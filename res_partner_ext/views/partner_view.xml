@@ -48,15 +48,13 @@
                     <field name="title"/>
                 </field>
                 <field name="display_name" position="after">
+                    <field name="search_key"/>
                     <field name="category_id" string="Category"/>
                     <!--<field name="vat" string="Tax ID"/>-->
                     <!--<field name="taxbranch" string="Tax Branch ID"/>-->
                 </field>
                 <field name="phone" position="after">
                     <field name="mobile"/>
-                </field>
-                <field name="email" position="after">
-                    <field name="search_key"/>
                 </field>
             </field>
         </record>

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountTaxDetail(models.Model):
@@ -24,6 +25,8 @@ class AccountTaxDetail(models.Model):
             rec.taxbranch_id = rec.invoice_tax_id.invoice_id.taxbranch_id
         elif rec.voucher_tax_id:
             rec.taxbranch_id = rec.voucher_tax_id.invoice_id.taxbranch_id
+        if not rec.taxbranch_id:
+            raise ValidationError(_('No taxbranch_id when create tax detail'))
         return rec
 
     @api.multi

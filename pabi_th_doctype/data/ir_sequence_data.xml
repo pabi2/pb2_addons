@@ -99,5 +99,97 @@
             <field name="implementation">standard</field>
             <field name="special_type">doctype</field>
         </record>
+        # Advance Dunnning Letter
+        <record id="doctype_advance_dunning_letter_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Advance Dunning Letter</field>
+            <field name="code"></field>
+            <field name="prefix">AD%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        # Asset Management
+        <record id="doctype_asset_transfer_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Asset Transfer</field>
+            <field name="code"></field>
+            <field name="prefix">AST</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        <record id="doctype_asset_changeowner_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Asset Change Owner</field>
+            <field name="code"></field>
+            <field name="prefix">ASC</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        <record id="doctype_asset_request_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Asset Request</field>
+            <field name="code"></field>
+            <field name="prefix">AI%(fy)s</field>
+            <field eval="7" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        <record id="doctype_asset_removal_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Asset Removal</field>
+            <field name="code"></field>
+            <field name="prefix">AR%(fy)s</field>
+            <field eval="7" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        <record id="doctype_asset_adjust_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Asset Adjust</field>
+            <field name="code"></field>
+            <field name="prefix">ASJ</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        <record id="doctype_bank_reconcile_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Bank Statement Reconcile</field>
+            <field name="code"></field>
+            <field name="prefix">BSR</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        <record id="doctype_loan_installment_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Loan Installment</field>
+            <field name="code"></field>
+            <field name="prefix">LI</field>
+            <field eval="5" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        <record id="doctype_purchase_billing_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: Purchase Billing</field>
+            <field name="code"></field>
+            <field name="prefix">BL%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
     </data>
 </openerp>

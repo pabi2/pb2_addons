@@ -104,9 +104,11 @@ class AccountInvoice(models.Model):
                          ('move_id', '=', invoice.move_id.id),
                          ('debit', '=', 0.0), ('credit', '=', 0.0)])
                 move_lines.reconcile(type='manual')
-
+                # Clear cache first.
+                invoice.invalidate_cache()
                 if invoice.clear_pettycash_id.pettycash_balance < 0.0:
                     raise ValidationError(
-                        _('Requested amount exceed petty cash balance: %s') %
+                        _('Requested amount exceed current '
+                          'petty cash balance: %s') %
                         '{:,.2f}'.format(balance))
         return result

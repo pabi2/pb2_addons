@@ -216,10 +216,14 @@ class AccountInvoice(models.Model):
         move_ids = self.payment_ids.mapped('move_id')._ids
         Voucher = self.env['account.voucher']
         voucher_ids = Voucher.search([('move_id', 'in', move_ids)])._ids
-        action_id = self.env.ref('account_voucher.action_vendor_payment')
-        if not action_id:
+        action = False
+        if self.type in ('in_invoice', 'in_refund'):
+            action = self.env.ref('account_voucher.action_vendor_payment')
+        if self.type in ('out_invoice', 'out_refund'):
+            action = self.env.ref('account_voucher.action_vendor_receipt')
+        if not action:
             raise ValidationError(_('No Action'))
-        action = action_id.read([])[0]
+        action = action.read([])[0]
         action['domain'] =\
             "[('id','in', [" + ','.join(map(str, voucher_ids)) + "])]"
         ctx = ast.literal_eval(action['context'])

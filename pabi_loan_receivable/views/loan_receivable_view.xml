@@ -136,7 +136,7 @@
                         <button name="action_sign" string="Sign Document" states="draft" type="object" class="oe_highlight"/>
                         <button name="%(action_create_bank_invoice)d" string="Create Bank Invoice" type="action" groups="account.group_account_invoice" states="open" class="oe_highlight"/>
                         <button name="%(action_create_installment_order)d" string="Create Installment" type="action" groups="account.group_account_invoice" states="sign" class="oe_highlight"/>
-                        <button name="action_cancel" string="Cancel" type="object" states="sign"/>
+                        <button name="action_cancel" string="Cancel" type="object" states="sign,open,bank_invoice,bank_paid"/>
                         <button name="action_cancel_draft" type="object" states="cancel" string="Set to Draft"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,sign,bank_invoice,bank_paid,open,done"/>
                     </header>

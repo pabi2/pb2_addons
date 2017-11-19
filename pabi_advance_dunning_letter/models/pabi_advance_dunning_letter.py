@@ -85,7 +85,8 @@ class PABIAdvanceDunningLetter(models.Model):
 
     @api.model
     def create(self, vals):
-        vals['name'] = self.env['ir.sequence'].get('advance.dunning') or '/'
+        if not vals.get('name') and vals.get('name') == '/':
+            vals['name'] = self.env['ir.sequence'].get('advance.dunning')
         return super(PABIAdvanceDunningLetter, self).create(vals)
 
     @api.multi

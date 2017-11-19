@@ -217,7 +217,8 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
     @api.model
     def create(self, vals):
         sequence_code = 'loan.installment'
-        vals['name'] = self.env['ir.sequence'].next_by_code(sequence_code)
+        if vals.get('name', '/') == '/':
+            vals['name'] = self.env['ir.sequence'].next_by_code(sequence_code)
         res = super(LoanInstallment, self).create(vals)
         res._set_header_taxbranch_id()
         return res
