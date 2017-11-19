@@ -21,6 +21,10 @@ class LoanCreateInstallmentOrderWizard(models.TransientModel):
         string='Number of Installment',
         readonly=True,
     )
+    install_amount = fields.Float(
+        string='Amount/Installment',
+        required=True,
+    )
 
     @api.model
     def default_get(self, field_list):
@@ -32,6 +36,8 @@ class LoanCreateInstallmentOrderWizard(models.TransientModel):
         res['date_order'] = first_date_due
         res['amount'] = loan.amount_receivable
         res['installment'] = loan.installment
+        res['install_amount'] = loan.installment and \
+            loan.amount_receivable / loan.installment
         return res
 
     @api.model
@@ -71,6 +77,7 @@ class LoanCreateInstallmentOrderWizard(models.TransientModel):
                     'active_ids': [order_id],
                     'active_model': 'sale.order',
                     'default_num_installment': self.installment,
+                    'loan_install_amount': self.install_amount,
                     'readonly_num_installment': True,
                     'hide_invoice_plan_detail': True,
                     })
