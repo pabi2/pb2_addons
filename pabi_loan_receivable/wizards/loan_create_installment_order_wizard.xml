@@ -1,43 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- © 2016 Kitti U.
-     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
-
 <openerp>
-<data>
+    <data>
 
-<record id="wizard_loan_create_installment_order" model="ir.ui.view">
-    <field name="name">Create Bank Invoice</field>
-    <field name="model">loan.create.installment.order.wizard</field>
-    <field name="arch" type="xml">
-        <form string="Select invoice date">
-            <p>Please select date for installment order</p>
-            <group>
-				<group>            
-	            	<field name="date_order" />
-	            </group>
-				<group> 
-	            	<field name="amount" />
-	            </group>
-            </group>
-            <footer>
-                <button name="action_create_installment_order"
-                        type="object" string="Create Installment Order"
-                        class="oe_highlight"/>
-                or
-                <button special="cancel"
-                        string="Cancel"/>
-            </footer>
-        </form>
-    </field>
-</record>
+        <record id="wizard_loan_create_installment_order" model="ir.ui.view">
+            <field name="name">Create Bank Invoice</field>
+            <field name="model">loan.create.installment.order.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Select invoice date">
+                    <p>Please select date for installment order</p>
+                    <group>
+                        <group>
+                            <field name="date_order"/>
+                        </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="install_amount"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_create_installment_order" type="object" string="Create Installment Order" class="oe_highlight"/>
+                        or
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
 
-<record id="action_create_installment_order" model="ir.actions.act_window">
-    <field name="name">Create Installment Order</field>
-    <field name="res_model">loan.create.installment.order.wizard</field>
-    <field name="view_type">form</field>
-    <field name="view_mode">form</field>
-    <field name="target">new</field>
-</record>
+        <record id="action_create_installment_order" model="ir.actions.act_window">
+            <field name="name">Create Installment Order</field>
+            <field name="res_model">loan.create.installment.order.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
 
-</data>
+    </data>
 </openerp>
