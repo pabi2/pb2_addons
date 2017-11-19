@@ -66,6 +66,13 @@
                 <xpath expr="//page[@string='Tax']/field/tree/field[@name='account_analytic_id']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
+                <xpath expr="//div[@name='buttons']" position="inside">
+                    <button class="oe_inline oe_stat_button" name="action_open_payments" type="object" icon="fa-file-text"
+                      attrs="{'invisible': [('payment_count', '=', 0)]}"
+                      context="{'default_partner_id': partner_id}">
+                        <field string="Payments" name="payment_count" widget="statinfo"/>
+                    </button>
+                </xpath>
             </field>
         </record>
 
