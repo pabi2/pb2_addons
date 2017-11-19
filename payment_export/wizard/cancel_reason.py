@@ -16,10 +16,11 @@ class PaymentExportCancel(models.TransientModel):
     def confirm_cancel(self):
         act_close = {'type': 'ir.actions.act_window_close'}
         export_ids = self._context.get('active_ids')
+        void_cheque = self._context.get('void_cheque', False)
         if export_ids is None:
             return act_close
         assert len(export_ids) == 1, "Only 1 export ID expected"
         export = self.env['payment.export'].browse(export_ids)
         export.cancel_reason_txt = self.cancel_reason_txt
-        export.action_cancel()
+        export.action_cancel(void_cheque=void_cheque)
         return act_close
