@@ -60,11 +60,53 @@
             <field name="reversal_sequence_id" ref="l10n_th_doctype_reversal.doctype_cancel_with_reversal_seq"/>
         </record>
 
-        <!-- Other Documents -->
+        <!-- Advance Dunning -->
         <record id="doctype_advance_dunning_letter" model="res.doctype" >
             <field name="name">Advance Dunning Letter</field>
             <field name="sequence_id" ref="doctype_advance_dunning_letter_seq"/>
             <field name="refer_type">advance_dunning_letter</field>
+        </record>
+        <!-- Asset Management -->
+        <record id="doctype_asset_transfer" model="res.doctype" >
+            <field name="name">Asset Transfer</field>
+            <field name="sequence_id" ref="doctype_asset_transfer_seq"/>
+            <field name="refer_type">asset_transfer</field>
+        </record>
+        <record id="doctype_asset_changeowner" model="res.doctype" >
+            <field name="name">Asset Change Owner</field>
+            <field name="sequence_id" ref="doctype_asset_changeowner_seq"/>
+            <field name="refer_type">asset_changeowner</field>
+        </record>
+        <record id="doctype_asset_request" model="res.doctype" >
+            <field name="name">Asset Request</field>
+            <field name="sequence_id" ref="doctype_asset_request_seq"/>
+            <field name="refer_type">asset_request</field>
+        </record>
+        <record id="doctype_asset_removal" model="res.doctype" >
+            <field name="name">Asset Removal</field>
+            <field name="sequence_id" ref="doctype_asset_removal_seq"/>
+            <field name="refer_type">asset_removal</field>
+        </record>
+        <record id="doctype_asset_adjust" model="res.doctype" >
+            <field name="name">Asset Adjustment</field>
+            <field name="sequence_id" ref="doctype_asset_adjust_seq"/>
+            <field name="refer_type">asset_adjust</field>
+        </record>
+        <!-- Misc -->
+        <record id="doctype_loan_installment" model="res.doctype" >
+            <field name="name">Loan Installment</field>
+            <field name="sequence_id" ref="doctype_loan_installment_seq"/>
+            <field name="refer_type">loan_installment</field>
+        </record>
+        <record id="doctype_bank_reconcile" model="res.doctype" >
+            <field name="name">Bank Statement Reconcile</field>
+            <field name="sequence_id" ref="doctype_bank_reconcile_seq"/>
+            <field name="refer_type">bank_reconcile</field>
+        </record>
+        <record id="doctype_purchase_billing" model="res.doctype" >
+            <field name="name">Purchase Billing</field>
+            <field name="sequence_id" ref="doctype_purchase_billing_seq"/>
+            <field name="refer_type">purchase_billing</field>
         </record>
 
     </data>

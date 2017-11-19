@@ -3,7 +3,7 @@
     <data noupdate="1">
       # Employee Expense
       <record id="doctype_salary_expense_seq" model="ir.sequence">
-          <field name="name">DOCTYPE: Employee Expense</field>
+          <field name="name">DOCTYPE: Salary Expense</field>
           <field name="code"></field>
           <field name="prefix">SL%(fy)s</field>
           <field eval="6" name="padding"/>
