@@ -34,14 +34,9 @@ class sale_create_invoice_plan(models.TransientModel):
         for install in installments:
             next_date = first_date + relativedelta(months=i)
             install.date_invoice = next_date.strftime('%Y-%m-%d')
-<<<<<<< HEAD
             remain_amount = self.order_amount - accum_amount
             if i == num_install or remain_amount < avg_amount:  # Final round
                 install.amount = remain_amount
-=======
-            if i == num_install:  # Last installment rounding.
-                install.amount = self.order_amount - accum_amount
->>>>>>> 5a51cfa91520245ae167e7f26fd92c1af88f5caa
                 install.percent = 100.0 - accum_percent
             else:
                 # Decimal will interact with each other.
