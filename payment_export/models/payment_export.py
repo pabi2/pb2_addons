@@ -383,14 +383,17 @@ class PaymentExport(models.Model):
         self.write({'state': 'done'})
 
     @api.multi
-    def action_cancel(self):
+    def action_cancel(self, void_cheque=False):
         self.write({'state': 'cancel'})
         for rec in self:
             for line in rec.line_ids:
-                line.cheque_register_id.write(
-                    {'voucher_id': False,
-                     'payment_export_id': False}
-                )
+                vals = {'voucher_id': False,
+                        'payment_export_id': False,
+                        }
+                if void_cheque:
+                    vals.update({'void': True,
+                                 'note': rec.cancel_reason_txt})
+                line.cheque_register_id.write(vals)
                 line.write({'exported': False})
 
     @api.multi
