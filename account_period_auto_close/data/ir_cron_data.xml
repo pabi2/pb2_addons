@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record model="ir.cron" id="cronjob_account_period_auto_close">
+            <field name='name'>Period Auto Close</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="doall" eval="False" />
+            <field name="model">account.period</field>
+            <field name="function">process_period_auto_close</field>
+            <field name="args">()</field>
+        </record>
+        <record model="ir.cron" id="cronjob_account_period_auto_open">
+            <field name='name'>Period Auto Open</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="doall" eval="False" />
+            <field name="model">account.period</field>
+            <field name="function">process_period_auto_open</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+</openerp>
