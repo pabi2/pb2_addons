@@ -91,6 +91,20 @@ class ImportXlsxTemplate(models.TransientModel):
     )
 
     @api.model
+    def get_eval_context(self, model=False, value=False):
+        eval_context = {'time': time,
+                        'env': self.env,
+                        'context': self._context,
+                        'value': False,
+                        'model': False,
+                        }
+        if model:
+            eval_context.update({'model': self.env[model]})
+        if value:
+            eval_context.update({'value': value})
+        return eval_context
+
+    @api.model
     def default_get(self, fields):
         res_model = self._context.get('active_model', False)
         res_id = self._context.get('active_id', False)
@@ -140,23 +154,26 @@ class ImportXlsxTemplate(models.TransientModel):
             if not isinstance(columns, list):  # Ex. 'A1': ['field1', 'field2']
                 columns = [columns]
             for field in columns:
-                x_field, eval_cond = get_field_condition(field)
+                rc, key_eval_cond = get_field_condition(rc)
+                field, val_eval_cond = get_field_condition(field)
                 row, col = XLS.pos2idx(rc)
-                out_field = '%s/%s' % (new_line_field, x_field)
+                out_field = '%s/%s' % (new_line_field, field)
                 field_type = XLS._get_field_type(model, out_field)
                 vals.update({out_field: []})
+                # Case default value from an eval
                 for idx in range(row, st.nrows):
-                    value = XLS._get_cell_value(st.cell(idx, col),
-                                                field_type=field_type)
+                    value = False
+                    if key_eval_cond:
+                        eval_context = self.get_eval_context()
+                        value = str(eval(key_eval_cond, eval_context))
+                    else:
+                        value = XLS._get_cell_value(st.cell(idx, col),
+                                                    field_type=field_type)
                     # Case Eval
-                    if eval_cond:
-                        eval_context = {'time': time,
-                                        'value': value,
-                                        'model': self.env[model],
-                                        'env': self.env,
-                                        'context': self._context,
-                                        }
-                        value = str(eval(eval_cond, eval_context))
+                    if val_eval_cond:
+                        eval_context = self.get_eval_context(model=model,
+                                                             value=value)
+                        value = str(eval(val_eval_cond, eval_context))
                     # --
                     vals[out_field].append(value)
                     if max_row and (idx - row) >= max_row:
@@ -195,10 +212,23 @@ class ImportXlsxTemplate(models.TransientModel):
                         _('Sheet %s not found!') % sheet_name)
                 # HEAD(s)
                 for rc, field in worksheet.get('_HEAD_', {}).iteritems():
+                    rc, key_eval_cond = get_field_condition(rc)
+                    field, val_eval_cond = get_field_condition(field)
                     row, col = XLS.pos2idx(rc)
                     field_type = XLS._get_field_type(model, field)
-                    value = XLS._get_cell_value(st.cell(row, col),
-                                                field_type=field_type)
+                    value = False
+                    if key_eval_cond:
+                        eval_context = self.get_eval_context()
+                        value = str(eval(key_eval_cond, eval_context))
+                    else:
+                        value = XLS._get_cell_value(st.cell(row, col),
+                                                    field_type=field_type)
+                    # Case Eval
+                    if val_eval_cond:
+                        eval_context = self.get_eval_context(model=model,
+                                                             value=value)
+                        value = str(eval(val_eval_cond, eval_context))
+                    # --
                     out_st.write(0, col_idx, field)  # Next Column
                     out_st.write(1, col_idx, value)  # Next Value
                     col_idx += 1

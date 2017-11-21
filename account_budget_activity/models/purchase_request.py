@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
+from openerp import tools
 from openerp.exceptions import ValidationError
 from .account_activity import ActivityCommon
 
@@ -73,6 +74,18 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
     price_unit = fields.Float(
         string='Unit Price',
     )
+    # We neeed the missing link to purchase_lines,
+    # this is mock with view purchase_request_purchase_order_line_rel
+    purchase_lines = fields.Many2many(
+        'purchase.order.line',
+        'purchase_request_purchase_order_line_rel',
+        'purchase_request_line_id',
+        'purchase_order_line_id',
+        string='Purchase Order Lines',
+        compute='_compute_purchase_lines',
+        store=True,
+        help="purchase_request_purchase_order_line_rel is a View."
+    )
     budget_commit_ids = fields.One2many(
         'account.analytic.line',
         'purchase_request_line_id',
@@ -89,6 +102,23 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
         string='Budget Transition',
         readonly=True,
     )
+
+    @api.model
+    def _get_purchase_lines_view_sql(self):
+        return """
+        select purchase_request_line_id, pol.id as purchase_order_line_id
+        from purchase_request_purchase_requisition_line_rel prq
+        join purchase_order_line pol
+        on pol.requisition_line_id = prq.purchase_requisition_line_id
+        """
+
+    @api.multi
+    @api.depends('requisition_lines.purchase_line_ids')
+    def _compute_purchase_lines(self):
+        print '=================_compute_purchase_lines======================='
+        for rec in self:
+            rec.purchase_lines = \
+                rec.requisition_lines.mapped('purchase_line_ids')
 
     @api.multi
     def _compute_budget_commit_bal(self):
@@ -198,23 +228,3 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
                 reverse=reverse, currency=rec.request_id.currency_id)
             if vals:
                 self.env['account.analytic.line'].sudo().create(vals)
-
-    # # When partial purchased_qty
-    # @api.multi
-    # @api.depends('purchased_qty')
-    # def _compute_temp_purchased_qty(self):
-    #     # As purchased_qty increased, release the commitment
-    #     for rec in self:
-    #         # On compute filed of temp_purchased_qty, ORM is not working
-    #         self._cr.execute("""
-    #             select temp_purchased_qty
-    #             from purchase_request_line where id = %s
-    #         """, (rec.id,))
-    #         temp_purchased_qty = self._cr.fetchone()[0] or 0.0
-    #         diff_qty = rec.purchased_qty - temp_purchased_qty
-    #         if rec.request_state not in ('draft', 'to_approve', 'rejected'):
-    #             rec.with_context(diff_qty=diff_qty).\
-    #                 _create_analytic_line(reverse=False)
-    #         rec.temp_purchased_qty = rec.purchased_qty
-
-    # ======================================================
