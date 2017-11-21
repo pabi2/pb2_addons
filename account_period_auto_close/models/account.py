@@ -17,7 +17,7 @@ class AccountFiscalyear(models.Model):
     )
     close_after_days = fields.Integer(
         string='Close after (days)',
-        default=4,
+        default=3,
         help="Number of days after end of running period to be auto close.\n"
         "0 means no auto close."
     )

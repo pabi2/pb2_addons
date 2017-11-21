@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="document.directory" id="dir_gfmis_template">
+            <field name="name">GFMIS Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <record id="gfmis_tempalte" model="ir.attachment">
+            <field name="res_model">account.trial.balance.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">gfmis.xlsx</field>
+            <field name="name">Export for GFMIS</field>
+            <field name="parent_id" eval="ref('dir_gfmis_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B3': 'fiscalyear_id.name',
+                        },
+                        'line_ids': {
+                            'A6': 'account_id.code',
+                            'B6': 'account_id.name',
+                            'C6': 'initial',
+                            'D6': 'debit',
+                            'E6': 'credit',
+                            'F6': 'balance',
+                        },
+                    },
+                }
+            }
+          </field>
+        </record>
+    </data>
+</openerp>

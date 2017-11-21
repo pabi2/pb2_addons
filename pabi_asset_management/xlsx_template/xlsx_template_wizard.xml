@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Change Owner -->
+        <act_window id="action_asset_changeowner_import_xlsx_tempalte"
+            name="Import Asset Change Owner (.xlsx)"
+            res_model="import.xlsx.template"
+            src_model="account.asset.changeowner"
+            view_mode="form"
+            target="new"/>
+
+        <!-- Transfer -->
+        <act_window id="action_asset_transfer_import_xlsx_tempalte"
+            name="Import Asset Transfer (.xlsx)"
+            res_model="import.xlsx.template"
+            src_model="account.asset.transfer"
+            view_mode="form"
+            target="new"/>
+
+        <!-- Removal -->
+        <act_window id="action_asset_removal_import_xlsx_tempalte"
+            name="Import Asset Removal (.xlsx)"
+            res_model="import.xlsx.template"
+            src_model="account.asset.removal"
+            view_mode="form"
+            target="new"/>
+
+        <!-- Asset Receive -->
+        <act_window id="action_asset_receive_import_xlsx_tempalte"
+            name="Import Asset Receive (.xlsx)"
+            res_model="import.xlsx.template"
+            src_model="stock.picking"
+            view_mode="form"
+            target="new"/>
+
+    </data>
+</openerp>
