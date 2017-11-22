@@ -21,15 +21,6 @@ CHEQUE_REPORT_MAP = {
 class PrintPaymentChequeWizard(models.TransientModel):
     _name = 'print.payment.cheque.wizard'
 
-    # doctype = fields.Selection(
-    #     [('sale', 'Sale'),
-    #      ('purchase', 'Purchase'),
-    #      ('payment', 'Payment'),
-    #      ('receipt', 'Receipt'), ],
-    #     string="Doctype",
-    #     readonly=True,
-    #     default=lambda self: self._get_default_doctype(),
-    # )
     bank_print = fields.Selection(
         selection='_get_voucher_bank_cheque',
         string="Bank Cheque",
@@ -42,16 +33,6 @@ class PrintPaymentChequeWizard(models.TransientModel):
         string="Language",
         required=True,
     )
-
-    # @api.model
-    # def _get_default_doctype(self):
-    #     active_ids = self._context.get('active_ids')
-    #     account_vouchers = self.env['account.voucher'].browse(active_ids)
-    #     doctypes = list(set(account_vouchers.mapped('type')))
-    #     if len(doctypes) > 1:
-    #         raise ValidationError(
-    #             _('Not allow selecting document with > 1 Doctypes'))
-    #     return doctypes[0]
 
     @api.multi
     def action_print_payment_cheque(self):
