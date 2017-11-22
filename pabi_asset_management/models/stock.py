@@ -26,7 +26,7 @@ class StockPicking(models.Model):
     )
 
     @api.onchange('partner_id')
-    def _onchane_partner_id(self):
+    def _onchange_partner_id(self):
         self.donor = False
 
     @api.multi
@@ -70,10 +70,12 @@ class StockPicking(models.Model):
         for rec in self:
             if not rec.asset_purchase_method_id:
                 continue
-            elif rec.asset_purchase_method_id.code == '8':  # Donation
-                if rec.move_lines.filtered('chartfield_id'):
-                    raise ValidationError(
-                        _("For Donation, budget is not required!"))
+            # TODO: user says, though donation it will require costcenter
+            # Just no budget.
+            # elif rec.asset_purchase_method_id.code == '8':  # Donation
+            #     if rec.move_lines.filtered('chartfield_id'):
+            #         raise ValidationError(
+            #             _("For Donation, budget is not required!"))
             else:
                 if rec.move_lines.filtered(lambda l: not l.chartfield_id):
                     raise ValidationError(
