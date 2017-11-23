@@ -65,6 +65,17 @@ class AccountMove(models.Model):
             if True in move.line_id.mapped('is_tax_line') \
                     and not move.tax_detail_ids:
                 raise ValidationError(_('Please fill Tax Detail!'))
+            # Validate Adjustment Budget, at lease 2 line must have AG/A
+            if move.doctype == 'adjustment':
+                ag_lines = move.line_id.filtered('activity_group_id')
+                # JV must have AG/A
+                if move.journal_id.analytic_journal_id and not ag_lines:
+                    raise ValidationError(
+                        _('For JV, at least 1 line must have activity gorup!'))
+                # JN must not have AG/A
+                if not move.journal_id.analytic_journal_id and ag_lines:
+                    raise ValidationError(
+                        _('For JN, No line can have activity gorup!'))
             # For case adjustment journal only, create analytic when posted
             Analytic = self.env['account.analytic.account']
             # Only direct creation of account move, we will recompute dimension

@@ -8,7 +8,9 @@
                 <form string="Import File Template">
                     <group>
                         <group>
-                            <field name="template_id" widget="selection"/>
+                            <field name="template_id" widget="selection"
+                              context="{'domain_template_ids': domain_template_ids}"/>
+                            <field name="domain_template_ids" invisible="1"/>
                             <field name="datas_fname" invisible="1"/>
                             <field name="datas" filename="datas_fname"/>
                             <field name="res_model" invisible="1"/>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="document.directory" id="dir_journal_adjustment_template">
+            <field name="name">Journal Adjustment Template</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <!-- Adjust Budget -->
+        <record id="journal_adj_budget_tempalte" model="ir.attachment">
+            <field name="res_model">account.move</field>
+            <field name="datas"></field>
+            <field name="datas_fname">journal_adj_budget.xlsx</field>
+            <field name="name">Journal Adj.Budget</field>
+            <field name="parent_id" eval="ref('dir_journal_adjustment_template')"/>
+            <field name="description">
+              {
+                '__IMPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'line_id': {
+                            'A3': 'sequence',
+                            'B3': 'partner_id',
+                            'C3': 'activity_group_id',
+                            'D3': 'activity_id',
+                            'E3': 'account_id',
+                            'F3': 'name',
+                            'G3': 'debit',
+                            'H3': 'credit',
+                            'I3': 'chartfield_id',
+                            'J3': 'cost_control_id',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+        <!-- Adjust No-Budget -->
+        <record id="journal_adj_no_budget_tempalte" model="ir.attachment">
+            <field name="res_model">account.move</field>
+            <field name="datas"></field>
+            <field name="datas_fname">journal_adj_no_budget.xlsx</field>
+            <field name="name">Journal Adj.No.Budget</field>
+            <field name="parent_id" eval="ref('dir_journal_adjustment_template')"/>
+            <field name="description">
+              {
+                '__IMPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'line_id': {
+                            'A3': 'sequence',
+                            'B3': 'partner_id',
+                            'C3': 'account_id',
+                            'D3': 'name',
+                            'E3': 'debit',
+                            'F3': 'credit',
+                            'G3': 'chartfield_id',
+                            'H3': 'cost_control_id',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+    </data>
+</openerp>

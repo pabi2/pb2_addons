@@ -27,10 +27,13 @@ Note: following are arequiremen for system to properly create analytic line
         'account_subscription_enhanced',
         'pabi_account_move_document_ref',
         'pabi_chartfield_merged',
+        'pabi_utils',
     ],
     'demo': [],
     'data': [
         'data/journal_data.xml',
+        'xlsx_template/templates.xml',
+        'xlsx_template/xlsx_template_wizard.xml',
         'wizard/create_journal_entry_wizard.xml',
         'wizard/edit_desc.xml',
         'views/account_view.xml',
