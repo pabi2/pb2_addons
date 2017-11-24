@@ -1,15 +1,31 @@
 # -*- coding: utf-8 -*-
 import re
 import os
+import math
 import openpyxl
 import base64
 import cStringIO
 import time
+from copy import copy
 from datetime import datetime
 from ast import literal_eval
 
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
+
+
+def get_field_aggregation(field):
+    """ i..e, 'field@{sum/avg/max/min}' """
+    if '@{' in field and '}' in field:
+        i = field.index('@{')
+        j = field.index('}')
+        cond = field[i + 2:j]
+        try:
+            if len(cond) > 0:
+                return (field[:i], cond)
+        except:
+            return (field, False)
+    return (field, False)
 
 
 def get_field_condition(field):
@@ -142,12 +158,27 @@ class ExportXlsxTemplate(models.TransientModel):
             raise Exception(
                 _('Records in %s exceed max record allowed!') % line_field)
         vals = dict([(field, []) for field in fields])
+        # Get field condition & aggre function
+        field_cond_dict = {}
+        aggre_func_dict = {}
+        aggre_func_list = ['sum', 'sum_label', 'avg', 'avg_label',
+                           'max', 'max_label', 'min', 'min_label']
+        pair_fields = []  # I.e., ('debit${value and . or .}@{sum}', 'debit')
+        for field in fields:
+            temp_field, eval_cond = get_field_condition(field)
+            raw_field, aggre_func = get_field_aggregation(temp_field)
+            if aggre_func and aggre_func not in aggre_func_list:
+                raise ValidationError(_('"%", not a valid aggregate function'))
+            field_cond_dict.update({field: eval_cond})
+            aggre_func_dict.update({field: aggre_func})
+            pair_fields.append((field, raw_field))
+        # --
         for line in lines:
-            for field in fields:
-                x_field, eval_cond = get_field_condition(field)
-                value = _get_field_data(x_field, line)
+            for field in pair_fields:  # (field, raw_field)
+                value = _get_field_data(field[1], line)
                 # Case Eval
-                if eval_cond:
+                eval_cond = field_cond_dict[field[0]]
+                if eval_cond:  # Get eval_cond of a raw field
                     eval_context = {'time': time,
                                     'value': value,
                                     'model': self.env[record._name],
@@ -156,8 +187,8 @@ class ExportXlsxTemplate(models.TransientModel):
                                     }
                     value = str(eval(eval_cond, eval_context))
                 # --
-                vals[field].append(value)
-        return (line_field, vals)
+                vals[field[0]].append(value)
+        return (line_field, vals, aggre_func_dict)
 
     @api.model
     def _fill_workbook_data(self, workbook, record, data_dict):
@@ -183,16 +214,41 @@ class ExportXlsxTemplate(models.TransientModel):
                 for line_field in line_fields:
                     fields = [field for rc, field
                               in worksheet.get(line_field, {}).iteritems()]
-                    line_field, vals = self._get_line_vals(record,
-                                                           line_field, fields)
+                    line_field, vals, aggre_func = \
+                        self._get_line_vals(record, line_field, fields)
                     for rc, field in worksheet.get(line_field, {}).iteritems():
                         col, row = split_row_col(rc)  # starting point
                         i = 0
+                        new_row = 0
                         for val in vals[field]:
                             new_row = row + i
                             new_rc = '%s%s' % (col, new_row)
                             st[new_rc] = val
                             i += 1
+                        # Add footer line if at least one field have func
+                        has_aggre_func = [x for x in aggre_func.values() if x]
+                        if has_aggre_func:
+                            f = aggre_func.get(field, False)
+                            if f:
+                                # # Line Separator
+                                # new_row += 1
+                                # new_rc = '%s%s' % (col, new_row)
+                                # col_width = st.column_dimensions[col].width
+                                # st[new_rc] = \
+                                #     '-' * int(math.ceil(col_width)) * 2
+                                # # --
+                                # Aggregation Amount
+                                new_row += 1
+                                new_rc = '%s%s' % (col, new_row)
+                                if 'label' in f:
+                                    label = {'sum_label': 'Total',
+                                             'avg_label': 'Average',
+                                             'min_label': 'Minimum',
+                                             'max_label': 'Maximum', }
+                                    st[new_rc] = label[f]
+                                else:
+                                    st[new_rc] = eval('%s(%s)' %
+                                                      (f, vals[field]))
         except ValueError, e:
             message = str(e).format(rc)
             raise ValidationError(message)

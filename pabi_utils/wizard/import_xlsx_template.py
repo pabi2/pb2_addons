@@ -196,9 +196,9 @@ class ImportXlsxTemplate(models.TransientModel):
                 columns = [columns]
             for field in columns:
                 rc, key_eval_cond = get_field_condition(rc)
-                field, val_eval_cond = get_field_condition(field)
+                x_field, val_eval_cond = get_field_condition(field)
                 row, col = XLS.pos2idx(rc)
-                out_field = '%s/%s' % (new_line_field, field)
+                out_field = '%s/%s' % (new_line_field, x_field)
                 field_type = XLS._get_field_type(model, out_field)
                 vals.update({out_field: []})
                 # Case default value from an eval
