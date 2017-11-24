@@ -301,7 +301,7 @@ WHERE fiscalyear_id = $P{year}]]>
 			<staticText>
 				<reportElement x="749" y="2" width="16" height="20"/>
 				<textElement textAlignment="Left" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[หน้า]]></text>
 			</staticText>

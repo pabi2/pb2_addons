@@ -117,98 +117,98 @@ Bangkok]]></text>
 			<staticText>
 				<reportElement x="9" y="54" width="72" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Company name]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="9" y="74" width="72" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Business place]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="9" y="94" width="72" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Address]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="9" y="134" width="72" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Plant]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="9" y="154" width="72" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Material type]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="329" y="154" width="70" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Unit of measure]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="82" y="54" width="6" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="82" y="74" width="6" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="82" y="94" width="6" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="82" y="134" width="6" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="82" y="154" width="6" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="400" y="154" width="6" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="865" y="54" width="29" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Tax ID]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="894" y="54" width="6" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
@@ -222,7 +222,7 @@ Bangkok]]></text>
 			<staticText>
 				<reportElement x="9" y="188" width="47" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Start date]]></text>
 			</staticText>
@@ -250,7 +250,7 @@ Bangkok]]></text>
 			<staticText>
 				<reportElement x="9" y="248" width="47" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="false" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[End date]]></text>
 			</staticText>
@@ -690,7 +690,7 @@ Bangkok]]></text>
 			<staticText>
 				<reportElement x="1177" y="1" width="16" height="20"/>
 				<textElement textAlignment="Left" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[หน้า]]></text>
 			</staticText>

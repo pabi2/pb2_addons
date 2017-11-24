@@ -142,63 +142,63 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 			<staticText>
 				<reportElement x="0" y="0" width="1377" height="34"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="24" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="24" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[สำนักงานพัฒนาวิทยาศาสตร์ และเทคโนโลยี]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="21" y="34" width="754" height="35"/>
 				<textElement textAlignment="Right" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="16" isBold="true" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[รายการผลการจัดซื้อครุภัณฑ์นอกมาตรฐาน ตั้งแต่ 10,000 บาท จนถึง 100,000 บาท ตั้งแต่วันที่]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="887" y="34" width="33" height="35"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="16" isBold="true" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[ถึง]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="787" y="34" width="184" height="35"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="16" isBold="true" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[(($P{date_from} != null && $P{date_from}.length() == 10) ? $P{date_from}.substring(8,10)+"/"+$P{date_from}.substring(5,7)+"/"+$P{date_from}.substring(0,4) : "")]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="915" y="34" width="168" height="35"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="16" isBold="true" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[(($P{date_to} != null && $P{date_to}.length() == 10) ? $P{date_to}.substring(8,10)+"/"+$P{date_to}.substring(5,7)+"/"+$P{date_to}.substring(0,4) : "")]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="1348" y="14" width="100" height="20"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="1313" y="14" width="16" height="20"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[หน้า]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="1341" y="14" width="7" height="20"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[/]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="1329" y="14" width="30" height="20"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
@@ -215,7 +215,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[ลำดับ]]></text>
 			</staticText>
@@ -228,7 +228,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[เลขที่ใบสั่งซื้อ]]></text>
 			</staticText>
@@ -241,7 +241,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[รายการครุภัณฑ์]]></text>
 			</staticText>
@@ -254,7 +254,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[งบประมาณ]]></text>
 			</staticText>
@@ -267,7 +267,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[วัน/เดือน/ปี ที่จำหน่าย]]></text>
 			</staticText>
@@ -280,7 +280,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[ผู้จำหน่าย]]></text>
 			</staticText>
@@ -293,7 +293,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[ยี่ห้อ / รุ่น]]></text>
 			</staticText>
@@ -306,7 +306,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[จังหวัดที่ซื้อ]]></text>
 			</staticText>
@@ -319,7 +319,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[ราคาจัดซื้อ]]></text>
 			</staticText>
@@ -332,7 +332,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[หมายเหตุ]]></text>
 			</staticText>
@@ -345,7 +345,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<text><![CDATA[Warranty]]></text>
 			</staticText>
@@ -362,7 +362,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{count_column}]]></textFieldExpression>
 			</textField>
@@ -375,7 +375,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_name}]]></textFieldExpression>
 			</textField>
@@ -388,7 +388,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{product_name}]]></textFieldExpression>
 			</textField>
@@ -401,7 +401,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{pr_price}]]></textFieldExpression>
 			</textField>
@@ -414,7 +414,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{date_order}]]></textFieldExpression>
 			</textField>
@@ -427,7 +427,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
@@ -440,7 +440,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{province}]]></textFieldExpression>
 			</textField>
@@ -453,7 +453,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{pol_price}]]></textFieldExpression>
 			</textField>
@@ -466,7 +466,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name}]]></textFieldExpression>
 			</textField>
@@ -479,7 +479,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{note}]]></textFieldExpression>
 			</textField>
@@ -492,7 +492,7 @@ WHERE date_order BETWEEN date($P{date_from}) AND date($P{date_to})]]>
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{warranty}]]></textFieldExpression>
 			</textField>
