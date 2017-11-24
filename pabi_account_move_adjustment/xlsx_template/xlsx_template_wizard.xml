@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Journal Adj.Budget Template -->
+        <act_window id="action_journal_adj_budget_import_xlsx_tempalte"
+            name="Import JV (.xlsx)"
+            res_model="import.xlsx.template"
+            src_model="account.move"
+            view_mode="form"
+            target="new"/>
+        <!-- Optional: To be specific to some template and context -->
+    		<record id="action_journal_adj_budget_import_xlsx_tempalte" model="ir.actions.act_window">
+      			<field name="context"
+              eval="{'template_fname': 'journal_adj_budget.xlsx',
+                     'template_context': {'doctype': 'adjustment', 'journal_id': ref('journal_adjust_budget')}}"/>
+        </record>
+
+
+        <!-- Journal Adj.No.Budget Template -->
+        <act_window id="action_journal_adj_no_budget_import_xlsx_tempalte"
+             name="Import JN (.xlsx)"
+             res_model="import.xlsx.template"
+             src_model="account.move"
+             view_mode="form"
+             target="new"/>
+        <!-- Optional: To be specific to some template and context -->
+     		<record id="action_journal_adj_no_budget_import_xlsx_tempalte" model="ir.actions.act_window">
+       			<field name="context"
+               eval="{'template_fname': 'journal_adj_no_budget.xlsx',
+                      'template_context': {'doctype': 'adjustment', 'journal_id': ref('journal_adjust_no_budget')}}"/>
+		    </record>
+
+    </data>
+</openerp>

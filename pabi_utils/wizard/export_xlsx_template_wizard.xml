@@ -19,7 +19,7 @@
                       </group>
                   </group>
                   <div states="get">
-                      <h2>Complete Prepare Template (.xlsx)</h2>
+                      <h2>Complete Prepare File (.xlsx)</h2>
                       <p>Here is the exported file: <field name="data" readonly="1" filename="name"/></p>
                       <p>This file is prefilled with data from the current active record (if any), using pattern in the
                          data dict section '__EXPORT__'.

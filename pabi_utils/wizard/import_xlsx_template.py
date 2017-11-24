@@ -7,7 +7,7 @@ import itertools
 import cStringIO
 import time
 from openerp import models, fields, api, _
-from openerp.exceptions import except_orm, ValidationError
+from openerp.exceptions import except_orm, ValidationError, RedirectWarning
 from openerp.tools.safe_eval import safe_eval as eval
 
 
@@ -67,7 +67,12 @@ class ImportXlsxTemplate(models.TransientModel):
         required=True,
         ondelete='set null',
         domain="[('res_model', '=', res_model),"
-        "('res_id', '=', False), ('res_name', '=', False)]",
+        "('res_id', '=', False),('res_name', '=', False)]"
+    )
+    domain_template_ids = fields.Many2many(
+        'ir.attachment',
+        string='Domain Templates',
+        help="template_id's domain. If False, no domain",
     )
     res_id = fields.Integer(
         string='Resource ID',
@@ -91,6 +96,34 @@ class ImportXlsxTemplate(models.TransientModel):
     )
 
     @api.model
+    def view_init(self, fields_list):
+        """ This template only works on some context of active record """
+
+        res_model = self._context.get('active_model', False)
+        res_id = self._context.get('active_id', False)
+        record = self.env[res_model].browse(res_id)
+        messages = []
+        valid = True
+        # For all import, only allow import in draft state (for documents)
+        if 'state' in record and record['state'] != 'draft':
+            messages.append(_('Document must be in draft state!'))
+            valid = False
+        # Context testing
+        if self._context.get('template_context', False):
+            template_context = self._context['template_context']
+            for key, value in template_context.iteritems():
+                if key not in record or \
+                        (record._fields[key].type == 'many2one' and
+                         record[key].id or record[key]) != value:
+                    valid = False
+                    messages.append(
+                        _('This import action is not usable '
+                          'in this document context!'))
+                    break
+        if not valid:
+            raise ValidationError('\n'.join(messages))
+
+    @api.model
     def get_eval_context(self, model=False, value=False):
         eval_context = {'time': time,
                         'env': self.env,
@@ -108,17 +141,25 @@ class ImportXlsxTemplate(models.TransientModel):
     def default_get(self, fields):
         res_model = self._context.get('active_model', False)
         res_id = self._context.get('active_id', False)
-        templates = self.env['ir.attachment'].\
-            search([('res_model', '=', res_model)])
+        template_dom = [('res_model', '=', res_model)]
+        template_fname = self._context.get('template_fname', False)
+        if template_fname:  # Specific template
+            template_dom.append(('datas_fname', '=', template_fname))
+        templates = self.env['ir.attachment'].search(template_dom)
         if not templates:
             raise ValidationError(_('No template found!'))
         defaults = super(ImportXlsxTemplate, self).default_get(fields)
         for template in templates:
             if not template.datas:
-                raise ValidationError(_('No file in %s') % (template.name,))
+                act = self.env.ref('document.action_document_directory_tree')
+                raise RedirectWarning(
+                    _('File "%s" not found in template, %s.') %
+                    (template.datas_fname, template.name),
+                    act.id, _('Set Templates'))
         defaults['template_id'] = len(templates) == 1 and template.id or False
         defaults['res_id'] = res_id
         defaults['res_model'] = res_model
+        defaults['domain_template_ids'] = templates.ids
         return defaults
 
     @api.model
@@ -155,9 +196,9 @@ class ImportXlsxTemplate(models.TransientModel):
                 columns = [columns]
             for field in columns:
                 rc, key_eval_cond = get_field_condition(rc)
-                field, val_eval_cond = get_field_condition(field)
+                x_field, val_eval_cond = get_field_condition(field)
                 row, col = XLS.pos2idx(rc)
-                out_field = '%s/%s' % (new_line_field, field)
+                out_field = '%s/%s' % (new_line_field, x_field)
                 field_type = XLS._get_field_type(model, out_field)
                 vals.update({out_field: []})
                 # Case default value from an eval

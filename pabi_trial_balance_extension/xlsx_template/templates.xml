@@ -24,11 +24,11 @@
                         },
                         'line_ids': {
                             'A6': 'account_id.code',
-                            'B6': 'account_id.name',
-                            'C6': 'initial',
-                            'D6': 'debit',
-                            'E6': 'credit',
-                            'F6': 'balance',
+                            'B6': 'account_id.name@{sum_label}',
+                            'C6': 'initial@{sum}',
+                            'D6': 'debit@{sum}',
+                            'E6': 'credit@{sum}',
+                            'F6': 'balance@{sum}',
                         },
                     },
                 }

@@ -470,6 +470,7 @@ class AccountAsset(ChartFieldAction, models.Model):
                 raise ValidationError(
                     _('No asset sequence setup for selected product!'))
             vals['code'] = self.env['ir.sequence'].next_by_id(sequence.id)
+
         # Set Salvage Value from Category
         profile_id = vals.get('profile_id', False)
         if profile_id:

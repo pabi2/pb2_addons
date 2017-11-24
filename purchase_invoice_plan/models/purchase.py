@@ -305,6 +305,8 @@ class PurchaseOrder(models.Model):
                 plan_obj = self.env['purchase.invoice.plan']
                 installments = list(set([plan.installment
                                          for plan in order.invoice_plan_ids]))
+                if not installments:
+                    raise ValidationError(_('No invoice plan installments!'))
                 last_installment = max(installments)
                 for installment in installments:
                     # Getting invoice plan for each installment
