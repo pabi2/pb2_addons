@@ -91,7 +91,7 @@
                 <!-- For some reason, without using replace, it got error in install -->
                 <field name="category_id" position="replace">
                     <field name="category_id" placeholder="Category..." domain="[('parent_id','=',False)]"/>
-                    <field name="tag_ids" widget="many2many_tags" attrs="{'invisible': [('supplier', '=', False)], 'required': [('supplier', '=', True)]}"/>
+                    <field name="tag_ids" widget="many2many_tags" attrs="{'invisible': [('supplier', '=', False)]}"/>
                 </field>
                 <!-- <field name="category_id" position="attributes">
                     <attribute name="domain">[('parent_id','=',False)]</attribute>
@@ -101,8 +101,7 @@
                     <attribute name="style">width: 100%%</attribute>
                 </field>
                 <field name="name" position="before">
-                    <field name="title" style="width: 50%%" options='{"no_open": True}' placeholder="Title"
-                      attrs="{'invisible': [('is_company', '=', True)]}"/>
+                    <field name="title" style="width: 50%%" options='{"no_open": True}' placeholder="Title"/>
                     <field name="title_lang" style="width: 50%%" attrs="{'invisible': [('is_company', '=', True)]}"/>
                 </field>
                 <field name="name" position="after">
@@ -219,6 +218,7 @@
             <field name="arch" type="xml">
                 <field name="complete_name" position="after">
                     <field name="receivable_account_id"/>
+                    <field name="payable_account_id"/>
                 </field>
             </field>
         </record>
