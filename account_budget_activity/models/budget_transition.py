@@ -216,7 +216,6 @@ class BudgetTransition(models.Model):
             self.return_budget_commitment(to_sources)
         elif is_backward:
             self.regain_budget_commitment(to_sources)
-
         return super(BudgetTransition, self).write(vals)
 
     @api.model
@@ -255,43 +254,49 @@ class BudgetTransition(models.Model):
     # Create budget transition log, when link between doc is created
     @api.model
     def create_trans_expense_to_invoice(self, line):
-        return self._create_trans_by_target_lines(
-            line, line.invoice_line_ids, 'unit_quantity',
-            'quantity', 'expense_line_id', 'invoice_line_id')
+        if line and line.invoice_line_ids:
+            self._create_trans_by_target_lines(
+                line, line.invoice_line_ids, 'unit_quantity',
+                'quantity', 'expense_line_id', 'invoice_line_id')
 
     @api.model
     def create_trans_pr_to_purchase(self, line):
-        return self._create_trans_by_target_lines(
-            line, line.purchase_lines, 'product_qty',
-            'product_qty', 'purchase_request_line_id', 'purchase_line_id')
+        if line and line.purchase_lines:
+            self._create_trans_by_target_lines(
+                line, line.purchase_lines, 'product_qty', 'product_qty',
+                'purchase_request_line_id', 'purchase_line_id')
 
     @api.model
     def create_trans_purchase_to_invoice(self, po_line):
-        return self._create_trans_by_target_lines(
-            po_line, po_line.invoice_lines, 'product_qty',
-            'quantity', 'purchase_line_id', 'invoice_line_id')
+        if po_line and po_line.invoice_lines:
+            self._create_trans_by_target_lines(
+                po_line, po_line.invoice_lines, 'product_qty',
+                'quantity', 'purchase_line_id', 'invoice_line_id')
 
     @api.model
     def create_trans_purchase_to_picking(self, po_line, moves, reverse=False):
-        return self._create_trans_by_target_lines(
-            po_line, moves, 'product_qty',
-            'product_uom_qty', 'purchase_line_id', 'stock_move_id',
-            reverse=reverse)
+        if po_line and moves:
+            self._create_trans_by_target_lines(
+                po_line, moves, 'product_qty',
+                'product_uom_qty', 'purchase_line_id', 'stock_move_id',
+                reverse=reverse)
 
     @api.model
     def create_trans_sale_to_invoice(self, so_line):
-        return self._create_trans_by_target_lines(
-            so_line, so_line.invoice_lines, 'product_uom_qty',
-            'quantity', 'sale_line_id', 'invoice_line_id',
-            reverse=True)  # For sales
+        if so_line and so_line.invoice_lines:
+            self._create_trans_by_target_lines(
+                so_line, so_line.invoice_lines, 'product_uom_qty',
+                'quantity', 'sale_line_id', 'invoice_line_id',
+                reverse=True)  # For sales
 
     @api.model
     def create_trans_sale_to_picking(self, so_line, moves, reverse=False):
         reverse = not reverse  # For sales
-        return self._create_trans_by_target_lines(
-            so_line, moves, 'product_uom_qty',
-            'product_uom_qty', 'sale_line_id', 'stock_move_id',
-            reverse=reverse)
+        if so_line and moves:
+            self._create_trans_by_target_lines(
+                so_line, moves, 'product_uom_qty',
+                'product_uom_qty', 'sale_line_id', 'stock_move_id',
+                reverse=reverse)
 
     # Return / Regain Commitment
     @api.model
@@ -339,14 +344,12 @@ class PurchaseRequestLine(models.Model):
     """ Source document, when line's link created, so do budget transition """
     _inherit = 'purchase.request.line'
 
-    # TODO: purchase_lines (direct from pr_line to po_line is not available)
-    # We do not install the module purchase_request_to_rfq
-    # @api.multi
-    # @api.constrains('purchase_lines')
-    # def _trigger_purchase_lines(self):
-    #     BudgetTrans = self.env['budget.transition'].sudo()
-    #     for pr_line in self:
-    #         BudgetTrans.create_trans_pr_to_purchase(pr_line)
+    @api.multi
+    @api.constrains('purchase_lines')
+    def _trigger_purchase_lines(self):
+        BudgetTrans = self.env['budget.transition'].sudo()
+        for pr_line in self:
+            BudgetTrans.create_trans_pr_to_purchase(pr_line)
 
 
 class PurchaseOrderLine(models.Model):
