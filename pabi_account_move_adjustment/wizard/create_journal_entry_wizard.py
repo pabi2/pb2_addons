@@ -15,6 +15,15 @@ class CreateJournalEntryWizard(models.TransientModel):
         readonly=False,
         default='no_budget',
     )
+    use_finlease_model = fields.Boolean(
+        string='Use Finlease Model',
+        default=False,
+    )
+    model_id = fields.Many2one(
+        'account.model',
+        string='Model',
+        domain=[('special_type', '=', 'invoice_plan_fin_lease')],
+    )
 
     @api.model
     def view_init(self, fields_list):
@@ -50,5 +59,18 @@ class CreateJournalEntryWizard(models.TransientModel):
         invoice = self.env['account.invoice'].browse(invoice_id)
         ctx.update({'default_ref': invoice.number,
                     'src_invoice_id': invoice.id})
+        # If use fin lease model
+        if self.use_finlease_model and self.model_id:
+            invline = invoice.invoice_line and invoice.invoice_line[0]
+            ctx.update({'default_line_id': [
+                {'account_id': self.model_id.debit_account_id.id,
+                 'debit': invoice.amount_untaxed,
+                 'name': invline and invline.name,
+                 'chartfield_id': invline and invline.chartfield_id.id},
+                {'account_id': self.model_id.credit_account_id.id,
+                 'credit': invoice.amount_untaxed,
+                 'name': invline and invline.name,
+                 'chartfield_id': invline and invline.chartfield_id.id}]})
+        # --
         result['context'] = ctx
         return result
