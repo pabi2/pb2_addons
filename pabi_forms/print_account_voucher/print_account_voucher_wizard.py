@@ -98,7 +98,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
     lang = fields.Selection(
         [('en', 'English'),
          ('th', 'Thai'), ],
-        default='en',
+        default='th',
         string="Language",
         required=True,
     )

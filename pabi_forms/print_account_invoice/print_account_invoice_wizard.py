@@ -70,7 +70,7 @@ class PrintAccountInvoiceWizard(models.TransientModel):
         ('en', 'English'),
         ('th', 'Thai'),
     ],
-        default='en',
+        default='th',
         string="Language",
         required=True,
     )
