@@ -56,12 +56,14 @@
             <field name="arch" type="xml">
                 <data>
                     <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="after">
-                        <field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+                        <field name="create_date" invisible="1"/>
+                        <field sum="Total WHT" name="amount_wht" attrs="{'invisible': [('create_date', '=', False)]}"/>
                         <field name="retention_on_payment" invisible="1"/>
                         <field sum="Total Retention" name="amount_retention" attrs="{'readonly': [('retention_on_payment','!=',True)]}" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
                     </xpath>
                     <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='amount']" position="after">
-                        <field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+                        <field name="create_date" invisible="1"/>
+                        <field sum="Total WHT" name="amount_wht" attrs="{'invisible': [('create_date', '=', False)]}"/>
                         <field name="retention_on_payment" invisible="1"/>
                         <field sum="Total Retention" name="amount_retention" attrs="{'readonly': [('retention_on_payment','!=',True)]}" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
                     </xpath>
@@ -136,12 +138,14 @@
                         <button name="%(action_print_wht_cert)d" type="action" string="Print WHT Cert." class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'posted'), ('tax_line_wht', '=', [])]}"/>
                     </button>
                     <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="after">
-                        <field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+                        <field name="create_date" invisible="1"/>
+                        <field sum="Total WHT" name="amount_wht" attrs="{'invisible': [('create_date', '=', False)]}"/>
                         <field name="retention_on_payment" invisible="1"/>
                         <field sum="Total Retention" name="amount_retention" attrs="{'readonly': [('retention_on_payment','!=',True)]}" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
                     </xpath>
                     <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='amount']" position="after">
-                        <field sum="Total WHT" name="amount_wht" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
+                        <field name="create_date" invisible="1"/>
+                        <field sum="Total WHT" name="amount_wht" attrs="{'invisible': [('create_date', '=', False)]}"/>
                         <field name="retention_on_payment" invisible="1"/>
                         <field sum="Total Retention" name="amount_retention" attrs="{'readonly': [('retention_on_payment','!=',True)]}" on_change="onchange_amount(parent.partner_id, move_line_id, amount_original, amount, amount_unreconciled, context)"/>
                     </xpath>

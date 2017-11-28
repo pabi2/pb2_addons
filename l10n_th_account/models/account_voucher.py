@@ -378,6 +378,7 @@ class AccountVoucher(common_voucher, models.Model):
 
     @api.multi
     def button_reset_taxes(self):
+        print '============================================'
         if self._context.get('no_reset_tax', False):
             return True
         for voucher in self:
@@ -387,12 +388,17 @@ class AccountVoucher(common_voucher, models.Model):
                 DELETE FROM account_voucher_tax
                 WHERE voucher_id=%s AND manual is False
                 """, (voucher.id,))
+            self.invalidate_cache()
             partner = voucher.partner_id
             if partner.lang:
                 voucher.with_context(lang=partner.lang)
             voucher_tax_obj = self.env['account.voucher.tax']
+            exists_taxes = [(x.invoice_id.id, x.tax_id.id)
+                            for x in voucher.tax_line]
             for tax in voucher_tax_obj.compute(voucher).values():
-                voucher_tax_obj.create(tax)
+                # Manual line still not deleted, do not recreate
+                if (tax['invoice_id'], tax['tax_id']) not in exists_taxes:
+                    voucher_tax_obj.create(tax)
         return True
 
     @api.multi
@@ -902,6 +908,21 @@ class AccountVoucherLine(common_voucher, models.Model):
             vals['amount'] = round(amount, prec)
         return {'value': vals}
 
+    @api.multi
+    def write(self, vals):
+        # WHT update to tax line
+        if 'amount_wht' in vals:
+            VoucherTax = self.env['account.voucher.tax']
+            for rec in self:
+                tax_line = VoucherTax.search([
+                    ('voucher_id', '=', rec.voucher_id.id),
+                    ('invoice_id', '=', rec.invoice_id.id),
+                    ('tax_code_type', '=', 'wht')])
+                tax_line.write({'manual': True,
+                                'amount': vals['amount_wht']})
+        res = super(AccountVoucherLine, self).write(vals)
+        return res
+
 
 class AccountVoucherTax(common_voucher, models.Model):
 
@@ -1366,5 +1387,3 @@ class AccountVoucherTax(common_voucher, models.Model):
                 continue
             res.append(self._prepare_one_move_line(t))
         return res
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

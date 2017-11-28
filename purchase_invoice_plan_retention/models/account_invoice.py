@@ -6,13 +6,13 @@ import openerp.addons.decimal_precision as dp
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
 
-    amount_retention = fields.Float(
-        string='Retention',
-        compute='_compute_amount',
-        digits=dp.get_precision('Account'),
-        store=True,
-        readonly=True,
-    )
+    # amount_retention = fields.Float(
+    #     string='Retention',
+    #     compute='_compute_amount',
+    #     digits=dp.get_precision('Account'),
+    #     store=True,
+    #     readonly=True,
+    # )
     percent_retention = fields.Float(
         string='Percent Retention',
         readonly=True,
@@ -35,6 +35,8 @@ class AccountInvoice(models.Model):
     def _compute_amount(self):
         super(AccountInvoice, self)._compute_amount()
         for rec in self:
+            if not self._context.get('installment', False):  # not po.inv.plan
+                continue
             if rec.retention_type and (rec.percent_retention or
                                        rec.fixed_retention):
                 amount_retention = 0.0
@@ -59,7 +61,12 @@ class AccountInvoice(models.Model):
                     amount_after_vat = (amount_before_vat + amount_tax)
                     amount_retention = (amount_after_vat *
                                         rec.percent_retention / 100)
-                rec.amount_retention = amount_retention
+                # rec.amount_retention = amount_retention
+                # Only when created from PO, we will first update retention
+                if amount_retention:
+                    self._cr.execute("""
+                        update account_invoice set amount_retention = %s
+                        where id = %s""", (amount_retention, rec.id))
                 if not rec.retention_on_payment:
                     rec.amount_total = (rec.amount_untaxed +
                                         rec.amount_tax - amount_retention)

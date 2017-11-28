@@ -71,7 +71,8 @@ class AccountMove(models.Model):
                 # JV must have AG/A
                 if move.journal_id.analytic_journal_id and not ag_lines:
                     raise ValidationError(
-                        _('For JV, at least 1 line must have activity gorup!'))
+                        _('For budget related transation, '
+                          'at least 1 line must have AG/A!'))
                 # JN must not have AG/A
                 if not move.journal_id.analytic_journal_id and ag_lines:
                     raise ValidationError(

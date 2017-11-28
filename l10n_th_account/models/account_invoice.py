@@ -12,7 +12,8 @@ class AccountInvoice(models.Model):
     amount_retention = fields.Float(
         string='Retention',
         digits=dp.get_precision('Account'),
-        readonly=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     retention_on_payment = fields.Boolean(
         string='Retention on Payment',

@@ -265,6 +265,8 @@ class ResPartner(models.Model):
                 name = "%s %s" % (record.title.name, record.name)
             else:
                 name = record.name
+            if record.search_key:
+                name = '[%s] %s' % (record.search_key, name)
             if record.parent_id and not record.is_company:
                 name = "%s, %s" % (record.parent_name, name)
             if self._context.get('show_address_only'):
