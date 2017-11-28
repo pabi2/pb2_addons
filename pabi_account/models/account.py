@@ -12,7 +12,7 @@ class AccountMove(models.Model):
         help="This field provide summary of items in move line with Qty."
     )
     date = fields.Date(
-        string='Account Date',  # Rename
+        string='Posting Date',  # Rename
     )
     date_document = fields.Date(
         string='Document Date',

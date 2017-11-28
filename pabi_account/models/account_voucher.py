@@ -89,7 +89,7 @@ class AccountVoucher(models.Model):
         store=True,
     )
     date = fields.Date(
-        string='Account Date',  # Change label
+        string='Posting Date',  # Change label
     )
     date_document = fields.Date(
         string='Document Date',

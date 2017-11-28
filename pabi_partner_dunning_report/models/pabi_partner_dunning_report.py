@@ -67,7 +67,7 @@ class PABIPartnerDunningReport(models.Model):
     )
     validate_user_id = fields.Many2one(
         'res.users',
-        compute='_compute_validate_user_id',
+        # compute='_compute_validate_user_id',
         string='Validator',
         readonly=True,
     )
@@ -96,12 +96,12 @@ class PABIPartnerDunningReport(models.Model):
         string='#3 Date'
     )
 
-    @api.multi
-    @api.depends()
-    def _compute_validate_user_id(self):
-        for line in self:
-            line.validate_user_id = line.move_line_id.document_id and \
-                line.move_line_id.document_id.validate_user_id
+    # @api.multi
+    # @api.depends()
+    # def _compute_validate_user_id(self):
+    #     for line in self:
+    #         line.validate_user_id = line.move_line_id.document_id and \
+    #             line.move_line_id.document_id.validate_user_id
 
     @api.multi
     @api.depends()
@@ -125,7 +125,8 @@ class PABIPartnerDunningReport(models.Model):
         # View
         tools.drop_view_if_exists(cr, self._table)
         _sql = """
-            select aml.id, aml.id as move_line_id,
+            select aml.create_uid validate_user_id, aml.id,
+                aml.id as move_line_id,
                 aml.date_maturity, aml.date, aml.partner_id,
                 aa.type account_type, new_title,
                 case when letter.l1 is not null then true else false end as l1,

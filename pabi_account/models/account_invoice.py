@@ -66,7 +66,7 @@ class AccountInvoice(models.Model):
         store=True,
     )
     date_invoice = fields.Date(
-        string='Account Date',  # Change label
+        string='Posting Date',  # Change label
         default=lambda self: fields.Date.context_today(self),
     )
     date_document = fields.Date(
