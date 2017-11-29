@@ -79,6 +79,7 @@
 			<field name="model">pabi.partner.dunning.letter</field>
 			<field name="arch" type="xml">
 				<search string="Dunning Letter">
+					<field name="partner_id"/>
 					<filter name="today" string="Today" domain="[('date_run','=',time.strftime('%%Y-%%m-%%d'))]"/>
 					<filter string="1st Letter" domain="[('letter_type', '=', 'l1')]"/>
 					<filter string="2nd Letter" domain="[('letter_type', '=', 'l2')]"/>
