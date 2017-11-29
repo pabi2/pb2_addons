@@ -378,7 +378,6 @@ class AccountVoucher(common_voucher, models.Model):
 
     @api.multi
     def button_reset_taxes(self):
-        print '============================================'
         if self._context.get('no_reset_tax', False):
             return True
         for voucher in self:

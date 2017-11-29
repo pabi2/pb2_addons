@@ -38,7 +38,6 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=80):
-        print self._context
         partner_id = \
             self._context.get('retention_return_to_supplier_id', False)
         if 'retention_return_to_supplier_id' in self._context and \

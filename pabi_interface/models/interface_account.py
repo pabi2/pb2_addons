@@ -210,11 +210,14 @@ class InterfaceAccountEntry(models.Model):
             if interface.type == 'reverse':
                 AccountMove = self.env['account.move']
                 move = interface.to_reverse_entry_id.move_id
-                # Already reconciled?
-                if not move.line_id.filtered(lambda l: not l.reconcile_id and
-                                             l.account_id.reconcile):
-                    raise ValidationError(
-                        _('%s is already reconciled!') % move.name)
+                # For invoice, check if already paid?
+                if move.journal_id.type not in ('bank', 'cash'):
+                    if move.line_id.filtered(
+                            lambda l:
+                            (l.reconcile_id or l.reconcile_partial_id) and
+                            l.account_id.reconcile):
+                        raise ValidationError(
+                            _('%s is already reconciled (paid)!') % move.name)
                 # If payment reversal, refresh it first
                 if interface.to_reverse_entry_id.type == 'voucher':
                     self._prepare_voucher_move_for_reversal(move)
@@ -224,7 +227,11 @@ class InterfaceAccountEntry(models.Model):
                     'ref': move.ref, })
                 move_dict = AccountMove._switch_move_dict_dr_cr(move_dict)
                 rev_move = AccountMove.create(move_dict)
-                AccountMove._reconcile_voided_entry([move.id, rev_move.id])
+                accounts = move.line_id.mapped('account_id')
+                for account in accounts:
+                    AccountMove.\
+                        _reconcile_voided_entry_by_account(
+                            [move.id, rev_move.id], account.id)
                 rev_move.button_validate()
                 interface.write({'move_id': rev_move.id,
                                  'state': 'done'})
