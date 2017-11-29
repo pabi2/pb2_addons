@@ -104,7 +104,7 @@
 	<field name="currency" class="java.lang.String">
 		<fieldDescription><![CDATA[currency_id/name]]></fieldDescription>
 	</field>
-	<variable name="amount_total" class="java.lang.Number" calculation="Sum">
+	<variable name="amount_total" class="java.lang.Number" resetType="Group" resetGroup="GroupID" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
 	</variable>
 	<variable name="partner_address" class="java.lang.String">
