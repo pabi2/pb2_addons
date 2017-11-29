@@ -49,5 +49,22 @@
             </field>
         </record>
 
+        <menuitem
+            name="Define Recurring" action="account.action_subscription_form"
+            id="account.menu_action_subscription_form" sequence="4"
+            parent="account.menu_finance_recurrent_entries"/>
+
+        <record model="ir.ui.view" id="view_account_journal_form">
+            <field name="name">view.account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <field name="currency" position="after">
+                    <field name="receipt"/>
+                    <field name="payment"/>
+                </field>
+            </field>
+        </record>
+
     </data>
 </openerp>

@@ -12,7 +12,7 @@ class AccountMove(models.Model):
         help="This field provide summary of items in move line with Qty."
     )
     date = fields.Date(
-        string='Account Date',  # Rename
+        string='Posting Date',  # Rename
     )
     date_document = fields.Date(
         string='Document Date',
@@ -61,3 +61,18 @@ class AccountAccount(models.Model):
                                                        args=args,
                                                        operator=operator,
                                                        limit=limit)
+
+
+class AccountJournal(models.Model):
+    _inherit = 'account.journal'
+
+    receipt = fields.Boolean(
+        string='Use for Receipt',
+        default=True,
+        help="If checked, this journal will show only on customer payment",
+    )
+    payment = fields.Boolean(
+        string='Use for Payment',
+        default=True,
+        help="If checked, this journal will show only on supplier payment",
+    )

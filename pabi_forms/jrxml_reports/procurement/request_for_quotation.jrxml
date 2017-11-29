@@ -162,14 +162,14 @@ WHERE $X{IN, po.id, PIDS}]]>
 			<staticText>
 				<reportElement x="366" y="48" width="58" height="20"/>
 				<textElement textAlignment="Left" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[เลขที่ (No) : ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="366" y="81" width="58" height="20"/>
 				<textElement textAlignment="Left" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[วันที่ (Date) : ]]></text>
 			</staticText>

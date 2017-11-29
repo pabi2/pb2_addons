@@ -36,15 +36,16 @@ class AccountVoucher(models.Model):
         string='Total AR',
         digits_compute=dp.get_precision('Account'),
     )
-    # MOVED TO payment_export
-    # payment_type = fields.Selection(
-    #     [('cheque', 'Cheque'),
-    #      ('transfer', 'Transfer'),
-    #      ],
-    #     string='Payment Type',
-    #     readonly=True, states={'draft': [('readonly', False)]},
-    #     help="Specified Payment Type, can be used to screen Payment Method",
-    # )
+    receipt_type = fields.Selection(
+        [('cash', 'Cash'),
+         ('credit', 'Credit'),
+         ('transfer', 'Transfer'),
+         ('cheque', 'Cheque'),
+         ],
+        string='Receipt Type',
+        readonly=True, states={'draft': [('readonly', False)]},
+        help="Type to be used in forms. Only avaiable on Customer Receipt",
+    )
     narration = fields.Text(
         readonly=False,
     )
@@ -89,7 +90,7 @@ class AccountVoucher(models.Model):
         store=True,
     )
     date = fields.Date(
-        string='Account Date',  # Change label
+        string='Posting Date',  # Change label
     )
     date_document = fields.Date(
         string='Document Date',
@@ -240,10 +241,11 @@ class AccountVoucher(models.Model):
     @api.multi
     def proforma_voucher(self):
         result = super(AccountVoucher, self).proforma_voucher()
-        # For NSTDA, not writeoff_amount allowed
-        if self.filtered('writeoff_amount'):
-            raise ValidationError(_('Difference Amount must be 0.0 '
-                                    'to validate this document!'))
+        # For NSTDA, not writeoff_amount allowed for Supplier Paymnet
+        for rec in self:
+            if rec.type == 'payment' and rec.writeoff_amount:
+                raise ValidationError(_('Difference Amount must be 0.0 '
+                                        'to validate this document!'))
         self.write({'validate_user_id': self.env.user.id,
                     'validate_date': fields.Date.today()})
         return result

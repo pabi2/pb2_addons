@@ -19,7 +19,7 @@ class AccountBankReceipt(models.Model):
         states={'draft': [('readonly', False)]},
     )
     receipt_date = fields.Date(
-        string='Account Date',  # Change label
+        string='Posting Date',  # Change label
     )
     date_document = fields.Date(
         string='Document Date',

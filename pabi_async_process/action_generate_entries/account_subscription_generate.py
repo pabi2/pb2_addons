@@ -35,6 +35,8 @@ class AccountSubscriptionGenerate(PabiAsync, models.TransientModel):
     async_process = fields.Boolean(
         string='Run task in background?',
         default=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
 
     @api.multi

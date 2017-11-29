@@ -24,7 +24,6 @@
         'data/payment_export_data.xml',
         'data/asset_data.xml',
         'data/hr_salary_data.xml',
-        'data/cheque_data.xml',
         'print_journal_entries/print_voucher_wizard.xml',
         'print_payment_export/print_payment_export_wizard.xml',
         'print_account_invoice/print_account_invoice_wizard.xml',

@@ -113,12 +113,12 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
         """
 
     @api.multi
-    @api.depends('requisition_lines.purchase_line_ids')
+    @api.depends('requisition_lines.purchase_line_ids.pur_line_id')
     def _compute_purchase_lines(self):
-        print '=================_compute_purchase_lines======================='
         for rec in self:
             rec.purchase_lines = \
-                rec.requisition_lines.mapped('purchase_line_ids')
+                rec.requisition_lines.mapped('purchase_line_ids').\
+                mapped('pur_line_id')
 
     @api.multi
     def _compute_budget_commit_bal(self):

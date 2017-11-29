@@ -191,28 +191,28 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 			<staticText>
 				<reportElement x="199" y="471" width="214" height="22"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ขอแสดงความนับถือ]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="199" y="535" width="214" height="22"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{hr_position}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="199" y="521" width="214" height="22"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{name_approve}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="199" y="549" width="214" height="22"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
@@ -263,28 +263,28 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 			<staticText>
 				<reportElement x="0" y="0" width="26" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ที่ วท]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="46" y="41" width="202" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[สงวนสิทธิ์ค่าปรับ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="46" y="66" width="241" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{name} == null ? "" : $F{name}+ ' ')+"" +($F{supplier} == null ? ' ' : $F{supplier})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="46" y="90" width="367" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["ใบสั่งซื้อ/จ้าง หรือสัญญา เลขที่ "+($F{po_no} == null ? ' ' : $F{po_no})
 +" ลงวันที่ " + ($F{contract_start_date} == null ? "" : $F{contract_start_date})]]></textFieldExpression>
@@ -292,28 +292,28 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="229" y="19" width="161" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{now_date}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="41" width="46" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[เรื่อง]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="66" width="46" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[เรียน]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="90" width="46" height="22"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[อ้างถึง]]></text>
 			</staticText>
@@ -324,7 +324,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="0" width="483" height="21"/>
 				<textElement textAlignment="Justified" lineSpacing="Single" markup="html">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ตามใบสั่งซื้อ/จ้างหรือสัญญาที่อ้างถึง "
 + ($F{operating_unit} == null ? ' ' : $F{operating_unit}) +"โดยศูนย์" +($F{code} == null? ' ' : $F{code})+
@@ -367,7 +367,7 @@ $F{amount_total_fine_text_th} == null ? "" : " (" + $F{amount_total_fine_text_th
 			<staticText>
 				<reportElement x="46" y="13" width="169" height="21"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[จึงเรียนมาเพื่อโปรดทราบ]]></text>
 			</staticText>

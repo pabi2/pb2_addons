@@ -1,22 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+
         <record id="view_account_subscription_generate" model="ir.ui.view">
             <field name="name">view.account.subscription.generate</field>
             <field name="model">account.subscription.generate</field>
             <field name="inherit_id" ref="account.view_account_subscription_generate"/>
             <field name="arch" type="xml">
+                <group position="before">
+                    <header>
+                        <button name="action_generate" states="draft" string="Generate Entries" class="oe_highlight" type="object" groups="account.group_account_user"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                    </header>
+                    <group>
+                        <group string="Generate Entries">
+                            <h2>
+                                <label string="Run ID: "/>
+                                <field name="id" class="oe_inline"/>
+                            </h2>
+                        </group>
+                        <group>
+                            <div class="oe_button_box oe_right">
+                                <button name="open_entries" string="Journal Entries" type="object" class="oe_inline"/>
+                            </div>
+                        </group>
+                    </group>
+                </group>
                 <field name="date" position="replace">
                     <group>
-                        <field name="calendar_period_id" />
-                        <field name="date" invisible="1"/>
+                        <field name="calendar_period_id"/>
+                        <field name="date" invisible="0"/>
                         <field name="message" nolabel="1" colspan="2"/>
                     </group>
                     <group>
                         <field name="model_type_ids"/>
                     </group>
                 </field>
+                <footer position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </footer>
             </field>
         </record>
+
+        <record id="view_account_subscription_generate_tree" model="ir.ui.view">
+            <field name="name">view.account.subscription.generate.tree</field>
+            <field name="model">account.subscription.generate</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:state == 'draft';gray:state == 'done';" string="Generate Entries">
+                    <field name="id"/>
+                    <field name="calendar_period_id"/>
+                    <field name="create_date"/>
+                    <field name="create_uid"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account.action_account_subscription_generate" model="ir.actions.act_window">
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_subscription_generate_tree"/>
+            <field name="target">current</field>
+        </record>
+
     </data>
 </openerp>

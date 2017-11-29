@@ -27,6 +27,7 @@
             <field name="arch" type="xml">
                 <field name="journal_id" position="attributes">
                     <attribute name="widget"></attribute>
+                    <attribute name="domain">[('type', 'in', ['bank', 'cash']), ('payment', '=', True)]</attribute>
                 </field>
                 <field name="date_value" position="attributes">
                     <attribute name="string">Value/Cheque Date</attribute>
@@ -89,7 +90,11 @@
                     <field name="date_document"/>
                 </xpath>
                 <field name="journal_id" position="after" >
+                    <field name="receipt_type" required="1"/>
                     <field name="number_preprint" required="1" />
+                </field>
+                <field name="journal_id" position="attributes">
+                	<attribute name="domain">[('type', 'in', ['bank', 'cash']), ('receipt', '=', True)]</attribute>
                 </field>
                 <field name="name" position="after" >
                     <field name="research_type"/>
@@ -104,18 +109,6 @@
                 <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='move_line_id']" position="after">
                     <field name="invoice_taxbranch_id"/>
                 </xpath>
-                <!-- <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="attributes">
-                    <attribute name="invisible">True</attribute>
-                </xpath>
-                <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='move_line_id']" position="before">
-                    <field name="select" groups="account.group_account_user"/>
-                </xpath>
-                <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='reconcile']" position="attributes">
-                    <attribute name="invisible">True</attribute>
-                </xpath>
-                <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='move_line_id']" position="before">
-                    <field name="select" groups="account.group_account_user"/>
-                </xpath> -->
             </field>
         </record>
 

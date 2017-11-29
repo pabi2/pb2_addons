@@ -182,7 +182,7 @@ WHERE create_date BETWEEN '$P!{date_from}' AND '$P!{date_to}']]>
 			<staticText>
 				<reportElement x="1313" y="14" width="16" height="20"/>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[หน้า]]></text>
 			</staticText>
@@ -350,14 +350,14 @@ WHERE create_date BETWEEN '$P!{date_from}' AND '$P!{date_to}']]>
 							<textField>
 								<reportElement style="THfont" x="691" y="0" width="180" height="19"/>
 								<textElement lineSpacing="Single">
-									<font fontName="TH SarabunPSK"/>
+									<font fontName="SansSerif"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{corp}]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="#,##0.00">
 								<reportElement style="THfont" x="836" y="0" width="70" height="19"/>
 								<textElement textAlignment="Right" lineSpacing="Single">
-									<font fontName="TH SarabunPSK"/>
+									<font fontName="SansSerif"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_total}]]></textFieldExpression>
 							</textField>
@@ -366,7 +366,7 @@ WHERE create_date BETWEEN '$P!{date_from}' AND '$P!{date_to}']]>
 									<printWhenExpression><![CDATA[$F{amount_total}]]></printWhenExpression>
 								</reportElement>
 								<textElement lineSpacing="Single">
-									<font fontName="TH SarabunPSK"/>
+									<font fontName="SansSerif"/>
 								</textElement>
 								<text><![CDATA[บาท]]></text>
 							</staticText>
@@ -506,14 +506,14 @@ WHERE create_date BETWEEN '$P!{date_from}' AND '$P!{date_to}']]>
 			<textField>
 				<reportElement x="935" y="0" width="182" height="20"/>
 				<textElement verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{rfq_supplier}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement x="1088" y="0" width="70" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="TH SarabunPSK"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{rfq_amount_total}]]></textFieldExpression>
 			</textField>
@@ -644,7 +644,7 @@ WHERE create_date BETWEEN '$P!{date_from}' AND '$P!{date_to}']]>
 					<printWhenExpression><![CDATA[$F{rfq_amount_total}]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[บาท]]></text>
 			</staticText>
@@ -653,7 +653,7 @@ WHERE create_date BETWEEN '$P!{date_from}' AND '$P!{date_to}']]>
 					<printWhenExpression><![CDATA[$F{amount_total}]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single">
-					<font fontName="TH SarabunPSK"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[บาท]]></text>
 			</staticText>
