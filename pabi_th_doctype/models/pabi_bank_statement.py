@@ -17,5 +17,4 @@ class PABIBankStatement(models.Model):
         # It will try to use doctype_id first, if not available, rollback
         name = self.env['ir.sequence'].get('pabi.bank.statement')
         vals.update({'name': name})
-        print vals
         return super(PABIBankStatement, self).create(vals)
