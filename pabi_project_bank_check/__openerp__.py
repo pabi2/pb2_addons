@@ -24,6 +24,7 @@ Concept:
     "installable": True,
     "depends": [
         "pabi_base",
+        "pabi_account",
         "account_voucher",
     ],
     # Conflict on passing context to journal_id in account.voucher

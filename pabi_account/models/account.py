@@ -61,3 +61,18 @@ class AccountAccount(models.Model):
                                                        args=args,
                                                        operator=operator,
                                                        limit=limit)
+
+
+class AccountJournal(models.Model):
+    _inherit = 'account.journal'
+
+    receipt = fields.Boolean(
+        string='Use for Receipt',
+        default=True,
+        help="If checked, this journal will show only on customer payment",
+    )
+    payment = fields.Boolean(
+        string='Use for Payment',
+        default=True,
+        help="If checked, this journal will show only on supplier payment",
+    )
