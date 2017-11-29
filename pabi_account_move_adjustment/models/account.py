@@ -24,6 +24,26 @@ class AccountMove(models.Model):
     line_id = fields.One2many('account.move.line',
                               track_visibility='onchange')
     narration = fields.Text(track_visibility='onchange')
+    due_history_ids = fields.One2many(
+        'account.move.due.history',
+        'move_id',
+        string='Due History',
+        readonly=True,
+    )
+    date_due = fields.Date(
+        string='Due Date',
+        compute='_compute_date_due',
+        readonly=True,
+    )
+
+    @api.multi
+    def _compute_date_due(self):
+        for rec in self:
+            date_due = rec.line_id.mapped('date_maturity')
+            if date_due:
+                rec.date_due = date_due[0]
+            else:
+                rec.date_due = False
 
     @api.multi
     def reset_desc(self):
@@ -252,4 +272,32 @@ class AccountModelType(models.Model):
         'account.journal',
         domain=[('code', 'in', ('AJB', 'AJN'))],
         help="In PABI2, only 2 type of journal is allowed for adjustment",
+    )
+
+
+class AccountMoveDueHistory(models.Model):
+    _name = 'account.move.due.history'
+    _order = 'write_date desc'
+
+    move_id = fields.Many2one(
+        'account.move',
+        string='Journal Entry',
+        ondelete='cascade',
+        index=True,
+    )
+    date_due = fields.Date(
+        string='New Due Date',
+        readonly=True,
+    )
+    write_uid = fields.Many2one(
+        'res.users',
+        string='Updated By',
+        readonly=True,
+    )
+    write_date = fields.Datetime(
+        string='Updated Date',
+        readonly=True,
+    )
+    reason = fields.Char(
+        string='Reason',
     )
