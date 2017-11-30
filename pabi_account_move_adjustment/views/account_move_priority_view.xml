@@ -131,6 +131,17 @@
                                 </tree>
                             </field>
                         </page>
+                        <page string="Budgeting">
+                            <separator string="Budget Actual"/>
+                            <field name="budget_commit_ids">
+                                <tree default_order='id'>
+                                    <field name="id"/>
+                                    <field name="move_id"/>
+                                    <field name="create_date"/>
+                                    <field name="amount" string="Actual Amount" sum="Total Amount"/>
+                                </tree>
+                            </field>
+                        </page>
                     </notebook>
                 </form>
             </field>

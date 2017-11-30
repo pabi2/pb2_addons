@@ -33,7 +33,7 @@ def action_open_hr_salary(session, model_name, res_id):
         raise FailedJobError(e)
 
 
-class HRSalaryExpense(PabiAsync, models.TransientModel):
+class HRSalaryExpense(PabiAsync, models.Model):
     _inherit = 'hr.salary.expense'
 
     async_process = fields.Boolean(

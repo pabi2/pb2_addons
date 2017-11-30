@@ -25,6 +25,17 @@ class HRExpenseExpense(models.Model):
         for rec in self:
             rec.line_ids.release_committed_budget()
 
+    @api.multi
+    def recreate_all_budget_commitment(self):
+        """ This method is used for development only """
+        for rec in self:
+            rec.budget_commit_ids.unlink()
+            rec.line_ids._create_analytic_line(reverse=True)
+            rec.budget_transition_ids.filtered('forward').\
+                return_budget_commitment(['expense_line_id'])
+            rec.budget_transition_ids.filtered('backward').\
+                regain_budget_commitment(['expense_line_id'])
+
     @api.model
     def _prepare_inv_line(self, account_id, exp_line):
         res = super(HRExpenseExpense, self)._prepare_inv_line(account_id,
