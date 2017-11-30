@@ -185,6 +185,15 @@ class AccountMoveLine(MergedChartField, models.Model):
             if self.chartfield_id.model == 'res.project':
                 self.project_id = res_id
 
+    @api.multi
+    @api.constrains('activity_group_id', 'activity_id')
+    def _check_activity_group(self):
+        for rec in self:
+            if rec.activity_group_id and \
+                    not (rec.activity_id or rec.activity_rpt_id):
+                raise ValidationError(
+                    _('Actvitiy is required for activity group!'))
+
     # @api.multi
     # def create_analytic_lines(self):
     #     """ For balance sheet item, do not create analytic line """
