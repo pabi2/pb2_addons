@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': "PABI2 Thai Tax Report",
+    'name': "PABI2 :: Thai Tax Report",
     'version': '8.0.1.0.0',
     'category': 'Accounting',
     'description': """
 
-Add taxbranch criteria
+Thai Tax Report based on Tax Detail table
+
 """,
     'author': "Kitti U.",
     'website': 'http://ecosoft.co.th',
     'license': 'AGPL-3',
     "depends": [
-        'l10n_th_tax_report',
-        'pabi_account',
+        'jasper_reports',
+        'l10n_th_account_tax_detail',
     ],
     "data": [
+        'security/ir.model.access.csv',
         'wizard/tax_report_wizard.xml',
         'report_data.xml',
     ],
