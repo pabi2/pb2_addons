@@ -18,3 +18,27 @@ class AccountMoveLine(models.Model):
             if vals.get('taxinvoice_taxbranch_id', False):
                 vals['taxbranch_id'] = vals.get('taxinvoice_taxbranch_id')
         return vals
+
+    @api.multi
+    def write(self, vals, check=True):
+        res = super(AccountMoveLine, self).write(vals, check=check)
+        # For doctype PV/RC, get the narration of the counter invoice's move
+        if vals.get('reconcile_id', False) or \
+                vals.get('reconcile_partial_id', False):
+            self._write_invoice_narration_to_payment()
+        return res
+
+    @api.multi
+    def _write_invoice_narration_to_payment(self):
+        for rec in self:
+            if rec.doctype in ('payment', 'receipt') and not rec.narration:
+                reconcile = rec.reconcile_id or rec.reconcile_partial_id
+                move_lines = reconcile.line_id + reconcile.line_partial_ids
+                inv_types = ('out_invoice', 'out_refund',
+                             'out_invoice_debitnote',
+                             'in_invoice_debitnote',
+                             'in_invoice', 'in_refund')
+                invoice_moves = move_lines.filtered(lambda l:
+                                                    l.doctype in inv_types)
+                rec.narration = invoice_moves and \
+                    invoice_moves[0].move_id.narration
