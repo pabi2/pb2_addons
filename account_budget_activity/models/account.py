@@ -3,6 +3,24 @@ from openerp import fields, models, api
 from .account_activity import ActivityCommon
 
 
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    budget_commit_ids = fields.One2many(
+        'account.analytic.line',
+        string='Budget Commitment',
+        compute='_compute_budget_commit_ids',
+        readonly=True,
+    )
+
+    @api.multi
+    def _compute_budget_commit_ids(self):
+        Analytic = self.env['account.analytic.line']
+        for rec in self:
+            _ids = rec.line_id.ids
+            rec.budget_commit_ids = Analytic.search([('move_id', 'in', _ids)])
+
+
 class AccountFiscalyear(models.Model):
     _inherit = 'account.fiscalyear'
 

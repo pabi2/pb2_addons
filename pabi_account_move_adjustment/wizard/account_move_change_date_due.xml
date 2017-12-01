@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_account_move_change_date_due" model="ir.ui.view">
+            <field name="name">Update Due Date</field>
+            <field name="model">account.move.change.date.due</field>
+            <field name="arch" type="xml">
+                <form string="Update Due Date">
+                    <p class="oe_grey">
+                        You can set the new Due Date.
+                    </p>
+                    <group>
+                        <group>
+                            <field name="move_id" invisible="1"/>
+                            <field name="date_due"/>
+                        </group>
+                        <group>
+                          <field name="reason"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="change_account_move_date_due" string="Change Due Date" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_account_move_change_date_due" model="ir.actions.act_window">
+            <field name="name">Update Due Date</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.move.change.date.due</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_move_change_date_due"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>

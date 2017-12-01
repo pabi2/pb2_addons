@@ -700,8 +700,14 @@ class PurchaseWorkAcceptanceLine(models.Model):
 
     @api.constrains('to_receive_qty')
     def _check_over_qty(self):
+        # Case COD and Service, not require to check
+        if self.product_id.type == 'service':
+            cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
+                                        'cash_on_delivery_payment_term', False)
+            if self.acceptance_id.order_id.payment_term_id == cod_pay_term:
+                return
         if self.to_receive_qty > self.balance_qty:
             raise ValidationError(
-                _("To receive quantity can't be over than "
-                  "balance quantity.")
+                _("To Receive Quantity, %s, can't exceed balance quantity.") %
+                self.product_id.name
             )

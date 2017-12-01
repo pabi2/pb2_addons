@@ -24,14 +24,21 @@ class AccountMove(models.Model):
 
     @api.multi
     def _write(self, vals):
+        # KV/DV
         if 'line_item_summary' in vals and vals.get('line_item_summary'):
-            self._write({'narration': vals.get('line_item_summary', False)})
+            summary = vals.get('line_item_summary')
+            self._write({'narration': summary})
         return super(AccountMove, self)._write(vals)
 
     @api.multi
     @api.depends('line_id.name')
     def _compute_line_item_summary(self):
-        for rec in self:
+        # For KV and DV only, it will be written down to narration
+        inv_types = ('out_invoice', 'out_refund', 'out_invoice_debitnote',
+                     'in_invoice', 'in_refund', 'in_invoice_debitnote',)
+        invoices = self.filtered(lambda l: l.doctype in inv_types)
+        # --
+        for rec in invoices:
             lines = rec.line_id.filtered(
                 lambda l: l.name != '/'
                 # and account_id.user_type.report_type in ('income', 'expense')

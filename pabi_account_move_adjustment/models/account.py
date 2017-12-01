@@ -24,6 +24,26 @@ class AccountMove(models.Model):
     line_id = fields.One2many('account.move.line',
                               track_visibility='onchange')
     narration = fields.Text(track_visibility='onchange')
+    due_history_ids = fields.One2many(
+        'account.move.due.history',
+        'move_id',
+        string='Due History',
+        readonly=True,
+    )
+    date_due = fields.Date(
+        string='Due Date',
+        compute='_compute_date_due',
+        readonly=True,
+    )
+
+    @api.multi
+    def _compute_date_due(self):
+        for rec in self:
+            date_due = rec.line_id.mapped('date_maturity')
+            if date_due:
+                rec.date_due = date_due[0]
+            else:
+                rec.date_due = False
 
     @api.multi
     def reset_desc(self):
@@ -66,17 +86,17 @@ class AccountMove(models.Model):
                     and not move.tax_detail_ids:
                 raise ValidationError(_('Please fill Tax Detail!'))
             # Validate Adjustment Budget, at lease 2 line must have AG/A
-            if move.doctype == 'adjustment':
-                ag_lines = move.line_id.filtered('activity_group_id')
-                # JV must have AG/A
-                if move.journal_id.analytic_journal_id and not ag_lines:
-                    raise ValidationError(
-                        _('For budget related transation, '
-                          'at least 1 line must have AG/A!'))
-                # JN must not have AG/A
-                if not move.journal_id.analytic_journal_id and ag_lines:
-                    raise ValidationError(
-                        _('For JN, No line can have activity gorup!'))
+            # if move.doctype == 'adjustment':
+            #     ag_lines = move.line_id.filtered('activity_group_id')
+            #     # JV must have AG/A
+            #     if move.journal_id.analytic_journal_id and not ag_lines:
+            #         raise ValidationError(
+            #             _('For budget related transation, '
+            #               'at least 1 line must have AG/A!'))
+            #     # JN must not have AG/A
+            #     if not move.journal_id.analytic_journal_id and ag_lines:
+            #         raise ValidationError(
+            #             _('For JN, No line can have activity gorup!'))
             # For case adjustment journal only, create analytic when posted
             Analytic = self.env['account.analytic.account']
             # Only direct creation of account move, we will recompute dimension
@@ -165,6 +185,15 @@ class AccountMoveLine(MergedChartField, models.Model):
             if self.chartfield_id.model == 'res.project':
                 self.project_id = res_id
 
+    @api.multi
+    @api.constrains('activity_group_id', 'activity_id')
+    def _check_activity_group(self):
+        for rec in self:
+            if rec.activity_group_id and \
+                    not (rec.activity_id or rec.activity_rpt_id):
+                raise ValidationError(
+                    _('Actvitiy is required for activity group!'))
+
     # @api.multi
     # def create_analytic_lines(self):
     #     """ For balance sheet item, do not create analytic line """
@@ -252,4 +281,32 @@ class AccountModelType(models.Model):
         'account.journal',
         domain=[('code', 'in', ('AJB', 'AJN'))],
         help="In PABI2, only 2 type of journal is allowed for adjustment",
+    )
+
+
+class AccountMoveDueHistory(models.Model):
+    _name = 'account.move.due.history'
+    _order = 'write_date desc'
+
+    move_id = fields.Many2one(
+        'account.move',
+        string='Journal Entry',
+        ondelete='cascade',
+        index=True,
+    )
+    date_due = fields.Date(
+        string='New Due Date',
+        readonly=True,
+    )
+    write_uid = fields.Many2one(
+        'res.users',
+        string='Updated By',
+        readonly=True,
+    )
+    write_date = fields.Datetime(
+        string='Updated Date',
+        readonly=True,
+    )
+    reason = fields.Char(
+        string='Reason',
     )

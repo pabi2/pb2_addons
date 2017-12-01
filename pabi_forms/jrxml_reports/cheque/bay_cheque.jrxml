@@ -33,6 +33,9 @@
 	<field name="is_transdebt" class="java.lang.Boolean">
 		<fieldDescription><![CDATA[is_transdebt]]></fieldDescription>
 	</field>
+	<field name="number" class="java.lang.String">
+		<fieldDescription><![CDATA[number]]></fieldDescription>
+	</field>
 	<background>
 		<band height="300">
 			<image>
@@ -152,7 +155,17 @@
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_transdebt} == true ? $F{transferdebt_partner_name} : $F{partner_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_transdebt} == true ?
+$F{transferdebt_partner_name}.substring(0, Math.min(20, $F{transferdebt_partner_name}.length())):
+$F{partner_name}.substring(0, Math.min(20, $F{partner_name}.length()))
+]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="75" y="5" width="149" height="27"/>
+				<textElement>
+					<font size="14" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{number}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
