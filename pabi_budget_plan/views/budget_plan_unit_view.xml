@@ -95,6 +95,8 @@
                                 <field name="planned_revenue"/>
                                 <field name="planned_expense"/>
                                 <field name="planned_overall"/>
+                                <button name="prepare_prev_fy_commitment" string="Compute Prev.FY Commitment" type="object"
+                                  attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                             </group>
                             <group>
                                 <field name="date"/>

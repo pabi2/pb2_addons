@@ -114,6 +114,16 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
         readonly=True,
     )
 
+    @api.multi
+    def name_get(self):
+        result = []
+        for line in self:
+            result.append(
+                (line.id,
+                 "%s / %s" % (line.request_id.name or '-',
+                              line.name or '-')))
+        return result
+
     @api.model
     def _get_purchase_lines_view_sql(self):
         return """
