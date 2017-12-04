@@ -77,7 +77,7 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
         required=True,
         readonly=True,
         default=lambda self: self.env.ref('pabi_account_move_adjustment.'
-                                          'journal_adjust_budget'),
+                                          'journal_adjust_no_budget'),
     )
     account_id = fields.Many2one(
         'account.account',

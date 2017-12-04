@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data noupdate="1">
-        # Analytic Journal (Adjust Budget)
+        # Analytic Journal (General Budget)
         <record id="analytic_journal_adjust_budget" model="account.analytic.journal">
             <field name="code">JV</field>
-            <field name="name">Adjust Budget</field>
+            <field name="name">General Budget</field>
             <field name="type">general</field>
             <field name="budget_method">revenue</field>
             <field name="budget_commit_type">actual</field>

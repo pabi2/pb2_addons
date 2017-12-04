@@ -273,7 +273,7 @@ class PurchaseWebInterface(models.Model):
         Attachment = self.env['ir.attachment']
         alfresco = \
             self.env['pabi.web.config.settings']._get_alfresco_connect('pcm')
-        if not alfresco:
+        if alfresco is False:
             return False
         pd_file = Attachment.search([
             ('res_id', '=', requisition.id),
@@ -364,7 +364,7 @@ class PurchaseWebInterface(models.Model):
     def send_pbweb_requisition_cancel(self, requisition):
         alfresco = \
             self.env['pabi.web.config.settings']._get_alfresco_connect('pcm')
-        if not alfresco or not requisition.reject_reason_txt:
+        if alfresco is False or not requisition.reject_reason_txt:
             return False
         send_act = "3"
         comment = requisition.cancel_reason_txt or ''
@@ -386,7 +386,7 @@ class PurchaseWebInterface(models.Model):
     def send_pbweb_action_request(self, request, action):
         alfresco = \
             self.env['pabi.web.config.settings']._get_alfresco_connect('pcm')
-        if not alfresco:
+        if alfresco is False:
             return False
         if action == "accept":
             send_act = "C2"

@@ -27,6 +27,17 @@ class PurchaseRequest(models.Model):
             rec.line_ids.release_committed_budget()
 
     @api.multi
+    def recreate_all_budget_commitment(self):
+        """ This method is used for development only """
+        for rec in self:
+            rec.budget_commit_ids.unlink()
+            rec.line_ids._create_analytic_line(reverse=True)
+            rec.budget_transition_ids.filtered('forward').\
+                return_budget_commitment(['purchase_request_line_id'])
+            rec.budget_transition_ids.filtered('backward').\
+                regain_budget_commitment(['purchase_request_line_id'])
+
+    @api.multi
     def button_to_approve(self):
         for request in self:
             for line in request.line_ids:
