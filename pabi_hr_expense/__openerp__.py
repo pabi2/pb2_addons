@@ -21,7 +21,6 @@
         "l10n_th_account",
     ],
     "data": [
-        "data/config_parameter.xml",
         "security/ir.model.access.csv",
         'workflow/hr_expense_workflow.xml',
         'wizard/expense_create_multi_supplier_invoice_view.xml',

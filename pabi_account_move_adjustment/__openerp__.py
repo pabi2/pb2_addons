@@ -31,6 +31,7 @@ Note: following are arequiremen for system to properly create analytic line
     ],
     'demo': [],
     'data': [
+        'security/ir.model.access.csv',
         'data/journal_data.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/xlsx_template_wizard.xml',
