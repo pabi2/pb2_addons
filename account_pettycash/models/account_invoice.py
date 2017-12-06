@@ -49,6 +49,20 @@ class AccountInvoice(models.Model):
                     ('{:,.2f}'.format(balance), company_currency.symbol,
                      '{:,.2f}'.format(max_amount), company_currency.symbol))
 
+    @api.model
+    def _prepare_pettycash_invoice_line(self, pettycash):
+        inv_line = self.env['account.invoice.line'].new()
+        inv_line.account_id = pettycash.account_id
+        inv_line.name = pettycash.account_id.name
+        inv_line.quantity = 1.0
+        # Get suggested currency amount
+        amount = pettycash.pettycash_limit - pettycash.pettycash_balance
+        company_currency = self.env.user.company_id.currency_id
+        amount_doc_currency = \
+            company_currency.compute(amount, self.currency_id)
+        inv_line.price_unit = amount_doc_currency
+        return inv_line
+
     @api.onchange('is_pettycash')
     def _onchange_is_pettycash(self):
         self.invoice_line = False
@@ -64,17 +78,7 @@ class AccountInvoice(models.Model):
                 self.is_pettycash = False
                 raise ValidationError(_('%s is not a petty cash holder') %
                                       self.partner_id.name)
-            inv_line = self.env['account.invoice.line'].new()
-            inv_line.account_id = pettycash.account_id
-            inv_line.name = pettycash.account_id.name
-            inv_line.section_id = pettycash.partner_id.employee_id.section_id
-            inv_line.quantity = 1.0
-            # Get suggested currency amount
-            amount = pettycash.pettycash_limit - pettycash.pettycash_balance
-            company_currency = self.env.user.company_id.currency_id
-            amount_doc_currency = \
-                company_currency.compute(amount, self.currency_id)
-            inv_line.price_unit = amount_doc_currency
+            inv_line = self._prepare_pettycash_invoice_line(pettycash)
             self.invoice_line += inv_line
 
     @api.multi

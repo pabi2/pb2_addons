@@ -249,6 +249,13 @@ class AccountInvoice(models.Model):
             new_move_lines.append(line_tuple)
         return new_move_lines
 
+    @api.model
+    def _prepare_pettycash_invoice_line(self, pettycash):
+        inv_line = super(AccountInvoice, self).\
+            _prepare_pettycash_invoice_line(pettycash)
+        inv_line.section_id = pettycash.partner_id.employee_id.section_id
+        return inv_line
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'

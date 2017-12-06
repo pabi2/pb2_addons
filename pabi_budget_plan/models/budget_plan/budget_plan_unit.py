@@ -221,6 +221,32 @@ class BudgetPlanUnit(BPCommon, models.Model):
             self.message_post(body=message)
         return super(BudgetPlanUnit, self).write(vals)
 
+    @api.multi
+    def prepare_prev_fy_commitment(self):
+        """ Prepre commitment amount from previous year from PO/EX """
+        Fiscal = self.env['account.fiscalyear']
+        Commit = self.env['budget.plan.unit.commit.view']
+        self.mapped('plan_expense_line_ids').unlink()
+        for plan in self:
+            prev_fy = Fiscal.search(
+                [('date_stop', '<', plan.fiscalyear_id.date_start)],
+                order='date_stop desc', limit=1)
+            if not prev_fy:
+                return
+            commits = Commit.search([
+                ('section_id', '=', plan.section_id.id),
+                ('fiscalyear_id', '=', plan.fiscalyear_id.id)])
+            plan_lines = []
+            for commit in commits:
+                d = commit.document_id
+                val = {'activity_group_id': d.activity_group_id.id,
+                       'cost_control_id': d.cost_control_id.id,
+                       'total_budget': commit.amount,
+                       'description': d.name_get()[0][1],
+                       }
+                plan_lines.append((0, 0, val))
+            plan.write({'plan_expense_line_ids': plan_lines})
+
 
 class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     _name = 'budget.plan.unit.line'
@@ -408,3 +434,56 @@ class BudgetPlanUnitSummary(models.Model):
             from budget_plan_unit_line l
             group by plan_id, activity_group_id, budget_method
         )""" % (self._table, ))
+
+
+class BudgetPlanUnitCommitView(models.Model):
+    _name = 'budget.plan.unit.commit.view'
+    _auto = False
+    _description = 'FY budget commitment for unit base'
+
+    document_id = fields.Reference(
+        [('purchase.request.line', 'PO Line'),
+         ('purchase.order.line', 'PR Line'),
+         ('hr.expense.line', 'EX Line'), ],
+        string='Line Ref.',
+        readonly=True,
+    )
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscalyear',
+        readonly=True,
+    )
+    section_id = fields.Many2one(
+        'res.section',
+        string='Section',
+        readonly=True,
+    )
+    amount = fields.Float(
+        string='Amount',
+        readonly=True,
+    )
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""create or replace view %s as (
+            select id, fiscalyear_id, section_id, document_id, amount from (
+                select max(id) id, fiscalyear_id, section_id,
+                document_id, -sum(amount) amount from (
+                    select id, fiscalyear_id, section_id, amount,
+                    case when doctype = 'purchase_request'
+                    then 'purchase.request.line,' || purchase_request_line_id
+                    when doctype = 'purchase_order'
+                    then 'purchase.order.line,' || purchase_line_id
+                    when doctype = 'employee_expense'
+                    then 'hr.expense.line,' || expense_line_id
+                    else document_id
+                    end
+                    from account_analytic_line
+                    where chart_view = 'unit_base'
+                    and doctype in
+                    ('purchase_request', 'purchase_order', 'employee_expense')
+                    ) a
+                group by fiscalyear_id, section_id, document_id
+                order by fiscalyear_id, section_id, document_id) b
+            where amount > 0.0
+        )""" % self._table)

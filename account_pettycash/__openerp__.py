@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "PABI2 :: Petty Cash",
+    "name": "Petty Cash",
     "summary": "",
     "version": "8.0.1.0.0",
     "category": "Accounting & Finance",
     "description": """
+This module allow setting of petty cash holder / amount.
+When user do expense request, user can request with the petty cash holder.
     """,
     "website": "https://ecosoft.co.th/",
     "author": "Kitti U.",
@@ -12,8 +14,7 @@
     "application": False,
     "installable": True,
     "depends": [
-        'pabi_account',
-        'pabi_hr_expense',
+        'hr_expense_advance_clearing',
     ],
     "data": [
         'security/ir.model.access.csv',

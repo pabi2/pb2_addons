@@ -83,6 +83,16 @@ class HRExpenseLine(ActivityCommon, models.Model):
     )
 
     @api.multi
+    def name_get(self):
+        result = []
+        for line in self:
+            result.append(
+                (line.id,
+                 "%s / %s" % (line.expense_id.number or '-',
+                              line.name or '-')))
+        return result
+
+    @api.multi
     def _compute_budget_commit_bal(self):
         for rec in self:
             rec.budget_commit_bal = sum(rec.budget_commit_ids.mapped('amount'))

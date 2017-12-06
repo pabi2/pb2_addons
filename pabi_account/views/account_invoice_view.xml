@@ -216,6 +216,40 @@
                 </xpath>
             </field>
         </record>
+
+        # Pettycash
+        <record id="invoice_supplier_form_pettycash" model="ir.ui.view">
+            <field name="name">invoice.supplier.form.pettycash</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account_pettycash.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <!-- Moved From -->
+                <label for="is_pettycash" position="replace"/>
+                <div name="pettycash_div1" position="replace"/>
+                <label for="clear_pettycash_id" position="replace"/>
+                <div name="pettycash_div2" position="replace"/>
+                <!-- Moved To -->
+                <xpath expr="//hr[@name='extra_line']" position="after">
+                    <label for="is_pettycash" attrs="{'invisible': [('source_document_id', '!=', False)]}"/>
+                    <div attrs="{'invisible': [('source_document_id', '!=', False)]}">
+                        <field name="is_pettycash" class="oe_inline"/>
+                    </div>
+                    <label for="clear_pettycash_id" attrs="{'invisible': [('clear_pettycash_id', '=', False)]}"/>
+                    <div attrs="{'invisible': [('clear_pettycash_id', '=', False)]}">
+                        <field name="clear_pettycash_id" class="oe_inline"/>
+                    </div>
+                </xpath>
+                <field name="payment_type" position="attributes">
+                    <attribute name="required">False</attribute>
+                    <attribute name="attrs">{'required': [('clear_pettycash_id', '=', False)]}</attribute>
+                </field>
+                <!-- -->
+            </field>
+        </record>
+
+
+
+
         <record id="invoice_tree" model="ir.ui.view">
             <field name="name">invoice.tree</field>
             <field name="model">account.invoice</field>

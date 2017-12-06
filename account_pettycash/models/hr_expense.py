@@ -49,9 +49,8 @@ class HRExpense(models.Model):
             'account_id': account.id,
             'price_unit': -expense.amount or 0.0,  # Negative
             'quantity': 1.0,
-            'section_id': pettycash.partner_id.employee_id.section_id.id,
         }
-        return [(0, 0, pettycash_line)]
+        return pettycash_line
 
     @api.model
     def _create_negative_pettycash_line(self, expense, invoice):
@@ -59,8 +58,8 @@ class HRExpense(models.Model):
         if not pettycash:
             raise ValidationError(
                 _('Expense not specify petty cash to clear!'))
-        pettycash_lines = self._prepare_pettycash_inv_lines(expense, pettycash)
-        invoice.write({'invoice_line': pettycash_lines})
+        pettycash_line = self._prepare_pettycash_inv_lines(expense, pettycash)
+        invoice.write({'invoice_line': [(0, 0, pettycash_line)]})
 
     @api.multi
     def _create_supplier_invoice_from_expense(self):

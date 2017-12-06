@@ -417,8 +417,10 @@ class AccountBudget(models.Model):
                             budget_level, resource,
                             add_field=False,
                             add_res_id=False):
+        """ For budget check, expenses only """
         monitors = resource.monitor_ids.\
-            filtered(lambda x: x.fiscalyear_id == fiscal)
+            filtered(lambda x: x.fiscalyear_id == fiscal and
+                     x.budget_method == 'expense')
         return monitors
 
     @api.model
@@ -487,7 +489,7 @@ class AccountBudget(models.Model):
             if amount == 0.0:  # 0.0 mean post check
                 res['message'] = _('%s\n'
                                    '%s, not enough budget, this transaction '
-                                   'will result in ฿%s over budget!') % \
+                                   'will result in %s฿ over budget!') % \
                     (fiscal.name, resource.name_get()[0][1],
                      '{:,.2f}'.format(-monitors[0].amount_balance))
             else:
