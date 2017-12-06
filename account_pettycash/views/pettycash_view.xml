@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        # Petty Cash
+        <record id="view_account_pettycash_tree" model="ir.ui.view">
+            <field name="name">view.account.pettycash.tree</field>
+            <field name="model">account.pettycash</field>
+            <field name="arch" type="xml">
+                <tree string="Petty Cash" editable="top">
+                    <field name="partner_id"/>
+                    <field name="account_id"/>
+                    <field name="pettycash_limit" sum="Limit"/>
+                    <field name="pettycash_balance" sum="Balance"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_pettycash_search" model="ir.ui.view">
+            <field name="name">view.account.pettycash.search</field>
+            <field name="model">account.pettycash</field>
+            <field name="arch" type="xml">
+                <search string="Petty Cash">
+                    <group expand="0" string="Group By">
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_account_pettycash" model="ir.actions.act_window">
+            <field name="name">Petty Cash</field>
+            <field name="res_model">account.pettycash</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_account_pettycash_tree"/>
+        </record>
+
+        <menuitem name="Petty Cash" id="menu_account_pettycash" action="action_account_pettycash" parent="account.menu_configuration_misc" sequence="1"
+          groups="account.group_account_manager"/>
+    </data>
+</openerp>

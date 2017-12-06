@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="view_expenses_form" model="ir.ui.view">
+            <field name="name">view.expenses.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_auto_invoice.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='payto_div2']" position="after">
+                    <div attrs="{'invisible': [('pay_to', '!=', 'pettycash')]}">
+                        <field name="pettycash_id" attrs="{'required': [('pay_to', '=', 'pettycash')]}" class="oe_inline"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Normal Expense, will not show Petty Cash -->
+        <record id="hr_expense.expense_all" model="ir.actions.act_window">
+            <field name="domain">[('is_employee_advance', '=', False),('is_advance_clearing', '=', False),('pay_to', '!=', 'pettycash')]</field>
+        </record>
+
+        <!-- Petty Cash menu -->
+        <record id="action_expense_pettycash" model="ir.actions.act_window">
+            <field name="name">Petty Cash</field>
+            <field name="res_model">hr.expense.expense</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="hr_expense_advance_clearing.view_hr_expense_filter"/>
+            <field name="view_id" ref="hr_expense.view_expenses_tree"/>
+            <field name="context">{'default_pay_to': 'pettycash', 'search_default_confirm': True}</field>
+            <field name="domain">[('is_employee_advance', '=', False), ('is_advance_clearing', '=', False), ('pay_to', '=', 'pettycash')]</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register new petty cash clearing.
+              </p><p>
+                Odoo will ensure the whole process is followed; the expense
+                sheet is validated by manager(s), the employee is reimbursed
+                from his expenses, some expenses must be re-invoiced to the
+                customers.
+              </p>
+            </field>
+        </record>
+
+        <menuitem action="action_expense_pettycash"
+                  id="menu_expense_pettycash"
+                  name="Petty Cash"
+                  parent="hr_expense.next_id_49"/>
+
+    </data>
+</openerp>
