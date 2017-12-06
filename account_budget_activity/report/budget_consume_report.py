@@ -90,10 +90,10 @@ class BudgetConsumeReport(models.Model):
             aal.fiscalyear_id,
             -------------> aal.doc_ref, aal.doc_id,
             -- Amount
-            case when aaj.budget_method = 'expense' then -amount
+            case when ag.budget_method = 'expense' then -amount
                 else amount end as amount,
             -- Budget Method
-            aaj.budget_method,
+            ag.budget_method,
             -- Type
             case when aaj.budget_commit_type = 'so_commit'
                 then aal.amount end as amount_so_commit,
@@ -104,10 +104,10 @@ class BudgetConsumeReport(models.Model):
             case when aaj.budget_commit_type = 'exp_commit'
                 then - aal.amount end as amount_exp_commit,
             case when aaj.budget_commit_type = 'actual'
-                    and aaj.budget_method = 'expense'
+                    and ag.budget_method = 'expense'
                     then - aal.amount
                 when aaj.budget_commit_type = 'actual'
-                    and aaj.budget_method = 'revenue'
+                    and ag.budget_method = 'revenue'
                     then aal.amount end
                 as amount_actual,
             -- Dimensions
@@ -119,14 +119,16 @@ class BudgetConsumeReport(models.Model):
         sql_from = """
             from account_analytic_line aal
             join account_analytic_journal aaj on aaj.id = aal.journal_id
+            join account_activity_group ag on ag.id = aal.activity_group_id
         """
         return sql_from
 
     def _get_sql_view(self):
         sql_view = """
         select *,
-        amount_so_commit + amount_pr_commit + amount_po_commit +
-        amount_exp_commit + amount_actual as amount_consumed
+        coalesce(a.amount_so_commit, 0) + coalesce(a.amount_pr_commit, 0) +
+        coalesce(a.amount_po_commit, 0) + coalesce(a.amount_exp_commit, 0) +
+        coalesce(a.amount_actual, 0) AS amount_consumed
         from
         (%s %s) a
         """ % (self._get_select_clause(), self._get_from_clause())
