@@ -29,6 +29,7 @@
         "pabi_source_document",
         "account_invoice_create_payment",
         "purchase_split_quote2order",
+        "account_pettycash",
     ],
     "data": [
         "data/default_value.xml",
