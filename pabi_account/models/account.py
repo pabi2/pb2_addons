@@ -33,18 +33,12 @@ class AccountMove(models.Model):
     @api.multi
     @api.depends('line_id.name')
     def _compute_line_item_summary(self):
-        # For KV and DV only, it will be written down to narration
-        inv_types = ('out_invoice', 'out_refund', 'out_invoice_debitnote',
-                     'in_invoice', 'in_refund', 'in_invoice_debitnote',)
-        invoices = self.filtered(lambda l: l.doctype in inv_types)
-        # --
-        for rec in invoices:
+        for rec in self:
             lines = rec.line_id.filtered(
                 lambda l: l.name != '/'
                 # and account_id.user_type.report_type in ('income', 'expense')
             )
-            items = [x.quantity and '%s [%s]' % (x.name, x.quantity) or x.name
-                     for x in lines]
+            items = [x.name for x in lines]
             items = list(set(items))
             if items:
                 rec.line_item_summary = ", ".join(items)
