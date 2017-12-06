@@ -83,3 +83,31 @@ class AccountJournal(models.Model):
         default=True,
         help="If checked, this journal will show only on supplier payment",
     )
+
+
+class AccountPaymentTerm(models.Model):
+    _inherit = 'account.payment.term'
+
+    revenue = fields.Boolean(
+        string='Use for Revenue',
+        default=True,
+        help="If checked, this term will only show on SO and Cust INV",
+    )
+    expense = fields.Boolean(
+        string='Use for Expense',
+        default=True,
+        help="If checked, this term will only show on PO and Sup INV",
+    )
+
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=80):
+        if 'invoice_type' in self._context:
+            itype = self._context.get('invoice_type')
+            if itype in ('out_invoice', 'out_refund', 'out_invoice_debitnote'):
+                args += [('revenue', '=', True)]
+            if itype in ('in_invoice', 'in_refund', 'in_invoice_debitnote'):
+                args += [('expense', '=', True)]
+        return super(AccountPaymentTerm, self).name_search(name=name,
+                                                           args=args,
+                                                           operator=operator,
+                                                           limit=limit)

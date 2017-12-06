@@ -10,6 +10,10 @@ class PurchaseOrder(models.Model):
         string='Supplier Invoice',
         compute='_compute_invoice_count',
     )
+    payment_term_id = fields.Many2one(
+        'account.payment.term',
+        domain=[('expense', '=', True)],
+    )
 
     @api.multi
     def _compute_invoice_count(self):
