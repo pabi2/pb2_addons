@@ -151,7 +151,11 @@ class HRExpense(models.Model):
         compute='_compute_activity_groups',
         store=True,
     )
-
+    # Dummy field, for future use
+    contract_id = fields.Many2one(
+        'purchase.contract',
+        string='Contract',
+    )
     # This method is checking that budget in Clearning must be same as in AV
     # But @Lek confirm AV must not have budget (may have in PABIWeb as info)
     # As such, this one is not used. But we keep for history only.
