@@ -514,5 +514,198 @@
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(adjustment_voucher)"/>
 		</record>
 
+		<!-- Qweb -->
+		<!-- Bank Receipt -->
+		<record id="report_bank_receipt_voucher_qweb" model="ir.actions.report.xml">
+			<field name="string">Bank Receipt Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.move</field>
+			<field name="name">Bank Receipt Voucher</field>
+			<field name="report_type">qweb-pdf</field>
+			<field name="report_name">pabi_forms.report_bank_receipt_voucher</field>
+			<field name="report_rml">pabi_forms.report_bank_receipt_voucher</field>
+			<field name="report_file">pabi_forms.report_bank_receipt_voucher</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
+			<field name="paperformat_id" ref="pabi_forms.account_paperformat_euro"/>
+		</record>
+
+		<record id="report_bank_receipt_voucher_qweb_values" model="ir.values">
+			<field name="name">RV Voucher</field>
+			<field name="model">account.move</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_bank_receipt_voucher_qweb)"/>
+		</record>
+
+		<!-- Invoice Voucher -->
+		<!-- KV -->
+		<record id="report_invoice_voucher_kv_qweb" model="ir.actions.report.xml">
+			<field name="string">Invoice Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.move</field>
+			<field name="name">Invoice Voucher</field>
+			<field name="report_type">qweb-pdf</field>
+			<field name="report_name">pabi_forms.report_invoice_voucher</field>
+			<field name="report_rml">pabi_forms.report_invoice_voucher</field>
+			<field name="report_file">pabi_forms.report_invoice_voucher</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
+			<field name="paperformat_id" ref="pabi_forms.account_paperformat_euro"/>
+		</record>
+
+		<record id="report_invoice_voucher_kv_qweb_values" model="ir.values">
+			<field name="name">KV Voucher</field>
+			<field name="model">account.move</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_invoice_voucher_kv_qweb)"/>
+		</record>
+
+		<!-- DV -->
+		<record id="report_invoice_voucher_dv_qweb" model="ir.actions.report.xml">
+			<field name="string">Invoice Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.move</field>
+			<field name="name">Invoice Voucher</field>
+			<field name="report_type">qweb-pdf</field>
+			<field name="report_name">pabi_forms.report_invoice_voucher</field>
+			<field name="report_rml">pabi_forms.report_invoice_voucher</field>
+			<field name="report_file">pabi_forms.report_invoice_voucher</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
+			<field name="paperformat_id" ref="pabi_forms.account_paperformat_euro"/>
+		</record>
+
+		<record id="report_invoice_voucher_dv_qweb_values" model="ir.values">
+			<field name="name">DV Voucher</field>
+			<field name="model">account.move</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_invoice_voucher_dv_qweb)"/>
+		</record>
+
+		<!-- Receipt Voucher -->
+		<record id="report_receipt_voucher_rc_qweb" model="ir.actions.report.xml">
+			<field name="string">Receipt Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.move</field>
+			<field name="name">Receipt Voucher</field>
+			<field name="report_type">qweb-pdf</field>
+			<field name="report_name">pabi_forms.report_receipt_voucher</field>
+			<field name="report_rml">pabi_forms.report_receipt_voucher</field>
+			<field name="report_file">pabi_forms.report_receipt_voucher</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
+			<field name="paperformat_id" ref="pabi_forms.account_paperformat_euro"/>
+		</record>
+
+		<record id="report_receipt_voucher_rc_qweb_values" model="ir.values">
+			<field name="name">RC Voucher</field>
+			<field name="model">account.move</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_receipt_voucher_rc_qweb)"/>
+		</record>
+
+		<!-- Payment Voucher -->
+		<record id="report_payment_voucher_pv_qweb" model="ir.actions.report.xml">
+			<field name="string">Payment Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.move</field>
+			<field name="name">Payment Voucher</field>
+			<field name="report_type">qweb-pdf</field>
+			<field name="report_name">pabi_forms.report_payment_voucher</field>
+			<field name="report_rml">pabi_forms.report_payment_voucher</field>
+			<field name="report_file">pabi_forms.report_payment_voucher</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
+			<field name="paperformat_id" ref="pabi_forms.account_paperformat_euro"/>
+		</record>
+
+		<record id="report_payment_voucher_pv_qweb_values" model="ir.values">
+			<field name="name">PV Voucher</field>
+			<field name="model">account.move</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_payment_voucher_pv_qweb)"/>
+		</record>
+
+		<!-- Adjustment voucher -->
+		<record id="report_adjustment_voucher_qweb" model="ir.actions.report.xml">
+			<field name="string">Adjustment Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.move</field>
+			<field name="name">Adjustment Voucher</field>
+			<field name="report_type">qweb-pdf</field>
+			<field name="report_name">pabi_forms.report_adjustment_voucher</field>
+			<field name="report_rml">pabi_forms.report_adjustment_voucher</field>
+			<field name="report_file">pabi_forms.report_adjustment_voucher</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
+			<field name="paperformat_id" ref="pabi_forms.account_paperformat_euro"/>
+		</record>
+
+		<record id="report_adjustment_voucher_qweb_values" model="ir.values">
+			<field name="name">Adjustment Voucher</field>
+			<field name="model">account.move</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_adjustment_voucher_qweb)"/>
+		</record>
+
+		<!-- Account Interface -->
+		<record id="report_interface_account_voucher_qweb" model="ir.actions.report.xml">
+			<field name="string">Interface Account Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.move</field>
+			<field name="name">Interface Account Voucher</field>
+			<field name="report_type">qweb-pdf</field>
+			<field name="report_name">pabi_forms.report_interface_account_voucher</field>
+			<field name="report_rml">pabi_forms.report_interface_account_voucher</field>
+			<field name="report_file">pabi_forms.report_interface_account_voucher</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
+			<field name="paperformat_id" ref="pabi_forms.account_paperformat_euro"/>
+		</record>
+
+		<record id="report_interface_account_voucher_qweb_values" model="ir.values">
+			<field name="name">Interface Account Voucher</field>
+			<field name="model">account.move</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_interface_account_voucher_qweb)"/>
+		</record>
+
+		<!-- Salary Expense -->
+		<record id="report_salary_expense_voucher_qweb" model="ir.actions.report.xml">
+			<field name="string">Salary Expense Voucher</field>
+			<field name="auto">True</field>
+			<field name="model">account.move</field>
+			<field name="name">Salary Expense Voucher</field>
+			<field name="report_type">qweb-pdf</field>
+			<field name="report_name">pabi_forms.report_salary_expense_voucher</field>
+			<field name="report_rml">pabi_forms.report_salary_expense_voucher</field>
+			<field name="report_file">pabi_forms.report_salary_expense_voucher</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
+			<field name="paperformat_id" ref="pabi_forms.account_paperformat_euro"/>
+		</record>
+
+		<record id="report_salary_expense_voucher_qweb_values" model="ir.values">
+			<field name="name">Salary Expense Voucher</field>
+			<field name="model">account.move</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_salary_expense_voucher_qweb)"/>
+		</record>
 	</data>
 </openerp>

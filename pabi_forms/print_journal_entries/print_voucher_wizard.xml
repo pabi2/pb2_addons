@@ -18,7 +18,12 @@
                 <form string="Print Voucher">
                     <p>This wizard select voucher form based on doctype</p>
                     <group>
-                        <field name="doctype"/>
+                        <group>
+                            <field name="doctype"/>
+                        </group>
+                        <group>
+                            <field name="report_type"/>
+                        </group>
                     </group>
                     <footer>
                         <button name="action_print_voucher" type="object" string="Print" class="oe_highlight"/>
