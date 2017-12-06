@@ -4,24 +4,49 @@ from openerp.exceptions import ValidationError
 from openerp.addons.pabi_account_move_document_ref.models.account_move \
     import DOCTYPE_SELECT
 
-DOCTYPE_REPORT_MAP = {'incoming_shipment': False,
-                      'delivery_order': False,
-                      'internal_transfer': False,
-                      'bank_receipt': 'bank.receipt.voucher',
-                      'out_invoice': 'invoice.voucher',
-                      'out_refund': 'invoice.voucher',
-                      'out_invoice_debitnote': False,
-                      'in_invoice': 'invoice.voucher',
-                      'in_refund': 'invoice.voucher',
-                      'in_invoice_debitnote': False,
-                      'receipt': 'receipt.voucher',
-                      'payment': 'payment.voucher',
-                      'employee_expense': False,
-                      'interface_account': False,
-                      'purchase_request': False,
-                      'purchase_order': False,
-                      'sale_order': False,
-                      'adjustment': 'adjustment.voucher'}
+DOCTYPE_REPORT_MAP = {
+    'jasper': {
+        'incoming_shipment': False,
+        'delivery_order': False,
+        'internal_transfer': False,
+        'bank_receipt': 'bank.receipt.voucher',
+        'out_invoice': 'invoice.voucher',
+        'out_refund': 'invoice.voucher',
+        'out_invoice_debitnote': False,
+        'in_invoice': 'invoice.voucher',
+        'in_refund': 'invoice.voucher',
+        'in_invoice_debitnote': False,
+        'receipt': 'receipt.voucher',
+        'payment': 'payment.voucher',
+        'employee_expense': False,
+        'interface_account': False,
+        'purchase_request': False,
+        'purchase_order': False,
+        'sale_order': False,
+        'adjustment': 'adjustment.voucher'
+    },
+    'qweb': {
+        'incoming_shipment': False,
+        'delivery_order': False,
+        'internal_transfer': False,
+        'bank_receipt': 'pabi_forms.report_bank_receipt_voucher',
+        'out_invoice': 'pabi_forms.report_invoice_voucher',
+        'out_refund': 'pabi_forms.report_invoice_voucher',
+        'out_invoice_debitnote': False,
+        'in_invoice': 'pabi_forms.report_invoice_voucher',
+        'in_refund': 'pabi_forms.report_invoice_voucher',
+        'in_invoice_debitnote': False,
+        'receipt': 'pabi_forms.report_receipt_voucher',
+        'payment': 'pabi_forms.report_payment_voucher',
+        'employee_expense': False,
+        'interface_account': 'pabi_forms.report_interface_account_voucher',
+        'purchase_request': False,
+        'purchase_order': False,
+        'sale_order': False,
+        'adjustment': 'pabi_forms.report_adjustment_voucher',
+        'salary_expense': 'pabi_forms.report_salary_expense_voucher',
+    }
+}
 
 
 class PrintVoucherWizard(models.TransientModel):
@@ -32,6 +57,12 @@ class PrintVoucherWizard(models.TransientModel):
         string="Doctype",
         readonly=True,
         default=lambda self: self._get_default_doctype(),
+    )
+    report_type = fields.Selection(
+        [('qweb', 'QWeb'), ('jasper', 'Jasper')],
+        string="Type",
+        required=True,
+        default='qweb',
     )
 
     @api.model
@@ -49,7 +80,8 @@ class PrintVoucherWizard(models.TransientModel):
         data = {'parameters': {}}
         ids = self._context.get('active_ids')
         data['parameters']['ids'] = ids
-        report_name = DOCTYPE_REPORT_MAP.get(self.doctype, False)
+        report_name = DOCTYPE_REPORT_MAP.get(self.report_type, {}) \
+            .get(self.doctype, False)
         if not report_name:
             raise ValidationError(_('No form for for this Doctype'))
         res = {
