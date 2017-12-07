@@ -298,7 +298,7 @@ class PurchaseWebInterface(models.Model):
                 url = pd_att.url.replace(file_prefix, "")
             pd_attach = {
                 'name': self.check_pdf_extension(pd_att.name),
-                'content': pd_att.datas,
+                'content': pd_att.datas or '',
                 'url': url,
             }
             attachment.append(pd_attach)
@@ -325,7 +325,6 @@ class PurchaseWebInterface(models.Model):
             },
             'attachments': attachment,
         }
-        print attachment
         # try:
         result = alfresco.ord.action(arg)
         # except Exception:
