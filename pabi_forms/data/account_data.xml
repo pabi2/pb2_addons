@@ -278,7 +278,7 @@
 			<field name="string">Customer Tax Receipt 200% (TH)</field>
 			<field name="name">Customer Tax Receipt 200% (TH)</field>
 			<field name="report_name">customer.tax.receipt.200.form.th</field>
-			<field name="force_locale">th_US</field>
+			<field name="force_locale">th_TH</field>
 			<field name="auto">True</field>
 			<field name="model">account.voucher</field>
 			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
