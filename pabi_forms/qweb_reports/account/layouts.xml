@@ -601,12 +601,12 @@
                                     <tr>
                                         <td style="width: 120px; text-align: right; padding-right: 10px; padding-top: 20px;">Accounted by</td>
                                         <td style="width: 200px; border-bottom: 1px solid; padding-top: 20px;">
-                                            <t t-if="o.doctype not in ['salary_expense', 'adjustment']">
+                                            <t t-if="o.doctype not in ['salary_expense']">
                                                 <t t-if="o.document_id and o.document_id.validate_user_id and o.document_id.validate_user_id.partner_id">
                                                     <span t-field="o.document_id.validate_user_id.partner_id.display_name"/>
                                                 </t>
                                             </t>
-                                            <t t-if="o.doctype in ['adjustment']">
+                                            <t t-if="not o.document_id">
                                                 <t t-if="o.create_uid">
                                                     <span t-field="o.create_uid.name"/>
                                                 </t>
@@ -623,6 +623,9 @@
                                                 <t t-if="o.document_id">
                                                     <span t-field="o.document_id.validate_date"/>
                                                 </t>
+                                            </t>
+                                            <t t-if="not o.document_id">
+                                                <span t-esc="datetime.datetime.strptime(o.create_date, '%Y-%m-%d %H:%M:%S').strftime('%d/%m/%Y')"/>
                                             </t>
                                         </td>
                                         <td colspan="2"></td>
