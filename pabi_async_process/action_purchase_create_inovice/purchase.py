@@ -47,11 +47,12 @@ class PurchaseOrder(PabiAsync, models.Model):
         if self._context.get('async_process', False):
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = '%s - Create Supplier Invoice(s)' % self.name
-            action_purchase_create_invoice.delay(session, self._name, self.id,
-                                                 description=description)
+            uuid = action_purchase_create_invoice.delay(
+                session, self._name, self.id, description=description)
             # Checking for running task, use the same signature as delay()
             task_name = "%s('%s', %s)" % \
                 ('action_purchase_create_invoice', self._name, self.id)
-            self._check_queue(task_name, desc=self.name, type='always')
+            self._check_queue(task_name, desc=self.name,
+                              type='always', uuid=uuid)
         else:
             return super(PurchaseOrder, self).action_invoice_create()

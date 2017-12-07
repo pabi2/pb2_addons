@@ -55,12 +55,12 @@ class AccountSubscriptionGenerate(PabiAsync, models.Model):
             period = self.calendar_period_id.calendar_name
             model_types = ', '.join([x.name for x in self.model_type_ids])
             description = 'Generate Entrie - %s - %s' % (period, model_types)
-            action_generate_recurring_entries.delay(session, self._name,
-                                                    self.id,
-                                                    description=description)
+            uuid = action_generate_recurring_entries.delay(
+                session, self._name, self.id, description=description)
             # Checking for running task, use the same signature as delay()
             task_name = "%s('%s', %s)" % ('action_generate_recurring_entries',
                                           self._name, self.id)
-            self._check_queue(task_name, desc=description, type='always')
+            self._check_queue(task_name, desc=description,
+                              type='always', uuid=uuid)
         else:
             return super(AccountSubscriptionGenerate, self).action_generate()

@@ -15,7 +15,7 @@ from openerp.addons.connector.exception import FailedJobError
 def action_run_tax_report(session, data, format):
     try:
         # Render Report
-        rpt_name = 'l10n_th_tax_report.%s' % data['report_name']
+        rpt_name = 'pabi_th_tax_report.%s' % data['report_name']
         report = session.env.ref(rpt_name)
         data = data['datas']
         data['model'] = 'account.tax.report'  # model is required, even sql rpt
@@ -57,11 +57,13 @@ class AccountTaxReportWizard(PabiAsync, models.TransientModel):
             data = super(AccountTaxReportWizard, self).run_report()
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = '%s - Print Tax Report' % self.tax_id.name
-            action_run_tax_report.delay(session, data, self.print_format,
-                                        description=description)
+            uuid = action_run_tax_report.delay(session, data,
+                                               self.print_format,
+                                               description=description)
             # Checking for running task, use the same signature as delay()
             task_name = "%s(%s, u'%s')" % \
                 ('action_run_tax_report', data, self.print_format)
-            self._check_queue(task_name, desc=description, type='mytask')
+            self._check_queue(task_name, desc=description,
+                              type='never', uuid=uuid)
         else:
             return super(AccountTaxReportWizard, self).run_report()
