@@ -284,9 +284,6 @@ class AccountModel(models.Model):
         "* Auto: As soon as Recurring Entry is created, the reveral will be "
         "auto created, and use 1st date of follwing month as entry date.",
     )
-    lines_id = fields.One2many(
-        copy=False,
-    )
     legend = fields.Text(
         default=lambda self:
         _('You can specify year, month and date in the name of the model '
@@ -299,6 +296,12 @@ class AccountModel(models.Model):
           'into the model line using ${object} (account.subscription),\n'
           'e.g. ${object.name} will get the name of Define Recurring\n')
     )
+
+    @api.one
+    def copy(self, default=None):
+        default = dict(default or {})
+        default['name'] = _('%s (copy)') % self.name
+        return super(AccountModel, self).copy(default)
 
     @api.onchange('model_type_id')
     def _onchange_model_type_id(self):
