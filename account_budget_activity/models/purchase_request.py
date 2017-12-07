@@ -240,6 +240,8 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
             'user_id': self._uid,
             # PR
             'purchase_request_line_id': self.id,
+            # Fiscal
+            'fiscalyear_id': self.fiscalyear_id.id,
         }
 
     @api.multi

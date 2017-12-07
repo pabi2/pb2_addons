@@ -213,6 +213,8 @@ class PurchaseOrderLine(ActivityCommon, models.Model):
             'user_id': self._uid,
             # PO
             'purchase_line_id': self.id,
+            # Fiscal
+            'fiscalyear_id': self.fiscalyear_id.id,
         }
 
     @api.multi
@@ -232,34 +234,3 @@ class PurchaseOrderLine(ActivityCommon, models.Model):
         res = super(PurchaseOrderLine, self).action_confirm()
         self._create_analytic_line(reverse=True)
         return res
-
-    # # When cancel or set done
-    # @api.multi
-    # def write(self, vals):
-    #   # Create negative amount for the remain product_qty - open_invoiced_qty
-    #     if vals.get('state') in ('done', 'cancel'):
-    #         self.filtered(lambda l: l.state not in ('done',
-    #                                                 'draft', 'cancel')).\
-    #             _create_analytic_line(reverse=False)
-    #     return super(PurchaseOrderLine, self).write(vals)
-
-    # # When partial open_invoiced_qty
-    # @api.multi
-    # @api.depends('open_invoiced_qty')
-    # def _compute_temp_invoiced_qty(self):
-    #     # As inoviced_qty increased, release the commitment
-    #     for rec in self:
-    #         # On compute filed of temp_purchased_qty, ORM is not working
-    #         self._cr.execute("""
-    #             select temp_invoiced_qty
-    #             from purchase_order_line where id = %s
-    #         """, (rec.id,))
-    #         result = self._cr.fetchone()
-    #         temp_invoiced_qty = result and result[0] or 0.0
-    #         diff_qty = (rec.open_invoiced_qty - temp_invoiced_qty)
-    #         if rec.state not in ('done', 'draft', 'cancel'):
-    #             rec.with_context(diff_qty=diff_qty).\
-    #                 _create_analytic_line(reverse=False)
-    #         rec.temp_invoiced_qty = rec.open_invoiced_qty
-
-    # ======================================================

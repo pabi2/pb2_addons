@@ -61,8 +61,6 @@ class AccountAnalyticLine(models.Model):
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
-        compute='_compute_fiscalyear_id',
-        store=True,
         readonly=True,
     )
     activity_group_id = fields.Many2one(
@@ -177,11 +175,12 @@ class AccountAnalyticLine(models.Model):
                 line.quarter = 'Q4'
 
     @api.multi
-    @api.depends('date')
-    def _compute_fiscalyear_id(self):
+    @api.constrains('date', 'fiscalyear_id')
+    def _check_compute_fiscalyear_id(self):
+        FiscalYear = self.env['account.fiscalyear']
         for rec in self:
-            FiscalYear = self.env['account.fiscalyear']
-            rec.fiscalyear_id = FiscalYear.find(rec.date)
+            if not rec.fiscalyear_id:  # No fiscal assigned, use rec.date
+                rec._write({'fiscalyear_id': FiscalYear.find(rec.date)})
 
     @api.model
     def create(self, vals):

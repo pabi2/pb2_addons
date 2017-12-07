@@ -33,6 +33,7 @@
                         <field name="budget_commit_ids">
                             <tree default_order='id'>
                                 <field name="id"/>
+                                <field name="fiscalyear_id"/>
                                 <field name="purchase_request_line_id"/>
                                 <field name="create_date"/>
                                 <field name="amount" string="Committed Amount" sum="Total Amount"/>
