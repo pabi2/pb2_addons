@@ -221,7 +221,7 @@
 
         <!-- Column Detail -->
         <template id="account_column_detail">
-            <tr t-foreach="o.line_id.sorted(key=lambda l: (l.debit, l.credit))" t-as="line">
+            <tr t-foreach="o.line_id.sorted(key=lambda l: (l.debit, l.credit), reverse=True)" t-as="line">
                 <td class="pabi-col-detail">
                     <t t-if="line.activity_id">
                         <span t-field="line.activity_id.name"/>
@@ -422,12 +422,15 @@
                     <div class="col-xs-5">
                         <span>Doc. No.: </span>
                         <t t-if="o.document_id">
-                            <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'payment', 'receipt', 'adjustment']">
+                            <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'payment', 'receipt']">
                                 <span t-field="o.document_id.number"/>
                             </t>
                             <t t-if="o.doctype in ['bank_receipt']">
                                 <span t-field="o.document_id.name"/>
                             </t>
+                        </t>
+                        <t t-if="o.doctype in ['adjustment']">
+                            <span t-field="o.name"/>
                         </t>
                     </div>
                 </div>
@@ -465,9 +468,9 @@
                             <t t-if="o.document_id">
                                 <t t-if="o.document_id.source_document">
                                     <t t-set="source_doc" t-value="[o.document_id.source_document]"/>
-                                    <!-- <t t-if="o.document_id.source_document_id and o.document_id.source_document_id.contract_id and o.document_id.source_document_id.contract_id.display_code">
+                                    <t t-if="o.document_id.source_document_id and o.document_id.source_document_id.contract_id and o.document_id.source_document_id.contract_id.display_code">
                                         <t t-set="source_doc" t-value="source_doc + [o.document_id.source_document_id.contract_id.display_code]"/>
-                                    </t> -->
+                                    </t>
                                     <span t-esc="' '.join(source_doc)"/>
                                 </t>
                             </t>
@@ -523,6 +526,11 @@
                             <span>Reversed Doc. No.: </span>
                             <t t-if="o.document_id and o.document_id.cancel_move_id">
                                 <span t-field="o.document_id.cancel_move_id.name"/>
+                            </t>
+                            <t t-if="not o.document_id">
+                                <t t-if="o.reversal_id">
+                                    <span t-field="o.reversal_id.name"/>
+                                </t>
                             </t>
                         </t>
                     </div>
@@ -593,9 +601,14 @@
                                     <tr>
                                         <td style="width: 120px; text-align: right; padding-right: 10px; padding-top: 20px;">Accounted by</td>
                                         <td style="width: 200px; border-bottom: 1px solid; padding-top: 20px;">
-                                            <t t-if="o.doctype not in ['salary_expense']">
+                                            <t t-if="o.doctype not in ['salary_expense', 'adjustment']">
                                                 <t t-if="o.document_id and o.document_id.validate_user_id and o.document_id.validate_user_id.partner_id">
                                                     <span t-field="o.document_id.validate_user_id.partner_id.display_name"/>
+                                                </t>
+                                            </t>
+                                            <t t-if="o.doctype in ['adjustment']">
+                                                <t t-if="o.create_uid">
+                                                    <span t-field="o.create_uid.name"/>
                                                 </t>
                                             </t>
                                         </td>
