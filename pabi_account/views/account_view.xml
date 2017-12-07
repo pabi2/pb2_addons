@@ -66,5 +66,53 @@
             </field>
         </record>
 
+
+        <record id="view_payment_term_form" model="ir.ui.view">
+            <field name="name">view.payment.term.form</field>
+            <field name="model">account.payment.term</field>
+            <field name="inherit_id" ref="account.view_payment_term_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='active']" position="after">
+                    <field name="revenue"/>
+                    <field name="expense"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Bank Journals -->
+        <record id="action_account_journal_bank" model="ir.actions.act_window">
+            <field name="name">Bank Journals</field>
+            <field name="res_model">account.journal</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('type', 'in', ('bank', 'cash'))]</field>
+            <field name="context">{'default_type': 'bank'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a journal.
+              </p><p>
+                A journal is used to record transactions of all accounting data
+                related to the day-to-day business.
+              </p><p>
+                A typical company may use one journal per payment method (cash,
+                bank accounts, checks), one purchase journal, one sale journal
+                and one for miscellaneous information.
+              </p>
+            </field>
+        </record>
+        <menuitem action="action_account_journal_bank" id="menu_action_account_journal_bank" parent="account.menu_journals"/>
+
+        <record model="ir.ui.view" id="view_account_journal_form2">
+            <field name="name">view.account.journal.form2</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='type']" position="attributes">
+                    <attribute name="readonly">context.get('default_type') == 'bank'</attribute>
+                </xpath>
+            </field>
+        </record>
+
+
     </data>
 </openerp>

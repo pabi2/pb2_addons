@@ -43,6 +43,9 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_term']" position="attributes">
+                    <attribute name="context">{'invoice_type': type}</attribute>
+                </xpath>
                 <xpath expr="//field[@name='date_invoice']" position="before">
                     <field name="date_document"/>
                 </xpath>
@@ -82,6 +85,9 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account_voucher.view_invoice_supplier"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_term']" position="attributes">
+                    <attribute name="context">{'invoice_type': type}</attribute>
+                </xpath>
                 <!-- <xpath expr="//button[@name='invoice_pay_customer']" position="attributes">
                     <attribute name="context">{'default_payment_type': payment_type}</attribute>
                 </xpath> -->

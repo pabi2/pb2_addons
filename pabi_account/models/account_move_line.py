@@ -20,8 +20,9 @@ class AccountMoveLine(models.Model):
         return vals
 
     @api.multi
-    def write(self, vals, check=True):
-        res = super(AccountMoveLine, self).write(vals, check=check)
+    def write(self, vals, check=True, update_check=True):
+        res = super(AccountMoveLine, self).\
+            write(vals, check=check, update_check=True)
         # For doctype PV/RC, get the narration of the counter invoice's move
         if vals.get('reconcile_id', False) or \
                 vals.get('reconcile_partial_id', False):
