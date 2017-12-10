@@ -45,10 +45,11 @@ class AccountInvoice(models.Model):
     def _compute_diff_expense_amount_flag(self):
         for rec in self:
             if rec.expense_id:
-                clear_amount = sum([x.price_subtotal < 0.0 and
-                                    x.price_subtotal or 0.0
-                                    for x in rec.invoice_line])
-                amount = rec.amount_total - clear_amount
+                # clear_amount = sum([x.price_subtotal < 0.0 and
+                #                     x.price_subtotal or 0.0
+                #                     for x in rec.invoice_line])
+                # amount = rec.amount_total - clear_amount
+                amount = rec.amount_total
                 rec.diff_expense_amount_adjusted = amount
                 rec.diff_expense_amount_flag = \
                     float_compare(amount, rec.amount_expense_request,
