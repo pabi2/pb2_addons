@@ -80,6 +80,9 @@ class BudgetTransition(models.Model):
     quantity = fields.Float(
         string='Quantity',
     )
+    amount = fields.Float(
+        string='Amount',
+    )
     forward = fields.Boolean(
         string='Forward',
         default=False,
@@ -175,10 +178,14 @@ class BudgetTransition(models.Model):
         for source in to_sources:
             for tran in self:
                 if source in tran and tran[source]:
-                    quantity = self._get_qty(tran[source])  # use samller qty
-                    if quantity > tran.quantity:
-                        quantity = tran.quantity
-                    ctx = {'diff_qty': quantity}
+                    ctx = {}
+                    if tran.quantity:
+                        quantity = self._get_qty(tran[source])
+                        if quantity > tran.quantity:
+                            quantity = tran.quantity
+                        ctx = {'diff_qty': quantity}
+                    if tran.amount:
+                        ctx = {'diff_amount': tran.amount}
                     tran[source].with_context(ctx).\
                         _create_analytic_line(reverse=False)
 
@@ -187,10 +194,14 @@ class BudgetTransition(models.Model):
         for source in to_sources:
             for tran in self:
                 if source in tran and tran[source] and tran.forward:  # Fwd
-                    quantity = self._get_qty(tran[source])  # use samller qty
-                    if quantity > tran.quantity:
-                        quantity = tran.quantity
-                    ctx = {'diff_qty': quantity}
+                    ctx = {}
+                    if tran.quantity:
+                        quantity = self._get_qty(tran[source])
+                        if quantity > tran.quantity:
+                            quantity = tran.quantity
+                        ctx = {'diff_qty': quantity}
+                    if tran.amount:
+                        ctx = {'diff_amount': tran.amount}
                     tran[source].with_context(ctx).\
                         _create_analytic_line(reverse=True)  # True
 
@@ -219,10 +230,27 @@ class BudgetTransition(models.Model):
         return super(BudgetTransition, self).write(vals)
 
     @api.model
-    def _create_trans_by_target_lines(self, source_line, target_lines,
-                                      source_qty_field, target_qty_field,
-                                      trans_source_field, trans_target_field,
-                                      reverse=False):
+    def _create_trans_by_target_lines_quantity(
+            self, source_line, target_lines, target_field, trans_source_field,
+            trans_target_field, reverse=False):
+        """ target_field_type = 'quantity' """
+        return self._create_trans_by_target_lines(
+            source_line, target_lines, target_field, trans_source_field,
+            trans_target_field, target_field_type='quantity', reverse=reverse)
+
+    @api.model
+    def _create_trans_by_target_lines_amount(
+            self, source_line, target_lines, target_field, trans_source_field,
+            trans_target_field, reverse=False):
+        """ target_field_type = 'amount' """
+        return self._create_trans_by_target_lines(
+            source_line, target_lines, target_field, trans_source_field,
+            trans_target_field, target_field_type='amount', reverse=reverse)
+
+    @api.model
+    def _create_trans_by_target_lines(
+            self, source_line, target_lines, target_field, trans_source_field,
+            trans_target_field, target_field_type='quantity', reverse=False):
         trans_ids = []
         # If trans already exist (same source id and target id), skip it.
         existing_trans = source_line.budget_transition_ids
@@ -245,8 +273,9 @@ class BudgetTransition(models.Model):
                     todo = False
                     break
             if todo:
-                quantity = target_line[target_qty_field]
-                trans_dict['quantity'] = reverse and -quantity or quantity
+                number = target_line[target_field]
+                # Quantity or Amount
+                trans_dict[target_field_type] = reverse and -number or number
                 trans = self.create(trans_dict)
                 trans_ids.append(trans.id)
         return trans_ids
@@ -255,37 +284,46 @@ class BudgetTransition(models.Model):
     @api.model
     def create_trans_expense_to_invoice(self, line):
         if line and line.invoice_line_ids:
-            self._create_trans_by_target_lines(
-                line, line.invoice_line_ids, 'unit_quantity',
-                'quantity', 'expense_line_id', 'invoice_line_id')
+            # For expense use "Amount" instead of "Quantity"
+            # Because, quantity is always equal to 1, so we can ignore it.
+            self._create_trans_by_target_lines_amount(
+                line, line.invoice_line_ids,
+                'price_subtotal', 'expense_line_id', 'invoice_line_id')
 
     @api.model
     def create_trans_pr_to_purchase(self, line):
         if line and line.purchase_lines:
-            self._create_trans_by_target_lines(
-                line, line.purchase_lines, 'product_qty', 'product_qty',
-                'purchase_request_line_id', 'purchase_line_id')
+            self._create_trans_by_target_lines_quantity(
+                line, line.purchase_lines,
+                'product_qty', 'purchase_request_line_id', 'purchase_line_id')
 
     @api.model
     def create_trans_purchase_to_invoice(self, po_line):
         if po_line and po_line.invoice_lines:
-            self._create_trans_by_target_lines(
-                po_line, po_line.invoice_lines, 'product_qty',
-                'quantity', 'purchase_line_id', 'invoice_line_id')
+            # Use invoice plan + invoice_mode = 'change_price', use amount
+            if po_line.order_id.use_invoice_plan and \
+                    po_line.order_id.invoice_mode == 'change_price':
+                self._create_trans_by_target_lines_amount(
+                    po_line, po_line.invoice_lines,
+                    'price_subtotal', 'purchase_line_id', 'invoice_line_id')
+            else:  # Other case, use quantity
+                self._create_trans_by_target_lines_quantity(
+                    po_line, po_line.invoice_lines,
+                    'quantity', 'purchase_line_id', 'invoice_line_id')
 
     @api.model
     def create_trans_purchase_to_picking(self, po_line, moves, reverse=False):
         if po_line and moves:
-            self._create_trans_by_target_lines(
-                po_line, moves, 'product_qty',
+            self._create_trans_by_target_lines_quantity(
+                po_line, moves,
                 'product_uom_qty', 'purchase_line_id', 'stock_move_id',
                 reverse=reverse)
 
     @api.model
     def create_trans_sale_to_invoice(self, so_line):
         if so_line and so_line.invoice_lines:
-            self._create_trans_by_target_lines(
-                so_line, so_line.invoice_lines, 'product_uom_qty',
+            self._create_trans_by_target_lines_quantity(
+                so_line, so_line.invoice_lines,
                 'quantity', 'sale_line_id', 'invoice_line_id',
                 reverse=True)  # For sales
 
@@ -293,8 +331,8 @@ class BudgetTransition(models.Model):
     def create_trans_sale_to_picking(self, so_line, moves, reverse=False):
         reverse = not reverse  # For sales
         if so_line and moves:
-            self._create_trans_by_target_lines(
-                so_line, moves, 'product_uom_qty',
+            self._create_trans_by_target_lines_quantity(
+                so_line, moves,
                 'product_uom_qty', 'sale_line_id', 'stock_move_id',
                 reverse=reverse)
 

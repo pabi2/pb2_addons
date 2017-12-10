@@ -215,14 +215,18 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
         # Use PR Commitment Account
         general_account_id = general_journal.pr_commitment_account_id.id
 
-        line_qty = 0.0
+        line_qty = False
+        line_amount = False
         if 'diff_qty' in self._context:
             line_qty = self._context.get('diff_qty')
+        elif 'diff_amount' in self._context:
+            line_amount = self._context.get('diff_amount')
         else:
-            # line_qty = self.product_qty - self.purchased_qty
             line_qty = self.product_qty
-        if not line_qty:
+        if not line_qty and not line_amount:
             return False
+        price_subtotal = line_amount or self._price_subtotal(line_qty)
+
         sign = reverse and -1 or 1
         company_currency = self.env.user.company_id.currency_id
         currency = currency or company_currency
@@ -232,7 +236,7 @@ class PurchaseRequestLine(ActivityCommon, models.Model):
             'account_id': self.analytic_account_id.id,
             'unit_amount': line_qty,
             'product_uom_id': False,
-            'amount': currency.compute(sign * self._price_subtotal(line_qty),
+            'amount': currency.compute(sign * price_subtotal,
                                        company_currency),
             'general_account_id': general_account_id,
             'journal_id': analytic_journal.id,

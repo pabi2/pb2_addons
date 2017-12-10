@@ -35,7 +35,7 @@
 								<field name="target"/>
 								<field name="forward"/>
 								<field name="backward"/>
-								<field name="quantity" sum="Total Quantity"/>
+								<field name="amount" sum="Total Amount"/>
 							</tree>
 						</field>
 					</page>
