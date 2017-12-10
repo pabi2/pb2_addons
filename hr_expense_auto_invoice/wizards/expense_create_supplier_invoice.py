@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, fields
+from openerp import api, models, fields, _
+from openerp.exceptions import ValidationError
 
 
 class ExpenseCreateSupplierInvoice(models.TransientModel):
@@ -20,6 +21,19 @@ class ExpenseCreateSupplierInvoice(models.TransientModel):
         string='Pay Type',
         readonly=True,
     )
+
+    @api.model
+    def view_init(self, fields_list):
+        """ Allow only when there are no open invoice of this EX """
+        res_model = self._context.get('active_model', False)
+        res_id = self._context.get('active_id', False)
+        expense = self.env[res_model].browse(res_id)
+        open_invoices = expense.invoice_ids.filtered(
+            lambda l: l.state not in ('paid', 'cancel'))
+        if open_invoices:
+            raise ValidationError(
+                _('There are some open invoices of this expense.\n'
+                  'Make sure you cancel all of them first and try again!'))
 
     @api.model
     def default_get(self, field_list):

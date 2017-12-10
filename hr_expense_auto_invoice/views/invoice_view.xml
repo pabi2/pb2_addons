@@ -10,7 +10,6 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='supplier_invoice_number']" position="after">
                 <field name="expense_id" readonly="1" attrs="{'invisible': [('expense_id', '=', False)]}"/>
-                <field name="invoice_ref_id" invisible="1" />
             </xpath>
         </field>
     </record>

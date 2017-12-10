@@ -156,35 +156,6 @@ class HRExpense(models.Model):
         'purchase.contract',
         string='Contract',
     )
-    # This method is checking that budget in Clearning must be same as in AV
-    # But @Lek confirm AV must not have budget (may have in PABIWeb as info)
-    # As such, this one is not used. But we keep for history only.
-    # --
-    # @api.one
-    # @api.constrains('line_ids')
-    # def _check_line_ids(self):
-    #     if not self.advance_expense_id:
-    #         return True
-    #     chart_fields = {
-    #         'project_id':
-    #         self.advance_expense_id.line_ids.mapped('project_id')._ids,
-    #         'section_id':
-    #         self.advance_expense_id.line_ids.mapped('section_id')._ids,
-    #         'invest_asset_id':
-    #         self.advance_expense_id.line_ids.mapped('invest_asset_id')._ids,
-    #         'invest_construction_phase_id':
-    #         self.advance_expense_id.line_ids.mapped(
-    #             'invest_construction_phase_id')._ids,
-    #     }
-    #     msg = _("You are selecting dimension which "
-    #             "has not been used in Advance %s."
-    #             % self.advance_expense_id.name_get()[0][1])
-    #     for line in self.line_ids:
-    #         for field in chart_fields:
-    #             if line[field]:
-    #                 if line[field].id not in chart_fields[field]:
-    #                     raise ValidationError(msg)
-    # --
 
     @api.multi
     @api.depends(
@@ -223,39 +194,13 @@ class HRExpense(models.Model):
         return res
 
     @api.multi
-    def action_invoice_except(self):
-        for expense in self:
-            expense.write({'state': 'invoice_except'})
-        return True
-
-    @api.multi
-    def action_ignore_exception(self):
-        for expense in self:
-            set_paid = True
-            for invoice in expense.invoice_ids:
-                if invoice.state not in ('paid', 'cancel'):
-                    set_paid = False
-            if set_paid:
-                expense.signal_workflow('except_to_paid')
-        return True
-
-    @api.multi
-    def action_recreate_invoice(self):
+    def _create_supplier_invoice_from_expense(self):
         self.ensure_one()
-        expense = self
-        root_invoice = False
-        for invoice in expense.invoice_ids:
-            if invoice.state == 'cancel' and not invoice.invoice_ref_id:
-                root_invoice = invoice
-        invoice = expense._create_supplier_invoice_from_expense()
+        invoice = \
+            super(HRExpense, self)._create_supplier_invoice_from_expense()
         invoice.write({
-            'amount_expense_request':
-                root_invoice.amount_expense_request,
-            'expense_id': root_invoice.expense_id.id,
-            'invoice_ref_id': invoice.id,
+            'amount_expense_request': invoice.amount_total,
         })
-        expense.invoice_id = invoice
-        expense.signal_workflow('except_to_done')
         return invoice
 
 

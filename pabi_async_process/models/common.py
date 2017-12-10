@@ -6,7 +6,7 @@ from openerp.exceptions import RedirectWarning, ValidationError
 class PabiAsync(object):
 
     @api.model
-    def _check_queue(self, task_name, desc=False, type='always'):
+    def _check_queue(self, task_name, desc=False, type='always', uuid=False):
         """ Checking Type
         'never' : No checking on task, simply show the RedirectWarning to myJob
             - no check in any case
@@ -33,6 +33,8 @@ class PabiAsync(object):
             message = _('This action is enqueued -- %s') % desc
         else:
             message = _('This action is enqueued')
+        if uuid:
+            message += '\nUUID: %s' % uuid
         raise RedirectWarning(message, action.id, _('Go to My Jobs'))
 
     @api.model

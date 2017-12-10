@@ -50,11 +50,12 @@ class HRSalaryExpense(PabiAsync, models.Model):
         if self.async_process and self.state != 'open':
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Generate Entries - Salary Expense %s' % self.number
-            action_open_hr_salary.delay(session, self._name, self.id,
-                                        description=description)
+            uuid = action_open_hr_salary.delay(session, self._name, self.id,
+                                               description=description)
             # Checking for running task, use the same signature as delay()
             task_name = "%s('%s', %s)" % \
                 ('action_open_hr_salary', self._name, self.id)
-            self._check_queue(task_name, desc=description, type='always')
+            self._check_queue(task_name, desc=description,
+                              type='always', uuid=uuid)
         else:
             return super(HRSalaryExpense, self).action_open()

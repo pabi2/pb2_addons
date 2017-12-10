@@ -1,35 +1,41 @@
 # -*- coding: utf-8 -*-
 import ast
 
-from openerp import models, api, fields
+from openerp import models, api, fields, _
 from ..models.common import PabiAsync
 
-from openerp.addons.connector.queue.job import job
+from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import FailedJobError
 
 
+def related_generate_entries(session, thejob):
+    generate_id = thejob.args[1]
+    action = {
+        'name': _('Generate Entries'),
+        'type': 'ir.actions.act_window',
+        'res_model': 'account.subscription.generate',
+        'view_type': 'form',
+        'view_mode': 'form',
+        'res_id': generate_id,
+    }
+    return action
+
+
 @job
-def action_generate_recurring_entries(session, calendar_period_id,
-                                      model_type_ids):
+@related_action(action=related_generate_entries)
+def action_generate_recurring_entries(session, model_name, res_id):
     try:
-        # Mock account.subscription.generate object
-        period = session.pool['account.period'].browse(session.cr, session.uid,
-                                                       calendar_period_id)
-        vals = {'date': period.date_stop,
-                'calendar_period_id': calendar_period_id,
-                'model_type_ids': [(6, 0, model_type_ids)]}
-        Generate = session.pool['account.subscription.generate']
-        _id = Generate.create(session.cr, session.uid, vals)
-        res = Generate.action_generate(session.cr, session.uid,
-                                       [_id], session.context)
-        domain = ast.literal_eval(res['domain'])
-        return {'move_ids': domain[0][2]}
+        session.pool[model_name].action_generate(session.cr, session.uid,
+                                                 [res_id], session.context)
+        entry = session.pool[model_name].browse(session.cr, session.uid,
+                                                res_id)
+        return {'move_ids': entry.move_ids.ids}
     except Exception, e:
         raise FailedJobError(e)
 
 
-class AccountSubscriptionGenerate(PabiAsync, models.TransientModel):
+class AccountSubscriptionGenerate(PabiAsync, models.Model):
     _inherit = 'account.subscription.generate'
 
     async_process = fields.Boolean(
@@ -49,13 +55,12 @@ class AccountSubscriptionGenerate(PabiAsync, models.TransientModel):
             period = self.calendar_period_id.calendar_name
             model_types = ', '.join([x.name for x in self.model_type_ids])
             description = 'Generate Entrie - %s - %s' % (period, model_types)
-            action_generate_recurring_entries.delay(
-                session, self.calendar_period_id.id,
-                self.model_type_ids.ids, description=description)
+            uuid = action_generate_recurring_entries.delay(
+                session, self._name, self.id, description=description)
             # Checking for running task, use the same signature as delay()
-            task_name = "%s(%s, %s)" % ('action_generate_recurring_entries',
-                                        self.calendar_period_id.id,
-                                        self.model_type_ids.ids)
-            self._check_queue(task_name, desc=description, type='mytask')
+            task_name = "%s('%s', %s)" % ('action_generate_recurring_entries',
+                                          self._name, self.id)
+            self._check_queue(task_name, desc=description,
+                              type='always', uuid=uuid)
         else:
             return super(AccountSubscriptionGenerate, self).action_generate()
