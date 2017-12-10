@@ -94,16 +94,16 @@ class AccountInvoice(models.Model):
                 })
         return super(AccountInvoice, self).confirm_paid()
 
-    @api.multi
-    def action_cancel(self):
-        for invoice in self:
-            if invoice.expense_id:
-                expense = invoice.expense_id
-                if expense.state == 'paid':
-                    expense.signal_workflow('invoice_except')
-                elif expense.state == 'done':
-                    expense.signal_workflow('done_to_except')
-        return super(AccountInvoice, self).action_cancel()
+    # @api.multi
+    # def action_cancel(self):
+    #     for invoice in self:
+    #         if invoice.expense_id:
+    #             expense = invoice.expense_id
+    #             if expense.state == 'paid':
+    #                 expense.signal_workflow('invoice_except')
+    #             elif expense.state == 'done':
+    #                 expense.signal_workflow('done_to_except')
+    #     return super(AccountInvoice, self).action_cancel()
 
     @api.multi
     def action_move_create(self):

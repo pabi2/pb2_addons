@@ -7,14 +7,14 @@
             <field name="kind">function</field>
             <field name="action">action_paid()</field>
         </record>
-        
+
         <record id="t16" model="workflow.transition">
             <field name="act_from" ref="hr_expense.act_done"/>
             <field name="act_to" ref="act_paid"/>
             <field name="signal">paid</field>
             <field name="group_id" ref="base.group_hr_user"/>
         </record>
-        
+
         <record id="t11" model="workflow.transition">
             <field name="act_from" ref="hr_expense.act_done"/>
             <field name="act_to" ref="hr_expense.act_refused"/>
@@ -31,6 +31,12 @@
             <field name="act_from" ref="hr_expense.act_done"/>
             <field name="act_to" ref="hr_expense.act_accepted"/>
             <field name="signal">done_to_accept</field>
+            <field name="group_id" ref="base.group_hr_user"/>
+        </record>
+        <record id="t14" model="workflow.transition">
+            <field name="act_from" ref="act_paid"/>
+            <field name="act_to" ref="hr_expense.act_accepted"/>
+            <field name="signal">paid_to_accept</field>
             <field name="group_id" ref="base.group_hr_user"/>
         </record>
 
