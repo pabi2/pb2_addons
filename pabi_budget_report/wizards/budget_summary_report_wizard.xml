@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="view_budget_summary_action_excel_export" model="ir.ui.view">
-            <field name="name">view.budget.summary.action.excel.export</field>
-            <field name="model">budget.summary.action.excel.export.wizard</field>
+        <record id="wizard_budget_summary_report" model="ir.ui.view">
+            <field name="name">wizard.budget.summary.report</field>
+            <field name="model">budget.summary.report.wizard</field>
             <field name="arch" type="xml">
                 <form string="Budget Summary (xls)">
                     <group>
@@ -21,19 +21,26 @@
             </field>
         </record>
 
-        <record id="action_budget_summary_action_excel_export" model="ir.actions.act_window">
+        <record id="action_budget_summary_report" model="ir.actions.act_window">
             <field name="name">Budget Summary (xls)</field>
-            <field name="res_model">budget.summary.action.excel.export.wizard</field>
+            <field name="res_model">budget.summary.report.wizard</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
         <menuitem
+            id="menu_budget_report"
+            name="Budget Report"
+            parent="account_budget_activity.menu_budgeting"
+            sequence="115"
+            />
+
+        <menuitem
             id="menu_budget_summary_report"
             name="Budget Summary (xls)"
-            parent="account_budget_activity.menu_action_budget_report"
-            action="action_budget_summary_action_excel_export"
+            parent="menu_budget_report"
+            action="action_budget_summary_report"
             sequence="110"
             icon="STOCK_PRINT"
             />

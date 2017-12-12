@@ -72,7 +72,8 @@ class BudgetSummaryReport(models.Model):
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW budget_summary_report as (
-            select row_number() over (order by rpt.chart_view, rpt.fiscalyear_id) as id,
+            select row_number() over (order by rpt.chart_view,
+                                               rpt.fiscalyear_id) as id,
                    rpt.chart_view, rpt.fiscalyear_id,
                    coalesce(plan, 0.0) as plan,
                    (select coalesce(sum(policy_amount), 0.0)
@@ -87,12 +88,20 @@ class BudgetSummaryReport(models.Model):
                    coalesce(balance, 0.0) as balance,
                    coalesce(total, 0.0) as commit_and_actual,
                    (actual_total/total) * 100 as actual_percent,
-                   coalesce(pr_commit+po_commit+exp_commit, 0.0) as commit_total,
-                   coalesce(pr_commit+po_commit+exp_commit, 0.0)/total * 100 as commit_percent
+                   coalesce(pr_commit+po_commit+exp_commit, 0.0)
+                        as commit_total,
+                   coalesce(pr_commit+po_commit+exp_commit, 0.0)/total * 100
+                        as commit_percent
             from
-                   (select chart_view, fiscalyear_id, sum(planned_amount) as plan, sum(released_amount) as released,
-                           sum(amount_pr_commit) as pr_commit, sum(amount_po_commit) as po_commit, sum(amount_exp_commit) as exp_commit,
-                           sum(amount_actual) as actual_total, sum(amount_balance) as balance, sum(amount_consumed) as total
+                   (select chart_view, fiscalyear_id,
+                           sum(planned_amount) as plan,
+                           sum(released_amount) as released,
+                           sum(amount_pr_commit) as pr_commit,
+                           sum(amount_po_commit) as po_commit,
+                           sum(amount_exp_commit) as exp_commit,
+                           sum(amount_actual) as actual_total,
+                           sum(amount_balance) as balance,
+                           sum(amount_consumed) as total
                     from budget_monitor_report
                     where budget_method = 'expense'
                     group by chart_view, fiscalyear_id) rpt)""")
