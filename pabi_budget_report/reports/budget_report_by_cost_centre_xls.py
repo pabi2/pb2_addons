@@ -163,7 +163,9 @@ class BudgetReportByCostCentreXLS(report_xls):
             row_start = row_pos
             report = _p.report.filtered(lambda l: l.sequence == sequence)
             for line in report.mapped('budget_id'):
-                budget_report = report.search([('budget_id', '=', line.id)])
+                budget_report = report.search(
+                    [('budget_id', '=',
+                        '%s,%s' % (line._table.replace('_', '.'), line.id))])
                 chart_view = CHART_VIEW.get(line._table, False)
                 total_commitment_start = rowcol_to_cell(row_pos, 5)
                 total_commitment_end = rowcol_to_cell(row_pos, 7)
