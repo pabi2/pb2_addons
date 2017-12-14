@@ -5,7 +5,7 @@
             <field name="name">wizard.budget.summary.report</field>
             <field name="model">budget.summary.report.wizard</field>
             <field name="arch" type="xml">
-                <form string="Budget Summary (xls)">
+                <form string="Budget Summary">
                     <group>
                         <group>
                             <field name="fiscalyear_id"/>
@@ -22,7 +22,7 @@
         </record>
 
         <record id="action_budget_summary_report" model="ir.actions.act_window">
-            <field name="name">Budget Summary (xls)</field>
+            <field name="name">Budget Summary</field>
             <field name="res_model">budget.summary.report.wizard</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
@@ -38,7 +38,7 @@
 
         <menuitem
             id="menu_budget_summary_report"
-            name="Budget Summary (xls)"
+            name="Budget Summary"
             parent="menu_budget_report"
             action="action_budget_summary_report"
             sequence="110"

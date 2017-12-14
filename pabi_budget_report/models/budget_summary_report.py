@@ -7,7 +7,7 @@ class BudgetSummaryReport(models.Model):
     _auto = False
 
     id = fields.Integer(
-        string="ID",
+        string='ID',
         readonly=True,
     )
     chart_view = fields.Selection(
