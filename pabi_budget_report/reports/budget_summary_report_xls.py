@@ -98,7 +98,7 @@ class BudgetSummaryReportXLS(report_xls):
             ws, row_pos, row_data, row_style=cell_style)
         c_specs = [
             ('fiscalyear_title', 1, 0, 'text', _('Fiscal Year'), None,
-             cell_style),
+                cell_style),
             ('fiscalyear_value', 1, 0, 'text', _p.fiscalyear.name)
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
@@ -127,22 +127,30 @@ class BudgetSummaryReportXLS(report_xls):
         cell_style = xlwt.easyxf(_xs['bold'] + _xs['center'] + _xs['fill'] +
                                  _xs['borders_all'])
         c_specs = [
-            ('budget_structure', 1, 0, 'text', _('Budget Structure')),
-            ('budget_plan', 1, 0, 'text', _('Budget Plan')),
-            ('budget_policy', 1, 0, 'text', _('Budget Policy')),
-            ('release_budget', 1, 0, 'text', _('Release Budget')),
-            ('pr_commitment', 1, 0, 'text', _('PR Commitment')),
-            ('po_commitment', 1, 0, 'text', _('PO  Commitment')),
-            ('ex_commitment', 1, 0, 'text', _('EX Commitment')),
-            ('actual', 1, 0, 'text', _('Actual')),
-            ('residual_budget', 1, 0, 'text', _('Residual Budget (Released)')),
-            ('percent_actual', 1, 0, 'text', _('% Actual')),
-            ('percent_commitment', 1, 0, 'text', _('% Commitment')),
-            ('total_commitment', 1, 0, 'text', _('Total Commitment'))
+            ('budget_structure', 1, 0, 'text', _('Budget Structure'), None,
+                cell_style),
+            ('budget_plan', 1, 0, 'text', _('Budget Plan'), None, cell_style),
+            ('budget_policy', 1, 0, 'text', _('Budget Policy'), None,
+                cell_style),
+            ('release_budget', 1, 0, 'text', _('Release Budget'), None,
+                cell_style),
+            ('pr_commitment', 1, 0, 'text', _('PR Commitment'), None,
+                cell_style),
+            ('po_commitment', 1, 0, 'text', _('PO  Commitment'), None,
+                cell_style),
+            ('ex_commitment', 1, 0, 'text', _('EX Commitment'), None,
+                cell_style),
+            ('actual', 1, 0, 'text', _('Actual'), None, cell_style),
+            ('residual_budget', 1, 0, 'text', _('Residual Budget (Released)'),
+                None, cell_style),
+            ('percent_actual', 1, 0, 'text', _('% Actual'), None, cell_style),
+            ('percent_commitment', 1, 0, 'text', _('% Commitment'), None,
+                cell_style),
+            ('total_commitment', 1, 0, 'text', _('Total Commitment'), None,
+                cell_style)
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
-        row_pos = self.xls_write_row(
-            ws, row_pos, row_data, row_style=cell_style)
+        row_pos = self.xls_write_row(ws, row_pos, row_data)
         row_start = row_pos
 
         # Column Detail
@@ -266,19 +274,18 @@ class BudgetSummaryReportXLS(report_xls):
         c_specs = [
             ('actual_title', 1, 0, 'text', _('Actual')),
             ('actual_value', 1, 0, 'number', None, actual_formula,
-             cell_style_decimal),
+                cell_style_decimal),
             ('actual_percent', 1, 0, 'number', None, actual_percent_formula,
-             cell_style_percent),
+                cell_style_percent),
             ('space_1', 1, 0, 'text', ''),
             ('space_2', 1, 0, 'text', ''),
             ('space_3', 1, 0, 'text', ''),
             ('space_4', 1, 0, 'text', ''),
             ('budget_policy_title', 1, 0, 'text', _('Budget Policy')),
             ('budget_policy_value', 1, 0, 'number', None,
-             budget_policy_formula,
-             cell_style_decimal),
+                budget_policy_formula, cell_style_decimal),
             ('budget_policy_percent', 1, 0, 'number', 1, None,
-             cell_style_percent)
+                cell_style_percent)
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(ws, row_pos, row_data)
@@ -291,18 +298,18 @@ class BudgetSummaryReportXLS(report_xls):
         c_specs = [
             ('total_commitment_title', 1, 0, 'text', _('Total Commitment')),
             ('total_commitment_value', 1, 0, 'number', None,
-             total_commitment_formula, cell_style_decimal),
+                total_commitment_formula, cell_style_decimal),
             ('total_commitment_percent', 1, 0, 'text', None,
-             total_commitment_percent_formula, cell_style_percent),
+                total_commitment_percent_formula, cell_style_percent),
             ('space_1', 1, 0, 'text', ''),
             ('space_2', 1, 0, 'text', ''),
             ('space_3', 1, 0, 'text', ''),
             ('space_4', 1, 0, 'text', ''),
             ('actual_title', 1, 0, 'text', _('Actual')),
             ('actual_value', 1, 0, 'text', None, actual_formula,
-             cell_style_decimal),
+                cell_style_decimal),
             ('actual_percent', 1, 0, 'text', None, actual_percent_formula,
-             cell_style_percent)
+                cell_style_percent)
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(ws, row_pos, row_data)
@@ -316,21 +323,21 @@ class BudgetSummaryReportXLS(report_xls):
             rowcol_to_cell(row_pos, 8) + '/' + rowcol_to_cell(row_pos - 2, 8)
         c_specs = [
             ('total_actual_commitment_title_1', 1, 0, 'text',
-             _('Total Actual + Commitment')),
+                _('Total Actual + Commitment')),
             ('total_actual_commitment_value_1', 1, 0, 'number', None,
-             total_actual_commitment_formula_1, cell_style_decimal),
+                total_actual_commitment_formula_1, cell_style_decimal),
             ('total_actual_commitment_percent_1', 1, 0, 'number', None,
-             total_actual_commitment_percent_formula_1, cell_style_percent),
+                total_actual_commitment_percent_formula_1, cell_style_percent),
             ('space_1', 1, 0, 'text', ''),
             ('space_2', 1, 0, 'text', ''),
             ('space_3', 1, 0, 'text', ''),
             ('space_4', 1, 0, 'text', ''),
             ('total_actual_commitment_title_2', 1, 0, 'text',
-             _('Total Actual + Commitment')),
+                _('Total Actual + Commitment')),
             ('total_actual_commitment_value_2', 1, 0, 'number', None,
-             total_actual_commitment_formula_2, cell_style_decimal),
+                total_actual_commitment_formula_2, cell_style_decimal),
             ('total_actual_commitment_percent_2', 1, 0, 'number', None,
-             total_actual_commitment_percent_formula_2, cell_style_percent),
+                total_actual_commitment_percent_formula_2, cell_style_percent),
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(ws, row_pos, row_data)
@@ -348,11 +355,11 @@ class BudgetSummaryReportXLS(report_xls):
             ('space_6', 1, 0, 'text', ''),
             ('space_7', 1, 0, 'text', ''),
             ('budget_balance_title', 1, 0, 'text',
-             _('Budget Balance (Policy)')),
+                _('Budget Balance (Policy)')),
             ('budget_balance_value', 1, 0, 'number', None,
-             budget_balance_formula, cell_style_decimal),
+                budget_balance_formula, cell_style_decimal),
             ('budget_balance_percent', 1, 0, 'number', None,
-             budget_balance_percent_formula, cell_style_percent)
+                budget_balance_percent_formula, cell_style_percent)
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(ws, row_pos, row_data)

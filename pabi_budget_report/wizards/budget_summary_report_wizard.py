@@ -3,8 +3,8 @@ from openerp import models, fields, api, _
 from openerp.exceptions import except_orm
 
 
-class BudgetSummaryActionExcelExportWizard(models.Model):
-    _name = 'budget.summary.action.excel.export.wizard'
+class BudgetSummaryReportWizard(models.Model):
+    _name = 'budget.summary.report.wizard'
 
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',

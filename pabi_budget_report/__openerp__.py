@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'NSTDA :: Budget Summary Report',
+    'name': 'NSTDA :: Budget Report',
     'version': '8.0.1.0.0',
     'category': 'Accounting & Finance',
     'description': """
@@ -13,7 +13,8 @@
     ],
     'data': [
         'security/ir.model.access.csv',
-        'wizards/budget_summary_action_excel_export_wizard.xml',
+        'wizards/budget_report_by_cost_centre_wizard.xml',
+        'wizards/budget_summary_report_wizard.xml',
     ],
     'demo': [
     ],
