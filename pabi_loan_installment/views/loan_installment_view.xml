@@ -28,6 +28,7 @@
                     <field name="amount_receivable"/>
                     <field name="amount_income"/>
                     <field name="amount_loan_total"/>
+                    <field name="amount_latest_principal"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -122,6 +123,9 @@
                               <h2>
                                     <label string="Total Loan Amount:"/>
                                     <field name="amount_loan_total" class="oe_inline"/>
+                                    <br/>
+                                    <label string="Remaining Principal:"/>
+                                    <field name="amount_latest_principal" class="oe_inline"/>
                                 </h2>
                             </group>
                         </group>
@@ -180,6 +184,8 @@
                                         <field name="move_line_id" invisible="1"/>
                                         <field name="ref_voucher"/>
                                         <field name="reconcile_id" widget="many2onebutton" string="Paid"/>
+                                        <field name="calc_principal"/>
+                                        <field name="remain_principal"/>
                                     </tree>
                                 </field>
                             </page>
