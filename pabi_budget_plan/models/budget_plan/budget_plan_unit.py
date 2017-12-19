@@ -8,25 +8,27 @@ from openerp.addons.account_budget_activity.models.account_activity \
 # from openerp.addons.document_status_history.models.document_history import \
 #     LogCommon
 
-_STATUS = [('1', 'Draft'),
-           ('2', 'Submitted'),
-           ('3', 'Approved'),
-           ('4', 'Cancelled'),
-           ('5', 'Rejected'),
-           ('6', 'Verified'),
-           ('7', 'Accepted'),
-           ('8', 'Done'),
-           ]
+# We need status as extra column for sorting purposes
 
-_STATE_TO_STATUS = {'draft': '1',
-                    'submit': '2',
-                    'approve': '3',
-                    'cancel': '4',
-                    'reject': '5',
-                    'verify': '6',
-                    'accept': '7',
-                    'done': '8',
-                    }
+# _STATUS = [('1', 'Draft'),
+#            ('2', 'Submitted'),
+#            ('3', 'Approved'),
+#            ('4', 'Cancelled'),
+#            ('5', 'Rejected'),
+#            ('6', 'Verified'),
+#            ('7', 'Accepted'),
+#            ('8', 'Done'),
+#            ]
+#
+# _STATE_TO_STATUS = {'draft': '1',
+#                     'submit': '2',
+#                     'approve': '3',
+#                     'cancel': '4',
+#                     'reject': '5',
+#                     'verify': '6',
+#                     'accept': '7',
+#                     'done': '8',
+#                     }
 
 
 class BudgetPlanUnit(BPCommon, models.Model):
@@ -108,13 +110,13 @@ class BudgetPlanUnit(BPCommon, models.Model):
         store=True,
     )
     # Converted to equivalant status
-    status = fields.Selection(
-        _STATUS,
-        string='Status',
-        compute='_compute_status',
-        store=True,
-        help="This virtual field is being used to sort the status in view",
-    )
+    # status = fields.Selection(
+    #     _STATUS,
+    #     string='Status',
+    #     compute='_compute_status',
+    #     store=True,
+    #     help="This virtual field is being used to sort the status in view",
+    # )
     # Data for filing import template
     master_ag_ids = fields.Many2many(
         'account.activity.group',
@@ -133,11 +135,11 @@ class BudgetPlanUnit(BPCommon, models.Model):
         for rec in self:
             rec.master_ag_ids = ActivityGroup.search([]).ids
 
-    @api.multi
-    @api.depends('state')
-    def _compute_status(self):
-        for rec in self:
-            rec.status = _STATE_TO_STATUS[rec.state]
+    # @api.multi
+    # @api.depends('state')
+    # def _compute_status(self):
+    #     for rec in self:
+    #         rec.status = _STATE_TO_STATUS[rec.state]
 
     @api.model
     def create(self, vals):
@@ -348,13 +350,13 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
         string='Reason',
     )
     # Converted to equivalant status
-    status = fields.Selection(
-        _STATUS,
-        related='plan_id.status',
-        string='Status',
-        store=True,
-        help="This virtual field is being used to sort the status in view",
-    )
+    # status = fields.Selection(
+    #     _STATUS,
+    #     related='plan_id.status',
+    #     string='Status',
+    #     store=True,
+    #     help="This virtual field is being used to sort the status in view",
+    # )
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
