@@ -68,10 +68,10 @@ class PurchaseOrder(models.Model):
                 r.update({d: order_line[d].id})
         return res
 
-    # When cancel or set done, clear all budget
+    # When draft, cancel or set done, clear all budget
     @api.multi
     def write(self, vals):
-        if vals.get('state') in ('done', 'cancel'):
+        if vals.get('state') in ('draft', 'done', 'cancel'):
             self.release_all_committed_budget()
         return super(PurchaseOrder, self).write(vals)
 

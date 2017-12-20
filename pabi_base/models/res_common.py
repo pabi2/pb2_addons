@@ -21,6 +21,11 @@ class ResCommon(object):
         string='Active',
         default=True,
     )
+    special = fields.Boolean(
+        string='Non-Standard',
+        default=False,
+        help="Specially used, i.e., Special Project GL",
+    )
 
     @api.multi
     def name_get(self):

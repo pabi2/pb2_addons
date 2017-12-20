@@ -301,7 +301,8 @@ class BudgetPolicy(models.Model):
             field = _DICT[policy.chart_view][2] or company.id
             policy_line = _DICT[policy.chart_view][3]
             entity_ids = model and \
-                self.env[model].search([]).ids or [company.id]
+                self.env[model].search([('special', '=', False)]).ids or \
+                [company.id]
 
             # For Revision 0, compare with Budget Plan
             for entity_id in entity_ids:
@@ -398,7 +399,9 @@ class BudgetPolicy(models.Model):
             plans = Plan.search([
                 ('fiscalyear_id', '=', self.fiscalyear_id.id),
                 (entity_field, '=', entity.id),
-                ('state', 'in', ('accept', 'done'))])
+                ('state', 'in', ('7_accept', '8_done'))])
+            print plans
+            print sub_entities
             # All entity must have valid plans
             if len(sub_entities) != len(plans):
                 res['valid'] = False

@@ -68,7 +68,7 @@
 
                 </xpath>
                 <xpath expr="//field[@name='state']" position="attributes">
-                    <attribute name="statusbar_visible">draft,approved,cancel</attribute>
+                    <attribute name="statusbar_visible">draft,approved,done</attribute>
                 </xpath>
                 <xpath expr="//button[@name='button_approved']" position="attributes">
                     <attribute name="string">Accept</attribute>
