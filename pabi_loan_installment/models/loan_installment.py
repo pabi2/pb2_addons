@@ -6,6 +6,7 @@ from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 from openerp.tools import float_compare
 from openerp.addons.pabi_chartfield.models.chartfield import HeaderTaxBranch
+from openerp.tools.float_utils import float_round as round
 
 
 class LoanInstallment(HeaderTaxBranch, models.Model):
@@ -59,6 +60,11 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
         string='Loan Amount',
         compute='_compute_amount',
         store=True,
+    )
+    amount_latest_principal = fields.Float(
+        string='Remaining Principal',
+        compute='_compute_amount_latest_principal',
+        help="Latest Principal in Installment Table",
     )
     amount_receivable = fields.Float(
         string='Receivables',
@@ -224,6 +230,12 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
         return res
 
     @api.multi
+    def _compute_amount_latest_principal(self):
+        for rec in self:
+            rec.amount_latest_principal = \
+                max(rec.installment_ids.mapped('remain_principal'))
+
+    @api.multi
     @api.depends('move_id.line_id.reconcile_id')
     def _compute_is_paid(self):
         MoveLine = self.env['account.move.line']
@@ -343,7 +355,9 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
                 raise ValidationError(_('No reconciled line can be selected!'))
             # Check amount
             amount = sum(rec.installment_ids.mapped('amount'))
-            if float_compare(amount, rec.amount_loan_total, 2) != 0:
+            amount_income = sum(rec.installment_ids.mapped('income'))
+            if float_compare(amount, rec.amount_loan_total, 2) != 0 or \
+                    float_compare(amount_income, rec.amount_income, 2) != 0:
                 raise ValidationError(
                     _('Amount mismatch, please calculate installment plan!'))
 
@@ -551,6 +565,24 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
         for line in rec.installment_ids.sorted(key=lambda l: l.date_start):
             line.installment = i
             i += 1
+
+        # Calculate default income
+        for rec in self:
+            total_income = rec.amount_income
+            total_loan = rec.amount_loan_total
+            i = 0
+            accum_income = 0.0
+            for line in rec.installment_ids:
+                i += 1
+                if i == len(rec.installment_ids):  # Last installment
+                    line.income = total_income - accum_income
+                    continue
+                if not total_loan:
+                    line.income = 0.0
+                else:
+                    line.income = \
+                        round((total_income / total_loan) * line.amount, 2)
+                    accum_income += line.income
         return
 
     @api.model
@@ -618,7 +650,7 @@ class LoanInstallmentPlan(models.Model):
     )
     income = fields.Float(
         string='Income',
-        compute='_compute_income',
+        # compute='_compute_income',
     )
     amount = fields.Float(
         string='Amount',
@@ -639,6 +671,20 @@ class LoanInstallmentPlan(models.Model):
         string='Ref Payments',
         compute='_compute_ref_voucher',
     )
+    ref_voucher_ids = fields.Many2one(
+        'account.voucher',
+        compute='_compute_ref_voucher',
+    )
+    calc_principal = fields.Float(
+        string='Calculated Principal',
+        compute='_compute_calc_principal',
+        help="Calculated principal amount based on journal entry in payment",
+    )
+    remain_principal = fields.Float(
+        string='Remaining Principal',
+        compute='_compute_calc_principal',
+        help="Sum of previous installment's calc_principal",
+    )
 
     @api.multi
     def _compute_ref_voucher(self):
@@ -647,7 +693,28 @@ class LoanInstallmentPlan(models.Model):
             vouchers = Voucher.search(
                 [('line_ids.move_line_id', '=', rec.move_line_id.id),
                  ('state', '=', 'posted')])
+            rec.ref_voucher_ids = vouchers
             rec.ref_voucher = ', '.join(vouchers.mapped('number'))
+
+    @api.multi
+    def _compute_calc_principal(self):
+        """ Principal is specially calcululated from supplier payment's JE """
+        accum_principal = 0.0
+        for rec in self:
+            income_account = rec.loan_install_id.income_account_id
+            moves = rec.ref_voucher_ids.mapped('move_id')
+            if moves:
+                move_lines = moves.mapped('line_id')
+                paid_amounts = move_lines.filtered(
+                    lambda l:
+                    l.journal_id.default_debit_account_id == l.account_id
+                ).mapped(lambda l: l.debit - l.credit)
+                income_amounts = move_lines.filtered(
+                    lambda l: l.account_id == income_account).\
+                    mapped(lambda l: l.debit - l.credit)
+                rec.calc_principal = sum(paid_amounts) + sum(income_amounts)
+                accum_principal += rec.calc_principal
+                rec.remain_principal = accum_principal
 
     @api.multi
     def name_get(self):
@@ -667,12 +734,12 @@ class LoanInstallmentPlan(models.Model):
             rec.days = prev_start and (date_start - prev_start).days or 0
             prev_start = date_start
 
-    @api.multi
-    def _compute_income(self):
-        for rec in self:
-            total_income = rec.loan_install_id.amount_income
-            total_loan = rec.loan_install_id.amount_loan_total
-            if not total_loan:
-                rec.income = 0.0
-            else:
-                rec.income = (total_income / total_loan) * rec.amount
+    # @api.multi
+    # def _compute_income(self, rate):
+    #     for rec in self:
+    #         total_income = rec.loan_install_id.amount_income
+    #         total_loan = rec.loan_install_id.amount_loan_total
+    #         if not total_loan:
+    #             rec.income = 0.0
+    #         else:
+    #             rec.income = (total_income / total_loan) * rec.amount

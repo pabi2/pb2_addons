@@ -11,6 +11,7 @@ class PurchaseRequest(models.Model):
         ('draft', 'Draft'),
         ('to_approve', 'To Accept'),
         ('approved', 'Accepted'),
+        ('done', 'Done'),
         ('rejected', 'Rejected')
     ]
 
@@ -425,6 +426,19 @@ class PurchaseRequestLine(models.Model):
             if rec.request_id:
                 rec.price_subtotal = \
                     rec.request_id.currency_id.round(rec.price_subtotal)
+
+    @api.multi
+    def write(self, vals):
+        """ If all pr line's state are close, also set PR to Done """
+        res = super(PurchaseRequestLine, self).write(vals)
+        if 'state' in vals and vals['state'] == 'close':
+            for rec in self:
+                if rec.request_id.state == 'done':
+                    continue
+                pr_line_states = rec.request_id.line_ids.mapped('state')
+                if len(pr_line_states) == 1 and pr_line_states[0] == 'close':
+                    rec.request_id.write({'state': 'done'})
+        return res
 
 
 class PurchaseRequestCommittee(models.Model):

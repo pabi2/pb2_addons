@@ -4,14 +4,14 @@ from openerp.addons.pabi_chartfield.models.chartfield import ChartField
 
 # This is the most detailed stats for any budget plan structure.
 # We make it common, but not necessary to use all of them
-_STATE = [('draft', 'Draft'),
-          ('submit', 'Submitted'),  # draft
-          ('approve', 'Approved'),  # submit
-          ('cancel', 'Cancelled'),  # draft,submit
-          ('reject', 'Rejected'),   # submit,approve
-          ('verify', 'Verified'),   # approve
-          ('accept', 'Accepted'),   # verify
-          ('done', 'Done'),   # verify
+_STATE = [('1_draft', 'Draft'),
+          ('2_submit', 'Submitted'),  # draft
+          ('3_approve', 'Approved'),  # submit
+          ('4_cancel', 'Cancelled'),  # draft,submit
+          ('5_reject', 'Rejected'),   # submit,approve
+          ('6_verify', 'Verified'),   # approve
+          ('7_accept', 'Accepted'),   # verify
+          ('8_done', 'Done'),   # verify
           # Accepted by Cooperate
           ]
 
@@ -99,7 +99,7 @@ class BPCommon(Common):
     state = fields.Selection(
         _STATE,
         string='Status',
-        default='draft',
+        default='1_draft',
         index=True,
         required=True,
         readonly=True,
@@ -135,35 +135,35 @@ class BPCommon(Common):
 
     @api.multi
     def action_draft(self):
-        self.write({'state': 'draft'})
+        self.write({'state': '1_draft'})
 
     @api.multi
     def action_submit(self):
-        self.write({'state': 'submit'})
+        self.write({'state': '2_submit'})
 
     @api.multi
     def action_approve(self):
-        self.write({'state': 'approve'})
+        self.write({'state': '3_approve'})
 
     @api.multi
     def action_cancel(self):
-        self.write({'state': 'cancel'})
+        self.write({'state': '4_cancel'})
 
     @api.multi
     def action_reject(self):
-        self.write({'state': 'reject'})
+        self.write({'state': '5_reject'})
 
     @api.multi
     def action_verify(self):
-        self.write({'state': 'verify'})
+        self.write({'state': '6_verify'})
 
     @api.multi
     def action_accept(self):
-        self.write({'state': 'accept'})
+        self.write({'state': '7_accept'})
 
     @api.multi
     def action_done(self):
-        self.write({'state': 'done'})
+        self.write({'state': '8_done'})
 
     @api.model
     def _prepare_copy_fields(self, source_model, target_model):

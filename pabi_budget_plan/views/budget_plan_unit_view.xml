@@ -67,16 +67,16 @@
             <field name="arch" type="xml">
                 <form string="Budget Plan" create="0">
                     <header>
-                        <button string="Submit" groups="pabi_base.group_budget_user" name="action_submit" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" groups="pabi_base.group_budget_manager" name="action_approve" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Verify" groups="pabi_base.group_operating_unit_budget" name="action_verify" states="approve" type="object" class="oe_highlight"/>
-                        <button string="Accept" groups="pabi_base.group_cooperate_budget" name="action_accept" states="verify" type="object" class="oe_highlight"/>
-                        <button string="Back to Approved" groups="pabi_base.group_cooperate_budget" name="action_approve" states="verify" type="object" class="oe_highlight"/>
-                        <button string="Back to Verified" groups="pabi_base.group_cooperate_budget" name="action_verify" states="accept" type="object" class="oe_highlight"/>
-                        <button string="Reject" groups="pabi_base.group_budget_manager" name="action_reject" states="submit,approve" type="object"/>
-                        <button string="Reset to Draft" name="action_draft" states="cancel,reject" type="object"/>
-                        <button string="Cancel" name="action_cancel" states="draft" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,verify,accept,done"/>
+                        <button string="Submit" groups="pabi_base.group_budget_user" name="action_submit" states="1_draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" groups="pabi_base.group_budget_manager" name="action_approve" states="2_submit" type="object" class="oe_highlight"/>
+                        <button string="Verify" groups="pabi_base.group_operating_unit_budget" name="action_verify" states="3_approve" type="object" class="oe_highlight"/>
+                        <button string="Accept" groups="pabi_base.group_cooperate_budget" name="action_accept" states="6_verify" type="object" class="oe_highlight"/>
+                        <button string="Back to Approved" groups="pabi_base.group_cooperate_budget" name="action_approve" states="6_verify" type="object" class="oe_highlight"/>
+                        <button string="Back to Verified" groups="pabi_base.group_cooperate_budget" name="action_verify" states="7_accept" type="object" class="oe_highlight"/>
+                        <button string="Reject" groups="pabi_base.group_budget_manager" name="action_reject" states="2_submit,3_approve" type="object"/>
+                        <button string="Reset to Draft" name="action_draft" states="4_cancel,5_reject" type="object"/>
+                        <button string="Cancel" name="action_cancel" states="1_draft" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="1_draft,2_submit,3_approve,6_verify,7_accept,8_done"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -96,7 +96,7 @@
                                 <field name="planned_expense"/>
                                 <field name="planned_overall"/>
                                 <button name="prepare_prev_fy_commitment" string="Compute Prev.FY Commitment" type="object"
-                                  attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                                  attrs="{'invisible': [('state', '!=', '1_draft')]}"/>
                             </group>
                             <group>
                                 <field name="date"/>
@@ -148,8 +148,8 @@
                     <field name="planned_expense"/>
                     <field name="planned_overall"/>
                     <field name="user_id"/>
-                    <field name="state" invisible="1"/>
-                    <field name="status"/>
+                    <field name="state" invisible="0"/>
+                    <!-- <field name="status"/> -->
                 </tree>
             </field>
         </record>
@@ -171,19 +171,19 @@
                     <filter string="My Division Plans" name="my_division_plans" context="{'my_division_plans': True}"/>
                     <filter string="This Fiscalyear" name="this_year_plans" context="{'this_year_plans': True}"/>
                     <separator/>
-                    <filter domain="[('state','=','draft')]" string="Draft"/>
-                    <filter domain="[('state','=','submit')]" string="Submitted"/>
-                    <filter domain="[('state','=','approve')]" string="Approved"/>
-                    <filter domain="[('state','=','verify')]" string="Verified"/>
-                    <filter domain="[('state','=','accept')]" string="Accepted"/>
-                    <filter domain="[('state','=','cancel')]" string="Cancelled"/>
-                    <filter domain="[('state','=','reject')]" string="Rejected"/>
+                    <filter domain="[('state','=','1_draft')]" string="Draft"/>
+                    <filter domain="[('state','=','2_submit')]" string="Submitted"/>
+                    <filter domain="[('state','=','3_approve')]" string="Approved"/>
+                    <filter domain="[('state','=','6_verify')]" string="Verified"/>
+                    <filter domain="[('state','=','7_accept')]" string="Accepted"/>
+                    <filter domain="[('state','=','4_cancel')]" string="Cancelled"/>
+                    <filter domain="[('state','=','5_reject')]" string="Rejected"/>
                     <group expand="0" string="Group By">
                         <filter string="Org" context="{'group_by':'org_id'}"/>
                         <filter string="Division" context="{'group_by':'division_id'}"/>
                         <filter string="Section" context="{'group_by':'section_id'}"/>
                         <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
-                        <filter string="Status" context="{'group_by':'status'}"/>
+                        <filter string="Status" context="{'group_by':'state'}"/>
                     </group>
                 </search>
             </field>
@@ -226,14 +226,14 @@
                     <filter string="My Division Plans" name="my_division_plans" context="{'my_division_plans': True}"/>
                     <filter string="This Fiscalyear" name="this_year_plans" context="{'this_year_plans': True}"/>
                     <separator/>
-                    <filter domain="[('state','=','draft')]" string="Draft"/>
-                    <filter domain="[('state','=','submit')]" string="Submitted"/>
-                    <filter domain="[('state','=','approve')]" string="Approved"/>
-                    <filter domain="[('state','=','verify')]" string="Verified"/>
-                    <filter domain="[('state','=','accept')]" string="Accepted"/>
-                    <filter domain="[('state','=','cancel')]" string="Cancelled"/>
-                    <filter domain="[('state','=','reject')]" string="Rejected"/>
-                    <filter domain="[('state','=','done')]" string="Done"/>
+                    <filter domain="[('state','=','1_draft')]" string="Draft"/>
+                    <filter domain="[('state','=','2_submit')]" string="Submitted"/>
+                    <filter domain="[('state','=','3_approve')]" string="Approved"/>
+                    <filter domain="[('state','=','4_verify')]" string="Verified"/>
+                    <filter domain="[('state','=','5_accept')]" string="Accepted"/>
+                    <filter domain="[('state','=','6_cancel')]" string="Cancelled"/>
+                    <filter domain="[('state','=','7_reject')]" string="Rejected"/>
+                    <filter domain="[('state','=','8_done')]" string="Done"/>
                     <group expand="0" string="Group By">
                         <filter string="Org" context="{'group_by':'org_id'}"/>
                         <filter string="Sector" context="{'group_by':'sector_id'}"/>
@@ -244,7 +244,7 @@
                         <filter string="Program" context="{'group_by':'program_rpt_id'}"/>
                         <filter string="Activity Group" context="{'group_by':'activity_group_id'}"/>
                         <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
-                        <filter string="Status" context="{'group_by':'status'}"/>
+                        <filter string="Status" context="{'group_by':'state'}"/>
                     </group>
                 </search>
             </field>
@@ -293,7 +293,7 @@
                     <field name="m12"/>
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="state" invisible="1"/>
-                    <field name="status" invisible="1"/>
+                    <!-- <field name="status" invisible="1"/> -->
                 </tree>
             </field>
         </record>

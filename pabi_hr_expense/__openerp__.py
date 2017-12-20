@@ -19,6 +19,7 @@
         "hr_expense_cancel_reason",
         "account_budget_activity",
         "l10n_th_account",
+        "account_invoice_cancel_reason",
     ],
     "data": [
         "security/ir.model.access.csv",
