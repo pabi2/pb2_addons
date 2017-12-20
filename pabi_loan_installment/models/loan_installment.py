@@ -232,8 +232,9 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
     @api.multi
     def _compute_amount_latest_principal(self):
         for rec in self:
-            rec.amount_latest_principal = \
-                max(rec.installment_ids.mapped('remain_principal'))
+            amounts = rec.installment_ids.mapped('remain_principal')
+            if len(amounts) > 0:
+                rec.amount_latest_principal = max(amounts)
 
     @api.multi
     @api.depends('move_id.line_id.reconcile_id')
