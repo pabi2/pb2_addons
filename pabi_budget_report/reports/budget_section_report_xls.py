@@ -154,7 +154,8 @@ class BudgetSectionReportXLS(report_xls):
             cell_format, num_format_str=report_xls.decimal_format)
         cell_style_percent = xlwt.easyxf(cell_format, num_format_str='0.00%')
         for section in _p.report.mapped('section_id'):
-            report = _p.report.search([('section_id', '=', section.id)])
+            report = _p.report.filtered(
+                lambda l: l.section_id.id == section.id)
             for activity_group in report.mapped('activity_group_id'):
                 budget_report = report.filtered(
                     lambda l: l.activity_group_id.id == activity_group.id)
