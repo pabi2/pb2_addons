@@ -109,6 +109,14 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
         default=lambda self:
         self.env.user.company_id.loan_income_account_id,
     )
+    force_close_account_id = fields.Many2one(
+        'account.account',
+        string='Force Close Account',
+        required=True,
+        readonly=True,
+        default=lambda self:
+        self.env.user.company_id.loan_force_close_account_id,
+    )
     move_id = fields.Many2one(
         'account.move',
         string='Journal Entry',
@@ -117,6 +125,11 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
     cancel_move_id = fields.Many2one(
         'account.move',
         string='Cancel Entry',
+        readonly=True,
+    )
+    force_close_move_id = fields.Many2one(
+        'account.move',
+        string='Force Close Entry',
         readonly=True,
     )
     sale_id = fields.Many2one(
@@ -128,7 +141,8 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
         [('draft', 'Draft'),
          ('open', 'Coverted to Loan'),
          ('paid', 'Fully Paid'),
-         ('cancel', 'Cancelled')],
+         ('cancel', 'Cancelled'),
+         ('force_close', 'Forced Closed')],
         string='Status',
         default='draft',
         readonly=True,
@@ -232,9 +246,10 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
     @api.multi
     def _compute_amount_latest_principal(self):
         for rec in self:
-            amounts = rec.installment_ids.mapped('remain_principal')
-            if len(amounts) > 0:
-                rec.amount_latest_principal = max(amounts)
+            remains = rec.installment_ids.filtered('remain_principal').\
+                mapped('remain_principal')
+            if remains:
+                rec.amount_latest_principal = min(remains)
 
     @api.multi
     @api.depends('move_id.line_id.reconcile_id')
@@ -279,7 +294,23 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
             'type': 'ir.actions.act_window',
             'context': self._context,
             'nodestroy': True,
-            'domain': [('id', '=', [self.move_id.id, self.cancel_move_id.id])],
+            'domain': [('id', 'in',
+                       (self.move_id.id, self.cancel_move_id.id))],
+        }
+
+    @api.multi
+    def open_force_close_move(self):
+        self.ensure_one()
+        return {
+            'name': _("Journal Entries"),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': self._context,
+            'nodestroy': True,
+            'domain': [('id', '=', self.force_close_move_id.id)],
         }
 
     @api.multi
@@ -343,8 +374,65 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
         return move_line_dict
 
     @api.multi
-    def _validate(self):
+    def _prepare_force_close_income_move_line(self, date, remain_income):
+        self.ensure_one()
+        move_line_dict = {
+            'move_id': self.force_close_move_id.id,
+            'date': date,
+            'date_maturity': False,
+            'name': self.defer_income_account_id.name or '/',
+            'partner_id': self.partner_id.id,
+            'account_id': self.defer_income_account_id.id,
+            'analytic_account_id': False,
+            'debit': remain_income > 0 and remain_income or 0.0,
+            'credit': remain_income < 0 and -remain_income or 0.0,
+        }
+        return move_line_dict
+
+    @api.multi
+    def _prepare_force_close_installment_move_lines(self, date):
+        self.ensure_one()
+        move_lines = []
+        for line in self.installment_ids:
+            amount = 0.0
+            if line.reconcile_id:
+                amount = line.extra_amount
+            else:
+                amount = line.amount
+            if amount != 0.0:
+                move_lines.append((0, 0, {
+                    'date': date,
+                    'date_maturity': False,
+                    'name': '%s #%s' % (self.name, line.installment),
+                    'partner_id': self.partner_id.id,
+                    'account_id': self.account_id.id,
+                    'analytic_account_id': False,
+                    'debit': amount < 0.0 and -amount or 0.0,
+                    'credit': amount > 0.0 and amount or 0.0,
+                }))
+        return move_lines
+
+    @api.multi
+    def _prepare_force_close_move_line(self, date, amount):
+        self.ensure_one()
+        move_line_dict = {
+            'move_id': self.force_close_move_id.id,
+            'date': date,
+            'date_maturity': False,
+            'name': self.force_close_account_id.name or '/',
+            'partner_id': self.partner_id.id,
+            'account_id': self.force_close_account_id.id,
+            'analytic_account_id': False,
+            'debit': amount > 0 and amount or 0.0,
+            'credit': amount < 0 and -amount or 0.0,
+        }
+        return move_line_dict
+
+    @api.multi
+    def _validate_move_create(self):
         for rec in self:
+            if not rec.state == 'draft':
+                raise ValidationError(_('Invaid State'))
             # No Taxbranch
             if not rec.taxbranch_id:
                 raise ValidationError(_('No taxbranch'))
@@ -361,6 +449,12 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
                     float_compare(amount_income, rec.amount_income, 2) != 0:
                 raise ValidationError(
                     _('Amount mismatch, please calculate installment plan!'))
+
+    @api.multi
+    def _validate_force_close(self):
+        for rec in self:
+            if not rec.state == 'open':
+                raise ValidationError(_('Invaid State'))
 
     @api.multi
     def _cancel(self):
@@ -397,7 +491,7 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
 
     @api.multi
     def action_move_create(self):
-        self._validate()
+        self._validate_move_create()
         Move = self.env['account.move']
         MoveLine = self.env['account.move.line']
         for rec in self:
@@ -437,6 +531,63 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
             rec.receivable_ids.mapped('invoice').write({'comment': rec.name})
         # Done
         self.write({'state': 'open'})
+        return True
+
+    @api.multi
+    def action_force_close(self):
+        self._validate_force_close()
+        Move = self.env['account.move']
+        MoveLine = self.env['account.move.line']
+        for rec in self:
+            if rec.force_close_move_id:
+                continue
+            today = fields.Date.context_today(self)
+            move_dict = Move.account_move_prepare(rec.journal_id.id,
+                                                  date=today, ref=rec.name)
+            move = Move.create(move_dict)
+            rec.force_close_move_id = move
+
+            to_reconcile_ids = []
+
+            # Cr ลูกหนี้ผ่อนชำระ
+            install_lines = \
+                self._prepare_force_close_installment_move_lines(today)
+            move.write({'line_id': install_lines})
+            amount_installment = \
+                sum(move.line_id.mapped(lambda l: l.credit - l.debit))
+            to_reconcile_ids += move.line_id.ids
+
+            # Dr รายได้รอการรับรู้คงเหลือ
+            remain_income = sum(self.installment_ids.
+                                filtered(lambda l: not l.reconcile_id).
+                                mapped('income'))
+            income_move_line_dict = \
+                rec._prepare_force_close_income_move_line(today, remain_income)
+            MoveLine.create(income_move_line_dict)
+
+            # Dr ลูกหนี้ดำเนินคดี
+            amount_close = amount_installment - remain_income
+            force_close_line_dict = \
+                rec._prepare_force_close_move_line(today, amount_close)
+            MoveLine.create(force_close_line_dict)
+
+            # Post move
+            move.with_context(direct_create=True).button_validate()
+
+            # Reconcile loan receivable
+            # Unreconciled move line from move_id
+            to_reconcile_ids += rec.move_id.line_id.filtered(
+                lambda l: not l.reconcile_id and
+                l.account_id == rec.account_id).ids
+            # Unreconciled move line from payment difference
+            payments = rec.installment_ids.mapped('ref_voucher_ids')
+            move_lines = payments.mapped('move_id').mapped('line_id')
+            to_reconcile_ids += move_lines.filtered(
+                lambda l: not l.reconcile_id and
+                l.account_id == rec.account_id).ids
+            MoveLine.browse(to_reconcile_ids).reconcile('auto')
+        # Done
+        self.write({'state': 'force_close'})
         return True
 
     @api.model
@@ -654,7 +805,7 @@ class LoanInstallmentPlan(models.Model):
         # compute='_compute_income',
     )
     amount = fields.Float(
-        string='Amount',
+        string='Installment Amount',
         default=0.0,
     )
     move_line_id = fields.Many2one(
@@ -675,6 +826,11 @@ class LoanInstallmentPlan(models.Model):
     ref_voucher_ids = fields.Many2one(
         'account.voucher',
         compute='_compute_ref_voucher',
+    )
+    extra_amount = fields.Float(
+        string='Extra Installment Amount',
+        compute='_compute_calc_principal',
+        help="Extra Installment Amount added during payment",
     )
     calc_principal = fields.Float(
         string='Calculated Principal',
@@ -702,20 +858,30 @@ class LoanInstallmentPlan(models.Model):
         """ Principal is specially calcululated from supplier payment's JE """
         accum_principal = 0.0
         for rec in self:
+            initial_principal = rec.loan_install_id.amount_receivable
+            install_account = rec.loan_install_id.account_id
             income_account = rec.loan_install_id.income_account_id
             moves = rec.ref_voucher_ids.mapped('move_id')
             if moves:
                 move_lines = moves.mapped('line_id')
+                # Real paid amount
                 paid_amounts = move_lines.filtered(
                     lambda l:
                     l.journal_id.default_debit_account_id == l.account_id
                 ).mapped(lambda l: l.debit - l.credit)
+                # Real income amount
                 income_amounts = move_lines.filtered(
                     lambda l: l.account_id == income_account).\
                     mapped(lambda l: l.debit - l.credit)
                 rec.calc_principal = sum(paid_amounts) + sum(income_amounts)
                 accum_principal += rec.calc_principal
-                rec.remain_principal = accum_principal
+                rec.remain_principal = initial_principal - accum_principal
+                # Extra installment amount
+                extra_amounts = move_lines.filtered(
+                    lambda l: l.account_id == install_account and
+                    l.analytic_account_id  # Signify it created from payment
+                ).mapped(lambda l: l.debit - l.credit)
+                rec.extra_amount = sum(extra_amounts)
 
     @api.multi
     def name_get(self):

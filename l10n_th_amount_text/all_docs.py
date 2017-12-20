@@ -94,13 +94,13 @@ class account_invoice(AmountToWord, osv.osv):
             _amount_total_text_en, string='Amount Total (EN)', type='char',
             store={'account.invoice':
                    (lambda self, cr, uid, ids, c={}:
-                    ids, ['amount_total'], 100),
+                    ids, ['amount_total'], 1000),
                    }),
         'amount_total_text_th': fields.function(
             _amount_total_text_th, string='Amount Total (TH)', type='char',
             store={'account.invoice':
                    (lambda self, cr, uid, ids, c={}:
-                    ids, ['amount_total'], 100),
+                    ids, ['amount_total'], 1000),
                    }),
     }
 
@@ -123,13 +123,13 @@ class account_voucher(AmountToWord, osv.osv):
             _amount_total_text_en, string='Amount Total (EN)', type='char',
             store={'account.voucher':
                    (lambda self, cr, uid, ids, c={}:
-                    ids, ['line_cr_ids', 'line_dr_ids'], 100),
+                    ids, ['line_cr_ids', 'line_dr_ids'], 1000),
                    }),
         'amount_total_text_th': fields.function(
             _amount_total_text_th, string='Amount Total (TH)', type='char',
             store={'account.voucher':
                    (lambda self, cr, uid, ids, c={}:
-                    ids, ['line_cr_ids', 'line_dr_ids'], 100),
+                    ids, ['line_cr_ids', 'line_dr_ids'], 1000),
                    }),
     }
 
@@ -160,19 +160,19 @@ class sale_order(AmountToWord, osv.osv):
             _amount_total_text_en, string='Amount Total (EN)', type='char',
             store={
                 'sale.order': (lambda self, cr, uid, ids, c={}:
-                               ids, ['order_line'], 10),
+                               ids, ['order_line'], 1000),
                 'sale.order.line': (_get_order,
                                     ['price_unit', 'tax_id',
-                                     'discount', 'product_uom_qty'], 10),
+                                     'discount', 'product_uom_qty'], 1000),
             }),
         'amount_total_text_th': fields.function(
             _amount_total_text_th, string='Amount Total (TH)', type='char',
             store={
                 'sale.order': (lambda self, cr, uid, ids, c={}:
-                               ids, ['order_line'], 10),
+                               ids, ['order_line'], 1000),
                 'sale.order.line': (_get_order,
                                     ['price_unit', 'tax_id',
-                                     'discount', 'product_uom_qty'], 10),
+                                     'discount', 'product_uom_qty'], 1000),
             }),
     }
 
@@ -203,19 +203,19 @@ class purchase_order(AmountToWord, osv.osv):
             _amount_total_text_en, string='Amount Total (EN)', type='char',
             store={
                 'purchase.order': (lambda self, cr, uid, ids, c={}:
-                                   ids, ['order_line'], 10),
+                                   ids, ['order_line'], 1000),
                 'purchase.order.line': (_get_order,
                                         ['price_unit', 'taxes_id',
-                                         'product_qty'], 10),
+                                         'product_qty'], 1000),
             }),
         'amount_total_text_th': fields.function(
             _amount_total_text_th, string='Amount Total (TH)', type='char',
             store={
                 'purchase.order': (lambda self, cr, uid, ids, c={}:
-                                   ids, ['order_line'], 10),
+                                   ids, ['order_line'], 1000),
                 'purchase.order.line': (_get_order,
                                         ['price_unit', 'taxes_id',
-                                         'product_qty'], 10),
+                                         'product_qty'], 1000),
             }),
     }
 

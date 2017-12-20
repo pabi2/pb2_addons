@@ -31,3 +31,7 @@ class ResCompany(models.Model):
         domain=[('type', '=', 'other'),
                 ('user_type.report_type', '=', 'income')],
     )
+    loan_force_close_account_id = fields.Many2one(
+        'account.account',
+        string='Force Close Account',
+    )

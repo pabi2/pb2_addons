@@ -12,6 +12,7 @@
                     <group name="loan_installment">
                         <field name="loan_installment_account_id" class="oe_inline"/>
                         <field name="loan_defer_income_account_id" class="oe_inline"/>
+                        <field name="loan_force_close_account_id" class="oe_inline"/>
                         <label for="id" string="Loan Income AG/A"/>
                         <div>
                             <div>

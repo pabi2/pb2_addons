@@ -224,15 +224,19 @@ class BudgetTransition(models.Model):
         model = self._context.get('trigger', False)
         if model not in trigger_models:
             raise ValidationError(_('Wrong budget transition trigger!'))
-        is_forward = 'forward' in vals and vals.get('forward', False)
-        is_backward = 'backward' in vals and vals.get('backward', False)
-        # For each type of model,
+
         to_sources = trigger_models[model]  # source document to return/regain
-        # Start
-        if is_forward:
-            self.return_budget_commitment(to_sources)
-        elif is_backward:
-            self.regain_budget_commitment(to_sources)
+        if 'forward' in vals:
+            if vals.get('forward', False):
+                self.return_budget_commitment(to_sources)
+            else:
+                self.regain_budget_commitment(to_sources)
+        if 'backward' in vals:
+            if vals.get('backward', False):
+                self.regain_budget_commitment(to_sources)
+            else:
+                self.return_budget_commitment(to_sources)
+
         return super(BudgetTransition, self).write(vals)
 
     @api.model
@@ -348,11 +352,22 @@ class BudgetTransition(models.Model):
         self.sudo().do_transit('forward', model, objects, obj_line_field)
 
     @api.model
+    def undo_forward(self, model, objects, obj_line_field=False):
+        self.sudo().do_transit('forward', model, objects, obj_line_field,
+                               undo=True)
+
+    @api.model
     def do_backward(self, model, objects, obj_line_field=False):
         self.sudo().do_transit('backward', model, objects, obj_line_field)
 
     @api.model
-    def do_transit(self, direction, model, objects, obj_line_field=False):
+    def undo_backward(self, model, objects, obj_line_field=False):
+        self.sudo().do_transit('backward', model, objects, obj_line_field,
+                               undo=True)
+
+    @api.model
+    def do_transit(self, direction, model, objects, obj_line_field=False,
+                   undo=False):
         target_model_fields = {'account.invoice': 'invoice_line_id',
                                'sale.order': 'sale_line_id',
                                'purchase.order': 'purchase_line_id',
@@ -366,9 +381,14 @@ class BudgetTransition(models.Model):
                 line_ids += obj[obj_line_field].ids
         else:
             line_ids = objects.ids
-        trans = self.search([
-            (trans_target_field, 'in', line_ids), (direction, '=', False)])
-        trans.with_context(trigger=model).write({direction: True})
+        if not undo:  # Normal case
+            trans = self.search([
+                (trans_target_field, 'in', line_ids), (direction, '=', False)])
+            trans.with_context(trigger=model).write({direction: True})
+        else:
+            trans = self.search([
+                (trans_target_field, 'in', line_ids), (direction, '=', True)])
+            trans.with_context(trigger=model).write({direction: False})
 
 
 class HRExpenseLine(models.Model):
@@ -467,6 +487,10 @@ class PurchaseOrder(models.Model):
             # PO Cancelled, It is time to regain commitment
             if vals['state'] == 'cancel':
                 BudgetTrans.do_backward(self._name, purchases, 'order_line')
+            # PO Draft, reset both return and regain
+            if vals['state'] == 'draft':
+                BudgetTrans.undo_forward(self._name, purchases, 'order_line')
+                BudgetTrans.undo_backward(self._name, purchases, 'order_line')
         return super(PurchaseOrder, self).write(vals)
 
 

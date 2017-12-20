@@ -72,6 +72,8 @@
                 <form string="Loan Installment">
                     <header>
                         <button name="action_move_create" string="Convert to Loan" states="draft" type="object" class="oe_highlight"/>
+                        <button name="action_force_close" string="Force Close" states="open" type="object"
+                          confirm="This operation can not be undone. Are you sure to continue?"/>
                         <button name="action_cancel" string="Cancel" type="object" states="draft,open"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,open,paid"/>
                     </header>
@@ -84,8 +86,10 @@
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
                             <field name="move_id" invisible="1"/>
-                            <button string="Journal Entries" class="oe_inline oe_stat_button" type="object" icon="fa-file-text" name="open_account_move" attrs="{'invisible': [('move_id', '=', False)]}"/>
-                            <button string="Payments" class="oe_inline oe_stat_button" name="action_open_payments" type="object" icon="fa-file-text" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                            <field name="force_close_move_id" invisible="1"/>
+                            <button string="Journal Entries" class="oe_inline oe_stat_button" type="object" icon="fa-file-text-o" name="open_account_move" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                            <button string="Payments" class="oe_inline oe_stat_button" name="action_open_payments" type="object" icon="fa-file-text-o" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                            <button string="Forced Closed" class="oe_inline oe_stat_button" name="open_force_close_move" type="object" icon="fa-file-text" attrs="{'invisible': [('force_close_move_id', '=', False)]}"/>
                         </div>
                         <group>
                             <group>
@@ -94,6 +98,7 @@
                                 <field name="account_id"/>
                                 <field name="defer_income_account_id"/>
                                 <field name="income_account_id"/>
+                                <field name="force_close_account_id"/>
                                 <field name="taxbranch_id"/>
                                 <field name="taxbranch_ids" invisible="1"/>
                                 <field name="len_taxbranch" invisible="1"/>
@@ -182,10 +187,11 @@
                                         <field name="income" sum="Total Income"/>
                                         <field name="amount" sum="Total Amount"/>
                                         <field name="move_line_id" invisible="1"/>
-                                        <field name="ref_voucher"/>
                                         <field name="reconcile_id" widget="many2onebutton" string="Paid"/>
-                                        <field name="calc_principal"/>
-                                        <field name="remain_principal"/>
+                                        <field name="ref_voucher"/>
+                                        <field name="extra_amount" sum="Total Extra Amount"/>
+                                        <field name="calc_principal" sum="Total Calc Principal"/>
+                                        <field name="remain_principal" sum="Total Remain Principal"/>
                                     </tree>
                                 </field>
                             </page>
