@@ -173,6 +173,12 @@
                               <field name="loan_defer_income_account_id" class="oe_inline"/>
                             </div>
                         </div>
+                        <label for="id" string="Force Close Account"/>
+                        <div>
+                            <div>
+                              <field name="loan_force_close_account_id" class="oe_inline"/>
+                            </div>
+                        </div>
                         <label for="id" string="Loan Income AG/A"/>
                         <div>
                             <div>

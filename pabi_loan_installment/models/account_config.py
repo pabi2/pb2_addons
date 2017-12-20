@@ -30,6 +30,11 @@ class AccountConfigSettings(models.TransientModel):
         string='Income Account',
         related="company_id.loan_income_account_id",
     )
+    loan_force_close_account_id = fields.Many2one(
+        'account.account',
+        string='Force Close Account',
+        related="company_id.loan_force_close_account_id",
+    )
 
     @api.onchange('loan_income_activity_id')
     def _onchange_loan_income_activity_id(self):
