@@ -371,7 +371,8 @@ class sale_order_line(models.Model):
     @api.model
     def _prepare_order_line_invoice_line(self, line, account_id=False):
         # Call super
-        res = super(sale_order_line, self).\
+        res = super(sale_order_line,
+                    self.with_context(force_ignore_line_percent=True)).\
             _prepare_order_line_invoice_line(line, account_id)
         # For invoice plan
         invoice_plan_percent = self._context.get('invoice_plan_percent', False)
