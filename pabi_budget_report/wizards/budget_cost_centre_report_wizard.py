@@ -3,6 +3,9 @@ from openerp import models, fields, api, _
 from openerp.exceptions import except_orm
 
 
+class BudgetCostCentreReportWizardX2(models.Model):
+    _name = 'wizard.budget.report.by.cost.centre'
+    
 class BudgetCostCentreReportWizardX(models.Model):
     _name = 'budget.report.by.cost.centre.wizard'
 
