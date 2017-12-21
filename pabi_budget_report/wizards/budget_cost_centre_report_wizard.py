@@ -3,8 +3,8 @@ from openerp import models, fields, api, _
 from openerp.exceptions import except_orm
 
 
-class BudgetReportByCostCentreWizard(models.Model):
-    _name = 'budget.report.by.cost.centre.wizard'
+class BudgetCostCentreReportWizard(models.Model):
+    _name = 'budget.cost.centre.report.wizard'
 
     period_id = fields.Many2one(
         'account.period',
@@ -27,7 +27,7 @@ class BudgetReportByCostCentreWizard(models.Model):
         if self._context.copy().get('xls_export', False):
             return {
                 'type': 'ir.actions.report.xml',
-                'report_name': 'budget_report_by_cost_centre_xls',
+                'report_name': 'budget_cost_centre_report_xls',
                 'datas': data,
             }
         raise except_orm(_('Error !'), ('The report has not yet.'))

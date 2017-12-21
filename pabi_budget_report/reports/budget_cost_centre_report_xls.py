@@ -30,10 +30,10 @@ COLUMN_SIZES = [
 ]
 
 
-class BudgetReportByCostCentreXLSParser(report_sxw.rml_parse):
+class BudgetCostCentreReportXLSParser(report_sxw.rml_parse):
 
     def __init__(self, cr, uid, name, context):
-        super(BudgetReportByCostCentreXLSParser, self).__init__(
+        super(BudgetCostCentreReportXLSParser, self).__init__(
             cr, uid, name, context=context)
         self.localcontext.update({
             'report_name': _('Budgeting Report by Cost Centre'),
@@ -43,7 +43,7 @@ class BudgetReportByCostCentreXLSParser(report_sxw.rml_parse):
         # Declare Valiable
         cr, uid = self.cr, self.uid
 
-        # Get Date
+        # Get Data
         form = data.get('form', {})
         period_id = form.get('period_id', False)
         costcenter_id = form.get('costcenter_id', False)
@@ -57,7 +57,7 @@ class BudgetReportByCostCentreXLSParser(report_sxw.rml_parse):
         costcenter = CostCenter.browse(cr, uid, costcenter_id)
 
         # Browse Report
-        Report = self.pool.get('budget.report.by.cost.centre')
+        Report = self.pool.get('budget.cost.centre.report')
         report_ids = Report.search(
             cr, uid, [('date_stop', '<=', period.date_stop),
                       ('costcenter_id', '=', costcenter_id)])
@@ -70,11 +70,11 @@ class BudgetReportByCostCentreXLSParser(report_sxw.rml_parse):
             'report': report,
         })
 
-        return super(BudgetReportByCostCentreXLSParser, self).set_context(
-            objects, data, report.ids, report_type=report_type)
+        return super(BudgetCostCentreReportXLSParser, self).set_context(
+            objects, data, report_ids, report_type=report_type)
 
 
-class BudgetReportByCostCentreXLS(report_xls):
+class BudgetCostCentreReportXLS(report_xls):
     column_sizes = [x[1] for x in COLUMN_SIZES]
 
     def generate_xls_report(self, _p, _xs, data, objects, wb):
@@ -147,25 +147,25 @@ class BudgetReportByCostCentreXLS(report_xls):
         row_pos = self.xls_write_row(ws, row_pos, row_data)
 
         # Column Detail
-        row_pos_total_list = []
+        row_pos_subtotal_list = []
         cell_format = _xs['right'] + _xs['borders_all']
+        cell_style = xlwt.easyxf(_xs['borders_all'])
         cell_style_decimal = xlwt.easyxf(
             cell_format, num_format_str=report_xls.decimal_format)
         cell_style_percent = xlwt.easyxf(cell_format, num_format_str='0.00%')
-        cell_style_total_title = xlwt.easyxf(
-            cell_format + _xs['bold'] + _xs['fill'])
-        cell_style_total_decimal = xlwt.easyxf(
-            cell_format + _xs['bold'],
-            num_format_str=report_xls.decimal_format)
-        cell_style_total_percent = xlwt.easyxf(
-            cell_format + _xs['bold'], num_format_str='0.00%')
+        cell_format = _xs['right'] + _xs['borders_all'] + _xs['bold']
+        cell_style_subtotal = xlwt.easyxf(cell_format + _xs['fill'])
+        cell_style_subtotal_decimal = xlwt.easyxf(
+            cell_format, num_format_str=report_xls.decimal_format)
+        cell_style_subtotal_percent = xlwt.easyxf(
+            cell_format, num_format_str='0.00%')
         for sequence in range(1, 6):
             row_start = row_pos
             report = _p.report.filtered(lambda l: l.sequence == sequence)
             for line in report.mapped('budget_id'):
-                budget_report = report.search(
-                    [('budget_id', '=',
-                        '%s,%s' % (line._table.replace('_', '.'), line.id))])
+                budget_report = report.filtered(
+                    lambda l: l.budget_id._table == line._table and
+                    l.budget_id.id == line.id)
                 chart_view = CHART_VIEW.get(line._table, False)
                 total_commitment_start = rowcol_to_cell(row_pos, 5)
                 total_commitment_end = rowcol_to_cell(row_pos, 7)
@@ -184,9 +184,10 @@ class BudgetReportByCostCentreXLS(report_xls):
                     rowcol_to_cell(row_pos, 10) + '/' + \
                     rowcol_to_cell(row_pos, 4)
                 c_specs = [
-                    ('budget_structure', 1, 0, 'text', chart_view),
-                    ('budget_code', 1, 0, 'text', line.code),
-                    ('budget_name', 1, 0, 'text', line.name),
+                    ('budget_structure', 1, 0, 'text', chart_view, None,
+                        cell_style),
+                    ('budget_code', 1, 0, 'text', line.code, None, cell_style),
+                    ('budget_name', 1, 0, 'text', line.name, None, cell_style),
                     ('budget_control', 1, 0, 'number',
                         sum(budget_report.mapped('planned_amount')), None,
                         cell_style_decimal),
@@ -264,60 +265,65 @@ class BudgetReportByCostCentreXLS(report_xls):
                     rowcol_to_cell(row_pos, 10) + '/' + \
                     rowcol_to_cell(row_pos, 4)
                 c_specs = [
-                    ('budget_structure', 1, 0, 'text', ''),
-                    ('budget_code', 1, 0, 'text', ''),
+                    ('budget_structure', 1, 0, 'text', None),
+                    ('budget_code', 1, 0, 'text', None),
                     ('budget_name', 1, 0, 'text', _('Total ') + chart_view,
-                        None, cell_style_total_title),
+                        None, cell_style_subtotal),
                     ('budget_control', 1, 0, 'number', None,
-                        budget_control_formula, cell_style_total_decimal),
+                        budget_control_formula, cell_style_subtotal_decimal),
                     ('budget_release', 1, 0, 'number', None,
-                        budget_release_formula, cell_style_total_decimal),
+                        budget_release_formula, cell_style_subtotal_decimal),
                     ('expense_commitment', 1, 0, 'number', None,
-                        expense_commitment_formula, cell_style_total_decimal),
+                        expense_commitment_formula,
+                        cell_style_subtotal_decimal),
                     ('pr_commitment', 1, 0, 'number', None,
-                        pr_commitment_formula, cell_style_total_decimal),
+                        pr_commitment_formula, cell_style_subtotal_decimal),
                     ('po_commitment', 1, 0, 'number', None,
-                        po_commitment_formula, cell_style_total_decimal),
+                        po_commitment_formula, cell_style_subtotal_decimal),
                     ('total_commitment', 1, 0, 'number', None,
-                        total_commitment_formula, cell_style_total_decimal),
+                        total_commitment_formula, cell_style_subtotal_decimal),
                     ('actual', 1, 0, 'number', None, actual_formula,
-                        cell_style_total_decimal),
+                        cell_style_subtotal_decimal),
                     ('consumed_budget', 1, 0, 'number', None,
-                        consumed_budget_formula, cell_style_total_decimal),
+                        consumed_budget_formula, cell_style_subtotal_decimal),
                     ('residual_budget', 1, 0, 'number', None,
-                        residual_budget_formula, cell_style_total_decimal),
+                        residual_budget_formula, cell_style_subtotal_decimal),
                     ('percent_consumed_budget', 1, 0, 'number', None,
                         percent_consumed_budget_formula,
-                        cell_style_total_percent)
+                        cell_style_subtotal_percent)
                 ]
                 row_data = self.xls_row_template(
                     c_specs, [x[0] for x in c_specs])
                 row_pos = self.xls_write_row(ws, row_pos, row_data)
-                row_pos_total_list.append(row_pos)
+                row_pos_subtotal_list.append(row_pos)
 
         # Column Footer
-        cell_style_total_title = xlwt.easyxf(
-            _xs['bold'] + _xs['borders_all'] + _xs['fill'])
+        cell_format = _xs['bold'] + _xs['borders_all'] + _xs['fill']
+        cell_style_total = xlwt.easyxf(cell_format)
         cell_style_total_decimal = xlwt.easyxf(
-            cell_format + _xs['bold'] + _xs['fill'],
+            cell_format + _xs['right'],
             num_format_str=report_xls.decimal_format)
         cell_style_total_percent = xlwt.easyxf(
-            cell_format + _xs['bold'] + _xs['fill'], num_format_str='0.00%')
+            cell_format + _xs['right'], num_format_str='0.00%')
         budget_control_formula_list = []
         budget_release_formula_list = []
         expense_commitment_formula_list = []
         pr_commitment_formula_list = []
         po_commitment_formula_list = []
         actual_formula_list = []
-        for row_pos in row_pos_total_list:
-            budget_control_formula_list.append(rowcol_to_cell(row_pos - 1, 3))
-            budget_release_formula_list.append(rowcol_to_cell(row_pos - 1, 4))
+        for row_pos_subtotal in row_pos_subtotal_list:
+            budget_control_formula_list.append(
+                rowcol_to_cell(row_pos_subtotal - 1, 3))
+            budget_release_formula_list.append(
+                rowcol_to_cell(row_pos_subtotal - 1, 4))
             expense_commitment_formula_list.append(
-                rowcol_to_cell(row_pos - 1, 5))
-            pr_commitment_formula_list.append(rowcol_to_cell(row_pos - 1, 6))
-            po_commitment_formula_list.append(rowcol_to_cell(row_pos - 1, 7))
-            actual_formula_list.append(rowcol_to_cell(row_pos - 1, 9))
-        if row_pos_total_list:
+                rowcol_to_cell(row_pos_subtotal - 1, 5))
+            pr_commitment_formula_list.append(
+                rowcol_to_cell(row_pos_subtotal - 1, 6))
+            po_commitment_formula_list.append(
+                rowcol_to_cell(row_pos_subtotal - 1, 7))
+            actual_formula_list.append(rowcol_to_cell(row_pos_subtotal - 1, 9))
+        if row_pos_subtotal_list:
             budget_control_formula = '+'.join(budget_control_formula_list)
             budget_release_formula = '+'.join(budget_release_formula_list)
             expense_commitment_formula = \
@@ -346,9 +352,9 @@ class BudgetReportByCostCentreXLS(report_xls):
             rowcol_to_cell(row_pos, 10) + '/' + rowcol_to_cell(row_pos, 4)
         c_specs = [
             ('budget_structure', 1, 0, 'text', _('Grand Total'), None,
-                cell_style_total_title),
-            ('budget_code', 1, 0, 'text', '', None, cell_style_total_title),
-            ('budget_name', 1, 0, 'text', '', None, cell_style_total_title),
+                cell_style_total),
+            ('budget_code', 1, 0, 'text', None, None, cell_style_total),
+            ('budget_name', 1, 0, 'text', None, None, cell_style_total),
             ('budget_control', 1, 0, 'number', None, budget_control_formula,
                 cell_style_total_decimal),
             ('budget_release', 1, 0, 'number', None, budget_release_formula,
@@ -374,7 +380,7 @@ class BudgetReportByCostCentreXLS(report_xls):
         row_pos = self.xls_write_row(ws, row_pos, row_data)
 
 
-BudgetReportByCostCentreXLS(
-    'report.budget_report_by_cost_centre_xls',
+BudgetCostCentreReportXLS(
+    'report.budget_cost_centre_report_xls',
     'budget.monitor.report',
-    parser=BudgetReportByCostCentreXLSParser)
+    parser=BudgetCostCentreReportXLSParser)
