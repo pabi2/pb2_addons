@@ -11,6 +11,11 @@ class BudgetTransition(models.Model):
     id = fields.Integer(
         string='ID',
     )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+        readonly=True,
+    )
     expense_line_id = fields.Many2one(
         'hr.expense.line',
         string='Expense Line',
@@ -100,6 +105,14 @@ class BudgetTransition(models.Model):
         default=False,
         help="True, when the end document is cancelled, "
         "if it has been forwarded, do regain budget commitment."
+    )
+    source_model = fields.Selection(
+        [('purchase.request.line', 'Purchase Request Line'),
+         ('purchase.order.line', 'Purchase Order Line'),
+         ('sale.order.line', 'Sales Order Line'),
+         ('hr.expense.line', 'Expense Line'), ],
+        string='Source Model',
+        readonly=True,
     )
     source = fields.Char(
         string='Source',
@@ -221,21 +234,21 @@ class BudgetTransition(models.Model):
                           'stock.move': ['purchase_line_id',
                                          'sale_line_id'],
                           }
-        model = self._context.get('trigger', False)
-        if model not in trigger_models:
-            raise ValidationError(_('Wrong budget transition trigger!'))
 
-        to_sources = trigger_models[model]  # source document to return/regain
-        if 'forward' in vals:
-            if vals.get('forward', False):
-                self.return_budget_commitment(to_sources)
-            else:
-                self.regain_budget_commitment(to_sources)
-        if 'backward' in vals:
-            if vals.get('backward', False):
-                self.regain_budget_commitment(to_sources)
-            else:
-                self.return_budget_commitment(to_sources)
+        if self._context.get('trigger', False):
+            model = self._context.get('trigger', False)
+            if model not in trigger_models:
+                raise ValidationError(_('Wrong budget transition trigger!'))
+            if 'forward' in vals:
+                if vals.get('forward', False):
+                    self.return_budget_commitment(trigger_models[model])
+                else:
+                    self.regain_budget_commitment(trigger_models[model])
+            if 'backward' in vals:
+                if vals.get('backward', False):
+                    self.regain_budget_commitment(trigger_models[model])
+                else:
+                    self.return_budget_commitment(trigger_models[model])
 
         return super(BudgetTransition, self).write(vals)
 
@@ -263,7 +276,7 @@ class BudgetTransition(models.Model):
             trans_target_field, target_field_type='quantity', reverse=False):
         trans_ids = []
         # If trans already exist (same source id and target id), skip it.
-        existing_trans = source_line.budget_transition_ids
+        existing_trans = source_line.budget_transition_ids.filtered('active')
         # Prepare existing trans dictionary. We use it to skip.
         existing_dicts = []
         for existing_tran in existing_trans:
@@ -286,6 +299,8 @@ class BudgetTransition(models.Model):
                 number = target_line[target_field]
                 # Quantity or Amount
                 trans_dict[target_field_type] = reverse and -number or number
+                # Source Model
+                trans_dict['source_model'] = source_line._name
                 trans = self.create(trans_dict)
                 trans_ids.append(trans.id)
         return trans_ids

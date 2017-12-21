@@ -17,6 +17,8 @@ class HRExpenseExpense(models.Model):
         'budget.transition',
         'expense_id',
         string='Budget Transition',
+        domain=[('source_model', '=', 'hr.expense.line'),
+                '|', ('active', '=', True), ('active', '=', False)],
         readonly=True,
     )
 
@@ -24,6 +26,8 @@ class HRExpenseExpense(models.Model):
     def release_all_committed_budget(self):
         for rec in self:
             rec.line_ids.release_committed_budget()
+            rec.budget_transition_ids.filtered('active').\
+                write({'active': False})
 
     @api.multi
     def recreate_all_budget_commitment(self):
@@ -31,9 +35,11 @@ class HRExpenseExpense(models.Model):
         for rec in self:
             rec.budget_commit_ids.unlink()
             rec.line_ids._create_analytic_line(reverse=True)
-            rec.budget_transition_ids.filtered('forward').\
+            rec.budget_transition_ids.\
+                filtered('active').filtered('forward').\
                 return_budget_commitment(['expense_line_id'])
-            rec.budget_transition_ids.filtered('backward').\
+            rec.budget_transition_ids.\
+                filtered('active').filtered('backward').\
                 regain_budget_commitment(['expense_line_id'])
 
     @api.model
@@ -79,6 +85,8 @@ class HRExpenseLine(ActivityCommon, models.Model):
         'budget.transition',
         'expense_line_id',
         string='Budget Transition',
+        domain=[('source_model', '=', 'hr.expense.line'),
+                '|', ('active', '=', True), ('active', '=', False)],
         readonly=True,
     )
 

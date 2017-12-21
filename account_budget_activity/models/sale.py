@@ -17,6 +17,8 @@ class SaleOrder(models.Model):
         'budget.transition',
         'sale_id',
         string='Budget Transition',
+        domain=[('source_model', '=', 'sale.order.line'),
+                '|', ('active', '=', True), ('active', '=', False)],
         readonly=True,
     )
 
@@ -24,6 +26,8 @@ class SaleOrder(models.Model):
     def release_all_committed_budget(self):
         for rec in self:
             rec.order_line.release_committed_budget()
+            rec.budget_transition_ids.filtered('active').\
+                write({'active': False})
 
     @api.multi
     def action_wait(self):
@@ -66,6 +70,8 @@ class SaleOrderLine(ActivityCommon, models.Model):
         'budget.transition',
         'sale_line_id',
         string='Budget Transition',
+        domain=[('source_model', '=', 'sale.order.line'),
+                '|', ('active', '=', True), ('active', '=', False)],
         readonly=True,
     )
 
