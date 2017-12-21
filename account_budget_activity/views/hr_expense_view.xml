@@ -36,6 +36,7 @@
 								<field name="forward"/>
 								<field name="backward"/>
 								<field name="amount" sum="Total Amount"/>
+								<field name="active"/>
 							</tree>
 						</field>
 					</page>

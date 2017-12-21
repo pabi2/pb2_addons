@@ -26,7 +26,7 @@
                             </tree>
                         </field>
                         <separator string="Budget Transition"/>
-                        <field name="budget_transition_ids">
+            						<field name="budget_transition_ids">
                             <tree default_order='id'>
                                 <field name="id"/>
                                 <field name="source"/>
@@ -35,6 +35,7 @@
                                 <field name="backward"/>
                                 <field name="quantity" sum="Total Quantity"/>
                                 <field name="amount" sum="Total Amount"/>
+                                <field name="active"/>
                             </tree>
                         </field>
                     </page>

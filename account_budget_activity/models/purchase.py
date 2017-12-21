@@ -17,6 +17,8 @@ class PurchaseOrder(models.Model):
         'budget.transition',
         'purchase_id',
         string='Budget Transition',
+        domain=[('source_model', '=', 'purchase.order.line'),
+                '|', ('active', '=', True), ('active', '=', False)],
         readonly=True,
     )
 
@@ -24,6 +26,8 @@ class PurchaseOrder(models.Model):
     def release_all_committed_budget(self):
         for rec in self:
             rec.order_line.release_committed_budget()
+            rec.budget_transition_ids.filtered('active').\
+                write({'active': False})
 
     @api.multi
     def recreate_all_budget_commitment(self):
@@ -31,9 +35,11 @@ class PurchaseOrder(models.Model):
         for rec in self:
             rec.budget_commit_ids.unlink()
             rec.order_line._create_analytic_line(reverse=True)
-            rec.budget_transition_ids.filtered('forward').\
+            rec.budget_transition_ids.\
+                filtered('active').filtered('forward').\
                 return_budget_commitment(['purchase_line_id'])
-            rec.budget_transition_ids.filtered('backward').\
+            rec.budget_transition_ids.\
+                filtered('active').filtered('backward').\
                 regain_budget_commitment(['purchase_line_id'])
 
     @api.multi
@@ -97,6 +103,8 @@ class PurchaseOrderLine(ActivityCommon, models.Model):
         'budget.transition',
         'purchase_line_id',
         string='Budget Transition',
+        domain=[('source_model', '=', 'purchase.order.line'),
+                '|', ('active', '=', True), ('active', '=', False)],
         readonly=True,
     )
 
