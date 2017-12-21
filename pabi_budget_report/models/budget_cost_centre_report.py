@@ -2,8 +2,8 @@
 from openerp import models, fields, tools
 
 
-class BudgetReportByCostCentre(models.Model):
-    _name = 'budget.report.by.cost.centre'
+class BudgetCostCentreReport(models.Model):
+    _name = 'budget.cost.centre.report'
     _auto = False
 
     id = fields.Integer(
@@ -73,7 +73,7 @@ class BudgetReportByCostCentre(models.Model):
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE or REPLACE VIEW budget_report_by_cost_centre as (
+        cr.execute("""CREATE or REPLACE VIEW budget_cost_centre_report as (
             select row_number() over (order by bmr.fiscalyear_id,
                                                ap.date_stop,
                                                bmr.costcenter_id,

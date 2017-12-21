@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="wizard_budget_report_by_cost_centre" model="ir.ui.view">
-            <field name="name">wizard.budget.report.by.cost.centre</field>
-            <field name="model">budget.report.by.cost.centre.wizard</field>
+        <record id="wizard_budget_cost_centre_report" model="ir.ui.view">
+            <field name="name">wizard.budget.cost.centre.report</field>
+            <field name="model">budget.cost.centre.report.wizard</field>
             <field name="arch" type="xml">
                 <form string="Budget Report By Cost Centre">
                     <group>
@@ -23,20 +23,20 @@
             </field>
         </record>
 
-        <record id="action_budget_report_by_cost_centre" model="ir.actions.act_window">
+        <record id="action_budget_cost_centre_report" model="ir.actions.act_window">
             <field name="name">Budget Report By Cost Centre</field>
-            <field name="res_model">budget.report.by.cost.centre.wizard</field>
+            <field name="res_model">budget.cost.centre.report.wizard</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
         <menuitem
-            id="menu_budget_report_by_cost_centre"
+            id="menu_budget_cost_centre_report"
             name="Budget Report By Cost Centre"
             parent="menu_budget_report"
-            action="action_budget_report_by_cost_centre"
-            sequence="10"
+            action="action_budget_cost_centre_report"
+            sequence="20"
             icon="STOCK_PRINT"
             />
     </data>

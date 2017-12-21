@@ -64,7 +64,7 @@ class BudgetSummaryReportXLSParser(report_sxw.rml_parse):
         })
 
         return super(BudgetSummaryReportXLSParser, self).set_context(
-            objects, data, report.ids, report_type=report_type)
+            objects, data, report_ids, report_type=report_type)
 
 
 class BudgetSummaryReportXLS(report_xls):
@@ -191,6 +191,14 @@ class BudgetSummaryReportXLS(report_xls):
             row_pos = self.xls_write_row(ws, row_pos, row_data)
 
         # Column Footer
+        cell_format = _xs['fill'] + _xs['borders_all'] + _xs['bold']
+        cell_style_right = xlwt.easyxf(cell_format + _xs['right'])
+        cell_style_center = xlwt.easyxf(cell_format + _xs['center'])
+        cell_style_decimal = xlwt.easyxf(
+            cell_format + _xs['right'],
+            num_format_str=report_xls.decimal_format)
+        cell_style_percent = xlwt.easyxf(
+            cell_format + _xs['right'], num_format_str='0.00%')
         plan_start = rowcol_to_cell(row_start, 1)
         plan_end = rowcol_to_cell(row_pos - 1, 1)
         plan_formula = 'SUM(' + plan_start + ':' + plan_end + ')'
@@ -219,15 +227,14 @@ class BudgetSummaryReportXLS(report_xls):
         balance_start = rowcol_to_cell(row_start, 8)
         balance_end = rowcol_to_cell(row_pos - 1, 8)
         balance_formula = 'SUM(' + balance_start + ':' + balance_end + ')'
+        actual_percent_formula = \
+            rowcol_to_cell(row_pos, 7) + '/' + rowcol_to_cell(row_pos, 2)
+        commit_percent_formula = \
+            rowcol_to_cell(row_pos, 11) + '/' + rowcol_to_cell(row_pos, 2)
         commit_total_start = rowcol_to_cell(row_start, 11)
         commit_total_end = rowcol_to_cell(row_pos - 1, 11)
         commit_total_formula = \
             'SUM(' + commit_total_start + ':' + commit_total_end + ')'
-        cell_format = _xs['fill'] + _xs['borders_all'] + _xs['bold']
-        cell_style_right = xlwt.easyxf(cell_format + _xs['right'])
-        cell_style_center = xlwt.easyxf(cell_format + _xs['center'])
-        cell_style_decimal = xlwt.easyxf(
-            cell_format, num_format_str=report_xls.decimal_format)
         c_specs = [
             ('budget_structure', 1, 0, 'text', _('Total'), None,
                 cell_style_center),
@@ -247,10 +254,10 @@ class BudgetSummaryReportXLS(report_xls):
                 cell_style_decimal),
             ('residual_budget', 1, 0, 'number', None, balance_formula,
                 cell_style_decimal),
-            ('percent_actual', 1, 0, 'text', _('100.00%'), None,
-                cell_style_right),
-            ('percent_commitment', 1, 0, 'text', _('100.00%'), None,
-                cell_style_right),
+            ('percent_actual', 1, 0, 'number', None, actual_percent_formula,
+                cell_style_percent),
+            ('percent_commitment', 1, 0, 'number', None,
+                commit_percent_formula, cell_style_percent),
             ('total_commitment', 1, 0, 'number', None, commit_total_formula,
                 cell_style_decimal)
         ]
@@ -264,6 +271,7 @@ class BudgetSummaryReportXLS(report_xls):
 
         # Footer
         cell_format = _xs['borders_all'] + _xs['right']
+        cell_style = xlwt.easyxf(_xs['borders_all'])
         cell_style_decimal = xlwt.easyxf(
             cell_format, num_format_str=report_xls.decimal_format)
         cell_style_percent = xlwt.easyxf(cell_format, num_format_str='0.00%')
@@ -272,16 +280,17 @@ class BudgetSummaryReportXLS(report_xls):
             rowcol_to_cell(row_pos + 2, 1)
         budget_policy_formula = rowcol_to_cell(row_pos - 2, 2)
         c_specs = [
-            ('actual_title', 1, 0, 'text', _('Actual')),
+            ('actual_title', 1, 0, 'text', _('Actual'), None, cell_style),
             ('actual_value', 1, 0, 'number', None, actual_formula,
                 cell_style_decimal),
             ('actual_percent', 1, 0, 'number', None, actual_percent_formula,
                 cell_style_percent),
-            ('space_1', 1, 0, 'text', ''),
-            ('space_2', 1, 0, 'text', ''),
-            ('space_3', 1, 0, 'text', ''),
-            ('space_4', 1, 0, 'text', ''),
-            ('budget_policy_title', 1, 0, 'text', _('Budget Policy')),
+            ('space_1', 1, 0, 'text', None),
+            ('space_2', 1, 0, 'text', None),
+            ('space_3', 1, 0, 'text', None),
+            ('space_4', 1, 0, 'text', None),
+            ('budget_policy_title', 1, 0, 'text', _('Budget Policy'), None,
+                cell_style),
             ('budget_policy_value', 1, 0, 'number', None,
                 budget_policy_formula, cell_style_decimal),
             ('budget_policy_percent', 1, 0, 'number', 1, None,
@@ -296,16 +305,17 @@ class BudgetSummaryReportXLS(report_xls):
         actual_percent_formula = \
             rowcol_to_cell(row_pos, 8) + '/' + rowcol_to_cell(row_pos - 1, 8)
         c_specs = [
-            ('total_commitment_title', 1, 0, 'text', _('Total Commitment')),
+            ('total_commitment_title', 1, 0, 'text', _('Total Commitment'),
+                None, cell_style),
             ('total_commitment_value', 1, 0, 'number', None,
                 total_commitment_formula, cell_style_decimal),
             ('total_commitment_percent', 1, 0, 'text', None,
                 total_commitment_percent_formula, cell_style_percent),
-            ('space_1', 1, 0, 'text', ''),
-            ('space_2', 1, 0, 'text', ''),
-            ('space_3', 1, 0, 'text', ''),
-            ('space_4', 1, 0, 'text', ''),
-            ('actual_title', 1, 0, 'text', _('Actual')),
+            ('space_1', 1, 0, 'text', None),
+            ('space_2', 1, 0, 'text', None),
+            ('space_3', 1, 0, 'text', None),
+            ('space_4', 1, 0, 'text', None),
+            ('actual_title', 1, 0, 'text', _('Actual'), None, cell_style),
             ('actual_value', 1, 0, 'text', None, actual_formula,
                 cell_style_decimal),
             ('actual_percent', 1, 0, 'text', None, actual_percent_formula,
@@ -323,17 +333,17 @@ class BudgetSummaryReportXLS(report_xls):
             rowcol_to_cell(row_pos, 8) + '/' + rowcol_to_cell(row_pos - 2, 8)
         c_specs = [
             ('total_actual_commitment_title_1', 1, 0, 'text',
-                _('Total Actual + Commitment')),
+                _('Total Actual + Commitment'), None, cell_style),
             ('total_actual_commitment_value_1', 1, 0, 'number', None,
                 total_actual_commitment_formula_1, cell_style_decimal),
             ('total_actual_commitment_percent_1', 1, 0, 'number', None,
                 total_actual_commitment_percent_formula_1, cell_style_percent),
-            ('space_1', 1, 0, 'text', ''),
-            ('space_2', 1, 0, 'text', ''),
-            ('space_3', 1, 0, 'text', ''),
-            ('space_4', 1, 0, 'text', ''),
+            ('space_1', 1, 0, 'text', None),
+            ('space_2', 1, 0, 'text', None),
+            ('space_3', 1, 0, 'text', None),
+            ('space_4', 1, 0, 'text', None),
             ('total_actual_commitment_title_2', 1, 0, 'text',
-                _('Total Actual + Commitment')),
+                _('Total Actual + Commitment'), None, cell_style),
             ('total_actual_commitment_value_2', 1, 0, 'number', None,
                 total_actual_commitment_formula_2, cell_style_decimal),
             ('total_actual_commitment_percent_2', 1, 0, 'number', None,
@@ -347,15 +357,15 @@ class BudgetSummaryReportXLS(report_xls):
         budget_balance_percent_formula = \
             rowcol_to_cell(row_pos, 8) + '/' + rowcol_to_cell(row_pos - 3, 8)
         c_specs = [
-            ('space_1', 1, 0, 'text', ''),
-            ('space_2', 1, 0, 'text', ''),
-            ('space_3', 1, 0, 'text', ''),
-            ('space_4', 1, 0, 'text', ''),
-            ('space_5', 1, 0, 'text', ''),
-            ('space_6', 1, 0, 'text', ''),
-            ('space_7', 1, 0, 'text', ''),
+            ('space_1', 1, 0, 'text', None),
+            ('space_2', 1, 0, 'text', None),
+            ('space_3', 1, 0, 'text', None),
+            ('space_4', 1, 0, 'text', None),
+            ('space_5', 1, 0, 'text', None),
+            ('space_6', 1, 0, 'text', None),
+            ('space_7', 1, 0, 'text', None),
             ('budget_balance_title', 1, 0, 'text',
-                _('Budget Balance (Policy)')),
+                _('Budget Balance (Policy)'), None, cell_style),
             ('budget_balance_value', 1, 0, 'number', None,
                 budget_balance_formula, cell_style_decimal),
             ('budget_balance_percent', 1, 0, 'number', None,
