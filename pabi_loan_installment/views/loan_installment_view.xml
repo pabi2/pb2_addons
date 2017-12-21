@@ -191,7 +191,7 @@
                                         <field name="ref_voucher"/>
                                         <field name="extra_amount" sum="Total Extra Amount"/>
                                         <field name="calc_principal" sum="Total Calc Principal"/>
-                                        <field name="remain_principal" sum="Total Remain Principal"/>
+                                        <field name="remain_principal"/>
                                     </tree>
                                 </field>
                             </page>

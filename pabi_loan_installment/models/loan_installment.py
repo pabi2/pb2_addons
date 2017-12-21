@@ -776,6 +776,7 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
 class LoanInstallmentPlan(models.Model):
     _name = 'loan.installment.plan'
     _rec_name = 'installment'
+    _order = 'installment'
 
     loan_install_id = fields.Many2one(
         'loan.installment',
@@ -856,32 +857,34 @@ class LoanInstallmentPlan(models.Model):
     @api.multi
     def _compute_calc_principal(self):
         """ Principal is specially calcululated from supplier payment's JE """
-        accum_principal = 0.0
-        for rec in self:
-            initial_principal = rec.loan_install_id.amount_receivable
-            install_account = rec.loan_install_id.account_id
-            income_account = rec.loan_install_id.income_account_id
-            moves = rec.ref_voucher_ids.mapped('move_id')
-            if moves:
-                move_lines = moves.mapped('line_id')
-                # Real paid amount
-                paid_amounts = move_lines.filtered(
-                    lambda l:
-                    l.journal_id.default_debit_account_id == l.account_id
-                ).mapped(lambda l: l.debit - l.credit)
-                # Real income amount
-                income_amounts = move_lines.filtered(
-                    lambda l: l.account_id == income_account).\
-                    mapped(lambda l: l.debit - l.credit)
-                rec.calc_principal = sum(paid_amounts) + sum(income_amounts)
-                accum_principal += rec.calc_principal
-                rec.remain_principal = initial_principal - accum_principal
-                # Extra installment amount
-                extra_amounts = move_lines.filtered(
-                    lambda l: l.account_id == install_account and
-                    l.analytic_account_id  # Signify it created from payment
-                ).mapped(lambda l: l.debit - l.credit)
-                rec.extra_amount = sum(extra_amounts)
+        loans = self.mapped('loan_install_id')
+        for loan in loans:
+            accum_principal = 0.0
+            for rec in self.filtered(lambda l: l.loan_install_id == loan):
+                initial_principal = rec.loan_install_id.amount_receivable
+                install_account = rec.loan_install_id.account_id
+                income_account = rec.loan_install_id.income_account_id
+                moves = rec.ref_voucher_ids.mapped('move_id')
+                if moves:
+                    move_lines = moves.mapped('line_id')
+                    # Real paid amount
+                    paid_amounts = move_lines.filtered(
+                        lambda l:
+                        l.journal_id.default_debit_account_id == l.account_id
+                    ).mapped(lambda l: l.debit - l.credit)
+                    # Real income amount
+                    income_amounts = move_lines.filtered(
+                        lambda l: l.account_id == income_account).\
+                        mapped(lambda l: l.debit - l.credit)
+                    rec.calc_principal = sum(paid_amounts) + sum(income_amounts)
+                    accum_principal += rec.calc_principal
+                    rec.remain_principal = initial_principal - accum_principal
+                    # Extra installment amount
+                    extra_amounts = move_lines.filtered(
+                        lambda l: l.account_id == install_account and
+                        l.analytic_account_id  # Signify it created from payment
+                    ).mapped(lambda l: l.debit - l.credit)
+                    rec.extra_amount = sum(extra_amounts)
 
     @api.multi
     def name_get(self):
