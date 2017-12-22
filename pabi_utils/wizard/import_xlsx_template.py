@@ -105,7 +105,7 @@ class ImportXlsxTemplate(models.TransientModel):
         messages = []
         valid = True
         # For all import, only allow import in draft state (for documents)
-        if 'state' in record and record['state'] != 'draft':
+        if 'state' in record and 'draft' not in record['state']:  # use not in
             messages.append(_('Document must be in draft state!'))
             valid = False
         # Context testing

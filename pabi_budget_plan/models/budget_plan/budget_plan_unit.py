@@ -49,8 +49,8 @@ class BudgetPlanUnit(BPCommon, models.Model):
         string='Budget Plan Lines',
         copy=True,
         readonly=True,
-        states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+        states={'1_draft': [('readonly', False)],
+                '2_submit': [('readonly', False)]},
     )
     plan_revenue_line_ids = fields.One2many(
         'budget.plan.unit.line',
@@ -58,8 +58,8 @@ class BudgetPlanUnit(BPCommon, models.Model):
         string='Revenue Plan Lines',
         copy=True,
         readonly=True,
-        states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+        states={'1_draft': [('readonly', False)],
+                '2_submit': [('readonly', False)]},
         domain=[('budget_method', '=', 'revenue')],  # Have domain
     )
     plan_expense_line_ids = fields.One2many(
@@ -68,8 +68,8 @@ class BudgetPlanUnit(BPCommon, models.Model):
         string='Expense Plan Lines',
         copy=True,
         readonly=True,
-        states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+        states={'1_draft': [('readonly', False)],
+                '2_submit': [('readonly', False)]},
         domain=[('budget_method', '=', 'expense')],  # Have domain
     )
     plan_summary_revenue_line_ids = fields.One2many(
@@ -156,7 +156,8 @@ class BudgetPlanUnit(BPCommon, models.Model):
         plans = self.search([('fiscalyear_id', '=', fiscalyear_id)])
         _ids = plans.mapped('section_id')._ids
         # Find sections
-        sections = self.env['res.section'].search([('id', 'not in', _ids)])
+        sections = self.env['res.section'].search([('id', 'not in', _ids),
+                                                   ('special', '=', False)])
         plan_ids = []
         for section in sections:
             plan = self.create({'fiscalyear_id': fiscalyear_id,
@@ -188,7 +189,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
     def action_verify_to_accept(self):
         if not self.env.user.has_group('pabi_base.group_cooperate_budget'):
             raise ValidationError(_('You are not allowed to accept!'))
-        if self.filtered(lambda l: l.state != 'verify'):
+        if self.filtered(lambda l: l.state != '6_verify'):
             raise ValidationError(_('Only verified plan can be selected!'))
         self.action_accept()
 
@@ -197,7 +198,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
         if not self.env.user.has_group('pabi_base.'
                                        'group_operating_unit_budget'):
             raise ValidationError(_('You are not allowed to verify!'))
-        if self.filtered(lambda l: l.state != 'approve'):
+        if self.filtered(lambda l: l.state != '3_approve'):
             raise ValidationError(_('Only approved plan can be selected!'))
         self.action_verify()
 
@@ -205,7 +206,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
     def action_submit_to_approve(self):
         if not self.env.user.has_group('pabi_base.group_budget_manager'):
             raise ValidationError(_('You are not allowed to approve!'))
-        if self.filtered(lambda l: l.state != 'submit'):
+        if self.filtered(lambda l: l.state != '2_submit'):
             raise ValidationError(_('Only submitted plan can be selected!'))
         self.action_approve()
 
