@@ -67,7 +67,8 @@ class BudgetPlanPersonnel(BPCommon, models.Model):
         _ids = plans.mapped('personnel_costcenter_id')._ids
         # Find Programs
         PersonnelCostcenter = self.env['res.personnel.costcenter']
-        personnels = PersonnelCostcenter.search([('id', 'not in', _ids)])
+        personnels = PersonnelCostcenter.search([('id', 'not in', _ids),
+                                                 ('special', '=', False)])
         plan_ids = []
         for personnel in personnels:
             plan = self.create({'fiscalyear_id': fiscalyear_id,

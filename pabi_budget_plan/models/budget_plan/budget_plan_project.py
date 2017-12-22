@@ -91,7 +91,8 @@ class BudgetPlanProject(BPCommon, models.Model):
         plans = self.search([('fiscalyear_id', '=', fiscalyear_id)])
         _ids = plans.mapped('program_id')._ids
         # Find Programs
-        programs = self.env['res.program'].search([('id', 'not in', _ids)])
+        programs = self.env['res.program'].search([('id', 'not in', _ids),
+                                                   ('special', '=', False)])
         plan_ids = []
         for program in programs:
             plan = self.create({'fiscalyear_id': fiscalyear_id,

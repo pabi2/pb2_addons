@@ -104,7 +104,8 @@ class BudgetPlanInvestAsset(BPCommon, models.Model):
         plans = self.search([('fiscalyear_id', '=', fiscalyear_id)])
         _ids = plans.mapped('org_id')._ids
         # Find Programs
-        orgs = self.env['res.org'].search([('id', 'not in', _ids)])
+        orgs = self.env['res.org'].search([('id', 'not in', _ids),
+                                           ('special', '=', False)])
         plan_ids = []
         for org in orgs:
             # For Invest Asset, convert from Asset Plan if available
