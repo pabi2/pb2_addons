@@ -10,12 +10,14 @@
     'depends': [
         'report_xls',
         'account_budget_activity',
+        'pabi_budget_plan',
     ],
     'data': [
         'security/ir.model.access.csv',
         'wizards/budget_summary_report_wizard.xml',
         'wizards/budget_cost_centre_report_wizard.xml',
         'wizards/budget_detail_report_wizard.xml',
+        'wizards/budget_plan_analysis_report_wizard.xml',
     ],
     'demo': [
     ],
