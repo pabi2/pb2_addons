@@ -179,7 +179,7 @@ class ImportXlsxTemplate(models.TransientModel):
                 # Line Items
                 line_fields = filter(lambda l: l != '_HEAD_', worksheet)
                 for line_field in line_fields:
-                    line_field, max_row = get_line_max(line_field)
+                    line_field, _ = get_line_max(line_field)
                     if line_field in record and record[line_field]:
                         record[line_field].unlink()  # Delete all lines
         except Exception, e:
@@ -202,7 +202,12 @@ class ImportXlsxTemplate(models.TransientModel):
                 field_type = XLS._get_field_type(model, out_field)
                 vals.update({out_field: []})
                 # Case default value from an eval
+                print st.nrows
+                print max_row
+                print '===================='
                 for idx in range(row, st.nrows):
+                    if max_row and (idx - row) > (max_row - 1):
+                        break
                     value = False
                     if key_eval_cond:
                         eval_context = self.get_eval_context()
@@ -217,8 +222,7 @@ class ImportXlsxTemplate(models.TransientModel):
                         value = str(eval(val_eval_cond, eval_context))
                     # --
                     vals[out_field].append(value)
-                    if max_row and (idx - row) >= max_row:
-                        break
+
         return vals
 
     @api.model

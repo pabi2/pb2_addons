@@ -188,7 +188,7 @@ class ExportXlsxTemplate(models.TransientModel):
                     value = str(eval(eval_cond, eval_context))
                 # --
                 vals[field[0]].append(value)
-        return (line_field, vals, aggre_func_dict)
+        return (vals, aggre_func_dict)
 
     @api.model
     def _fill_workbook_data(self, workbook, record, data_dict):
@@ -208,13 +208,24 @@ class ExportXlsxTemplate(models.TransientModel):
                         _('Sheet %s not found!') % sheet_name)
                 # HEAD
                 for rc, field in worksheet.get('_HEAD_', {}).iteritems():
-                    st[rc] = self._get_val(record, field)
+                    tmp_field, eval_cond = get_field_condition(field)
+                    value = tmp_field and self._get_val(record, tmp_field)
+                    # Case Eval
+                    if eval_cond:  # Get eval_cond of a raw field
+                        eval_context = {'time': time,
+                                        'value': value,
+                                        'model': self.env[record._name],
+                                        'env': self.env,
+                                        'context': self._context,
+                                        }
+                        value = str(eval(eval_cond, eval_context))
+                    st[rc] = value
                 # Line Items
                 line_fields = filter(lambda l: l != '_HEAD_', worksheet)
                 for line_field in line_fields:
                     fields = [field for rc, field
                               in worksheet.get(line_field, {}).iteritems()]
-                    line_field, vals, aggre_func = \
+                    vals, aggre_func = \
                         self._get_line_vals(record, line_field, fields)
                     for rc, field in worksheet.get(line_field, {}).iteritems():
                         col, row = split_row_col(rc)  # starting point

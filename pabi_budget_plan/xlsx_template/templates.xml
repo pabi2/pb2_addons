@@ -21,29 +21,111 @@
             <field name="description">
               {
                 '__EXPORT__': {
-                    'Expense': {
+                    1: {
                         '_HEAD_': {
                             'B1': 'fiscalyear_id.name',
                             'B2': 'org_id.name_short',
                             'B3': 'section_id.code',
+                            'B4': '${time.strftime("%Y-%m-%d")}',
+                            'B5': 'user_id.name${value or ""}'
                         },
+                        'plan_expense_line_ids[50]': {
+                            'A10': 'charge_type${value and value.title() or ""}',
+                            'B10': 'activity_group_id.name',
+                            'C10': 'cost_control_id.name',
+                            'D10': 'description',
+                            'E10': 'reason',
+                            'F10': 'unit',
+                            'G10': 'activity_unit_price',
+                            'H10': 'activity_unit',
+                            'J10': 'm0',
+                            'K10': 'm1',
+                            'L10': 'm2',
+                            'M10': 'm3',
+                            'N10': 'm4',
+                            'O10': 'm5',
+                            'P10': 'm6',
+                            'Q10': 'm7',
+                            'R10': 'm8',
+                            'S10': 'm9',
+                            'T10': 'm10',
+                            'U10': 'm11',
+                            'V10': 'm12',
+                        }
+                    },
+                    'Revenue': {
+                        '_HEAD_': {
+                            'B1': 'fiscalyear_id.name',
+                            'B2': 'org_id.name_short',
+                            'B3': 'section_id.code',
+                            'B4': '${time.strftime("%Y-%m-%d")}',
+                            'B5': 'user_id.name${value or ""}'
+                        },
+                        'plan_revenue_line_ids[50]': {
+                            'A10': 'charge_type${value and value.title() or ""}',
+                            'B10': 'activity_group_id.name',
+                            'C10': 'cost_control_id.name',
+                            'D10': 'description',
+                            'E10': 'reason',
+                            'F10': 'unit',
+                            'G10': 'activity_unit_price',
+                            'H10': 'activity_unit',
+                            'J10': 'm0',
+                            'K10': 'm1',
+                            'L10': 'm2',
+                            'M10': 'm3',
+                            'N10': 'm4',
+                            'O10': 'm5',
+                            'P10': 'm6',
+                            'Q10': 'm7',
+                            'R10': 'm8',
+                            'S10': 'm9',
+                            'T10': 'm10',
+                            'U10': 'm11',
+                            'V10': 'm12',
+                        }
                     },
                     'Activity Group': {
                         '_HEAD_': {},
-                        'master_ag_ids[100]': {
+                        'master_ag_ids': {
                             'A2': 'name',
                             'B2': 'description',
+                        },
+                    },
+                    'Job Order': {
+                        '_HEAD_': {},
+                        'master_cc_ids': {
+                            'A2': 'cost_control_type_id.name',
+                            'B2': 'code',
+                            'C2': 'name',
+                            'D2': 'description${value or ""}',
                         },
                     },
                 },
                 '__IMPORT__': {
                     'Expense': {
-                        'plan_expense_line_ids[100]': {
+                        'plan_expense_line_ids[50]': {
                             'A10': 'charge_type',
                             'B10': 'activity_group_id',
+                            'C10': 'cost_control_id',
+                            'D10': 'description',
+                            'E10': 'reason',
                             'F10': 'unit',
                             'G10': 'activity_unit_price',
-                            'D10': 'description',
+                            'H10': 'activity_unit',
+                            'J10': 'm0',
+                            'K10': 'm1',
+                            'L10': 'm2',
+                            'M10': 'm3',
+                            'N10': 'm4',
+                            'O10': 'm5',
+                            'P10': 'm6',
+                            'Q10': 'm7',
+                            'R10': 'm8',
+                            'S10': 'm9',
+                            'T10': 'm10',
+                            'U10': 'm11',
+                            'V10': 'm12',
                         }
                     }
                 }

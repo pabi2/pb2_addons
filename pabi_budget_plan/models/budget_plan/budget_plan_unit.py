@@ -123,6 +123,11 @@ class BudgetPlanUnit(BPCommon, models.Model):
         sring='Activity Grups Master Data',
         compute='_compute_master_ag_ids',
     )
+    master_cc_ids = fields.Many2many(
+        'cost.control',
+        sring='Cost Control Master Data',
+        compute='_compute_master_cc_ids',
+    )
     _sql_constraints = [
         ('uniq_plan', 'unique(section_id, fiscalyear_id)',
          'Duplicated budget plan for the same section is not allowed!'),
@@ -134,6 +139,13 @@ class BudgetPlanUnit(BPCommon, models.Model):
         ActivityGroup = self.env['account.activity.group']
         for rec in self:
             rec.master_ag_ids = ActivityGroup.search([]).ids
+
+    @api.multi
+    @api.depends()
+    def _compute_master_cc_ids(self):
+        CostControl = self.env['cost.control']
+        for rec in self:
+            rec.master_cc_ids = CostControl.search([]).ids
 
     # @api.multi
     # @api.depends('state')
