@@ -2,6 +2,7 @@
 <openerp>
     <data>
 
+      # Budget Plan
       <!-- Budget Plan Unit Based -->
       <act_window id="action_budget_plan_unit_export_xlsx_tempalte"
           name="Get Import Template (.xlsx)"
@@ -15,6 +16,36 @@
           src_model="budget.plan.unit"
           view_mode="form"
           target="new"/>
+
+      # Budget Breakdown
+      <!-- Budget Breakdown Unit Based -->
+      <act_window id="action_budget_breakdown_unit_export_xlsx_tempalte"
+          name="Export Breakdowns (.xlsx)"
+          res_model="export.xlsx.template"
+          src_model="budget.breakdown"
+          view_mode="form"
+          target="new"/>
+      <!-- Optional: To be specific to some template and context -->
+  		<record id="action_budget_breakdown_unit_export_xlsx_tempalte" model="ir.actions.act_window">
+    			<field name="context"
+            eval="{'template_fname': 'budget_breakdown_unit_base.xlsx',
+                   'template_context': {}}"/>
+      </record>
+
+
+      <act_window id="action_budget_breakdown_unit_import_xlsx_tempalte"
+          name="Import Breakdowns (.xlsx)"
+          res_model="import.xlsx.template"
+          src_model="budget.breakdown"
+          view_mode="form"
+          target="new"/>
+      <!-- Optional: To be specific to some template and context -->
+   		<record id="action_budget_breakdown_unit_import_xlsx_tempalte" model="ir.actions.act_window">
+     			<field name="context"
+            eval="{'template_fname': 'budget_breakdown_unit_base.xlsx',
+                   'template_context': {}}"/>
+      </record>
+
 
     </data>
 </openerp>

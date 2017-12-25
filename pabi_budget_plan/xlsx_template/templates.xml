@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-        <!-- Directory Asset Action Import Temlates -->
+        # Budget Plan
+        <!-- Directory Budget Plan Templates -->
         <record model="document.directory" id="dir_budget_plan_template">
             <field name="name">Budget Plan Templates</field>
             <field name="parent_id" ref="document.dir_root"/>
@@ -14,7 +15,7 @@
         <record id="budget_plan_unit_base_xlsx_tempalte" model="ir.attachment">
             <field name="res_model">budget.plan.unit</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_unit_base.xls</field>
+            <field name="datas_fname">budget_plan_unit_base.xlsx</field>
             <field name="name">Unit Based Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
@@ -43,6 +44,62 @@
                             'F10': 'unit',
                             'G10': 'activity_unit_price',
                             'D10': 'description',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+
+        # Budget Breakdown
+        <!-- Directory Budget Breakdown Templates -->
+        <record model="document.directory" id="dir_budget_breakdown_template">
+            <field name="name">Budget Breakdown Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <!-- Unit Based Breakdown Template -->
+        <record id="budget_breakdown_unit_base_xlsx_tempalte" model="ir.attachment">
+            <field name="res_model">budget.breakdown</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_breakdown_unit_base.xlsx</field>
+            <field name="name">Unit Based Breakdown Template</field>
+            <field name="parent_id" eval="ref('dir_budget_breakdown_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B3': 'org_id.name_short',
+                            'B4': 'fiscalyear_id.name',
+                            'B5': 'revision',
+                            'B6': 'planned_amount',
+                            'B7': 'new_policy_amount',
+                        },
+                        'unit_base_line_ids': {
+                            'A12': 'section_id.code',
+                            'B12': 'section_id.name_short',
+                            'C12': 'planned_amount',
+                            'D12': 'past_consumed',
+                            'E12': 'rolling',
+                            'F12': 'latest_policy_amount',
+                            'G12': 'policy_amount',
+                            'I12': 'budget_id.id',
+                            'J12': 'budget_plan_id.id',
+                        }
+                    },
+                },
+                '__IMPORT__': {
+                    1: {
+                        'unit_base_line_ids': {
+                            'A12': 'section_id',
+                            'G12': 'policy_amount',
+                            'I12': 'budget_id/.id',
+                            'J12': ['budget_plan_id${value and "budget.plan.unit,%s" % int(value) or False}'],
                         }
                     }
                 }
