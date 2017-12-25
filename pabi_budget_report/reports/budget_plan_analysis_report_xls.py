@@ -345,7 +345,7 @@ class BudgetPlanAnalysisReportXLS(report_xls):
                     cell_style_decimal),
                 ('total_budget', 1, 0, 'number', None, total_budget_formula,
                     cell_style_decimal),
-                ('previous_year_commitment', 1, 0, 'number', 1, None,
+                ('previous_year_commitment', 1, 0, 'number', line.m0, None,
                     cell_style_decimal),
                 ('oct', 1, 0, 'number', line.m1, None, cell_style_decimal),
                 ('nov', 1, 0, 'number', line.m2, None, cell_style_decimal),
