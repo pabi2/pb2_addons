@@ -58,6 +58,7 @@
                                         <field name="cur_actual" sum="Total"/>
                                         <field name="cur_remaining_budget" sum="Total"/>
                                         <field name="cur_estimated_commitment" sum="Total"/>
+                                        <field name="m0" sum="Total"/>
                                         <field name="m1" sum="Total"/>
                                         <field name="m2" sum="Total"/>
                                         <field name="m3" sum="Total"/>
@@ -275,6 +276,7 @@
                     <field name="cur_actual" sum="Total"/>
                     <field name="cur_remaining_budget" sum="Total"/>
                     <field name="cur_estimated_commitment" sum="Total"/>
+                    <field name="m0" sum="Total"/>
                     <field name="m1" sum="Total"/>
                     <field name="m2" sum="Total"/>
                     <field name="m3" sum="Total"/>

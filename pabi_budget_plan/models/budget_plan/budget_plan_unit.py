@@ -244,7 +244,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
                 d = commit.document_id
                 val = {'activity_group_id': d.activity_group_id.id,
                        'cost_control_id': d.cost_control_id.id,
-                       'total_budget': commit.amount,
+                       'm0': commit.amount,
                        'description': d.name_get()[0][1],
                        }
                 plan_lines.append((0, 0, val))
@@ -386,6 +386,9 @@ class BudgetPlanUnitSummary(models.Model):
         'account.activity.group',
         string='Activity Group',
     )
+    m0 = fields.Float(
+        string='Prev FY',
+    )
     m1 = fields.Float(
         string='Oct',
     )
@@ -430,7 +433,7 @@ class BudgetPlanUnitSummary(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
             select min(id) id, plan_id, activity_group_id, budget_method,
-            sum(m1) m1, sum(m2) m2, sum(m3) m3, sum(m4) m4,
+            sum(m0) m0, sum(m1) m1, sum(m2) m2, sum(m3) m3, sum(m4) m4,
             sum(m5) m5, sum(m6) m6, sum(m7) m7, sum(m8) m8, sum(m9) m9,
             sum(m10) m10, sum(m11) m11, sum(m12) m12,
             sum(planned_amount) planned_amount
