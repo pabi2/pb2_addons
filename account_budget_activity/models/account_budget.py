@@ -264,14 +264,16 @@ class AccountBudget(models.Model):
         res = super(AccountBudget, self).write(vals)
         for budget in self:
             if budget.budget_level_id.budget_release == 'manual_header':
-                if not budget.budget_expense_line_ids:
+                if vals.get('policy_amount', False) and \
+                        not budget.budget_expense_line_ids:
                     raise ValidationError(
                         _('Budget %s has no expense line!\n'
                           'This operation can not proceed.') % (budget.name,))
-                budget.budget_expense_line_ids.write(
-                    {'released_amount': 0.0})
-                budget.budget_expense_line_ids[0].write(
-                    {'released_amount': budget.to_release_amount})
+                if budget.budget_expense_line_ids:
+                    budget.budget_expense_line_ids.write(
+                        {'released_amount': 0.0})
+                    budget.budget_expense_line_ids[0].write(
+                        {'released_amount': budget.to_release_amount})
         return res
 
     @api.multi

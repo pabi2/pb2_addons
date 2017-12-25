@@ -280,11 +280,13 @@ class BudgetPolicy(models.Model):
             # 1st policy
             v0_lines = self.search(
                 [('revision', '=', '0'),
-                 ('chart_view', '=', policy.chart_view)]).line_ids
+                 ('chart_view', '=', policy.chart_view),
+                 ('fiscalyear_id', '=', policy.fiscalyear_id.id)]).line_ids
             # latest policy
             latest_lines = self.search(
                 [('revision', '=', str(int(policy.revision) - 1)),
-                 ('chart_view', '=', policy.chart_view)]).line_ids
+                 ('chart_view', '=', policy.chart_view),
+                 ('fiscalyear_id', '=', policy.fiscalyear_id.id)]).line_ids
 
             _DICT = {
                 'unit_base': ('budget.plan.unit', 'res.org', 'org_id',
@@ -318,8 +320,11 @@ class BudgetPolicy(models.Model):
                 if policy.revision != '0':
                     v0_line = not model and v0_lines[0] or \
                         v0_lines.filtered(lambda l: l[field] == entity_id)
+                    print latest_lines
+                    print entity_id
                     lastest_line = not model and latest_lines[0] or \
-                        latest_lines.filtered(lambda l: l[field] == entity_id)
+                        latest_lines.filtered(
+                            lambda l: l[field].id == entity_id)
                     v0_policy_amount = v0_line.policy_amount
                     latest_policy_amount = lastest_line.policy_amount
                     vals.update({
@@ -347,12 +352,12 @@ class BudgetPolicy(models.Model):
                     continue
                 policy._create_breakdown()
                 policy.write({'state': 'done'})
-                # update plans to done
+                # update plans to done too
                 model = _DICT[policy.chart_view]
                 plans = self.env[model].search([
                     ('fiscalyear_id', '=', self.fiscalyear_id.id),
-                    ('state', 'in', ('accept', 'done'))])
-                plans.write({'state': 'done'})
+                    ('state', 'in', ('7_accept', '8_done'))])
+                plans.write({'state': '8_done'})
             else:
                 raise ValidationError(
                     _('This action is not valid for this budget structure!'))
@@ -400,8 +405,6 @@ class BudgetPolicy(models.Model):
                 ('fiscalyear_id', '=', self.fiscalyear_id.id),
                 (entity_field, '=', entity.id),
                 ('state', 'in', ('7_accept', '8_done'))])
-            print plans
-            print sub_entities
             # All entity must have valid plans
             if len(sub_entities) != len(plans):
                 res['valid'] = False

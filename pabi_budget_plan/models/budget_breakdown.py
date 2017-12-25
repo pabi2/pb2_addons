@@ -306,7 +306,7 @@ class BudgetBreakdown(models.Model):
             plans = BudgetPlan.search([
                 ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
                 (entity_field, '=', entity_id),
-                ('state', 'in', ('accept', 'done'))])
+                ('state', 'in', ('7_accept', '8_done'))])
             budgets = Budget.search([
                 ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
                 (entity_field, '=', entity_id),
