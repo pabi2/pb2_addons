@@ -170,8 +170,8 @@
                             'E12': 'rolling',
                             'F12': 'latest_policy_amount',
                             'G12': 'policy_amount',
-                            'I12': 'budget_id.id',
-                            'J12': 'budget_plan_id.id',
+                            'I12': 'budget_id.id${value or ""}',
+                            'J12': 'budget_plan_id.id${value or ""}',
                         }
                     },
                 },

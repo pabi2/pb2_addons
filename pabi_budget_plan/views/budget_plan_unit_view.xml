@@ -97,8 +97,6 @@
                                 <field name="planned_revenue"/>
                                 <field name="planned_expense"/>
                                 <field name="planned_overall"/>
-                                <button name="prepare_prev_fy_commitment" string="Compute Prev.FY Commitment" type="object"
-                                  attrs="{'invisible': [('state', '!=', '1_draft')]}"/>
                             </group>
                             <group>
                                 <field name="date"/>
@@ -113,6 +111,9 @@
                         </group>
                         <notebook>
                             <page string="Expense Plan" name="expense">
+                              <button name="prepare_prev_fy_commitment" string="Compute Prev.FY Commitment" type="object"
+                                attrs="{'invisible': [('state', '!=', '1_draft')]}" class="oe_right"/>
+
                                 <div name="expense_extra"></div>
                                 <field name="plan_expense_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'expense', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
                             </page>

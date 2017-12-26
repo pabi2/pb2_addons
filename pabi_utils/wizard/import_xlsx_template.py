@@ -202,9 +202,6 @@ class ImportXlsxTemplate(models.TransientModel):
                 field_type = XLS._get_field_type(model, out_field)
                 vals.update({out_field: []})
                 # Case default value from an eval
-                print st.nrows
-                print max_row
-                print '===================='
                 for idx in range(row, st.nrows):
                     if max_row and (idx - row) > (max_row - 1):
                         break
