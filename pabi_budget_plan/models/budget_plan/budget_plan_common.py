@@ -248,6 +248,10 @@ class BPLCommon(ChartField, Common):
 
 class BPLMonthCommon(BPLCommon):
 
+    m0 = fields.Float(
+        string='Prev FY',
+        required=False,
+    )
     m1 = fields.Float(
         string='Oct',
         required=False,

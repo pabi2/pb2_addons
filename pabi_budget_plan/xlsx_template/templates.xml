@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-        <!-- Directory Asset Action Import Temlates -->
+        # Budget Plan
+        <!-- Directory Budget Plan Templates -->
         <record model="document.directory" id="dir_budget_plan_template">
             <field name="name">Budget Plan Templates</field>
             <field name="parent_id" ref="document.dir_root"/>
@@ -14,35 +15,173 @@
         <record id="budget_plan_unit_base_xlsx_tempalte" model="ir.attachment">
             <field name="res_model">budget.plan.unit</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_unit_base.xls</field>
+            <field name="datas_fname">budget_plan_unit_base.xlsx</field>
             <field name="name">Unit Based Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
               {
                 '__EXPORT__': {
-                    'Expense': {
+                    1: {
                         '_HEAD_': {
                             'B1': 'fiscalyear_id.name',
                             'B2': 'org_id.name_short',
                             'B3': 'section_id.code',
+                            'B4': '${time.strftime("%Y-%m-%d")}',
+                            'B5': 'user_id.name${value or ""}'
                         },
+                        'plan_expense_line_ids[50]': {
+                            'A10': 'charge_type${value and value.title() or ""}',
+                            'B10': 'activity_group_id.name',
+                            'C10': 'cost_control_id.name',
+                            'D10': 'description',
+                            'E10': 'reason',
+                            'F10': 'unit',
+                            'G10': 'activity_unit_price',
+                            'H10': 'activity_unit',
+                            'J10': 'm0',
+                            'K10': 'm1',
+                            'L10': 'm2',
+                            'M10': 'm3',
+                            'N10': 'm4',
+                            'O10': 'm5',
+                            'P10': 'm6',
+                            'Q10': 'm7',
+                            'R10': 'm8',
+                            'S10': 'm9',
+                            'T10': 'm10',
+                            'U10': 'm11',
+                            'V10': 'm12',
+                        }
+                    },
+                    'Revenue': {
+                        '_HEAD_': {
+                            'B1': 'fiscalyear_id.name',
+                            'B2': 'org_id.name_short',
+                            'B3': 'section_id.code',
+                            'B4': '${time.strftime("%Y-%m-%d")}',
+                            'B5': 'user_id.name${value or ""}'
+                        },
+                        'plan_revenue_line_ids[50]': {
+                            'A10': 'charge_type${value and value.title() or ""}',
+                            'B10': 'activity_group_id.name',
+                            'C10': 'cost_control_id.name',
+                            'D10': 'description',
+                            'E10': 'reason',
+                            'F10': 'unit',
+                            'G10': 'activity_unit_price',
+                            'H10': 'activity_unit',
+                            'J10': 'm0',
+                            'K10': 'm1',
+                            'L10': 'm2',
+                            'M10': 'm3',
+                            'N10': 'm4',
+                            'O10': 'm5',
+                            'P10': 'm6',
+                            'Q10': 'm7',
+                            'R10': 'm8',
+                            'S10': 'm9',
+                            'T10': 'm10',
+                            'U10': 'm11',
+                            'V10': 'm12',
+                        }
                     },
                     'Activity Group': {
                         '_HEAD_': {},
-                        'master_ag_ids[100]': {
+                        'master_ag_ids': {
                             'A2': 'name',
                             'B2': 'description',
+                        },
+                    },
+                    'Job Order': {
+                        '_HEAD_': {},
+                        'master_cc_ids': {
+                            'A2': 'cost_control_type_id.name',
+                            'B2': 'code',
+                            'C2': 'name',
+                            'D2': 'description${value or ""}',
                         },
                     },
                 },
                 '__IMPORT__': {
                     'Expense': {
-                        'plan_expense_line_ids[100]': {
+                        'plan_expense_line_ids[50]': {
                             'A10': 'charge_type',
                             'B10': 'activity_group_id',
+                            'C10': 'cost_control_id',
+                            'D10': 'description',
+                            'E10': 'reason',
                             'F10': 'unit',
                             'G10': 'activity_unit_price',
-                            'D10': 'description',
+                            'H10': 'activity_unit',
+                            'J10': 'm0',
+                            'K10': 'm1',
+                            'L10': 'm2',
+                            'M10': 'm3',
+                            'N10': 'm4',
+                            'O10': 'm5',
+                            'P10': 'm6',
+                            'Q10': 'm7',
+                            'R10': 'm8',
+                            'S10': 'm9',
+                            'T10': 'm10',
+                            'U10': 'm11',
+                            'V10': 'm12',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+
+        # Budget Breakdown
+        <!-- Directory Budget Breakdown Templates -->
+        <record model="document.directory" id="dir_budget_breakdown_template">
+            <field name="name">Budget Breakdown Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <!-- Unit Based Breakdown Template -->
+        <record id="budget_breakdown_unit_base_xlsx_tempalte" model="ir.attachment">
+            <field name="res_model">budget.breakdown</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_breakdown_unit_base.xlsx</field>
+            <field name="name">Unit Based Breakdown Template</field>
+            <field name="parent_id" eval="ref('dir_budget_breakdown_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B3': 'org_id.name_short',
+                            'B4': 'fiscalyear_id.name',
+                            'B5': 'revision',
+                            'B6': 'planned_amount',
+                            'B7': 'new_policy_amount',
+                        },
+                        'unit_base_line_ids': {
+                            'A12': 'section_id.code',
+                            'B12': 'section_id.name_short',
+                            'C12': 'planned_amount',
+                            'D12': 'past_consumed',
+                            'E12': 'rolling',
+                            'F12': 'latest_policy_amount',
+                            'G12': 'policy_amount',
+                            'I12': 'budget_id.id${value or ""}',
+                            'J12': 'budget_plan_id.id${value or ""}',
+                        }
+                    },
+                },
+                '__IMPORT__': {
+                    1: {
+                        'unit_base_line_ids': {
+                            'A12': 'section_id',
+                            'G12': 'policy_amount',
+                            'I12': 'budget_id/.id',
+                            'J12': ['budget_plan_id${value and "budget.plan.unit,%s" % int(value) or False}'],
                         }
                     }
                 }

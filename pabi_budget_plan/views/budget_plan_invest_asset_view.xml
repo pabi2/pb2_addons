@@ -55,6 +55,7 @@
                                         <field name="fund_id" required="1"/>
                                         <field name="item_id" widget="many2one_clickable"/>
 
+                                        <field name="m0" sum="m0"/>
                                         <field name="m1" sum="m1"/>
                                         <field name="m2" sum="m2"/>
                                         <field name="m3" sum="m3"/>
@@ -152,6 +153,7 @@
                     <field name="invest_asset_id"/>
                     <field name="fund_id"/>
 
+                    <field name="m0" sum="Period 0"/>
                     <field name="m1" sum="Period 1"/>
                     <field name="m2" sum="Period 2"/>
                     <field name="m3" sum="Period 3"/>

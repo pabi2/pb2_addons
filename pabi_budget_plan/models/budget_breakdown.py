@@ -139,6 +139,10 @@ class BudgetBreakdown(models.Model):
         states={'draft': [('readonly', False)]},
         domain=[('chart_view', '=', 'invest_asset')],
     )
+    message = fields.Text(
+        string='Messages',
+        readonly=True,
+    )
     _sql_constraints = [
         ('uniq_breakdown', 'unique(policy_line_id)',
          'Budget breakdown must have 1-1 relationship with budget policy!'),
@@ -232,8 +236,36 @@ class BudgetBreakdown(models.Model):
                 raise ValidationError(
                     _('Before you proceed, please click button to '
                       '"Generate Breakdown Lines".'))
+            if not breakdown._validate_breakdown():
+                continue
             breakdown.generate_budget_control()
-        self.write({'state': 'done'})
+            breakdown.write({'state': 'done'})
+
+    @api.multi
+    def _validate_breakdown(self):
+        """ Check relelated budget plan
+        - If policy amount is not zero, at least there should be a plan line
+        """
+        self.ensure_one()
+        res = {'valid': True, 'message': ''}
+        msg = []
+        if self.chart_view == 'unit_base':
+            for line in self.unit_base_line_ids:
+                if line.policy_amount:
+                    plan_unit = line.budget_plan_id
+                    if not plan_unit.plan_expense_line_ids:
+                        res['valid'] = False
+                        msg.append(
+                            '%s - %s, do not have any plan line, policy amount'
+                            ' is not allowed.' %
+                            (plan_unit.name, plan_unit.section_id.name_short))
+        res['message'] = '\n'.join(msg)
+        if res['valid']:
+            self.write({'message': False})
+            return True
+        else:
+            self.write({'message': res['message']})
+            return False
 
     # @api.multi
     # def _generate_breakdown_line_unit_base(self):
@@ -306,7 +338,7 @@ class BudgetBreakdown(models.Model):
             plans = BudgetPlan.search([
                 ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
                 (entity_field, '=', entity_id),
-                ('state', 'in', ('accept', 'done'))])
+                ('state', 'in', ('7_accept', '8_done'))])
             budgets = Budget.search([
                 ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
                 (entity_field, '=', entity_id),
@@ -336,7 +368,11 @@ class BudgetBreakdown(models.Model):
                     sub_entity_field: budget[sub_entity_field].id,
                 }
                 lines.append((0, 0, vals))
-            breakdown.write({breakdown_line_field: lines})
+            breakdown.write({breakdown_line_field: lines,
+                             'message': False})
+
+        self.message_post(body=_('Regenerate Breakdown Lines, '
+                                 'all amount reset!'))
 
     # @api.multi
     # def generate_breakdown_line(self):

@@ -10,7 +10,7 @@ from xlrd.sheet import ctype_text
 import unicodecsv
 from datetime import datetime
 from openerp import models, api, _
-from openerp.exceptions import ValidationError
+from openerp.exceptions import ValidationError, except_orm
 
 
 class PABIUtilsXLS(models.AbstractModel):
@@ -319,7 +319,12 @@ class PABIUtilsXLS(models.AbstractModel):
             {'headers': csv_header, 'separator': ',',
              'quoting': '"', 'encoding': 'utf-8'})
         if errors:
-            raise ValidationError(errors[0]['message'].encode('utf-8'))
+            if errors[0]['message'] == ("Unknown error during import: "
+                                        "<type 'exceptions.TypeError'>: "
+                                        "'bool' object is not iterable"):
+                raise except_orm(_('Data not valid or no data to import!'), "")
+            else:
+                raise ValidationError(errors[0]['message'].encode('utf-8'))
         return xml_ids
 
     @api.model

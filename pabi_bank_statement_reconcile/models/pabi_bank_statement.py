@@ -36,7 +36,7 @@ class PABIBankStatement(models.Model):
         help="If checked, we will use the selected template for import."
         "Otherwise, simply use the standard raw tempalte for import."
     )
-    xlsx_tempalte_id = fields.Many2one(
+    xlsx_template_id = fields.Many2one(
         'ir.attachment',
         string='XLSX Template',
         readonly=True,
@@ -319,7 +319,7 @@ class PABIBankStatement(models.Model):
                     auto_id=True)
             else:
                 self.env['import.xlsx.template'].import_template(
-                    rec.import_file, rec.xlsx_tempalte_id,
+                    rec.import_file, rec.xlsx_template_id,
                     'pabi.bank.statement', rec.id)
         self.write({'state': 'bank'})
         return

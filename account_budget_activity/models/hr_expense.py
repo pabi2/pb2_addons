@@ -61,10 +61,8 @@ class HRExpenseExpense(models.Model):
                     line.analytic_account = \
                         Analytic.create_matched_analytic(line)
                 expense.line_ids._create_analytic_line(reverse=True)
-        # Create negative amount for the remain product_qty - open_invoiced_qty
         if vals.get('state') in ('cancelled',):
-            self.filtered(lambda x: x.state not in ('cancelled',)).\
-                line_ids._create_analytic_line(reverse=False)
+            self.release_all_committed_budget()
         return super(HRExpenseExpense, self).write(vals)
 
 
