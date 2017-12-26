@@ -291,21 +291,22 @@ class InvestAssetPlanItem(models.Model):
     priority = fields.Integer(
         string='Priority',
     )
-    program_group_id = fields.Many2one(
-        'res.program.group',
-        string='Program Group',
-    )
+    # Investment Asset Master Data
     invest_asset_id = fields.Many2one(
         'res.invest.asset',
         string='Investment Asset',
+    )
+    program_group_id = fields.Many2one(
+        'res.program.group',
+        string='Program Group',
     )
     invest_asset_categ_id = fields.Many2one(
         'res.invest.asset.category',
         string='Investment Asset Category',
         required=True,
     )
-    asset_common_name = fields.Char(
-        string='Asset Common Name'
+    name_common = fields.Char(
+        string='Common Name'
     )
     asset_name = fields.Char(
         string='Asset Name',
@@ -315,13 +316,13 @@ class InvestAssetPlanItem(models.Model):
         'hr.employee',
         string='Requester',
     )
-    section_id = fields.Many2one(
+    owner_section_id = fields.Many2one(
         'res.section',
         string='Section',
         required=True,
         domain="[('org_id', '=', org_id)]",
     )
-    division_id = fields.Many2one(
+    owner_division_id = fields.Many2one(
         'res.division',
         related='section_id.division_id',
         string='Division',
@@ -330,6 +331,8 @@ class InvestAssetPlanItem(models.Model):
     location = fields.Char(
         string='Asset Location',
     )
+    START HERE
+
     quantity_plan = fields.Float(
         string='Quantity (Plan)',
     )
