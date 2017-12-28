@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <!-- Documents that allow technical close -->
+        <act_window id="action_purchase_request_technical_close"
+            name="Close &amp; Uncommit Budget" res_model="budget.technical.close.wizard"
+            src_model="purchase.request" view_mode="form" target="new"/>
+
+        <act_window id="action_purchase_order_technical_close"
+            name="Close &amp; Uncommit Budget" res_model="budget.technical.close.wizard"
+            src_model="purchase.order" view_mode="form" target="new"/>
+
+        <act_window id="action_expense_technical_close"
+            name="Close &amp; Uncommit Budget" res_model="budget.technical.close.wizard"
+            src_model="hr.expense.expense" view_mode="form" target="new"/>
+
+        <act_window id="action_sale_order_technical_close"
+            name="Close &amp; Uncommit Budget" res_model="budget.technical.close.wizard"
+            src_model="sale.order" view_mode="form" target="new"/>
+
+
+        <!-- Technical Close Wizard -->
+        <record id="view_budget_technical_close_wizard" model="ir.ui.view">
+            <field name="name">Close &amp; Uncommit Budget</field>
+            <field name="model">budget.technical.close.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Close &amp; Uncommit Budget">
+                    <p>
+                        Closing this document will also relase all committed budget and inactive budget transition.<br/>
+                        Are you sure to continue?
+                    </p>
+                    <footer>
+                        <button name="action_close" string="Close &amp; Uncommit Budget" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

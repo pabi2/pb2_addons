@@ -2,11 +2,19 @@
 <openerp>
     <data>
 
-        <record id="view_order_form" model="ir.ui.view" >
+        <record id="view_order_form" model="ir.ui.view">
             <field name="name">view.order.form</field>
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
+                <xpath expr="/form/sheet//field[@name='name']" position="after">
+                    <field name="technical_closed" invisible="1"/>
+                    <h4 attrs="{'invisible': [('technical_closed', '!=', True)]}">
+                        <font color="red">
+                            <label string="Closed &amp; Uncommitted Budget"/>
+                        </font>
+                    </h4>
+                </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='product_id']" position="after">
                     <field name="activity_group_id" required="0" invisible="0"/>
                     <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'revenue')]"/>
@@ -30,7 +38,7 @@
                             </tree>
                         </field>
                         <separator string="Budget Transition"/>
-            						<field name="budget_transition_ids">
+                        <field name="budget_transition_ids">
                             <tree default_order='id'>
                                 <field name="id"/>
                                 <field name="source"/>
@@ -46,5 +54,15 @@
             </field>
         </record>
 
+        <record id="view_order_tree" model="ir.ui.view">
+            <field name="name">view.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="state" position="after">
+                    <field name="technical_closed"/>
+                </field>
+            </field>
+        </record>
     </data>
 </openerp>

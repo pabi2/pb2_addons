@@ -34,6 +34,9 @@ class CommitCommon(object):
     technical_closed = fields.Boolean(
         string='Closed',
         readonly=True,
+        default=False,
+        copy=False,
+        track_visibility='onchange',
         help="If checked, all committed budget will be released",
     )
 
