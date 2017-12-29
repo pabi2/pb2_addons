@@ -12,6 +12,14 @@
                     'readonly': [('state', 'in', ('done','cancel'))]}
                     "/>
                 </xpath>
+                <xpath expr="/form/sheet/div[@class='oe_right oe_button_box']" position="inside">
+                    <button type="object"  name="invoice_open"
+                        class="oe_stat_button"
+                        icon="fa-pencil-square-o"
+                        attrs="{'invisible': [('ref_invoice_count', '=', 0)]}">
+                        <field name="ref_invoice_count" widget="statinfo" string="Invoices"/>
+                    </button>
+                </xpath>
             </field>
         </record>
     </data>
