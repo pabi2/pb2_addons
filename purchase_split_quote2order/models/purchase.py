@@ -115,5 +115,5 @@ class PurchaseOrderLine(models.Model):
         'purchase.order.line',
         string='Order Line Reference',
         readonly=True,
-        ondelete='restrict',
+        ondelete='set null',
     )
