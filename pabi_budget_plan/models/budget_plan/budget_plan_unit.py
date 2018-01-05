@@ -250,7 +250,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
                 return
             commits = Commit.search([
                 ('section_id', '=', plan.section_id.id),
-                ('fiscalyear_id', '=', plan.fiscalyear_id.id)])
+                ('fiscalyear_id', '=', prev_fy.id)])
             plan_lines = []
             for commit in commits:
                 d = commit.document_id

@@ -296,7 +296,7 @@ class sale_order(models.Model):
                              precision_digits=prec) != 0:
                 raise except_orm(
                     _('Amount mismatch!'),
-                    _('Total invoice amount, %s, not equal to purchase '
+                    _('Total invoice amount, %s, not equal to sales '
                       'order amount, %s.\nThis may be caused by quantity '
                       'rounding from invoice plan to invoice line.') %
                     ('{:,.2f}'.format(invoice_untaxed),

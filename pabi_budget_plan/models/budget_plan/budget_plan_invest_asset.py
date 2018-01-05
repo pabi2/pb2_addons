@@ -7,26 +7,6 @@ from .budget_plan_common import BPCommon, BPLMonthCommon
 # from openerp.addons.document_status_history.models.document_history import \
 #     LogCommon
 
-_STATUS = [('1', 'Draft'),
-           ('2', 'Submitted'),
-           ('3', 'Approved'),
-           ('4', 'Cancelled'),
-           ('5', 'Rejected'),
-           ('6', 'Verified'),
-           ('7', 'Accepted'),
-           ('8', 'Done'),
-           ]
-
-_STATE_TO_STATUS = {'draft': '1',
-                    'submit': '2',
-                    'approve': '3',
-                    'cancel': '4',
-                    'reject': '5',
-                    'verify': '6',
-                    'accept': '7',
-                    'done': '8',
-                    }
-
 
 class BudgetPlanInvestAsset(BPCommon, models.Model):
     _name = 'budget.plan.invest.asset'
@@ -40,7 +20,9 @@ class BudgetPlanInvestAsset(BPCommon, models.Model):
         'plan_id',
         string='Budget Plan Lines',
         copy=True,
-        track_visibility='onchange',
+        readonly=True,
+        states={'1_draft': [('readonly', False)],
+                '2_submit': [('readonly', False)]},
     )
     plan_revenue_line_ids = fields.One2many(
         'budget.plan.invest.asset.line',
@@ -48,7 +30,9 @@ class BudgetPlanInvestAsset(BPCommon, models.Model):
         string='Revenue Plan Lines',
         copy=True,
         domain=[('budget_method', '=', 'revenue')],  # Have domain
-        track_visibility='onchange',
+        readonly=True,
+        states={'1_draft': [('readonly', False)],
+                '2_submit': [('readonly', False)]},
     )
     plan_expense_line_ids = fields.One2many(
         'budget.plan.invest.asset.line',
@@ -56,7 +40,9 @@ class BudgetPlanInvestAsset(BPCommon, models.Model):
         string='Expense Plan Lines',
         copy=True,
         domain=[('budget_method', '=', 'expense')],  # Have domain
-        track_visibility='onchange',
+        readonly=True,
+        states={'1_draft': [('readonly', False)],
+                '2_submit': [('readonly', False)]},
     )
     # Invest Asset Only
     asset_plan_id = fields.Many2one(
@@ -70,24 +56,10 @@ class BudgetPlanInvestAsset(BPCommon, models.Model):
         string='Org',
         required=True,
     )
-    # Converted to equivalant status
-    status = fields.Selection(
-        _STATUS,
-        string='Status',
-        compute='_compute_status',
-        store=True,
-        help="This virtual field is being used to sort the status in view",
-    )
     _sql_constraints = [
         ('uniq_plan', 'unique(org_id, fiscalyear_id)',
          'Duplicated budget plan for the same org is not allowed!'),
     ]
-
-    @api.multi
-    @api.depends('state')
-    def _compute_status(self):
-        for rec in self:
-            rec.status = _STATE_TO_STATUS[rec.state]
 
     @api.model
     def create(self, vals):
@@ -169,20 +141,6 @@ class BudgetPlanInvestAssetLine(BPLMonthCommon, models.Model):
         related='invest_asset_id.owner_section_id',
         store=True,
         readonly=True,
-    )
-    item_id = fields.Many2one(
-        'invest.asset.plan.item',
-        string='Asset Info',
-        ondelete='restrict',
-        readonly=True,
-    )
-    # Converted to equivalant status
-    status = fields.Selection(
-        _STATUS,
-        related='plan_id.status',
-        string='Status',
-        store=True,
-        help="This virtual field is being used to sort the status in view",
     )
 
     @api.model
