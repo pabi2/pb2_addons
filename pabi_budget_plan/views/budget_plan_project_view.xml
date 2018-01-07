@@ -7,19 +7,22 @@
             <field name="arch" type="xml">
                 <form string="Budget Plan">
                     <header>
-                        <button string="Submit" name="action_submit" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="action_approve" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Accept" name="action_accept" states="approve" type="object" class="oe_highlight"/>
-                        <button string="Reject" name="action_reject" states="submit,approve" type="object" />
-                        <button string="Reset to Draft" name="action_draft" states="cancel" type="object"/>
-                        <button string="Cancel" name="action_cancel" states="draft" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,accept"/>
+                        <button string="Submit" groups="pabi_base.group_budget_user" name="action_submit" states="1_draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" groups="pabi_base.group_budget_manager" name="action_approve" states="2_submit" type="object" class="oe_highlight"/>
+                        <button string="Verify" groups="pabi_base.group_operating_unit_budget" name="action_verify" states="3_approve" type="object" class="oe_highlight"/>
+                        <button string="Accept" groups="pabi_base.group_cooperate_budget" name="action_accept" states="6_verify" type="object" class="oe_highlight"/>
+                        <button string="Back to Approved" groups="pabi_base.group_cooperate_budget" name="action_approve" states="6_verify" type="object" class="oe_highlight"/>
+                        <button string="Back to Verified" groups="pabi_base.group_cooperate_budget" name="action_verify" states="7_accept" type="object" class="oe_highlight"/>
+                        <button string="Reject" groups="pabi_base.group_budget_manager" name="action_reject" states="2_submit,3_approve" type="object"/>
+                        <button string="Reset to Draft" name="action_draft" states="4_cancel,5_reject" type="object"/>
+                        <button string="Cancel" name="action_cancel" states="1_draft" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="1_draft,2_submit,3_approve,6_verify,7_accept,8_done"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="name" attrs="{'readonly':[('state','!=','1_draft')]}"/>
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons"></div>
@@ -44,6 +47,8 @@
                         </group>
                         <notebook>
                             <page string="Budget Control">
+                                <button name="prepare_prev_fy_commitment" string="Compute Prev.FY Commitment" type="object"
+                                  attrs="{'invisible': [('state', '!=', '1_draft')]}" class="oe_right"/>
                                 <field name="plan_line_ids" colspan="4" nolabel="1">
                                     <tree string="Budget Lines" editable="bottom">
 
@@ -113,7 +118,7 @@
                                 </field>
                             </page>
                             <page string="Performance">
-                                <field name="performance_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
+                                <field name="performance_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','1_draft')]}">
                                     <tree string="Budget Lines" editable="bottom">
 
                                         <field name="c_or_n"/>

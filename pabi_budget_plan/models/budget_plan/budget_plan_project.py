@@ -137,6 +137,7 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
+        required=False,  # Change from BPLCommon to required=False
     )
     activity_id = fields.Many2one(
         'account.activity',

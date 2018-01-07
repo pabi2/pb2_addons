@@ -320,8 +320,6 @@ class BudgetPolicy(models.Model):
                 if policy.revision != '0':
                     v0_line = not model and v0_lines[0] or \
                         v0_lines.filtered(lambda l: l[field] == entity_id)
-                    print latest_lines
-                    print entity_id
                     lastest_line = not model and latest_lines[0] or \
                         latest_lines.filtered(
                             lambda l: l[field].id == entity_id)
@@ -399,7 +397,8 @@ class BudgetPolicy(models.Model):
             msg.append('====================== %s ======================'
                        % (entity.name,))
             # Active sections of this org
-            sub_entities = SubEntity.search([(entity_field, '=', entity.id)])
+            sub_entities = SubEntity.search([(entity_field, '=', entity.id),
+                                             ('special', '=', False)])
             # Active plans of this org
             plans = Plan.search([
                 ('fiscalyear_id', '=', self.fiscalyear_id.id),

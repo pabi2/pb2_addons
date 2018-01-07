@@ -289,12 +289,14 @@ class AccountBudget(models.Model):
     def _get_past_consumed_domain(self):
         self.ensure_one()
         dom = super(AccountBudget, self)._get_past_consumed_domain()
+        # Level of Budget Control Sheet
         budget_type_dict = {
             'unit_base': 'section_id',
-            'project_base': 'project_id',
-            'personnel': 'personnel_costcenter_id',
-            'invest_asset': 'invest_asset_id',
-            'invest_construction': 'invest_construction_phase_id'}
+            'project_base': 'program_id',
+            'personnel': 'personnel_costcenter_id',  # TODO: ???
+            'invest_asset': 'org_id',
+            'invest_construction': 'org_id'}
         dimension = budget_type_dict[self.chart_view]
-        dom.append((dimension, '=', self[dimension].id))
+        dom += [('chart_view', '=', self.chart_view),
+                (dimension, '=', self[dimension].id)]
         return dom
