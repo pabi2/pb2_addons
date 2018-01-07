@@ -132,9 +132,12 @@ class AccountInvoice(models.Model):
         for invoice in self:
             description = ''
             for line in invoice.invoice_line:
-                description += line.name + ' ' + \
-                    '{:,}'.format(line.quantity) + \
-                    (line.uos_id and (' ' + line.uos_id.name) or '') + '\n'
+                # description += line.name + ' ' + \
+                #     '{:,}'.format(line.quantity) + \
+                #     (line.uos_id and (' ' + line.uos_id.name) or '') + '\n'
+
+                # Remove quantity and uos out from description
+                description += line.name + '\n'
             invoice.invoice_description = \
                 len(description) > 0 and description or False
 

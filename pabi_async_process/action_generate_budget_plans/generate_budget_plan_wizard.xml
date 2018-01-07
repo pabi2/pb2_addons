@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_generate_budget_plan" model="ir.ui.view">
+            <field name="name">view.generate.budget.plan</field>
+            <field name="model">generate.budget.plan</field>
+            <field name="inherit_id" ref="pabi_budget_plan.view_generate_budget_plan"/>
+            <field name="arch" type="xml">
+                <field name="fiscalyear_id" position="after">
+                    <field name="async_process"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

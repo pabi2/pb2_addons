@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="wizard_budget_detail_report" model="ir.ui.view">
+            <field name="name">wizard.budget.detail.report</field>
+            <field name="model">budget.detail.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Budget Detail By Cost Center">
+                    <group>
+                        <group>
+                            <field name="period_id"/>
+                            <field name="costcenter_id"/>
+                        </group>
+                        <group>
+                            <field name="chart_view"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button icon="gtk-execute" string="Export" name="xls_export" type="object" class="oe_highlight" context="{'xls_export':1}"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_budget_detail_report" model="ir.actions.act_window">
+            <field name="name">Budget Detail By Cost Center</field>
+            <field name="res_model">budget.detail.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+            id="menu_budget_detail_report"
+            name="Budget Detail By Cost Center"
+            parent="menu_budget_report"
+            action="action_budget_detail_report"
+            sequence="30"
+            icon="STOCK_PRINT"
+            />
+    </data>
+</openerp>
