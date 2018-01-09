@@ -177,34 +177,11 @@
                             </tree>
                         </field>
                     </page>
-                    <page string="Attachment">
-                        <field name="attachment_ids">
-                            <tree>
-                                <field name="name"/>
-                                <field name="type"/>
-                                <field name="description" />
-                                <field name="attach_by" />
-                                <field name="url" widget="url" invisible="1"/>
-                                <button name="%(pabi_attachment_helper.action_open_url)d"
-                                        string="Open Document"
-                                        type="action"
-                                        icon="gtk-justify-fill"
-                                    />
-                            </tree>
-                            <form>
-                            	<group colspan="4">
-	                            	<group>
-	                            		<field name="name"/>
-                                        <field name="url" widget="url" attrs="{'invisible': [('type', '!=', 'url')]}"/>
-                                        <field name="datas" attrs="{'invisible': [('type', '!=', 'binary')]}"/>
-	                        		</group>
-                                    <group>
-                                		<field name="description"/>
-                                        <field name="type"/>
-	                        		</group>
-                        		</group>
-                        	</form>
-                    	</field>
+                    <page string="Attachments">
+                        <field name="attachment_ids"
+                            context="{'tree_view_ref': 'pabi_attachment_helper.view_attachment_history_tree',
+                                      'default_type': 'url',
+                                      'default_res_model': 'purchase.requisition'}"/>
                     </page>
                     <page string="Approval Report">
                         <button name="create_approval_no" attrs="{'invisible':[('doc_no','!=',False)]}" string="Create Approval No." type="object"/>

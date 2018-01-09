@@ -11,6 +11,7 @@
         "base_document_export",
         "pabi_source_document",  # Use this for field invoice_source_documents
         # "pabi_name_search",
+        "pabi_attachment_helper",
     ],
     "description": """
 

@@ -113,11 +113,9 @@ class PurchaseRequisition(models.Model):
     attachment_ids = fields.One2many(
         'ir.attachment',
         'res_id',
-        string='Attach Files',
-        domain=[
-            ('res_model', '=', 'purchase.requisition'),
-        ],
-
+        string='Attachment',
+        copy=False,
+        domain=[('res_model', '=', 'purchase.requisition')],
     )
     amount_untaxed = fields.Float(
         string='Untaxed Amount',

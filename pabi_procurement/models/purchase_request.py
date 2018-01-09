@@ -32,11 +32,9 @@ class PurchaseRequest(models.Model):
     attachment_ids = fields.One2many(
         'ir.attachment',
         'res_id',
-        string='Attach Files',
-        domain=[
-            ('res_model', '=', 'purchase.request'),
-        ],
-        readonly=False,
+        string='Attachment',
+        copy=False,
+        domain=[('res_model', '=', 'purchase.request')],
     )
     date_approve = fields.Date(
         string='Approved Date',

@@ -20,6 +20,7 @@
         "account_budget_activity",
         "l10n_th_account",
         "account_invoice_cancel_reason",
+        "pabi_attachment_helper",
     ],
     "data": [
         "security/ir.model.access.csv",

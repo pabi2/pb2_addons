@@ -115,6 +115,12 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="Attachments">
+                                <field name="attachment_ids"
+                                    context="{'tree_view_ref': 'pabi_attachment_helper.view_attachment_history_tree',
+                                              'default_type': 'url',
+                                              'default_res_model': 'payment.export'}"/>
+                            </page>
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
