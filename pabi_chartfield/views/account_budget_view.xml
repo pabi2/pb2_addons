@@ -497,9 +497,11 @@
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="state"/>
+                    <separator/>
                     <field name="org_id"/>
-                    <field name="division_id"/>
                     <field name="section_id"/>
+                    <field name="program_id"/>
+                    <separator/>>
                     <filter string="My Org Budgets" name="my_org_budgets" context="{'my_org_budgets': True}"/>
                     <filter string="My Section Budgets" name="my_section_budgets" context="{'my_section_budgets': True}"/>
                     <filter string="My Division Budgets" name="my_division_budgets" context="{'my_division_budgets': True}"/>

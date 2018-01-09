@@ -25,7 +25,10 @@
             <field name="arch" type="xml">
                 <form string="Budget Policy">
                     <header>
-                        <button string="Create Budget Breakdown" name="action_done" states="draft" type="object" class="oe_highlight" confirm="This operation can not be reverted, are you sure you want to proceed?"/>
+                        <button string="Done" name="action_done" states="draft" type="object" class="oe_highlight"
+                          attrs="{'invisible': ('chart_view', '!=', 'project_base')}" confirm="This operation can not be reverted, are you sure you want to proceed?"/>
+                        <button string="Create Breakdown and Done" name="action_done" states="draft" type="object"
+                          attrs="{'invisible': ('chart_view', '=', 'project_base')}" class="oe_highlight" confirm="This operation can not be reverted, are you sure you want to proceed?"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>
@@ -76,9 +79,18 @@
                         <notebook>
                             <page string="Policy Lines">
                                 <separator string="Unit Based" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}"/>
+                                <separator string="Project Based" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}"/>
                                 <separator string="Investment Asset" attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}"/>
                                 <!-- Unit Based -->
                                 <field name="unit_base_line_ids" colspan="4" nolabel="1" attrs="{'invisible': ['|', ('chart_view', '!=', 'unit_base'), ('revision', '!=', '0')]}">
+                                    <tree editable="bottom" create="0" delete="0">
+                                        <field name="name" string="Entity"/>
+                                        <field name="planned_amount"/>
+                                        <field name="policy_amount"/>
+                                    </tree>
+                                </field>
+                                <!-- Project Based -->
+                                <field name="project_base_line_ids" colspan="4" nolabel="1" attrs="{'invisible': ['|', ('chart_view', '!=', 'project_base'), ('revision', '!=', '0')]}">
                                     <tree editable="bottom" create="0" delete="0">
                                         <field name="name" string="Entity"/>
                                         <field name="planned_amount"/>
@@ -128,7 +140,6 @@
                     <filter string="Personnel Budget" name="personnel" domain="[('chart_view', '=', 'personnel')]"/>
                     <filter string="Invest Asset" name="invest_asset" domain="[('chart_view', '=', 'invest_asset')]"/>
                     <filter string="Invest Construction" name="invest_construction" domain="[('chart_view', '=', 'invest_construction')]"/>
-
                     <group expand="0" string="Group By">
                         <filter string="Status" context="{'group_by':'state'}"/>
                         <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
@@ -155,7 +166,25 @@
         </record>
         <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_unit_view" groups="pabi_base.group_cooperate_budget" action="action_budget_policy_unit_view" sequence="10"/>
 
-        # Project Based # Personnel # Invest Asset
+        # Project Based Policy
+        <record model="ir.actions.act_window" id="action_budget_policy_project_view">
+            <field name="name">Project Based</field>
+            <field name="res_model">budget.policy</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_budget_policy_tree"/>
+            <field name="search_view_id" ref="view_budget_policy_search"/>
+            <field name="domain">[('chart_view', '=', 'project_base')]</field>
+            <field name="context">{'default_chart_view': 'project_base'}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new budget policy for project based structure.
+                </p>
+            </field>
+        </record>
+        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_project_view" groups="pabi_base.group_cooperate_budget" action="action_budget_policy_project_view" sequence="10"/>
+
+        # # Invest Asset
         <record model="ir.actions.act_window" id="action_budget_policy_invest_asset_view">
             <field name="name">Investment Asset</field>
             <field name="res_model">budget.policy</field>

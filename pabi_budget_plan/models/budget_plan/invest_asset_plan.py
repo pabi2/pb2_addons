@@ -224,9 +224,9 @@ class InvestAssetPlan(models.Model):
                     'po_commitment': commit.po_commit,
                     'total_commitment': commit.all_commit,
                     'actual_amount': commit.actual,
-                    'total_budget_usage': commit.consumed,
-                    'total_budget_remaining': commit.remain,
-                    'total_budget_carry_forward': commit.carry_forward,
+                    'budget_usage': commit.consumed,
+                    'budget_remaining': commit.remain,
+                    'budget_carry_forward': commit.carry_forward,
                     'next_fy_commitment': next_fy_commit,
                 }
                 vals.update(a._invest_asset_common_dict())
@@ -410,15 +410,15 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
         readonly=True,
         help="This FY actual amount",
     )
-    total_budget_usage = fields.Float(
+    budget_usage = fields.Float(
         string='Current Budget Usage',
         help="This FY Commitments + Actuals"
     )
-    total_budget_remaining = fields.Float(
+    budget_remaining = fields.Float(
         string='Current Remaining Budget',
         help="This FY Budget Remaining"
     )
-    total_budget_carry_forward = fields.Float(
+    budget_carry_forward = fields.Float(
         string='Budget Carry Forward',
         help="This FY Budget Remaining"
     )

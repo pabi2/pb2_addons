@@ -38,19 +38,6 @@ class BudgetPlanProject(BPCommon, models.Model):
         domain=[('budget_method', '=', 'expense')],  # Have domain
         track_visibility='onchange',
     )
-    # Project Only
-    project_line_ids = fields.One2many(
-        'budget.plan.project.line',
-        'plan_id',
-        string='Budget Plan Lines',
-        copy=True,
-    )
-    performance_line_ids = fields.One2many(
-        'budget.plan.project.line',
-        'plan_id',
-        string='Budget Plan Lines',
-        copy=True,
-    )
     # Select Dimension - Project
     program_id = fields.Many2one(
         'res.program',
@@ -99,6 +86,11 @@ class BudgetPlanProject(BPCommon, models.Model):
                                 'program_id': program.id,
                                 'user_id': False})
             plan_ids.append(plan.id)
+
+        # Special for Project Based, also create budget control too
+        self.env['account.budget'].\
+            generate_project_base_controls(fiscalyear_id)
+
         return plan_ids
 
     @api.multi
@@ -129,6 +121,9 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
         required=True,
     )
     # Extra
+    name = fields.Char(
+        string='Project Name',
+    )
     program_id = fields.Many2one(
         related='plan_id.program_id',
         store=True,
@@ -150,6 +145,54 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
         string='C/N',
         default='new',
     )
+    # Budget Control
+    amount_plan = fields.Float(  # cur_current_budget
+        string='Current Budget',
+        readonly=True,
+        help="This FY Budget Plan (what is different with budget released?)",
+    )
+    amount_released = fields.Float(  # cur_release_budget
+        string='Released Budget',
+        readonly=True,
+        help="This FY Budget Released",
+    )
+    total_commitment = fields.Float(  # cur_commit_budget
+        string='Current Total Commit',
+        readonly=True,
+        help="This FY Total Commitment",
+    )
+    actual_amount = fields.Float(  # cur_actual
+        string='Current Actual',
+        readonly=True,
+        help="This FY actual amount",
+    )
+    budget_remaining = fields.Float(  # cur_remaining_budget
+        string='Remaining Budget',
+        help="This FY Budget Remaining"
+    )
+    estimated_commitment = fields.Float(  # cur_estimated_commitment
+        string='Estimated Commitment',
+        help="??? What is this ???"
+    )
+    fy1 = fields.Float(
+        string='FY1',
+    )
+    fy2 = fields.Float(
+        string='FY2',
+    )
+    fy3 = fields.Float(
+        string='FY3',
+    )
+    fy4 = fields.Float(
+        string='FY4',
+    )
+    fy5 = fields.Float(
+        string='FY5',
+    )
+    total = fields.Float(
+        string='Total',
+    )
+    # Project Detail
     project_kind = fields.Selection(
         [('research', 'Research'),
          ('non_research', 'Non-Research')],
@@ -249,43 +292,22 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     pfm_expense_remaining_budget = fields.Float(
         string='Remaining Expense Budget',
     )
-    # Budget Control
-    cur_current_budget = fields.Float(
-        string='Current Budget',
-    )
-    cur_release_budget = fields.Float(
-        string='Release Budget',
-    )
-    cur_commit_budget = fields.Float(
-        string='Commit Budget',
-    )
-    cur_actual = fields.Float(
-        string='Actual',
-    )
-    cur_remaining_budget = fields.Float(
-        string='Remaining Budget',
-    )
-    cur_estimated_commitment = fields.Float(
-        string='Estimated Commitment',
-    )
-    fy1 = fields.Float(
-        string='FY1',
-    )
-    fy2 = fields.Float(
-        string='FY2',
-    )
-    fy3 = fields.Float(
-        string='FY3',
-    )
-    fy4 = fields.Float(
-        string='FY4',
-    )
-    fy5 = fields.Float(
-        string='FY5',
-    )
-    total = fields.Float(
-        string='Total',
-    )
 
     # Required for updating dimension
     # FIND ONLY WHAT IS NEED AND USE related field.
+
+    @api.multi
+    def edit_project(self):
+        self.ensure_one()
+        action = self.env.ref('pabi_budget_plan.'
+                              'action_budget_plan_project_line_view')
+        result = action.read()[0]
+        view = self.env.ref('pabi_budget_plan.'
+                            'view_budget_plan_project_line_form')
+        result.update(
+            {'res_id': self.id,
+             'view_id': False,
+             'view_mode': 'form',
+             'views': [(view.id, 'form')],
+             'context': False, })
+        return result

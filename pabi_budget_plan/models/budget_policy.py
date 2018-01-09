@@ -120,6 +120,13 @@ class BudgetPolicy(models.Model):
         readonly=False,
         states={'done': [('readonly', True)]},
     )
+    project_base_line_ids = fields.One2many(
+        'budget.policy.line',
+        'policy_id',
+        string='Policy Lines',
+        readonly=False,
+        states={'done': [('readonly', True)]},
+    )
     invest_asset_line_ids = fields.One2many(
         'budget.policy.line',
         'policy_id',
@@ -198,6 +205,8 @@ class BudgetPolicy(models.Model):
             'invest_asset':
             'pabi_budget_plan.action_invest_asset_breakdown_view',
         }
+        if self.chart_view not in _ACTION.keys():
+            raise ValidationError(_('No breakdown for this budget structure!'))
         action = self.env.ref(_ACTION[self.chart_view])
         result = action.read()[0]
         result.update({'domain': [('id', 'in', self.breakdown_ids.ids)]})
@@ -208,6 +217,7 @@ class BudgetPolicy(models.Model):
         self.ensure_one()
         _prefix = 'POLICY'
         _prefix2 = {'unit_base': 'UNIT',
+                    'project_base': 'PROJECT',
                     'invest_asset': 'ASSET'}
         prefix2 = _prefix2[self.chart_view]
         name = '%s/%s/%s/V%s' % (_prefix, prefix2,
@@ -257,6 +267,7 @@ class BudgetPolicy(models.Model):
 
     @api.multi
     @api.depends('line_ids',
+                 'project_base_line_ids',
                  'unit_base_line_ids',
                  'invest_asset_line_ids')
     def _compute_all(self):
@@ -266,6 +277,8 @@ class BudgetPolicy(models.Model):
                 lines = rec.unit_base_line_ids
             if rec.invest_asset_line_ids:
                 lines = rec.invest_asset_line_ids
+            if rec.project_base_line_ids:
+                lines = rec.project_base_line_ids
             else:  # Fall back to basic
                 lines = rec.line_ids
             rec.planned_amount = sum(lines.mapped('planned_amount'))
@@ -289,9 +302,14 @@ class BudgetPolicy(models.Model):
                  ('fiscalyear_id', '=', policy.fiscalyear_id.id)]).line_ids
 
             _DICT = {
-                'unit_base': ('budget.plan.unit', 'res.org', 'org_id',
+                'unit_base': ('budget.plan.unit',
+                              'res.org', 'org_id',
                               'unit_base_line_ids'),
-                'invest_asset': ('budget.plan.invest.asset', False, False,
+                'project_base': ('budget.plan.project',
+                                 'res.program', 'program_id',
+                                 'project_base_line_ids'),
+                'invest_asset': ('budget.plan.invest.asset',
+                                 False, False,
                                  'invest_asset_line_ids')
             }
 
@@ -340,18 +358,22 @@ class BudgetPolicy(models.Model):
 
     @api.multi
     def action_done(self):
-        _DICT = {'unit_base': 'budget.plan.unit',
-                 'invest_asset': 'budget.plan.invest.asset'}
+        _DICT = {'unit_base': ('budget.plan.unit', True),
+                 'project_base': ('budget.plan.project', False),
+                 'invest_asset': ('budget.plan.invest.asset', True)}
         for policy in self:
             policy._validate_policy_amount()
             if policy.chart_view in _DICT.keys():
                 valid = policy._validate_policy()
                 if not valid:
                     continue
-                policy._create_breakdown()
                 policy.write({'state': 'done'})
-                # update plans to done too
-                model = _DICT[policy.chart_view]
+                # Create breakdown
+                has_breakdown = _DICT[policy.chart_view][1]
+                if has_breakdown:
+                    policy._create_breakdown()
+                # update all plans to done too
+                model = _DICT[policy.chart_view][0]
                 plans = self.env[model].search([
                     ('fiscalyear_id', '=', self.fiscalyear_id.id),
                     ('state', 'in', ('7_accept', '8_done'))])
@@ -377,6 +399,8 @@ class BudgetPolicy(models.Model):
         _DICT = {
             'unit_base': ('budget.plan.unit', 'org_id',
                           'res.section', 'section_id'),
+            'project_base': ('budget.plan.project', 'program_id',
+                             'res.program', 'program_id'),
             'invest_asset': ('budget.plan.invest.asset', False,
                              'res.org', 'org_id'),
         }
@@ -397,7 +421,10 @@ class BudgetPolicy(models.Model):
             msg.append('====================== %s ======================'
                        % (entity.name,))
             # Active sections of this org
-            sub_entities = SubEntity.search([(entity_field, '=', entity.id),
+            field = entity_field
+            if self.chart_view == 'project_base':  # Special Case
+                field = 'id'
+            sub_entities = SubEntity.search([(field, '=', entity.id),
                                              ('special', '=', False)])
             # Active plans of this org
             plans = Plan.search([
@@ -428,7 +455,7 @@ class BudgetPolicy(models.Model):
         self.ensure_one()
         Breakdown = self.env['budget.breakdown']
         # For each policy line, create a breakdown
-        for policy_line in self.unit_base_line_ids:
+        for policy_line in self.line_ids:
             # Create only if it has not been created before
             breakdowns = Breakdown.search([
                 ('policy_line_id', '=', policy_line.id)])
@@ -478,6 +505,8 @@ class BudgetPolicyLine(ChartField, models.Model):
             chart_view = rec.policy_id.chart_view
             if chart_view == 'unit_base':
                 rec.name = rec.org_id.name_short
+            elif chart_view == 'project_base':
+                rec.name = rec.program_id.name_short
             elif chart_view == 'invest_asset':
                 rec.name = 'NSTDA'
             # Continue with other dimension

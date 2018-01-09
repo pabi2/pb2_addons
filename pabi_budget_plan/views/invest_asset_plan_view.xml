@@ -95,9 +95,9 @@
                                 <field name="po_commitment" invisible="0" sum="PO Commitment Total"/>
                                 <field name="total_commitment" invisible="0" sum="All Commitment Total"/>
                                 <field name="actual_amount" invisible="0" sum="This FY Actual Total"/>
-                                <field name="total_budget_usage" invisible="0" sum="Total Budget Usage"/>
-                                <field name="total_budget_remaining" invisible="0" sum="Total Budget Remaining"/>
-                                <field name="total_budget_carry_forward" invisible="0" sum="Total Budget Carry Forward"/>
+                                <field name="budget_usage" invisible="0" sum="Total Budget Usage"/>
+                                <field name="budget_remaining" invisible="0" sum="Total Budget Remaining"/>
+                                <field name="budget_carry_forward" invisible="0" sum="Total Budget Carry Forward"/>
                                 <field name="next_fy_commitment" invisible="0" sum="Next FY Po Commitment Total"/>
                             </tree>
                         </field>
@@ -202,9 +202,9 @@
                     <field name="po_commitment" invisible="0" sum="PO Commitment Total"/>
                     <field name="total_commitment" invisible="0" sum="All Commitment Total"/>
                     <field name="actual_amount" invisible="0" sum="This FY Actual Total"/>
-                    <field name="total_budget_usage" invisible="0" sum="Total Budget Usage"/>
-                    <field name="total_budget_remaining" invisible="0" sum="Total Budget Remaining"/>
-                    <field name="total_budget_carry_forward" invisible="0" sum="Total Budget Carry Forward"/>
+                    <field name="budget_usage" invisible="0" sum="Total Budget Usage"/>
+                    <field name="budget_remaining" invisible="0" sum="Total Budget Remaining"/>
+                    <field name="budget_carry_forward" invisible="0" sum="Total Budget Carry Forward"/>
                     <field name="next_fy_commitment" invisible="0" sum="Next FY Po Commitment Total"/>
                 </tree>
             </field>
