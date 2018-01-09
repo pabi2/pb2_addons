@@ -6,10 +6,12 @@
             <field name="model">ir.attachment</field>
             <field name="arch" type="xml">
                 <tree editable="bottom" >
+                    <field name="res_model" invisible="1" readonly="0"/>
                     <field name="type" />
                     <field name="name" />
                     <field name="description" />
                     <field name="attach_by"/>
+                    <field name="create_date"/>
                     <field name="url" widget="url" invisible="1"/>
                     <button name="%(action_open_url)d" string="Open Document"
                         type="action" icon="gtk-justify-fill"

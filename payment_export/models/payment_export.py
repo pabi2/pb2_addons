@@ -161,6 +161,13 @@ class PaymentExport(models.Model):
         states={'draft': [('readonly', False)]},
         help="More filter. You can use complex search with comma and between.",
     )
+    attachment_ids = fields.One2many(
+        'ir.attachment',
+        'res_id',
+        string='Attachment',
+        copy=False,
+        domain=[('res_model', '=', 'payment.export')],
+    )
 
     @api.onchange('journal_id')
     def onchange_journal_id(self):

@@ -156,6 +156,13 @@ class HRExpense(models.Model):
         'purchase.contract',
         string='Contract',
     )
+    attachment_ids = fields.One2many(
+        'ir.attachment',
+        'res_id',
+        string='Attachment',
+        copy=False,
+        domain=[('res_model', '=', 'hr.expense.expense')],
+    )
 
     @api.multi
     @api.depends(
