@@ -264,9 +264,9 @@
             <field name="model">budget.plan.project.line</field>
             <field name="arch" type="xml">
                 <form string="Project Plan">
-                    <field name="name"/>
                     <group>
                         <group>
+                            <field name="name"/>
                             <field name="c_or_n"/>
                             <field name="functional_area_id"/>
                             <field name="program_group_id"/>
