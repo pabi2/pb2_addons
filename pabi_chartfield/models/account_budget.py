@@ -249,13 +249,13 @@ class AccountBudgetLine(ChartField, models.Model):
         related='budget_id.chart_view',
         store=True,
     )
-    item_id = fields.Many2one(
-        'invest.asset.plan.item',
-        string='Asset Info',
-        ondelete='restrict',
-        readonly=True,
-        help="Special field to store Asset Item information",
-    )
+    # item_id = fields.Many2one(
+    #     'invest.asset.plan.item',
+    #     string='Asset Info',
+    #     ondelete='restrict',
+    #     readonly=True,
+    #     help="Special field to store Asset Item information",
+    # )
     display_name = fields.Char(
         string='Display Name',
         readonly=True,

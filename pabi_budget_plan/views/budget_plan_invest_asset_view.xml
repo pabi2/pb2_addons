@@ -8,13 +8,16 @@
             <field name="arch" type="xml">
                 <form string="Budget Plan">
                     <header>
-                        <button string="Submit" name="action_submit" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="action_approve" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Accept" name="action_accept" states="approve" type="object" class="oe_highlight"/>
-                        <button string="Reject" name="action_reject" states="submit,approve" type="object" />
-                        <button string="Reset to Draft" name="action_draft" states="cancel" type="object"/>
-                        <button string="Cancel" name="action_cancel" states="draft" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,accept"/>
+                        <button string="Submit" groups="pabi_base.group_budget_user" name="action_submit" states="1_draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" groups="pabi_base.group_budget_manager" name="action_approve" states="2_submit" type="object" class="oe_highlight"/>
+                        <button string="Verify" groups="pabi_base.group_operating_unit_budget" name="action_verify" states="3_approve" type="object" class="oe_highlight"/>
+                        <button string="Accept" groups="pabi_base.group_cooperate_budget" name="action_accept" states="6_verify" type="object" class="oe_highlight"/>
+                        <button string="Back to Approved" groups="pabi_base.group_cooperate_budget" name="action_approve" states="6_verify" type="object" class="oe_highlight"/>
+                        <button string="Back to Verified" groups="pabi_base.group_cooperate_budget" name="action_verify" states="7_accept" type="object" class="oe_highlight"/>
+                        <button string="Reject" groups="pabi_base.group_budget_manager" name="action_reject" states="2_submit,3_approve" type="object"/>
+                        <button string="Reset to Draft" name="action_draft" states="4_cancel,5_reject" type="object"/>
+                        <button string="Cancel" name="action_cancel" states="1_draft" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="1_draft,2_submit,3_approve,6_verify,7_accept,8_done"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -23,13 +26,12 @@
                                 <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
                             </h1>
                         </div>
-                        <div class="oe_right oe_button_box" name="buttons">
-                        </div>
+                        <div class="oe_right oe_button_box" name="buttons"></div>
                         <group>
                             <group>
-                              <field name="org_id"/>
-                              <field name="user_id"/>
-                              <field name="planned_overall"/>
+                                <field name="org_id"/>
+                                <field name="user_id"/>
+                                <field name="planned_overall"/>
                             </group>
                             <group>
                                 <field name="date"/>
@@ -51,9 +53,8 @@
                                         <field name="section_id"/>
                                         <field name="activity_group_id"/>
 
-                                        <field name="invest_asset_id" required="1"/>
+                                        <field name="invest_asset_id" required="1" widget="many2one_clickable"/>
                                         <field name="fund_id" required="1"/>
-                                        <field name="item_id" widget="many2one_clickable"/>
 
                                         <field name="m0" sum="m0"/>
                                         <field name="m1" sum="m1"/>

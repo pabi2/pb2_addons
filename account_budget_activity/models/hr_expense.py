@@ -2,45 +2,15 @@
 from openerp import api, models, fields, _
 from openerp.exceptions import ValidationError
 from .account_activity import ActivityCommon
+from .budget_commit import CommitCommon
+from .budget_commit import CommitLineCommon
 
 
-class HRExpenseExpense(models.Model):
+class HRExpenseExpense(CommitCommon, models.Model):
     _inherit = 'hr.expense.expense'
 
-    budget_commit_ids = fields.One2many(
-        'account.analytic.line',
-        'expense_id',
-        string='Budget Commitment',
-        readonly=True,
-    )
-    budget_transition_ids = fields.One2many(
-        'budget.transition',
-        'expense_id',
-        string='Budget Transition',
-        domain=[('source_model', '=', 'hr.expense.line'),
-                '|', ('active', '=', True), ('active', '=', False)],
-        readonly=True,
-    )
-
-    @api.multi
-    def release_all_committed_budget(self):
-        for rec in self:
-            rec.line_ids.release_committed_budget()
-            rec.budget_transition_ids.filtered('active').\
-                write({'active': False})
-
-    @api.multi
-    def recreate_all_budget_commitment(self):
-        """ This method is used for development only """
-        for rec in self:
-            rec.budget_commit_ids.unlink()
-            rec.line_ids._create_analytic_line(reverse=True)
-            rec.budget_transition_ids.\
-                filtered('active').filtered('forward').\
-                return_budget_commitment(['expense_line_id'])
-            rec.budget_transition_ids.\
-                filtered('active').filtered('backward').\
-                regain_budget_commitment(['expense_line_id'])
+    budget_commit_ids = fields.One2many(inverse_name='expense_id')
+    budget_transition_ids = fields.One2many(inverse_name='expense_id')
 
     @api.model
     def _prepare_inv_line(self, account_id, exp_line):
@@ -66,27 +36,11 @@ class HRExpenseExpense(models.Model):
         return super(HRExpenseExpense, self).write(vals)
 
 
-class HRExpenseLine(ActivityCommon, models.Model):
+class HRExpenseLine(CommitLineCommon, ActivityCommon, models.Model):
     _inherit = 'hr.expense.line'
 
-    budget_commit_ids = fields.One2many(
-        'account.analytic.line',
-        'expense_line_id',
-        string='Budget Commitment',
-        readonly=True,
-    )
-    budget_commit_bal = fields.Float(
-        string='Budget Balance',
-        compute='_compute_budget_commit_bal',
-    )
-    budget_transition_ids = fields.One2many(
-        'budget.transition',
-        'expense_line_id',
-        string='Budget Transition',
-        domain=[('source_model', '=', 'hr.expense.line'),
-                '|', ('active', '=', True), ('active', '=', False)],
-        readonly=True,
-    )
+    budget_commit_ids = fields.One2many(inverse_name='expense_line_id')
+    budget_transition_ids = fields.One2many(inverse_name='expense_line_id')
 
     @api.multi
     def name_get(self):
@@ -98,20 +52,20 @@ class HRExpenseLine(ActivityCommon, models.Model):
                               line.name or '-')))
         return result
 
-    @api.multi
-    def _compute_budget_commit_bal(self):
-        for rec in self:
-            rec.budget_commit_bal = sum(rec.budget_commit_ids.mapped('amount'))
-
-    @api.multi
-    def release_committed_budget(self):
-        _field = 'expense_line_id'
-        Analytic = self.env['account.analytic.line']
-        for rec in self:
-            aline = Analytic.search([(_field, '=', rec.id)],
-                                    order='create_date desc', limit=1)
-            if aline and rec.budget_commit_bal:
-                aline.copy({'amount': -rec.budget_commit_bal})
+    # @api.multi
+    # def _compute_budget_commit_bal(self):
+    #     for rec in self:
+    #       rec.budget_commit_bal = sum(rec.budget_commit_ids.mapped('amount'))
+    #
+    # @api.multi
+    # def release_committed_budget(self):
+    #     _field = 'expense_line_id'
+    #     Analytic = self.env['account.analytic.line']
+    #     for rec in self:
+    #         aline = Analytic.search([(_field, '=', rec.id)],
+    #                                 order='create_date desc', limit=1)
+    #         if aline and rec.budget_commit_bal:
+    #             aline.copy({'amount': -rec.budget_commit_bal})
 
     @api.model
     def _get_non_product_account_id(self):
@@ -135,69 +89,69 @@ class HRExpenseLine(ActivityCommon, models.Model):
         cur = self.expense_id.currency_id
         return cur.round(taxes['total'])
 
-    @api.model
-    def _prepare_analytic_line(self, reverse=False, currency=False):
-        self.ensure_one()
-        # general_account_id = self._get_account_id_from_po_line()
-        general_journal = self.env['account.journal'].search(
-            [('type', '=', 'purchase')], limit=1)
-        if not general_journal:
-            raise Warning(_('Define an accounting journal for purchase'))
-        if not general_journal.is_budget_commit:
-            return False
-        if not general_journal.exp_commitment_analytic_journal_id or \
-                not general_journal.exp_commitment_account_id:
-            raise ValidationError(
-                _("No analytic journal for expense commitments defined on the "
-                  "accounting journal '%s'") % general_journal.name)
-        analytic_journal = general_journal.exp_commitment_analytic_journal_id
-
-        # Pre check, is eligible line
-        Budget = self.env['account.budget']
-        if not Budget.budget_eligible_line(analytic_journal, self):
-            return False
-
-        # Use EXP Commitment Account
-        general_account_id = general_journal.exp_commitment_account_id.id
-
-        line_qty = False
-        line_amount = False
-        if 'diff_qty' in self._context:
-            line_qty = self._context.get('diff_qty')
-        elif 'diff_amount' in self._context:
-            line_amount = self._context.get('diff_amount')
-        else:
-            line_qty = self.unit_quantity
-        if not line_qty and not line_amount:
-            return False
-        price_subtotal = line_amount or self._price_subtotal(line_qty)
-
-        sign = reverse and -1 or 1
-        company_currency = self.env.user.company_id.currency_id
-        currency = currency or company_currency
-        return {
-            'name': self.name,
-            'product_id': self.product_id.id,
-            'account_id': self.analytic_account.id,
-            'unit_amount': line_qty,
-            'product_uom_id': self.uom_id.id,
-            'amount': currency.compute(sign * price_subtotal,
-                                       company_currency),
-            'general_account_id': general_account_id,
-            'journal_id': analytic_journal.id,
-            'ref': self.expense_id.name,
-            'user_id': self._uid,
-            # Expense
-            'expense_line_id': self.id,
-        }
-
-    @api.multi
-    def _create_analytic_line(self, reverse=False):
-        for rec in self:
-            vals = rec._prepare_analytic_line(
-                reverse=reverse, currency=rec.expense_id.currency_id)
-            if vals:
-                self.env['account.analytic.line'].sudo().create(vals)
+    # @api.model
+    # def _prepare_analytic_line(self, reverse=False, currency=False):
+    #     self.ensure_one()
+    #     # general_account_id = self._get_account_id_from_po_line()
+    #     general_journal = self.env['account.journal'].search(
+    #         [('type', '=', 'purchase')], limit=1)   # <--- TYPE
+    #     if not general_journal:
+    #         raise Warning(_('Define an accounting journal for purchase'))
+    #     if not general_journal.is_budget_commit:
+    #         return False
+    #     if not general_journal.exp_commitment_analytic_journal_id or \
+    #             not general_journal.exp_commitment_account_id:  # <---
+    #         raise ValidationError(
+    #             _("No analytic journal for expense commitments defined on the "
+    #               "accounting journal '%s'") % general_journal.name)
+    #     analytic_journal = general_journal.exp_commitment_analytic_journal_id
+    #
+    #     # Pre check, is eligible line
+    #     Budget = self.env['account.budget']
+    #     if not Budget.budget_eligible_line(analytic_journal, self):
+    #         return False
+    #
+    #     # Use EXP Commitment Account
+    #     general_account_id = general_journal.exp_commitment_account_id.id   #  < --
+    #
+    #     line_qty = False
+    #     line_amount = False
+    #     if 'diff_qty' in self._context:
+    #         line_qty = self._context.get('diff_qty')
+    #     elif 'diff_amount' in self._context:
+    #         line_amount = self._context.get('diff_amount')
+    #     else:
+    #         line_qty = self.unit_quantity   # <--- Field
+    #     if not line_qty and not line_amount:
+    #         return False
+    #     price_subtotal = line_amount or self._price_subtotal(line_qty)
+    #
+    #     sign = reverse and -1 or 1
+    #     company_currency = self.env.user.company_id.currency_id
+    #     currency = currency or company_currency
+    #     return {
+    #         'name': self.name,
+    #         'product_id': self.product_id.id,     # <--- Project
+    #         'account_id': self.analytic_account.id,    # <-- anatlyic account
+    #         'unit_amount': line_qty,
+    #         'product_uom_id': self.uom_id.id,
+    #         'amount': currency.compute(sign * price_subtotal,
+    #                                    company_currency),
+    #         'general_account_id': general_account_id,
+    #         'journal_id': analytic_journal.id,
+    #         'ref': self.expense_id.name,
+    #         'user_id': self._uid,
+    #         # Expense
+    #         'expense_line_id': self.id,   # <-- ID to Expense Line
+    #     }
+    #
+    # @api.multi
+    # def _create_analytic_line(self, reverse=False):
+    #     for rec in self:
+    #         vals = rec._prepare_analytic_line(
+    #             reverse=reverse, currency=rec.expense_id.currency_id)
+    #         if vals:
+    #             self.env['account.analytic.line'].sudo().create(vals)
 
     # # When partial open_invoiced_qty
     # @api.multi

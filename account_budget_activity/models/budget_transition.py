@@ -20,7 +20,7 @@ class BudgetTransition(models.Model):
         'hr.expense.line',
         string='Expense Line',
         index=True,
-        ondelete='restrict',
+        ondelete='cascade',
     )
     expense_id = fields.Many2one(
         'hr.expense.expense',
@@ -32,7 +32,7 @@ class BudgetTransition(models.Model):
         'purchase.request.line',
         string='Purchase Request Line',
         index=True,
-        ondelete='restrict',
+        ondelete='cascade',
     )
     purchase_request_id = fields.Many2one(
         'purchase.request',
@@ -44,7 +44,7 @@ class BudgetTransition(models.Model):
         'purchase.order.line',
         string='Purchase Order Line',
         index=True,
-        ondelete='restrict',
+        ondelete='cascade',
     )
     purchase_id = fields.Many2one(
         'purchase.order',
@@ -56,7 +56,7 @@ class BudgetTransition(models.Model):
         'sale.order.line',
         string='Sales Order Line',
         index=True,
-        ondelete='restrict',
+        ondelete='cascade',
     )
     sale_id = fields.Many2one(
         'sale.order',
@@ -68,7 +68,7 @@ class BudgetTransition(models.Model):
         'account.invoice.line',
         string='Invoice Line',
         index=True,
-        ondelete='restrict',
+        ondelete='cascade',
     )
     invoice_id = fields.Many2one(
         'account.invoice',
@@ -80,7 +80,7 @@ class BudgetTransition(models.Model):
         'stock.move',
         string='Stock Move',
         index=True,
-        ondelete='restrict',
+        ondelete='cascade',
     )
     picking_id = fields.Many2one(
         'stock.picking',

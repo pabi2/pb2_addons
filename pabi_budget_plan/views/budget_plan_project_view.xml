@@ -1,25 +1,29 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
+
         <record model="ir.ui.view" id="view_budget_plan_project_form">
             <field name="name">view.budget.plan.project.form</field>
             <field name="model">budget.plan.project</field>
             <field name="arch" type="xml">
                 <form string="Budget Plan">
                     <header>
-                        <button string="Submit" name="action_submit" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="action_approve" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Accept" name="action_accept" states="approve" type="object" class="oe_highlight"/>
-                        <button string="Reject" name="action_reject" states="submit,approve" type="object" />
-                        <button string="Reset to Draft" name="action_draft" states="cancel" type="object"/>
-                        <button string="Cancel" name="action_cancel" states="draft" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,accept"/>
+                        <button string="Submit" groups="pabi_base.group_budget_user" name="action_submit" states="1_draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" groups="pabi_base.group_budget_manager" name="action_approve" states="2_submit" type="object" class="oe_highlight"/>
+                        <button string="Verify" groups="pabi_base.group_operating_unit_budget" name="action_verify" states="3_approve" type="object" class="oe_highlight"/>
+                        <button string="Accept" groups="pabi_base.group_cooperate_budget" name="action_accept" states="6_verify" type="object" class="oe_highlight"/>
+                        <button string="Back to Approved" groups="pabi_base.group_cooperate_budget" name="action_approve" states="6_verify" type="object" class="oe_highlight"/>
+                        <button string="Back to Verified" groups="pabi_base.group_cooperate_budget" name="action_verify" states="7_accept" type="object" class="oe_highlight"/>
+                        <button string="Reject" groups="pabi_base.group_budget_manager" name="action_reject" states="2_submit,3_approve" type="object"/>
+                        <button string="Reset to Draft" name="action_draft" states="4_cancel,5_reject" type="object"/>
+                        <button string="Cancel" name="action_cancel" states="1_draft" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="1_draft,2_submit,3_approve,6_verify,7_accept,8_done"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="name" attrs="{'readonly':[('state','!=','1_draft')]}"/>
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons"></div>
@@ -44,20 +48,25 @@
                         </group>
                         <notebook>
                             <page string="Budget Control">
+                                <button name="prepare_prev_fy_commitment" string="Compute Prev.FY Commitment" type="object"
+                                  attrs="{'invisible': [('state', '!=', '1_draft')]}" class="oe_right"/>
                                 <field name="plan_line_ids" colspan="4" nolabel="1">
                                     <tree string="Budget Lines" editable="bottom">
 
                                         <field name="c_or_n"/>
 
                                         <field name="project_id"/>
+                                        <field name="name"/>
                                         <field name="fund_id" required="1"/>
 
-                                        <field name="cur_current_budget" sum="Total"/>
-                                        <field name="cur_release_budget" sum="Total"/>
-                                        <field name="cur_commit_budget" sum="Total"/>
-                                        <field name="cur_actual" sum="Total"/>
-                                        <field name="cur_remaining_budget" sum="Total"/>
-                                        <field name="cur_estimated_commitment" sum="Total"/>
+                                        <button name="edit_project" string="Info." icon="gtk-justify-fill" type="object" class="oe_link"/>
+
+                                        <field name="amount_plan" sum="Total"/>
+                                        <field name="amount_released" sum="Total"/>
+                                        <field name="total_commitment" sum="Total"/>
+                                        <field name="actual_amount" sum="Total"/>
+                                        <field name="budget_remaining" sum="Total"/>
+                                        <field name="estimated_commitment" sum="Total"/>
                                         <field name="m0" sum="Total"/>
                                         <field name="m1" sum="Total"/>
                                         <field name="m2" sum="Total"/>
@@ -77,66 +86,6 @@
                                         <field name="fy4" sum="Total"/>
                                         <field name="fy5" sum="Total"/>
                                         <field name="total" sum="Total"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Project Detail">
-                                <field name="project_line_ids" colspan="4" nolabel="1">
-                                    <tree string="Budget Lines" editable="bottom">
-
-                                        <field name="c_or_n"/>
-
-                                        <field name="project_id"/>
-
-                                        <field name="functional_area_id"/>
-                                        <field name="program_group_id"/>
-                                        <field name="program_id"/>
-                                        <field name="project_group_id"/>
-                                        <field name="mission_id"/>
-                                        <field name="project_kind"/>
-                                        <field name="project_objective"/>
-                                        <field name="project_type"/>
-                                        <field name="org_id"/>
-                                        <field name="costcenter_id"/>
-                                        <field name="division_id"/>
-                                        <field name="manager_employee_id"/>
-                                        <field name="date_from"/>
-                                        <field name="date_to"/>
-                                        <field name="project_duration"/>
-                                        <field name="project_status"/>
-                                        <field name="analyst_employee_id"/>
-                                        <field name="ref_program_id"/>
-                                        <field name="external_fund_type"/>
-                                        <field name="external_fund_name"/>
-                                        <field name="priority"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Performance">
-                                <field name="performance_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
-                                    <tree string="Budget Lines" editable="bottom">
-
-                                        <field name="c_or_n"/>
-
-                                        <field name="project_id"/>
-
-                                        <field name="pfm_publications" sum="Total"/>
-                                        <field name="pfm_patents" sum="Total"/>
-                                        <field name="pfm_petty_patents" sum="Total"/>
-                                        <field name="pfm_copyrights" sum="Total"/>
-                                        <field name="pfm_trademarks" sum="Total"/>
-                                        <field name="pfm_plant_varieties" sum="Total"/>
-                                        <field name="pfm_laboratory_prototypes" sum="Total"/>
-                                        <field name="pfm_field_prototypes" sum="Total"/>
-                                        <field name="pfm_commercial_prototypes" sum="Total"/>
-                                        <field name="pfm_revenue_budget" sum="Total"/>
-                                        <field name="pfm_revenue_overall_plan" sum="Total"/>
-                                        <field name="pfm_revenue_accum" sum="Total"/>
-                                        <field name="pfm_revenue_current_year" sum="Total"/>
-                                        <field name="pfm_expense_overall_budget" sum="Total"/>
-                                        <field name="pfm_expense_accum" sum="Total"/>
-                                        <field name="pfm_commitment_accum" sum="Total"/>
-                                        <field name="pfm_expense_remaining_budget" sum="Total"/>
                                     </tree>
                                 </field>
                             </page>
@@ -270,12 +219,12 @@
                     <field name="pfm_commitment_accum" sum="Total"/>
                     <field name="pfm_expense_remaining_budget" sum="Total"/>
 
-                    <field name="cur_current_budget" sum="Total"/>
-                    <field name="cur_release_budget" sum="Total"/>
-                    <field name="cur_commit_budget" sum="Total"/>
-                    <field name="cur_actual" sum="Total"/>
-                    <field name="cur_remaining_budget" sum="Total"/>
-                    <field name="cur_estimated_commitment" sum="Total"/>
+                    <field name="amount_plan" sum="Total"/>
+                    <field name="amount_released" sum="Total"/>
+                    <field name="total_commitment" sum="Total"/>
+                    <field name="actual_amount" sum="Total"/>
+                    <field name="budget_remaining" sum="Total"/>
+                    <field name="estimated_commitment" sum="Total"/>
                     <field name="m0" sum="Total"/>
                     <field name="m1" sum="Total"/>
                     <field name="m2" sum="Total"/>
@@ -308,6 +257,66 @@
 	                <field name="mission_id" type="col"/>
 	                <field name="amount_total" type="measure"/-->
                 </graph>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_budget_plan_project_line_form">
+            <field name="name">view.budget.plan.project.line.form</field>
+            <field name="model">budget.plan.project.line</field>
+            <field name="arch" type="xml">
+                <form string="Project Plan">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="c_or_n"/>
+                            <field name="functional_area_id"/>
+                            <field name="program_group_id"/>
+                            <field name="program_id"/>
+                            <field name="project_group_id"/>
+                            <field name="mission_id"/>
+                            <field name="project_kind"/>
+                            <field name="project_objective"/>
+                            <field name="project_type"/>
+                            <field name="org_id"/>
+                            <field name="costcenter_id"/>
+                            <field name="division_id"/>
+                        </group>
+                        <group>
+                            <field name="manager_employee_id"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="project_duration"/>
+                            <field name="project_status"/>
+                            <field name="analyst_employee_id"/>
+                            <field name="ref_program_id"/>
+                            <field name="external_fund_type"/>
+                            <field name="external_fund_name"/>
+                            <field name="priority"/>
+                        </group>
+                    </group>
+                    <group string="Performance">
+                        <group>
+                            <field name="pfm_publications" sum="Total"/>
+                            <field name="pfm_patents" sum="Total"/>
+                            <field name="pfm_petty_patents" sum="Total"/>
+                            <field name="pfm_copyrights" sum="Total"/>
+                            <field name="pfm_trademarks" sum="Total"/>
+                            <field name="pfm_plant_varieties" sum="Total"/>
+                            <field name="pfm_laboratory_prototypes" sum="Total"/>
+                            <field name="pfm_field_prototypes" sum="Total"/>
+                            <field name="pfm_commercial_prototypes" sum="Total"/>
+                        </group>
+                        <group>
+                            <field name="pfm_revenue_budget" sum="Total"/>
+                            <field name="pfm_revenue_overall_plan" sum="Total"/>
+                            <field name="pfm_revenue_accum" sum="Total"/>
+                            <field name="pfm_revenue_current_year" sum="Total"/>
+                            <field name="pfm_expense_overall_budget" sum="Total"/>
+                            <field name="pfm_expense_accum" sum="Total"/>
+                            <field name="pfm_commitment_accum" sum="Total"/>
+                            <field name="pfm_expense_remaining_budget" sum="Total"/>
+                        </group>
+                    </group>
+                </form>
             </field>
         </record>
 

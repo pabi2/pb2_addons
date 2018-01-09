@@ -44,5 +44,32 @@
 			</field>
 		</record>
 
+		<record id="view_expenses_form_sequence" model="ir.ui.view">
+			<field name="name">hr.expense.form</field>
+			<field name="model">hr.expense.expense</field>
+			<field name="inherit_id" ref="hr_expense_sequence.view_expenses_form_sequence"/>
+			<field name="arch" type="xml">
+				<xpath expr="/form/sheet//field[@name='number']" position="after">
+					<field name="technical_closed" invisible="1"/>
+					<h4 attrs="{'invisible': [('technical_closed', '!=', True)]}">
+						<font color="red">
+							<label string="Closed &amp; Uncommitted Budget"/>
+						</font>
+					</h4>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_expenses_tree" model="ir.ui.view">
+			<field name="name">hr.expense.tree</field>
+			<field name="model">hr.expense.expense</field>
+			<field name="inherit_id" ref="hr_expense.view_expenses_tree"/>
+			<field name="arch" type="xml">
+				<field name="state" position="after">
+					<field name="technical_closed"/>
+				</field>
+			</field>
+		</record>
+
 	</data>
 </openerp>

@@ -90,3 +90,27 @@ class AccountBudget(models.Model):
                     _('Cannot delete budget(s)\
                     which are not in draft or cancelled.'))
         return super(AccountBudget, self).unlink()
+
+    @api.model
+    def generate_project_base_controls(self, fiscalyear_id=None):
+        if not fiscalyear_id:
+            raise ValidationError(_('No fiscal year provided!'))
+        fiscal = self.env['account.fiscalyear'].browse(fiscalyear_id)
+        # Find existing plans, and exclude them
+        plans = self.search([('fiscalyear_id', '=', fiscalyear_id)])
+        _ids = plans.mapped('program_id')._ids
+        # Find Programs
+        programs = self.env['res.program'].search([('id', 'not in', _ids),
+                                                   ('special', '=', False)])
+        control_ids = []
+        for program in programs:
+            control = self.create({'chart_view': 'project_base',
+                                   'fiscalyear_id': fiscalyear_id,
+                                   'date_from': fiscal.date_start,
+                                   'date_to': fiscal.date_stop,
+                                   'program_id': program.id,
+                                   'user_id': False})
+            control_ids.append(control.id)
+        # First sync with myProject
+        self.browse(control_ids).sync_budget_my_project()
+        return control_ids
