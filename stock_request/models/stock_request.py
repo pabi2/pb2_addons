@@ -58,6 +58,13 @@ class StockRequest(models.Model):
         default=lambda self: self.env['hr.employee'].
         search([('user_id', '=', self._uid)]),
     )
+    supervisor_emp_id = fields.Many2one(
+        'hr.employee',
+        string="Requester's Supervisor",
+        readonly=True,
+        compute='_compute_supervisor_emp_id',
+        store=True,
+    )
     prepare_emp_id = fields.Many2one(
         'hr.employee',
         string='Preparer',
@@ -160,6 +167,14 @@ class StockRequest(models.Model):
         string='Notes',
     )
 
+    @api.multi
+    @api.depends('employee_id')
+    def _compute_supervisor_emp_id(self):
+        BossLevel = self.env['wkf.cmd.boss.level.approval']
+        for rec in self:
+            rec.supervisor_emp_id = \
+                BossLevel.get_supervisor(rec.employee_id.id)
+
     @api.one
     @api.constrains('location_id', 'location_dest_id')
     def _check_location(self):
@@ -176,7 +191,7 @@ class StockRequest(models.Model):
         if self._context.get('default_type') == 'request':
             res['arch'] = res['arch'].replace(
                 'visible="draft,done"',
-                'visible="draft,confirmed,wait_approve,'
+                'visible="draft,wait_confirm,confirmed,wait_approve,'
                 'approved,ready,done"')
         if self._context.get('default_type') == 'transfer':
             res['arch'] = res['arch'].replace(
@@ -225,14 +240,21 @@ class StockRequest(models.Model):
     def action_request(self):
         self.ensure_one()
         if not self.line_ids:
-            raise ValidationError('No lines!')
+            raise ValidationError(_('No lines!'))
         self.write({'state': 'wait_confirm'})
 
     @api.multi
     def action_confirm(self):
         self.ensure_one()
+        # For case stock request, check confirm by supervisor in L only.
+        if self.type == 'request' and self.supervisor_emp_id and \
+                self._uid != self.supervisor_emp_id.user_id.id:
+            raise ValidationError(
+                _('You must be direct supervisor of %s %s to "Confirm".') %
+                (self.employee_id.first_name, self.employee_id.last_name))
+        # --
         if not self.line_ids:
-            raise ValidationError('No lines!')
+            raise ValidationError(_('No lines!'))
         # self.line_ids._check_future_qty()
         self.write({'state': 'confirmed'})
 
@@ -240,7 +262,7 @@ class StockRequest(models.Model):
     def action_verify(self):
         self.ensure_one()
         if not self.line_ids:
-            raise ValidationError('No lines!')
+            raise ValidationError(_('No lines!'))
         self._check_user_from_borrow_location()
         self.line_ids._check_future_qty()
         self.write({'state': 'wait_approve'})
@@ -256,7 +278,7 @@ class StockRequest(models.Model):
     def action_prepare(self):
         self.ensure_one()
         if not self.line_ids:
-            raise ValidationError('No lines!')
+            raise ValidationError(_('No lines!'))
         if not self.receive_emp_id:
             raise ValidationError(_('Please select receiver!'))
         self._check_user_from_borrow_location()
@@ -264,14 +286,16 @@ class StockRequest(models.Model):
         self.transfer_picking_id.sudo().action_confirm()  # Confirm and reserve
         self.transfer_picking_id.sudo().action_assign()
         if self.sudo().transfer_picking_id.state != 'assigned':
-            raise ValidationError('Requested material(s) not fully available!')
+            raise ValidationError(
+                _('Requested material(s) not fully available!'))
         self.write({'state': 'ready'})
 
     @api.multi
     def action_transfer(self):
         self.ensure_one()
         if self._uid != self.receive_emp_id.user_id.id:
-            raise ValidationError('You must be receiver to click "Transfer".')
+            raise ValidationError(
+                _('You must be receiver to click "Transfer".'))
         if self.transfer_picking_id:
             self.transfer_picking_id.sudo().action_done()
         self.write({'state': 'done'})
@@ -439,37 +463,53 @@ class StockRequestLine(models.Model):
         store=True,
     )
 
-    @api.one
-    @api.depends('request_id.location_id', 'request_id.location_borrow_id')
-    def _compute_location_id(self):
-        if self.request_id.type == 'borrow':
-            self.location_id = self.sudo().request_id.location_borrow_id
-        else:
-            self.location_id = self.sudo().request_id.location_id
+    @api.model
+    def _get_location_id_by_type(self, ttype, location_id, location_borrow_id):
+        return ttype == 'borrow' and location_borrow_id or location_id
 
     @api.multi
-    @api.depends('product_id', 'product_uom', 'location_id')
+    def _compute_location_id(self):
+        for rec in self:
+            ttype = rec.sudo().request_id.type
+            location_borrow_id = rec.sudo().request_id.location_borrow_id.id
+            location_id = rec.sudo().request_id.location_id.id
+            rec.location_id = self._get_location_id_by_type(ttype, location_id,
+                                                            location_borrow_id)
+
+    @api.multi
+    def _set_product_qty(self, location_id):
+        self.ensure_one()
+        if self.product_id:
+            UOM = self.env['product.uom']
+            ctx = {'location': location_id}
+            qty = self.product_id.with_context(ctx).sudo()._product_available()
+            onhand_qty = qty[self.product_id.id]['qty_available']
+            future_qty = qty[self.product_id.id]['virtual_available']
+            self.onhand_qty = \
+                UOM._compute_qty(self.product_id.uom_id.id,
+                                 onhand_qty,
+                                 self.product_uom.id)
+            self.future_qty = \
+                UOM._compute_qty(self.product_id.uom_id.id,
+                                 future_qty,
+                                 self.product_uom.id)
+
+    @api.multi
     def _compute_product_available(self):
         for rec in self:
-            UOM = self.env['product.uom']
-            if rec.product_id:
-                qty = rec.product_id.with_context(
-                    location=rec.sudo().location_id.id
-                ).sudo()._product_available()
-                onhand_qty = qty[rec.product_id.id]['qty_available']
-                future_qty = qty[rec.product_id.id]['virtual_available']
-                rec.onhand_qty = \
-                    UOM._compute_qty(rec.product_id.uom_id.id,
-                                     onhand_qty,
-                                     rec.product_uom.id)
-                rec.future_qty = \
-                    UOM._compute_qty(rec.product_id.uom_id.id,
-                                     future_qty,
-                                     rec.product_uom.id)
+            location_id = rec.sudo().location_id.id
+            rec._set_product_qty(location_id)
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
+        request_type = self._context.get('request_type')
+        location_borrow_id = self._context.get('location_borrow_id')
+        request_location_id = self._context.get('location_id')
+        location_id = self._get_location_id_by_type(request_type,
+                                                    request_location_id,
+                                                    location_borrow_id)
         self.product_uom = self.product_id.uom_id
+        self._set_product_qty(location_id)
 
     @api.onchange('request_uom_qty')
     def _onchange_request_uom_qty(self):

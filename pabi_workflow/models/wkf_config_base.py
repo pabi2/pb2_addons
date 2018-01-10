@@ -25,6 +25,9 @@ class WkfCmdApprovalLevel(models.Model):
     _name = 'wkf.cmd.level'
     _description = 'Level'
 
+    sequence = fields.Integer(
+        string='Sequence',
+    )
     name = fields.Char(
         string='Name',
         required=True,
