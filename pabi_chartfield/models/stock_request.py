@@ -46,6 +46,10 @@ class StockRequest(models.Model):
             fund_id = False
         return fund_id
 
+    @api.onchange('employee_id')
+    def _onchange_employee_id(self):
+        self.section_id = self.employee_id.section_id
+
     # Section
     @api.onchange('section_id')
     def _onchange_section_id(self):
