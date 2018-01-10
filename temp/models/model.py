@@ -11,6 +11,7 @@ class XXX(models.TransientModel):
         'wiz_id',
         string='Lines',
     )
+    asset_name = fields.Char('asset name')
 
 
 class YYY(models.TransientModel):
