@@ -77,7 +77,7 @@ class AccountInvoice(models.Model):
         default=lambda self: fields.Date.context_today(self),
     )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
-                        'Preparint Number must be unique!')]
+                        'Preprint Number must be unique!')]
 
     @api.multi
     def action_cancel(self):
