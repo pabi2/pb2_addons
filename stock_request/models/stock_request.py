@@ -139,6 +139,7 @@ class StockRequest(models.Model):
         index=True,
         copy=False,
         default='draft',
+        track_visibility='always',
     )
     line_ids = fields.One2many(
         'stock.request.line',
