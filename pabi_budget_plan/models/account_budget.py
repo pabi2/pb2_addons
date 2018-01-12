@@ -112,5 +112,6 @@ class AccountBudget(models.Model):
                                    'user_id': False})
             control_ids.append(control.id)
         # First sync with myProject
-        self.browse(control_ids).sync_budget_my_project()
+        for control in self.browse(control_ids):
+            control.sync_budget_my_project()
         return control_ids

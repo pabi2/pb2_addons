@@ -299,7 +299,6 @@ class ResProjectMember(models.Model):
                 _('There are project with > 1 project manager'))
 
 
-
 class ResProjectBudgetPlan(models.Model):
     _name = 'res.project.budget.plan'
     _description = 'Project Budget Lines and Released Amount'

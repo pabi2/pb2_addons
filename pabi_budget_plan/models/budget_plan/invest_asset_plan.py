@@ -544,11 +544,9 @@ class InvestAssetPlanCommitView(models.Model):
                      amount_po_commit + amount_exp_commit) all_commit,
                 -sum(amount_actual) actual,
                 -sum(amount_consumed) consumed,
-                sum(released_amount + amount_consumed) remain,
+                sum(amount_balance) remain,
                 sum(released_amount + amount_actual) carry_forward
             from budget_monitor_report
             where chart_view = 'invest_asset'
             group by invest_asset_id, fiscalyear_id, org_id
-
-
         )""" % self._table)
