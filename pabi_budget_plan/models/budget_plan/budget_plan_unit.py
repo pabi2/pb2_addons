@@ -2,7 +2,7 @@
 from openerp import tools
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
-from .budget_plan_common import BPCommon, BPLMonthCommon
+from .budget_plan_common import BPCommon, BPLMonthCommon, PrevFYCommon
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 # from openerp.addons.document_status_history.models.document_history import \
@@ -236,32 +236,6 @@ class BudgetPlanUnit(BPCommon, models.Model):
             self.message_post(body=message)
         return super(BudgetPlanUnit, self).write(vals)
 
-    @api.multi
-    def prepare_prev_fy_commitment(self):
-        """ Prepre commitment amount from previous year from PO/EX """
-        Fiscal = self.env['account.fiscalyear']
-        Commit = self.env['budget.plan.unit.commit.view']
-        self.mapped('plan_expense_line_ids').unlink()
-        for plan in self:
-            prev_fy = Fiscal.search(
-                [('date_stop', '<', plan.fiscalyear_id.date_start)],
-                order='date_stop desc', limit=1)
-            if not prev_fy:
-                return
-            commits = Commit.search([
-                ('section_id', '=', plan.section_id.id),
-                ('fiscalyear_id', '=', prev_fy.id)])
-            plan_lines = []
-            for commit in commits:
-                d = commit.document_id
-                val = {'activity_group_id': d.activity_group_id.id,
-                       'cost_control_id': d.cost_control_id.id,
-                       'm0': commit.amount,
-                       'description': d.name_get()[0][1],
-                       }
-                plan_lines.append((0, 0, val))
-            plan.write({'plan_expense_line_ids': plan_lines})
-
 
 class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     _name = 'budget.plan.unit.line'
@@ -454,54 +428,48 @@ class BudgetPlanUnitSummary(models.Model):
         )""" % (self._table, ))
 
 
-class BudgetPlanUnitCommitView(models.Model):
-    _name = 'budget.plan.unit.commit.view'
+class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
+    """ Prev FY Performance view, must named as [model]+perv.fy.view """
+    _name = 'budget.plan.unit.prev.fy.view'
     _auto = False
-    _description = 'FY budget commitment for unit base'
+    _description = 'Prev FY budget performance for project base'
+    # Extra variable for this view
+    _chart_view = 'unit_base'
+    _ex_view_fields = ['section_id', 'document',
+                       'activity_group_id', 'cost_control_id']
+    _ex_domain_fields = ['section_id']  # Each plan is by this domain of view
 
-    document_id = fields.Reference(
-        [('purchase.request.line', 'PO Line'),
-         ('purchase.order.line', 'PR Line'),
-         ('hr.expense.line', 'EX Line'), ],
-        string='Line Ref.',
-        readonly=True,
-    )
-    fiscalyear_id = fields.Many2one(
-        'account.fiscalyear',
-        string='Fiscalyear',
-        readonly=True,
-    )
     section_id = fields.Many2one(
         'res.section',
         string='Section',
         readonly=True,
     )
-    amount = fields.Float(
-        string='Amount',
+    document = fields.Char(
+        string='Document',
+        readonly=True,
+    )
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        string='Activity Group',
+        readonly=True,
+    )
+    cost_control_id = fields.Many2one(
+        'cost.control',
+        string='Joe Order',
         readonly=True,
     )
 
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""create or replace view %s as (
-            select id, fiscalyear_id, section_id, document_id, amount from (
-                select max(id) id, fiscalyear_id, section_id,
-                document_id, -sum(amount) amount from (
-                    select id, fiscalyear_id, section_id, amount,
-                    case when doctype = 'purchase_request'
-                    then 'purchase.request.line,' || purchase_request_line_id
-                    when doctype = 'purchase_order'
-                    then 'purchase.order.line,' || purchase_line_id
-                    when doctype = 'employee_expense'
-                    then 'hr.expense.line,' || expense_line_id
-                    else document_id
-                    end
-                    from account_analytic_line
-                    where chart_view = 'unit_base'
-                    and doctype in
-                    ('purchase_request', 'purchase_order', 'employee_expense')
-                    ) a
-                group by fiscalyear_id, section_id, document_id
-                order by fiscalyear_id, section_id, document_id) b
-            where amount > 0.0
-        )""" % self._table)
+    @api.multi
+    def _prepare_prev_fy_lines(self):
+        """ Given search result from this view, prepare lines tuple """
+        plan_lines = []
+        for rec in self:
+            if not rec.all_commit:
+                continue
+            val = {'activity_group_id': rec.activity_group_id.id,
+                   'cost_control_id': rec.cost_control_id.id,
+                   'm0': rec.all_commit,
+                   'description': rec.document,
+                   }
+            plan_lines.append((0, 0, val))
+        return plan_lines

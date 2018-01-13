@@ -1,20 +1,19 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-
         <record model="ir.ui.view" id="view_budget_plan_invest_construction_form">
             <field name="name">view.budget.plan.invest.construction.form</field>
             <field name="model">budget.plan.invest.construction</field>
             <field name="arch" type="xml">
                 <form string="Budget Plan">
                     <header>
-                        <button string="Submit" name="action_submit" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="action_approve" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Accept" name="action_accept" states="approve" type="object" class="oe_highlight"/>
-                        <button string="Reject" name="action_reject" states="submit,approve" type="object" />
-                        <button string="Reset to Draft" name="action_draft" states="cancel" type="object"/>
-                        <button string="Cancel" name="action_cancel" states="draft" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,accept"/>
+                        <button string="Submit" name="action_submit" states="1_draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" name="action_approve" states="2_submit" type="object" class="oe_highlight"/>
+                        <button string="Accept" name="action_accept" states="3_approve" type="object" class="oe_highlight"/>
+                        <button string="Reject" name="action_reject" states="2_submit,3_approve" type="object" />
+                        <button string="Reset to Draft" name="action_draft" states="4_cancel" type="object"/>
+                        <button string="Cancel" name="action_cancel" states="1_draft" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="1_draft,2_submit,3_approve,7_accept"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -44,68 +43,22 @@
                         </group>
                         <notebook>
                             <page string="Budget Plan">
+
+                                <button name="compute_prev_fy_performance" string="Prev.FY Performance" type="object" icon="terp-stock_format-scientific"
+                                  attrs="{'invisible': [('state', '!=', '1_draft')]}" class="oe_right"/>
+
                                 <field name="plan_line_ids" colspan="4" nolabel="1">
                                     <tree string="Next year plan" editable="bottom">
                                         <field name="c_or_n"/>
+                                        <field name="invest_construction_phase_id"/>
                                         <field name="name" string="New Project"/>
                                         <field name="description" string="Description"/>
-                                        <field name="invest_construction_id" invisible="1"/>
-                                        <field name="invest_construction_phase_id"/>
-                                        <field name="activity_group_id"/>
+                                        <field name="activity_group_id" invisible="0"/>
+
+                                        <button name="edit_invest_construction" string="Info." icon="gtk-justify-fill" type="object" class="oe_link"/>
+
                                         <field name="planned_amount" sum="Planned Amount"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Info">
-                                <field name="info_line_ids" colspan="4" nolabel="1">
-                                    <tree string="Additional Info" editable="bottom">
-                                        <field name="c_or_n"/>
-                                        <field name="invest_construction_id"/>
-                                        <field name="org_id"/>
-                                        <field name="date_start"/>
-                                        <field name="date_end"/>
-                                        <field name="fund_id" required="1"/>
-                                        <field name="invest_construction_phase_id"/>
-                                        <field name="phase_state"/>
-                                        <field name="phase_month_duration"/>
-                                        <field name="phase_date_start"/>
-                                        <field name="phase_date_end"/>
-                                        <field name="operation_area"/>
-                                        <field name="approval_info"/>
-                                        <field name="project_readiness"/>
-                                        <field name="reason"/>
-                                        <field name="expected_result"/>
-                                        <field name="pm_employee_id"/>
-                                        <field name="section_id"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Extended Budget Plan">
-                                <field name="extend_line_ids" colspan="4" nolabel="1">
-                                    <tree string="Budget Plan for entire project" editable="bottom">
-                                        <field name="c_or_n"/>
-                                        <field name="invest_construction_id" invisible="1"/>
-                                        <field name="invest_construction_phase_id"/>
-                                        <field name="amount_phase_plan"/>
-                                        <field name="amount_phase_plan_adj"/>
-                                        <field name="amount_phase_actual"/>
-                                        <field name="amount_phase_diff"/>
-                                        <field name="amount_phase_plan_fy0"/>
-                                        <field name="amount_phase_plan_fy1"/>
-                                        <field name="amount_phase_plan_fy2"/>
-                                        <field name="amount_phase_plan_fy3"/>
-                                        <field name="amount_phase_plan_fy4"/>
-                                        <field name="amount_phase_plan_fy5"/>
-                                        <field name="amount_phase_plan_fy6"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Recent Performance">
-                                <field name="fy0_line_ids" colspan="4" nolabel="1">
-                                    <tree string="Performance of passing year" editable="bottom">
-                                        <field name="c_or_n"/>
-                                        <field name="invest_construction_id" invisible="1"/>
-                                        <field name="invest_construction_phase_id"/>
+
                                         <field name="amount_fy0_released"/>
                                         <field name="amount_fy0_commit"/>
                                         <field name="amount_fy0_exp_commit"/>
@@ -244,6 +197,51 @@
                     <field name="org_id" type="col"/>
                     <field name="planned_amount" type="measure"/>
                 </graph>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_budget_plan_invest_construction_line_form">
+            <field name="name">view.budget.plan.invest.construction.line.form</field>
+            <field name="model">budget.plan.invest.construction.line</field>
+            <field name="arch" type="xml">
+                <form string="Project Plan">
+                    <group>
+                        <group>
+                            <field name="name" string="Project Name"/>
+                            <field name="c_or_n"/>
+                            <field name="invest_construction_id"/>
+                            <field name="invest_construction_phase_id"/>
+                            <field name="org_id"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="fund_id" required="1"/>
+                            <field name="phase_state"/>
+                            <field name="phase_month_duration"/>
+                            <field name="phase_date_start"/>
+                            <field name="phase_date_end"/>
+                            <field name="operation_area"/>
+                            <field name="approval_info"/>
+                            <field name="project_readiness"/>
+                            <field name="reason"/>
+                            <field name="expected_result"/>
+                            <field name="pm_employee_id"/>
+                            <field name="section_id"/>
+                        </group>
+                        <group>
+                            <field name="amount_phase_plan"/>
+                            <field name="amount_phase_plan_adj"/>
+                            <field name="amount_phase_actual"/>
+                            <field name="amount_phase_diff"/>
+                            <field name="amount_phase_plan_fy0"/>
+                            <field name="amount_phase_plan_fy1"/>
+                            <field name="amount_phase_plan_fy2"/>
+                            <field name="amount_phase_plan_fy3"/>
+                            <field name="amount_phase_plan_fy4"/>
+                            <field name="amount_phase_plan_fy5"/>
+                            <field name="amount_phase_plan_fy6"/>
+                        </group>
+                    </group>
+                </form>
             </field>
         </record>
 

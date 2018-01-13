@@ -35,6 +35,10 @@ class GenerateBudgetPlan(models.TransientModel):
             'invest_asset': (
                 'invest.asset.plan',  # Asset Plan
                 'pabi_budget_plan.action_invest_asset_plan_view'),
+            'invest_construction': (
+                'budget.plan.invest.construction',  # Asset Plan
+                'pabi_budget_plan.'
+                'action_budget_plan_invest_construction_view'),
         }
         if self.chart_view not in _DICT.keys():
             raise ValidationError(_('Selected budget view is not valid!'))

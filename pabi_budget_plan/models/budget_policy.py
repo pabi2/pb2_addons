@@ -134,6 +134,13 @@ class BudgetPolicy(models.Model):
         readonly=False,
         states={'done': [('readonly', True)]},
     )
+    invest_construction_line_ids = fields.One2many(
+        'budget.policy.line',
+        'policy_id',
+        string='Policy Lines',
+        readonly=False,
+        states={'done': [('readonly', True)]},
+    )
     message = fields.Text(
         string='Messages',
         readonly=True,

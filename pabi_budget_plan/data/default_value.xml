@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data noupdate="1">
+        <!-- Default AG for Investment Asset Budget Plan -->
+        <record id="base.value_invest_asset_activity_group" model="ir.values">
+            <field name="name">activity_group_id</field>
+            <field name="model">budget.plan.invest.asset.line</field>
+            <field name="key">default</field>
+            <field name="key2"></field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="value_unpickle" eval="ref('base.AG0001')"/>
+        </record>
+        <!-- Default AG for Investment Construction Budget Plan -->
+        <record id="base.value_invest_construction_activity_group" model="ir.values">
+            <field name="name">activity_group_id</field>
+            <field name="model">budget.plan.invest.construction.line</field>
+            <field name="key">default</field>
+            <field name="key2"></field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="value_unpickle" eval="ref('base.AG0026')"/>
+        </record>
+    </data>
+</openerp>

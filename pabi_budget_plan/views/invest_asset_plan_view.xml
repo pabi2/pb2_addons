@@ -55,10 +55,10 @@
                         <h2>
                             <label for="verified_amount"/><field name="verified_amount" class="oe_inline"/>
                         </h2>
-                        <button name="prepare_prev_fy_commitment" string="Compute Prev.FY Commitment" type="object"
+                        <button name="compute_prev_fy_performance" string="Prev.FY Performance" type="object" icon="terp-stock_format-scientific"
                           attrs="{'invisible': [('state', '!=', 'draft')]}" class="oe_right"/>
                         <!-- <button name="%(action_invest_asset_selection)d" string="⇒ Mass Update Select" type="action" class="oe_link"/> -->
-                        <field name="item_ids" colspan="4" nolabel="1">
+                        <field name="plan_line_ids" colspan="4" nolabel="1">
                             <tree string="Asset Lines" colors="grey:select==False;blue:select==True" editable="bottom">
                                 <field name="plan_id" invisible="1"/>
                                 <field name="select"/>

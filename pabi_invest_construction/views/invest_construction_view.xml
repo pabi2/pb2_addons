@@ -110,7 +110,7 @@
                             <group>
                                 <field name="pm_employee_id"/>
                                 <field name="pm_section_id"/>
-                                <field name="org_id"/>
+                                <field name="org_id" required="1" attrs="{'readonly': [('state', 'not in', ('draft', 'submit'))]}"/>
                                 <field name="costcenter_id" required="1"/>
                             </group>
                         </group>

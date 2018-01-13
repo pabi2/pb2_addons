@@ -75,16 +75,16 @@ class ResInvestConstruction(LogCommon, models.Model):
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
     )
-    org_id = fields.Many2one(
-        'res.org',
-        string='Org',
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
-        help="Org where this construction project belong to. "
-        "Use default as PM's org, but changable."
-    )
+    # org_id = fields.Many2one(
+    #     'res.org',
+    #     string='Org',
+    #     required=True,
+    #     readonly=True,
+    #     states={'draft': [('readonly', False)],
+    #             'submit': [('readonly', False)]},
+    #     help="Org where this construction project belong to. "
+    #     "Use default as PM's org, but changable."
+    # )
     mission_id = fields.Many2one(
         'res.mission',
         string='Core Mission',
@@ -296,6 +296,9 @@ class ResInvestConstruction(LogCommon, models.Model):
 class RestInvestConstructionPhase(LogCommon, models.Model):
     _inherit = 'res.invest.construction.phase'
 
+    name = fields.Char(
+        required=False,
+    )
     active = fields.Boolean(
         string='Active',
         compute='_compute_active',
@@ -515,7 +518,6 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
     def find_active_construction_budget(self, fiscalyear_ids, org_ids):
         budgets = self.env['account.budget'].search([
             ('chart_view', '=', 'invest_construction'),
-            ('active', '=', True),
             ('fiscalyear_id', 'in', fiscalyear_ids),
             ('org_id', 'in', org_ids)])
         return budgets
