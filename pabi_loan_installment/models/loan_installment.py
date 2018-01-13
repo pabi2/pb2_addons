@@ -42,6 +42,7 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
         'loan_install_id', 'move_line_id',
         string='Trade Receivables',
         readonly=True,
+        copy=False,
         states={'draft': [('readonly', False)]},
         domain="[('state','=','valid'),"
         "('account_id.type', '=', 'receivable'),"
@@ -860,7 +861,10 @@ class LoanInstallmentPlan(models.Model):
         loans = self.mapped('loan_install_id')
         for loan in loans:
             accum_principal = 0.0
-            for rec in self.filtered(lambda l: l.loan_install_id == loan):
+            installments = self.filtered(lambda l: l.loan_install_id == loan)
+            if not installments:
+                continue
+            for rec in installments.sorted(key=lambda self: self.installment):
                 initial_principal = rec.loan_install_id.amount_receivable
                 install_account = rec.loan_install_id.account_id
                 income_account = rec.loan_install_id.income_account_id
@@ -876,13 +880,14 @@ class LoanInstallmentPlan(models.Model):
                     income_amounts = move_lines.filtered(
                         lambda l: l.account_id == income_account).\
                         mapped(lambda l: l.debit - l.credit)
-                    rec.calc_principal = sum(paid_amounts) + sum(income_amounts)
+                    rec.calc_principal = \
+                        sum(paid_amounts) + sum(income_amounts)
                     accum_principal += rec.calc_principal
                     rec.remain_principal = initial_principal - accum_principal
                     # Extra installment amount
                     extra_amounts = move_lines.filtered(
                         lambda l: l.account_id == install_account and
-                        l.analytic_account_id  # Signify it created from payment
+                        l.analytic_account_id  # Signify if created by payment
                     ).mapped(lambda l: l.debit - l.credit)
                     rec.extra_amount = sum(extra_amounts)
 
