@@ -2,7 +2,7 @@
 from openerp import tools
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
-from .budget_plan_common import BPCommon, BPLMonthCommon
+from .budget_plan_common import BPCommon, BPLMonthCommon, PrevFYCommon
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 # from openerp.addons.document_status_history.models.document_history import \
@@ -104,39 +104,6 @@ class BudgetPlanProject(BPCommon, models.Model):
                                                       head_src_model,
                                                       line_src_model)
         return budget
-
-    @api.multi
-    def prepare_prev_fy_commitment(self):
-        """ Prepre commitment amount from previous year from PO/EX """
-        Fiscal = self.env['account.fiscalyear']
-        Commit = self.env['budget.plan.project.commit.view']
-        self.mapped('plan_line_ids').unlink()
-        for plan in self:
-            prev_fy = Fiscal.search(
-                [('date_stop', '<', plan.fiscalyear_id.date_start)],
-                order='date_stop desc', limit=1)
-            if not prev_fy:
-                return
-            commits = Commit.search([
-                ('program_id', '=', plan.program_id.id),
-                ('fiscalyear_id', '=', prev_fy.id)])
-            plan_lines = []
-            for commit in commits:
-                val = {'c_or_n': 'continue',
-                       'project_id': commit.project_id.id,
-                       'name': commit.project_id.name,
-                       'fund_id': commit.fund_id.id,
-                       'amount_plan': commit.planned,
-                       'amount_released': commit.released,
-                       'total_commitment': commit.all_commit,
-                       'actual_amount': commit.actual,
-                       'budget_remaining': commit.remain,
-                       'estimated_commitment': 0.0,  # ???
-                       'm0': 0.0,  # ???
-                       # MORE FIELDS, Still don't know how to get it from
-                       }
-                plan_lines.append((0, 0, val))
-            plan.write({'plan_line_ids': plan_lines})
 
 
 class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
@@ -347,21 +314,16 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
         return result
 
 
-class BudgetPlanProjectCommitView(models.Model):
-    _name = 'budget.plan.project.commit.view'
+class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
+    """ Prev FY Performance view, must named as [model]+perv.fy.view """
+    _name = 'budget.plan.project.prev.fy.view'
     _auto = False
-    _description = 'FY budget commitment for project base'
+    _description = 'Prev FY budget performance for project base'
+    # Extra variable for this view
+    _chart_view = 'project_base'
+    _ex_view_fields = ['program_id', 'project_id']  # Each line
+    _ex_domain_fields = ['program_id']  # Each plan is by this domain
 
-    fiscalyear_id = fields.Many2one(
-        'account.fiscalyear',
-        string='Fiscalyear',
-        readonly=True,
-    )
-    fund_id = fields.Many2one(
-        'res.fund',
-        string='Fund',
-        readonly=True,
-    )
     program_id = fields.Many2one(
         'res.program',
         string='Program',
@@ -372,64 +334,24 @@ class BudgetPlanProjectCommitView(models.Model):
         string='Project',
         readonly=True,
     )
-    planned = fields.Float(
-        string='Planned',
-        readonly=True,
-    )
-    released = fields.Float(
-        string='Released',
-        readonly=True,
-    )
-    so_commit = fields.Float(
-        string='SO Commit',
-        readonly=True,
-    )
-    pr_commit = fields.Float(
-        string='PR Commit',
-        readonly=True,
-    )
-    po_commit = fields.Float(
-        string='PO Commit',
-        readonly=True,
-    )
-    exp_commit = fields.Float(
-        string='EX Commit',
-        readonly=True,
-    )
-    all_commit = fields.Float(
-        string='All Commit',
-        readonly=True,
-    )
-    actual = fields.Float(
-        string='Actual',
-        readonly=True,
-    )
-    consumed = fields.Float(
-        string='Consumed',
-        readonly=True,
-    )
-    remain = fields.Float(
-        string='Ramining',
-        readonly=True,
-    )
 
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""create or replace view %s as (
-            select max(id) id, project_id, fiscalyear_id, program_id, fund_id,
-                sum(planned_amount) as planned,
-                sum(released_amount) as released,
-                -sum(amount_so_commit) so_commit,
-                -sum(amount_pr_commit) pr_commit,
-                -sum(amount_po_commit) po_commit,
-                -sum(amount_exp_commit) exp_commit,
-                -sum(amount_so_commit + amount_pr_commit +
-                     amount_po_commit + amount_exp_commit) all_commit,
-                -sum(amount_actual) actual,
-                -sum(amount_consumed) consumed,
-                sum(amount_balance) remain,
-                sum(released_amount + amount_actual) carry_forward
-            from budget_monitor_report
-            where chart_view = 'project_base'
-            group by project_id, fiscalyear_id, program_id, fund_id
-        )""" % self._table)
+    @api.multi
+    def _prepare_prev_fy_lines(self):
+        """ Given search result from this view, prepare lines tuple """
+        plan_lines = []
+        for rec in self:
+            val = {'c_or_n': 'continue',
+                   'project_id': rec.project_id.id,
+                   'name': rec.project_id.name,
+                   'fund_id': rec.fund_id.id,
+                   'amount_plan': rec.planned,
+                   'amount_released': rec.released,
+                   'total_commitment': rec.all_commit,
+                   'actual_amount': rec.actual,
+                   'budget_remaining': rec.balance,
+                   'estimated_commitment': 0.0,  # ???
+                   'm0': 0.0,  # ???
+                   # MORE FIELDS, Still don't know how to get it from
+                   }
+            plan_lines.append((0, 0, val))
+        return plan_lines

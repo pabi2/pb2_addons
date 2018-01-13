@@ -2,6 +2,7 @@
 from openerp import tools
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from .budget_plan_common import PrevFYCommon
 from openerp.addons.pabi_base.models.res_investment_structure import \
     InvestAssetCommon
 
@@ -97,7 +98,7 @@ class InvestAssetPlan(models.Model):
         string='Verified Amount',
         compute='_compute_verified',
     )
-    item_ids = fields.One2many(
+    plan_line_ids = fields.One2many(
         'invest.asset.plan.item',
         'plan_id',
         string='Asset Items',
@@ -187,57 +188,11 @@ class InvestAssetPlan(models.Model):
             plan_ids.append(plan.id)
         return plan_ids
 
-    @api.multi
-    def prepare_prev_fy_commitment(self):
-        """ Prepre commitment amount from previous year from PO/EX """
-        Fiscal = self.env['account.fiscalyear']
-        Commit = self.env['invest.asset.plan.commit.view']
-        self.mapped('item_ids').unlink()
-        for plan in self:
-            prev_fy = Fiscal.search(
-                [('date_stop', '<', plan.fiscalyear_id.date_start)],
-                order='date_stop desc', limit=1)
-            if not prev_fy:
-                return
-            commits = Commit.search([
-                ('org_id', '=', plan.org_id.id),
-                ('fiscalyear_id', '=', prev_fy.id)])
-            plan_lines = []
-            for commit in commits:
-                a = commit.invest_asset_id
-                expenses = a.monitor_expense_ids
-                all_actual = sum(expenses.mapped('amount_actual'))
-                next_fy_ex = expenses.filtered(
-                    lambda l: l.fiscalyear_id == plan.fiscalyear_id)
-                next_fy_commit = sum(next_fy_ex.mapped('amount_pr_commit') +
-                                     next_fy_ex.mapped('amount_po_commit') +
-                                     next_fy_ex.mapped('amount_exp_commit'))
-                vals = {
-                    'select': True,
-                    'priority': 0,
-                    'invest_asset_id': a.id,
-                    # Prev FY actual = all actual - current actal
-                    'prev_fy_actual': all_actual - commit.actual,
-                    'amount_plan': commit.released,
-                    'pr_commitment': commit.pr_commit,
-                    'exp_commitment': commit.exp_commit,
-                    'po_commitment': commit.po_commit,
-                    'total_commitment': commit.all_commit,
-                    'actual_amount': commit.actual,
-                    'budget_usage': commit.consumed,
-                    'budget_remaining': commit.remain,
-                    'budget_carry_forward': commit.carry_forward,
-                    'next_fy_commitment': next_fy_commit,
-                }
-                vals.update(a._invest_asset_common_dict())
-                plan_lines.append((0, 0, vals))
-            plan.write({'item_ids': plan_lines})
-
     @api.one
-    @api.depends('item_ids', 'item_ids.select')
+    @api.depends('plan_line_ids', 'plan_line_ids.select')
     def _compute_verified(self):
         self.verified_amount = sum([x.price_total
-                                   for x in self.item_ids if x.select])
+                                   for x in self.plan_line_ids if x.select])
 
     @api.model
     def _prepare_plan_header(self, asset_plan):
@@ -277,7 +232,7 @@ class InvestAssetPlan(models.Model):
             # Prepare Budget Plan
             budget_plan_vals = self._prepare_plan_header(asset_plan)
             line_vals = []
-            for item in asset_plan.item_ids:
+            for item in asset_plan.plan_line_ids:
                 if not item.select:
                     continue
                 line_vals.append([0, 0, self._prepare_plan_line(item)])
@@ -291,7 +246,7 @@ class InvestAssetPlan(models.Model):
     @api.multi
     def generate_invest_asset(self):
         self.ensure_one()
-        invest_asset_ids = self.item_ids.convert_to_invest_asset()
+        invest_asset_ids = self.plan_line_ids.convert_to_invest_asset()
         action = self.env.ref('pabi_base.action_res_invest_asset')
         result = action.read()[0]
         result.update({'domain': [('id', 'in', invest_asset_ids)]})
@@ -301,7 +256,7 @@ class InvestAssetPlan(models.Model):
     def _compute_invest_asset_count(self):
         for rec in self:
             rec.invest_asset_count = \
-                len(rec.item_ids.mapped('invest_asset_id'))
+                len(rec.plan_line_ids.mapped('invest_asset_id'))
 
     @api.multi
     def action_view_budget_plan(self):
@@ -325,12 +280,19 @@ class InvestAssetPlan(models.Model):
     @api.multi
     def action_view_invest_asset(self):
         self.ensure_one()
-        invest_assets = self.item_ids.mapped('invest_asset_id')
+        invest_assets = self.plan_line_ids.mapped('invest_asset_id')
         action = self.env.ref('pabi_base.action_res_invest_asset')
         dom = [('id', 'in', invest_assets.ids)]
         result = action.read()[0]
         result.update({'domain': dom})
         return result
+
+    @api.multi
+    def compute_prev_fy_performance(self):
+        """ Prepre actual/commit amount from previous year from PR/PO/EX """
+        """ For this model, we need create one as it is not inherited """
+        PrevFY = self.env['invest.asset.plan.prev.fy.view']
+        PrevFY._fill_prev_fy_performance(self)  # self = plans
 
 
 class InvestAssetPlanItem(InvestAssetCommon, models.Model):
@@ -470,16 +432,16 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
         return invest_asset_ids
 
 
-class InvestAssetPlanCommitView(models.Model):
-    _name = 'invest.asset.plan.commit.view'
+class InvestAssetPlanPrevFYView(PrevFYCommon, models.Model):
+    """ Prev FY Performance view, must named as [model]+perv.fy.view """
+    _name = 'invest.asset.plan.prev.fy.view'
     _auto = False
-    _description = 'FY budget commitment for asset plan'
+    _description = 'Prev FY budget performance for invest asset'
+    # Extra variable for this view
+    _chart_view = 'invest_asset'
+    _ex_view_fields = ['org_id', 'invest_asset_id']
+    _ex_domain_fields = ['org_id']  # Each plan is by this domain of view
 
-    fiscalyear_id = fields.Many2one(
-        'account.fiscalyear',
-        string='Fiscalyear',
-        readonly=True,
-    )
     org_id = fields.Many2one(
         'res.org',
         string='Org',
@@ -487,66 +449,42 @@ class InvestAssetPlanCommitView(models.Model):
     )
     invest_asset_id = fields.Many2one(
         'res.invest.asset',
-        string='Invest Asset',
-        readonly=True,
-    )
-    released = fields.Float(
-        string='Released',
-        readonly=True,
-    )
-    so_commit = fields.Float(
-        string='SO Commit',
-        readonly=True,
-    )
-    pr_commit = fields.Float(
-        string='PR Commit',
-        readonly=True,
-    )
-    po_commit = fields.Float(
-        string='PO Commit',
-        readonly=True,
-    )
-    exp_commit = fields.Float(
-        string='EX Commit',
-        readonly=True,
-    )
-    all_commit = fields.Float(
-        string='All Commit',
-        readonly=True,
-    )
-    actual = fields.Float(
-        string='Actual',
-        readonly=True,
-    )
-    consumed = fields.Float(
-        string='Consumed',
-        readonly=True,
-    )
-    remain = fields.Float(
-        string='Ramining',
-        readonly=True,
-    )
-    carry_forward = fields.Float(
-        string='Carry Forward',
+        string='Investment Asset',
         readonly=True,
     )
 
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""create or replace view %s as (
-            select max(id) id, invest_asset_id, fiscalyear_id, org_id,
-                sum(released_amount) as released,
-                -sum(amount_so_commit) so_commit,
-                -sum(amount_pr_commit) pr_commit,
-                -sum(amount_po_commit) po_commit,
-                -sum(amount_exp_commit) exp_commit,
-                -sum(amount_so_commit + amount_pr_commit +
-                     amount_po_commit + amount_exp_commit) all_commit,
-                -sum(amount_actual) actual,
-                -sum(amount_consumed) consumed,
-                sum(amount_balance) remain,
-                sum(released_amount + amount_actual) carry_forward
-            from budget_monitor_report
-            where chart_view = 'invest_asset'
-            group by invest_asset_id, fiscalyear_id, org_id
-        )""" % self._table)
+    @api.multi
+    def _prepare_prev_fy_lines(self):
+        """ Given search result from this view, prepare lines tuple """
+        plan_lines = []
+        plan_fiscalyear_id = self._context.get('plan_fiscalyear_id')
+        print plan_fiscalyear_id
+        for rec in self:
+            a = rec.invest_asset_id
+            expenses = a.monitor_expense_ids
+            # All actuals in the past
+            all_actual = sum(expenses.mapped('amount_actual'))
+            next_fy_ex = expenses.filtered(
+                lambda l: l.fiscalyear_id.id == plan_fiscalyear_id)
+            next_fy_commit = sum(next_fy_ex.mapped('amount_pr_commit') +
+                                 next_fy_ex.mapped('amount_po_commit') +
+                                 next_fy_ex.mapped('amount_exp_commit'))
+            val = {
+                'select': True,
+                'priority': 0,
+                'invest_asset_id': a.id,
+                # Prev FY actual = all actual - current actal
+                'prev_fy_actual': all_actual - rec.actual,
+                'amount_plan': rec.released,
+                'pr_commitment': rec.pr_commit,
+                'exp_commitment': rec.exp_commit,
+                'po_commitment': rec.po_commit,
+                'total_commitment': rec.all_commit,
+                'actual_amount': rec.actual,
+                'budget_usage': rec.consumed,
+                'budget_remaining': rec.balance,
+                'budget_carry_forward': rec.carry_forward,
+                'next_fy_commitment': next_fy_commit,
+            }
+            plan_lines.append((0, 0, val))
+        return plan_lines

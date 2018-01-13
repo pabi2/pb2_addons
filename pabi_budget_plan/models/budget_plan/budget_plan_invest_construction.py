@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
-from .budget_plan_common import BPCommon, BPLCommon
+from openerp import tools
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
+from .budget_plan_common import BPCommon, BPLCommon, PrevFYCommon
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 # from openerp.addons.document_status_history.models.document_history import \
@@ -42,27 +44,6 @@ class BudgetPlanInvestConstruction(BPCommon, models.Model):
         string='Org',
         required=True,
     )
-    info_line_ids = fields.One2many(
-        'budget.plan.invest.construction.line',
-        'plan_id',
-        string='Info Lines',
-        copy=True,
-        track_visibility='onchange',
-    )
-    extend_line_ids = fields.One2many(
-        'budget.plan.invest.construction.line',
-        'plan_id',
-        string='Extended Lines',
-        copy=True,
-        track_visibility='onchange',
-    )
-    fy0_line_ids = fields.One2many(
-        'budget.plan.invest.construction.line',
-        'plan_id',
-        string='FY0 Lines',
-        copy=True,
-        track_visibility='onchange',
-    )
     _sql_constraints = [
         ('uniq_plan', 'unique(org_id, fiscalyear_id)',
          'Duplicated budget plan for the same org is not allowed!'),
@@ -74,6 +55,24 @@ class BudgetPlanInvestConstruction(BPCommon, models.Model):
                                     'res.org', vals['org_id'])
         vals.update({'name': name})
         return super(BudgetPlanInvestConstruction, self).create(vals)
+
+    @api.model
+    def generate_plans(self, fiscalyear_id=None):
+        if not fiscalyear_id:
+            raise ValidationError(_('No fiscal year provided!'))
+        # Find existing plans, and exclude them
+        plans = self.search([('fiscalyear_id', '=', fiscalyear_id)])
+        _ids = plans.mapped('org_id')._ids
+        # Find sections
+        orgs = self.env['res.org'].search([('id', 'not in', _ids),
+                                           ('special', '=', False)])
+        plan_ids = []
+        for org in orgs:
+            plan = self.create({'fiscalyear_id': fiscalyear_id,
+                                'org_id': org.id,
+                                'user_id': False})
+            plan_ids.append(plan.id)
+        return plan_ids
 
 
 class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
@@ -210,3 +209,57 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
 
     # Required for updating dimension
     # FIND ONLY WHAT IS NEED AND USE related field.
+
+    @api.multi
+    def edit_invest_construction(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'pabi_budget_plan.'
+            'act_budget_plan_invest_construction_line_view')
+        result = action.read()[0]
+        view = self.env.ref('pabi_budget_plan.'
+                            'view_budget_plan_invest_construction_line_form')
+        result.update(
+            {'res_id': self.id,
+             'view_id': False,
+             'view_mode': 'form',
+             'views': [(view.id, 'form')],
+             'context': False, })
+        return result
+
+
+class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
+    """ Prev FY Performance view, must named as [model]+perv.fy.view """
+    _name = 'budget.plan.invest.construction.prev.fy.view'
+    _auto = False
+    _description = 'Prev FY budget performance for construction'
+    # Extra variable for this view
+    _chart_view = 'invest_construction'
+    _ex_view_fields = ['invest_construction_phase_id', 'org_id']
+    _ex_domain_fields = ['org_id']  # Each plan is by this domain
+
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+        readonly=True,
+    )
+    invest_construction_phase_id = fields.Many2one(
+        'res.invest.construction.phase',
+        string='Construction Phase',
+        readonly=True,
+    )
+
+    @api.multi
+    def _prepare_prev_fy_lines(self):
+        """ Given search result from this view, prepare lines tuple """
+        plan_lines = []
+        for rec in self:
+            if rec.invest_construction_phase_id.state != 'approve':
+                continue
+            val = {'c_or_n': 'continue',
+                   'invest_construction_phase_id':
+                   rec.invest_construction_phase_id.id,
+                   # ???
+                   }
+            plan_lines.append((0, 0, val))
+        return plan_lines
