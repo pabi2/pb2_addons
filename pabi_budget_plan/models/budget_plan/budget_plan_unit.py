@@ -109,18 +109,15 @@ class BudgetPlanUnit(BPCommon, models.Model):
         readonly=True,
         store=True,
     )
-    # Converted to equivalant status
-    # status = fields.Selection(
-    #     _STATUS,
-    #     string='Status',
-    #     compute='_compute_status',
-    #     store=True,
-    #     help="This virtual field is being used to sort the status in view",
-    # )
     # Data for filing import template
-    master_ag_ids = fields.Many2many(
+    master_ag_exp_ids = fields.Many2many(
         'account.activity.group',
-        sring='Activity Grups Master Data',
+        sring='Activity Grups Master (exp)',
+        compute='_compute_master_ag_ids',
+    )
+    master_ag_rev_ids = fields.Many2many(
+        'account.activity.group',
+        sring='Activity Grups Master (rev)',
         compute='_compute_master_ag_ids',
     )
     master_cc_ids = fields.Many2many(
@@ -138,7 +135,11 @@ class BudgetPlanUnit(BPCommon, models.Model):
     def _compute_master_ag_ids(self):
         ActivityGroup = self.env['account.activity.group']
         for rec in self:
-            rec.master_ag_ids = ActivityGroup.search([]).ids
+            ags = ActivityGroup.search([])
+            rec.master_ag_exp_ids = \
+                ags.filtered(lambda l: l.budget_method == 'expense')
+            rec.master_ag_rev_ids = \
+                ags.filtered(lambda l: l.budget_method == 'revenue')
 
     @api.multi
     @api.depends()

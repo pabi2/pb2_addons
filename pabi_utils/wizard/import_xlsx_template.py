@@ -205,17 +205,14 @@ class ImportXlsxTemplate(models.TransientModel):
                 for idx in range(row, st.nrows):
                     if max_row and (idx - row) > (max_row - 1):
                         break
-                    value = False
+                    value = XLS._get_cell_value(st.cell(idx, col),
+                                                field_type=field_type)
+                    eval_context = self.get_eval_context(model=model,
+                                                         value=value)
                     if key_eval_cond:
-                        eval_context = self.get_eval_context()
                         value = str(eval(key_eval_cond, eval_context))
-                    else:
-                        value = XLS._get_cell_value(st.cell(idx, col),
-                                                    field_type=field_type)
                     # Case Eval
                     if val_eval_cond:
-                        eval_context = self.get_eval_context(model=model,
-                                                             value=value)
                         value = str(eval(val_eval_cond, eval_context))
                     # --
                     vals[out_field].append(value)
@@ -258,17 +255,14 @@ class ImportXlsxTemplate(models.TransientModel):
                     field, val_eval_cond = get_field_condition(field)
                     row, col = XLS.pos2idx(rc)
                     field_type = XLS._get_field_type(model, field)
-                    value = False
+                    value = XLS._get_cell_value(st.cell(row, col),
+                                                field_type=field_type)
+                    eval_context = self.get_eval_context(model=model,
+                                                         value=value)
                     if key_eval_cond:
-                        eval_context = self.get_eval_context()
                         value = str(eval(key_eval_cond, eval_context))
-                    else:
-                        value = XLS._get_cell_value(st.cell(row, col),
-                                                    field_type=field_type)
                     # Case Eval
                     if val_eval_cond:
-                        eval_context = self.get_eval_context(model=model,
-                                                             value=value)
                         value = str(eval(val_eval_cond, eval_context))
                     # --
                     out_st.write(0, col_idx, field)  # Next Column
