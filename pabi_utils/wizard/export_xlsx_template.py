@@ -176,6 +176,8 @@ class ExportXlsxTemplate(models.TransientModel):
         for line in lines:
             for field in pair_fields:  # (field, raw_field)
                 value = _get_field_data(field[1], line)
+                if isinstance(value, basestring):
+                    value = value.encode('utf-8')
                 # Case Eval
                 eval_cond = field_cond_dict[field[0]]
                 if eval_cond:  # Get eval_cond of a raw field
