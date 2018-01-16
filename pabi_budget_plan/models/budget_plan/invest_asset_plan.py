@@ -276,7 +276,7 @@ class InvestAssetPlan(models.Model):
             'invest_asset_id': invest_asset.id,
             'fund_id': invest_asset.fund_ids and invest_asset.fund_ids[0].id,
             # Commitment = current commitment + next year commitment
-            'm0': item.all_commit + item.next_fy_commitment,
+            'm0': item.total_commitment + item.next_fy_commitment,
             # If first year of this asset, use amount_plan_total
             # for on going invest asset, use carry_forward
             'm1': (item.amount_plan == 0.0 and item.carry_forward == 0.0 and
