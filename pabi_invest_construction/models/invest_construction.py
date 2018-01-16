@@ -163,11 +163,14 @@ class ResInvestConstruction(LogCommon, models.Model):
     def _compute_amount_phase_approve(self):
         for rec in self:
             amount_total = sum([x.amount_phase_approve for x in rec.phase_ids])
+            print amount_total
+            print rec.amount_budget_approve
             if amount_total and float_compare(amount_total,
                                               rec.amount_budget_approve,
                                               precision_digits=2) != 0:
                 raise ValidationError(
-                    _('Phases Approved Amount != Project Approved Amount'))
+                    _("Sum of all phases approved budget != "
+                      "Project's approved budget"))
             rec.amount_phase_approve = amount_total
 
     @api.multi
