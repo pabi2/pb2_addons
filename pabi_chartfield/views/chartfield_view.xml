@@ -58,6 +58,7 @@
                     <field name="cost_control_type_id"/>
                     <field name="name"/>
                     <field name="code" />
+                    <field name="name_short"/>
                     <field name="description" />
                     <field name="owner_level"/>
                     <field name="active"/>
@@ -87,7 +88,8 @@
                         </group>
                         <group>
                             <field name="active"/>
-                        	<field name="code" />
+                        	   <field name="code" />
+                             <field name="name_short"/>
                             <field name="description" />
                         </group>
                     </group>
@@ -100,13 +102,13 @@
                 </form>
             </field>
         </record>
-        
+
         <record id="view_cost_control_search" model="ir.ui.view">
             <field name="name">view.cost.control.search</field>
             <field name="model">cost.control</field>
             <field name="arch" type="xml">
                 <search string="Search Job Order">
-                    <field name="name" string="Job Order" filter_domain="['|',('name','ilike',self), ('code','ilike',self)]"/>
+                    <field name="name" string="Job Order" filter_domain="['|',('name','ilike',self), ('code','ilike',self), ('name_short','ilike',self)]"/>
                     <filter name="public" string="NSTDA Wide" domain="[('public','=',True)]"/>
                     <separator/>
                     <group expand="0" string="Group By">
