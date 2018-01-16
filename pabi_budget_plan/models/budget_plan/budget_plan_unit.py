@@ -310,6 +310,11 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
         store=True,
         readonly=True,
     )
+    cost_control_type_id = fields.Many2one(
+        related='cost_control_id.cost_control_type_id',
+        store=True,
+        readonly=True,
+    )
     unit = fields.Float(
         string='Unit',
     )
