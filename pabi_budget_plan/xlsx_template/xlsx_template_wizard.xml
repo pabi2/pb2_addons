@@ -32,7 +32,6 @@
                    'template_context': {}}"/>
       </record>
 
-
       <act_window id="action_budget_breakdown_unit_import_xlsx_tempalte"
           name="Import Breakdowns (.xlsx)"
           res_model="import.xlsx.template"
@@ -45,6 +44,20 @@
             eval="{'template_fname': 'budget_breakdown_unit_base.xlsx',
                    'template_context': {}}"/>
       </record>
+
+      # Asset Item Plan
+      <act_window id="action_invest_asset_plan_export_xlsx_tempalte"
+          name="Get Import Template (.xlsx)"
+          res_model="export.xlsx.template"
+          src_model="invest.asset.plan"
+          view_mode="form"
+          target="new"/>
+      <act_window id="action_invest_asset_plan_import_xlsx_tempalte"
+          name="Import Template Data (.xlsx)"
+          res_model="import.xlsx.template"
+          src_model="invest.asset.plan"
+          view_mode="form"
+          target="new"/>
 
 
     </data>

@@ -6,9 +6,9 @@ from openerp.exceptions import ValidationError
 
 _STATES = [
     ('draft', 'Draft'),
-    ('wait_confirm', 'Waiting Confirmation'),
+    ('wait_confirm', 'Waiting for Confirmation'),
     ('confirmed', 'Confirmed'),
-    ('wait_approve', 'Waiting Approval'),
+    ('wait_approve', 'Waiting for Approval'),
     ('approved', 'Approved'),
     ('ready', 'Ready to Transfer'),
     ('done', 'Transferred'),

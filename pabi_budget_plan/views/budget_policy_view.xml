@@ -25,10 +25,12 @@
             <field name="arch" type="xml">
                 <form string="Budget Policy">
                     <header>
-                        <button string="Done" name="action_done" states="draft" type="object" class="oe_highlight"
-                          attrs="{'invisible': ('chart_view', '!=', 'project_base')}" confirm="This operation can not be reverted, are you sure you want to proceed?"/>
-                        <button string="Create Breakdown and Done" name="action_done" states="draft" type="object"
-                          attrs="{'invisible': ('chart_view', '=', 'project_base')}" class="oe_highlight" confirm="This operation can not be reverted, are you sure you want to proceed?"/>
+                        <button string="Done" name="action_done" type="object" class="oe_highlight"
+                          attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('chart_view', '!=', 'project_base')]}"
+                          confirm="This operation can not be reverted, are you sure you want to proceed?"/>
+                        <button string="Create Breakdown and Done" name="action_done" type="object"
+                          attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('chart_view', '=', 'project_base')]}" class="oe_highlight"
+                          confirm="This operation can not be reverted, are you sure you want to proceed?"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>

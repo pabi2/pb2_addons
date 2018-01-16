@@ -2,21 +2,71 @@
 <openerp>
     <data noupdate="1">
 
-        <!-- Job Order Type -->
-        <record id="cost_control_nstda_course" model="cost.control.type">
-            <field name="name">NSTDA Course</field>
-            <field name="description">Course or Seminar organized by NSTDA</field>
-        </record>
-        
-        <record id="cost_control_field_trip" model="cost.control.type">
-            <field name="name">Field Trip</field>
+        <record id="base.JT0001" model="cost.control.type">
+            <field name="code">JT0001</field>
+            <field name="name">การจัดประชุม</field>
             <field name="description"></field>
         </record>
-        
-        <record id="cost_control_event" model="cost.control.type">
-            <field name="name">Event</field>
+
+        <record id="base.JT0002" model="cost.control.type">
+            <field name="code">JT0002</field>
+            <field name="name">การจัดกิจกรรม เผยแพร่ และ ผลิตสื่อ</field>
             <field name="description"></field>
         </record>
-        
+
+        <record id="base.JT0003" model="cost.control.type">
+            <field name="code">JT0003</field>
+            <field name="name">การจัดฝึกอบรม สัมมนา พัฒนาบุคลากร สวทช.</field>
+            <field name="description"></field>
+        </record>
+
+        <record id="base.JT0004" model="cost.control.type">
+            <field name="code">JT0004</field>
+            <field name="name">การจัดฝึกอบรม สัมมนา บุคลากรภายนอก</field>
+            <field name="description"></field>
+        </record>
+
+        <record id="base.JT0005" model="cost.control.type">
+            <field name="code">JT0005</field>
+            <field name="name">การสร้างภาพลักษณ์องค์กร</field>
+            <field name="description"></field>
+        </record>
+
+        <record id="base.JT0006" model="cost.control.type">
+            <field name="code">JT0006</field>
+            <field name="name">การเข้ารับการอบรม สัมมนา พัฒนาบุคลากร-ในประเทศ</field>
+            <field name="description"></field>
+        </record>
+
+        <record id="base.JT0007" model="cost.control.type">
+            <field name="code">JT0007</field>
+            <field name="name">การเข้ารับการอบรม สัมมนา พัฒนาบุคลากร-ต่างประเทศ</field>
+            <field name="description"></field>
+        </record>
+
+        <record id="base.JT0008" model="cost.control.type">
+            <field name="code">JT0008</field>
+            <field name="name">การเดินทางเสนอผลงาน-ในประเทศ</field>
+            <field name="description"></field>
+        </record>
+
+        <record id="base.JT0009" model="cost.control.type">
+            <field name="code">JT0009</field>
+            <field name="name">การเดินทางเสนอผลงาน-ต่างประเทศ</field>
+            <field name="description"></field>
+        </record>
+
+        <record id="base.JT0010" model="cost.control.type">
+            <field name="code">JT0010</field>
+            <field name="name">การเดินทางปฏิบัติงาน-ในประเทศ</field>
+            <field name="description"></field>
+        </record>
+
+        <record id="base.JT0011" model="cost.control.type">
+            <field name="code">JT0011</field>
+            <field name="name">การเดินทางปฏิบัติงาน-ต่างประเทศ</field>
+            <field name="description"></field>
+        </record>
+
     </data>
 </openerp>

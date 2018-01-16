@@ -26,7 +26,7 @@
                             'D2': 'fiscalyear_id.name',
                             'D3': 'org_id.name_short',
                             'D4': 'section_id.code',
-                            'D5': '${time.strftime("%Y-%m-%d")}',
+                            'D5': '${time.strftime("%d-%m-%Y")}',
                             'D6': 'user_id.name${value or ""}'
                         },
                         'plan_expense_line_ids[100]': {
@@ -170,7 +170,6 @@
           </field>
         </record>
 
-
         # Budget Breakdown
         <!-- Directory Budget Breakdown Templates -->
         <record model="document.directory" id="dir_budget_breakdown_template">
@@ -225,5 +224,120 @@
             }
           </field>
         </record>
+
+        # Invest Asset Plan
+        <!-- Asset Item Plan Template -->
+        <record id="invest_asset_plan_xlsx_tempalte" model="ir.attachment">
+            <field name="res_model">invest.asset.plan</field>
+            <field name="datas"></field>
+            <field name="datas_fname">invest_asset_plan.xlsx</field>
+            <field name="name">Invest Asset Plan Template</field>
+            <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Asset_Item_Plan': {
+                        '_HEAD_': {
+                            'D2': 'fiscalyear_id.name',
+                            'D3': 'org_id.name_short',
+                            'D4': '${env.user.section_id.code or ""}',
+                            'D5': '${time.strftime("%d-%m-%Y")}',
+                            'D6': '${env.user.name or ""}',
+                        },
+                        'plan_line_ids[20]': {
+                            'C11': 'owner_program_id.name',
+                            'D11': 'invest_asset_categ_id.name',
+                            'E11': 'name_common',
+                            'F11': 'name',
+                            'G11': 'request_user_id.name',
+                            'H11': 'owner_section_id.name',
+                            'I11': 'owner_section_id.division_id.name',
+                            'J11': 'location',
+                            'K11': 'quantity',
+                            'L11': 'price_unit',
+                            # 'M11': '',
+                            'N11': 'price_other',
+                            # 'O11': '',
+                            'P11': 'amount_plan_total',
+                            'Q11': 'reason_purchase',
+                            'R11': 'reason_purchase_text',
+                            'S11': 'expect_output',
+                            'T11': 'planned_utilization',
+                            'U11': 'specification_summary',
+                            # 'V11': '',
+                            # 'W11': '',
+                            'X11': 'prev_fy_actual',
+                            'Y11': 'amount_plan',
+                            'Z11': 'pr_commitment',
+                            'AA11': 'po_commitment',
+                            'AB11': 'exp_commitment',
+                            'AC11': 'total_commitment',
+                            'AD11': 'actual_amount',
+                            'AE11': 'budget_usage',
+                            'AF11': 'budget_remaining',
+                            'AG11': 'budget_carry_forward',
+                            'AH11': 'next_fy_commitment',
+                        },
+                    },
+                    'TAB_List': {
+                        'master_program_ids': {
+                            'B6': 'name'
+                        },
+                        'master_requester_ids': {
+                            'D6': 'name'
+                        },
+                        'master_section_ids': {
+                            'F6': 'name'
+                        },
+                        'master_division_ids': {
+                            'G6': 'name'
+                        },
+                        'master_asset_categ_ids': {
+                            'I6': 'name'
+                        },
+                    },
+                },
+                '__IMPORT__': {
+                    'Asset_Item_Plan': {
+                        'plan_line_ids[20]': {
+                            'C11': 'owner_program_id',
+                            'D11': 'invest_asset_categ_id',
+                            'E11': 'name_common',
+                            'F11': 'name',
+                            'G11': 'request_user_id',
+                            'H11': 'owner_section_id',
+                            # 'I11': '',
+                            'J11': 'location',
+                            'K11': 'quantity',
+                            'L11': 'price_unit',
+                            # 'M11': '',
+                            'N11': 'price_other',
+                            # 'O11': '',
+                            'P11': 'amount_plan_total',
+                            'Q11': 'reason_purchase',
+                            'R11': 'reason_purchase_text',
+                            'S11': 'expect_output',
+                            'T11': 'planned_utilization',
+                            'U11': 'specification_summary',
+                            # 'V11': '',
+                            # 'W11': '',
+                            'X11': 'prev_fy_actual',
+                            'Y11': 'amount_plan',
+                            'Z11': 'pr_commitment',
+                            'AA11': 'po_commitment',
+                            'AB11': 'exp_commitment',
+                            'AC11': 'total_commitment',
+                            'AD11': 'actual_amount',
+                            'AE11': 'budget_usage',
+                            'AF11': 'budget_remaining',
+                            'AG11': 'budget_carry_forward',
+                            'AH11': 'next_fy_commitment',
+                        },
+                    },
+                },
+            }
+          </field>
+        </record>
+
     </data>
 </openerp>
