@@ -344,7 +344,7 @@ class BudgetPolicy(models.Model):
                 # V0 and latest policy
                 if policy.revision != '0':
                     v0_line = not model and v0_lines[0] or \
-                        v0_lines.filtered(lambda l: l[field] == entity_id)
+                        v0_lines.filtered(lambda l: l[field].id == entity_id)
                     lastest_line = not model and latest_lines[0] or \
                         latest_lines.filtered(
                             lambda l: l[field].id == entity_id)
