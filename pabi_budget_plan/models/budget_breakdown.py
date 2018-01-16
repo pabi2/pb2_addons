@@ -48,7 +48,6 @@ class BudgetBreakdown(models.Model):
         help="Revision 0 - 12, 0 is on on the fiscalyear open.",
     )
     planned_amount = fields.Float(
-        related='policy_line_id.planned_amount',
         string='Planned Overall',
         compute='_compute_all',
         store=True,

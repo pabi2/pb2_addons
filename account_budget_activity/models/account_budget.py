@@ -269,9 +269,18 @@ class AccountBudget(models.Model):
                     raise ValidationError(
                         _('Budget %s has no expense line!\n'
                           'This operation can not proceed.') % (budget.name,))
+                # If policy amount to allocate, but no budget line yet,
+                # do not allow, must set release amount to zero (for now)
+                if budget.to_release_amount and \
+                        not budget.budget_expense_line_ids:
+                    raise ValidationError(
+                        _('%s has no budget lines!\n'
+                          'Not allow to allocate amount.') % budget.name)
                 if budget.budget_expense_line_ids:
+                    # Refresh all line to zero first
                     budget.budget_expense_line_ids.write(
                         {'released_amount': 0.0})
+                    # Then write to the first line
                     budget.budget_expense_line_ids[0].write(
                         {'released_amount': budget.to_release_amount})
         return res

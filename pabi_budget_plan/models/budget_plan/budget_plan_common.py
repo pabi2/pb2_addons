@@ -382,14 +382,14 @@ class PrevFYCommon(object):
         select max(id) id, fiscalyear_id, fund_id, %s,
             sum(planned_amount) as planned,
             sum(released_amount) as released,
-            -sum(amount_pr_commit) pr_commit,
-            -sum(amount_po_commit) po_commit,
-            -sum(amount_exp_commit) exp_commit,
-            -sum(coalesce(amount_pr_commit, 0.0) +
-                 coalesce(amount_po_commit, 0.0) +
-                 coalesce(amount_exp_commit, 0.0)) all_commit,
-            -sum(amount_actual) actual,
-            -sum(amount_consumed) consumed,
+            sum(amount_pr_commit) pr_commit,
+            sum(amount_po_commit) po_commit,
+            sum(amount_exp_commit) exp_commit,
+            sum(coalesce(amount_pr_commit, 0.0) +
+                coalesce(amount_po_commit, 0.0) +
+                coalesce(amount_exp_commit, 0.0)) all_commit,
+            sum(amount_actual) actual,
+            sum(amount_consumed) consumed,
             sum(amount_balance) balance,
             sum(coalesce(released_amount, 0.0) +
                 coalesce(amount_actual, 0.0)) carry_forward

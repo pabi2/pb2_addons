@@ -18,13 +18,6 @@
           target="new"/>
 
       # Budget Breakdown
-      <!-- Budget Breakdown Unit Based -->
-      <act_window id="action_budget_breakdown_unit_export_xlsx_tempalte"
-          name="Export Breakdowns (.xlsx)"
-          res_model="export.xlsx.template"
-          src_model="budget.breakdown"
-          view_mode="form"
-          target="new"/>
       <!-- Optional: To be specific to some template and context -->
   		<record id="action_budget_breakdown_unit_export_xlsx_tempalte" model="ir.actions.act_window">
     			<field name="context"
@@ -32,12 +25,6 @@
                    'template_context': {}}"/>
       </record>
 
-      <act_window id="action_budget_breakdown_unit_import_xlsx_tempalte"
-          name="Import Breakdowns (.xlsx)"
-          res_model="import.xlsx.template"
-          src_model="budget.breakdown"
-          view_mode="form"
-          target="new"/>
       <!-- Optional: To be specific to some template and context -->
    		<record id="action_budget_breakdown_unit_import_xlsx_tempalte" model="ir.actions.act_window">
      			<field name="context"

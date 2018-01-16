@@ -216,7 +216,9 @@ class ImportXlsxTemplate(models.TransientModel):
                         value = str(eval(val_eval_cond, eval_context))
                     # --
                     vals[out_field].append(value)
-
+                # if all value in vals[out_field] == '', we don't need it
+                if not filter(lambda x: x != '', vals[out_field]):
+                    vals.pop(out_field)
         return vals
 
     @api.model
