@@ -279,8 +279,9 @@ class InvestAssetPlan(models.Model):
             'm0': item.total_commitment + item.next_fy_commitment,
             # If first year of this asset, use amount_plan_total
             # for on going invest asset, use carry_forward
-            'm1': (item.amount_plan == 0.0 and item.carry_forward == 0.0 and
-                   item.amount_plan_total or item.carry_forward),
+            'm1': (item.amount_plan == 0.0 and
+                   item.budget_carry_forward == 0.0 and
+                   item.amount_plan_total or item.budget_carry_forward),
         }
         return data
 
