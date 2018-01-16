@@ -173,7 +173,7 @@ class ResProject(LogCommon, models.Model):
                 vals['fiscalyear_id'] = sync.fiscalyear_id.id
                 vals['activity_group_id'] = sync.activity_group_id.id
                 vals['released_amount'] = sync.released_amount
-                for i in range(1, 10):
+                for i in range(1, 13):
                     vals['m' + str(i)] = sync['m' + str(i)]
                 sync.sync_budget_line_id.write(vals)
                 # Mark synced

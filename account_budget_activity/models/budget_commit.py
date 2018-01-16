@@ -203,7 +203,7 @@ class CommitLineCommon(object):
             return False
         price_subtotal = line_amount or self._price_subtotal(line_qty)
 
-        sign = reverse and 1 or -1  # opposite of purchase side
+        sign = reverse and -1 or 1
         company_currency = company.currency_id
         currency = currency or company_currency
 
