@@ -111,10 +111,72 @@ class InvestAssetPlan(models.Model):
         string='Investment Asset Count',
         compute='_compute_invest_asset_count',
     )
+    # Master Datas
+    master_asset_categ_ids = fields.Many2many(
+        'res.invest.asset.category',
+        sring='Asset Category Master Data',
+        compute='_compute_master_asset_categ_ids',
+    )
+    master_program_ids = fields.Many2many(
+        'res.program',
+        sring='Programs Master Data',
+        compute='_compute_master_program_ids',
+    )
+    master_requester_ids = fields.Many2many(
+        'res.users',
+        sring='Requester Master Data',
+        compute='_compute_master_requester_ids',
+    )
+    master_section_ids = fields.Many2many(
+        'res.section',
+        sring='Section Master Data',
+        compute='_compute_master_section_ids',
+    )
+    master_division_ids = fields.Many2many(
+        'res.division',
+        sring='Division Master Data',
+        compute='_compute_master_division_ids',
+    )
     _sql_constraints = [
         ('uniq_plan', 'unique(org_id, fiscalyear_id)',
          'Duplicated budget plan for the same org is not allowed!'),
     ]
+
+    @api.multi
+    @api.depends()
+    def _compute_master_asset_categ_ids(self):
+        Category = self.env['res.invest.asset.category']
+        for rec in self:
+            rec.master_asset_categ_ids = Category.search([])
+
+    @api.multi
+    @api.depends()
+    def _compute_master_program_ids(self):
+        Program = self.env['res.program']
+        for rec in self:
+            rec.master_program_ids = Program.search([])
+
+    @api.multi
+    @api.depends()
+    def _compute_master_division_ids(self):
+        Division = self.env['res.division']
+        for rec in self:
+            rec.master_division_ids = Division.search([])
+
+    @api.multi
+    @api.depends()
+    def _compute_master_section_ids(self):
+        Section = self.env['res.section']
+        for rec in self:
+            rec.master_section_ids = Section.search([])
+
+    @api.multi
+    @api.depends()
+    def _compute_master_requester_ids(self):
+        Employee = self.env['hr.employee']
+        for rec in self:
+            employees = Employee.search([('org_id', '=', rec.org_id.id)])
+            rec.master_requester_ids = employees.mapped('user_id')
 
     @api.model
     def _get_doc_number(self, fiscalyear_id, model, res_id):

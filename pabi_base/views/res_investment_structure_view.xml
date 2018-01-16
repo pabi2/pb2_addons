@@ -41,7 +41,7 @@
                         <group string="Owner">
                             <field name="owner_section_id"/>
                             <field name="owner_division_id"/>
-                            <field name="owner_program_group_id"/>
+                            <field name="owner_program_id"/>
                             <field name="request_user_id"/>
                             <field name="location"/>
                         </group>

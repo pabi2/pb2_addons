@@ -33,14 +33,14 @@ class InvestAssetCommon(object):
         help="Not related to budgeting, this field hold the "
         "section owner of this asset",
     )
-    owner_program_group_id = fields.Many2one(
-        'res.program.group',
-        string='Owner Program Group',
+    owner_program_id = fields.Many2one(
+        'res.program',
+        string='Owner Program',
         help="Not related to budgeting, this field hold the "
         "program group owner of this asset",
     )
     request_user_id = fields.Many2one(
-        'hr.employee',
+        'res.users',
         string='Requester',
     )
     location = fields.Char(
@@ -125,7 +125,7 @@ class InvestAssetCommon(object):
             'invest_asset_categ_id': self.invest_asset_categ_id.id,
             'name_common': self.name_common,
             'owner_section_id': self.owner_section_id.id,
-            'owner_program_group_id': self.owner_program_group_id.id,
+            'owner_program_id': self.owner_program_id.id,
             'request_user_id': self.request_user_id.id,
             'location': self.location,
             'quantity': self.quantity,
