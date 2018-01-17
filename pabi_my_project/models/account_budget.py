@@ -59,3 +59,12 @@ class AccountBudget(models.Model):
                     project_plan.sync_budget_line_id = budget_line
             project.sync_project_plan_to_budget_line([self.fiscalyear_id.id])
         return True
+
+    @api.model
+    def generate_project_base_controls(self, fiscalyear_id=None):
+        control_ids = super(AccountBudget, self).\
+            generate_project_base_controls(fiscalyear_id=fiscalyear_id)
+        # First sync with myProject
+        for control in self.browse(control_ids):
+            control.sync_budget_my_project()
+        return control_ids
