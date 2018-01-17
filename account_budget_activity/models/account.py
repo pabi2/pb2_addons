@@ -110,9 +110,16 @@ class AccountFiscalyearBudgetLevel(models.Model):
         "amount equal to plan amount"
     )
     check_plan_with_released_amount = fields.Boolean(
-        string='Check Plan with Release',
+        string='Check Rolling Plan with Release',
+        default=False,
         help="When confirm budget control, check that sum "
-        "planned amount not exceed the released amount"
+        "rolling amount not exceed the released amount"
+    )
+    check_release_with_policy_amount = fields.Boolean(
+        string='Check Released with Policy',
+        default=False,
+        help="When confirm budget control, check that sum "
+        "released amount not exceed the policy amount"
     )
     adjust_past_plan = fields.Boolean(
         string='Adjust Past Plan',

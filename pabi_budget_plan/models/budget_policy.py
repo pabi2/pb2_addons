@@ -434,10 +434,14 @@ class BudgetPolicy(models.Model):
             sub_entities = SubEntity.search([(field, '=', entity.id),
                                              ('special', '=', False)])
             # Active plans of this org
+            print Plan
+            print self.fiscalyear_id.name
+            print entity
             plans = Plan.search([
                 ('fiscalyear_id', '=', self.fiscalyear_id.id),
                 (entity_field, '=', entity.id),
                 ('state', 'in', ('7_accept', '8_done'))])
+            print plans
             # All entity must have valid plans
             if len(sub_entities) != len(plans):
                 res['valid'] = False

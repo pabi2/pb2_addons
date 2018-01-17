@@ -366,6 +366,20 @@ class AccountBudget(models.Model):
                          ))
         return True
 
+    @api.multi
+    def _validate_release_vs_policy(self):
+        for budget in self:
+            if budget.budget_level_id.check_release_with_policy_amount:
+                if budget.released_amount > budget.policy_amount:
+                    raise ValidationError(
+                        _('%s: released amount (%s) will exceed '
+                          'policy amount (%s) after this operation!') %
+                        (budget.name_get()[0][1],
+                         '{:,.2f}'.format(budget.released_amount),
+                         '{:,.2f}'.format(budget.policy_amount),
+                         ))
+        return True
+
     # @api.multi
     # def budget_confirm(self):
     #     self._validate_budget_level()
@@ -384,6 +398,7 @@ class AccountBudget(models.Model):
     def budget_done(self):
         self._validate_budget_level()
         self._validate_plan_vs_release()
+        self._validate_release_vs_policy()
         self.write({'state': 'done'})
 
     # ---- BUDGET CHECK ----
