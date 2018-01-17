@@ -12,7 +12,12 @@
                             <field name="chart_view"/>
                             <field name="fiscalyear_id"/>
                         </group>
-                        <group></group>
+                        <group>
+                            <label attrs="{'invisible': [('chart_view', 'not in', ('unit_base', 'invest_asset'))]}"
+                              string="For this budget structure, Budget Plans will be created."/>
+                            <label attrs="{'invisible': [('chart_view', 'not in', ('project_base', 'invest_construction'))]}"
+                              string="For this budget structure, both Budget Plans and Budget Budget Control will be created."/>
+                        </group>
                     </group>
                     <footer>
                         <button string="Generate Plans" name="action_generate_budget_plan" type="object" class="oe_highlight"/>
