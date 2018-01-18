@@ -26,10 +26,10 @@
                 <form string="Budget Policy">
                     <header>
                         <button string="Done" name="action_done" type="object" class="oe_highlight"
-                          attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('chart_view', '!=', 'project_base')]}"
+                          attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('chart_view', 'not in', ('project_base', 'invest_construction'))]}"
                           confirm="This operation can not be reverted, are you sure you want to proceed?"/>
                         <button string="Create Breakdown and Done" name="action_done" type="object"
-                          attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('chart_view', '=', 'project_base')]}" class="oe_highlight"
+                          attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('chart_view', 'in', ('project_base', 'invest_construction'))]}" class="oe_highlight"
                           confirm="This operation can not be reverted, are you sure you want to proceed?"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
@@ -42,7 +42,8 @@
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
                             <button string="Regenerate Policy Lines" states="draft" name="generate_policy_line" type="object"/>
-                            <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text" name="action_open_breakdown" states="done">
+                            <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text" name="action_open_breakdown"
+                                attrs="{'invisible': ['|', ('state', '!=', 'done'), ('chart_view', 'in', ('project_base', 'invest_construction'))]}">
                                 <field string="Breakdowns" name="breakdown_count" widget="statinfo"/>
                             </button>
                         </div>

@@ -72,6 +72,11 @@ class BudgetPlanInvestConstruction(BPCommon, models.Model):
                                 'org_id': org.id,
                                 'user_id': False})
             plan_ids.append(plan.id)
+
+        # Special for Invest Construction, also create budget control too
+        self.env['account.budget'].\
+            generate_invest_construction_controls(fiscalyear_id)
+
         return plan_ids
 
 

@@ -32,7 +32,8 @@ class account_invoice(models.Model):
             # Other invoices exists
             if inv.is_advance or inv.is_deposit:
                 for invoice in inv.purchase_ids.invoice_ids:
-                    if invoice.state not in ('draft', 'cancel'):
+                    if inv != invoice and \
+                            invoice.state not in ('draft', 'cancel'):
                         raise ValidationError(
                             _("""Cancellation of advance invoice is not allowed!
                             Please cancel all following invoices first."""))

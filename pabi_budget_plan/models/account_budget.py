@@ -96,9 +96,10 @@ class AccountBudget(models.Model):
         if not fiscalyear_id:
             raise ValidationError(_('No fiscal year provided!'))
         fiscal = self.env['account.fiscalyear'].browse(fiscalyear_id)
-        # Find existing plans, and exclude them
-        plans = self.search([('fiscalyear_id', '=', fiscalyear_id)])
-        _ids = plans.mapped('program_id')._ids
+        # Find existing controls, and exclude them
+        controls = self.search([('fiscalyear_id', '=', fiscalyear_id),
+                                ('chart_view', '=', 'unit_base')])
+        _ids = controls.mapped('program_id')._ids
         # Find Programs
         programs = self.env['res.program'].search([('id', 'not in', _ids),
                                                    ('special', '=', False)])
@@ -111,7 +112,27 @@ class AccountBudget(models.Model):
                                    'program_id': program.id,
                                    'user_id': False})
             control_ids.append(control.id)
-        # First sync with myProject
-        for control in self.browse(control_ids):
-            control.sync_budget_my_project()
+        return control_ids
+
+    @api.model
+    def generate_invest_construction_controls(self, fiscalyear_id=None):
+        if not fiscalyear_id:
+            raise ValidationError(_('No fiscal year provided!'))
+        fiscal = self.env['account.fiscalyear'].browse(fiscalyear_id)
+        # Find existing controls, and exclude them
+        controls = self.search([('fiscalyear_id', '=', fiscalyear_id),
+                                ('chart_view', '=', 'invest_construction')])
+        _ids = controls.mapped('org_id')._ids
+        # Find orgs
+        orgs = self.env['res.org'].search([('id', 'not in', _ids),
+                                           ('special', '=', False)])
+        control_ids = []
+        for org in orgs:
+            control = self.create({'chart_view': 'invest_construction',
+                                   'fiscalyear_id': fiscalyear_id,
+                                   'date_from': fiscal.date_start,
+                                   'date_to': fiscal.date_stop,
+                                   'org_id': org.id,
+                                   'user_id': False})
+            control_ids.append(control.id)
         return control_ids

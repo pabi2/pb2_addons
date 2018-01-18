@@ -225,7 +225,8 @@ class BudgetPolicy(models.Model):
         _prefix = 'POLICY'
         _prefix2 = {'unit_base': 'UNIT',
                     'project_base': 'PROJECT',
-                    'invest_asset': 'ASSET'}
+                    'invest_asset': 'ASSET',
+                    'invest_construction': 'CONSTRUCT'}
         prefix2 = _prefix2[self.chart_view]
         name = '%s/%s/%s/V%s' % (_prefix, prefix2,
                                  self.fiscalyear_id.code, self.revision)
@@ -276,7 +277,8 @@ class BudgetPolicy(models.Model):
     @api.depends('line_ids',
                  'project_base_line_ids',
                  'unit_base_line_ids',
-                 'invest_asset_line_ids')
+                 'invest_asset_line_ids',
+                 'invest_construction_line_ids',)
     def _compute_all(self):
         for rec in self:
             lines = False
@@ -317,7 +319,10 @@ class BudgetPolicy(models.Model):
                                  'project_base_line_ids'),
                 'invest_asset': ('budget.plan.invest.asset',
                                  False, False,
-                                 'invest_asset_line_ids')
+                                 'invest_asset_line_ids'),
+                'invest_construction': ('budget.plan.invest.construction',
+                                        False, False,
+                                        'invest_construction_line_ids')
             }
 
             # Use company id, to handle case NSTDA level
@@ -365,9 +370,12 @@ class BudgetPolicy(models.Model):
 
     @api.multi
     def action_done(self):
-        _DICT = {'unit_base': ('budget.plan.unit', True),
-                 'project_base': ('budget.plan.project', False),
-                 'invest_asset': ('budget.plan.invest.asset', True)}
+        _DICT = {
+            'unit_base': ('budget.plan.unit', True),
+            'project_base': ('budget.plan.project', False),
+            'invest_asset': ('budget.plan.invest.asset', True),
+            'invest_construction': ('budget.plan.invest.construction', False),
+        }
         for policy in self:
             policy._validate_policy_amount()
             if policy.chart_view in _DICT.keys():
@@ -410,6 +418,8 @@ class BudgetPolicy(models.Model):
                              'res.program', 'program_id'),
             'invest_asset': ('budget.plan.invest.asset', False,
                              'res.org', 'org_id'),
+            'invest_construction': ('budget.plan.invest.construction',
+                                    'org_id', 'res.org', 'org_id'),
         }
         plan_model = _DICT[self.chart_view][0]
         entity_field = _DICT[self.chart_view][1]
@@ -434,9 +444,6 @@ class BudgetPolicy(models.Model):
             sub_entities = SubEntity.search([(field, '=', entity.id),
                                              ('special', '=', False)])
             # Active plans of this org
-            print Plan
-            print self.fiscalyear_id.name
-            print entity
             plans = Plan.search([
                 ('fiscalyear_id', '=', self.fiscalyear_id.id),
                 (entity_field, '=', entity.id),
@@ -520,6 +527,8 @@ class BudgetPolicyLine(ChartField, models.Model):
                 rec.name = rec.program_id.name_short
             elif chart_view == 'invest_asset':
                 rec.name = 'NSTDA'
+            elif chart_view == 'invest_construction':
+                rec.name = 'NSTDA'
             # Continue with other dimension
             else:
                 rec.name = 'n/a'
@@ -538,8 +547,8 @@ class BudgetPolicyLine(ChartField, models.Model):
     @api.model
     def _change_amount_content(self, policy, new_amount):
         POLICY_LEVEL = {'unit_base': 'org_id',
-                        'invest_asset': 'org_id',
                         'project_base': 'program_id',
+                        'invest_asset': 'org_id',
                         'invest_construction': 'org_id',
                         'personnel': 'personnel_costcenter_id'}
         title = _('Policy amount change(s)')
