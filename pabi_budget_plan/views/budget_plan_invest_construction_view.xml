@@ -57,15 +57,14 @@
 
                                         <button name="edit_invest_construction" string="Info." icon="gtk-justify-fill" type="object" class="oe_link"/>
 
-                                        <field name="planned_amount" sum="Planned Amount"/>
-
-                                        <field name="amount_fy0_released"/>
-                                        <field name="amount_fy0_commit"/>
-                                        <field name="amount_fy0_exp_commit"/>
-                                        <field name="amount_fy0_pr_commit"/>
-                                        <field name="amount_fy0_actual"/>
-                                        <field name="amount_fy0_consumed"/>
-                                        <field name="amoutn_fy0_balance"/>
+                                        <field name="planned" sum="Planned Amount"/>
+                                        <field name="released"/>
+                                        <field name="all_commit"/>
+                                        <field name="pr_commit"/>
+                                        <field name="po_commit"/>
+                                        <field name="actual"/>
+                                        <field name="consumed"/>
+                                        <field name="balance"/>
                                     </tree>
                                 </field>
                             </page>
@@ -127,7 +126,7 @@
                 <search string="Search Budget Plan Line">
                     <group expand="0" string="Group By">
                         <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
-                        <filter name="section_id" string="Section" domain="[]" context="{'group_by':'section_id'}"/>
+                        <filter name="pm_section_id" string="Owner Section" domain="[]" context="{'group_by':'pm_section_id'}"/>
 
                         <filter name="activity_group_id" string="Activity Group" domain="[]" context="{'group_by':'activity_group_id'}"/>
                         <filter name="invest_construction_id" string="Construction" domain="[]" context="{'group_by':'invest_construction_id'}"/>
@@ -148,44 +147,37 @@
                       <field name="invest_construction_id" invisible="1"/>
                       <field name="invest_construction_phase_id"/>
                       <field name="activity_group_id"/>
-                      <field name="planned_amount" sum="Planned Amount"/>
 
                       <field name="org_id"/>
                       <field name="date_start"/>
                       <field name="date_end"/>
-                      <field name="fund_id" required="1"/>
                       <field name="invest_construction_phase_id"/>
-                      <field name="phase_state"/>
-                      <field name="phase_month_duration"/>
-                      <field name="phase_date_start"/>
-                      <field name="phase_date_end"/>
+                      <field name="month_duration"/>
+                      <field name="date_start"/>
+                      <field name="date_end"/>
                       <field name="operation_area"/>
-                      <field name="approval_info"/>
                       <field name="project_readiness"/>
                       <field name="reason"/>
                       <field name="expected_result"/>
                       <field name="pm_employee_id"/>
-                      <field name="section_id"/>
+                      <field name="pm_section_id"/>
 
-                      <field name="amount_phase_plan"/>
-                      <field name="amount_phase_plan_adj"/>
-                      <field name="amount_phase_actual"/>
-                      <field name="amount_phase_diff"/>
-                      <field name="amount_phase_plan_fy0"/>
-                      <field name="amount_phase_plan_fy1"/>
-                      <field name="amount_phase_plan_fy2"/>
-                      <field name="amount_phase_plan_fy3"/>
-                      <field name="amount_phase_plan_fy4"/>
-                      <field name="amount_phase_plan_fy5"/>
-                      <field name="amount_phase_plan_fy6"/>
+                      <field name="budget_overall"/>
+                      <field name="amount_fy1"/>
+                      <field name="amount_fy2"/>
+                      <field name="amount_fy3"/>
+                      <field name="amount_fy4"/>
+                      <field name="amount_fy5"/>
+                      <field name="amount_beyond"/>
 
-                      <field name="amount_fy0_released"/>
-                      <field name="amount_fy0_commit"/>
-                      <field name="amount_fy0_exp_commit"/>
-                      <field name="amount_fy0_pr_commit"/>
-                      <field name="amount_fy0_actual"/>
-                      <field name="amount_fy0_consumed"/>
-                      <field name="amoutn_fy0_balance"/>
+                      <field name="planned"/>
+                      <field name="released"/>
+                      <field name="all_commit"/>
+                      <field name="pr_commit"/>
+                      <field name="po_commit"/>
+                      <field name="actual"/>
+                      <field name="consumed"/>
+                      <field name="balance"/>
                 </tree>
             </field>
         </record>
@@ -207,38 +199,37 @@
                 <form string="Project Plan">
                     <group>
                         <group>
-                            <field name="name" string="Project Name"/>
                             <field name="c_or_n"/>
                             <field name="invest_construction_id"/>
                             <field name="invest_construction_phase_id"/>
-                            <field name="org_id"/>
+                            <field name="name" string="New Project"/>
+                            <field name="description"/>
+                            <field name="month_duration"/>
                             <field name="date_start"/>
                             <field name="date_end"/>
-                            <field name="fund_id" required="1"/>
-                            <field name="phase_state"/>
-                            <field name="phase_month_duration"/>
-                            <field name="phase_date_start"/>
-                            <field name="phase_date_end"/>
                             <field name="operation_area"/>
-                            <field name="approval_info"/>
                             <field name="project_readiness"/>
                             <field name="reason"/>
                             <field name="expected_result"/>
                             <field name="pm_employee_id"/>
-                            <field name="section_id"/>
+                            <field name="pm_section_id"/>
                         </group>
                         <group>
-                            <field name="amount_phase_plan"/>
-                            <field name="amount_phase_plan_adj"/>
-                            <field name="amount_phase_actual"/>
-                            <field name="amount_phase_diff"/>
-                            <field name="amount_phase_plan_fy0"/>
-                            <field name="amount_phase_plan_fy1"/>
-                            <field name="amount_phase_plan_fy2"/>
-                            <field name="amount_phase_plan_fy3"/>
-                            <field name="amount_phase_plan_fy4"/>
-                            <field name="amount_phase_plan_fy5"/>
-                            <field name="amount_phase_plan_fy6"/>
+                            <field name="budget_overall"/>
+                            <field name="amount_fy1"/>
+                            <field name="amount_fy2"/>
+                            <field name="amount_fy3"/>
+                            <field name="amount_fy4"/>
+                            <field name="amount_fy5"/>
+                            <field name="amount_beyond"/>
+                            <field name="planned"/>
+                            <field name="released"/>
+                            <field name="all_commit"/>
+                            <field name="pr_commit"/>
+                            <field name="po_commit"/>
+                            <field name="actual"/>
+                            <field name="consumed"/>
+                            <field name="balance"/>
                         </group>
                     </group>
                 </form>

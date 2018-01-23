@@ -323,6 +323,7 @@ class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
     _chart_view = 'project_base'
     _ex_view_fields = ['program_id', 'project_id']  # Each line
     _ex_domain_fields = ['program_id']  # Each plan is by this domain
+    _ex_active_domain = [('project_id.state', '=', 'approve')]
 
     program_id = fields.Many2one(
         'res.program',

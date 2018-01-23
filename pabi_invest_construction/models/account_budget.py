@@ -28,6 +28,11 @@ class AccountBudget(models.Model):
         Phase = self.env['res.invest.construction.phase']
         PhaseSync = self.env['res.invest.construction.phase.sync']
         BudgetLine = self.env['account.budget.line']
+        # Get default AG for construction
+        const_default_ag = self.env.ref(
+            'base.value_invest_construction_activity_group')
+        const_default_ag_id = int(const_default_ag.value_unpickle)
+        # Phases to sync
         phases = Phase.search([
             ('org_id', '=', self.org_id.id),
             ('state', '=', 'approve'),
@@ -62,6 +67,7 @@ class AccountBudget(models.Model):
                         'budget_id': self.id,
                         'org_id': self.org_id.id,
                         'fund_id': ic.fund_ids and ic.fund_ids[0].id or False,
+                        'activity_group_id': const_default_ag_id,
                         'invest_construction_id': ic.id,
                         'invest_construction_phase_id': phase.id,
                     }

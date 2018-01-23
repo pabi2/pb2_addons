@@ -139,7 +139,7 @@ CHART_VIEW = {
     'personnel': ('Personnel', 'personnel_costcenter_id'),
     'invest_asset': ('Investment Asset', 'invest_asset_id'),
     'invest_construction': ('Investment Construction',
-                            'invest_construction_id'),
+                            'invest_construction_phase_id'),
 }
 
 CHART_VIEW_LIST = [(x[0], x[1][0]) for x in CHART_VIEW.items()]

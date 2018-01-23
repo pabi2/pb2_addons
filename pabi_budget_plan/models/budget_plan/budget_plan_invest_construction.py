@@ -97,6 +97,11 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
         required=True,
     )
     # Extra
+    org_id = fields.Many2one(
+        related='plan_id.org_id',
+        store=True,
+        readonly=True,
+    )
     invest_construction_id = fields.Many2one(
         related='invest_construction_phase_id.invest_construction_id',
         store=True,
@@ -109,6 +114,9 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
         default='new',
     )
     # From Project Construction Master Data
+    month_duration = fields.Integer(
+        string='Months',
+    )
     date_start = fields.Date(
         string='Project Start Date',
     )
@@ -119,14 +127,15 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
         'hr.employee',
         string='Project Manager',
     )
+    pm_section_id = fields.Many2one(
+        'res.section',
+        string='Owner Section',
+    )
     operation_area = fields.Char(
         string='Operation Area',
     )
     date_expansion = fields.Date(
         string='Expansion Date',
-    )
-    approval_info = fields.Text(
-        string='Approval Info',
     )
     project_readiness = fields.Text(
         string='Project Readiness',
@@ -137,79 +146,50 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
     expected_result = fields.Text(
         string='Expected Result',
     )
-    phase_state = fields.Selection(
-        [('draft', 'Draft'),
-         ('submit', 'Submitted'),
-         ('approve', 'Approved'),
-         ('reject', 'Rejected'),
-         ('delete', 'Deleted'),
-         ('cancel', 'Cancelled'),
-         ('close', 'Closed'),
-         ],
-        string='Phase Status',
+    budget_overall = fields.Float(
+        string='Overall Budget',
     )
-    phase_month_duration = fields.Integer(
-        string='Duration (month)',
+    amount_fy1 = fields.Float(
+        string='FY1',
     )
-    phase_date_start = fields.Date(
-        string='Start Date',
-    )
-    phase_date_end = fields.Date(
-        string='End Date',
-    )
-    amount_phase_plan = fields.Float(
-        string='Budget',
-    )
-    amount_phase_plan_adj = fields.Float(
-        string='Budget Adj',
-    )
-    amount_phase_actual = fields.Float(
-        string='Actual',
-    )
-    amount_phase_diff = fields.Float(
-        string='Balance',
-    )
-    amount_phase_plan_fy0 = fields.Float(
-        string='FY0 (Prev)',
-    )
-    amount_phase_plan_fy1 = fields.Float(
-        string='FY1 (Next)',
-    )
-    amount_phase_plan_fy2 = fields.Float(
+    amount_fy2 = fields.Float(
         string='FY2',
     )
-    amount_phase_plan_fy3 = fields.Float(
+    amount_fy3 = fields.Float(
         string='FY3',
     )
-    amount_phase_plan_fy4 = fields.Float(
+    amount_fy4 = fields.Float(
         string='FY4',
     )
-    amount_phase_plan_fy5 = fields.Float(
+    amount_fy5 = fields.Float(
         string='FY5',
     )
-    amount_phase_plan_fy6 = fields.Float(
-        string='FY6 (Beyond)',
+    amount_beyond = fields.Float(
+        string='Beyond FY5',
     )
-    amount_fy0_released = fields.Float(
-        string='FY0 Released',
+    planned = fields.Float(
+        string='Current Plan',
     )
-    amount_fy0_commit = fields.Float(
-        string='FY0 Commit',
+    released = fields.Float(
+        string='Current Released',
     )
-    amount_fy0_exp_commit = fields.Float(
-        string='FY0 EXP Commit',
+    all_commit = fields.Float(
+        string='Current All Commit',
     )
-    amount_fy0_pr_commit = fields.Float(
-        string='FY0 PR Commit',
+    po_commit = fields.Float(
+        string='Current PO Commit',
     )
-    amount_fy0_actual = fields.Float(
-        string='FY0 Actual',
+    pr_commit = fields.Float(
+        string='Current PR Commit',
     )
-    amount_fy0_consumed = fields.Float(
-        string='FY0 Commit + Actual',
+    actual = fields.Float(
+        string='Current Actual',
     )
-    amoutn_fy0_balance = fields.Float(
-        string='FY0 Balance',
+    consumed = fields.Float(
+        string='Current Consumed',
+    )
+    balance = fields.Float(
+        string='Current Balance',
     )
 
     # Required for updating dimension
@@ -242,6 +222,8 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
     _chart_view = 'invest_construction'
     _ex_view_fields = ['invest_construction_phase_id', 'org_id']
     _ex_domain_fields = ['org_id']  # Each plan is by this domain
+    _ex_active_domain = \
+        [('invest_construction_phase_id.state', '=', 'approve')]
 
     org_id = fields.Many2one(
         'res.org',

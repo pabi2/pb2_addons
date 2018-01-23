@@ -72,18 +72,22 @@
                 <xpath expr="/form/sheet/group/group//field[@name='creating_user_id']" position="after">
                     <field name="chart_view" required="1" readonly="1"/>
                     <field name="program_id"
+                        domain="[('special', '=', False)]"
                         attrs="{'invisible': [('chart_view','!=','project_base')],
                             'required': [('chart_view','=','project_base')],
                             'readonly': [('state','!=','draft')]}"/>
                     <field name="section_id"
+                        domain="[('special', '=', False)]"
                         attrs="{'invisible': [('chart_view','!=','unit_base')],
                             'required': [('chart_view','=','unit_base')],
                             'readonly': [('state','!=','draft')]}"/>
                     <field name="personnel_costcenter_id"
+                        domain="[('special', '=', False)]"
                         attrs="{'invisible': [('chart_view','!=','personnel')],
                             'required': [('chart_view','=','personnel')],
                             'readonly': [('state','!=','draft')]}"/>
                     <field name="org_id"
+                        domain="[('special', '=', False)]"
                         attrs="{'invisible': [('chart_view','not in',('invest_asset','invest_construction'))],
                             'required': [('chart_view','in',('invest_asset','invest_construction'))],
                             'readonly': [('state','!=','draft')]}"/>

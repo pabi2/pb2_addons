@@ -504,6 +504,7 @@ class InvestAssetPlanPrevFYView(PrevFYCommon, models.Model):
     _chart_view = 'invest_asset'
     _ex_view_fields = ['org_id', 'invest_asset_id']
     _ex_domain_fields = ['org_id']  # Each plan is by this domain of view
+    _ex_active_domain = [('carry_forward', '>', 0.0)]
 
     org_id = fields.Many2one(
         'res.org',
@@ -521,7 +522,6 @@ class InvestAssetPlanPrevFYView(PrevFYCommon, models.Model):
         """ Given search result from this view, prepare lines tuple """
         plan_lines = []
         plan_fiscalyear_id = self._context.get('plan_fiscalyear_id')
-        print plan_fiscalyear_id
         for rec in self:
             a = rec.invest_asset_id
             expenses = a.monitor_expense_ids
