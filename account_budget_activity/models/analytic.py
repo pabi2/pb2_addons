@@ -62,6 +62,23 @@ class AccountAnalyticLine(models.Model):
         'account.fiscalyear',
         string='Fiscal Year',
         readonly=True,
+        index=True,
+    )
+    monitor_fy_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Monitoring FY',
+        readonly=True,
+        index=True,
+        help="Special fiscal year column, used to carry forward "
+        "commitment from past year to current budget year.\n"
+        "At beginning of new fiscal year, an action to carry over commitment "
+        "can be triggered."
+    )
+    has_commit_amount = fields.Boolean(
+        string='Commitment > 0.0',
+        default=False,
+        readonly=True,
+        help="True if parent document (PR/PO/EX/SO) as uncleared commitment"
     )
     activity_group_id = fields.Many2one(
         'account.activity.group',
@@ -180,7 +197,11 @@ class AccountAnalyticLine(models.Model):
         FiscalYear = self.env['account.fiscalyear']
         for rec in self:
             if not rec.fiscalyear_id:  # No fiscal assigned, use rec.date
-                rec._write({'fiscalyear_id': FiscalYear.find(rec.date)})
+                fiscalyear_id = FiscalYear.find(rec.date)
+                rec._write({'fiscalyear_id': fiscalyear_id,
+                            'monitor_fy_id': fiscalyear_id, })
+            else:
+                rec._write({'monitor_fy_id': rec.fiscalyear_id.id, })
 
     @api.model
     def create(self, vals):

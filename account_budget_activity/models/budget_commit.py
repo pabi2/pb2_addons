@@ -132,6 +132,34 @@ class CommitLineCommon(object):
         domain=_trans_id_domain,
         readonly=True,
     )
+    has_commit_amount = fields.Boolean(
+        string='Commitment > 0.0',
+        compute='_compute_has_commit_amount',
+        store=True,
+    )
+    commit_amount = fields.Float(
+        string='Commitment',
+        compute='_compute_has_commit_amount',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('budget_commit_ids')
+    def _compute_has_commit_amount(self):
+        for rec in self:
+            commit_amount = sum(rec.budget_commit_ids.mapped('amount'))
+            rec.commit_amount = commit_amount
+            if commit_amount:
+                rec.has_commit_amount = True
+            else:
+                rec.has_commit_amount = False
+
+    @api.multi
+    def _write(self, vals):
+        if 'has_commit_amount' in vals:
+            self.mapped('budget_commit_ids').write({
+                'has_commit_amount': vals['has_commit_amount']})
+        return super(CommitLineCommon, self)._write(vals)
 
     @api.multi
     def _compute_budget_commit_bal(self):
