@@ -153,5 +153,18 @@
             <field name="code">61</field>
         </record>
 
+        <!-- Project NSTDA Strategy -->
+        <record id="project_nstda_strategy_1" model="project.nstda.strategy">
+            <field name="name">ประเด็นมุ่งเน้น</field>
+            <field name="code">1</field>
+        </record>
+        <record id="project_nstda_strategy_2" model="project.nstda.strategy">
+            <field name="name">เทคโนโลยีฐานแบบบูรณาการ</field>
+            <field name="code">2</field>
+        </record>
+        <record id="project_nstda_strategy_3" model="project.nstda.strategy">
+            <field name="name">เทคโนโลยีฐาน</field>
+            <field name="code">3</field>
+        </record>
     </data>
 </openerp>

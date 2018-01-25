@@ -58,6 +58,7 @@
             <field name="arch" type="xml">
                 <search string="Org">
                     <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                    <field name="operating_unit_id"/>
                     <group expand="0" string="Group By">
                         <filter name="operating_unit_id" string="Operating Unit" context="{'group_by':'operating_unit_id'}"/>
                     </group>
@@ -119,6 +120,7 @@
             <field name="arch" type="xml">
                 <search string="Org">
                     <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                    <field name="org_id"/>
                     <group expand="0" string="Group By">
                         <filter name="org_id" string="Org" context="{'group_by':'org_id'}"/>
                     </group>
@@ -182,6 +184,8 @@
             <field name="arch" type="xml">
                 <search string="Subsector">
                     <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                    <field name="org_id"/>
+                    <field name="sector_id"/>
                     <group expand="0" string="Group By">
                         <filter name="org_id" string="Org" context="{'group_by':'org_id'}"/>
                         <filter name="sector_id" string="Sector" context="{'group_by':'sector_id'}"/>
@@ -247,6 +251,9 @@
             <field name="arch" type="xml">
                 <search string="Subsector">
                     <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                    <field name="org_id"/>
+                    <field name="sector_id"/>
+                    <field name="subsector_id"/>
                     <group expand="0" string="Group By">
                         <filter name="org_id" string="Org" context="{'group_by':'org_id'}"/>
                         <filter name="sector_id" string="Sector" context="{'group_by':'sector_id'}"/>
@@ -329,6 +336,10 @@
             <field name="arch" type="xml">
                 <search string="Subsector">
                     <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                    <field name="org_id"/>
+                    <field name="sector_id"/>
+                    <field name="subsector_id"/>
+                    <field name="division_id"/>
                     <group expand="0" string="Group By">
                         <filter name="org_id" string="Org" context="{'group_by':'org_id'}"/>
                         <filter name="sector_id" string="Sector" context="{'group_by':'sector_id'}"/>
@@ -395,10 +406,6 @@
                 <search string="Cost Center">
                     <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
                     <group expand="1" string="Group By">
-                        <filter string="Org" name="org_id" context="{'group_by':'org_id'}"/>
-                        <filter string="Sector" name="sector_id" context="{'group_by':'sector_id'}"/>
-                        <filter string="Subsector" name="subsector_id" context="{'group_by':'subsector_id'}"/>
-                        <filter string="Division" name="division_id" context="{'group_by':'division_id'}"/>
                     </group>
                 </search>
             </field>

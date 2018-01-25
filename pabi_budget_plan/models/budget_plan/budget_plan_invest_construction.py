@@ -13,6 +13,7 @@ class BudgetPlanInvestConstruction(BPCommon, models.Model):
     _name = 'budget.plan.invest.construction'
     _inherit = ['mail.thread']
     _description = "Investment Construction Budget - Budget Plan"
+    _order = 'fiscalyear_id desc, id desc'
 
     # COMMON
     plan_line_ids = fields.One2many(
@@ -241,8 +242,6 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
         """ Given search result from this view, prepare lines tuple """
         plan_lines = []
         for rec in self:
-            if rec.invest_construction_phase_id.state != 'approve':
-                continue
             val = {'c_or_n': 'continue',
                    'invest_construction_phase_id':
                    rec.invest_construction_phase_id.id,

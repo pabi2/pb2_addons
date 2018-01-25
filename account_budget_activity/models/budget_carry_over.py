@@ -32,6 +32,7 @@ class BudgetCarryOver(models.Model):
         'carry_over_id',
         string='Carry Over Lines',
         readonly=True,
+        copy=False,
         states={'draft': [('readonly', False)]},
     )
     state = fields.Selection(
@@ -89,7 +90,7 @@ class BudgetCarryOver(models.Model):
             if rec.doctype in ('purchase_request', 'purchase_order'):
                 domain += ['|', ('fiscalyear_id', '=', False),
                            ('fiscalyear_id.date_start', '<',
-                            rec.fiscalyear_id.date_start)]
+                            rec.fiscalyear_id.date_start)]  # No future fy
             docs = self.env[model].search(domain)
             lines = []
             for doc in docs:

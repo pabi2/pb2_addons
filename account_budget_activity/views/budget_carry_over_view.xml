@@ -10,6 +10,8 @@
                     <field name="name"/>
                     <field name="doctype"/>
                     <field name="fiscalyear_id"/>
+                    <field name="write_uid" readonly="1"/>
+                    <field name="write_date" readonly="1"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -33,9 +35,11 @@
                         <group>
                             <group>
                                 <field name="doctype"/>
+                                <field name="fiscalyear_id"/>
                             </group>
                             <group>
-                                <field name="fiscalyear_id"/>
+                                <field name="write_uid"/>
+                                <field name="write_date"/>
                             </group>
                         </group>
                         <field name="line_ids">
@@ -62,7 +66,7 @@
         </record>
 
         <record id="action_budget_carry_over" model="ir.actions.act_window">
-            <field name="name">Carry Over Next FY</field>
+            <field name="name">Commitment Carry Over</field>
             <field name="res_model">budget.carry.over</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
@@ -71,7 +75,8 @@
             <field name="help">Process to carry over committed budget from previous year to next year</field>
         </record>
 
-        <menuitem action="action_budget_carry_over" id="menu_action_budget_carry_over" parent="menu_action_budget_year_end_process" sequence="10"/>
+        <menuitem action="action_budget_carry_over" id="menu_action_budget_carry_over" parent="menu_action_budget_year_end_process" sequence="10"
+          groups="group_budget_carry_over"/>
 
     </data>
 </openerp>

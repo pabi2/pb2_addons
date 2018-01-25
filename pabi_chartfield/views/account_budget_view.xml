@@ -504,7 +504,6 @@
                     <separator/>
                     <field name="org_id"/>
                     <field name="section_id"/>
-                    <field name="program_id"/>
                     <separator/>>
                     <filter string="My Org Budgets" name="my_org_budgets" context="{'my_org_budgets': True}"/>
                     <filter string="My Section Budgets" name="my_section_budgets" context="{'my_section_budgets': True}"/>
@@ -545,6 +544,32 @@
             action="account_budget_activity.act_account_budget_view" sequence="1" />
 
         <!-- 2) Project Base -->
+        <record id="view_account_budget_project_base_search" model="ir.ui.view">
+            <field name="name">view.account.budget.project_base_search</field>
+            <field name="model">account.budget</field>
+            <field name="arch" type="xml">
+                <search string="Budget">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="state"/>
+                    <separator/>
+                    <field name="functional_area_id"/>
+                    <field name="program_id"/>
+                    <separator/>
+                    <filter string="This Fiscalyear" name="this_year_budgets" context="{'this_year_plans': True}"/>
+                    <separator/>
+                    <filter domain="[('state','=','draft')]" string="Draft"/>
+                    <filter domain="[('state','=','done')]" string="Controlled"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Funcational Area" context="{'group_by':'functional_area_id'}"/>
+                        <filter string="Programs" context="{'group_by':'program_id'}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Status" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
 
         <record model="ir.actions.act_window" id="act_account_budget_view_project_base">
             <field name="name">Project Based</field>
@@ -554,7 +579,7 @@
             <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
             <!-- TODO: currrently, we use the one form unit based, change to its own -->
             <field name="search_view_id" ref="view_account_budget_unit_base_search"/>
-            <!-- <field name="search_view_id" ref="view_account_budget_project_base_search"/> -->
+            <field name="search_view_id" ref="view_account_budget_project_base_search"/>
             <field name="domain">[('chart_view', '=', 'project_base')]</field>
             <field name="context">{'default_chart_view': 'project_base'}</field>
             <field name="help" type="html">
@@ -593,6 +618,30 @@
             action="act_account_budget_view_personnel" sequence="3" />
 
         <!-- 4) Invest Asset -->
+        <record id="view_account_budget_invest_asset__search" model="ir.ui.view">
+            <field name="name">view.account.budget.invest_asset__search</field>
+            <field name="model">account.budget</field>
+            <field name="arch" type="xml">
+                <search string="Budget">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="state"/>
+                    <separator/>
+                    <field name="org_id"/>
+                    <separator/>
+                    <filter string="This Fiscalyear" name="this_year_budgets" context="{'this_year_plans': True}"/>
+                    <separator/>
+                    <filter domain="[('state','=','draft')]" string="Draft"/>
+                    <filter domain="[('state','=','done')]" string="Controlled"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Org" context="{'group_by':'org_id'}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Status" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
 
         <record model="ir.actions.act_window" id="act_account_budget_view_invest_asset">
             <field name="name">Investment Asset</field>
@@ -602,7 +651,7 @@
             <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
             <!-- TODO: currrently, we use the one form unit based, change to its own -->
             <field name="search_view_id" ref="view_account_budget_unit_base_search"/>
-            <!-- <field name="search_view_id" ref="view_account_budget_invest_asset_search"/> -->
+            <field name="search_view_id" ref="view_account_budget_invest_asset_search"/>
             <field name="domain">[('chart_view', '=', 'invest_asset')]</field>
             <field name="context">{'default_chart_view': 'invest_asset'}</field>
             <field name="help" type="html">

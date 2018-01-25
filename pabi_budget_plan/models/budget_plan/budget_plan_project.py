@@ -13,7 +13,7 @@ class BudgetPlanProject(BPCommon, models.Model):
     _name = 'budget.plan.project'
     _inherit = ['mail.thread']
     _description = "Project - Budget Plan"
-    _order = 'id desc'
+    _order = 'fiscalyear_id desc, id desc'
 
     # COMMON
     plan_line_ids = fields.One2many(
@@ -22,6 +22,8 @@ class BudgetPlanProject(BPCommon, models.Model):
         string='Budget Plan Lines',
         copy=True,
         track_visibility='onchange',
+        readonly=True,
+        states={'1_draft': [('readonly', False)]},
     )
     plan_revenue_line_ids = fields.One2many(
         'budget.plan.project.line',
@@ -44,6 +46,7 @@ class BudgetPlanProject(BPCommon, models.Model):
         'res.program',
         string='Program',
         required=True,
+        readonly=True,
     )
     program_group_id = fields.Many2one(
         'res.program.group',
@@ -89,9 +92,11 @@ class BudgetPlanProject(BPCommon, models.Model):
             plan_ids.append(plan.id)
 
         # Special for Project Based, also create budget control too
-        self.env['account.budget'].\
+        budget_ids = self.env['account.budget'].\
             generate_project_base_controls(fiscalyear_id)
 
+        # For project, do auto activate
+        self.env['account.budget'].browse(budget_ids).budget_done()
         return plan_ids
 
     @api.multi
@@ -146,35 +151,42 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
         string='C/N',
         default='new',
     )
+    nstda_strategy_id = fields.Many2one(
+        'project.nstda.strategy',
+        string='NSTDA Strategy',
+    )
     # Budget Control
-    amount_plan = fields.Float(  # cur_current_budget
+    planned = fields.Float(  # cur_current_budget
         string='Current Budget',
         readonly=True,
         help="This FY Budget Plan (what is different with budget released?)",
     )
-    amount_released = fields.Float(  # cur_release_budget
-        string='Released Budget',
+    released = fields.Float(  # cur_release_budget
+        string='Current Released',
         readonly=True,
         help="This FY Budget Released",
     )
-    total_commitment = fields.Float(  # cur_commit_budget
-        string='Current Total Commit',
+    all_commit = fields.Float(  # cur_commit_budget
+        string='Current All Commit',
         readonly=True,
         help="This FY Total Commitment",
     )
-    actual_amount = fields.Float(  # cur_actual
+    actual = fields.Float(  # cur_actual
         string='Current Actual',
         readonly=True,
         help="This FY actual amount",
     )
-    budget_remaining = fields.Float(  # cur_remaining_budget
+    balance = fields.Float(  # cur_remaining_budget
         string='Remaining Budget',
+        readonly=True,
         help="This FY Budget Remaining"
     )
-    estimated_commitment = fields.Float(  # cur_estimated_commitment
+    est_commit = fields.Float(  # cur_estimated_commitment
         string='Estimated Commitment',
-        help="??? What is this ???"
+        readonly=True,
+        help="Next fiscalyear commitment PO Invoice Plan",
     )
+    # Project Detail
     fy1 = fields.Float(
         string='FY1',
     )
@@ -190,14 +202,18 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     fy5 = fields.Float(
         string='FY5',
     )
-    total = fields.Float(
-        string='Total',
+    revenue_budget = fields.Float(
+        string='Revenue Budget',
     )
-    # Project Detail
+    overall_revenue_plan = fields.Float(
+        string='Overall Revenue Plan',
+    )
     project_kind = fields.Selection(
         [('research', 'Research'),
-         ('non_research', 'Non-Research')],
-        string='Research / Non-Research',
+         ('non_research', 'Non-Research'),
+         ('management', 'Management'),
+         ('construction', 'Construction'), ],
+        string='Project Kind',
     )
     project_objective = fields.Char(
         string='Objective',
@@ -205,14 +221,19 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     project_type = fields.Char(
         string='Project Type',
     )
-    manager_employee_id = fields.Many2one(
+    pm_employee_id = fields.Many2one(
         'hr.employee',
         string='Project Manager',
     )
-    date_from = fields.Date(
+    owner_division_id = fields.Many2one(
+        'res.division',
+        string='Owner Division',
+        related='pm_employee_id.section_id.division_id',
+    )
+    date_start = fields.Date(
         string='Start Date',
     )
-    date_to = fields.Date(
+    date_end = fields.Date(
         string='End Date',
     )
     project_duration = fields.Integer(
@@ -269,28 +290,22 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     pfm_commercial_prototypes = fields.Integer(
         string='Commercial Prototype',
     )
-    pfm_revenue_budget = fields.Float(
-        string='Revenue Budget',
-    )
-    pfm_revenue_overall_plan = fields.Float(
-        string='Overall Revenue Plan',
-    )
-    pfm_revenue_accum = fields.Float(
+    overall_revenue = fields.Float(
         string='Accum. Revenue',
     )
-    pfm_revenue_current_year = fields.Float(
+    current_revenue = fields.Float(
         string='Current Year Revenue',
     )
-    pfm_expense_overall_budget = fields.Float(
+    overall_expense_budget = fields.Float(
         string='Overall Expense Budget',
     )
-    pfm_expense_accum = fields.Float(
+    overall_actual = fields.Float(
         string='Accum. Expense',
     )
-    pfm_commitment_accum = fields.Float(
+    overall_commit = fields.Float(
         string='Accum. Commitment',
     )
-    pfm_expense_remaining_budget = fields.Float(
+    overall_expense_balance = fields.Float(
         string='Remaining Expense Budget',
     )
 
@@ -323,7 +338,9 @@ class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
     _chart_view = 'project_base'
     _ex_view_fields = ['program_id', 'project_id']  # Each line
     _ex_domain_fields = ['program_id']  # Each plan is by this domain
-    _ex_active_domain = [('project_id.state', '=', 'approve')]
+    # TODO: what contion that we will not retrieve previous year data?
+    # _ex_active_domain = [('project_id.state', '=', 'approve')]
+    _ex_active_domain = []
 
     program_id = fields.Many2one(
         'res.program',
@@ -340,19 +357,70 @@ class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
     def _prepare_prev_fy_lines(self):
         """ Given search result from this view, prepare lines tuple """
         plan_lines = []
+        plan_fiscalyear_id = self._context.get('plan_fiscalyear_id')
+        Project = self.env['res.project']
+        ProjectLine = self.env['budget.plan.project.line']
+        project_fields = set(Project._fields.keys())
+        plan_line_fields = set(ProjectLine._fields.keys())
+        common_fields = list(project_fields & plan_line_fields)
         for rec in self:
+            # Get commitment other than, the previous year.
+            expenses = rec.project_id.monitor_expense_ids
+            revenues = rec.project_id.monitor_revenue_ids
+
+            all_actual_expense = sum(expenses.mapped('amount_actual'))
+            all_actual_revenue = sum(revenues.mapped('amount_actual'))
+
+            next_fy_ex = expenses.filtered(
+                lambda l: l.fiscalyear_id.id == plan_fiscalyear_id)
+            next_fy_commit = sum(next_fy_ex.mapped('amount_pr_commit') +
+                                 next_fy_ex.mapped('amount_po_commit') +
+                                 next_fy_ex.mapped('amount_exp_commit'))
+
+            ytd_ex = expenses.filtered(
+                lambda l: l.fiscalyear_id.date_start <=
+                rec.fiscalyear_id.date_start)
+            ytd_commit = sum(ytd_ex.mapped('amount_pr_commit') +
+                             ytd_ex.mapped('amount_po_commit') +
+                             ytd_ex.mapped('amount_exp_commit'))
+
+            current_actual_revenue = sum(revenues.filtered(
+                lambda l: l.fiscalyear_id == rec.fiscalyear_id
+            ).mapped('amount_actual'))
+
+            # 1) Begins
             val = {'c_or_n': 'continue',
                    'project_id': rec.project_id.id,
                    'name': rec.project_id.name,
-                   'fund_id': rec.fund_id.id,
-                   'amount_plan': rec.planned,
-                   'amount_released': rec.released,
-                   'total_commitment': rec.all_commit,
-                   'actual_amount': rec.actual,
-                   'budget_remaining': rec.balance,
-                   'estimated_commitment': 0.0,  # ???
-                   'm0': 0.0,  # ???
-                   # MORE FIELDS, Still don't know how to get it from
-                   }
+                   'fund_id': rec.fund_id.id, }
+            # 2) Project Info
+            for field in common_fields:
+                if field in rec.project_id and \
+                        field not in ['id', '__last_update',
+                                      'write_uid', 'write_date',
+                                      'create_uid', 'create_date',
+                                      'state', ]:
+                    try:
+                        val[field] = rec.project_id[field].id
+                    except:
+                        val[field] = rec.project_id[field]
+            # Calc from PABI2 monitoring views
+            # 3) Overall
+            val.update({'overall_revenue': all_actual_revenue,
+                        'current_revenue': current_actual_revenue,
+                        'overall_actual': all_actual_expense,
+                        'overall_commit': ytd_commit,
+                        'overall_expense_balance':
+                        (val.get('overall_expense_budget', 0.0) -
+                         all_actual_expense - ytd_commit), })
+            # 4) Current Year
+            val.update({
+                'planned': rec.planned,
+                'released': rec.released,
+                'all_commit': rec.all_commit,
+                'actual': rec.actual,
+                'balance': rec.balance,
+                'est_commit': next_fy_commit,  # from PO invoice plan
+            })
             plan_lines.append((0, 0, val))
         return plan_lines

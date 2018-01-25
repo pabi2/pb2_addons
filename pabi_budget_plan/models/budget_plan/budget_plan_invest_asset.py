@@ -12,7 +12,7 @@ class BudgetPlanInvestAsset(BPCommon, models.Model):
     _name = 'budget.plan.invest.asset'
     _inherit = ['mail.thread']
     _description = "Invest Asset - Budget Plan"
-    _order = 'id desc'
+    _order = 'fiscalyear_id desc, id desc'
 
     # COMMON
     plan_line_ids = fields.One2many(

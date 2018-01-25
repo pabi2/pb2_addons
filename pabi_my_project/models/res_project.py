@@ -42,6 +42,12 @@ class ResProject(LogCommon, models.Model):
     date_end = fields.Date(
         string='End Date',
     )
+    project_duration = fields.Integer(
+        string='Duration',
+    )
+    project_status = fields.Char(
+        string='Project Status',
+    )
     project_date_end_proposal = fields.Date(
         string='Project End Date (by proposal)',
     )
@@ -59,7 +65,12 @@ class ResProject(LogCommon, models.Model):
     pm_section_id = fields.Many2one(
         'res.section',
         string='Project Manager Section',
-        required=True,
+        related='pm_employee_id.section_id',
+    )
+    owner_division_id = fields.Many2one(
+        'res.division',
+        string='Project Division',
+        related='pm_employee_id.section_id.division_id',
     )
     analyst_employee_id = fields.Many2one(
         'hr.employee',
@@ -68,8 +79,24 @@ class ResProject(LogCommon, models.Model):
     )
     analyst_section_id = fields.Many2one(
         'res.section',
-        string='Project Manager Section',
-        required=True,
+        string='Project Analyst Section',
+        related='analyst_employee_id.section_id',
+    )
+    ref_program_id = fields.Many2one(
+        'res.program',
+        string='Program Reference',
+    )
+    external_fund_type = fields.Selection(
+        [('government', 'Government'),
+         ('private', 'Private Organization'),
+         ('oversea', 'Oversea')],
+        string='External Fund Type',
+    )
+    external_fund_name = fields.Char(
+        string='External Fund Name',
+    )
+    priority = fields.Char(
+        string='Priority',
     )
     budget_plan_ids = fields.One2many(
         'res.project.budget.plan',
@@ -109,10 +136,81 @@ class ResProject(LogCommon, models.Model):
         string='Project Member',
         copy=False,
     )
+    nstda_strategy_id = fields.Many2one(
+        'project.nstda.strategy',
+        string='NSTDA Strategy',
+    )
+    # Project Performance (myPerformance)
+    pfm_publications = fields.Integer(
+        string='Publication',
+    )
+    pfm_patents = fields.Integer(
+        string='Patent',
+    )
+    pfm_petty_patents = fields.Integer(
+        string='Petty Patent',
+    )
+    pfm_copyrights = fields.Integer(
+        string='Copy Right',
+    )
+    pfm_trademarks = fields.Integer(
+        string='Trademark',
+    )
+    pfm_plant_varieties = fields.Integer(
+        string='Plant Varieties',
+    )
+    pfm_laboratory_prototypes = fields.Integer(
+        string='Laboratory Prototype',
+    )
+    pfm_field_prototypes = fields.Integer(
+        string='Field Prototype',
+    )
+    pfm_commercial_prototypes = fields.Integer(
+        string='Commercial Prototype',
+    )
+    # Project Detail    # Project Detail
+    fy1 = fields.Float(
+        string='FY1',
+    )
+    fy2 = fields.Float(
+        string='FY2',
+    )
+    fy3 = fields.Float(
+        string='FY3',
+    )
+    fy4 = fields.Float(
+        string='FY4',
+    )
+    fy5 = fields.Float(
+        string='FY5',
+    )
+    revenue_budget = fields.Float(
+        string='Revenue Budget',
+    )
+    overall_revenue_plan = fields.Float(
+        string='Overall Revenue Plan',
+    )
+    overall_expense_budget = fields.Float(
+        string='Overall Expense Budget',
+    )
+    project_kind = fields.Selection(
+        [('research', 'Research'),
+         ('non_research', 'Non-Research'),
+         ('management', 'Management'),
+         ('construction', 'Construction'), ],
+        string='Project Kind',
+    )
+    project_objective = fields.Char(
+        string='Objective',
+    )
+    project_type = fields.Char(
+        string='Project Type',
+    )
 
     @api.onchange('pm_employee_id')
     def _onchange_user_id(self):
         self.pm_section_id = self.pm_employee_id.section_id
+        self.owner_disivion_id = self.pm_employee_id.section_id.division_id
 
     @api.onchange('analyst_employee_id')
     def _onchange_analyst_employee_id(self):

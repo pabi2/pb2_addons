@@ -35,7 +35,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
     _name = 'budget.plan.unit'
     _inherit = ['mail.thread']
     _description = "Unit - Budget Plan"
-    _order = 'id desc'
+    _order = 'fiscalyear_id desc, id desc'
 
     # TO BE REMOVED
     @api.multi

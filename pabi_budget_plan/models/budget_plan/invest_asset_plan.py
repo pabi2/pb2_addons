@@ -10,6 +10,7 @@ from openerp.addons.pabi_base.models.res_investment_structure import \
 class InvestAssetPlan(models.Model):
     _name = 'invest.asset.plan'
     _description = 'Investment Asset Planning'
+    _order = 'fiscalyear_id desc, id desc'
 
     name = fields.Char(
         string='Name',
