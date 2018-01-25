@@ -18,6 +18,8 @@
         'security/security_rule_plan_project.xml',
         'security/security_rule_breakdown.xml',
         'security/security_rule_budget_unit.xml',
+        'security/security_rule_invest_asset.xml',
+        'security/security_rule_plan_asset.xml',
         'security/ir.model.access.csv',
         'data/sequence.xml',
         'data/actions.xml',

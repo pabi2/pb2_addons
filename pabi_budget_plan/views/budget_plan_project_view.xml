@@ -190,75 +190,77 @@
             <field name="arch" type="xml">
                 <tree string="Budget Plan Lines">
 
-                    <field name="c_or_n" invisible="1"/>
-                    <field name="project_id" invisible="0"/>
+                    <field name="project_id"/>
+                    <field name="name"/>
+                    <field name="c_or_n"/>
 
-                    <field name="functional_area_id" invisible="1"/>
-                    <field name="program_group_id" invisible="1"/>
-                    <field name="program_id" invisible="1"/>
-                    <field name="project_group_id" invisible="1"/>
-                    <field name="nstda_strategy_id" invisible="1"/>
-                    <field name="mission_id" invisible="1"/>
-                    <field name="project_kind" invisible="1"/>
-                    <field name="project_objective" invisible="1"/>
-                    <field name="project_type" invisible="1"/>
-                    <field name="org_id" invisible="1"/>
-                    <field name="costcenter_id" invisible="1"/>
-                    <field name="owner_division_id" invisible="1"/>
-                    <field name="pm_employee_id" invisible="1"/>
-                    <field name="date_start" invisible="1"/>
-                    <field name="date_end" invisible="1"/>
-                    <field name="project_duration" invisible="1"/>
-                    <field name="project_status" invisible="1"/>
-                    <field name="analyst_employee_id" invisible="1"/>
-                    <field name="ref_program_id" invisible="1"/>
-                    <field name="external_fund_type" invisible="1"/>
-                    <field name="external_fund_name" invisible="1"/>
-                    <field name="priority" invisible="1"/>
+                    <field name="functional_area_id"/>
+                    <field name="program_id"/>
+                    <field name="project_group_id"/>
+                    <field name="nstda_strategy_id"/>
+                    <field name="project_objective"/>
+                    <field name="mission_id"/>
+                    <field name="project_kind"/>
+                    <field name="project_type"/>
+                    <field name="org_id"/>
+                    <field name="costcenter_id"/>
+                    <field name="owner_division_id"/>
 
-                    <field name="pfm_publications" sum="Total"/>
-                    <field name="pfm_patents" sum="Total"/>
-                    <field name="pfm_petty_patents" sum="Total"/>
-                    <field name="pfm_copyrights" sum="Total"/>
-                    <field name="pfm_trademarks" sum="Total"/>
-                    <field name="pfm_plant_varieties" sum="Total"/>
-                    <field name="pfm_laboratory_prototypes" sum="Total"/>
-                    <field name="pfm_field_prototypes" sum="Total"/>
-                    <field name="pfm_commercial_prototypes" sum="Total"/>
+                    <field name="pm_employee_id"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="project_duration"/>
+                    <field name="project_status"/>
+                    <field name="analyst_employee_id"/>
+                    <field name="ref_program_id"/>
+                    <field name="external_fund_type"/>
+                    <field name="external_fund_name"/>
+                    <field name="priority"/>
+                    <field name="fy1"/>
+                    <field name="fy2"/>
+                    <field name="fy3"/>
+                    <field name="fy4"/>
+                    <field name="fy5"/>
+                    <field name="revenue_budget"/>
+                    <field name="overall_revenue_plan"/>
 
-                    <field name="overall_revenue" sum="Total"/>
-                    <field name="current_revenue" sum="Total"/>
-                    <field name="overall_expense_budget" sum="Total"/>
-                    <field name="overall_actual" sum="Total"/>
-                    <field name="overall_commit" sum="Total"/>
-                    <field name="overall_expense_balance" sum="Total"/>
+                    <field name="pfm_publications"/>
+                    <field name="pfm_patents"/>
+                    <field name="pfm_petty_patents"/>
+                    <field name="pfm_copyrights"/>
+                    <field name="pfm_trademarks"/>
+                    <field name="pfm_plant_varieties"/>
+                    <field name="pfm_laboratory_prototypes"/>
+                    <field name="pfm_field_prototypes"/>
+                    <field name="pfm_commercial_prototypes"/>
 
-                    <field name="planned" sum="Total"/>
-                    <field name="released" sum="Total"/>
-                    <field name="all_commit" sum="Total"/>
-                    <field name="actual" sum="Total"/>
-                    <field name="balance" sum="Total"/>
-                    <field name="est_commit" sum="Total"/>
-                    <!-- <field name="m0" sum="Total"/> -->
-                    <field name="m1" sum="Total"/>
-                    <field name="m2" sum="Total"/>
-                    <field name="m3" sum="Total"/>
-                    <field name="m4" sum="Total"/>
-                    <field name="m5" sum="Total"/>
-                    <field name="m6" sum="Total"/>
-                    <field name="m7" sum="Total"/>
-                    <field name="m8" sum="Total"/>
-                    <field name="m9" sum="Total"/>
-                    <field name="m10" sum="Total"/>
-                    <field name="m11" sum="Total"/>
-                    <field name="m12" sum="Total"/>
-                    <field name="fy1" sum="Total"/>
-                    <field name="fy2" sum="Total"/>
-                    <field name="fy3" sum="Total"/>
-                    <field name="fy4" sum="Total"/>
-                    <field name="fy5" sum="Total"/>
-                    <field name="revenue_budget" sum="Total"/>
-                    <field name="overall_revenue_plan" sum="Total"/>
+                    <field name="overall_revenue"/>
+                    <field name="current_revenue"/>
+                    <field name="overall_expense_budget"/>
+                    <field name="overall_actual"/>
+                    <field name="overall_commit"/>
+                    <field name="overall_expense_balance"/>
+                    <field name="planned"/>
+                    <field name="released"/>
+                    <field name="all_commit"/>
+                    <field name="actual"/>
+                    <field name="balance"/>
+                    <field name="est_commit"/>
+
+                    <field name="m1"/>
+                    <field name="m2"/>
+                    <field name="m3"/>
+                    <field name="m4"/>
+                    <field name="m5"/>
+                    <field name="m6"/>
+                    <field name="m7"/>
+                    <field name="m8"/>
+                    <field name="m9"/>
+                    <field name="m10"/>
+                    <field name="m11"/>
+                    <field name="m12"/>
+                    <field name="planned_amount"/>
+                    
                 </tree>
             </field>
         </record>

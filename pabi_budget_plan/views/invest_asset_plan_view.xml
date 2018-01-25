@@ -6,14 +6,20 @@
             <field name="name">view.invest.asset.plan.form</field>
             <field name="model">invest.asset.plan</field>
             <field name="arch" type="xml">
-                <form string="Budget Plan">
+                <form string="Budget Plan" create="0" delete="0">
                     <header>
-                        <button string="Submit" name="button_submit" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="button_approve" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Reject" name="button_reject" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Reset to Draft" name="button_draft" states="cancel" type="object"/>
-                        <button string="Cancel" name="button_cancel" states="draft,reject" type="object"/>
-                        <button name="%(action_asset_plan_to_budget_plan)d" type="action" class="oe_highlight" string="Convert to Budget Plan" states="approve"/>
+                        <button string="Submit" name="button_submit" states="draft" type="object" class="oe_highlight"
+                            groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+                        <button string="Approve" name="button_approve" states="submit" type="object" class="oe_highlight"
+                            groups="pabi_base.group_cooperate_budget"/>
+                        <button string="Reject" name="button_reject" states="submit" type="object" class="oe_highlight"
+                            groups="pabi_base.group_cooperate_budget"/>
+                        <button string="Reset to Draft" name="button_draft" states="cancel" type="object"
+                            groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+                        <button string="Cancel" name="button_cancel" states="draft,reject" type="object"
+                            groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+                        <button name="%(action_asset_plan_to_budget_plan)d" type="action" class="oe_highlight" string="Convert to Budget Plan" states="approve"
+                            groups="pabi_base.group_cooperate_budget"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,done"/>
                     </header>
                     <sheet>
@@ -110,7 +116,7 @@
             <field name="name">view.invest.asset.plan.tree</field>
             <field name="model">invest.asset.plan</field>
             <field name="arch" type="xml">
-                <tree string="Investment Asset Planning">
+                <tree string="Investment Asset Planning" create="0" delete="0">
                     <field name="name"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
@@ -129,6 +135,20 @@
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="state"/>
+                    <field name="org_id"/>
+                    <filter string="This Fiscalyear" name="this_year_plans" context="{'this_year_plans': True}"/>
+                    <separator/>
+                    <filter domain="[('state','=','draft')]" string="Draft"/>
+                    <filter domain="[('state','=','submit')]" string="Submitted"/>
+                    <filter domain="[('state','=','approve')]" string="Approved"/>
+                    <filter domain="[('state','=','done')]" string="Done"/>
+                    <filter domain="[('state','=','cancel')]" string="Cancelled"/>
+                    <filter domain="[('state','=','reject')]" string="Rejected"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Org" context="{'group_by':'org_id'}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Status" context="{'group_by':'state'}"/>
+                    </group>
                 </search>
             </field>
         </record>
@@ -147,7 +167,8 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_invest_asset_plan_view" action="action_invest_asset_plan_view" sequence="5"/>
+        <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_invest_asset_plan_view" action="action_invest_asset_plan_view" sequence="5"
+          groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
 
         <!-- Investment Asset Plan Items -->
         <record id="view_invest_asset_plan_item_filter" model="ir.ui.view">
@@ -274,7 +295,8 @@
             <field name="context">{'search_default_fiscalyear_id': 1, 'search_default_org_id': 1}</field>
         </record>
 
-        <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_act_invest_asset_plan_item_view" action="act_invest_asset_plan_item_view" sequence="6"/>
+        <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_act_invest_asset_plan_item_view" action="act_invest_asset_plan_item_view" sequence="6"
+          groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
 
     </data>
 </openerp>
