@@ -101,12 +101,19 @@ class HRExpense(models.Model):
         #  - supplier_text = False
         #  - is_advance_clearing = True
         #  - is_employee_advance = False
-        # 4) Internal Charge (Not Available in Odoo Yet)
+        # 4) Internal Charge
+        #  - pay_to = 'internal'
+        #  - supplier_text = False
+        #  - is_advance_clearing = False
+        #  - is_employee_advance = False
+        #  - internal_section_id OR internal_project_id (not both)
         data_dict = {
             'pay_to': u'supplier',  # 'employee', 'supplier'
             'supplier_text': u'AAA Co., Ltd.',  # If Pay to Supplier
             'is_advance_clearing': u'False',  # True if Clear Advance
             'is_employee_advance': u'False',
+            'internal_section_id': u'101012',  # Only for Internal Charge
+            'internal_project_id': False,  # Only for Internal Charge
             'number': u'/',  # expense number
             'employee_code': u'004012',
             'preparer_code': u'004012',
