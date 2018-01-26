@@ -85,7 +85,7 @@
                                 <field name="price_unit" invisible="1" sum="Unit Price"/>
                                 <field name="price_subtotal" invisible="1" sum="Subtotal"/>
                                 <field name="price_other" invisible="1" sum="Others"/>
-                                <field name="price_total" invisible="1" sum="Total"/>
+                                <field name="price_total" invisible="0" sum="Total"/>
                                 <field name="reason_purchase" invisible="1"/>
                                 <field name="reason_purchase_text" invisible="1"/>
                                 <field name="expect_output" invisible="1"/>

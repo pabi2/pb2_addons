@@ -251,11 +251,12 @@ class InvestAssetPlan(models.Model):
             plan_ids.append(plan.id)
         return plan_ids
 
-    @api.one
+    @api.multi
     @api.depends('plan_line_ids', 'plan_line_ids.select')
     def _compute_verified(self):
-        self.verified_amount = sum([x.price_total
-                                   for x in self.plan_line_ids if x.select])
+        for rec in self:
+            rec.verified_amount = sum([x.price_total
+                                       for x in rec.plan_line_ids if x.select])
 
     @api.model
     def _prepare_plan_header(self, asset_plan):
@@ -276,13 +277,13 @@ class InvestAssetPlan(models.Model):
         data = {
             'invest_asset_id': invest_asset.id,
             'fund_id': invest_asset.fund_ids and invest_asset.fund_ids[0].id,
-            # Commitment = current commitment + next year commitment
-            'm0': item.total_commitment + item.next_fy_commitment,
-            # If first year of this asset, use amount_plan_total
-            # for on going invest asset, use carry_forward
-            'm1': (item.amount_plan == 0.0 and
-                   item.budget_carry_forward == 0.0 and
-                   item.amount_plan_total or item.budget_carry_forward),
+            # Past Commitment Only
+            'm0': item.total_commitment,
+            # If first year of this asset, use amount_plan_total or amount_plan
+            # If not, and for on going invest asset, use carry_forward
+            'm1': (item.amount_plan_total or  # Adjusted budget amount
+                   item.price_total or  # Budget amount
+                   item.budget_carry_forward),
         }
         return data
 

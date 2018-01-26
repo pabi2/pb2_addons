@@ -257,7 +257,7 @@ class BPLCommon(ChartField, Common):
 class BPLMonthCommon(BPLCommon):
 
     m0 = fields.Float(
-        string='Prev FY',
+        string='Commit Carry Over',
         required=False,
     )
     m1 = fields.Float(
