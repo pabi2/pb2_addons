@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- Cooperate see all plans -->
+        <record id="property_rule_plan_invest_construction_cooperate" model="ir.rule">
+            <field name="name">Cooperate - Plan Invest Construction Access</field>
+            <field name="model_id" ref="model_budget_plan_invest_construction"/>
+            <field name="domain_force">[(1 ,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget'))]"/>
+        </record>
+        <record id="property_rule_plan_invest_construction_cooperate_line" model="ir.rule">
+            <field name="name">Cooperate - Plan Invest Construction Line Access</field>
+            <field name="model_id" ref="model_budget_plan_invest_construction_line"/>
+            <field name="domain_force">[(1 ,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget'))]"/>
+        </record>
+
+    </data>
+</openerp>

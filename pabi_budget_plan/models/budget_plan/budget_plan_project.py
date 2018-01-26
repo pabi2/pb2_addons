@@ -341,6 +341,7 @@ class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
     # TODO: what contion that we will not retrieve previous year data?
     # _ex_active_domain = [('project_id.state', '=', 'approve')]
     _ex_active_domain = []
+    _prev_fy_only = True  # Will the result of his view focus on prev fy only
 
     program_id = fields.Many2one(
         'res.program',

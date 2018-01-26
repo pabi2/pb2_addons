@@ -445,6 +445,7 @@ class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
                        'activity_group_id', 'cost_control_id']
     _ex_domain_fields = ['section_id']  # Each plan is by this domain of view
     _ex_active_domain = [('all_commit', '>', 0.0)]
+    _prev_fy_only = True  # Will the result of his view focus on prev fy only
 
     section_id = fields.Many2one(
         'res.section',

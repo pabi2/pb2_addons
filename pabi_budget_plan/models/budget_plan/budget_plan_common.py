@@ -420,8 +420,10 @@ class PrevFYCommon(object):
                 return
             ctx = {'plan_fiscalyear_id': plan.fiscalyear_id.id,
                    'prev_fiscalyear_id': prev_fy.id}
-            domain = [('fiscalyear_id', '=', prev_fy.id)]
-            # domain = [('fiscalyear_id.date_stop', '<=', prev_fy.date_stop)]
+            # Lookup for previous year performance only
+            domain = []
+            if self._prev_fy_only:
+                domain = [('fiscalyear_id', '=', prev_fy.id)]
             for field in self._ex_domain_fields:
                 domain.append((field, '=', plan[field].id))
             if self._ex_active_domain:

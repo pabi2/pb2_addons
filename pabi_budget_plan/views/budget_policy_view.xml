@@ -213,7 +213,7 @@
         </record>
         <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_invest_asset_view" groups="pabi_base.group_cooperate_budget" action="action_budget_policy_invest_asset_view" sequence="40"/>
 
-        # Invest Asset
+        # Invest Construction
         <record model="ir.actions.act_window" id="action_budget_policy_invest_construction_view">
             <field name="name">Investment Construction</field>
             <field name="res_model">budget.policy</field>
