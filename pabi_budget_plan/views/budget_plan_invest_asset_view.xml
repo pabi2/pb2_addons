@@ -6,18 +6,17 @@
             <field name="name">view.budget.plan.invest.asset.form</field>
             <field name="model">budget.plan.invest.asset</field>
             <field name="arch" type="xml">
-                <form string="Budget Plan">
+                <form string="Budget Plan" create="0">
                     <header>
-                        <button string="Submit" groups="pabi_base.group_budget_user" name="action_submit" states="1_draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" groups="pabi_base.group_budget_manager" name="action_approve" states="2_submit" type="object" class="oe_highlight"/>
-                        <button string="Verify" groups="pabi_base.group_operating_unit_budget" name="action_verify" states="3_approve" type="object" class="oe_highlight"/>
-                        <button string="Accept" groups="pabi_base.group_cooperate_budget" name="action_accept" states="6_verify" type="object" class="oe_highlight"/>
-                        <button string="Back to Approved" groups="pabi_base.group_cooperate_budget" name="action_approve" states="6_verify" type="object" class="oe_highlight"/>
-                        <button string="Back to Verified" groups="pabi_base.group_cooperate_budget" name="action_verify" states="7_accept" type="object" class="oe_highlight"/>
-                        <button string="Reject" groups="pabi_base.group_budget_manager" name="action_reject" states="2_submit,3_approve" type="object"/>
-                        <button string="Reset to Draft" name="action_draft" states="4_cancel,5_reject" type="object"/>
-                        <button string="Cancel" name="action_cancel" states="1_draft" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="1_draft,2_submit,3_approve,6_verify,7_accept,8_done"/>
+                        <button string="Accept" name="action_accept" states="1_draft" type="object" class="oe_highlight"
+                            groups="pabi_base.group_cooperate_budget"/>
+                        <button string="Reject" name="action_reject" states="7_accept" type="object"
+                            groups="pabi_base.group_cooperate_budget"/>
+                        <button string="Reset to Draft" name="action_draft" states="4_cancel,5_reject" type="object"
+                            groups="pabi_base.group_cooperate_budget"/>
+                        <button string="Cancel" name="action_cancel" states="1_draft" type="object"
+                            groups="pabi_base.group_cooperate_budget"/>
+                        <field name="state" widget="statusbar" statusbar_visible="1_draft,7_accept,8_done"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -50,7 +49,6 @@
                                     <tree string="Budget Lines" editable="bottom">
 
                                         <field name="org_id"/>
-                                        <field name="section_id"/>
                                         <field name="activity_group_id"/>
 
                                         <field name="invest_asset_id" required="1" widget="many2one_clickable"/>
@@ -84,7 +82,7 @@
             <field name="name">view.budget.plan.invest.asset.tree</field>
             <field name="model">budget.plan.invest.asset</field>
             <field name="arch" type="xml">
-                <tree string="Budget">
+                <tree string="Budget" create="0" delete="0">
                     <field name="name"/>
                     <field name="org_id"/>
                     <field name="date_from"/>
@@ -121,7 +119,8 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_budget_plan_invest_asset_view" action="action_budget_plan_invest_asset_view" sequence="10"/>
+        <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_budget_plan_invest_asset_view" action="action_budget_plan_invest_asset_view" sequence="10"
+            groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
 
         <!-- Budget Plan Line -->
 
@@ -132,8 +131,6 @@
                 <search string="Search Budget Plan Line">
                     <group expand="0" string="Group By">
                         <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
-                        <filter name="section_id" string="Section" domain="[]" context="{'group_by':'section_id'}"/>
-
                         <filter name="activity_group_id" string="Activity Group" domain="[]" context="{'group_by':'activity_group_id'}"/>
                         <filter name="activity_id" string="Activity" domain="[]" context="{'group_by':'activity_id'}"/>
                     </group>
@@ -148,7 +145,6 @@
                 <tree string="Budget Plan Lines">
 
                     <field name="org_id"/>
-                    <field name="section_id"/>
                     <field name="activity_group_id"/>
 
                     <field name="invest_asset_id"/>
@@ -192,7 +188,8 @@
             <field name="view_id" ref="view_budget_plan_invest_asset_line_tree"/>
         </record>
 
-        <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_act_budget_plan_invest_asset_line_view" action="act_budget_plan_invest_asset_line_view" sequence="20"/>
+        <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_act_budget_plan_invest_asset_line_view" action="act_budget_plan_invest_asset_line_view" sequence="20"
+            groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
 
     </data>
 </openerp>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="budget_carry_over_tree" model="ir.ui.view">
+            <field name="name">budget.carry.over.tree</field>
+            <field name="model">budget.carry.over</field>
+            <field name="arch" type="xml">
+                <tree string="Carry Over">
+                    <field name="name"/>
+                    <field name="doctype"/>
+                    <field name="fiscalyear_id"/>
+                    <field name="write_uid" readonly="1"/>
+                    <field name="write_date" readonly="1"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="budget_carry_over_form" model="ir.ui.view">
+            <field name="name">budget.carry.over.tree</field>
+            <field name="model">budget.carry.over</field>
+            <field name="arch" type="xml">
+                <form string="Carry Over">
+                    <header>
+                        <button name="action_carry_over" class="oe_highlight" type="object" states="draft" string="Carry Over" groups="base.group_user"
+                          confirm="This will carry over committed budget of following documents to specified fiscal year."/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <label string="Carry Over "/>
+                            <field name="name" class="oe_inline" readonly="1"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="doctype"/>
+                                <field name="fiscalyear_id"/>
+                            </group>
+                            <group>
+                                <field name="write_uid"/>
+                                <field name="write_date"/>
+                            </group>
+                        </group>
+                        <field name="line_ids">
+                            <tree string="Carry Over Lines" editable="bottom">
+                                <field name="name"/>
+                                <field name="purchase_request_line_id" invisible="1"/>
+                                <field name="purchase_line_id" invisible="1"/>
+                                <field name="expense_line_id" invisible="1"/>
+                                <field name="sale_line_id" invisible="1"/>
+                                <field name="commit_amount"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_budget_carry_over_search" model="ir.ui.view">
+            <field name="name">view.budget.carry.over.search</field>
+            <field name="model">budget.carry.over</field>
+            <field name="arch" type="xml">
+                <search string="Carry Over"></search>
+            </field>
+        </record>
+
+        <record id="action_budget_carry_over" model="ir.actions.act_window">
+            <field name="name">Commitment Carry Over</field>
+            <field name="res_model">budget.carry.over</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="view_budget_carry_over_search"/>
+            <field name="help">Process to carry over committed budget from previous year to next year</field>
+        </record>
+
+        <menuitem action="action_budget_carry_over" id="menu_action_budget_carry_over" parent="menu_action_budget_year_end_process" sequence="10"
+          groups="group_budget_carry_over"/>
+
+    </data>
+</openerp>

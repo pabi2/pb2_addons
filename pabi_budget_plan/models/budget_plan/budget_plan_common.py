@@ -219,6 +219,7 @@ class BPLCommon(ChartField, Common):
 
     activity_group_id = fields.Many2one(
         'account.activity.group',
+        string="Activity Group",
         required=True,
     )
     budget_method = fields.Selection(
@@ -256,7 +257,7 @@ class BPLCommon(ChartField, Common):
 class BPLMonthCommon(BPLCommon):
 
     m0 = fields.Float(
-        string='Prev FY',
+        string='Commit Carry Over',
         required=False,
     )
     m1 = fields.Float(
@@ -391,8 +392,8 @@ class PrevFYCommon(object):
             sum(amount_actual) actual,
             sum(amount_consumed) consumed,
             sum(amount_balance) balance,
-            sum(coalesce(released_amount, 0.0) +
-                coalesce(amount_actual, 0.0)) carry_forward
+            sum(coalesce(released_amount, 0.0)
+                - coalesce(amount_actual, 0.0)) carry_forward
         from budget_monitor_report
         where chart_view = '%s'
             and budget_method = 'expense'
@@ -420,8 +421,11 @@ class PrevFYCommon(object):
             ctx = {'plan_fiscalyear_id': plan.fiscalyear_id.id,
                    'prev_fiscalyear_id': prev_fy.id}
             domain = [('fiscalyear_id', '=', prev_fy.id)]
+            # domain = [('fiscalyear_id.date_stop', '<=', prev_fy.date_stop)]
             for field in self._ex_domain_fields:
                 domain.append((field, '=', plan[field].id))
+            if self._ex_active_domain:
+                domain += self._ex_active_domain
             # Prepare prev fy plan lines
             lines = self.search(domain)
             plan_lines = lines.with_context(ctx)._prepare_prev_fy_lines()

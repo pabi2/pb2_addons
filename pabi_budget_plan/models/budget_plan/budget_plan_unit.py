@@ -35,7 +35,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
     _name = 'budget.plan.unit'
     _inherit = ['mail.thread']
     _description = "Unit - Budget Plan"
-    _order = 'id desc'
+    _order = 'fiscalyear_id desc, id desc'
 
     # TO BE REMOVED
     @api.multi
@@ -444,6 +444,7 @@ class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
     _ex_view_fields = ['section_id', 'document',
                        'activity_group_id', 'cost_control_id']
     _ex_domain_fields = ['section_id']  # Each plan is by this domain of view
+    _ex_active_domain = [('all_commit', '>', 0.0)]
 
     section_id = fields.Many2one(
         'res.section',

@@ -76,7 +76,7 @@
                         <button string="Back to Approved" groups="pabi_base.group_cooperate_budget" name="action_approve" states="6_verify" type="object" class="oe_highlight"/>
                         <button string="Back to Verified" groups="pabi_base.group_cooperate_budget" name="action_verify" states="7_accept" type="object" class="oe_highlight"/>
                         <button string="Reject" groups="pabi_base.group_budget_manager" name="action_reject" states="2_submit,3_approve" type="object"/>
-                        <button string="Reset to Draft" name="action_draft" states="4_cancel,5_reject" type="object"/>
+                        <button string="Reset to Draft" name="action_draft" states="2_submit,4_cancel,5_reject" type="object"/>
                         <button string="Cancel" name="action_cancel" states="1_draft" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="1_draft,2_submit,3_approve,6_verify,7_accept,8_done"/>
                     </header>
@@ -205,7 +205,8 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_plan_unit" id="menu_budget_plan_unit_view" action="action_budget_plan_unit_view" sequence="10"/>
+        <menuitem parent="menu_action_budget_plan_unit" id="menu_budget_plan_unit_view" action="action_budget_plan_unit_view" sequence="10"
+          groups="pabi_base.group_budget_user"/>
 
         <!-- Budget Plan Line -->
 
@@ -320,7 +321,8 @@
             <field name="view_id" ref="view_budget_plan_unit_line_tree"/>
         </record>
 
-        <menuitem parent="menu_action_budget_plan_unit" id="menu_act_budget_plan_unit_line_view" action="act_budget_plan_unit_line_view" sequence="20"/>
+        <menuitem parent="menu_action_budget_plan_unit" id="menu_act_budget_plan_unit_line_view" action="act_budget_plan_unit_line_view" sequence="20"
+          groups="pabi_base.group_budget_user"/>
 
     </data>
 </openerp>

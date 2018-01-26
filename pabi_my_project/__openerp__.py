@@ -12,6 +12,7 @@
     "depends": [
         "pabi_base",
         "pabi_chartfield",
+        "pabi_budget_plan",
         "document_status_history",
     ],
     "data": [

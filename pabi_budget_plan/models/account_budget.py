@@ -58,10 +58,17 @@ class AccountBudget(models.Model):
                 super(AccountBudget, budget).write(vals)
         else:
             super(AccountBudget, self).write(vals)
-        # Name
         for rec in self:
+            # Name
             if rec.name != rec._get_doc_number():
                 rec._write({'name': rec._get_doc_number()})
+            # If there is policy amount, some fields can't be changed.
+            if rec.policy_amount:
+                no_edit_fields = ['section_id', 'fiscalyear_id']
+                if set(no_edit_fields) & set(vals.keys()):
+                    raise ValidationError(
+                        _('With policy amount, fields edit not allow for: %s')
+                        % ', '.join(no_edit_fields))
         return True
 
     @api.multi
@@ -98,7 +105,7 @@ class AccountBudget(models.Model):
         fiscal = self.env['account.fiscalyear'].browse(fiscalyear_id)
         # Find existing controls, and exclude them
         controls = self.search([('fiscalyear_id', '=', fiscalyear_id),
-                                ('chart_view', '=', 'unit_base')])
+                                ('chart_view', '=', 'project_base')])
         _ids = controls.mapped('program_id')._ids
         # Find Programs
         programs = self.env['res.program'].search([('id', 'not in', _ids),
@@ -109,8 +116,7 @@ class AccountBudget(models.Model):
                                    'fiscalyear_id': fiscalyear_id,
                                    'date_from': fiscal.date_start,
                                    'date_to': fiscal.date_stop,
-                                   'program_id': program.id,
-                                   'user_id': False})
+                                   'program_id': program.id, })
             control_ids.append(control.id)
         return control_ids
 

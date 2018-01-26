@@ -895,8 +895,8 @@ class ResInvestConstructionPhasePlan(models.Model):
             for rec in self:
                 today = fields.Date.context_today(self)
                 if rec.calendar_period_id.date_start < today:
-                    raise ValidationError(_('You are not allowed to change '
-                                            'amount in the past period!'))
+                    raise ValidationError(
+                        _('Changing past period amount is not allowed!'))
         return super(ResInvestConstructionPhasePlan, self).write(vals)
 
 

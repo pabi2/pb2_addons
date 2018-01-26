@@ -6,15 +6,15 @@
             <field name="name">view.budget.plan.project.form</field>
             <field name="model">budget.plan.project</field>
             <field name="arch" type="xml">
-                <form string="Budget Plan">
+                <form string="Budget Plan" create="0">
                     <header>
-                        <button string="Submit" name="action_submit" states="1_draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="action_approve" states="2_submit" type="object" class="oe_highlight"/>
-                        <button string="Accept" name="action_accept" states="3_approve" type="object" class="oe_highlight"/>
-                        <button string="Reject" name="action_reject" states="2_submit,3_approve" type="object" />
-                        <button string="Reset to Draft" name="action_draft" states="4_cancel" type="object"/>
-                        <button string="Cancel" name="action_cancel" states="1_draft" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="1_draft,2_submit,3_approve,7_accept"/>
+                        <button string="Verify" name="action_verify" states="1_draft" type="object" class="oe_highlight"/>
+                        <button string="Accept" groups="pabi_base.group_cooperate_budget" name="action_accept" states="6_verify" type="object" class="oe_highlight"/>
+                        <button string="Reject" groups="pabi_base.group_cooperate_budget" name="action_reject" states="6_verify" type="object" />
+                        <button string="Back to Verified" groups="pabi_base.group_cooperate_budget" name="action_verify" states="7_accept" type="object" class="oe_highlight"/>
+                        <button string="Reset to Draft" name="action_draft" states="4_cancel,5_reject" type="object"/>
+                        <button string="Cancel" name="action_cancel" states="1_draft,6_verify" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="1_draft,6_verify,7_accept"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -34,7 +34,7 @@
                             </group>
                             <group>
                                 <field name="date"/>
-                                <field name="fiscalyear_id"/>
+                                <field name="fiscalyear_id" readonly="1"/>
                                 <label for="date_from" string="Duration"/>
                                 <div>
                                     <field name="date_from" class="oe_inline"/>
@@ -54,17 +54,16 @@
 
                                         <field name="project_id"/>
                                         <field name="name"/>
-                                        <field name="fund_id" required="1"/>
 
                                         <button name="edit_project" string="Info." icon="gtk-justify-fill" type="object" class="oe_link"/>
 
-                                        <field name="amount_plan" sum="Total"/>
-                                        <field name="amount_released" sum="Total"/>
-                                        <field name="total_commitment" sum="Total"/>
-                                        <field name="actual_amount" sum="Total"/>
-                                        <field name="budget_remaining" sum="Total"/>
-                                        <field name="estimated_commitment" sum="Total"/>
-                                        <field name="m0" sum="Total"/>
+                                        <field name="planned" sum="Total"/>
+                                        <field name="released" sum="Total"/>
+                                        <field name="all_commit" sum="Total"/>
+                                        <field name="actual" sum="Total"/>
+                                        <field name="balance" sum="Total"/>
+                                        <field name="est_commit" sum="Total"/>
+                                        <!-- <field name="m0" sum="Total"/> Prev FY is not being used here -->
                                         <field name="m1" sum="Total"/>
                                         <field name="m2" sum="Total"/>
                                         <field name="m3" sum="Total"/>
@@ -77,12 +76,7 @@
                                         <field name="m10" sum="Total"/>
                                         <field name="m11" sum="Total"/>
                                         <field name="m12" sum="Total"/>
-                                        <field name="fy1" sum="Total"/>
-                                        <field name="fy2" sum="Total"/>
-                                        <field name="fy3" sum="Total"/>
-                                        <field name="fy4" sum="Total"/>
-                                        <field name="fy5" sum="Total"/>
-                                        <field name="total" sum="Total"/>
+                                        <field name="planned_amount" sum="Total"/>
                                     </tree>
                                 </field>
                             </page>
@@ -100,9 +94,14 @@
             <field name="name">view.budget.plan.project.tree</field>
             <field name="model">budget.plan.project</field>
             <field name="arch" type="xml">
-                <tree string="Budget Plan">
+                <tree string="Budget Plan" create="0" delete="0">
                     <field name="fiscalyear_id"/>
                     <field name="name"/>
+                    <field name="functional_area_id"/>
+                    <field name="program_group_id"/>
+                    <field name="program_id"/>
+                    <field name="planned_overall"/>
+                    <field name="user_id"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -114,6 +113,23 @@
             <field name="arch" type="xml">
                 <search string="Budget">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Plan"/>
+                    <field name="functional_area_id"/>
+                    <field name="program_id"/>
+                    <field name="program_group_id"/>
+                    <filter string="This Fiscalyear" name="this_year_plans" context="{'this_year_plans': True}"/>
+                    <separator/>
+                    <filter domain="[('state','=','1_draft')]" string="Draft"/>
+                    <filter domain="[('state','=','6_verify')]" string="Verified"/>
+                    <filter domain="[('state','=','7_accept')]" string="Accepted"/>
+                    <filter domain="[('state','=','4_cancel')]" string="Cancelled"/>
+                    <filter domain="[('state','=','5_reject')]" string="Rejected"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Functional Area" context="{'group_by':'functional_area_id'}"/>
+                        <filter string="Program Group" context="{'group_by':'program_group_id'}"/>
+                        <filter string="Program" context="{'group_by':'program_id'}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Status" context="{'group_by':'state'}"/>
+                    </group>
                 </search>
             </field>
         </record>
@@ -132,7 +148,8 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_plan_project" id="menu_budget_plan_project_view" action="action_budget_plan_project_view" sequence="10"/>
+        <menuitem parent="menu_action_budget_plan_project" id="menu_budget_plan_project_view" action="action_budget_plan_project_view" sequence="10"
+          groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget"/>
 
         <record id="view_budget_plan_project_line_search" model="ir.ui.view">
             <field name="name">view.budget.plan.project.line.search</field>
@@ -146,14 +163,15 @@
                         <filter name="program_group_id" string="Program Group" domain="[]" context="{'group_by':'program_group_id'}"/>
                         <filter name="program_id" string="Program" domain="[]" context="{'group_by':'program_id'}"/>
                         <filter name="project_group_id" string="Project Group" domain="[]" context="{'group_by':'project_group_id'}"/>
+                        <filter name="nstda_strategy_id" string="NSTDA Strategy" domain="[]" context="{'group_by':'nstda_strategy_id'}"/>
                         <filter name="mission_id" string="Mission" domain="[]" context="{'group_by':'mission_id'}"/>
                         <filter name="project_kind" string="Project Kind" domain="[]" context="{'group_by':'project_kind'}"/>
                         <filter name="project_objective" string="Objective" domain="[]" context="{'group_by':'project_objective'}"/>
                         <filter name="project_type" string="Type" domain="[]" context="{'group_by':'project_type'}"/>
                         <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
                         <filter name="costcenter_id" string="Costcenter" domain="[]" context="{'group_by':'costcenter_id'}"/>
-                        <filter name="division_id" string="Division" domain="[]" context="{'group_by':'division_id'}"/>
-                        <filter name="manager_employee_id" string="Manager" domain="[]" context="{'group_by':'manager_employee_id'}"/>
+                        <filter name="owner_division_id" string="Division" domain="[]" context="{'group_by':'owner_division_id'}"/>
+                        <filter name="pm_employee_id" string="Manager" domain="[]" context="{'group_by':'pm_employee_id'}"/>
                         <filter name="project_duration" string="Duration" domain="[]" context="{'group_by':'project_duration'}"/>
                         <filter name="project_status" string="Status" domain="[]" context="{'group_by':'project_status'}"/>
                         <filter name="analyst_employee_id" string="Analyst" domain="[]" context="{'group_by':'analyst_employee_id'}"/>
@@ -172,76 +190,77 @@
             <field name="arch" type="xml">
                 <tree string="Budget Plan Lines">
 
-                    <field name="c_or_n" invisible="1"/>
-                    <field name="project_id" invisible="0"/>
-                    <field name="fund_id"/>
+                    <field name="project_id"/>
+                    <field name="name"/>
+                    <field name="c_or_n"/>
 
-                    <field name="functional_area_id" invisible="1"/>
-                    <field name="program_group_id" invisible="1"/>
-                    <field name="program_id" invisible="1"/>
-                    <field name="project_group_id" invisible="1"/>
-                    <field name="mission_id" invisible="1"/>
-                    <field name="project_kind" invisible="1"/>
-                    <field name="project_objective" invisible="1"/>
-                    <field name="project_type" invisible="1"/>
-                    <field name="org_id" invisible="1"/>
-                    <field name="costcenter_id" invisible="1"/>
-                    <field name="division_id" invisible="1"/>
-                    <field name="manager_employee_id" invisible="1"/>
-                    <field name="date_from" invisible="1"/>
-                    <field name="date_to" invisible="1"/>
-                    <field name="project_duration" invisible="1"/>
-                    <field name="project_status" invisible="1"/>
-                    <field name="analyst_employee_id" invisible="1"/>
-                    <field name="ref_program_id" invisible="1"/>
-                    <field name="external_fund_type" invisible="1"/>
-                    <field name="external_fund_name" invisible="1"/>
-                    <field name="priority" invisible="1"/>
+                    <field name="functional_area_id"/>
+                    <field name="program_id"/>
+                    <field name="project_group_id"/>
+                    <field name="nstda_strategy_id"/>
+                    <field name="project_objective"/>
+                    <field name="mission_id"/>
+                    <field name="project_kind"/>
+                    <field name="project_type"/>
+                    <field name="org_id"/>
+                    <field name="costcenter_id"/>
+                    <field name="owner_division_id"/>
 
-                    <field name="pfm_publications" sum="Total"/>
-                    <field name="pfm_patents" sum="Total"/>
-                    <field name="pfm_petty_patents" sum="Total"/>
-                    <field name="pfm_copyrights" sum="Total"/>
-                    <field name="pfm_trademarks" sum="Total"/>
-                    <field name="pfm_plant_varieties" sum="Total"/>
-                    <field name="pfm_laboratory_prototypes" sum="Total"/>
-                    <field name="pfm_field_prototypes" sum="Total"/>
-                    <field name="pfm_commercial_prototypes" sum="Total"/>
-                    <field name="pfm_revenue_budget" sum="Total"/>
-                    <field name="pfm_revenue_overall_plan" sum="Total"/>
-                    <field name="pfm_revenue_accum" sum="Total"/>
-                    <field name="pfm_revenue_current_year" sum="Total"/>
-                    <field name="pfm_expense_overall_budget" sum="Total"/>
-                    <field name="pfm_expense_accum" sum="Total"/>
-                    <field name="pfm_commitment_accum" sum="Total"/>
-                    <field name="pfm_expense_remaining_budget" sum="Total"/>
+                    <field name="pm_employee_id"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="project_duration"/>
+                    <field name="project_status"/>
+                    <field name="analyst_employee_id"/>
+                    <field name="ref_program_id"/>
+                    <field name="external_fund_type"/>
+                    <field name="external_fund_name"/>
+                    <field name="priority"/>
+                    <field name="fy1"/>
+                    <field name="fy2"/>
+                    <field name="fy3"/>
+                    <field name="fy4"/>
+                    <field name="fy5"/>
+                    <field name="revenue_budget"/>
+                    <field name="overall_revenue_plan"/>
 
-                    <field name="amount_plan" sum="Total"/>
-                    <field name="amount_released" sum="Total"/>
-                    <field name="total_commitment" sum="Total"/>
-                    <field name="actual_amount" sum="Total"/>
-                    <field name="budget_remaining" sum="Total"/>
-                    <field name="estimated_commitment" sum="Total"/>
-                    <field name="m0" sum="Total"/>
-                    <field name="m1" sum="Total"/>
-                    <field name="m2" sum="Total"/>
-                    <field name="m3" sum="Total"/>
-                    <field name="m4" sum="Total"/>
-                    <field name="m5" sum="Total"/>
-                    <field name="m6" sum="Total"/>
-                    <field name="m7" sum="Total"/>
-                    <field name="m8" sum="Total"/>
-                    <field name="m9" sum="Total"/>
-                    <field name="m10" sum="Total"/>
-                    <field name="m11" sum="Total"/>
-                    <field name="m12" sum="Total"/>
-                    <field name="fy1" sum="Total"/>
-                    <field name="fy2" sum="Total"/>
-                    <field name="fy3" sum="Total"/>
-                    <field name="fy4" sum="Total"/>
-                    <field name="fy5" sum="Total"/>
-                    <field name="total" sum="Total"/>
+                    <field name="pfm_publications"/>
+                    <field name="pfm_patents"/>
+                    <field name="pfm_petty_patents"/>
+                    <field name="pfm_copyrights"/>
+                    <field name="pfm_trademarks"/>
+                    <field name="pfm_plant_varieties"/>
+                    <field name="pfm_laboratory_prototypes"/>
+                    <field name="pfm_field_prototypes"/>
+                    <field name="pfm_commercial_prototypes"/>
 
+                    <field name="overall_revenue"/>
+                    <field name="current_revenue"/>
+                    <field name="overall_expense_budget"/>
+                    <field name="overall_actual"/>
+                    <field name="overall_commit"/>
+                    <field name="overall_expense_balance"/>
+                    <field name="planned"/>
+                    <field name="released"/>
+                    <field name="all_commit"/>
+                    <field name="actual"/>
+                    <field name="balance"/>
+                    <field name="est_commit"/>
+
+                    <field name="m1"/>
+                    <field name="m2"/>
+                    <field name="m3"/>
+                    <field name="m4"/>
+                    <field name="m5"/>
+                    <field name="m6"/>
+                    <field name="m7"/>
+                    <field name="m8"/>
+                    <field name="m9"/>
+                    <field name="m10"/>
+                    <field name="m11"/>
+                    <field name="m12"/>
+                    <field name="planned_amount"/>
+                    
                 </tree>
             </field>
         </record>
@@ -261,26 +280,27 @@
             <field name="model">budget.plan.project.line</field>
             <field name="arch" type="xml">
                 <form string="Project Plan">
-                    <group>
+                    <group string="Project Information">
                         <group>
+                            <field name="project_id"/>
                             <field name="name"/>
                             <field name="c_or_n"/>
                             <field name="functional_area_id"/>
-                            <field name="program_group_id"/>
                             <field name="program_id"/>
                             <field name="project_group_id"/>
+                            <field name="nstda_strategy_id"/>
+                            <field name="project_objective"/>
                             <field name="mission_id"/>
                             <field name="project_kind"/>
-                            <field name="project_objective"/>
                             <field name="project_type"/>
                             <field name="org_id"/>
                             <field name="costcenter_id"/>
-                            <field name="division_id"/>
+                            <field name="owner_division_id"/>
                         </group>
                         <group>
-                            <field name="manager_employee_id"/>
-                            <field name="date_from"/>
-                            <field name="date_to"/>
+                            <field name="pm_employee_id"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
                             <field name="project_duration"/>
                             <field name="project_status"/>
                             <field name="analyst_employee_id"/>
@@ -288,29 +308,48 @@
                             <field name="external_fund_type"/>
                             <field name="external_fund_name"/>
                             <field name="priority"/>
+                            <field name="fy1"/>
+                            <field name="fy2"/>
+                            <field name="fy3"/>
+                            <field name="fy4"/>
+                            <field name="fy5"/>
+                            <field name="revenue_budget"/>
+                            <field name="overall_revenue_plan"/>
                         </group>
                     </group>
-                    <group string="Performance">
+                    <hr/>
+                    <group string="Project Performance">
                         <group>
-                            <field name="pfm_publications" sum="Total"/>
-                            <field name="pfm_patents" sum="Total"/>
-                            <field name="pfm_petty_patents" sum="Total"/>
-                            <field name="pfm_copyrights" sum="Total"/>
-                            <field name="pfm_trademarks" sum="Total"/>
-                            <field name="pfm_plant_varieties" sum="Total"/>
-                            <field name="pfm_laboratory_prototypes" sum="Total"/>
-                            <field name="pfm_field_prototypes" sum="Total"/>
-                            <field name="pfm_commercial_prototypes" sum="Total"/>
+                            <field name="pfm_publications"/>
+                            <field name="pfm_patents"/>
+                            <field name="pfm_petty_patents"/>
+                            <field name="pfm_copyrights"/>
+                            <field name="pfm_trademarks"/>
                         </group>
                         <group>
-                            <field name="pfm_revenue_budget" sum="Total"/>
-                            <field name="pfm_revenue_overall_plan" sum="Total"/>
-                            <field name="pfm_revenue_accum" sum="Total"/>
-                            <field name="pfm_revenue_current_year" sum="Total"/>
-                            <field name="pfm_expense_overall_budget" sum="Total"/>
-                            <field name="pfm_expense_accum" sum="Total"/>
-                            <field name="pfm_commitment_accum" sum="Total"/>
-                            <field name="pfm_expense_remaining_budget" sum="Total"/>
+                            <field name="pfm_plant_varieties"/>
+                            <field name="pfm_laboratory_prototypes"/>
+                            <field name="pfm_field_prototypes"/>
+                            <field name="pfm_commercial_prototypes"/>
+                        </group>
+                    </group>
+                    <hr/>
+                    <group string="Monetary Performance">
+                        <group string="Year to Date">
+                            <field name="overall_revenue"/>
+                            <field name="current_revenue"/>
+                            <field name="overall_expense_budget"/>
+                            <field name="overall_actual"/>
+                            <field name="overall_commit"/>
+                            <field name="overall_expense_balance"/>
+                        </group>
+                        <group string="Current Year">
+                            <field name="planned"/>
+                            <field name="released"/>
+                            <field name="all_commit"/>
+                            <field name="actual"/>
+                            <field name="balance"/>
+                            <field name="est_commit"/>
                         </group>
                     </group>
                 </form>
@@ -325,7 +364,8 @@
             <field name="view_id" ref="view_budget_plan_project_line_tree"/>
         </record>
 
-        <menuitem parent="menu_action_budget_plan_project" id="menu_budget_plan_project_line_view" action="action_budget_plan_project_line_view" sequence="20"/>
+        <menuitem parent="menu_action_budget_plan_project" id="menu_budget_plan_project_line_view" action="action_budget_plan_project_line_view" sequence="20"
+          groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget"/>
 
     </data>
 </openerp>

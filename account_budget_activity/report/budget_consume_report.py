@@ -87,7 +87,7 @@ class BudgetConsumeReport(models.Model):
     def _get_select_clause(self):
         sql_select = """
         select aal.id, aal.user_id, aal.date,
-            aal.fiscalyear_id,
+            aal.monitor_fy_id fiscalyear_id,
             -------------> aal.doc_ref, aal.doc_id,
             -- Amount
             case when ag.budget_method = 'expense' then -amount

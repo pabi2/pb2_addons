@@ -448,7 +448,6 @@ class BudgetPolicy(models.Model):
                 ('fiscalyear_id', '=', self.fiscalyear_id.id),
                 (entity_field, '=', entity.id),
                 ('state', 'in', ('7_accept', '8_done'))])
-            print plans
             # All entity must have valid plans
             if len(sub_entities) != len(plans):
                 res['valid'] = False

@@ -33,5 +33,13 @@
         </record>
         <menuitem name="Master Plan" id="menu_project_master_plan" action="action_project_master_plan" parent="menu_res_project" sequence="40"/>
 
+        <!-- NSTDA Strategy -->
+        <record id="action_project_nstda_strategy" model="ir.actions.act_window">
+            <field name="name">NSTDA Strategy</field>
+            <field name="res_model">project.nstda.strategy</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem name="NSTDA Strategy" id="menu_project_nstda_strategy" action="action_project_nstda_strategy" parent="menu_res_project" sequence="50"/>
+
     </data>
 </openerp>

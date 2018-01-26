@@ -35,7 +35,8 @@
             <field name="arch" type="xml">
                 <xpath expr="/tree/field[@name='budget_method']" position="after">
                     <field name="charge_type" invisible="0"/>
-                    <field name="income_section_id" attrs="{'required': [('charge_type', '=', 'internal')]}"/>
+                    <!-- <field name="income_section_id" attrs="{'required': [('charge_type', '=', 'internal')]}"/> -->
+                    <field name="income_section_id"/>
                 </xpath>
                 <xpath expr="/tree" position="attributes">
                     <attribute name="colors">blue:(charge_type == 'external');green:(charge_type == 'internal')</attribute>

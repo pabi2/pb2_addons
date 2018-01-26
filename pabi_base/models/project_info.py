@@ -17,3 +17,7 @@ class ProjectOperation(ResCommon, models.Model):
 
 class ProjectMasterPlan(ResCommon, models.Model):
     _name = 'project.master.plan'
+
+
+class ProjectNSTDAStrategy(ResCommon, models.Model):
+    _name = 'project.nstda.strategy'
