@@ -957,7 +957,7 @@ class ResInvestConstructionPhaseSync(models.Model):
         'account.budget.line',
         string='Budget Line Ref',
         index=True,
-        ondelete='set null',
+        ondelete='cascade',
         help="This is of latest version of fiscalyear's budget control",
     )
     budget_id = fields.Many2one(
