@@ -93,7 +93,7 @@
                         <group>
                             <group>
                                 <field name="amount_budget_plan"/>
-                                <field name="amount_budget_approve"/>
+                                <field name="amount_budget"/>
                             </group>
                             <group>
                                 <field name="fund_ids" widget="many2many_tags"/>
@@ -163,7 +163,7 @@
             <field name="inherit_id" ref="view_invest_construction_form"/>
             <field name="groups_id" eval="[(6, 0, [ref('pabi_base.group_cooperate_budget')])]"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='amount_budget_approve']" position="attributes">
+                <xpath expr="//field[@name='amount_budget']" position="attributes">
                     <attribute name="readonly">False</attribute>
                 </xpath>
                 <xpath expr="//field[@name='mission_id']" position="attributes">
@@ -200,7 +200,7 @@
                     <field name="name"/>
                     <field name="pm_employee_id"/>
                     <field name="amount_budget_plan" sum="Total Plan"/>
-                    <field name="amount_budget_approve" sum="Total Approved Budget"/>
+                    <field name="amount_budget" sum="Total Approved Budget"/>
                     <field name="amount_phase_approve" sum="Total Approved Phases Budget"/>
                     <field name="state"/>
                 </tree>

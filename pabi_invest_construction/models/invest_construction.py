@@ -98,13 +98,37 @@ class ResInvestConstruction(LogCommon, models.Model):
         compute='_compute_amount_budget_plan',
         readonly=True,
     )
-    amount_budget_approve = fields.Float(
+    amount_budget = fields.Float(
         string='Approved Budget',
         default=0.0,
         readonly=True,
         states={'submit': [('readonly', False)],
                 'unapprove': [('readonly', False)]},
         write=['pabi_base.group_cooperate_budget'],  # Only Corp can edit
+    )
+    amount_fy1 = fields.Float(
+        string='FY1',
+        compute='_compute_amount_fy',
+    )
+    amount_fy2 = fields.Float(
+        string='FY2',
+        compute='_compute_amount_fy',
+    )
+    amount_fy3 = fields.Float(
+        string='FY3',
+        compute='_compute_amount_fy',
+    )
+    amount_fy4 = fields.Float(
+        string='FY4',
+        compute='_compute_amount_fy',
+    )
+    amount_fy5 = fields.Float(
+        string='FY5',
+        compute='_compute_amount_fy',
+    )
+    amount_beyond = fields.Float(
+        string='FY6 and Beyond',
+        compute='_compute_amount_fy',
     )
     amount_phase_approve = fields.Float(
         string='Approved Budget (Phases)',
@@ -143,6 +167,20 @@ class ResInvestConstruction(LogCommon, models.Model):
     ]
 
     @api.multi
+    def _compute_amount_fy(self):
+        """ Converse year plan into fields amount_fy1 - amount_fy5 """
+        for rec in self:
+            plans = rec.budget_plan_ids.sorted(key=lambda l: l.fiscalyear_id)
+            amount_beyond = 0.0
+            years = len(plans)
+            for i in range(0, years):
+                if i < 5:  # only fy1 - fy5
+                    rec['amount_fy%s' % (i + 1)] = plans[i].amount_plan
+                else:
+                    amount_beyond += plans[i].amount_plan
+            rec.amount_beyond = amount_beyond
+
+    @api.multi
     @api.constrains('budget_plan_ids')
     def _check_fiscalyear_unique(self):
         for rec in self:
@@ -163,10 +201,8 @@ class ResInvestConstruction(LogCommon, models.Model):
     def _compute_amount_phase_approve(self):
         for rec in self:
             amount_total = sum([x.amount_phase_approve for x in rec.phase_ids])
-            print amount_total
-            print rec.amount_budget_approve
             if amount_total and float_compare(amount_total,
-                                              rec.amount_budget_approve,
+                                              rec.amount_budget,
                                               precision_digits=2) != 0:
                 raise ValidationError(
                     _("Sum of all phases approved budget != "
@@ -921,7 +957,7 @@ class ResInvestConstructionPhaseSync(models.Model):
         'account.budget.line',
         string='Budget Line Ref',
         index=True,
-        ondelete='set null',
+        ondelete='cascade',
         help="This is of latest version of fiscalyear's budget control",
     )
     budget_id = fields.Many2one(

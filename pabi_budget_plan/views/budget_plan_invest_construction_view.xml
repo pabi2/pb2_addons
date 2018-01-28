@@ -7,13 +7,10 @@
             <field name="arch" type="xml">
                 <form string="Budget Plan">
                     <header>
-                        <button string="Submit" name="action_submit" states="1_draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="action_approve" states="2_submit" type="object" class="oe_highlight"/>
-                        <button string="Accept" name="action_accept" states="3_approve" type="object" class="oe_highlight"/>
-                        <button string="Reject" name="action_reject" states="2_submit,3_approve" type="object" />
+                        <button string="Accept" name="action_accept" states="1_draft" type="object" class="oe_highlight"/>
                         <button string="Reset to Draft" name="action_draft" states="4_cancel" type="object"/>
-                        <button string="Cancel" name="action_cancel" states="1_draft" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="1_draft,2_submit,3_approve,7_accept,8_done"/>
+                        <button string="Cancel" name="action_cancel" states="1_draft,7_accept" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="1_draft,7_accept,8_done"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -50,21 +47,20 @@
                                 <field name="plan_line_ids" colspan="4" nolabel="1">
                                     <tree string="Next year plan" editable="bottom">
                                         <field name="c_or_n"/>
-                                        <field name="invest_construction_phase_id"/>
+                                        <field name="invest_construction_id"/>
                                         <field name="name" string="New Project"/>
                                         <field name="description" string="Description"/>
                                         <field name="activity_group_id" invisible="0"/>
 
                                         <button name="edit_invest_construction" string="Info." icon="gtk-justify-fill" type="object" class="oe_link"/>
 
-                                        <field name="planned" sum="Planned Amount"/>
-                                        <field name="released"/>
-                                        <field name="all_commit"/>
-                                        <field name="pr_commit"/>
-                                        <field name="po_commit"/>
-                                        <field name="actual"/>
-                                        <field name="consumed"/>
-                                        <field name="balance"/>
+                                        <field name="amount_budget"/>
+                                        <field name="overall_all_commit"/>
+                                        <field name="overall_pr_commit"/>
+                                        <field name="overall_po_commit"/>
+                                        <field name="overall_actual"/>
+                                        <field name="overall_consumed"/>
+                                        <field name="overall_balance"/>
                                     </tree>
                                 </field>
                             </page>
@@ -115,7 +111,8 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_plan_invest_construction" id="menu_budget_plan_invest_construction_view" action="action_budget_plan_invest_construction_view" sequence="10"/>
+        <menuitem parent="menu_action_budget_plan_invest_construction" id="menu_budget_plan_invest_construction_view" action="action_budget_plan_invest_construction_view" sequence="10"
+            groups="pabi_base.group_cooperate_budget"/>
 
         <!-- Budget Plan Line -->
 
@@ -144,14 +141,12 @@
                       <field name="c_or_n"/>
                       <field name="name" string="New Project"/>
                       <field name="description" string="Description"/>
-                      <field name="invest_construction_id" invisible="1"/>
-                      <field name="invest_construction_phase_id"/>
+                      <field name="invest_construction_id"/>
                       <field name="activity_group_id"/>
 
                       <field name="org_id"/>
                       <field name="date_start"/>
                       <field name="date_end"/>
-                      <field name="invest_construction_phase_id"/>
                       <field name="month_duration"/>
                       <field name="date_start"/>
                       <field name="date_end"/>
@@ -162,7 +157,7 @@
                       <field name="pm_employee_id"/>
                       <field name="pm_section_id"/>
 
-                      <field name="budget_overall"/>
+                      <field name="amount_budget"/>
                       <field name="amount_fy1"/>
                       <field name="amount_fy2"/>
                       <field name="amount_fy3"/>
@@ -170,14 +165,12 @@
                       <field name="amount_fy5"/>
                       <field name="amount_beyond"/>
 
-                      <field name="planned"/>
-                      <field name="released"/>
-                      <field name="all_commit"/>
-                      <field name="pr_commit"/>
-                      <field name="po_commit"/>
-                      <field name="actual"/>
-                      <field name="consumed"/>
-                      <field name="balance"/>
+                      <field name="overall_all_commit"/>
+                      <field name="overall_pr_commit"/>
+                      <field name="overall_po_commit"/>
+                      <field name="overall_actual"/>
+                      <field name="overall_consumed"/>
+                      <field name="overall_balance"/>
                 </tree>
             </field>
         </record>
@@ -201,7 +194,6 @@
                         <group>
                             <field name="c_or_n"/>
                             <field name="invest_construction_id"/>
-                            <field name="invest_construction_phase_id"/>
                             <field name="name" string="New Project"/>
                             <field name="description"/>
                             <field name="month_duration"/>
@@ -215,21 +207,19 @@
                             <field name="pm_section_id"/>
                         </group>
                         <group>
-                            <field name="budget_overall"/>
+                            <field name="amount_budget"/>
                             <field name="amount_fy1"/>
                             <field name="amount_fy2"/>
                             <field name="amount_fy3"/>
                             <field name="amount_fy4"/>
                             <field name="amount_fy5"/>
                             <field name="amount_beyond"/>
-                            <field name="planned"/>
-                            <field name="released"/>
-                            <field name="all_commit"/>
-                            <field name="pr_commit"/>
-                            <field name="po_commit"/>
-                            <field name="actual"/>
-                            <field name="consumed"/>
-                            <field name="balance"/>
+                            <field name="overall_all_commit"/>
+                            <field name="overall_pr_commit"/>
+                            <field name="overall_po_commit"/>
+                            <field name="overall_actual"/>
+                            <field name="overall_consumed"/>
+                            <field name="overall_balance"/>
                         </group>
                     </group>
                 </form>
@@ -244,7 +234,8 @@
             <field name="view_id" ref="view_budget_plan_invest_construction_line_tree"/>
         </record>
 
-        <menuitem parent="menu_action_budget_plan_invest_construction" id="menu_act_budget_plan_invest_construction_line_view" action="act_budget_plan_invest_construction_line_view" sequence="20"/>
+        <menuitem parent="menu_action_budget_plan_invest_construction" id="menu_act_budget_plan_invest_construction_line_view" action="act_budget_plan_invest_construction_line_view" sequence="20"
+            groups="pabi_base.group_cooperate_budget"/>
 
     </data>
 </openerp>

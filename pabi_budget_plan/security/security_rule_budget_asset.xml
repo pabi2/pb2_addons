@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        # Invest Asset
+        <!-- Cooperate see all, but readonly -->
+        <record id="property_rule_account_budget_asset_cooperate" model="ir.rule">
+            <field name="name">Budget Cooperate - Budget Asset Access</field>
+            <field name="model_id" ref="account_budget_activity.model_account_budget"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="0" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+        <record id="property_rule_account_budget_line_asset_cooperate" model="ir.rule">
+            <field name="name">Budget Cooperate - Budget Line Unit Based Access</field>
+            <field name="model_id" ref="account_budget_activity.model_account_budget_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="0" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+
+        <!-- OU see budget control in same OU -->
+        <record id="property_rule_account_budget_asset_org" model="ir.rule">
+            <field name="name">Budget Org Manager - Budget Unit Based Access</field>
+            <field name="model_id" ref="account_budget_activity.model_account_budget"/>
+            <field name="domain_force">[('chart_view', '=', 'invest_asset'), ('org_id','=',user.partner_id.employee_id.section_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_asset_ou_budget'))]"/>
+        </record>
+        <record id="property_rule_account_budget_line_asset_org" model="ir.rule">
+            <field name="name">Budget Org Manager - Budget Line Unit Based Access</field>
+            <field name="model_id" ref="account_budget_activity.model_account_budget_line"/>
+            <field name="domain_force">[('chart_view', 'in', [False, 'invest_asset']), ('org_id','=',user.partner_id.employee_id.section_id.org_id.id)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_asset_ou_budget'))]"/>
+        </record>
+
+
+    </data>
+</openerp>

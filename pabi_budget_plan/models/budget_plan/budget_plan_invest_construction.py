@@ -103,11 +103,6 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
         store=True,
         readonly=True,
     )
-    invest_construction_id = fields.Many2one(
-        related='invest_construction_phase_id.invest_construction_id',
-        store=True,
-        readonly=True,
-    )
     c_or_n = fields.Selection(
         [('continue', 'Continue'),
          ('new', 'New')],
@@ -147,7 +142,7 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
     expected_result = fields.Text(
         string='Expected Result',
     )
-    budget_overall = fields.Float(
+    amount_budget = fields.Float(
         string='Overall Budget',
     )
     amount_fy1 = fields.Float(
@@ -168,30 +163,48 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
     amount_beyond = fields.Float(
         string='Beyond FY5',
     )
-    planned = fields.Float(
-        string='Current Plan',
+    overall_all_commit = fields.Float(
+        string='Overall Commitment'
     )
-    released = fields.Float(
-        string='Current Released',
+    overall_pr_commit = fields.Float(
+        string='Overall PR Commit'
     )
-    all_commit = fields.Float(
-        string='Current All Commit',
+    overall_po_commit = fields.Float(
+        string='Overall PO Commit'
     )
-    po_commit = fields.Float(
-        string='Current PO Commit',
+    overall_actual = fields.Float(
+        string='Overall PO Commit'
     )
-    pr_commit = fields.Float(
-        string='Current PR Commit',
+    overall_consumed = fields.Float(
+        string='Overall PO Commit'
     )
-    actual = fields.Float(
-        string='Current Actual',
+    overall_balance = fields.Float(
+        string='Overall PO Commit'
     )
-    consumed = fields.Float(
-        string='Current Consumed',
-    )
-    balance = fields.Float(
-        string='Current Balance',
-    )
+    # planned = fields.Float(
+    #     string='Current Plan',
+    # )
+    # released = fields.Float(
+    #     string='Current Released',
+    # )
+    # all_commit = fields.Float(
+    #     string='Current All Commit',
+    # )
+    # po_commit = fields.Float(
+    #     string='Current PO Commit',
+    # )
+    # pr_commit = fields.Float(
+    #     string='Current PR Commit',
+    # )
+    # actual = fields.Float(
+    #     string='Current Actual',
+    # )
+    # consumed = fields.Float(
+    #     string='Current Consumed',
+    # )
+    # balance = fields.Float(
+    #     string='Current Balance',
+    # )
 
     # Required for updating dimension
     # FIND ONLY WHAT IS NEED AND USE related field.
@@ -221,19 +234,20 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
     _description = 'Prev FY budget performance for construction'
     # Extra variable for this view
     _chart_view = 'invest_construction'
-    _ex_view_fields = ['invest_construction_phase_id', 'org_id']
+    _ex_view_fields = ['invest_construction_id', 'org_id']
     _ex_domain_fields = ['org_id']  # Each plan is by this domain
     _ex_active_domain = \
-        [('invest_construction_phase_id.state', '=', 'approve')]
+        [('invest_construction_id.state', '=', 'approve')]
+    _prev_fy_only = False  # Will the result of his view focus on prev fy only
 
     org_id = fields.Many2one(
         'res.org',
         string='Org',
         readonly=True,
     )
-    invest_construction_phase_id = fields.Many2one(
-        'res.invest.construction.phase',
-        string='Construction Phase',
+    invest_construction_id = fields.Many2one(
+        'res.invest.construction',
+        string='Construction',
         readonly=True,
     )
 
@@ -241,11 +255,35 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
     def _prepare_prev_fy_lines(self):
         """ Given search result from this view, prepare lines tuple """
         plan_lines = []
+        Project = self.env['res.invest.construction']
+        ProjectLine = self.env['budget.plan.invest.construction.line']
+        project_fields = set(Project._fields.keys())
+        plan_line_fields = set(ProjectLine._fields.keys())
+        common_fields = list(project_fields & plan_line_fields)
         for rec in self:
-            val = {'c_or_n': 'continue',
-                   'invest_construction_phase_id':
-                   rec.invest_construction_phase_id.id,
-                   # ???
-                   }
+            val = {
+                'c_or_n': 'continue',
+                'invest_construction_id': rec.invest_construction_id.id,
+            }
+            # Project Info
+            for field in common_fields:
+                if field in rec.invest_construction_id and \
+                        field not in ['id', '__last_update',
+                                      'write_uid', 'write_date',
+                                      'create_uid', 'create_date',
+                                      'state', ]:
+                    try:
+                        val[field] = rec.invest_construction_id[field].id
+                    except:
+                        val[field] = rec.invest_construction_id[field]
+            # Overall budget performance
+            val.update({
+                'overall_all_commit': rec.all_commit,
+                'overall_pr_commit': rec.pr_commit,
+                'overall_po_commit': rec.po_commit,
+                'overall_actual': rec.actual,
+                'overall_consumed': rec.consumed,
+                'overall_balance': rec.balance,
+            })
             plan_lines.append((0, 0, val))
         return plan_lines
