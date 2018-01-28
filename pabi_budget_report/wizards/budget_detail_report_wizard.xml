@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="wizard_budget_detail_report" model="ir.ui.view">
-            <field name="name">wizard.budget.detail.report</field>
+        <record id="budget_detail_report_wizard" model="ir.ui.view">
+            <field name="name">budget.detail.report.wizard</field>
             <field name="model">budget.detail.report.wizard</field>
             <field name="arch" type="xml">
-                <form string="Budget Detail By Cost Center">
+                <form string="Budget Detail By Cost Centre">
                     <group>
                         <group>
                             <field name="period_id"/>
@@ -25,7 +25,7 @@
         </record>
 
         <record id="action_budget_detail_report" model="ir.actions.act_window">
-            <field name="name">Budget Detail By Cost Center</field>
+            <field name="name">Budget Detail By Cost Centre</field>
             <field name="res_model">budget.detail.report.wizard</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
@@ -34,7 +34,7 @@
 
         <menuitem
             id="menu_budget_detail_report"
-            name="Budget Detail By Cost Center"
+            name="Budget Detail By Cost Centre"
             parent="menu_budget_report"
             action="action_budget_detail_report"
             sequence="30"
