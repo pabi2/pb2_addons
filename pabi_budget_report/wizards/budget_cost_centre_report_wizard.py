@@ -1,10 +1,21 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
-from .budget_common_report_wizard import BudgetCommonReportWizard
+from openerp import models, fields, api
+from .budget_common_report_wizard import Common
 
 
-class BudgetCostCentreReportWizard(models.Model, BudgetCommonReportWizard):
+class BudgetCostCentreReportWizard(models.Model, Common):
     _name = 'budget.cost.centre.report.wizard'
+
+    period_id = fields.Many2one(
+        'account.period',
+        string='Period End',
+        required=True,
+    )
+    costcenter_id = fields.Many2one(
+        'res.costcenter',
+        string='Cost Center',
+        required=True,
+    )
 
     @api.multi
     def xls_export(self):

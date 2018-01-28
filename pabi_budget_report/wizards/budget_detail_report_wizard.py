@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from .budget_common_report_wizard import BudgetCommonReportWizard
+from .budget_common_report_wizard import Common
 
 
-class BudgetDetailReportWizard(models.Model, BudgetCommonReportWizard):
+class BudgetDetailReportWizard(models.Model, Common):
     _name = 'budget.detail.report.wizard'
 
+    period_id = fields.Many2one(
+        'account.period',
+        string='Period End',
+        required=True,
+    )
+    costcenter_id = fields.Many2one(
+        'res.costcenter',
+        string='Cost Center',
+        required=True,
+    )
     chart_view = fields.Selection(
         [('personnel', 'Personnel'),
          ('invest_asset', 'Investment Asset'),
