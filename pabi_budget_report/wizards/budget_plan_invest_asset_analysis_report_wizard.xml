@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="wizard_budget_plan_analysis_report" model="ir.ui.view">
-            <field name="name">wizard.budget.plan.analysis.report</field>
-            <field name="model">budget.plan.analysis.report.wizard</field>
+        <record id="budget_plan_invest_asset_analysis_report_wizard" model="ir.ui.view">
+            <field name="name">budget.plan.invest.asset.analysis.report.wizard</field>
+            <field name="model">budget.plan.invest.asset.analysis.report.wizard</field>
             <field name="arch" type="xml">
                 <form string="Budget Plan Analysis">
                     <group>
@@ -28,21 +28,21 @@
             </field>
         </record>
 
-        <record id="action_budget_plan_analysis_report" model="ir.actions.act_window">
+        <record id="action_budget_plan_invest_asset_analysis_report" model="ir.actions.act_window">
             <field name="name">Budget Plan Analysis</field>
-            <field name="res_model">budget.plan.analysis.report.wizard</field>
+            <field name="res_model">budget.plan.invest.asset.analysis.report.wizard</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
         <menuitem
-            id="menu_budget_plan_analysis_report"
+            id="menu_budget_plan_invest_asset_analysis_report"
             name="Budget Plan Analysis"
-            parent="pabi_budget_plan.menu_action_budget_plan_unit"
-            action="action_budget_plan_analysis_report"
+            parent="pabi_budget_plan.menu_action_budget_plan_invest_asset"
+            action="action_budget_plan_invest_asset_analysis_report"
             sequence="30"
             icon="STOCK_PRINT"
-            />
+        />
     </data>
 </openerp>
