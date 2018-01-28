@@ -19,9 +19,6 @@
         'wizards/budget_detail_report_wizard.xml',
         'wizards/budget_plan_unit_analysis_report_wizard.xml',
         'wizards/budget_plan_project_analysis_report_wizard.xml',
-        'wizards/budget_plan_personnel_analysis_report_wizard.xml',
-        'wizards/budget_plan_invest_asset_analysis_report_wizard.xml',
-        'wizards/budget_plan_invest_construction_analysis_report_wizard.xml',
     ],
     'demo': [
     ],

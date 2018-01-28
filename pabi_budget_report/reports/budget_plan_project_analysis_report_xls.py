@@ -110,11 +110,11 @@ class BudgetPlanProjectAnalysisReportXLSParser(report_sxw.rml_parse):
         # Get Data
         form = data.get('form', {})
         fiscalyear_id = form.get('fiscalyear_id', False)
-        org_id = form.get('org_id', False)
-        sector_id = form.get('sector_id', False)
-        subsector_id = form.get('subsector_id', False)
-        division_id = form.get('division_id', False)
-        section_id = form.get('section_id', False)
+        functional_area_id = form.get('functional_area_id', False)
+        program_group_id = form.get('program_group_id', False)
+        program_id = form.get('program_id', False)
+        project_group_id = form.get('project_group_id', False)
+        project_id = form.get('project_id', False)
         budget_method = form.get('budget_method', False)
 
         # Browse Fiscalyear
@@ -122,30 +122,30 @@ class BudgetPlanProjectAnalysisReportXLSParser(report_sxw.rml_parse):
         fiscalyear = Fiscalyear.browse(cr, uid, fiscalyear_id)
 
         # Browse Structure
-        Org = self.pool.get('res.org')
-        Sector = self.pool.get('res.sector')
-        Subsector = self.pool.get('res.subsector')
-        Division = self.pool.get('res.division')
-        Section = self.pool.get('res.section')
-        org = Org.browse(cr, uid, org_id)
-        sector = Sector.browse(cr, uid, sector_id)
-        subsector = Subsector.browse(cr, uid, subsector_id)
-        division = Division.browse(cr, uid, division_id)
-        section = Section.browse(cr, uid, section_id)
+        FunctionalArea = self.pool.get('res.functional.area')
+        ProgramGroup = self.pool.get('res.program.group')
+        Program = self.pool.get('res.program')
+        ProjectGroup = self.pool.get('res.project.group')
+        Project = self.pool.get('res.project')
+        functional_area = FunctionalArea.browse(cr, uid, functional_area_id)
+        program_group = ProgramGroup.browse(cr, uid, program_group_id)
+        program = Program.browse(cr, uid, program_id)
+        project_group = ProjectGroup.browse(cr, uid, project_group_id)
+        project = Project.browse(cr, uid, project_id)
 
         # Browse Report
         Report = self.pool.get('budget.plan.project.line')
         domain = [('fiscalyear_id', '=', fiscalyear_id)]
-        if org:
-            domain += [('org_id', '=', org_id)]
-        if sector:
-            domain += [('sector_id', '=', sector_id)]
-        if subsector:
-            domain += [('subsector_id', '=', subsector_id)]
-        if division:
-            domain += [('division_id', '=', division_id)]
-        if section:
-            domain += [('section_id', '=', section_id)]
+        if functional_area:
+            domain += [('functional_area_id', '=', functional_area_id)]
+        if program_group:
+            domain += [('program_group_id', '=', program_group_id)]
+        if program:
+            domain += [('program_id', '=', program_id)]
+        if project_group:
+            domain += [('project_group_id', '=', project_group_id)]
+        if project:
+            domain += [('project_id', '=', project_id)]
         if budget_method:
             domain += [('budget_method', '=', budget_method)]
         report_ids = Report.search(cr, uid, domain)
@@ -154,11 +154,11 @@ class BudgetPlanProjectAnalysisReportXLSParser(report_sxw.rml_parse):
         # Update Context
         self.localcontext.update({
             'fiscalyear': fiscalyear,
-            'org': org,
-            'sector': sector,
-            'subsector': subsector,
-            'division': division,
-            'section': section,
+            'functional_area': functional_area,
+            'program_group': program_group,
+            'program': program,
+            'project_group': project_group,
+            'project': project,
             'budget_method': budget_method,
             'report': report,
         })
@@ -198,56 +198,62 @@ class BudgetPlanProjectAnalysisReportXLS(report_xls):
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(ws, row_pos, row_data)
         c_specs = [
-            ('org_title', 1, 0, 'text', _('Org'), None, cell_style_title),
-            ('org_value', 1, 0, 'text',
+            ('functional_area_title', 1, 0, 'text', _('Functional Area'),
+                None, cell_style_title),
+            ('functional_area_value', 1, 0, 'text',
                 '%s%s' %
-                (_p.org.code and '[' + _p.org.code + '] ' or '',
-                 _p.org.name_short and _p.org.name_short or _p.org.name or ''),
+                (_p.functional_area.code and
+                 '[' + _p.functional_area.code + '] ' or '',
+                 _p.functional_area.name_short and
+                 _p.functional_area.name_short or _p.functional_area.name
+                 or ''),
              None, cell_style_value)
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(ws, row_pos, row_data)
         c_specs = [
-            ('sector_title', 1, 0, 'text', _('Sector'), None,
+            ('program_group_title', 1, 0, 'text', _('Program Group'), None,
                 cell_style_title),
-            ('sector_value', 1, 0, 'text',
+            ('program_group_value', 1, 0, 'text',
                 '%s%s' %
-                (_p.sector.code and '[' + _p.sector.code + '] ' or '',
-                 _p.sector.name_short and _p.sector.name_short or
-                 _p.sector.name or ''), None, cell_style_value),
+                (_p.program_group.code and '[' + _p.program_group.code + '] '
+                 or '', _p.program_group.name_short and
+                 _p.program_group.name_short or _p.program_group.name or ''),
+                None, cell_style_value),
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(ws, row_pos, row_data)
         c_specs = [
-            ('sub_sector_title', 1, 0, 'text', _('Sub Sector'), None,
+            ('program_title', 1, 0, 'text', _('Program'), None,
                 cell_style_title),
-            ('sub_sector_value', 1, 0, 'text',
+            ('program_value', 1, 0, 'text',
                 '%s%s' %
-                (_p.subsector.code and '[' + _p.subsector.code + '] ' or '',
-                 _p.subsector.name_short and _p.subsector.name_short or
-                 _p.subsector.name or ''), None, cell_style_value),
+                (_p.program.code and '[' + _p.program.code + '] ' or '',
+                 _p.program.name_short and _p.program.name_short or
+                 _p.program.name or ''), None, cell_style_value),
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(ws, row_pos, row_data)
         c_specs = [
-            ('division_title', 1, 0, 'text', _('Division'), None,
+            ('project_group_title', 1, 0, 'text', _('Project Group'), None,
                 cell_style_title),
-            ('division_value', 1, 0, 'text',
+            ('project_group_value', 1, 0, 'text',
                 '%s%s' %
-                (_p.division.code and '[' + _p.division.code + '] ' or '',
-                 _p.division.name_short and _p.division.name_short or
-                 _p.division.name or ''), None, cell_style_value),
+                (_p.project_group.code and '[' + _p.project_group.code + '] '
+                 or '', _p.project_group.name_short and
+                 _p.project_group.name_short or _p.project_group.name or ''),
+                None, cell_style_value),
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(ws, row_pos, row_data)
         c_specs = [
-            ('section_title', 1, 0, 'text', _('Section'), None,
+            ('project_title', 1, 0, 'text', _('Project'), None,
                 cell_style_title),
-            ('section_value', 1, 0, 'text',
+            ('project_value', 1, 0, 'text',
                 '%s%s' %
-                (_p.section.code and '[' + _p.section.code + '] ' or '',
-                 _p.section.name_short and _p.section.name_short or
-                 _p.section.name or ''), None, cell_style_value),
+                (_p.project.code and '[' + _p.project.code + '] ' or '',
+                 _p.project.name_short and _p.project.name_short or
+                 _p.project.name or ''), None, cell_style_value),
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(ws, row_pos, row_data)
