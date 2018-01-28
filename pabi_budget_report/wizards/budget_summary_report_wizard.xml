@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="wizard_budget_summary_report" model="ir.ui.view">
-            <field name="name">wizard.budget.summary.report</field>
+        <record id="budget_summary_report_wizard" model="ir.ui.view">
+            <field name="name">budget.summary.report.wizard</field>
             <field name="model">budget.summary.report.wizard</field>
             <field name="arch" type="xml">
                 <form string="Budget Summary (Overview)">

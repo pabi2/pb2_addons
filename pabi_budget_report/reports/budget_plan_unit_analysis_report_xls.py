@@ -45,10 +45,10 @@ COLUMN_SIZES = [
 ]
 
 
-class BudgetPlanAnalysisReportXLSParser(report_sxw.rml_parse):
+class BudgetPlanUnitAnalysisReportXLSParser(report_sxw.rml_parse):
 
     def __init__(self, cr, uid, name, context):
-        super(BudgetPlanAnalysisReportXLSParser, self).__init__(
+        super(BudgetPlanUnitAnalysisReportXLSParser, self).__init__(
             cr, uid, name, context=context)
 
         self.localcontext.update({
@@ -115,11 +115,11 @@ class BudgetPlanAnalysisReportXLSParser(report_sxw.rml_parse):
             'report': report,
         })
 
-        return super(BudgetPlanAnalysisReportXLSParser, self).set_context(
+        return super(BudgetPlanUnitAnalysisReportXLSParser, self).set_context(
             objects, data, report_ids, report_type=report_type)
 
 
-class BudgetPlanAnalysisReportXLS(report_xls):
+class BudgetPlanUnitAnalysisReportXLS(report_xls):
     column_sizes = [x[1] for x in COLUMN_SIZES]
 
     def generate_xls_report(self, _p, _xs, data, objects, wb):
@@ -476,7 +476,7 @@ class BudgetPlanAnalysisReportXLS(report_xls):
         row_pos = self.xls_write_row(ws, row_pos, row_data)
 
 
-BudgetPlanAnalysisReportXLS(
-    'report.budget_plan_analysis_report_xls',
+BudgetPlanUnitAnalysisReportXLS(
+    'report.budget_plan_unit_analysis_report_xls',
     'budget.plan.unit.line',
-    parser=BudgetPlanAnalysisReportXLSParser)
+    parser=BudgetPlanUnitAnalysisReportXLSParser)

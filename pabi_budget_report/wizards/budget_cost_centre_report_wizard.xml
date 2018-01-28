@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="wizard_budget_cost_centre_report" model="ir.ui.view">
-            <field name="name">wizard.budget.cost.centre.report</field>
+        <record id="budget_cost_centre_report_wizard" model="ir.ui.view">
+            <field name="name">budget.cost.centre.report.wizard</field>
             <field name="model">budget.cost.centre.report.wizard</field>
             <field name="arch" type="xml">
                 <form string="Budget Report By Cost Centre">

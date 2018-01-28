@@ -1,21 +1,11 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api, _
-from openerp.exceptions import except_orm
+from openerp import models, fields, api
+from .budget_common_report_wizard import BudgetCommonReportWizard
 
 
-class BudgetDetailReportWizard(models.Model):
+class BudgetDetailReportWizard(models.Model, BudgetCommonReportWizard):
     _name = 'budget.detail.report.wizard'
 
-    period_id = fields.Many2one(
-        'account.period',
-        string='Period End',
-        required=True,
-    )
-    costcenter_id = fields.Many2one(
-        'res.costcenter',
-        string='Cost Center',
-        required=True,
-    )
     chart_view = fields.Selection(
         [('personnel', 'Personnel'),
          ('invest_asset', 'Investment Asset'),
@@ -28,16 +18,6 @@ class BudgetDetailReportWizard(models.Model):
 
     @api.multi
     def xls_export(self):
-        data = {}
-        data['form'] = self.read(
-            ['period_id', 'costcenter_id', 'chart_view'])[0]
-        for field in ['period_id', 'costcenter_id', 'chart_view']:
-            if isinstance(data['form'][field], tuple):
-                data['form'][field] = data['form'][field][0]
-        if self._context.copy().get('xls_export', False):
-            return {
-                'type': 'ir.actions.report.xml',
-                'report_name': 'budget_detail_report_xls',
-                'datas': data,
-            }
-        raise except_orm(_('Error !'), ('The report has not yet.'))
+        fields = ['period_id', 'costcenter_id', 'chart_view']
+        report_name = 'budget_detail_report_xls'
+        return self._get_report(fields, report_name)

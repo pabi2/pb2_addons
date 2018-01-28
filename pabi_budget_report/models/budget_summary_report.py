@@ -87,11 +87,13 @@ class BudgetSummaryReport(models.Model):
                    coalesce(actual_total, 0.0) as actual_total,
                    coalesce(balance, 0.0) as balance,
                    coalesce(total, 0.0) as commit_and_actual,
-                   (actual_total/total) * 100 as actual_percent,
+                   case when total = 0 then 0
+                    else (actual_total/total) * 100 end as actual_percent,
                    coalesce(pr_commit+po_commit+exp_commit, 0.0)
-                        as commit_total,
-                   coalesce(pr_commit+po_commit+exp_commit, 0.0)/total * 100
-                        as commit_percent
+                    as commit_total,
+                   case when total = 0 then 0 else
+                    coalesce(pr_commit+po_commit+exp_commit, 0.0)/total * 100
+                    end as commit_percent
             from
                    (select chart_view, fiscalyear_id,
                            sum(planned_amount) as plan,
