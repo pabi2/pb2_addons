@@ -450,7 +450,7 @@ class BudgetPlanUnitAnalysisReportXLS(report_xls):
             ('sub_sector', 1, 0, 'text', None, None, cell_style),
             ('division', 1, 0, 'text', None, None, cell_style),
             ('section', 1, 0, 'text', None, None, cell_style),
-            ('section_program', 1, 0, 'text', None, None),
+            ('section_program', 1, 0, 'text', None, None, cell_style),
             ('charge_type', 1, 0, 'text', None, None, cell_style),
             ('activity_group', 1, 0, 'text', None, None, cell_style),
             ('job_order', 1, 0, 'text', None, None, cell_style),
