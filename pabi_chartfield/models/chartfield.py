@@ -53,6 +53,7 @@ CHART_STRUCTURE = \
             'costcenter_id': {
                 'taxbranch_id': {}
             },
+            'section_program_id': {},
         },
         'project_id': {
             'project_group_id': {
@@ -68,6 +69,7 @@ CHART_STRUCTURE = \
                     'tag_id': {
                         'tag_type_id': {}
                     },
+                    'section_program_id': {},
                 },
                 'org_id': {},
                 'tag_id': {
@@ -150,10 +152,12 @@ CHART_FIELDS = [
     ('spa_id', ['project_base']),
     ('mission_id', ['project_base',
                     'unit_base',
-                    'personnel',
                     ]),  # both
     ('tag_type_id', ['project_base']),
     ('tag_id', ['project_base']),
+    ('section_program_id', ['project_base',
+                            'unit_base',
+                            ]),  # both
     # Project Based
     ('functional_area_id', ['project_base']),
     ('program_group_id', ['project_base']),
@@ -393,15 +397,21 @@ class HeaderTaxBranch(object):
 
 class ChartField(object):
 
+    # Shared by Project and Unit
+    mission_id = fields.Many2one(
+        'res.mission',
+        string='Mission',
+        ondelete='restrict',
+    )
+    section_program_id = fields.Many2one(
+        'res.section.program',
+        string='Section Program',
+        ondelete='restrict',
+    )
     # Project Base
     spa_id = fields.Many2one(
         'res.spa',
         string='SPA',
-        ondelete='restrict',
-    )
-    mission_id = fields.Many2one(
-        'res.mission',
-        string='Mission',
         ondelete='restrict',
     )
     tag_type_id = fields.Many2one(

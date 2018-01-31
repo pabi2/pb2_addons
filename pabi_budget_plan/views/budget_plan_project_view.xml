@@ -164,6 +164,7 @@
                         <filter name="program_id" string="Program" domain="[]" context="{'group_by':'program_id'}"/>
                         <filter name="project_group_id" string="Project Group" domain="[]" context="{'group_by':'project_group_id'}"/>
                         <filter name="nstda_strategy_id" string="NSTDA Strategy" domain="[]" context="{'group_by':'nstda_strategy_id'}"/>
+                        <filter name="section_program_id" string="Section Program" domain="[]" context="{'group_by':'section_program_id'}"/>
                         <filter name="mission_id" string="Mission" domain="[]" context="{'group_by':'mission_id'}"/>
                         <filter name="project_kind" string="Project Kind" domain="[]" context="{'group_by':'project_kind'}"/>
                         <filter name="project_objective" string="Objective" domain="[]" context="{'group_by':'project_objective'}"/>
@@ -199,6 +200,7 @@
                     <field name="project_group_id"/>
                     <field name="nstda_strategy_id"/>
                     <field name="project_objective"/>
+                    <field name="section_program_id"/>
                     <field name="mission_id"/>
                     <field name="project_kind"/>
                     <field name="project_type"/>
@@ -260,7 +262,7 @@
                     <field name="m11"/>
                     <field name="m12"/>
                     <field name="planned_amount"/>
-                    
+
                 </tree>
             </field>
         </record>

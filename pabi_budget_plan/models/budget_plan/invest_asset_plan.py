@@ -418,9 +418,9 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
         help="This FY PR Commitment",
     )
     exp_commitment = fields.Float(
-        string='Current EXP Commit',
+        string='Current EX Commit',
         readonly=True,
-        help="This FY EXP Commitment",
+        help="This FY EX Commitment",
     )
     po_commitment = fields.Float(
         string='Current PO Commit',

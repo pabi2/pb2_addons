@@ -16,6 +16,7 @@
                 </xpath>
             </field>
         </record>
+
         # Project base
         <record id="project_base_tree_view" model="ir.ui.view">
             <field name="name">project.base.tree.view</field>

@@ -135,6 +135,11 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
         store=True,
         readonly=True,
     )
+    section_program_id = fields.Many2one(
+        related='plan_id.program_id.section_program_id',
+        store=True,
+        readonly=True,
+    )
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',

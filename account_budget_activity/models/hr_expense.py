@@ -111,7 +111,7 @@ class HRExpenseLine(CommitLineCommon, ActivityCommon, models.Model):
     #     if not Budget.budget_eligible_line(analytic_journal, self):
     #         return False
     #
-    #     # Use EXP Commitment Account
+    #     # Use EX Commitment Account
     #     general_account_id = general_journal.exp_commitment_account_id.id   #  < --
     #
     #     line_qty = False

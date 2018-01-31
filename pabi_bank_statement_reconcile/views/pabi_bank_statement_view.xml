@@ -38,7 +38,7 @@
                             <div>
                                 <div>
                                     <field name="use_xlsx_template" class="oe_inline"/>
-                                    <field name="xlsx_tempalte_id" class="oe_inline" attrs="{'invisible': [('use_xlsx_template', '=', False)], 'required': [('use_xlsx_template', '=', True)]}"/>
+                                    <field name="xlsx_template_id" class="oe_inline" attrs="{'invisible': [('use_xlsx_template', '=', False)], 'required': [('use_xlsx_template', '=', True)]}"/>
                                 </div>
                             </div>
                             <field name="import_file" filename="import_file_name"/>
