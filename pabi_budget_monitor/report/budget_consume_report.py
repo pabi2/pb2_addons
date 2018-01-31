@@ -13,10 +13,10 @@ class BudgetConsumeReport(ChartField, models.Model):
         readonly=True,
         help="Reference to original document",
     )
-    program_rpt_id = fields.Many2one(
-        'res.program',
-        string='Report Program',
-    )
+    # program_rpt_id = fields.Many2one(
+    #     'res.program',
+    #     string='Report Program',
+    # )
 
     # def _get_sql_view(self):
     #     sql_view = super(BudgetConsumeReport, self)._get_sql_view()
@@ -43,10 +43,10 @@ class BudgetConsumeReport(ChartField, models.Model):
         dimensions += ', aal.chart_view'
         # Add dimensions for document reference
         dimensions += ', aal.document'
-        dimensions += '''
-            , CASE WHEN aal.section_id is not null THEN section.program_rpt_id
-                    WHEN aal.project_id is not null THEN project.program_rpt_id
-                    END as program_rpt_id'''
+        # dimensions += '''
+        #   , CASE WHEN aal.section_id is not null THEN section.program_rpt_id
+        #          WHEN aal.project_id is not null THEN project.program_rpt_id
+        #             END as program_rpt_id'''
         return dimensions
 
     def init(self, cr):

@@ -244,7 +244,8 @@
                         <filter string="Division" context="{'group_by':'division_id'}"/>
                         <filter string="Section" context="{'group_by':'section_id'}"/>
                         <filter string="Mission" context="{'group_by':'mission_id'}"/>
-                        <filter string="Program" context="{'group_by':'program_rpt_id'}"/>
+                        <filter string="Section Program" context="{'group_by':'section_program_id'}"/>
+                        <!-- <filter string="Program" context="{'group_by':'program_rpt_id'}"/> -->
                         <filter string="Activity Group" context="{'group_by':'activity_group_id'}"/>
                         <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
                         <filter string="Status" context="{'group_by':'state'}"/>
@@ -271,7 +272,8 @@
                     <field name="section_name" />
                     <field name="section_program_id"/>
                     <field name="mission_id" />
-                    <field name="program_rpt_id" />
+                    <field name="section_program_id" />
+                    <!-- <field name="program_rpt_id" /> -->
                     <field name="fund_id" invisible="1"/>
                     <field name="activity_group_id"/>
                     <field name="cost_control_id" invisible="1"/>

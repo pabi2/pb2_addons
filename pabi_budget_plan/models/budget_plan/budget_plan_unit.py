@@ -291,12 +291,12 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
         store=True,
         readonly=True,
     )
-    program_rpt_id = fields.Many2one(
-        related='section_id.program_rpt_id',
-        string='Program',
-        store=True,
-        readonly=True,
-    )
+    # program_rpt_id = fields.Many2one(
+    #     related='section_id.program_rpt_id',
+    #     string='Program',
+    #     store=True,
+    #     readonly=True,
+    # )
     division_id = fields.Many2one(
         related='section_id.division_id',
         store=True,

@@ -140,10 +140,10 @@ class ResSection(ResCommon, models.Model):
         string='Funds',
         default=lambda self: self.env.ref('base.fund_nstda'),
     )
-    program_rpt_id = fields.Many2one(
-        'res.program',
-        string='Report Program',
-    )
+    # program_rpt_id = fields.Many2one(
+    #     'res.program',
+    #     string='Report Program',
+    # )
     section_program_id = fields.Many2one(
         'res.section.program',
         string='Section Program',

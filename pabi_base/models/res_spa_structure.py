@@ -265,10 +265,10 @@ class ResProject(SpaStructureTag, ResCommon, models.Model):
         string='Funds',
         default=lambda self: self.env.ref('base.fund_nstda'),
     )
-    program_rpt_id = fields.Many2one(
-        'res.program',
-        string='Report Program',
-    )
+    # program_rpt_id = fields.Many2one(
+    #     'res.program',
+    #     string='Report Program',
+    # )
     # Other Info
     fund_type_id = fields.Many2one(
         'project.fund.type',
