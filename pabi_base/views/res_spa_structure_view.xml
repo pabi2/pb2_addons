@@ -153,6 +153,7 @@
                             <field name="program_group_id"/>
                             <field name="spa_ids" widget="many2many_tags" placeholder="SPA Tags..."/>
                             <field name="current_spa_id"/>
+                            <field name="section_program_id"/>
                         </group>
                         <group>
                             <field name="code"/>
@@ -307,7 +308,7 @@
                             <field name="functional_area_id"/>
                             <field name="program_group_id"/>
                             <field name="program_id"/>
-                            <field name="program_rpt_id"/>
+                            <!-- <field name="program_rpt_id"/> -->
                         </group>
                         <group string="Tags">
                             <field name="mission_id"/>

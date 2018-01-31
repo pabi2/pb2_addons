@@ -257,6 +257,7 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     # Extra
     section_id = fields.Many2one(
         related='plan_id.section_id',
+        string='Section',
         store=True,
         readonly=True,
     )
@@ -275,6 +276,12 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     section_code = fields.Char(
         related='section_id.code',
         string='Section Code',
+        store=True,
+        readonly=True,
+    )
+    section_program_id = fields.Many2one(
+        related='plan_id.section_id.section_program_id',
+        string='Section Program',
         store=True,
         readonly=True,
     )

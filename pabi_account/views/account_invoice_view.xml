@@ -234,6 +234,14 @@
                 <div name="pettycash_div1" position="replace"/>
                 <label for="clear_pettycash_id" position="replace"/>
                 <div name="pettycash_div2" position="replace"/>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="invoice_supplier_form_pettycash2">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="invoice_supplier_form"/>
+            <field name="arch" type="xml">
                 <!-- Moved To -->
                 <xpath expr="//hr[@name='extra_line']" position="after">
                     <label for="is_pettycash" attrs="{'invisible': [('source_document_id', '!=', False)]}"/>
@@ -249,12 +257,9 @@
                     <attribute name="required">False</attribute>
                     <attribute name="attrs">{'required': [('clear_pettycash_id', '=', False)]}</attribute>
                 </field>
-                <!-- -->
             </field>
         </record>
-
-
-
+        # --
 
         <record id="invoice_tree" model="ir.ui.view">
             <field name="name">invoice.tree</field>

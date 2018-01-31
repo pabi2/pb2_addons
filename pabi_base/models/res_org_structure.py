@@ -144,6 +144,10 @@ class ResSection(ResCommon, models.Model):
         'res.program',
         string='Report Program',
     )
+    section_program_id = fields.Many2one(
+        'res.section.program',
+        string='Section Program',
+    )
 
 
 class ResCostcenter(ResCommon, models.Model):
@@ -222,3 +226,20 @@ class ResTaxbranch(ResCommon, models.Model):
     #     string='Org',
     #     required=True,
     # )
+
+
+# Special new dimension to be shared by Section and Program
+class ResSectionProgram(ResCommon, models.Model):
+    _name = 'res.section.program'
+    _description = 'Section Program'
+
+    section_ids = fields.One2many(
+        'res.section',
+        'section_program_id',
+        string='Sections',
+    )
+    program_ids = fields.One2many(
+        'res.program',
+        'section_program_id',
+        string='Programs',
+    )

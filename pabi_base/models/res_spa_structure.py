@@ -174,6 +174,10 @@ class ResProgram(SpaStructureTag, ResCommon, models.Model):
         compute='_compute_current_spa_id',
         help="Active SPA as of today",
     )
+    section_program_id = fields.Many2one(
+        'res.section.program',
+        string='Section Program',
+    )
 
     @api.one
     def _compute_current_spa_id(self):

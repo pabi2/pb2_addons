@@ -222,8 +222,8 @@
                     <field name="subsector_id"/>
                     <field name="division_id"/>
                     <field name="section_id"/>
+                    <field name="section_program_id"/>
                     <field name="mission_id"/>
-                    <field name="program_rpt_id"/>
                     <filter string="My Org Plans" name="my_org_plans" context="{'my_org_plans': True}"/>
                     <filter string="My Section Plans" name="my_section_plans" context="{'my_section_plans': True}"/>
                     <filter string="My Division Plans" name="my_division_plans" context="{'my_division_plans': True}"/>
@@ -269,6 +269,7 @@
                     <field name="section_code" />
                     <field name="section_name_short" />
                     <field name="section_name" />
+                    <field name="section_program_id"/>
                     <field name="mission_id" />
                     <field name="program_rpt_id" />
                     <field name="fund_id" invisible="1"/>

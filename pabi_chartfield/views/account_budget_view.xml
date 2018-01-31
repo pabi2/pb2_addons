@@ -578,7 +578,6 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
             <!-- TODO: currrently, we use the one form unit based, change to its own -->
-            <field name="search_view_id" ref="view_account_budget_unit_base_search"/>
             <field name="search_view_id" ref="view_account_budget_project_base_search"/>
             <field name="domain">[('chart_view', '=', 'project_base')]</field>
             <field name="context">{'default_chart_view': 'project_base'}</field>
@@ -651,7 +650,7 @@
             <field name="view_id" ref="account_budget_activity.account_budget_view_tree"/>
             <!-- TODO: currrently, we use the one form unit based, change to its own -->
             <field name="search_view_id" ref="view_account_budget_unit_base_search"/>
-            <field name="search_view_id" ref="view_account_budget_invest_asset_search"/>
+            <!-- <field name="search_view_id" ref="view_account_budget_invest_asset_search"/> -->
             <field name="domain">[('chart_view', '=', 'invest_asset')]</field>
             <field name="context">{'default_chart_view': 'invest_asset'}</field>
             <field name="help" type="html">
