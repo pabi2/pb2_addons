@@ -705,8 +705,9 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
     def _set_amount_plan_init(self):
         for phase in self:
             for plan in phase.phase_plan_ids:
-                if not plan.amount_plan_init:
+                if not plan.init:
                     plan.amount_plan_init = plan.amount_plan
+                    plan.init = True
 
     @api.multi
     def _check_amount_plan_approve(self):
@@ -887,6 +888,11 @@ class ResInvestConstructionPhasePlan(models.Model):
         string='Investment Construction',
         related='invest_construction_phase_id.invest_construction_id',
         store=True,
+    )
+    init = fields.Boolean(
+        string='Intit?',
+        default=False,
+        help="This field mark that amount_plan_init already init",
     )
     amount_plan_init = fields.Float(
         string='Initial Plan',
