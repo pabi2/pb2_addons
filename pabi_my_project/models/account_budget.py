@@ -57,7 +57,10 @@ class AccountBudget(models.Model):
                     budget_line = BudgetLine.create(budget_line_dict)
                     budget_line.update_related_dimension(budget_line_dict)
                     project_plan.sync_budget_line_id = budget_line
-            project.sync_project_plan_to_budget_line([self.fiscalyear_id.id])
+        # Sync all projects in one go
+        projects.sync_project_plan_to_budget_line([self.fiscalyear_id.id])
+        # Recompute overall budgetted expense and revenue
+        self._compute_budgeted_overall()
         return True
 
     @api.model
