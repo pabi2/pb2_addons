@@ -33,6 +33,7 @@ COLUMN_SIZES = [
     ('project_group', 25),
     ('nstda_strategy', 25),
     ('project_objective', 25),
+    ('section_program', 25),
     ('mission', 25),
     ('project_kind', 25),
     ('project_type', 25),
@@ -300,6 +301,8 @@ class BudgetPlanProjectAnalysisReportXLS(report_xls):
                 None, cell_style),
             ('project_objective', 1, 0, 'text', _('Objective'),
                 None, cell_style),
+            ('section_program', 1, 0, 'text', _('Section Program'),
+                None, cell_style),
             ('mission', 1, 0, 'text', _('Mission'), None, cell_style),
             ('project_kind', 1, 0, 'text', _('Project Kind'),
                 None, cell_style),
@@ -442,6 +445,13 @@ class BudgetPlanProjectAnalysisReportXLS(report_xls):
                      line.nstda_strategy_id.name or ''), None, cell_style),
                 ('project_objective', 1, 0, 'text',
                     line.project_objective, None, cell_style),
+                ('section_program', 1, 0, 'text',
+                    '%s%s' %
+                    (line.section_program_id.code and
+                     '[' + line.section_program_id.code + '] ' or '',
+                     line.section_program_id.name_short and
+                     line.section_program_id.name_short or
+                     line.section_program_id.name or ''), None, cell_style),
                 ('mission', 1, 0, 'text', line.mission_id.name,
                     None, cell_style),
                 ('project_kind', 1, 0, 'text',
@@ -569,113 +579,113 @@ class BudgetPlanProjectAnalysisReportXLS(report_xls):
         cell_style_decimal = xlwt.easyxf(
             cell_format + _xs['right'],
             num_format_str=report_xls.decimal_format)
-        fy1_start = rowcol_to_cell(row_start, 24)
-        fy1_end = rowcol_to_cell(row_pos - 1, 24)
+        fy1_start = rowcol_to_cell(row_start, 25)
+        fy1_end = rowcol_to_cell(row_pos - 1, 25)
         fy1_formula = 'SUM(' + fy1_start + ':' + fy1_end + ')'
-        fy2_start = rowcol_to_cell(row_start, 25)
-        fy2_end = rowcol_to_cell(row_pos - 1, 25)
+        fy2_start = rowcol_to_cell(row_start, 26)
+        fy2_end = rowcol_to_cell(row_pos - 1, 26)
         fy2_formula = 'SUM(' + fy2_start + ':' + fy2_end + ')'
-        fy3_start = rowcol_to_cell(row_start, 26)
-        fy3_end = rowcol_to_cell(row_pos - 1, 26)
+        fy3_start = rowcol_to_cell(row_start, 27)
+        fy3_end = rowcol_to_cell(row_pos - 1, 27)
         fy3_formula = 'SUM(' + fy3_start + ':' + fy3_end + ')'
-        fy4_start = rowcol_to_cell(row_start, 27)
-        fy4_end = rowcol_to_cell(row_pos - 1, 27)
+        fy4_start = rowcol_to_cell(row_start, 28)
+        fy4_end = rowcol_to_cell(row_pos - 1, 28)
         fy4_formula = 'SUM(' + fy4_start + ':' + fy4_end + ')'
-        fy5_start = rowcol_to_cell(row_start, 28)
-        fy5_end = rowcol_to_cell(row_pos - 1, 28)
+        fy5_start = rowcol_to_cell(row_start, 29)
+        fy5_end = rowcol_to_cell(row_pos - 1, 29)
         fy5_formula = 'SUM(' + fy5_start + ':' + fy5_end + ')'
-        revenue_budget_start = rowcol_to_cell(row_start, 29)
-        revenue_budget_end = rowcol_to_cell(row_pos - 1, 29)
+        revenue_budget_start = rowcol_to_cell(row_start, 30)
+        revenue_budget_end = rowcol_to_cell(row_pos - 1, 30)
         revenue_budget_formula = \
             'SUM(' + revenue_budget_start + ':' + revenue_budget_end + ')'
-        overall_revenue_plan_start = rowcol_to_cell(row_start, 30)
-        overall_revenue_plan_end = rowcol_to_cell(row_pos - 1, 30)
+        overall_revenue_plan_start = rowcol_to_cell(row_start, 31)
+        overall_revenue_plan_end = rowcol_to_cell(row_pos - 1, 31)
         overall_revenue_plan_formula = \
             'SUM(' + overall_revenue_plan_start + ':' + \
             overall_revenue_plan_end + ')'
-        overall_revenue_start = rowcol_to_cell(row_start, 40)
-        overall_revenue_end = rowcol_to_cell(row_pos - 1, 40)
+        overall_revenue_start = rowcol_to_cell(row_start, 41)
+        overall_revenue_end = rowcol_to_cell(row_pos - 1, 41)
         overall_revenue_formula = \
             'SUM(' + overall_revenue_start + ':' + overall_revenue_end + ')'
-        current_revenue_start = rowcol_to_cell(row_start, 41)
-        current_revenue_end = rowcol_to_cell(row_pos - 1, 41)
+        current_revenue_start = rowcol_to_cell(row_start, 42)
+        current_revenue_end = rowcol_to_cell(row_pos - 1, 42)
         current_revenue_formula = \
             'SUM(' + current_revenue_start + ':' + current_revenue_end + ')'
-        overall_expense_budget_start = rowcol_to_cell(row_start, 42)
-        overall_expense_budget_end = rowcol_to_cell(row_pos - 1, 42)
+        overall_expense_budget_start = rowcol_to_cell(row_start, 43)
+        overall_expense_budget_end = rowcol_to_cell(row_pos - 1, 43)
         overall_expense_budget_formula = \
             'SUM(' + overall_expense_budget_start + ':' + \
             overall_expense_budget_end + ')'
-        overall_actual_start = rowcol_to_cell(row_start, 43)
-        overall_actual_end = rowcol_to_cell(row_pos - 1, 43)
+        overall_actual_start = rowcol_to_cell(row_start, 44)
+        overall_actual_end = rowcol_to_cell(row_pos - 1, 44)
         overall_actual_formula = \
             'SUM(' + overall_actual_start + ':' + overall_actual_end + ')'
-        overall_commit_start = rowcol_to_cell(row_start, 44)
-        overall_commit_end = rowcol_to_cell(row_pos - 1, 44)
+        overall_commit_start = rowcol_to_cell(row_start, 45)
+        overall_commit_end = rowcol_to_cell(row_pos - 1, 45)
         overall_commit_formula = \
             'SUM(' + overall_commit_start + ':' + overall_commit_end + ')'
-        overall_expense_balance_start = rowcol_to_cell(row_start, 45)
-        overall_expense_balance_end = rowcol_to_cell(row_pos - 1, 45)
+        overall_expense_balance_start = rowcol_to_cell(row_start, 46)
+        overall_expense_balance_end = rowcol_to_cell(row_pos - 1, 46)
         overall_expense_balance_formula = \
             'SUM(' + overall_expense_balance_start + ':' + \
             overall_expense_balance_end + ')'
-        planned_start = rowcol_to_cell(row_start, 46)
-        planned_end = rowcol_to_cell(row_pos - 1, 46)
+        planned_start = rowcol_to_cell(row_start, 47)
+        planned_end = rowcol_to_cell(row_pos - 1, 47)
         planned_formula = 'SUM(' + planned_start + ':' + planned_end + ')'
-        released_start = rowcol_to_cell(row_start, 47)
-        released_end = rowcol_to_cell(row_pos - 1, 47)
+        released_start = rowcol_to_cell(row_start, 48)
+        released_end = rowcol_to_cell(row_pos - 1, 48)
         released_formula = 'SUM(' + released_start + ':' + released_end + ')'
-        all_commit_start = rowcol_to_cell(row_start, 48)
-        all_commit_end = rowcol_to_cell(row_pos - 1, 48)
+        all_commit_start = rowcol_to_cell(row_start, 49)
+        all_commit_end = rowcol_to_cell(row_pos - 1, 49)
         all_commit_formula = \
             'SUM(' + all_commit_start + ':' + all_commit_end + ')'
-        actual_start = rowcol_to_cell(row_start, 49)
-        actual_end = rowcol_to_cell(row_pos - 1, 49)
+        actual_start = rowcol_to_cell(row_start, 50)
+        actual_end = rowcol_to_cell(row_pos - 1, 50)
         actual_formula = 'SUM(' + actual_start + ':' + actual_end + ')'
-        balance_start = rowcol_to_cell(row_start, 50)
-        balance_end = rowcol_to_cell(row_pos - 1, 50)
+        balance_start = rowcol_to_cell(row_start, 51)
+        balance_end = rowcol_to_cell(row_pos - 1, 51)
         balance_formula = 'SUM(' + balance_start + ':' + balance_end + ')'
-        est_commit_start = rowcol_to_cell(row_start, 51)
-        est_commit_end = rowcol_to_cell(row_pos - 1, 51)
+        est_commit_start = rowcol_to_cell(row_start, 52)
+        est_commit_end = rowcol_to_cell(row_pos - 1, 52)
         est_formula = 'SUM(' + est_commit_start + ':' + est_commit_end + ')'
-        m1_start = rowcol_to_cell(row_start, 52)
-        m1_end = rowcol_to_cell(row_pos - 1, 52)
+        m1_start = rowcol_to_cell(row_start, 53)
+        m1_end = rowcol_to_cell(row_pos - 1, 53)
         m1_formula = 'SUM(' + m1_start + ':' + m1_end + ')'
-        m2_start = rowcol_to_cell(row_start, 53)
-        m2_end = rowcol_to_cell(row_pos - 1, 53)
+        m2_start = rowcol_to_cell(row_start, 54)
+        m2_end = rowcol_to_cell(row_pos - 1, 54)
         m2_formula = 'SUM(' + m2_start + ':' + m2_end + ')'
-        m3_start = rowcol_to_cell(row_start, 54)
-        m3_end = rowcol_to_cell(row_pos - 1, 54)
+        m3_start = rowcol_to_cell(row_start, 55)
+        m3_end = rowcol_to_cell(row_pos - 1, 55)
         m3_formula = 'SUM(' + m3_start + ':' + m3_end + ')'
-        m4_start = rowcol_to_cell(row_start, 55)
-        m4_end = rowcol_to_cell(row_pos - 1, 55)
+        m4_start = rowcol_to_cell(row_start, 56)
+        m4_end = rowcol_to_cell(row_pos - 1, 56)
         m4_formula = 'SUM(' + m4_start + ':' + m4_end + ')'
-        m5_start = rowcol_to_cell(row_start, 56)
-        m5_end = rowcol_to_cell(row_pos - 1, 56)
+        m5_start = rowcol_to_cell(row_start, 57)
+        m5_end = rowcol_to_cell(row_pos - 1, 57)
         m5_formula = 'SUM(' + m5_start + ':' + m5_end + ')'
-        m6_start = rowcol_to_cell(row_start, 57)
-        m6_end = rowcol_to_cell(row_pos - 1, 57)
+        m6_start = rowcol_to_cell(row_start, 58)
+        m6_end = rowcol_to_cell(row_pos - 1, 58)
         m6_formula = 'SUM(' + m6_start + ':' + m6_end + ')'
-        m7_start = rowcol_to_cell(row_start, 58)
-        m7_end = rowcol_to_cell(row_pos - 1, 58)
+        m7_start = rowcol_to_cell(row_start, 59)
+        m7_end = rowcol_to_cell(row_pos - 1, 59)
         m7_formula = 'SUM(' + m7_start + ':' + m7_end + ')'
-        m8_start = rowcol_to_cell(row_start, 59)
-        m8_end = rowcol_to_cell(row_pos - 1, 59)
+        m8_start = rowcol_to_cell(row_start, 60)
+        m8_end = rowcol_to_cell(row_pos - 1, 60)
         m8_formula = 'SUM(' + m8_start + ':' + m8_end + ')'
-        m9_start = rowcol_to_cell(row_start, 60)
-        m9_end = rowcol_to_cell(row_pos - 1, 60)
+        m9_start = rowcol_to_cell(row_start, 61)
+        m9_end = rowcol_to_cell(row_pos - 1, 61)
         m9_formula = 'SUM(' + m9_start + ':' + m9_end + ')'
-        m10_start = rowcol_to_cell(row_start, 61)
-        m10_end = rowcol_to_cell(row_pos - 1, 61)
+        m10_start = rowcol_to_cell(row_start, 62)
+        m10_end = rowcol_to_cell(row_pos - 1, 62)
         m10_formula = 'SUM(' + m10_start + ':' + m10_end + ')'
-        m11_start = rowcol_to_cell(row_start, 62)
-        m11_end = rowcol_to_cell(row_pos - 1, 62)
+        m11_start = rowcol_to_cell(row_start, 63)
+        m11_end = rowcol_to_cell(row_pos - 1, 63)
         m11_formula = 'SUM(' + m11_start + ':' + m11_end + ')'
-        m12_start = rowcol_to_cell(row_start, 63)
-        m12_end = rowcol_to_cell(row_pos - 1, 63)
+        m12_start = rowcol_to_cell(row_start, 64)
+        m12_end = rowcol_to_cell(row_pos - 1, 64)
         m12_formula = 'SUM(' + m12_start + ':' + m12_end + ')'
-        planned_amount_start = rowcol_to_cell(row_start, 64)
-        planned_amount_end = rowcol_to_cell(row_pos - 1, 64)
+        planned_amount_start = rowcol_to_cell(row_start, 65)
+        planned_amount_end = rowcol_to_cell(row_pos - 1, 65)
         planned_amount_formula = \
             'SUM(' + planned_amount_start + ':' + planned_amount_end + ')'
         c_specs = [
@@ -687,6 +697,7 @@ class BudgetPlanProjectAnalysisReportXLS(report_xls):
             ('project_group', 1, 0, 'text', None, None, cell_style),
             ('nstda_strategy', 1, 0, 'text', None, None, cell_style),
             ('project_objective', 1, 0, 'text', None, None, cell_style),
+            ('section_program', 1, 0, 'text', None, None, cell_style),
             ('mission', 1, 0, 'text', None, None, cell_style),
             ('project_kind', 1, 0, 'text', None, None, cell_style),
             ('project_type', 1, 0, 'text', None, None, cell_style),
