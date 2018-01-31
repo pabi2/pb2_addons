@@ -805,9 +805,11 @@ class AccountBudgetLine(ActivityCommon, models.Model):
 
     @api.multi
     def release_budget_line(self, release_result):
-        # TODO: release amount must >= actual+commit and <= planned_amount
         for rec in self:
             amount_to_release = release_result.get(rec.id, 0.0)
+            if amount_to_release > rec.planned_amount:
+                raise ValidationError(
+                    _('Release amount exceed planned amount!'))
             rec.write({'released_amount': amount_to_release})
         return
 

@@ -24,6 +24,9 @@
                 <xpath expr="//button[@name='budget_draft']" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_user</attribute>
                 </xpath>
+                <xpath expr="//page[@name='revenue']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('chart_view', '!=', 'unit_base')]}</attribute>
+                </xpath>
             </field>
         </record>
 

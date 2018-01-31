@@ -147,7 +147,7 @@
                                       'default_budget_method': 'expense'}" />
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[last()]" position="after">
-                    <page string="Summary">
+                    <page string="Summary" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
                         <separator string="Budgeted Expense"/>
                         <field name="budget_summary_expense_line_ids"
                                 colspan="4" nolabel="1"
