@@ -54,7 +54,7 @@ class BudgetAllocation(models.Model):
                       'project_base': 'amount_project_base',
                       'personnel': 'amount_personnel',
                       'invest_asset': 'amount_invest_asset',
-                      'invest_constructon': 'amount_invest_construction', }
+                      'invest_construction': 'amount_invest_construction', }
         Policy = self.env['budget.policy']
         for rec in self:
             amount_total = 0.0
