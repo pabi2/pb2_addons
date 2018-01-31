@@ -69,8 +69,9 @@
                                 <field name="select"/>
                                 <field name="priority"/>
                                 <field name="invest_asset_id"/>
-                                <field name="name"/>
-                                <button name="edit_asset_item" string="Info." icon="gtk-justify-fill" type="object" class="oe_link"/>
+                                <field name="name" string="New Asset"/>
+                                <button name="edit_asset_item" string="Info." icon="gtk-justify-fill" type="object" class="oe_link"
+                                    attrs="{'invisible': [('invest_asset_id', '!=', False)]}"/>
                                 <field name="invest_asset_categ_id" invisible="1"/>
                                 <field name="fiscalyear_id" invisible="1"/>
                                 <field name="org_id" invisible="1"/>
@@ -90,8 +91,6 @@
                                 <field name="expect_output" invisible="1"/>
                                 <field name="planned_utilization" invisible="1"/>
                                 <field name="specification_summary" invisible="1"/>
-                                <field name="quotation_document" invisible="1"/>
-                                <field name="specification_document" invisible="1"/>
                                 <field name="amount_plan_total" invisible="1" sum="Plan Total"/>
                                 <field name="prev_fy_actual" invisible="0" sum="Prev FY Actual Total"/>
                                 <field name="amount_plan" invisible="0" sum="This FY Plan Total"/>
@@ -212,8 +211,6 @@
                     <field name="expect_output" invisible="1"/>
                     <field name="planned_utilization" invisible="1"/>
                     <field name="specification_summary" invisible="1"/>
-                    <field name="quotation_document" invisible="1"/>
-                    <field name="specification_document" invisible="1"/>
                     <field name="amount_plan_total" invisible="1" sum="Plan Total"/>
                     <field name="prev_fy_actual" invisible="0" sum="Prev FY Actual Total"/>
                     <field name="amount_plan" invisible="0" sum="This FY Plan Total"/>
@@ -249,12 +246,10 @@
                         <field name="name"/>
                             <field name="invest_asset_categ_id"/>
                             <field name="name_common"/>
-                            <field name="org_id"/>
-                            <field name="costcenter_id"/>
                         </group>
                         <group>
-                            <field name="quotation_document"/>
-                            <field name="specification_document"/>
+                            <field name="org_id"/>
+                            <field name="costcenter_id"/>
                         </group>
                     </group>
                     <group>

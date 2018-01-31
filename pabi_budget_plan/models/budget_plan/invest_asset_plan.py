@@ -483,17 +483,22 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
         """ Create if not exists, update if already Exists
         Use data in invest asset item to overwrite the existing data """
         InvestAsset = self.env['res.invest.asset']
+        Attachment = self.env['ir.attachment']
         invest_asset_ids = []
         for rec in self.filtered('select'):
-            if rec.invest_asset_id:  # Exists, update data
+            if not rec.invest_asset_id:
                 vals = rec._invest_asset_common_dict()
-                rec.invest_asset_id.write(vals)
-                invest_asset_ids.append(rec.invest_asset_id.id)
-            else:
-                vals = rec._invest_asset_common_dict()
+                # FY for runing number
+                vals['fiscalyear_id'] = rec.fiscalyear_id.id
                 invest_asset = InvestAsset.create(vals)
                 rec.invest_asset_id = invest_asset
                 invest_asset_ids.append(invest_asset.id)
+                # Move all attachment to new asset
+                attachments = Attachment.search([
+                    ('res_id', '=', rec.id),
+                    ('res_model', '=', 'invest.asset.plan.item')])
+                attachments.write({'res_id': invest_asset.id,
+                                   'res_model': InvestAsset._name})
         return invest_asset_ids
 
 

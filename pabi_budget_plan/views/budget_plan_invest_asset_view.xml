@@ -101,6 +101,10 @@
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="state"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Fiscalyear" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Org" context="{'group_by':'org_id'}"/>
+                    </group>
                 </search>
             </field>
         </record>
