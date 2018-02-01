@@ -32,7 +32,6 @@ class ResPartner(models.Model):
         return [('id', 'in', users.mapped('partner_id')._ids)]
 
     @api.multi
-    @api.depends()
     def _compute_employee_id(self):
         for partner in self:
             self._cr.execute("""

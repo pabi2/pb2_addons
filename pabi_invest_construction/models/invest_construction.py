@@ -562,7 +562,6 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         return budgets
 
     @api.multi
-    @api.depends()
     def _compute_budget_count(self):
         for rec in self:
             # Show all budget control with the same org and same fiscalyear
@@ -902,21 +901,6 @@ class ResInvestConstructionPhasePlan(models.Model):
         string='Current Plan',
         required=True,
     )
-    # _sql_constraints = [
-    #     ('construction_phase_plan_uniq',
-    #      'unique(invest_construction_phase_id, calendar_period_id)',
-    #      'Period must be unique for a construction phase!'),
-    # ]
-
-    # @api.multi
-    # @api.depends()
-    # def _compute_past_period(self):
-    #     for rec in self:
-    #         today = fields.Date.context_today(self)
-    #         rec.past_period_le = \
-    #             rec.calendar_period_id.date_start <= today or False
-    #         rec.past_period_lt = \
-    #             rec.calendar_period_id.date_stop < today or False
 
     @api.multi
     @api.constrains('calendar_period_id')

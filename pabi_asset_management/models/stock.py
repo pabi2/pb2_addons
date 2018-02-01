@@ -42,7 +42,6 @@ class StockPicking(models.Model):
         return result
 
     @api.multi
-    @api.depends()
     def _compute_assset_count(self):
         for rec in self:
             rec.asset_count = len(rec.asset_ids)

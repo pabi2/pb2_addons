@@ -174,7 +174,6 @@ class AccountInvoice(models.Model):
             rec.currency_rate = rate
 
     @api.multi
-    @api.depends()
     def _compute_payment_count(self):
         for rec in self:
             move_ids = [move_line.move_id.id for move_line in rec.payment_ids]

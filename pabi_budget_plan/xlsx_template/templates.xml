@@ -38,6 +38,7 @@
                             'G11': 'unit',
                             'H11': 'activity_unit_price',
                             'I11': 'activity_unit',
+                            'J11': 'total_budget',
                             'K11': 'm0',
                             'L11': 'm1',
                             'M11': 'm2',
@@ -70,6 +71,7 @@
                             'G11': 'unit',
                             'H11': 'activity_unit_price',
                             'I11': 'activity_unit',
+                            'J11': 'total_budget',
                             'K11': 'm0',
                             'L11': 'm1',
                             'M11': 'm2',
@@ -124,7 +126,8 @@
                             'G11': 'unit',
                             'H11': 'activity_unit_price',
                             'I11': 'activity_unit',
-                            # 'K11': 'm0', when import, user should have moved it to m1-m12
+                            'J11': 'total_budget',
+                            'K11': 'm0',
                             'L11': 'm1',
                             'M11': 'm2',
                             'N11': 'm3',
@@ -150,7 +153,8 @@
                             'G11': 'unit',
                             'H11': 'activity_unit_price',
                             'I11': 'activity_unit',
-                            # 'K11': 'm0', when import, user should have moved it to m1-m12
+                            'J11': 'total_budget',
+                            'K11': 'm0',
                             'L11': 'm1',
                             'M11': 'm2',
                             'N11': 'm3',
@@ -287,10 +291,8 @@
                             'D6': 'name'
                         },
                         'master_section_ids': {
-                            'F6': 'name'
-                        },
-                        'master_division_ids': {
-                            'G6': 'name'
+                            'F6': 'name',
+                            'G6': 'division_id.name'
                         },
                         'master_asset_categ_ids': {
                             'H6': 'name'

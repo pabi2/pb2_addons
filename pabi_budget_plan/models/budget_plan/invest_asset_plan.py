@@ -9,6 +9,7 @@ from openerp.addons.pabi_base.models.res_investment_structure import \
 
 class InvestAssetPlan(models.Model):
     _name = 'invest.asset.plan'
+    _inherit = ['mail.thread']
     _description = 'Investment Asset Planning'
     _order = 'fiscalyear_id desc, id desc'
 
@@ -87,6 +88,7 @@ class InvestAssetPlan(models.Model):
         required=True,
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
     org_id = fields.Many2one(
         'res.org',
@@ -133,46 +135,30 @@ class InvestAssetPlan(models.Model):
         sring='Section Master Data',
         compute='_compute_master_section_ids',
     )
-    master_division_ids = fields.Many2many(
-        'res.division',
-        sring='Division Master Data',
-        compute='_compute_master_division_ids',
-    )
     _sql_constraints = [
         ('uniq_plan', 'unique(org_id, fiscalyear_id)',
          'Duplicated budget plan for the same org is not allowed!'),
     ]
 
     @api.multi
-    @api.depends()
     def _compute_master_asset_categ_ids(self):
         Category = self.env['res.invest.asset.category']
         for rec in self:
             rec.master_asset_categ_ids = Category.search([])
 
     @api.multi
-    @api.depends()
     def _compute_master_program_ids(self):
         Program = self.env['res.program']
         for rec in self:
             rec.master_program_ids = Program.search([])
 
     @api.multi
-    @api.depends()
-    def _compute_master_division_ids(self):
-        Division = self.env['res.division']
-        for rec in self:
-            rec.master_division_ids = Division.search([])
-
-    @api.multi
-    @api.depends()
     def _compute_master_section_ids(self):
         Section = self.env['res.section']
         for rec in self:
             rec.master_section_ids = Section.search([])
 
     @api.multi
-    @api.depends()
     def _compute_master_requester_ids(self):
         Employee = self.env['hr.employee']
         for rec in self:
@@ -252,11 +238,11 @@ class InvestAssetPlan(models.Model):
         return plan_ids
 
     @api.multi
-    @api.depends('plan_line_ids', 'plan_line_ids.select')
+    @api.depends('plan_line_ids', 'plan_line_ids.approved')
     def _compute_verified(self):
         for rec in self:
-            rec.verified_amount = sum([x.price_total
-                                       for x in rec.plan_line_ids if x.select])
+            rec.verified_amount = \
+                sum([x.price_total for x in rec.plan_line_ids if x.approved])
 
     @api.model
     def _prepare_plan_header(self, asset_plan):
@@ -298,7 +284,7 @@ class InvestAssetPlan(models.Model):
             budget_plan_vals = self._prepare_plan_header(asset_plan)
             line_vals = []
             for item in asset_plan.plan_line_ids:
-                if not item.select:
+                if not item.approved:
                     continue
                 line_vals.append([0, 0, self._prepare_plan_line(item)])
             budget_plan_vals['plan_line_ids'] = line_vals
@@ -363,6 +349,7 @@ class InvestAssetPlan(models.Model):
 class InvestAssetPlanItem(InvestAssetCommon, models.Model):
     _name = 'invest.asset.plan.item'
     _description = 'Investment Asset Plan Items'
+    _order = 'priority'
 
     plan_id = fields.Many2one(
         'invest.asset.plan',
@@ -374,6 +361,12 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
     select = fields.Boolean(
         string='Select',
         default=True,
+        help="Selected by Org to be proposed to commitee",
+    )
+    approved = fields.Boolean(
+        string='Approved',
+        default=True,
+        help="Approved by committee. This invest asset will be created auto",
     )
     org_id = fields.Many2one(
         'res.org',
@@ -439,20 +432,28 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
     )
     budget_usage = fields.Float(
         string='Current Budget Usage',
+        readonly=True,
         help="This FY Commitments + Actuals"
     )
     budget_remaining = fields.Float(
         string='Current Remaining Budget',
+        readonly=True,
         help="This FY Budget Remaining"
     )
     budget_carry_forward = fields.Float(
         string='Budget Carry Forward',
+        readonly=True,
         help="This FY Budget Remaining"
     )
     next_fy_commitment = fields.Float(
         string='Next FY Commitment',
         readonly=True,
-        help="To be carried to upcoming year plan",
+        help="Comitment on next fy PR/PO",
+    )
+    next_accum_commitment = fields.Float(
+        string='Beyond Next FY Commitment',
+        readonly=True,
+        help="Commitment on future PR/PO after next fy and beyond",
     )
 
     @api.multi
@@ -485,7 +486,7 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
         InvestAsset = self.env['res.invest.asset']
         Attachment = self.env['ir.attachment']
         invest_asset_ids = []
-        for rec in self.filtered('select'):
+        for rec in self.filtered('approved'):
             if not rec.invest_asset_id:
                 vals = rec._invest_asset_common_dict()
                 # FY for runing number
@@ -535,13 +536,20 @@ class InvestAssetPlanPrevFYView(PrevFYCommon, models.Model):
             expenses = a.monitor_expense_ids
             # All actuals in the past
             all_actual = sum(expenses.mapped('amount_actual'))
+            # All commitment, now and futures
+            all_time_commit = sum(expenses.mapped('amount_pr_commit') +
+                                  expenses.mapped('amount_po_commit') +
+                                  expenses.mapped('amount_exp_commit'))
+            # Next FY PR/PO/EX
             next_fy_ex = expenses.filtered(
                 lambda l: l.fiscalyear_id.id == plan_fiscalyear_id)
             next_fy_commit = sum(next_fy_ex.mapped('amount_pr_commit') +
                                  next_fy_ex.mapped('amount_po_commit') +
                                  next_fy_ex.mapped('amount_exp_commit'))
+
             val = {
                 'select': True,
+                'approved': True,
                 'priority': 0,
                 'invest_asset_id': a.id,
                 # Prev FY actual = all actual - current actal
@@ -550,12 +558,17 @@ class InvestAssetPlanPrevFYView(PrevFYCommon, models.Model):
                 'pr_commitment': rec.pr_commit,
                 'exp_commitment': rec.exp_commit,
                 'po_commitment': rec.po_commit,
-                'total_commitment': rec.all_commit,
+                'total_commitment': rec.all_commit,  # Currenty year commit
                 'actual_amount': rec.actual,
                 'budget_usage': rec.consumed,
                 'budget_remaining': rec.balance,
                 'budget_carry_forward': rec.carry_forward,
                 'next_fy_commitment': next_fy_commit,
+                'next_accum_commitment':
+                all_time_commit - rec.all_commit - next_fy_commit,
             }
+            # Get asset info too.
+            val.update(a._invest_asset_common_dict())
+            # --
             plan_lines.append((0, 0, val))
         return plan_lines

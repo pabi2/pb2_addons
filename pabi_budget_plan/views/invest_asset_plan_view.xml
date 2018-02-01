@@ -67,6 +67,7 @@
                             <tree string="Asset Lines" colors="grey:select==False;blue:select==True" editable="bottom">
                                 <field name="plan_id" invisible="1"/>
                                 <field name="select"/>
+                                <field name="approved"/>
                                 <field name="priority"/>
                                 <field name="invest_asset_id"/>
                                 <field name="name" string="New Asset"/>
@@ -92,20 +93,25 @@
                                 <field name="planned_utilization" invisible="1"/>
                                 <field name="specification_summary" invisible="1"/>
                                 <field name="amount_plan_total" invisible="1" sum="Plan Total"/>
-                                <field name="prev_fy_actual" invisible="0" sum="Prev FY Actual Total"/>
-                                <field name="amount_plan" invisible="0" sum="This FY Plan Total"/>
-                                <field name="pr_commitment" invisible="0" sum="PR Commitment Total"/>
-                                <field name="po_commitment" invisible="0" sum="PO Commitment Total"/>
-                                <field name="exp_commitment" invisible="0" sum="EX Commitment Total"/>
-                                <field name="total_commitment" invisible="0" sum="All Commitment Total"/>
-                                <field name="actual_amount" invisible="0" sum="This FY Actual Total"/>
-                                <field name="budget_usage" invisible="0" sum="Total Budget Usage"/>
-                                <field name="budget_remaining" invisible="0" sum="Total Budget Remaining"/>
-                                <field name="budget_carry_forward" invisible="0" sum="Total Budget Carry Forward"/>
-                                <field name="next_fy_commitment" invisible="0" sum="Next FY Po Commitment Total"/>
+                                <field name="prev_fy_actual" sum="Prev FY Actual Total"/>
+                                <field name="amount_plan" sum="This FY Plan Total"/>
+                                <field name="pr_commitment" sum="PR Commitment Total"/>
+                                <field name="po_commitment" sum="PO Commitment Total"/>
+                                <field name="exp_commitment" sum="EX Commitment Total"/>
+                                <field name="total_commitment" sum="All Commitment Total"/>
+                                <field name="actual_amount" sum="This FY Actual Total"/>
+                                <field name="budget_usage" sum="Total Budget Usage"/>
+                                <field name="budget_remaining" sum="Total Budget Remaining"/>
+                                <field name="budget_carry_forward" sum="Total Budget Carry Forward"/>
+                                <field name="next_fy_commitment" sum="Next FY Commitment Total"/>
+                                <field name="next_accum_commitment" sum="Beyond Next FY Commitment Total"/>
                             </tree>
                         </field>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -212,17 +218,18 @@
                     <field name="planned_utilization" invisible="1"/>
                     <field name="specification_summary" invisible="1"/>
                     <field name="amount_plan_total" invisible="1" sum="Plan Total"/>
-                    <field name="prev_fy_actual" invisible="0" sum="Prev FY Actual Total"/>
-                    <field name="amount_plan" invisible="0" sum="This FY Plan Total"/>
-                    <field name="pr_commitment" invisible="0" sum="PR Commitment Total"/>
-                    <field name="exp_commitment" invisible="0" sum="EX Commitment Total"/>
-                    <field name="po_commitment" invisible="0" sum="PO Commitment Total"/>
-                    <field name="total_commitment" invisible="0" sum="All Commitment Total"/>
-                    <field name="actual_amount" invisible="0" sum="This FY Actual Total"/>
-                    <field name="budget_usage" invisible="0" sum="Total Budget Usage"/>
-                    <field name="budget_remaining" invisible="0" sum="Total Budget Remaining"/>
-                    <field name="budget_carry_forward" invisible="0" sum="Total Budget Carry Forward"/>
-                    <field name="next_fy_commitment" invisible="0" sum="Next FY Po Commitment Total"/>
+                    <field name="prev_fy_actual" sum="Prev FY Actual Total"/>
+                    <field name="amount_plan" sum="This FY Plan Total"/>
+                    <field name="pr_commitment" sum="PR Commitment Total"/>
+                    <field name="exp_commitment" sum="EX Commitment Total"/>
+                    <field name="po_commitment" sum="PO Commitment Total"/>
+                    <field name="total_commitment" sum="All Commitment Total"/>
+                    <field name="actual_amount" sum="This FY Actual Total"/>
+                    <field name="budget_usage" sum="Total Budget Usage"/>
+                    <field name="budget_remaining" sum="Total Budget Remaining"/>
+                    <field name="budget_carry_forward" sum="Total Budget Carry Forward"/>
+                    <field name="next_fy_commitment" sum="Next FY Commitment Total"/>
+                    <field name="next_accum_commitment" sum="Beyond Next FY Commitment Total"/>
                 </tree>
             </field>
         </record>

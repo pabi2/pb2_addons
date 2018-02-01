@@ -440,7 +440,6 @@ class AccountAsset(ChartFieldAction, models.Model):
         return result
 
     @api.multi
-    @api.depends()
     def _compute_asset_count(self):
         # self = self.with_context(active_test=False)
         for asset in self:

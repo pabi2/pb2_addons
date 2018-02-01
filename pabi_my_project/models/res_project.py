@@ -225,7 +225,6 @@ class ResProject(LogCommon, models.Model):
         return budgets
 
     @api.multi
-    @api.depends()
     def _compute_budget_count(self):
         for rec in self:
             # Show all budget control with same program and fiscalyear

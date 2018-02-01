@@ -240,7 +240,6 @@ class AccountBudget(models.Model):
         return future_plan
 
     @api.multi
-    @api.depends()
     def _compute_past_future_rolling(self):
         Consume = self.env['budget.consume.report']
         for budget in self:
@@ -253,7 +252,6 @@ class AccountBudget(models.Model):
             budget.rolling = budget.past_consumed + budget.future_plan
 
     @api.multi
-    @api.depends()
     def _compute_release_diff_rolling(self):
         for budget in self:
             amount_diff = budget.released_amount - budget.rolling
@@ -723,7 +721,6 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         return super(AccountBudgetLine, self).write(vals)
 
     @api.multi
-    @api.depends()
     def _compute_current_period(self):
         Period = self.env['account.period']
         date_start = Period.find().date_start

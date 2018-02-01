@@ -124,7 +124,6 @@ class AccountAssetTransfer(models.Model):
     )
 
     @api.multi
-    @api.depends()
     def _compute_asset_count(self):
         for rec in self:
             rec.source_asset_count = len(rec.asset_ids)

@@ -315,7 +315,6 @@ class BudgetFundRuleLine(models.Model):
                 raise ValidationError(_('Funded Amount must not be zero!'))
 
     @api.multi
-    @api.depends()
     def _compute_amount_consumed(self):
         for rec in self:
             if not rec.activity_ids or not rec.project_id or not rec.fund_id:

@@ -5,6 +5,7 @@ access_res_sector,access_res_sector,model_res_sector,base.group_user,1,0,0,0
 access_res_subsector,access_res_subsector,model_res_subsector,base.group_user,1,0,0,0
 access_res_division,access_res_division,model_res_division,base.group_user,1,0,0,0
 access_res_section,access_res_section,model_res_section,base.group_user,1,0,0,0
+access_res_section_view,access_res_section_view,model_res_section_view,base.group_user,1,0,0,0
 access_res_costcenter,access_res_costcenter,model_res_costcenter,base.group_user,1,0,0,0
 access_res_spa,access_res_spa,model_res_spa,base.group_user,1,0,0,0
 access_res_mission,access_res_mission,model_res_mission,base.group_user,1,0,0,0

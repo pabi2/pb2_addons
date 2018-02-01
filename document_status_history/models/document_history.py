@@ -84,7 +84,7 @@ class LogCommon(object):
         string="Status History",
     )
 
-    @api.depends()
+    @api.multi
     def _compute_log_lines(self):
         for record in self:
             if isinstance(record.id, int):

@@ -101,15 +101,7 @@ class PABIPartnerDunningReport(models.Model):
         string='#3 Date'
     )
 
-    # @api.multi
-    # @api.depends()
-    # def _compute_validate_user_id(self):
-    #     for line in self:
-    #         line.validate_user_id = line.move_line_id.document_id and \
-    #             line.move_line_id.document_id.validate_user_id
-
     @api.multi
-    @api.depends()
     def _compute_date(self):
         today = fields.Date.context_today(self)
         DATETIME_FORMAT = "%Y-%m-%d"
