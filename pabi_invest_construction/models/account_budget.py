@@ -71,11 +71,12 @@ class AccountBudget(models.Model):
                         'invest_construction_id': ic.id,
                         'invest_construction_phase_id': phase.id,
                     }
-                    print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
                     phase_sync.sync_budget_line_id = \
                         BudgetLine.create(budget_line_dict)
-                    print 'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy'
-            phase.sync_phase_to_budget_line([fiscalyear_id])
+        # Sync all phases in one go
+        phases.sync_phase_to_budget_line([fiscalyear_id])
+        # Recompute overall budgetted expense and revenue
+        self._compute_budgeted_overall()
         return True
 
     @api.model

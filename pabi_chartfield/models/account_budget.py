@@ -274,7 +274,6 @@ class AccountBudgetLine(ChartField, models.Model):
             _get_budget_level_type_hook(budget_line)
 
     @api.multi
-    @api.depends()
     def _compute_display_name(self):
         for rec in self:
             if rec.activity_id:

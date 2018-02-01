@@ -194,7 +194,7 @@ class AccountVoucher(models.Model):
                                    ('partner_id', 'child_of', partner)]).ids
         return invoice_ids
 
-    @api.depends()
+    @api.multi
     def _compute_total_ar_ap_amount(self):
         for record in self:
             invoice_ids = record._get_related_invoices()

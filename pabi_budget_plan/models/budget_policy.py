@@ -197,7 +197,6 @@ class BudgetPolicy(models.Model):
         self.new_policy_amount = new_policy_amount
 
     @api.multi
-    @api.depends()
     def _compute_breakdown_count(self):
         Breakdown = self.env['budget.breakdown']
         for policy in self:

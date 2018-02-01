@@ -73,12 +73,6 @@ class InvestAssetCommon(object):
     specification_summary = fields.Text(
         string='Summary of Specification',
     )
-    quotation_document = fields.Binary(
-        string='Quotation',
-    )
-    specification_document = fields.Binary(
-        string='Specification',
-    )
     amount_plan_total = fields.Float(
         string='Budget Plan Amount',
         help="Planned Amount for this asset, regardless of FY",
@@ -136,8 +130,6 @@ class InvestAssetCommon(object):
             'expect_output': self.expect_output,
             'planned_utilization': self.planned_utilization,
             'specification_summary': self.specification_summary,
-            'quotation_document': self.quotation_document,
-            'specification_document': self.specification_document,
             'amount_plan_total': self.amount_plan_total,
         }
 
@@ -153,6 +145,11 @@ class ResInvestAsset(ResCommon, InvestAssetCommon, models.Model):
         'invest_asset_id', 'fund_id',
         string='Funds',
         default=lambda self: self.env.ref('base.fund_nstda'),
+    )
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscalyear',
+        required=True,
     )
 
 

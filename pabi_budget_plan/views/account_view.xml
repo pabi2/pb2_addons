@@ -32,9 +32,16 @@
                         </group>
                     </group>
                     <group>
-                        <p class="oe_grey">
+                        <p class="oe_grey" colspan="4">
                             This allocation board simply report the updated status of budget policy for every structure.
                         </p>
+                        <group>
+                            <field name="overall_policy"/>
+                            <field name="latest_policy"/>
+                        </group>
+                        <group>
+                            <field name="remain_policy"/>
+                        </group>
                     </group>
                     <field colspan="4" name="budget_allocation_ids" nolabel="1" widget="one2many_list">
                         <tree string="Budget Allocations" editable="bottom" create="0" delete="0">

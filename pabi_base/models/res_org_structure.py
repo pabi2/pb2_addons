@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models
 from openerp.addons.pabi_base.models.res_common import ResCommon
+from openerp import tools
 
 # ORG Structure:
 #                                           (mission)
@@ -140,14 +141,25 @@ class ResSection(ResCommon, models.Model):
         string='Funds',
         default=lambda self: self.env.ref('base.fund_nstda'),
     )
-    program_rpt_id = fields.Many2one(
-        'res.program',
-        string='Report Program',
-    )
+    # program_rpt_id = fields.Many2one(
+    #     'res.program',
+    #     string='Report Program',
+    # )
     section_program_id = fields.Many2one(
         'res.section.program',
         string='Section Program',
     )
+
+
+class ResSectionView(ResSection, models.Model):
+    # View version of section to by pass security rule in some case
+    _name = 'res.section.view'
+    _auto = False
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
+                   (self._table, "select * from res_section",))
 
 
 class ResCostcenter(ResCommon, models.Model):

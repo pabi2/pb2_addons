@@ -9,8 +9,8 @@
         <record id="invest_asset_sequence" model="ir.sequence">
             <field name="code">invest.asset</field>
             <field name="name">Investment Asset</field>
-            <field name="prefix">IA</field>
-            <field name="padding">8</field>
+            <field name="prefix">%(fy)s</field>
+            <field name="padding">4</field>
         </record>
     </data>
 </openerp>

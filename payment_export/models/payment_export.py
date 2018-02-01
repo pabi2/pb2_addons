@@ -232,7 +232,6 @@ class PaymentExport(models.Model):
             export.num_line = len(export.line_ids)
 
     @api.multi
-    @api.depends()
     def _compute_cheque_number(self):
         for export in self:
             self._cr.execute("""
@@ -244,13 +243,6 @@ class PaymentExport(models.Model):
             res = self._cr.fetchone()
             export.cheque_number_from = res[0]
             export.cheque_number_to = res[1]
-
-    # @api.one
-    # @api.depends('journal_id')
-    # def _compute_is_cheque_lot(self):
-    #     Lot = self.env['cheque.lot']
-    #     lots = Lot.search([('journal_id', '=', self.journal_id.id)])
-    #     self.is_cheque_lot = lots and True or False
 
     @api.multi
     @api.depends('transfer_type', 'cheque_lot_id')

@@ -10,29 +10,12 @@
                     <div class="oe_right">
                         <h2>
                             <label string="Released: "/>
-                            <field name="progress" string="Released" class="oe_inline" readonly="0"/>%
+                            <field name="progress" string="Released" class="oe_inline" readonly="1"/>%
                         </h2>
                     </div>
                     <group>
                         <field name="amount_to_release" readonly="context.get('active_model',False) == 'account.budget' and True or False"/>
                     </group>
-                    <!--group>
-                   		<field name="release_ids" nolabel="1">
-                   			<tree editable="bottom" create="0" delete="0">
-                   				<field name="ready" invisible="1"/>
-                   				<field name="past" invisible="1"/>
-                   				<field name="release"
-                   					attrs="{'readonly': [('ready', '=', False)],
-                   							'invisible': [('past', '=', True)]}"/>
-                   				<field name="from_period" />
-                   				<field name="to_period" />
-                   				<field name="from_date" />
-                   				<field name="to_date" />
-                   				<field name="planned_amount" sum="Planned"/>
-                   				<field name="released_amount" sum="Released"/>
-                   			</tree>
-                   		</field>
-                   	</group-->
                     <footer>
                         <button name="do_release" string="Release Budget" type="object" class="oe_highlight"/>
                         or

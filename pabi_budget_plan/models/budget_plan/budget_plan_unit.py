@@ -131,7 +131,6 @@ class BudgetPlanUnit(BPCommon, models.Model):
     ]
 
     @api.multi
-    @api.depends()
     def _compute_master_ag_ids(self):
         ActivityGroup = self.env['account.activity.group']
         for rec in self:
@@ -142,7 +141,6 @@ class BudgetPlanUnit(BPCommon, models.Model):
                 ags.filtered(lambda l: l.budget_method == 'revenue')
 
     @api.multi
-    @api.depends()
     def _compute_master_cc_ids(self):
         CostControl = self.env['cost.control']
         for rec in self:
@@ -291,12 +289,12 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
         store=True,
         readonly=True,
     )
-    program_rpt_id = fields.Many2one(
-        related='section_id.program_rpt_id',
-        string='Program',
-        store=True,
-        readonly=True,
-    )
+    # program_rpt_id = fields.Many2one(
+    #     related='section_id.program_rpt_id',
+    #     string='Program',
+    #     store=True,
+    #     readonly=True,
+    # )
     division_id = fields.Many2one(
         related='section_id.division_id',
         store=True,

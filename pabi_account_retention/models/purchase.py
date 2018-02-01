@@ -14,7 +14,6 @@ class PurchaseOrder(models.Model):
     )
 
     @api.multi
-    @api.depends()
     def _compute_has_supplier_retention(self):
         Invoice = self.env['account.invoice']
         for po in self:

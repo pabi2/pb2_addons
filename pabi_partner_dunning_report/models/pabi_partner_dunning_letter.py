@@ -79,7 +79,6 @@ class PABIPartnerDunningLetter(models.Model):
     )
 
     @api.multi
-    @api.depends()
     def _compute_amount_total(self):
         for letter in self:
             self._cr.execute("""
@@ -99,7 +98,6 @@ class PABIPartnerDunningLetter(models.Model):
         return template.render_template(text, obj._name, obj.id)
 
     @api.multi
-    @api.depends()
     def _compute_letter_text(self):
         company = self.env['res.company'].search([])[0]
         for letter in self:

@@ -148,7 +148,6 @@ class BudgetBreakdown(models.Model):
     ]
 
     @api.multi
-    @api.depends()
     def _compute_budget_count(self):
         for breakdown in self:
             breakdown.budget_count = \

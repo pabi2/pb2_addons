@@ -130,7 +130,6 @@ class ChequeLot(models.Model):
                     _('Cheque Number From - To must be in same digit length!'))
 
     @api.multi
-    @api.depends()
     def _compute_next_number(self):
         for rec in self:
             self._cr.execute("""

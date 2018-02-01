@@ -28,6 +28,35 @@ class AccountFiscalyear(models.Model):
         string='Budget Allocations',
         track_visibility='onchange',
     )
+    overall_policy = fields.Float(
+        string='NSTDA Policy',
+    )
+    latest_policy = fields.Float(
+        string='Current NSTDA Policy',
+        compute='_compute_latest_remain_policy',
+    )
+    remain_policy = fields.Float(
+        string='Remain NSTDA Policy',
+        compute='_compute_latest_remain_policy',
+    )
+
+    @api.multi
+    def _compute_latest_remain_policy(self):
+        for rec in self:
+            allocations = rec.budget_allocation_ids.sorted(
+                key=lambda r: r.revision, reverse=True)
+            amounts = {'amount_unit_base': 0.0,
+                       'amount_project_base': 0.0,
+                       'amount_invest_asset': 0.0,
+                       'amount_invest_construction': 0.0,
+                       'amount_personnel': 0.0,
+                       }
+            for line in allocations:
+                for key in amounts.keys():
+                    if not amounts[key]:
+                        amounts[key] = line[key]
+            rec.latest_policy = sum(amounts.values())
+            rec.remain_policy = rec.overall_policy - rec.latest_policy
 
     def init(self, cr):
         env = Environment(cr, SUPERUSER_ID, {})

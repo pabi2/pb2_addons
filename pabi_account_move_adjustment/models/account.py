@@ -267,7 +267,6 @@ class AccountModelLine(models.Model):
         self.budget_journal = analytic_journal and True or False
 
     @api.multi
-    @api.depends()
     def _compute_budget_journal(self):
         for rec in self:
             analytic_journal = rec.model_id.journal_id.analytic_journal_id

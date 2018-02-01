@@ -51,7 +51,8 @@
 	                    <filter string="Subsector" name="groupby_subsector" context="{'group_by':'subsector_id'}"/>
 	                    <filter string="Division" name="groupby_division" context="{'group_by':'division_id'}"/>
 	                    <filter string="Section" name="groupby_section" context="{'group_by':'section_id'}"/>
-	                    <filter string="Report Progam" name="groupby_rpt_program" context="{'group_by':'program_rpt_id'}"/>
+											<filter string="Report Progam" name="groupby_section_program" context="{'group_by':'section_program_id'}"/>
+	                    <!-- <filter string="Report Progam" name="groupby_rpt_program" context="{'group_by':'program_rpt_id'}"/> -->
 	                </group>
                 </search>
             </xpath>

@@ -21,7 +21,7 @@
                 <form string="Investment Asset">
                     <label for="name" class="oe_edit_only"/>
                     <h1>
-                        <field name="name" class="oe_inline" placeholder="Name"/>
+                        <field name="name" class="oe_inline" placeholder="Name"/> - 
                         <field name="code" class="oe_inline" placeholder="Code"/>
                     </h1>
                     <group>
@@ -32,8 +32,7 @@
                             <field name="costcenter_id"/>
                         </group>
                         <group>
-                            <field name="quotation_document"/>
-                            <field name="specification_document"/>
+                            <field name="fiscalyear_id"/>
                             <field name="active"/>
                         </group>
                     </group>
