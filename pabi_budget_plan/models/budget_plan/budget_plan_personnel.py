@@ -38,15 +38,9 @@ class BudgetPlanPersonnel(BPCommon, models.Model):
         domain=[('budget_method', '=', 'expense')],  # Have domain
         track_visibility='onchange',
     )
-    # Select Dimension - Personnel
-    personnel_costcenter_id = fields.Many2one(
-        'res.personnel.costcenter',
-        string='Personnel Budget',
-        required=True,
-    )
     _sql_constraints = [
-        ('uniq_plan', 'unique(personnel_costcenter_id, fiscalyear_id)',
-         'Duplicated budget plan for the same personnel '
+        ('uniq_plan', 'unique(fiscalyear_id)',
+         'Duplicated budget plan for the same fiscal year '
          'budget is not allowed!'),
     ]
 
@@ -54,7 +48,7 @@ class BudgetPlanPersonnel(BPCommon, models.Model):
     def create(self, vals):
         name = self._get_doc_number(vals['fiscalyear_id'],
                                     'res.personnel.costcenter',
-                                    vals['personnel_costcenter_id'])
+                                    code='PERSONNEL')
         vals.update({'name': name})
         return super(BudgetPlanPersonnel, self).create(vals)
 
@@ -64,17 +58,11 @@ class BudgetPlanPersonnel(BPCommon, models.Model):
             raise ValidationError(_('No fiscal year provided!'))
         # Find existing plans, and exclude them
         plans = self.search([('fiscalyear_id', '=', fiscalyear_id)])
-        _ids = plans.mapped('personnel_costcenter_id')._ids
-        # Find Programs
-        PersonnelCostcenter = self.env['res.personnel.costcenter']
-        personnels = PersonnelCostcenter.search([('id', 'not in', _ids),
-                                                 ('special', '=', False)])
         plan_ids = []
-        for personnel in personnels:
+        if not plans:  # No plan for selected year has been created
             plan = self.create({'fiscalyear_id': fiscalyear_id,
-                                'personnel_costcenter_id': personnel.id,
                                 'user_id': False})
-            plan_ids.append(plan.id)
+        plan_ids.append(plan.id)
         return plan_ids
 
     @api.multi
@@ -105,10 +93,14 @@ class BudgetPlanPersonnelLine(BPLMonthCommon, ActivityCommon, models.Model):
         required=True,
     )
     # Extra
+    org_id = fields.Many2one(
+        'res.org',
+        required=True,
+        domain=[('special', '=', False)],
+    )
     personnel_costcenter_id = fields.Many2one(
-        related='plan_id.personnel_costcenter_id',
-        store=True,
-        readonly=True,
+        'res.personnel.costcenter',
+        required=True,
     )
 
     # Required for updating dimension

@@ -127,6 +127,13 @@ class BudgetPolicy(models.Model):
         readonly=False,
         states={'done': [('readonly', True)]},
     )
+    personnel_line_ids = fields.One2many(
+        'budget.policy.line',
+        'policy_id',
+        string='Policy Lines',
+        readonly=False,
+        states={'done': [('readonly', True)]},
+    )
     invest_asset_line_ids = fields.One2many(
         'budget.policy.line',
         'policy_id',
@@ -210,6 +217,8 @@ class BudgetPolicy(models.Model):
             'unit_base': 'pabi_budget_plan.action_unit_base_breakdown_view',
             'invest_asset':
             'pabi_budget_plan.action_invest_asset_breakdown_view',
+            'personnel':
+            'pabi_budget_plan.action_personnel_breakdown_view',
         }
         if self.chart_view not in _ACTION.keys():
             raise ValidationError(_('No breakdown for this budget structure!'))
@@ -224,6 +233,7 @@ class BudgetPolicy(models.Model):
         _prefix = 'POLICY'
         _prefix2 = {'unit_base': 'UNIT',
                     'project_base': 'PROJECT',
+                    'personnel': 'PERSONNEL',
                     'invest_asset': 'ASSET',
                     'invest_construction': 'CONSTRUCT'}
         prefix2 = _prefix2[self.chart_view]
@@ -274,8 +284,9 @@ class BudgetPolicy(models.Model):
 
     @api.multi
     @api.depends('line_ids',
-                 'project_base_line_ids',
                  'unit_base_line_ids',
+                 'project_base_line_ids',
+                 'personnel_line_ids',
                  'invest_asset_line_ids',
                  'invest_construction_line_ids',)
     def _compute_all(self):
@@ -287,6 +298,10 @@ class BudgetPolicy(models.Model):
                 lines = rec.invest_asset_line_ids
             if rec.project_base_line_ids:
                 lines = rec.project_base_line_ids
+            if rec.personnel_line_ids:
+                lines = rec.personnel_line_ids
+            if rec.invest_construction_line_ids:
+                lines = rec.invest_construction_line_ids
             else:  # Fall back to basic
                 lines = rec.line_ids
             rec.planned_amount = sum(lines.mapped('planned_amount'))
@@ -316,6 +331,9 @@ class BudgetPolicy(models.Model):
                 'project_base': ('budget.plan.project',
                                  'res.program', 'program_id',
                                  'project_base_line_ids'),
+                'personnel': ('budget.plan.personnel',
+                              False, False,
+                              'personnel_line_ids'),
                 'invest_asset': ('budget.plan.invest.asset',
                                  False, False,
                                  'invest_asset_line_ids'),
@@ -372,6 +390,7 @@ class BudgetPolicy(models.Model):
         _DICT = {
             'unit_base': ('budget.plan.unit', True),
             'project_base': ('budget.plan.project', False),
+            'personnel': ('budget.plan.personnel', True),
             'invest_asset': ('budget.plan.invest.asset', True),
             'invest_construction': ('budget.plan.invest.construction', False),
         }
@@ -411,10 +430,12 @@ class BudgetPolicy(models.Model):
         """
         self.ensure_one()
         _DICT = {
-            'unit_base': ('budget.plan.unit', 'org_id',
-                          'res.section', 'section_id'),
+            'unit_base': ('budget.plan.unit', 'org_id',  # Org as header
+                          'res.section', 'section_id'),  # Section as line
             'project_base': ('budget.plan.project', 'program_id',
                              'res.program', 'program_id'),
+            'personnel': ('budget.plan.personnel', False,
+                          False, False),
             'invest_asset': ('budget.plan.invest.asset', False,
                              'res.org', 'org_id'),
             'invest_construction': ('budget.plan.invest.construction',
@@ -427,7 +448,6 @@ class BudgetPolicy(models.Model):
 
         res = {'valid': True, 'message': ''}
         msg = []
-        SubEntity = self.env[sub_entity_model]
         Plan = self.env[plan_model]
         for policy_line in self.line_ids:
             entity = entity_field and policy_line[entity_field] or False
@@ -440,23 +460,31 @@ class BudgetPolicy(models.Model):
             field = entity_field
             if self.chart_view == 'project_base':  # Special Case
                 field = 'id'
-            sub_entities = SubEntity.search([(field, '=', entity.id),
-                                             ('special', '=', False)])
             # Active plans of this org
             plans = Plan.search([
                 ('fiscalyear_id', '=', self.fiscalyear_id.id),
                 (entity_field, '=', entity.id),
                 ('state', 'in', ('7_accept', '8_done'))])
             # All entity must have valid plans
-            if len(sub_entities) != len(plans):
-                res['valid'] = False
-                msg.append("Plan of following entity not accepted.")
-                invalid_sections = sub_entities.filtered(
-                    lambda l: l.id not in plans.mapped(sub_entity_field).ids)
-                for s in invalid_sections:
-                    msg.append("* %s" % s.name_get()[0][1])
+            if sub_entity_model:  # Except case Personnel
+                sub_entities = self.env[sub_entity_model].search([
+                    (field, '=', entity.id), ('special', '=', False)])
+                if len(sub_entities) != len(plans):
+                    res['valid'] = False
+                    msg.append("Plan of following entity not accepted.")
+                    subentity_ids = plans.mapped(sub_entity_field).ids
+                    invalid_sections = sub_entities.filtered(
+                        lambda l: l.id not in subentity_ids)
+                    for s in invalid_sections:
+                        msg.append("* %s" % s.name_get()[0][1])
+                else:
+                    msg.append("Ready...")
             else:
-                msg.append("Ready...")
+                if len(plans) > 0:  # Case personnel budget
+                    msg.append("Ready...")
+                else:
+                    msg.append("No budget plan.")
+
         res['message'] = '\n'.join(msg)
 
         if res['valid']:
@@ -523,6 +551,8 @@ class BudgetPolicyLine(ChartField, models.Model):
                 rec.name = rec.org_id.name_short
             elif chart_view == 'project_base':
                 rec.name = rec.program_id.name_short
+            elif chart_view == 'personnel':
+                rec.name = 'NSTDA'
             elif chart_view == 'invest_asset':
                 rec.name = 'NSTDA'
             elif chart_view == 'invest_construction':
@@ -546,9 +576,9 @@ class BudgetPolicyLine(ChartField, models.Model):
     def _change_amount_content(self, policy, new_amount):
         POLICY_LEVEL = {'unit_base': 'org_id',
                         'project_base': 'program_id',
+                        'personnel': 'personnel_costcenter_id',
                         'invest_asset': 'org_id',
-                        'invest_construction': 'org_id',
-                        'personnel': 'personnel_costcenter_id'}
+                        'invest_construction': 'org_id', }
         title = _('Policy amount change(s)')
         message = '<h3>%s</h3><ul>' % title
         for rec in self:

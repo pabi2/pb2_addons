@@ -138,6 +138,14 @@ class BudgetBreakdown(models.Model):
         states={'draft': [('readonly', False)]},
         domain=[('chart_view', '=', 'invest_asset')],
     )
+    personnel_line_ids = fields.One2many(
+        'budget.breakdown.line',
+        'breakdown_id',
+        string='Personnel Breakdown Lines',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        domain=[('chart_view', '=', 'personnel')],
+    )
     message = fields.Text(
         string='Messages',
         readonly=True,
@@ -160,6 +168,7 @@ class BudgetBreakdown(models.Model):
             'unit_base': 'account_budget_activity.act_account_budget_view',
             'invest_asset':
             'pabi_chartfield.act_account_budget_view_invest_asset',
+            'personnel': 'pabi_chartfield.act_account_budget_view_personnel',
         }
         action = self.env.ref(_ACTION[self.chart_view])
         result = action.read()[0]
@@ -172,9 +181,11 @@ class BudgetBreakdown(models.Model):
         self.ensure_one()
         _prefix = 'BREAKDOWN'
         _prefix2 = {'unit_base': 'UNIT',
-                    'invest_asset': 'ASSET'}
+                    'invest_asset': 'ASSET',
+                    'personnel': 'PERSONNEL'}
         _prefix3 = {'unit_base': 'org_id',
-                    'invest_asset': False}
+                    'invest_asset': False,
+                    'personnel': False}
         prefix2 = _prefix2[self.chart_view]
         obj = _prefix3[self.chart_view] and \
             self[_prefix3[self.chart_view]] or False
@@ -205,14 +216,17 @@ class BudgetBreakdown(models.Model):
         return res
 
     @api.multi
-    @api.depends('line_ids', 'unit_base_line_ids', 'invest_asset_line_ids')
+    @api.depends('line_ids', 'unit_base_line_ids',
+                 'invest_asset_line_ids', 'personnel_line_ids')
     def _compute_all(self):
         for rec in self:
             lines = False
             if rec.unit_base_line_ids:
                 lines = rec.unit_base_line_ids
-            if rec.invest_asset_line_ids:
+            elif rec.invest_asset_line_ids:
                 lines = rec.invest_asset_line_ids
+            elif rec.personnel_line_ids:
+                lines = rec.personnel_line_ids
             else:  # Fall back to basic
                 lines = rec.line_ids
             rec.planned_amount = sum(lines.mapped('planned_amount'))
@@ -265,47 +279,6 @@ class BudgetBreakdown(models.Model):
             self.write({'message': res['message']})
             return False
 
-    # @api.multi
-    # def _generate_breakdown_line_unit_base(self):
-    #     for breakdown in self:
-    #         if breakdown.chart_view != 'unit_base':
-    #             raise ValidationError(_('Not a unit based breakdown!'))
-    #         breakdown.line_ids.unlink()
-    #         lines = []
-    #         Budget = self.env['account.budget']
-    #         BudgetPlanUnit = self.env['budget.plan.unit']
-    #         plans = BudgetPlanUnit.search([
-    #             ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
-    #             ('org_id', '=', breakdown.org_id.id),
-    #             ('state', '=', 'accept')])
-    #         budgets = Budget.search([
-    #             ('fiscalyear_id', '=', breakdown.fiscalyear_id.id),
-    #             ('org_id', '=', breakdown.org_id.id),
-    #             ('chart_view', '=', breakdown.chart_view)])
-    #         # Existing budgets, get section dict {seciton_id: budget_id}
-    #         sec_bud_dict = dict([(x.section_id.id, x.id) for x in budgets])
-    #         # Create line from plans first
-    #         for plan in plans:
-    #             budget_plan_id = '%s,%s' % (BudgetPlanUnit._name, plan.id)
-    #             section_id = plan.section_id.id
-    #             vals = {
-    #                 'budget_plan_id': budget_plan_id,
-    #                 'budget_id': sec_bud_dict.get(section_id, False),
-    #                 'section_id': plan.section_id.id,
-    #             }
-    #             lines.append((0, 0, vals))
-    #         # Create line for budget that don't have plan, manual create
-    #         budgets = budgets.filtered(lambda l: l.section_id
-    #                                    not in plans.mapped('section_id'))
-    #         for budget in budgets:
-    #             vals = {
-    #                 'budget_plan_id': False,
-    #                 'budget_id': budget.id,
-    #                 'section_id': budget.section_id.id,
-    #             }
-    #             lines.append((0, 0, vals))
-    #         breakdown.write({'unit_base_line_ids': lines})
-
     @api.multi
     def generate_breakdown_line(self):
         for breakdown in self:
@@ -314,7 +287,10 @@ class BudgetBreakdown(models.Model):
                                    'unit_base_line_ids'),
                      'invest_asset': ('budget.plan.invest.asset',
                                       False, 'org_id',
-                                      'invest_asset_line_ids'), }
+                                      'invest_asset_line_ids'),
+                     'personnel': ('budget.plan.personnel',
+                                   False, False,
+                                   'personnel_line_ids'), }
             if breakdown.chart_view not in _DICT.keys():
                 raise ValidationError(
                     _('This budget structure is not supported!'))
@@ -342,43 +318,43 @@ class BudgetBreakdown(models.Model):
                 (entity_field, '=', entity_id),
                 ('chart_view', '=', breakdown.chart_view)])
             # Existing budgets, sub_entity_dict, i.e.,  {seciton_id: budget_id}
-            ent_bud_dict = \
-                dict([(x[sub_entity_field].id, x.id) for x in budgets])
+            ent_bud_dict = {}
+            for x in budgets:
+                if sub_entity_field:
+                    ent_bud_dict.update({x[sub_entity_field].id: x.id})
+                else:
+                    ent_bud_dict.update({False: x.id})  # Personnel
             # Create line from plans first
             for plan in plans:
                 budget_plan_id = '%s,%s' % (BudgetPlan._name, plan.id)
-                sub_entity_id = plan[sub_entity_field].id
-                vals = {
+                sub_entity_id = False
+                vals = {}
+                if sub_entity_field:
+                    sub_entity_id = plan[sub_entity_field].id
+                    vals.update({
+                        sub_entity_field: sub_entity_id
+                    })
+                vals.update({
                     'budget_plan_id': budget_plan_id,
                     'budget_id': ent_bud_dict.get(sub_entity_id, False),
-                    sub_entity_field: plan[sub_entity_field].id,
-                }
+                })
                 lines.append((0, 0, vals))
             # Create line for budget that don't have plan, manual create
             if sub_entity_field:
                 budgets = budgets.filtered(
                     lambda l: l[sub_entity_field]
                     not in plans.mapped(sub_entity_field))
-            for budget in budgets:
-                vals = {
-                    'budget_plan_id': False,
-                    'budget_id': budget.id,
-                    sub_entity_field: budget[sub_entity_field].id,
-                }
-                lines.append((0, 0, vals))
+                for budget in budgets:
+                    vals = {
+                        'budget_plan_id': False,
+                        'budget_id': budget.id,
+                        sub_entity_field: budget[sub_entity_field].id
+                    }
+                    lines.append((0, 0, vals))
             breakdown.write({breakdown_line_field: lines,
                              'message': False})
 
-        self.message_post(body=_('Regenerate Breakdown Lines, '
-                                 'all amount reset!'))
-
-    # @api.multi
-    # def generate_breakdown_line(self):
-    #     # Unit Base
-    #     breakdowns = self.filtered(lambda l: l.chart_view == 'unit_base')
-    #     if breakdowns:
-    #         breakdowns._generate_breakdown_line_unit_base()
-    #     # Other structure...
+        self.message_post(body=_('Regenerate Breakdown Lines, amounts reset!'))
 
     @api.multi
     def generate_budget_control(self):
@@ -482,25 +458,35 @@ class BudgetBreakdownLine(ChartField, models.Model):
     )
 
     @api.multi
-    @api.depends('breakdown_id')
+    @api.depends('budget_plan_id', 'budget_id')
     def _compute_amount(self):
         for line in self:
+            # From Budget Plan
             line.planned_amount = line.budget_plan_id and \
                 line.budget_plan_id.planned_expense or 0.0
             line.latest_policy_amount = line.budget_id and \
                 line.budget_id.policy_amount or 0.0
+            # From Budget Control
+            line.future_plan = line.budget_id.future_plan
+            line.past_consumed = line.budget_id.past_consumed
+            line.rolling = line.budget_id.rolling
 
     @api.model
     def _change_amount_content(self, breakdown, new_amount):
         BREAKDOWN_LEVEL = {'unit_base': 'section_id',  # only 2 types
-                           'invest_asset': 'org_id', }
+                           'invest_asset': 'org_id',
+                           'personnel': False, }
         title = _('Policy amount change(s)')
         message = '<h3>%s</h3><ul>' % title
         for rec in self:
-            obj = rec[BREAKDOWN_LEVEL[breakdown.chart_view]]
+            field = BREAKDOWN_LEVEL[breakdown.chart_view]
+            code = 'NSTDA'
+            if field:
+                obj = rec[field]
+                code = obj.code or obj.name_short or obj.name
             message += _(
                 '<li><b>%s</b>: %s → %s</li>'
-            ) % (obj.code or obj.name_short or obj.name,
+            ) % (code,
                  '{:,.2f}'.format(rec.policy_amount),
                  '{:,.2f}'.format(new_amount), )
             message += '</ul>'

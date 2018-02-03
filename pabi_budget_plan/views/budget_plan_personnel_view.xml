@@ -8,25 +8,21 @@
             <field name="arch" type="xml">
                 <form string="Budget Plan">
                     <header>
-                        <button string="Submit" name="action_submit" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="action_approve" states="submit" type="object" class="oe_highlight"/>
-                        <button string="Accept" name="action_accept" states="approve" type="object" class="oe_highlight"/>
-                        <button string="Reject" name="action_reject" states="submit,approve" type="object" />
-                        <button string="Reset to Draft" name="action_draft" states="cancel" type="object"/>
-                        <button string="Cancel" name="action_cancel" states="draft" type="object"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,accept"/>
+                        <button string="Accept" name="action_accept" states="1_draft" type="object" class="oe_highlight"/>
+                        <button string="Reset to Draft" name="action_draft" states="4_cancel" type="object"/>
+                        <button string="Cancel" name="action_cancel" states="1_draft,7_accept" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="1_draft,7_accept,8_done"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="name"/>
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons"></div>
                         <group>
                             <group>
-                                <field name="personnel_costcenter_id"/>
                                 <field name="user_id"/>
                                 <field name="planned_overall"/>
                             </group>
@@ -46,6 +42,7 @@
                                 <field name="plan_line_ids" colspan="4" nolabel="1">
                                     <tree string="Budget Lines" editable="bottom">
 
+                                        <field name="org_id"/>
                                         <field name="personnel_costcenter_id"/>
                                         <field name="fund_id" required="1"/>
 
@@ -130,7 +127,6 @@
                 <search string="Search Budget Plan Line">
                     <group expand="0" string="Group By">
                         <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
-                        <filter name="section_id" string="Section" domain="[]" context="{'group_by':'section_id'}"/>
                         <filter name="personnel_costcenter_id" string="Personnel Budget" domain="[]" context="{'group_by':'personnel_costcenter_id'}"/>
                         <filter name="activity_group_id" string="Activity Group" domain="[]" context="{'group_by':'activity_group_id'}"/>
                         <filter name="activity_id" string="Activity" domain="[]" context="{'group_by':'activity_id'}"/>
@@ -146,8 +142,6 @@
                 <tree string="Budget Plan Lines">
 
                     <field name="org_id"/>
-                    <field name="section_id"/>
-
                     <field name="personnel_costcenter_id"/>
                     <field name="fund_id" required="1"/>
 
