@@ -230,9 +230,9 @@
             <field name="inherit_id" ref="account_pettycash.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <!-- Moved From -->
-                <label for="is_pettycash" position="replace"/>
+                <label name="is_pettycash_label" position="replace"/>
                 <div name="pettycash_div1" position="replace"/>
-                <label for="clear_pettycash_id" position="replace"/>
+                <label name="clear_pettycash_id_label" position="replace"/>
                 <div name="pettycash_div2" position="replace"/>
             </field>
         </record>
