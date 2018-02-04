@@ -6,6 +6,7 @@ import xlwt
 import itertools
 import cStringIO
 import time
+from datetime import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError, RedirectWarning
 from openerp.tools.safe_eval import safe_eval as eval
@@ -126,6 +127,7 @@ class ImportXlsxTemplate(models.TransientModel):
     @api.model
     def get_eval_context(self, model=False, value=False):
         eval_context = {'time': time,
+                        'datetime': datetime,
                         'env': self.env,
                         'context': self._context,
                         'value': False,

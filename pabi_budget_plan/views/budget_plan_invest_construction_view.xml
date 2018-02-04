@@ -47,7 +47,7 @@
                                 <field name="plan_line_ids" colspan="4" nolabel="1">
                                     <tree string="Next year plan" editable="bottom">
                                         <field name="c_or_n"/>
-                                        <field name="invest_construction_id"/>
+                                        <field name="invest_construction_id" invisible="1"/>
                                         <field name="name" string="New Project"/>
                                         <field name="description" string="Description"/>
                                         <field name="activity_group_id" invisible="0"/>
@@ -55,12 +55,15 @@
                                         <button name="edit_invest_construction" string="Info." icon="gtk-justify-fill" type="object" class="oe_link"/>
 
                                         <field name="amount_budget"/>
+                                        <field name="overall_released"/>
                                         <field name="overall_all_commit"/>
                                         <field name="overall_pr_commit"/>
                                         <field name="overall_po_commit"/>
+                                        <field name="overall_exp_commit"/>
                                         <field name="overall_actual"/>
                                         <field name="overall_consumed"/>
                                         <field name="overall_balance"/>
+                                        <field name="next_fy_commitment"/>
                                     </tree>
                                 </field>
                             </page>
@@ -145,7 +148,7 @@
                       <field name="c_or_n"/>
                       <field name="name" string="New Project"/>
                       <field name="description" string="Description"/>
-                      <field name="invest_construction_id"/>
+                      <field name="invest_construction_id" invisible="1"/>
                       <field name="activity_group_id"/>
 
                       <field name="org_id"/>
@@ -162,6 +165,7 @@
                       <field name="pm_section_id"/>
 
                       <field name="amount_budget"/>
+                      <field name="amount_before"/>
                       <field name="amount_fy1"/>
                       <field name="amount_fy2"/>
                       <field name="amount_fy3"/>
@@ -169,12 +173,15 @@
                       <field name="amount_fy5"/>
                       <field name="amount_beyond"/>
 
+                      <field name="overall_released"/>
                       <field name="overall_all_commit"/>
                       <field name="overall_pr_commit"/>
                       <field name="overall_po_commit"/>
+                      <field name="overall_exp_commit"/>
                       <field name="overall_actual"/>
                       <field name="overall_consumed"/>
                       <field name="overall_balance"/>
+                      <field name="next_fy_commitment"/>
                 </tree>
             </field>
         </record>
@@ -197,7 +204,7 @@
                     <group>
                         <group>
                             <field name="c_or_n"/>
-                            <field name="invest_construction_id"/>
+                            <field name="invest_construction_id" invisible="1"/>
                             <field name="name" string="New Project"/>
                             <field name="description"/>
                             <field name="month_duration"/>
@@ -212,18 +219,22 @@
                         </group>
                         <group>
                             <field name="amount_budget"/>
+                            <field name="amount_before"/>
                             <field name="amount_fy1"/>
                             <field name="amount_fy2"/>
                             <field name="amount_fy3"/>
                             <field name="amount_fy4"/>
                             <field name="amount_fy5"/>
                             <field name="amount_beyond"/>
+                            <field name="overall_released"/>
                             <field name="overall_all_commit"/>
                             <field name="overall_pr_commit"/>
                             <field name="overall_po_commit"/>
+                            <field name="overall_exp_commit"/>
                             <field name="overall_actual"/>
                             <field name="overall_consumed"/>
                             <field name="overall_balance"/>
+                            <field name="next_fy_commitment"/>
                         </group>
                     </group>
                 </form>

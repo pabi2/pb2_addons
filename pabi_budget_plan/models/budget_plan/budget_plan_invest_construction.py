@@ -45,10 +45,34 @@ class BudgetPlanInvestConstruction(BPCommon, models.Model):
         string='Org',
         required=True,
     )
+    # Master Datas
+    master_org_ids = fields.Many2many(
+        'res.org',
+        sring='Orgs Master Data',
+        compute='_compute_master_org_ids',
+    )
+    master_employee_ids = fields.Many2many(
+        'hr.employee',
+        sring='Employee Master Data',
+        compute='_compute_master_employee_ids',
+    )
     _sql_constraints = [
         ('uniq_plan', 'unique(org_id, fiscalyear_id)',
          'Duplicated budget plan for the same org is not allowed!'),
     ]
+
+    @api.multi
+    def _compute_master_org_ids(self):
+        Org = self.env['res.org']
+        for rec in self:
+            rec.master_org_ids = Org.search([])
+
+    @api.multi
+    def _compute_master_employee_ids(self):
+        Employee = self.env['hr.employee']
+        for rec in self:
+            employees = Employee.search([('org_id', '=', rec.org_id.id)])
+            rec.master_employee_ids = employees
 
     @api.model
     def create(self, vals):
@@ -104,8 +128,8 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
         readonly=True,
     )
     c_or_n = fields.Selection(
-        [('continue', 'Continue'),
-         ('new', 'New')],
+        [('continue', u'ต่อเนื่อง'),
+         ('new', u'ใหม่')],
         string='C/N',
         default='new',
     )
@@ -145,6 +169,9 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
     amount_budget = fields.Float(
         string='Overall Budget',
     )
+    amount_before = fields.Float(
+        string='Before FY1',
+    )
     amount_fy1 = fields.Float(
         string='FY1',
     )
@@ -163,6 +190,9 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
     amount_beyond = fields.Float(
         string='Beyond FY5',
     )
+    overall_released = fields.Float(
+        string='Overall Released'
+    )
     overall_all_commit = fields.Float(
         string='Overall Commitment'
     )
@@ -172,42 +202,28 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
     overall_po_commit = fields.Float(
         string='Overall PO Commit'
     )
+    overall_exp_commit = fields.Float(
+        string='Overall EX Commit'
+    )
     overall_actual = fields.Float(
-        string='Overall PO Commit'
+        string='Overall Actual'
     )
     overall_consumed = fields.Float(
-        string='Overall PO Commit'
+        string='Overall Consumed'
     )
     overall_balance = fields.Float(
-        string='Overall PO Commit'
+        string='Overall Balance'
     )
-    # planned = fields.Float(
-    #     string='Current Plan',
-    # )
-    # released = fields.Float(
-    #     string='Current Released',
-    # )
-    # all_commit = fields.Float(
-    #     string='Current All Commit',
-    # )
-    # po_commit = fields.Float(
-    #     string='Current PO Commit',
-    # )
-    # pr_commit = fields.Float(
-    #     string='Current PR Commit',
-    # )
-    # actual = fields.Float(
-    #     string='Current Actual',
-    # )
-    # consumed = fields.Float(
-    #     string='Current Consumed',
-    # )
-    # balance = fields.Float(
-    #     string='Current Balance',
-    # )
-
+    next_fy_commitment = fields.Float(
+        string='Next FY Commitment',
+    )
     # Required for updating dimension
     # FIND ONLY WHAT IS NEED AND USE related field.
+
+    @api.onchange('c_or_n')
+    def _onchange_c_or_n(self):
+        if self.c_or_n == 'new':
+            self.invest_construction_id = False
 
     @api.multi
     def edit_invest_construction(self):
@@ -260,12 +276,13 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
         project_fields = set(Project._fields.keys())
         plan_line_fields = set(ProjectLine._fields.keys())
         common_fields = list(project_fields & plan_line_fields)
+        plan_fiscalyear_id = self._context.get('plan_fiscalyear_id')
         for rec in self:
             val = {
                 'c_or_n': 'continue',
                 'invest_construction_id': rec.invest_construction_id.id,
             }
-            # Project Info
+            # Project Info, if any
             for field in common_fields:
                 if field in rec.invest_construction_id and \
                         field not in ['id', '__last_update',
@@ -276,14 +293,26 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
                         val[field] = rec.invest_construction_id[field].id
                     except:
                         val[field] = rec.invest_construction_id[field]
+
+            # Next FY Commitment
+            construction = rec.invest_construction_id
+            next_fy_ex = construction.monitor_expense_ids.filtered(
+                lambda l: l.fiscalyear_id.id == plan_fiscalyear_id)
+            next_fy_commit = sum(next_fy_ex.mapped('amount_pr_commit') +
+                                 next_fy_ex.mapped('amount_po_commit') +
+                                 next_fy_ex.mapped('amount_exp_commit'))
+
             # Overall budget performance
             val.update({
+                'overall_released': rec.released,
                 'overall_all_commit': rec.all_commit,
                 'overall_pr_commit': rec.pr_commit,
                 'overall_po_commit': rec.po_commit,
+                'overall_exp_commit': rec.exp_commit,
                 'overall_actual': rec.actual,
                 'overall_consumed': rec.consumed,
                 'overall_balance': rec.balance,
+                'next_fy_commitment': next_fy_commit
             })
             plan_lines.append((0, 0, val))
         return plan_lines

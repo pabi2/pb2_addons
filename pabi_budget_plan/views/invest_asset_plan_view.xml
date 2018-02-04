@@ -66,9 +66,9 @@
                         <field name="plan_line_ids" colspan="4" nolabel="1">
                             <tree string="Asset Lines" colors="grey:select==False;blue:select==True" editable="bottom">
                                 <field name="plan_id" invisible="1"/>
+                                <field name="priority"/>
                                 <field name="select"/>
                                 <field name="approved"/>
-                                <field name="priority"/>
                                 <field name="invest_asset_id"/>
                                 <field name="name" string="New Asset"/>
                                 <button name="edit_asset_item" string="Info." icon="gtk-justify-fill" type="object" class="oe_link"
