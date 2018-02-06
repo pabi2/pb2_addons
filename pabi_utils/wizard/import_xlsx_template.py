@@ -21,7 +21,7 @@ def get_field_condition(field):
         cond = field[i + 2:j]
         try:
             if len(cond) > 0:
-                return (field[:i], cond)
+                return (field.replace('${%s}' % cond, ''), False)
         except:
             return (field, False)
     return (field, False)

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 from openerp import models, api, fields, _
 
 
@@ -116,6 +117,14 @@ class AccountTrailBalanceReport(models.Model):
             report_lines.append((0, 0, line_dict))
         report.write({'line_ids': report_lines})
         return report.id
+
+    @api.model
+    def vacumm_old_reports(self):
+        """ Vacumm report older than 1 day """
+        old_date = datetime.datetime.now() - datetime.timedelta(days=1)
+        reports = self.search([('create_date', '<',
+                                old_date.strftime('%Y-%m-%d'))])
+        reports.unlink()
 
 
 class AccountTrailBalanceLine(models.Model):

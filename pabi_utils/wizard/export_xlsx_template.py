@@ -24,7 +24,7 @@ def get_field_aggregation(field):
             if len(cond) > 0:
                 return (field[:i], cond)
         except:
-            return (field, False)
+            return (field.replace('@{%s}' % cond, ''), False)
     return (field, False)
 
 
@@ -36,7 +36,7 @@ def get_field_condition(field):
         cond = field[i + 2:j]
         try:
             if len(cond) > 0:
-                return (field[:i], cond)
+                return (field.replace('${%s}' % cond, ''), cond)
         except:
             return (field, False)
     return (field, False)
@@ -167,8 +167,13 @@ class ExportXlsxTemplate(models.TransientModel):
                            'max', 'max_label', 'min', 'min_label']
         pair_fields = []  # I.e., ('debit${value and . or .}@{sum}', 'debit')
         for field in fields:
+            print field
             temp_field, eval_cond = get_field_condition(field)
+            print eval_cond
+            print temp_field
             raw_field, aggre_func = get_field_aggregation(temp_field)
+            print raw_field
+            print aggre_func
             if aggre_func and aggre_func not in aggre_func_list:
                 raise ValidationError(_('"%", not a valid aggregate function'))
             field_cond_dict.update({field: eval_cond})
