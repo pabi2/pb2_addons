@@ -19,5 +19,8 @@ Add ability to export Trial Balance with mapped account for GFMIS as xlsx
     "data": [
         "xlsx_template/xlsx_template_wizard.xml",
         "xlsx_template/templates.xml",
+        "data/pabi.data.map.type.csv",
+        "data/pabi.data.map.csv",
+        "views/account_view.xml",
     ],
 }

@@ -111,6 +111,7 @@ class AccountTrailBalanceReport(models.Model):
                 'debit': debit,
                 'credit': credit,
                 'balance': debit - credit,
+                'final_balance': initial + (debit - credit),
             }
             report_lines.append((0, 0, line_dict))
         report.write({'line_ids': report_lines})
@@ -142,6 +143,9 @@ class AccountTrailBalanceLine(models.Model):
     balance = fields.Float(
         string='Balance',
     )
+    final_balance = fields.Float(
+        string='Current Balance',
+    )
 
     @api.multi
     def open_debit_items(self):
@@ -154,6 +158,10 @@ class AccountTrailBalanceLine(models.Model):
     @api.multi
     def open_balance_items(self):
         return self.open_items('balance')
+
+    @api.multi
+    def open_final_balance_items(self):
+        return self.open_items('final_balance')
 
     @api.multi
     def open_initial_items(self):
@@ -180,6 +188,11 @@ class AccountTrailBalanceLine(models.Model):
         if move_type == 'initial':
             moves = TB._get_init_moves(rpt, moves, self.account_id)
             move_ids = moves.ids
+        if move_type == 'final_balance':
+            init_moves = TB._get_init_moves(rpt, moves, self.account_id)
+            blance_moves = TB._get_focus_moves(rpt, moves, self.account_id)
+            move_ids = init_moves.ids + blance_moves.ids
+
         return {
             'name': _("Journal Items"),
             'view_type': 'form',

@@ -9,7 +9,7 @@ import time
 from copy import copy
 from datetime import datetime
 from ast import literal_eval
-
+from openerp.tools import float_compare
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
 
@@ -183,14 +183,17 @@ class ExportXlsxTemplate(models.TransientModel):
                 # Case Eval
                 eval_cond = field_cond_dict[field[0]]
                 if eval_cond:  # Get eval_cond of a raw field
-                    eval_context = {'time': time,
+                    eval_context = {'float_compare': float_compare,
+                                    'time': time,
                                     'datetime': datetime,
                                     'value': value,
                                     'model': self.env[record._name],
                                     'env': self.env,
                                     'context': self._context,
                                     }
-                    value = str(eval(eval_cond, eval_context))
+                    # value = str(eval(eval_cond, eval_context))
+                    # Test removing str(), coz some case, need resulting number
+                    value = eval(eval_cond, eval_context)
                 # --
                 vals[field[0]].append(value)
         return (vals, aggre_func_dict)
@@ -217,7 +220,8 @@ class ExportXlsxTemplate(models.TransientModel):
                 value = tmp_field and self._get_val(record, tmp_field)
                 # Case Eval
                 if eval_cond:  # Get eval_cond of a raw field
-                    eval_context = {'time': time,
+                    eval_context = {'float_compare': float_compare,
+                                    'time': time,
                                     'datetime': datetime,
                                     'value': value,
                                     'model': self.env[record._name],
