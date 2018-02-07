@@ -60,6 +60,11 @@ class AccountInvoice(models.Model):
     number_preprint = fields.Char(
         string='Preprint Number',
     )
+    display_name2 = fields.Char(
+        string='Partner Name',
+        related='partner_id.display_name2',
+        store=True,
+    )
     partner_code = fields.Char(
         string='Partner Code',
         related='partner_id.search_key',
