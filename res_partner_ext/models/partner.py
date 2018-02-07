@@ -55,6 +55,12 @@ class ResPartner(models.Model):
         string='Title (lang)',
         compute='_compute_title_lang',
     )
+    display_name2 = fields.Char(
+        string='Name',
+        compute='_compute_display_name2',
+        store=True,
+        help="Name with title",
+    )
 
     @api.onchange('title')
     def _onchange_title(self):
@@ -64,6 +70,14 @@ class ResPartner(models.Model):
         if self._context.get('lang', False) == 'en_US':
             title_name = self.title.with_context(lang='th_TH').name_get()
         self.title_lang = title_name and title_name[0][1] or False
+
+    @api.multi
+    @api.depends('title', 'name')
+    def _compute_display_name2(self):
+        for rec in self:
+            name = [rec.title.name, rec.name]
+            name = filter(lambda a: a is not False, name)
+            rec.display_name2 = ' '.join(name)
 
     @api.multi
     def _compute_title_lang(self):
