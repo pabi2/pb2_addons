@@ -8,11 +8,11 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='journal_id']" position="after">
-                    <label for="is_pettycash"/>
+                    <label for="is_pettycash" name="is_pettycash_label"/>
                     <div name="pettycash_div1">
                         <field name="is_pettycash" class="oe_inline"/>
                     </div>
-                    <label for="clear_pettycash_id" attrs="{'invisible': [('clear_pettycash_id', '=', False)]}"/>
+                    <label for="clear_pettycash_id" name="clear_pettycash_id_label" attrs="{'invisible': [('clear_pettycash_id', '=', False)]}"/>
                     <div name="pettycash_div2" attrs="{'invisible': [('clear_pettycash_id', '=', False)]}">
                         <field name="clear_pettycash_id" class="oe_inline"/>
                     </div>

@@ -17,6 +17,20 @@
           view_mode="form"
           target="new"/>
 
+      <!-- Budget Plan Invest Construction -->
+      <act_window id="action_budget_plan_invest_construction_export_xlsx_tempalte"
+          name="Get Import Template (.xlsx)"
+          res_model="export.xlsx.template"
+          src_model="budget.plan.invest.construction"
+          view_mode="form"
+          target="new"/>
+      <act_window id="action_budget_plan_invest_construction_import_xlsx_tempalte"
+          name="Import Template Data (.xlsx)"
+          res_model="import.xlsx.template"
+          src_model="budget.plan.invest.construction"
+          view_mode="form"
+          target="new"/>
+
       # Budget Breakdown
       <!-- Optional: To be specific to some template and context -->
   		<record id="action_budget_breakdown_unit_export_xlsx_tempalte" model="ir.actions.act_window">
@@ -45,7 +59,6 @@
           src_model="invest.asset.plan"
           view_mode="form"
           target="new"/>
-
 
     </data>
 </openerp>

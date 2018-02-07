@@ -32,6 +32,8 @@
                             <button name="open_credit_items" string="Journal Items" icon="gtk-zoom-in" type="object"/>
                             <field name="balance" sum="Total Balance"/>
                             <button name="open_balance_items" string="Journal Items" icon="gtk-zoom-in" type="object"/>
+                            <field name="final_balance" sum="Total Balance"/>
+                            <button name="open_final_balance_items" string="Journal Items" icon="gtk-zoom-in" type="object"/>
                         </tree>
                     </field>
                 </form>

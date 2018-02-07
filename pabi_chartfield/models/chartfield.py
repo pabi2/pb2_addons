@@ -12,6 +12,7 @@ from openerp.exceptions import ValidationError
 # functional_area -> program_group -> program -> project_group -> *project*
 #                                    (spa(s))                     (mission)
 #
+#     (org)
 #    (section)
 # personnel_costcenter
 #
@@ -86,16 +87,7 @@ CHART_STRUCTURE = \
             },
         },
         'personnel_costcenter_id': {
-            # 'section_id': {
-            #     'division_id': {
-            #         'subsector_id': {
-            #             'sector_id': {
-            #                 'org_id': {}
-            #             },
-            #         },
-            #     },
-            # },
-            # 'mission_id': {},
+            'org_id': {},
             'costcenter_id': {
                 'taxbranch_id': {}
             },
@@ -172,23 +164,24 @@ CHART_FIELDS = [
                 'invest_construction',
                 ]),  # All
     ('sector_id', ['unit_base',
-                   'personnel',
                    ]),
     ('subsector_id', ['unit_base',
-                      'personnel',
                       ]),
     ('division_id', ['unit_base',
-                     'personnel',
                      ]),
     ('section_id', ['unit_base',
-                    'personnel',
                     ]),
     ('costcenter_id', ['unit_base',
+                       'project_base',
                        'personnel',
+                       'invest_asset',
+                       'invest_construction',
                        ]),
     ('taxbranch_id', ['unit_base',
                       'project_base',
                       'personnel',
+                      'invest_asset',
+                      'invest_construction',
                       ]),
     # Personnel
     ('personnel_costcenter_id', ['personnel']),

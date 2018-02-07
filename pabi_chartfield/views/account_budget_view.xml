@@ -81,11 +81,11 @@
                         attrs="{'invisible': [('chart_view','!=','unit_base')],
                             'required': [('chart_view','=','unit_base')],
                             'readonly': [('state','!=','draft')]}"/>
-                    <field name="personnel_costcenter_id"
+                    <!-- <field name="personnel_costcenter_id"
                         domain="[('special', '=', False)]"
                         attrs="{'invisible': [('chart_view','!=','personnel')],
                             'required': [('chart_view','=','personnel')],
-                            'readonly': [('state','!=','draft')]}"/>
+                            'readonly': [('state','!=','draft')]}"/> -->
                     <field name="org_id"
                         domain="[('special', '=', False)]"
                         attrs="{'invisible': [('chart_view','not in',('invest_asset','invest_construction'))],
@@ -105,7 +105,6 @@
                                       'default_budget_method': 'revenue'}" />
                     <field name="budget_revenue_line_personnel" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.personnel_tree_view',
-                                      'default_personnel_costcenter_id': personnel_costcenter_id,
                                       'default_fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'revenue'}" />
                     <field name="budget_revenue_line_invest_asset" colspan="4" nolabel="1"
@@ -132,7 +131,6 @@
                                       'default_budget_method': 'expense'}" />
                     <field name="budget_expense_line_personnel" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.personnel_tree_view',
-                                      'default_personnel_costcenter_id': personnel_costcenter_id,
                                       'default_fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'expense'}" />
                     <field name="budget_expense_line_invest_asset" colspan="4" nolabel="1"
@@ -316,7 +314,7 @@
                     <field name="project_id" invisible="1" />
                     <field name="fund_id" invisible="0" />
 
-                    <field name="org_id" invisible="1" />
+                    <field name="org_id" invisible="0" />
                     <field name="sector_id" invisible="1" />
                     <field name="subsector_id" invisible="1"/>
                     <field name="division_id" invisible="1" />
@@ -335,7 +333,7 @@
                     <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
                     <!-- PERIOD -->
                     <field name="planned_amount" sum="Planned Amount"/>
-                    <field name="budget_release" invisible="0"/>
+                    <field name="budget_release" invisible="1"/>
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"
                       attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"
                       string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>

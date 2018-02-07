@@ -20,15 +20,17 @@ class AccountBudget(models.Model):
                     'invest_asset': 'ASSET',
                     'project_base': 'PROJ',
                     'invest_construction': 'CONST',
-                    'personnel': 'PERS'}
+                    'personnel': 'PERSONNEL'}
         _prefix3 = {'unit_base': 'section_id',
                     'invest_asset': 'org_id',
                     'project_base': 'program_id',
                     'invest_construction': 'org_id',
-                    'personnel': 'personnel_costcenter_id'}
+                    'personnel': False}
         prefix2 = _prefix2[self.chart_view]
-        obj = self[_prefix3[self.chart_view]]
-        prefix3 = obj.code or obj.name_short or obj.name
+        prefix3 = 'NSTDA'
+        if _prefix3[self.chart_view]:
+            obj = self[_prefix3[self.chart_view]]
+            prefix3 = obj.code or obj.name_short or obj.name
         name = '%s/%s/%s/%s' % (_prefix, prefix2,
                                 self.fiscalyear_id.code, prefix3)
         return name

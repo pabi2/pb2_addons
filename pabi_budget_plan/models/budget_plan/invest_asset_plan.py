@@ -176,7 +176,7 @@ class InvestAssetPlan(models.Model):
     @api.model
     def create(self, vals):
         name = self._get_doc_number(vals['fiscalyear_id'],
-                                    'res.org', vals['org_id'])
+                                    'res.org', res_id=vals['org_id'])
         vals.update({'name': name})
         return super(InvestAssetPlan, self).create(vals)
 

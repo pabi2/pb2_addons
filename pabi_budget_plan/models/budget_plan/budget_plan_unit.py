@@ -155,7 +155,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
     @api.model
     def create(self, vals):
         name = self._get_doc_number(vals['fiscalyear_id'],
-                                    'res.section', vals['section_id'])
+                                    'res.section', res_id=vals['section_id'])
         vals.update({'name': name})
         return super(BudgetPlanUnit, self).create(vals)
 

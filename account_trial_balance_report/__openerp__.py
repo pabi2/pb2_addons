@@ -17,6 +17,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/report_auto_vacumm.xml',
         'wizard/trial_balance_wizard.xml',
         'views/trial_balance_report.xml',
     ],

@@ -90,6 +90,6 @@ class AccountVoucherLine(models.Model):
                     [('move_id', '=', rec.move_line_id.move_id.id)])
                 if not loan:
                     continue
-                if len(loan) > 1:
-                    raise ValidationError(_('1 move_id belongs to > 1 loan!'))
-                rec.invoice_taxbranch_id = loan.taxbranch_id
+                # if len(loan) > 1:
+                #   raise ValidationError(_('1 move_id belongs to > 1 loan!'))
+                rec.invoice_taxbranch_id = loan[0].taxbranch_id

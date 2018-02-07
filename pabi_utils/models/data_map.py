@@ -40,9 +40,6 @@ class PABIDataMap(models.Model):
         ('in_value_uniq',
          'unique(map_type_id, model_id, field_id, in_value)',
          'In value must be unique!'),
-        ('out_value_uniq',
-         'unique(map_type_id, model_id, field_id, out_value)',
-         'Out value must be unique!')
     ]
 
     @api.onchange('model_id')
@@ -79,6 +76,8 @@ class PABIDataMap(models.Model):
                  ('field_id.name', '=', field),
                  ('in_value', '=', in_value)],
                 limit=1).out_value
+        if isinstance(out_value, basestring):
+            out_value = out_value.encode('utf-8')
         return out_value
 
     @api.model

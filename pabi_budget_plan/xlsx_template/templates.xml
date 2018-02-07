@@ -244,102 +244,201 @@
                         '_HEAD_': {
                             'D2': 'fiscalyear_id.name',
                             'D3': 'org_id.name_short',
-                            'D4': '${env.user.section_id.code or ""}',
-                            'D5': '${time.strftime("%d-%m-%Y")}',
-                            'D6': '${env.user.name or ""}',
+                            'D4': '${time.strftime("%d-%m-%Y")}',
+                            'D5': '${env.user.name or ""}',
                         },
                         'plan_line_ids[20]': {
-                            'C11': 'owner_program_id.name${value or ""}',
-                            'D11': 'invest_asset_categ_id.name${value or ""}',
-                            'E11': 'name_common${value or ""}',
-                            'F11': 'name${value or ""}',
-                            'G11': 'request_user_id.name${value or ""}',
-                            'H11': 'owner_section_id.name${value or ""}',
-                            'I11': 'owner_section_id.division_id.name${value or ""}',
-                            'J11': 'location${value or ""}',
-                            'K11': 'quantity',
-                            'L11': 'price_unit',
-                            # 'M11': '',
-                            'N11': 'price_other',
-                            # 'O11': '',
-                            'P11': 'amount_plan_total',
-                            'Q11': 'reason_purchase${value or ""}',
-                            'R11': 'reason_purchase_text${value or ""}',
-                            'S11': 'expect_output${value or ""}',
-                            'T11': 'planned_utilization',
-                            'U11': 'specification_summary${value or ""}',
-                            # 'V11': '',
-                            # 'W11': '',
-                            'X11': 'prev_fy_actual',
-                            'Y11': 'amount_plan',
-                            'Z11': 'pr_commitment',
-                            'AA11': 'po_commitment',
-                            'AB11': 'exp_commitment',
-                            'AC11': 'total_commitment',
-                            'AD11': 'actual_amount',
-                            'AE11': 'budget_usage',
-                            'AF11': 'budget_remaining',
-                            'AG11': 'budget_carry_forward',
-                            'AH11': 'next_fy_commitment',
+                            'B10': 'priority',
+                            'C10': 'select${value and "X" or ""}',
+                            'D10': 'approved${value and "X" or ""}',
+
+                            'E10': 'owner_program_id.name${value or ""}',
+                            'F10': 'invest_asset_categ_id.name${value or ""}',
+                            'G10': 'name_common${value or ""}',
+                            'H10': 'name${value or ""}',
+
+                            'K10': 'request_user_id.name${value or ""}',
+                            'L10': 'owner_section_id.name${value or ""}',
+                            'M10': 'owner_section_id.division_id.name${value or ""}',
+                            'N10': 'location${value or ""}',
+                            'O10': 'quantity',
+                            'P10': 'price_unit',
+                            'R10': 'price_other',
+                            'T10': 'amount_plan_total',
+                            'U10': 'reason_purchase${value or ""}',
+                            'V10': 'reason_purchase_text${value or ""}',
+                            'W10': 'expect_output${value or ""}',
+                            'X10': 'planned_utilization',
+                            'Y10': 'specification_summary${value or ""}',
+
+                            'Z10': 'prev_fy_actual',
+                            'AA10': 'amount_plan',
+                            'AB10': 'pr_commitment',
+                            'AC10': 'po_commitment',
+                            'AD10': 'exp_commitment',
+                            'AE10': 'total_commitment',
+                            'AF10': 'actual_amount',
+                            'AG10': 'budget_usage',
+                            'AH10': 'budget_remaining',
+                            'AI10': 'budget_carry_forward',
+                            'AJ10': 'next_fy_commitment',
                         },
                     },
                     'TAB_List': {
                         'master_program_ids': {
-                            'B6': 'name'
+                            'B5': 'name'
                         },
                         'master_requester_ids': {
-                            'D6': 'name'
+                            'D5': 'name'
                         },
                         'master_section_ids': {
-                            'F6': 'name',
-                            'G6': 'division_id.name'
+                            'F5': 'name',
+                            'G5': 'division_id.name'
                         },
                         'master_asset_categ_ids': {
-                            'H6': 'name'
+                            'H5': 'name'
                         },
                     },
                 },
                 '__IMPORT__': {
                     'Asset_Item_Plan': {
                         'plan_line_ids[20]': {
-                            'C11': 'owner_program_id',
-                            'D11': 'invest_asset_categ_id',
-                            'E11': 'name_common',
-                            'F11': 'name',
-                            'G11': 'request_user_id',
-                            'H11': 'owner_section_id',
-                            # 'I11': '',
-                            'J11': 'location',
-                            'K11': 'quantity',
-                            'L11': 'price_unit',
-                            # 'M11': '',
-                            'N11': 'price_other',
-                            # 'O11': '',
-                            'P11': 'amount_plan_total',
-                            'Q11': 'reason_purchase',
-                            'R11': 'reason_purchase_text',
-                            'S11': 'expect_output',
-                            'T11': 'planned_utilization',
-                            'U11': 'specification_summary',
-                            # 'V11': '',
-                            # 'W11': '',
-                            'X11': 'prev_fy_actual',
-                            'Y11': 'amount_plan',
-                            'Z11': 'pr_commitment',
-                            'AA11': 'po_commitment',
-                            'AB11': 'exp_commitment',
-                            'AC11': 'total_commitment',
-                            'AD11': 'actual_amount',
-                            'AE11': 'budget_usage',
-                            'AF11': 'budget_remaining',
-                            'AG11': 'budget_carry_forward',
-                            'AH11': 'next_fy_commitment',
+                            'B10': 'priority',
+                            'C10${value and True or False}': 'select',
+                            'D10${value and True or False}': 'approved',
+
+                            'E10': 'owner_program_id',
+                            'F10': 'invest_asset_categ_id',
+                            'G10': 'name_common',
+                            'H10': 'name',
+
+                            'K10': 'request_user_id',
+                            'L10': 'owner_section_id',
+                            'N10': 'location',
+                            'O10': 'quantity',
+                            'P10': 'price_unit',
+                            'R10': 'price_other',
+                            'T10': 'amount_plan_total',
+                            'U10': 'reason_purchase',
+                            'V10': 'reason_purchase_text',
+                            'W10': 'expect_output',
+                            'X10': 'planned_utilization',
+                            'Y10': 'specification_summary',
+
+                            'Z10': 'prev_fy_actual',
+                            'AA10': 'amount_plan',
+                            'AB10': 'pr_commitment',
+                            'AC10': 'po_commitment',
+                            'AD10': 'exp_commitment',
+                            'AE10': 'total_commitment',
+                            'AF10': 'actual_amount',
+                            'AG10': 'budget_usage',
+                            'AH10': 'budget_remaining',
+                            'AI10': 'budget_carry_forward',
+                            'AJ10': 'next_fy_commitment',
                         },
                     },
                 },
+                '__POST_IMPORT__': [
+                  '${object.plan_line_ids.filtered(lambda l: not l.priority).unlink()}',
+                ],
             }
           </field>
         </record>
+
+        <!--Inest Construction Template -->
+        <record id="budget_plan_invest_construction_xlsx_tempalte" model="ir.attachment">
+            <field name="res_model">budget.plan.invest.construction</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_plan_invest_construction.xlsx</field>
+            <field name="name">Invest Construction Template</field>
+            <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Construction Project': {
+                        '_HEAD_': {
+                            'D2': 'fiscalyear_id.name',
+                            'D3': 'org_id.name_short',
+                            'D4': '${time.strftime("%d-%m-%Y")}',
+                            'D5': 'user_id.name${value or ""}'
+                        },
+                        'plan_expense_line_ids[20]': {
+                            'B10': 'c_or_n${value == "continue" and "ต่อเนื่อง" or "ใหม่"}',
+                            'C10': 'org_id.name_short${value or ""}',
+                            'D10': 'name${value or ""}',
+                            'E10': 'month_duration',
+                            'F10': 'date_start${value and value.strftime("%Y-%m-%d") or ""}',
+                            'G10': 'date_end${value and value.strftime("%Y-%m-%d") or ""}',
+                            'H10': 'operation_area${value or ""}',
+                            'I10': 'project_readiness${value or ""}',
+                            'J10': 'reason${value or ""}',
+                            'K10': 'expected_result${value or ""}',
+                            'L10': 'pm_employee_id.name${value or ""}',
+                            'O10': 'amount_budget',
+                            'P10': 'amount_before',
+                            'Q10': 'amount_fy1',
+                            'R10': 'amount_fy2',
+                            'S10': 'amount_fy3',
+                            'T10': 'amount_fy4',
+                            'U10': 'amount_fy5',
+                            'V10': 'overall_released',
+                            'W10': 'overall_all_commit',
+                            'X10': 'overall_pr_commit',
+                            'Y10': 'overall_po_commit',
+                            'Z10': 'overall_exp_commit',
+                            'AA10': 'overall_actual',
+                            'AB10': 'overall_consumed',
+                            'AC10': 'overall_balance',
+                        }
+                    },
+                    'TAB_List': {
+                        'master_org_ids': {
+                            'B5': 'name_short'
+                        },
+                        'master_employee_ids': {
+                            'D5': 'name',
+                            'E5': 'section_id.name',
+                            'F5': 'section_id.division_id.name',
+                        },
+                    },
+                },
+                '__IMPORT__': {
+                    'Construction Project': {
+                        'plan_expense_line_ids[20]': {
+                            'B10': 'c_or_n',
+                            'C10': 'org_id',
+                            'D10': 'name',
+                            'E10': 'month_duration',
+                            'F10': 'date_start',
+                            'G10': 'date_end',
+                            'H10': 'operation_area',
+                            'I10': 'project_readiness',
+                            'J10': 'reason',
+                            'K10': 'expected_result',
+                            'L10${value and value[1:7] or ""}': 'pm_employee_id',
+                            'O10': 'amount_budget',
+                            'P10': 'amount_before',
+                            'Q10': 'amount_fy1',
+                            'R10': 'amount_fy2',
+                            'S10': 'amount_fy3',
+                            'T10': 'amount_fy4',
+                            'U10': 'amount_fy5',
+                            'V10': 'overall_released',
+                            'W10': 'overall_all_commit',
+                            'X10': 'overall_pr_commit',
+                            'Y10': 'overall_po_commit',
+                            'Z10': 'overall_exp_commit',
+                            'AA10': 'overall_actual',
+                            'AB10': 'overall_consumed',
+                            'AC10': 'overall_balance',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
 
     </data>
 </openerp>

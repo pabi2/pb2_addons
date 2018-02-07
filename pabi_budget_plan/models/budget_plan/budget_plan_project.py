@@ -70,7 +70,7 @@ class BudgetPlanProject(BPCommon, models.Model):
     @api.model
     def create(self, vals):
         name = self._get_doc_number(vals['fiscalyear_id'],
-                                    'res.program', vals['program_id'])
+                                    'res.program', res_id=vals['program_id'])
         vals.update({'name': name})
         return super(BudgetPlanProject, self).create(vals)
 

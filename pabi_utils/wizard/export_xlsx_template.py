@@ -9,7 +9,7 @@ import time
 from copy import copy
 from datetime import datetime
 from ast import literal_eval
-
+from openerp.tools import float_compare
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
 
@@ -24,7 +24,7 @@ def get_field_aggregation(field):
             if len(cond) > 0:
                 return (field[:i], cond)
         except:
-            return (field, False)
+            return (field.replace('@{%s}' % cond, ''), False)
     return (field, False)
 
 
@@ -36,7 +36,7 @@ def get_field_condition(field):
         cond = field[i + 2:j]
         try:
             if len(cond) > 0:
-                return (field[:i], cond)
+                return (field.replace('${%s}' % cond, ''), cond)
         except:
             return (field, False)
     return (field, False)
@@ -145,11 +145,13 @@ class ExportXlsxTemplate(models.TransientModel):
                 data_type = line_copy._fields[f].type
                 line_copy = line_copy[f]
                 if data_type == 'date':
-                    line_copy = datetime.strptime(line_copy,
-                                                  '%Y-%m-%d')
+                    if line_copy:
+                        line_copy = datetime.strptime(line_copy,
+                                                      '%Y-%m-%d')
                 elif data_type == 'datetime':
-                    line_copy = datetime.strptime(line_copy,
-                                                  '%Y-%m-%d %H:%M:%S')
+                    if line_copy:
+                        line_copy = datetime.strptime(line_copy,
+                                                      '%Y-%m-%d %H:%M:%S')
             return line_copy
 
         line_field, max_row = get_line_max(line_field)
@@ -165,8 +167,13 @@ class ExportXlsxTemplate(models.TransientModel):
                            'max', 'max_label', 'min', 'min_label']
         pair_fields = []  # I.e., ('debit${value and . or .}@{sum}', 'debit')
         for field in fields:
+            print field
             temp_field, eval_cond = get_field_condition(field)
+            print eval_cond
+            print temp_field
             raw_field, aggre_func = get_field_aggregation(temp_field)
+            print raw_field
+            print aggre_func
             if aggre_func and aggre_func not in aggre_func_list:
                 raise ValidationError(_('"%", not a valid aggregate function'))
             field_cond_dict.update({field: eval_cond})
@@ -181,13 +188,17 @@ class ExportXlsxTemplate(models.TransientModel):
                 # Case Eval
                 eval_cond = field_cond_dict[field[0]]
                 if eval_cond:  # Get eval_cond of a raw field
-                    eval_context = {'time': time,
+                    eval_context = {'float_compare': float_compare,
+                                    'time': time,
+                                    'datetime': datetime,
                                     'value': value,
                                     'model': self.env[record._name],
                                     'env': self.env,
                                     'context': self._context,
                                     }
-                    value = str(eval(eval_cond, eval_context))
+                    # value = str(eval(eval_cond, eval_context))
+                    # Test removing str(), coz some case, need resulting number
+                    value = eval(eval_cond, eval_context)
                 # --
                 vals[field[0]].append(value)
         return (vals, aggre_func_dict)
@@ -197,78 +208,80 @@ class ExportXlsxTemplate(models.TransientModel):
         """ Fill data from record with format in data_dict to workbook """
         if not record or not data_dict:
             return
-        try:
-            for sheet_name in data_dict:
-                worksheet = data_dict[sheet_name]
-                st = False
-                if isinstance(sheet_name, str):
-                    st = get_sheet_by_name(workbook, sheet_name)
-                elif isinstance(sheet_name, int):
-                    st = workbook.worksheets[sheet_name - 1]
-                if not st:
-                    raise ValidationError(
-                        _('Sheet %s not found!') % sheet_name)
-                # HEAD
-                for rc, field in worksheet.get('_HEAD_', {}).iteritems():
-                    tmp_field, eval_cond = get_field_condition(field)
-                    value = tmp_field and self._get_val(record, tmp_field)
-                    # Case Eval
-                    if eval_cond:  # Get eval_cond of a raw field
-                        eval_context = {'time': time,
-                                        'value': value,
-                                        'model': self.env[record._name],
-                                        'env': self.env,
-                                        'context': self._context,
-                                        }
-                        value = str(eval(eval_cond, eval_context))
-                    st[rc] = value
-                # Line Items
-                line_fields = filter(lambda l: l != '_HEAD_', worksheet)
-                for line_field in line_fields:
-                    fields = [field for rc, field
-                              in worksheet.get(line_field, {}).iteritems()]
-                    vals, aggre_func = \
-                        self._get_line_vals(record, line_field, fields)
-                    for rc, field in worksheet.get(line_field, {}).iteritems():
-                        col, row = split_row_col(rc)  # starting point
-                        i = 0
-                        new_row = 0
-                        for val in vals[field]:
-                            new_row = row + i
+        # try:
+        for sheet_name in data_dict:
+            worksheet = data_dict[sheet_name]
+            st = False
+            if isinstance(sheet_name, str):
+                st = get_sheet_by_name(workbook, sheet_name)
+            elif isinstance(sheet_name, int):
+                st = workbook.worksheets[sheet_name - 1]
+            if not st:
+                raise ValidationError(
+                    _('Sheet %s not found!') % sheet_name)
+            # HEAD
+            for rc, field in worksheet.get('_HEAD_', {}).iteritems():
+                tmp_field, eval_cond = get_field_condition(field)
+                value = tmp_field and self._get_val(record, tmp_field)
+                # Case Eval
+                if eval_cond:  # Get eval_cond of a raw field
+                    eval_context = {'float_compare': float_compare,
+                                    'time': time,
+                                    'datetime': datetime,
+                                    'value': value,
+                                    'model': self.env[record._name],
+                                    'env': self.env,
+                                    'context': self._context,
+                                    }
+                    value = str(eval(eval_cond, eval_context))
+                st[rc] = value
+            # Line Items
+            line_fields = filter(lambda l: l != '_HEAD_', worksheet)
+            for line_field in line_fields:
+                fields = [field for rc, field
+                          in worksheet.get(line_field, {}).iteritems()]
+                vals, aggre_func = \
+                    self._get_line_vals(record, line_field, fields)
+                for rc, field in worksheet.get(line_field, {}).iteritems():
+                    col, row = split_row_col(rc)  # starting point
+                    i = 0
+                    new_row = 0
+                    for val in vals[field]:
+                        new_row = row + i
+                        new_rc = '%s%s' % (col, new_row)
+                        st[new_rc] = val
+                        i += 1
+                    # Add footer line if at least one field have func
+                    has_aggre_func = [x for x in aggre_func.values() if x]
+                    if has_aggre_func:
+                        f = aggre_func.get(field, False)
+                        if f:
+                            # # Line Separator
+                            # new_row += 1
+                            # new_rc = '%s%s' % (col, new_row)
+                            # col_width = st.column_dimensions[col].width
+                            # st[new_rc] = \
+                            #     '-' * int(math.ceil(col_width)) * 2
+                            # # --
+                            # Aggregation Amount
+                            new_row += 1
                             new_rc = '%s%s' % (col, new_row)
-                            st[new_rc] = val
-                            i += 1
-                        # Add footer line if at least one field have func
-                        has_aggre_func = [x for x in aggre_func.values() if x]
-                        if has_aggre_func:
-                            f = aggre_func.get(field, False)
-                            if f:
-                                # # Line Separator
-                                # new_row += 1
-                                # new_rc = '%s%s' % (col, new_row)
-                                # col_width = st.column_dimensions[col].width
-                                # st[new_rc] = \
-                                #     '-' * int(math.ceil(col_width)) * 2
-                                # # --
-                                # Aggregation Amount
-                                new_row += 1
-                                new_rc = '%s%s' % (col, new_row)
-                                if 'label' in f:
-                                    label = {'sum_label': 'Total',
-                                             'avg_label': 'Average',
-                                             'min_label': 'Minimum',
-                                             'max_label': 'Maximum', }
-                                    st[new_rc] = label[f]
-                                else:
-                                    st[new_rc] = eval('%s(%s)' %
-                                                      (f, vals[field]))
-        except ValueError, e:
-            message = str(e).format(rc)
-            raise ValidationError(message)
-        except KeyError, e:
-            raise except_orm(_('Key Error!'), e)
-        except Exception, e:
-            raise except_orm(_('Error filling data into excel sheets!'), e)
+                            if 'label' in f:
+                                label = {'sum_label': 'Total',
+                                         'avg_label': 'Average',
+                                         'min_label': 'Minimum',
+                                         'max_label': 'Maximum', }
+                                st[new_rc] = label[f]
+                            else:
+                                st[new_rc] = eval('%s(%s)' %
+                                                  (f, vals[field]))
+        # except ValueError, e:
+        #     message = str(e).format(rc)
+        #     raise ValidationError(message)
+        # except KeyError, e:
+        #     raise except_orm(_('Key Error!'), e)
+        # except Exception, e:
+        #     raise except_orm(_('Error filling data into excel sheets!'), e)
 
     @api.model
     def _export_template(self, template, res_model, res_id):
