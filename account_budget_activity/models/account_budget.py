@@ -264,9 +264,12 @@ class AccountBudget(models.Model):
             if budget.budget_level_id.budget_release == 'manual_header':
                 if vals.get('policy_amount', False) and \
                         not budget.budget_expense_line_ids:
-                    raise ValidationError(
-                        _('Budget %s has no expense line!\n'
-                          'This operation can not proceed.') % (budget.name,))
+                    budget.write({
+                        'budget_expense_line_ids':
+                        [(0, 0, {'m1': vals['policy_amount']})]})
+                    # raise ValidationError(
+                    #     _('Budget %s has no expense line!\n'
+                    #     'This operation can not proceed.') % (budget.name,))
                 # If policy amount to allocate, but no budget line yet,
                 # do not allow, must set release amount to zero (for now)
                 if budget.to_release_amount and \
@@ -354,6 +357,7 @@ class AccountBudget(models.Model):
     def _validate_plan_vs_release(self):
         for budget in self:
             if budget.budget_level_id.check_plan_with_released_amount:
+                budget.invalidate_cache()
                 if budget.rolling > budget.released_amount:
                     raise ValidationError(
                         _('%s: rolling plan (%s) will exceed '

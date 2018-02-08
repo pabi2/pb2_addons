@@ -13,6 +13,7 @@ class SectionBudgetTransfer(models.Model):
     _name = 'section.budget.transfer'
     _inherit = ['mail.thread']
     _description = "Section Budget Transfer"
+    _order = 'id desc'
 
     name = fields.Char(
         string='Name',
@@ -281,6 +282,12 @@ class SectionBudgetTransferLine(models.Model):
 
     @api.onchange('from_budget_id')
     def _onchange_from_budget_id(self):
+        if self.from_budget_id and \
+                self.from_budget_id.release_diff_rolling <= 0.0:
+            raise ValidationError(
+                _("%s don't have enough budget to transfer.\n"
+                  "Make sure its amount rolling less than its released") %
+                self.from_budget_id.name)
         self.amount_transfer = self.from_budget_id.release_diff_rolling
 
     @api.onchange('amount_transfer')

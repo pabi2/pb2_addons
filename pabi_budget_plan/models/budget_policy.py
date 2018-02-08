@@ -283,7 +283,8 @@ class BudgetPolicy(models.Model):
             rec.date_to = rec.fiscalyear_id.date_stop
 
     @api.multi
-    @api.depends('line_ids',
+    @api.depends('new_policy_amount',
+                 'line_ids',
                  'unit_base_line_ids',
                  'project_base_line_ids',
                  'personnel_line_ids',
@@ -375,6 +376,7 @@ class BudgetPolicy(models.Model):
                     vals.update({
                         'v0_policy_amount': v0_policy_amount,
                         'latest_policy_amount': latest_policy_amount,
+                        'policy_amount': latest_policy_amount,
                     })
                 lines.append((0, 0, vals))
             policy.write({policy_line: lines})
