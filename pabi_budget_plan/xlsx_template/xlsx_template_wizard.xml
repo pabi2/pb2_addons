@@ -9,7 +9,8 @@
           res_model="export.xlsx.template"
           src_model="budget.plan.unit"
           view_mode="form"
-          target="new"/>
+          target="new"
+          context="{'lang': 'th_TH'}"/>
       <act_window id="action_budget_plan_unit_import_xlsx_tempalte"
           name="Import Template Data (.xlsx)"
           res_model="import.xlsx.template"
@@ -23,7 +24,8 @@
           res_model="export.xlsx.template"
           src_model="budget.plan.invest.construction"
           view_mode="form"
-          target="new"/>
+          target="new"
+          context="{'lang': 'th_TH'}"/>
       <act_window id="action_budget_plan_invest_construction_import_xlsx_tempalte"
           name="Import Template Data (.xlsx)"
           res_model="import.xlsx.template"
@@ -52,7 +54,8 @@
           res_model="export.xlsx.template"
           src_model="invest.asset.plan"
           view_mode="form"
-          target="new"/>
+          target="new"
+          context="{'lang': 'th_TH'}"/>
       <act_window id="action_invest_asset_plan_import_xlsx_tempalte"
           name="Import Template Data (.xlsx)"
           res_model="import.xlsx.template"
