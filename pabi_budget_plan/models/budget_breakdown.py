@@ -377,9 +377,10 @@ class BudgetBreakdown(models.Model):
                 plan = line.budget_plan_id
                 budget = plan.convert_to_budget_control()
                 line.budget_id = budget
-            # New policy, set is set to draft
-            line.budget_id.write({'state': 'draft',
-                                  'policy_amount': line.policy_amount})
+            # New policy, set is set to draft, if policy change from prev.
+            if line.budget_id.policy_amount != line.policy_amount:
+                line.budget_id.write({'state': 'draft',
+                                      'policy_amount': line.policy_amount})
         self.write({'state': 'done'})
 
     @api.multi
