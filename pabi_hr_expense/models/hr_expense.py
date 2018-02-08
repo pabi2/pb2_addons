@@ -219,6 +219,10 @@ class HRExpenseAdvanceDueHistory(models.Model):
         ondelete='cascade',
         index=True,
     )
+    date_old_due = fields.Date(
+        string='Old Due Date',
+        readonly=True,
+    )
     date_due = fields.Date(
         string='New Due Date',
         readonly=True,

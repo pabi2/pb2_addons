@@ -26,11 +26,13 @@ class AccountMoveChangeDateDue(models.TransientModel):
             history_obj = self.env['account.move.due.history']
             move_id = self._context.get('active_id', False)
             move = self.env['account.move'].browse(move_id)
+            date_old_due = self.move_id.date_due
             move.line_id.filtered('date_maturity').\
                 write({'date_maturity': self.date_due})
             if self.date_due:
                 history_obj.create({
                     'move_id': self.move_id.id,
+                    'date_old_due': date_old_due,
                     'date_due': self.date_due,
                     'reason': self.reason,
                 })
