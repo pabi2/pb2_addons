@@ -157,6 +157,15 @@
 
                     </page>
                 </xpath>
+                <xpath expr="/form/sheet/notebook/page[@name='expense']//group[@name='expense_extra2']" position="inside">
+                    <field name="commitment_summary_expense_line_ids" nolabel="1">
+                        <tree>
+                            <field name="activity_group_id"/>
+                            <field name="cost_control_id"/>
+                            <field name="all_commit" sum="Total"/>
+                        </tree>
+                    </field>
+                </xpath>
             </field>
         </record>
 
