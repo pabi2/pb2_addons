@@ -156,6 +156,9 @@ class HRExpense(models.Model):
             'date': move.date,
             'date_maturity': move.date
         }
+        # Internal Charge
+        if expense.pay_to == 'internal':
+            vals['charge_type'] = 'internal'
         return vals
 
     @api.model
@@ -181,11 +184,11 @@ class HRExpense(models.Model):
         Expense = self.env['hr.expense.line']
         Period = self.env['account.period']
         for expense in self:
-            ctx = self._context.copy()
-            ctx.update({'company_id': expense.company_id.id})
             periods = Period.find(expense.date)
             period = periods and periods[0] or False
-            ctx.update({'period_id': period.id})
+            ctx = self._context.copy()
+            ctx.update({'company_id': expense.company_id.id,
+                        'period_id': period.id})
             # ============== Create 1st JE for Revenue ==============
             # Cr: Revenue
             rev_journal = expense.rev_ic_journal_id
@@ -267,3 +270,10 @@ class HRExpense(models.Model):
             exp_move.with_context(ctx).write({'line_id': exp_move_lines})
             expense.write({'rev_ic_move_id': rev_move.id,
                            'exp_ic_move_id': exp_move.id})
+
+    @api.multi
+    def write(self, vals):
+        self.ensure_one()
+        if self.pay_to == 'internal':  # For Internal Charge, no analytic_line
+            self = self.with_context(no_create_analytic_line=True)
+        return super(HRExpense, self).write(vals)
