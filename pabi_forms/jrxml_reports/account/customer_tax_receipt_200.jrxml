@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
 	<property name="ireport.zoom" value="1.2418426461183112"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="576"/>
+	<property name="ireport.y" value="127"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -209,7 +209,7 @@ $F{amount_total_text_th}]]></variableExpression>
 		</band>
 	</background>
 	<title>
-		<band height="288">
+		<band height="287">
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="394" y="271" width="115" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -268,12 +268,12 @@ $F{first_product_categ}.toString() != "การร่วมวิจัย"]]><
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_payment}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="49" y="268" width="165" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="24" y="272" width="228" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{vat} != "" ? ($P{REPORT_LOCALE}.toString().equals("th_TH") ? "เลขประจำตัวผู้เสียภาษี: " : "Tax ID: ") + $F{vat} : "")
-+ ($F{taxbranch}.toString() != "" ? ($P{REPORT_LOCALE}.toString().equals("th_TH") ? " สาขา: ": " Branch No: ") : "")
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{vat} != "" ? "เลขประจำตัวผู้เสียภาษี/Tax ID: " + $F{vat} : "")
++ ($F{taxbranch}.toString() != "" ? " สาขา/Branch No: " : "")
 + ($F{taxbranch} == "00000" ? ($P{REPORT_LOCALE}.toString().equals("th_TH") ? "สำนักงานใหญ่" : "Head Office") : $F{taxbranch})]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -298,7 +298,7 @@ $F{first_product_categ}.toString() != "การร่วมวิจัย"]]><
 	<columnHeader>
 		<band height="44" splitType="Stretch">
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="394" y="-2" width="115" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="394" y="-4" width="115" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -453,7 +453,7 @@ $F{first_product_categ}.toString() != "การร่วมวิจัย"]]><
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_LOCALE}.toString().equals("th_TH") ? "หากมีการแก้ไขขอให้แจ้งภายใน 7 วัน มิฉะนั้นสำนักงานฯ จะถือว่าถูกต้อง" :
-"If changes are requested to notify within 7 days, otherwise the office has. Will be considered invalid."]]></textFieldExpression>
+"Any change must be notified within 7 days. Otherwise, all will be considered as correct."]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>
