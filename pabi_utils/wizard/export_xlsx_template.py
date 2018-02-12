@@ -223,6 +223,8 @@ class ExportXlsxTemplate(models.TransientModel):
             for rc, field in worksheet.get('_HEAD_', {}).iteritems():
                 tmp_field, eval_cond = get_field_condition(field)
                 value = tmp_field and self._get_val(record, tmp_field)
+                if isinstance(value, basestring):
+                    value = value.encode('utf-8')
                 # Case Eval
                 if eval_cond:  # Get eval_cond of a raw field
                     eval_context = {'float_compare': float_compare,

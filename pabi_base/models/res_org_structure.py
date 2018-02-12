@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+from openerp import fields, models, api
 from openerp.addons.pabi_base.models.res_common import ResCommon
 from openerp import tools
 
@@ -149,6 +149,40 @@ class ResSection(ResCommon, models.Model):
         'res.section.program',
         string='Section Program',
     )
+    internal_charge = fields.Boolean(
+        string='Internal Charge',
+        default=False,
+        help="Service from this section is available as internal charge",
+    )
+
+    # @api.model
+    # def search(self, args, offset=0, limit=None, order=None, count=False):
+    #     if self._context.get('show_all_section', False):
+    #         return super(ResCommon, self.sudo()).\
+    #             search(args, offset=offset, limit=limit,
+    #                    order=order, count=count)
+    #   return super(ResSection, self).search(args, offset=offset, limit=limit,
+    #                                           order=order, count=count)
+    #
+    # @api.model
+    # def name_search(self, name, args=None, operator='ilike', limit=80):
+    #     if self._context.get('show_all_section', False):
+    #         return super(ResCommon, self.sudo()).\
+    #             name_search(name=name, args=args,
+    #                         operator=operator, limit=limit)
+    #     return super(ResSection, self).name_search(name=name, args=args,
+    #                                                operator=operator,
+    #                                                limit=limit)
+    #
+    # def read(self, cr, uid, ids, fields=None,
+    #          context=None, load='_classic_read'):
+    #     if not context:
+    #         context = {}
+    #     print context
+    #     if context.get('show_all_section', False):
+    #         uid = 1  # Super User, show all
+    #     return super(ResSection, self).read(
+    #         cr, uid, ids, fields=fields, context=context, load=load)
 
 
 class ResSectionView(ResSection, models.Model):

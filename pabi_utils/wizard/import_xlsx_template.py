@@ -21,7 +21,7 @@ def get_field_condition(field):
         cond = field[i + 2:j]
         try:
             if len(cond) > 0:
-                return (field.replace('${%s}' % cond, ''), False)
+                return (field.replace('${%s}' % cond, ''), cond)
         except:
             return (field, False)
     return (field, False)
@@ -214,11 +214,13 @@ class ImportXlsxTemplate(models.TransientModel):
                     eval_context = self.get_eval_context(model=model,
                                                          value=value)
                     if key_eval_cond:
-                        value = str(eval(key_eval_cond, eval_context))
+                        # str() will throw cordinal not in range error
+                        # value = str(eval(key_eval_cond, eval_context))
+                        value = eval(key_eval_cond, eval_context)
                     # Case Eval
                     if val_eval_cond:
-                        value = str(eval(val_eval_cond, eval_context))
-                    # --
+                        # value = str(eval(val_eval_cond, eval_context))
+                        value = eval(val_eval_cond, eval_context)
                     vals[out_field].append(value)
                 # if all value in vals[out_field] == '', we don't need it
                 if not filter(lambda x: x != '', vals[out_field]):

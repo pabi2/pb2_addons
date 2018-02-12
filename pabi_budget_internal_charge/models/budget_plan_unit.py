@@ -66,8 +66,9 @@ class BudgetPlanUnitLine(models.Model):
         "External Charge. Internal charged is for Unit Based only."
     )
     income_section_id = fields.Many2one(
-        'res.section.view',
+        'res.section',
         string='Income Section',
+        domain=[('internal_charge', '=', True)],
     )
     income_section_name = fields.Char(
         related='income_section_id.name',

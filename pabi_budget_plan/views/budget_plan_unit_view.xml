@@ -46,6 +46,7 @@
                     <field name="description"/>
                     <field name="reason"/>
                     <field name="m0"/>
+                    <field name="next_fy_commitment" sum="Next FY Commitment"/>
                     <field name="m1"/>
                     <field name="m2"/>
                     <field name="m3"/>
@@ -286,6 +287,7 @@
                     <field name="description"/>
                     <field name="reason"/>
                     <field name="m0"/>
+                    <field name="next_fy_commitment" sum="Next FY Commitment"/>
                     <field name="m1"/>
                     <field name="m2"/>
                     <field name="m3"/>

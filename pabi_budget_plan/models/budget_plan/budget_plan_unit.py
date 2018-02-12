@@ -110,6 +110,11 @@ class BudgetPlanUnit(BPCommon, models.Model):
         store=True,
     )
     # Data for filing import template
+    master_internal_charge_ids = fields.Many2many(
+        'res.section',
+        sring='Internal Charge Sections',
+        compute='_compute_master_internal_charge_ids',
+    )
     master_ag_exp_ids = fields.Many2many(
         'account.activity.group',
         sring='Activity Grups Master (exp)',
@@ -129,6 +134,13 @@ class BudgetPlanUnit(BPCommon, models.Model):
         ('uniq_plan', 'unique(section_id, fiscalyear_id)',
          'Duplicated budget plan for the same section is not allowed!'),
     ]
+
+    @api.multi
+    def _compute_master_internal_charge_ids(self):
+        Section = self.env['res.section']
+        sections = Section.search([('internal_charge', '=', True)])
+        for rec in self:
+            rec.master_internal_charge_ids = sections
 
     @api.multi
     def _compute_master_ag_ids(self):
@@ -355,6 +367,11 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     #     store=True,
     #     help="This virtual field is being used to sort the status in view",
     # )
+    next_fy_commitment = fields.Float(
+        string='Next FY Commitment',
+        readonly=True,
+        help="Comitment on next fy PR/PO/EX",
+    )
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
@@ -476,12 +493,22 @@ class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
     def _prepare_prev_fy_lines(self):
         """ Given search result from this view, prepare lines tuple """
         plan_lines = []
+        plan_fiscalyear_id = self._context.get('plan_fiscalyear_id')
         for rec in self:
+            a = rec.section_id
+            expenses = a.monitor_expense_ids
             if not rec.all_commit:
                 continue
+            # Next FY PR/PO/EX
+            next_fy_ex = expenses.filtered(
+                lambda l: l.fiscalyear_id.id == plan_fiscalyear_id)
+            next_fy_commit = sum(next_fy_ex.mapped('amount_pr_commit') +
+                                 next_fy_ex.mapped('amount_po_commit') +
+                                 next_fy_ex.mapped('amount_exp_commit'))
             val = {'activity_group_id': rec.activity_group_id.id,
                    'cost_control_id': rec.cost_control_id.id,
                    'm0': rec.all_commit,
+                   'next_fy_commitment': next_fy_commit,
                    'description': rec.document,
                    }
             plan_lines.append((0, 0, val))
