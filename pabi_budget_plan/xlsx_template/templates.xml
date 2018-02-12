@@ -452,6 +452,34 @@
           </field>
         </record>
 
+        <!-- Project Based Template -->
+        <record id="budget_plan_project_base_xlsx_tempalte" model="ir.attachment">
+            <field name="res_model">budget.plan.project</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_plan_project.xlsx</field>
+            <field name="name">Project Based Template</field>
+            <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Project': {
+                        '_HEAD_': {
+                            'E2': 'fiscalyear_id.name',
+                            'E3': 'program_id.name',
+                            'E4': 'program_group_id.name',
+                            'E5': 'functional_area_id.name',
+                            'E6': '${time.strftime("%d-%m-%Y")}',
+                            'E7': 'user_id.name${value or ""}'
+                        },
+                    },
+                },
+                '__IMPORT__': {
+                    'Project': {
+                    }
+                }
+            }
+          </field>
+        </record>
 
     </data>
 </openerp>
