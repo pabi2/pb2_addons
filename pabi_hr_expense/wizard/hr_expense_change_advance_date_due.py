@@ -21,5 +21,6 @@ class HRExpenseChangeAdvanceDateDue(models.TransientModel):
         if self.date_due:
             history_obj.create({
                 'expense_id': self.expense_id.id,
+                'date_old_due': self.expense_id.date_due,
                 'date_due': self.date_due,
             })

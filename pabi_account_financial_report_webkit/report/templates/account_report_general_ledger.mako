@@ -137,6 +137,8 @@
                             ## curency code
                             <div class="act_as_cell amount" style="width: 30px; text-align: right;">${_('Curr.')}</div>
                         %endif
+                        ## created by
+                        <div class="act_as_cell" style="width: 100px;">${_('Created by')}</div>
                     </div>
                 </div>
 
@@ -193,7 +195,8 @@
                               ## curency code
                               <div class="act_as_cell amount"></div>
                          %endif
-
+                         ## created by
+                         <div class="act_as_cell"></div>
                         </div>
                       %endif
                       %for line in ledger_lines[account.id]:
@@ -253,14 +256,16 @@
                               ## curency code
                               <div class="act_as_cell amount" style="text-align: right;">${line.get('currency_code') or ''}</div>
                           %endif
+                          ## created by
+                          <div class="act_as_cell">${line.get('created_name') or ''}</div>
                       </div>
                       %endfor
                 </div>
                 <div class="act_as_table list_table">
                     <div class="act_as_row labels" style="font-weight: bold;">
                         ## date
-                        <div class="act_as_cell first_column" style="width: 615px;">${account.code} - ${account.name}</div>
-                        <div class="act_as_cell" style="width: 260px;">${_("Cumulated Balance on Account")}</div>
+                        <div class="act_as_cell first_column" style="width: 1305px;">${account.code} - ${account.name}</div>
+                        <div class="act_as_cell" style="width: 150px;">${_("Cumulated Balance on Account")}</div>
                         ## debit
                         <div class="act_as_cell amount" style="width: 75px;">${ formatLang(cumul_debit) | amount }</div>
                         ## credit
@@ -277,6 +282,8 @@
                             ## curency code
                             <div class="act_as_cell amount" style="width: 30px; text-align: right;"></div>
                         %endif
+                        ## created by
+                        <div class="act_as_cell" style="width: 100px;"></div>
                     </div>
                 </div>
             </div>

@@ -23,6 +23,7 @@ _column_sizes = [
     ('activity', 20),
     ('account_code', 12),
     ('partner', 30),
+    ('reference', 30),
     ('description', 45),
     ('counterpart', 30),
     ('debit', 15),
@@ -30,6 +31,7 @@ _column_sizes = [
     ('cumul_bal', 15),
     ('curr_bal', 15),
     ('curr_code', 7),
+    ('created_by', 30),
 ]
 
 
@@ -164,6 +166,8 @@ class general_ledger_xls(report_xls):
             ('account_code', 1, 0, 'text',
              _('Account'), None, c_hdr_cell_style),
             ('partner', 1, 0, 'text', _('Partner'), None, c_hdr_cell_style),
+            ('reference', 1, 0, 'text', _('Reference'), None,
+                c_hdr_cell_style),
             ('description', 1, 0, 'text', _('Description'), None,
                 c_hdr_cell_style),
             ('counterpart', 1, 0, 'text',
@@ -181,6 +185,10 @@ class general_ledger_xls(report_xls):
                 ('curr_code', 1, 0, 'text', _('Curr.'),
                  None, c_hdr_cell_style_center),
             ]
+        c_specs += [
+            ('created_by', 1, 0, 'text', _('Created by'),
+                None, c_hdr_cell_style),
+        ]
         c_hdr_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
 
         # cell styles for ledger lines
@@ -231,7 +239,7 @@ class general_ledger_xls(report_xls):
                     cumul_balance_curr = init_balance.get(
                         'init_balance_currency') or 0.0
                     c_specs = [('empty%s' % x, 1, 0, 'text', None)
-                               for x in range(6)]
+                               for x in range(14)]
                     c_specs += [
                         ('init_bal', 1, 0, 'text', _('Initial Balance')),
                         ('counterpart', 1, 0, 'text', None),
@@ -305,6 +313,7 @@ class general_ledger_xls(report_xls):
                         ('account_code', 1, 0, 'text', account.code),
                         ('partner', 1, 0, 'text',
                          line.get('partner_name') or ''),
+                        ('reference', 1, 0, 'text', line.get('lref') or ''),
                         ('description', 1, 0, 'text', label),
                         ('counterpart', 1, 0, 'text',
                          line.get('counterparts') or ''),
@@ -324,22 +333,26 @@ class general_ledger_xls(report_xls):
                                 'currency_code') or '', None,
                              ll_cell_style_center),
                         ]
+                    c_specs += [
+                        ('created_by', 1, 0, 'text',
+                            line.get('created_name') or ''),
+                    ]
                     row_data = self.xls_row_template(
                         c_specs, [x[0] for x in c_specs])
                     row_pos = self.xls_write_row(
                         ws, row_pos, row_data, ll_cell_style)
 
-                debit_start = rowcol_to_cell(row_start, 15)
-                debit_end = rowcol_to_cell(row_pos - 1, 15)
+                debit_start = rowcol_to_cell(row_start, 16)
+                debit_end = rowcol_to_cell(row_pos - 1, 16)
                 debit_formula = 'SUM(' + debit_start + ':' + debit_end + ')'
-                credit_start = rowcol_to_cell(row_start, 16)
-                credit_end = rowcol_to_cell(row_pos - 1, 16)
+                credit_start = rowcol_to_cell(row_start, 17)
+                credit_end = rowcol_to_cell(row_pos - 1, 17)
                 credit_formula = 'SUM(' + credit_start + ':' + credit_end + ')'
-                balance_debit = rowcol_to_cell(row_pos, 15)
-                balance_credit = rowcol_to_cell(row_pos, 16)
+                balance_debit = rowcol_to_cell(row_pos, 16)
+                balance_credit = rowcol_to_cell(row_pos, 17)
                 balance_formula = balance_debit + '-' + balance_credit
                 c_specs = [
-                    ('acc_title', 14, 0, 'text',
+                    ('acc_title', 15, 0, 'text',
                      ' - '.join([account.code, account.name])),
                     ('cum_bal', 1, 0, 'text',
                      _('Cumulated Balance on Account'),
@@ -359,6 +372,9 @@ class general_ledger_xls(report_xls):
                     else:
                         c_specs += [('curr_bal', 1, 0, 'text', None)]
                     c_specs += [('curr_code', 1, 0, 'text', None)]
+                c_specs += [
+                    ('created_by', 1, 0, 'text', None),
+                ]
                 row_data = self.xls_row_template(
                     c_specs, [x[0] for x in c_specs])
                 row_pos = self.xls_write_row(
