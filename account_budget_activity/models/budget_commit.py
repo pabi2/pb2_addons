@@ -257,6 +257,9 @@ class CommitLineCommon(object):
 
     @api.multi
     def _create_analytic_line(self, reverse=False):
+        if self._context.get('no_create_analytic_line', False):
+            return
+
         params = self._CLC[self._name]
 
         document_field = params['document_field']

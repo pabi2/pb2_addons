@@ -248,36 +248,37 @@ class BudgetBreakdown(models.Model):
                 raise ValidationError(
                     _('Before you proceed, please click button to '
                       '"Generate Breakdown Lines".'))
-            if not breakdown._validate_breakdown():
-                continue
+            # if not breakdown._validate_breakdown():
+            #     continue
             breakdown.generate_budget_control()
             breakdown.write({'state': 'done'})
 
-    @api.multi
-    def _validate_breakdown(self):
-        """ Check relelated budget plan
-        - If policy amount is not zero, at least there should be a plan line
-        """
-        self.ensure_one()
-        res = {'valid': True, 'message': ''}
-        msg = []
-        if self.chart_view == 'unit_base':
-            for line in self.unit_base_line_ids:
-                if line.policy_amount:
-                    plan_unit = line.budget_plan_id
-                    if not plan_unit.plan_expense_line_ids:
-                        res['valid'] = False
-                        msg.append(
-                            '%s - %s, do not have any plan line, policy amount'
-                            ' is not allowed.' %
-                            (plan_unit.name, plan_unit.section_id.name_short))
-        res['message'] = '\n'.join(msg)
-        if res['valid']:
-            self.write({'message': False})
-            return True
-        else:
-            self.write({'message': res['message']})
-            return False
+    # I think no need to check, if no line in control, just create one
+    # @api.multi
+    # def _validate_breakdown(self):
+    #     """ Check relelated budget plan
+    #     - If policy amount is not zero, at least there should be a plan line
+    #     """
+    #     self.ensure_one()
+    #     res = {'valid': True, 'message': ''}
+    #     msg = []
+    #     if self.chart_view == 'unit_base':
+    #         for line in self.unit_base_line_ids:
+    #             if line.policy_amount:
+    #                 plan_unit = line.budget_plan_id
+    #                 if not plan_unit.plan_expense_line_ids:
+    #                     res['valid'] = False
+    #                     msg.append(
+    #                       '%s - %s, do not have any plan line, policy amount'
+    #                         ' is not allowed.' %
+    #                       (plan_unit.name, plan_unit.section_id.name_short))
+    #     res['message'] = '\n'.join(msg)
+    #     if res['valid']:
+    #         self.write({'message': False})
+    #         return True
+    #     else:
+    #         self.write({'message': res['message']})
+    #         return False
 
     @api.multi
     def generate_breakdown_line(self):
@@ -318,13 +319,17 @@ class BudgetBreakdown(models.Model):
                 (entity_field, '=', entity_id),
                 ('chart_view', '=', breakdown.chart_view)])
             # Existing budgets, sub_entity_dict, i.e.,  {seciton_id: budget_id}
-            ent_bud_dict = {}
+            ent_bud_dict = {}  # {sub_entity_id: (budget_id, latest_policy)}
             for x in budgets:
                 if sub_entity_field:
-                    ent_bud_dict.update({x[sub_entity_field].id: x.id})
+                    ent_bud_dict.update(
+                        {x[sub_entity_field].id: (x.id,
+                                                  x.policy_amount)})
                 else:
-                    ent_bud_dict.update({False: x.id})  # Personnel
-            # Create line from plans first
+                    # For personnel budget
+                    ent_bud_dict.update({False: (x.id,
+                                                 x.policy_amount)})
+            # Create line from plans first, so this will also reference to plan
             for plan in plans:
                 budget_plan_id = '%s,%s' % (BudgetPlan._name, plan.id)
                 sub_entity_id = False
@@ -334,9 +339,15 @@ class BudgetBreakdown(models.Model):
                     vals.update({
                         sub_entity_field: sub_entity_id
                     })
+                budget_id = False
+                latest_policy_amount = False
+                if ent_bud_dict.get(sub_entity_id, False):
+                    budget_id = ent_bud_dict[sub_entity_id][0]
+                    latest_policy_amount = ent_bud_dict[sub_entity_id][1]
                 vals.update({
                     'budget_plan_id': budget_plan_id,
-                    'budget_id': ent_bud_dict.get(sub_entity_id, False),
+                    'budget_id': budget_id,
+                    'policy_amount': latest_policy_amount,
                 })
                 lines.append((0, 0, vals))
             # Create line for budget that don't have plan, manual create
@@ -348,6 +359,7 @@ class BudgetBreakdown(models.Model):
                     vals = {
                         'budget_plan_id': False,
                         'budget_id': budget.id,
+                        'policy_amount': budget.policy_amount,
                         sub_entity_field: budget[sub_entity_field].id
                     }
                     lines.append((0, 0, vals))
@@ -365,9 +377,10 @@ class BudgetBreakdown(models.Model):
                 plan = line.budget_plan_id
                 budget = plan.convert_to_budget_control()
                 line.budget_id = budget
-            # New policy, set is set to draft
-            line.budget_id.write({'state': 'draft',
-                                  'policy_amount': line.policy_amount})
+            # New policy, set is set to draft, if policy change from prev.
+            if line.budget_id.policy_amount != line.policy_amount:
+                line.budget_id.write({'state': 'draft',
+                                      'policy_amount': line.policy_amount})
         self.write({'state': 'done'})
 
     @api.multi

@@ -102,7 +102,7 @@ class HRExpenseLine(CommitLineCommon, ActivityCommon, models.Model):
     #     if not general_journal.exp_commitment_analytic_journal_id or \
     #             not general_journal.exp_commitment_account_id:  # <---
     #         raise ValidationError(
-    #             _("No analytic journal for expense commitments defined on the "
+    #         _("No analytic journal for expense commitments defined on the "
     #               "accounting journal '%s'") % general_journal.name)
     #     analytic_journal = general_journal.exp_commitment_analytic_journal_id
     #
@@ -112,7 +112,7 @@ class HRExpenseLine(CommitLineCommon, ActivityCommon, models.Model):
     #         return False
     #
     #     # Use EX Commitment Account
-    #     general_account_id = general_journal.exp_commitment_account_id.id   #  < --
+    # general_account_id = general_journal.exp_commitment_account_id.id #  < --
     #
     #     line_qty = False
     #     line_amount = False

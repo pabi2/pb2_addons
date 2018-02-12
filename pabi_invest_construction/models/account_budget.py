@@ -66,7 +66,8 @@ class AccountBudget(models.Model):
                     budget_line_dict = {
                         'budget_id': self.id,
                         'org_id': self.org_id.id,
-                        'fund_id': ic.fund_ids and ic.fund_ids[0].id or False,
+                        'fund_id':
+                        phase.fund_ids and phase.fund_ids[0].id or False,
                         'activity_group_id': const_default_ag_id,
                         'invest_construction_id': ic.id,
                         'invest_construction_phase_id': phase.id,

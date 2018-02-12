@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="pabi_base.view_res_fund_form"/>
             <field name="arch" type="xml">
                 <group position="inside">
-                    <group string="Applicable with Budget Struture..." colspan="4">
+                    <group string="Applicable with Budget Structure..." colspan="4">
                         <div>
                             <field name="unit_base" class="oe_inline"/>
                             <label string="Unit Based," class="oe_inline"/>

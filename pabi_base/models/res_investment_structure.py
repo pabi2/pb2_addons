@@ -209,7 +209,9 @@ class ResInvestConstructionPhase(ResCommon, models.Model):
     )
     fund_ids = fields.Many2many(
         'res.fund',
-        related='invest_construction_id.fund_ids',
+        'res_fund_invest_construction_phase_rel',
+        'invest_construction_phase_id', 'fund_id',
+        domain="[('invest_construction', '=', True)]",
         string='Funds',
     )
     _sql_constraints = [

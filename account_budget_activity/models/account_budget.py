@@ -163,9 +163,9 @@ class AccountBudget(models.Model):
         store=True,
     )
     past_consumed = fields.Float(
-        string='Consumed',
+        string='Past Actuals',
         compute='_compute_past_future_rolling',
-        help="Commitment + Actual for the past months",
+        help="Actual for the past months",
     )
     future_plan = fields.Float(
         string='Future Plan',
@@ -216,7 +216,8 @@ class AccountBudget(models.Model):
         Period = self.env['account.period']
         current_period = Period.find()
         dom = [('fiscalyear_id', '=', self.fiscalyear_id.id),
-               ('period_id', '<', current_period.id)]
+               ('period_id', '<=', current_period.id),
+               ('budget_method', '=', 'expense')]
         return dom
 
     @api.multi
@@ -235,7 +236,7 @@ class AccountBudget(models.Model):
         future_plan = 0.0
         expense_lines = self._budget_expense_lines_hook()
         for line in expense_lines:
-            for i in range(period_num, 13):
+            for i in range(period_num + 1, 13):
                 future_plan += line['m%s' % (i,)]
         return future_plan
 
@@ -245,7 +246,8 @@ class AccountBudget(models.Model):
         for budget in self:
             # Past
             dom = budget._get_past_consumed_domain()
-            budget.past_consumed = sum(Consume.search(dom).mapped('amount'))
+            budget.past_consumed = \
+                sum(Consume.search(dom).mapped('amount_actual'))
             # Future
             budget.future_plan = budget._get_future_plan_amount()
             # Rolling
@@ -264,9 +266,12 @@ class AccountBudget(models.Model):
             if budget.budget_level_id.budget_release == 'manual_header':
                 if vals.get('policy_amount', False) and \
                         not budget.budget_expense_line_ids:
-                    raise ValidationError(
-                        _('Budget %s has no expense line!\n'
-                          'This operation can not proceed.') % (budget.name,))
+                    budget.write({
+                        'budget_expense_line_ids':
+                        [(0, 0, {'m1': vals['policy_amount']})]})
+                    # raise ValidationError(
+                    #     _('Budget %s has no expense line!\n'
+                    #     'This operation can not proceed.') % (budget.name,))
                 # If policy amount to allocate, but no budget line yet,
                 # do not allow, must set release amount to zero (for now)
                 if budget.to_release_amount and \
@@ -354,6 +359,7 @@ class AccountBudget(models.Model):
     def _validate_plan_vs_release(self):
         for budget in self:
             if budget.budget_level_id.check_plan_with_released_amount:
+                budget.invalidate_cache()
                 if budget.rolling > budget.released_amount:
                     raise ValidationError(
                         _('%s: rolling plan (%s) will exceed '

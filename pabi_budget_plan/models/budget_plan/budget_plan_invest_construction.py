@@ -2,7 +2,7 @@
 from openerp import tools
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
-from .budget_plan_common import BPCommon, BPLCommon, PrevFYCommon
+from .budget_plan_common import BPCommon, BPLMonthCommon, PrevFYCommon
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 # from openerp.addons.document_status_history.models.document_history import \
@@ -105,7 +105,7 @@ class BudgetPlanInvestConstruction(BPCommon, models.Model):
         return plan_ids
 
 
-class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
+class BudgetPlanInvestConstructionLine(BPLMonthCommon, ActivityCommon,
                                        models.Model):
     _name = 'budget.plan.invest.construction.line'
     _description = "Investment Construction Budget - Budget Plan Line"
@@ -216,6 +216,12 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
     )
     next_fy_commitment = fields.Float(
         string='Next FY Commitment',
+    )
+    # Special for Invest Construction, m1 always equal fy1
+    # So, the fy1 amount will be presented in budget plan
+    m1 = fields.Float(
+        related='amount_fy1',
+        store=True,
     )
     # Required for updating dimension
     # FIND ONLY WHAT IS NEED AND USE related field.

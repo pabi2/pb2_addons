@@ -42,11 +42,12 @@ class AccountBudget(models.Model):
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=80):
         # case transfer, only list budget with diff amount to transfer
+        # Note, using this is quite performance consumed, try not to use it.
         if self._context.get('show_release_diff_rolling_gt_zero', False):
             budgets = self.search(args)
             _ids = []
             for budget in budgets:
-                if budget.release_diff_rolling >= 0.0:
+                if budget.release_diff_rolling > 0.0:
                     _ids.append(budget.id)
             args += [('id', 'in', _ids)]
         return super(AccountBudget, self).name_search(name=name,
