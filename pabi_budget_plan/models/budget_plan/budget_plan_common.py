@@ -118,7 +118,9 @@ class BPCommon(Common):
         return '%s/%s/%s' % (_prefix, fiscal.code, code)
 
     @api.multi
-    @api.depends('plan_line_ids')
+    @api.depends('plan_line_ids',
+                 'plan_line_ids.planned_amount',
+                 'plan_line_ids.budget_method')
     def _compute_planned_overall(self):
         for rec in self:
             lines = rec.plan_line_ids
