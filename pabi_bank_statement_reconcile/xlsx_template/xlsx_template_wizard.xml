@@ -8,7 +8,8 @@
           res_model="export.xlsx.template"
           src_model="pabi.bank.statement"
           view_mode="form"
-          target="new"/>
+          target="new"
+          context="{'lang': 'th_TH'}"/>
       <act_window id="action_bank_statement_import_xlsx_tempalte"
           name="Import Template Data (.xlsx)"
           res_model="import.xlsx.template"
