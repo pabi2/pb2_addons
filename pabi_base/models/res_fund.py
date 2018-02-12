@@ -32,7 +32,7 @@ class ResFund(ResCommon, models.Model):
         string='Investment Assets',
     )
     invest_construction_phase_ids = fields.Many2many(
-        'res.project',
+        'res.invest.construction.phase',
         'res_fund_invest_construction_phase_rel',
         'fund_id', 'invest_construction_phase_id',
         string='Investment Construction Phases',

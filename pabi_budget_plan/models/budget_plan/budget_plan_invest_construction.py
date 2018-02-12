@@ -217,6 +217,13 @@ class BudgetPlanInvestConstructionLine(BPLCommon, ActivityCommon,
     next_fy_commitment = fields.Float(
         string='Next FY Commitment',
     )
+    # Special for Invest Construction, m1 always equal fy1
+    # So, the fy1 amount will be presented in budget plan
+    m0 = fields.Float(
+        related='amount_fy1',
+        store=True,
+    )
+
     # Required for updating dimension
     # FIND ONLY WHAT IS NEED AND USE related field.
 
