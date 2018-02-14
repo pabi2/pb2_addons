@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
+from openerp import tools
+from openerp.exceptions import ValidationError
 
 
 class BudgetAllocation(models.Model):
     _name = 'budget.allocation'
-    _inherit = ['mail.thread']
+    _auto = False
+    # _inherit = ['mail.thread']
     _description = 'Budget Allocation'
 
     fiscalyear_id = fields.Many2one(
@@ -13,12 +16,12 @@ class BudgetAllocation(models.Model):
         index=True,
         ondelete='cascade',
     )
-    revision = fields.Selection(
-        lambda self: [(str(x), str(x))for x in range(13)],
+    revision = fields.Integer(
         string='Revision',
         readonly=True,
-        help="Revision 0 - 12, 0 is on on the fiscalyear open.",
+        help="Revision number",
     )
+    # Amount
     amount_unit_base = fields.Float(
         string='Unit Based',
         compute='_compute_amount',
@@ -42,6 +45,32 @@ class BudgetAllocation(models.Model):
     amount_total = fields.Float(
         string='Total',
         compute='_compute_amount',
+    )
+    # Policy ID
+    unit_base_policy_id = fields.Many2one(
+        'budget.policy',
+        string='Unit Based',
+        compute='_compute_policy_id',
+    )
+    project_base_policy_id = fields.Many2one(
+        'budget.policy',
+        string='Project Based',
+        compute='_compute_policy_id',
+    )
+    personnel_policy_id = fields.Many2one(
+        'budget.policy',
+        string='Personnel',
+        compute='_compute_policy_id',
+    )
+    invest_asset_policy_id = fields.Many2one(
+        'budget.policy',
+        string='Invest Asset',
+        compute='_compute_policy_id',
+    )
+    invest_construction_policy_id = fields.Many2one(
+        'budget.policy',
+        string='Invest Construction',
+        compute='_compute_policy_id',
     )
     _sql_constraints = [
         ('uniq_revision', 'unique(fiscalyear_id, revision)',
@@ -68,34 +97,75 @@ class BudgetAllocation(models.Model):
                 amount_total += p.new_policy_amount
             rec.amount_total = amount_total
 
-    # Following code is not being used, as this model simply a view.
-    # @api.model
-    # def _change_amount_content(self, fiscal, alloc, alloc_vals):
-    #     track_fields = ['amount_unit_base', 'amount_project_base',
-    #                     'amount_personnel', 'amount_invest_asset',
-    #                     'amount_invest_construction']
-    #     if not alloc_vals or set(alloc_vals.keys()).isdisjoint(track_fields):
-    #         return False
-    #     field_labels = dict([(name, field.string)
-    #                          for name, field in alloc._fields.iteritems()])
-    #     title = _('Allocation change(s) for %s revision %s') % (fiscal.name,
-    #                                                             alloc.revision)
-    #     message = '<h3>%s</h3><ul>' % title
-    #     for field in track_fields:
-    #         if alloc_vals.get(field, False):
-    #             message += _(
-    #                 '<li><b>%s</b>: %s → %s</li>'
-    #             ) % (field_labels[field],
-    #                  '{:,.2f}'.format(alloc[field]),
-    #                  '{:,.2f}'.format(alloc_vals[field]), )
-    #     message += '</ul>'
-    #     return message
-    #
-    # @api.multi
-    # def write(self, vals):
-    #     for alloc in self:
-    #         message = self._change_amount_content(alloc.fiscalyear_id,
-    #                                               alloc, vals)
-    #         if message:
-    #             alloc.fiscalyear_id.message_post(body=message)
-    #     return super(BudgetAllocation, self).write(vals)
+    @api.multi
+    def _compute_policy_id(self):
+        chartviews = {
+            'unit_base': 'unit_base_policy_id',
+            'project_base': 'project_base_policy_id',
+            'personnel': 'personnel_policy_id',
+            'invest_asset': 'invest_asset_policy_id',
+            'invest_construction': 'invest_construction_policy_id',
+        }
+        Policy = self.env['budget.policy']
+        for rec in self:
+            # All policyes of the same revision / fiscalyear
+            policies = Policy.search(
+                [('revision', '=', rec.revision),
+                 ('fiscalyear_id', '=', rec.fiscalyear_id.id)])
+            for chart_view in chartviews:
+                p = policies.filtered(lambda l: l.chart_view == chart_view)
+                rec[chartviews[chart_view]] = p
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        _sql = """
+        select row_number() over (order by fiscalyear_id, revision) as id, *
+        from (select distinct fiscalyear_id, revision
+            from budget_policy
+            order by fiscalyear_id, revision) a
+        """
+        cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
+                   (self._table, _sql))
+
+    @api.multi
+    def open_unit_base_policy(self):
+        self.ensure_one()
+        return self.open_policy(self.unit_base_policy_id.id)
+
+    @api.multi
+    def open_project_base_policy(self):
+        self.ensure_one()
+        return self.open_policy(self.project_base_policy_id.id)
+
+    @api.multi
+    def open_personnel_policy(self):
+        self.ensure_one()
+        return self.open_policy(self.personnel_policy_id.id)
+
+    @api.multi
+    def open_invest_asset_policy(self):
+        self.ensure_one()
+        return self.open_policy(self.invest_asset_policy_id.id)
+
+    @api.multi
+    def open_invest_construction_policy(self):
+        self.ensure_one()
+        return self.open_policy(self.invest_construction_policy_id.id)
+
+    @api.model
+    def open_policy(self, policy_id):
+        if not policy_id:
+            raise ValidationError(_('No related policy!'))
+        view = self.env.ref('pabi_budget_plan.view_budget_policy_form')
+        result = {
+            'name': _("Budget Policy"),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'budget.policy',
+            'view_id': view.id,
+            'res_id': policy_id,
+            'type': 'ir.actions.act_window',
+            'context': {},
+            'nodestroy': True,
+        }
+        return result

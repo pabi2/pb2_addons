@@ -29,15 +29,13 @@ class BudgetPolicy(models.Model):
         states={'draft': [('readonly', False)]},
         track_visibility='onchange',
     )
-    revision = fields.Selection(
-        lambda self: [(str(x), str(x))for x in range(13)],
+    revision = fields.Integer(
         string='Revision',
         required=True,
-        help="Revision 0 - 12, 0 is on on the fiscalyear open.",
+        help="Revision number",
         track_visibility='onchange',
     )
-    revision_readonly = fields.Selection(
-        lambda self: [(str(x), str(x))for x in range(13)],
+    revision_readonly = fields.Integer(
         related='revision',
         string='Revision',
         readonly=True,
@@ -173,13 +171,13 @@ class BudgetPolicy(models.Model):
             order='revision desc')
         revision = False
         if existing_policies:
-            current_rev = int(existing_policies[0].revision)
+            current_rev = existing_policies[0].revision
             if current_rev == 12:
                 raise ValidationError(_('You have reached max revision!'))
             else:
-                revision = str(int(existing_policies[0].revision) + 1)
+                revision = existing_policies[0].revision + 1
         else:
-            revision = '0'
+            revision = 0
         return revision
 
     @api.model
@@ -316,12 +314,12 @@ class BudgetPolicy(models.Model):
             lines = []
             # 1st policy
             v0_lines = self.search(
-                [('revision', '=', '0'),
+                [('revision', '=', 0),
                  ('chart_view', '=', policy.chart_view),
                  ('fiscalyear_id', '=', policy.fiscalyear_id.id)]).line_ids
             # latest policy
             latest_lines = self.search(
-                [('revision', '=', str(int(policy.revision) - 1)),
+                [('revision', '=', policy.revision - 1),
                  ('chart_view', '=', policy.chart_view),
                  ('fiscalyear_id', '=', policy.fiscalyear_id.id)]).line_ids
 
@@ -365,7 +363,7 @@ class BudgetPolicy(models.Model):
                 if model:
                     vals.update({field: entity_id})
                 # V0 and latest policy
-                if policy.revision != '0':
+                if policy.revision != 0:
                     v0_line = not model and v0_lines[0] or \
                         v0_lines.filtered(lambda l: l[field].id == entity_id)
                     lastest_line = not model and latest_lines[0] or \
