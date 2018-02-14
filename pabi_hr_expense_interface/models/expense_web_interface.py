@@ -127,6 +127,7 @@ class HRExpense(models.Model):
             'receive_method': 'other_bank',  # salary_bank, other_bank
             'employee_bank_id.id': u'64',
             'advance_expense_number': u'',  # Case clearing, refer Exp Advance
+            'origin_pr_number': u'',  # If small amount, has origin_pr_number
             'line_ids': [  # 1 line only, Advance
                 {
                     'section_id.id': u'434',
@@ -209,6 +210,13 @@ class HRExpense(models.Model):
             data_dict['advance_expense_id.id'] = expense.id or u''
         if 'advance_expense_number' in data_dict:
             del data_dict['advance_expense_number']
+        # Small amount origin_pr_number if any
+        if data_dict.get('origin_pr_number', '') != '':
+            domain = [('name', '=', data_dict.get('origin_pr_number'))]
+            pr = self.search(domain)
+            data_dict['origin_pr_id.id'] = pr.id or u''
+        if 'origin_pr_number' in data_dict:
+            del data_dict['origin_pr_number']
         # preparer_code to user_id.id
         domain = [('employee_code', '=', data_dict.get('preparer_code'))]
         employee = Employee.search(domain)

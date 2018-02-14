@@ -163,6 +163,14 @@ class HRExpense(models.Model):
         copy=False,
         domain=[('res_model', '=', 'hr.expense.expense')],
     )
+    # Case Small Amount
+    origin_pr_id = fields.Many2one(
+        'purchase.request',
+        string='Reference PR for case small amount',
+        copy=False,
+        readonly=True,
+        help="Reference number to PR that was originally a small amount.",
+    )
 
     @api.multi
     @api.depends(
