@@ -405,7 +405,11 @@ class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
                         field not in ['id', '__last_update',
                                       'write_uid', 'write_date',
                                       'create_uid', 'create_date',
-                                      'state', ]:
+                                      'state',
+                                      # Related fields
+                                      'program_id', 'section_program_id',
+                                      'owner_division_id',
+                                      ]:
                     try:
                         val[field] = rec.project_id[field].id
                     except:
