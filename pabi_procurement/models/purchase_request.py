@@ -84,9 +84,9 @@ class PurchaseRequest(models.Model):
     purchase_method_id = fields.Many2one(
         'purchase.method',
         string='Procurement Method',
-        required=True,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={'draft': [('readonly', False)],
+                'to_approve': [('readonly', False)]},
     )
     purchase_price_range_id = fields.Many2one(
         'purchase.price.range',
@@ -148,9 +148,9 @@ class PurchaseRequest(models.Model):
     purchase_type_id = fields.Many2one(
         'purchase.type',
         string='Procurement Type',
-        required=True,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={'draft': [('readonly', False)],
+                'to_approve': [('readonly', False)]},
     )
     delivery_address = fields.Text(
         string='Delivery Address',
@@ -336,7 +336,22 @@ class PurchaseRequest(models.Model):
         return commitee_ids
 
     @api.multi
+    def _validate_required_fields(self):
+        # purchase_method_id, purchase_type_id, and committee_ids must exists
+        for pr in self:
+            if not pr.purchase_type_id:
+                raise ValidationError(
+                    _('Purchase Type is required for %s') % pr.name)
+            if not pr.purchase_method_id:
+                raise ValidationError(
+                    _('Purchase Method is required for %s') % pr.name)
+            if not pr.committee_ids:
+                raise ValidationError(
+                    _('Commitee is required for %s') % pr.name)
+
+    @api.multi
     def button_approved(self):
+        self._validate_required_fields()
         res = super(PurchaseRequest, self).button_approved()
         PWInterface = self.env['purchase.web.interface']
         PWInterface.send_pbweb_action_request(self, 'accept')
