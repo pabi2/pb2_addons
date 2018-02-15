@@ -29,7 +29,7 @@
                     <field name="delivery_address"/>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='description']" position="before">
-                    <field name="purchase_type_id"/>
+                    <field name="purchase_type_id" attrs="{'required': [('is_small_amount', '=', False)]}"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='product_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -55,7 +55,7 @@
                 <xpath expr="//form/sheet/group/group/field[@name='description']" position="after">
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
-                    <field name="purchase_method_id"/>
+                    <field name="purchase_method_id" attrs="{'required': [('is_small_amount', '=', False)]}"/>
                     <field name="purchase_price_range_id"/>
                     <field name="purchase_condition_id"/>
                     <field name="purchase_condition_detail_id"/>
