@@ -229,10 +229,15 @@ class AccountBudget(models.Model):
     def _get_future_plan_amount(self):
         self.ensure_one()
         Period = self.env['account.period']
-        period_num = 1
-        date_start = Period.find().date_start
-        if self.fiscalyear_id.date_start <= date_start:
-            period_num = Period.get_num_period_by_period()  # Now
+        period_num = 0
+        this_period_date_start = Period.find().date_start
+
+        if self.fiscalyear_id.date_start > this_period_date_start:
+            period_num = 0
+        elif self.fiscalyear_id.date_stop < this_period_date_start:
+            period_num = 12
+        else:
+            period_num = Period.get_num_period_by_period()
         future_plan = 0.0
         expense_lines = self._budget_expense_lines_hook()
         for line in expense_lines:
@@ -729,12 +734,14 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     @api.multi
     def _compute_current_period(self):
         Period = self.env['account.period']
-        date_start = Period.find().date_start
+        this_period_date_start = Period.find().date_start
         for rec in self:
             if rec.budget_id.budget_level_id.adjust_past_plan:
                 rec.current_period = 0
-            elif rec.fiscalyear_id.date_start > date_start:
+            elif rec.fiscalyear_id.date_start > this_period_date_start:
                 rec.current_period = 0
+            elif rec.fiscalyear_id.date_stop < this_period_date_start:
+                rec.current_period = 12
             else:
                 rec.current_period = Period.get_num_period_by_period()
 
