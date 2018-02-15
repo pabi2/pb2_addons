@@ -142,15 +142,14 @@ class AccountBudget(ChartField, models.Model):
     def budget_done(self):
         for budget in self:
             lines = budget.budget_line_ids
+            # Make sure, it has same dimension as its header for 5 structure
+            lines.write({'section_id': budget.section_id.id,
+                         'program_id': budget.program_id.id,
+                         'org_id': budget.org_id.id, })
             for line in lines:
                 res = line.\
                     _get_chained_dimension(CHART_VIEW_FIELD[budget.chart_view])
                 line.write(res)
-        # kittiu: Following might not necessary as we already split chart_view
-        #         for budget in self:
-        #             budget.validate_chartfields(budget.chart_view)
-        #             lines = budget.budget_line_ids
-        #             lines.validate_chartfields(budget.chart_view)
         return super(AccountBudget, self).budget_done()
 
     # @api.multi
