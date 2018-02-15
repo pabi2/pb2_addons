@@ -235,7 +235,9 @@ class ExportXlsxTemplate(models.TransientModel):
                                     'env': self.env,
                                     'context': self._context,
                                     }
-                    value = str(eval(eval_cond, eval_context))
+                    # str() throw cordinal not in range error
+                    value = eval(eval_cond, eval_context)
+                    # value = str(eval(eval_cond, eval_context))
                 st[rc] = value
             # Line Items
             line_fields = filter(lambda l: l != '_HEAD_', worksheet)
