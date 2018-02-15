@@ -71,3 +71,17 @@ class AccountBudget(models.Model):
         for control in self.browse(control_ids):
             control.sync_budget_my_project()
         return control_ids
+
+
+class AccountBudgetLine(models.Model):
+    _inherit = 'account.budget.line'
+
+    @api.multi
+    def unlink(self):
+        # unlinked line, reset the sync
+        if self.ids:
+            self._cr.execute("""
+                update res_project_budget_plan set synced = false
+                where sync_budget_line_id in %s
+            """, (tuple(self.ids),))
+        return super(AccountBudgetLine, self).unlink()

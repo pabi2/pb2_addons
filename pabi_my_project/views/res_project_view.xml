@@ -97,7 +97,7 @@
                                 <field name="budget_plan_ids">
                                     <tree editable="bottom">
                                         <field name="fiscalyear_id"/>
-                                        <field name="activity_group_id"/>
+                                        <field name="activity_group_id" required="1"/>
                                         <field name="m1"/>
                                         <field name="m2"/>
                                         <field name="m3"/>
@@ -111,7 +111,9 @@
                                         <field name="m11"/>
                                         <field name="m12"/>
                                         <field name="planned_amount" sum="Total Planned"/>
-                                        <field name="released_amount" sum="Total Released"/>
+                                        <button name="%(pabi_my_project.action_project_budget_release_wizard)d"
+                                          string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                                        <field name="released_amount" sum="Total Released" readonly="1"/>
                                         <field name="synced"/>
                                     </tree>
                                 </field>

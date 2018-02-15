@@ -358,6 +358,41 @@ class ResProject(LogCommon, models.Model):
                 project.write({'budget_plan_ids': update_vals})
         return True
 
+    @api.multi
+    def write(self, vals):
+        res = super(ResProject, self).write(vals)
+        # If project group is changes, resync everything
+        self.refresh_budget_line(vals)
+        # Auto create fiscal plan line (for ease of use of user)
+        self.prepare_fiscal_plan_line(vals)
+        return res
+
+    @api.multi
+    def refresh_budget_line(self, vals):
+        if 'project_group_id' in vals:
+            for proj in self:
+                # Delete all existing budget lines from this project
+                proj.budget_plan_ids.mapped('sync_budget_line_id').unlink()
+                # Find new budgets for this project
+                budgets = self.find_active_project_budget(
+                    proj.fiscalyear_ids.ids, [proj.program_id.id])
+                budgets.sync_budget_my_project()
+
+    @api.multi
+    def prepare_fiscal_plan_line(self, vals):
+        if ('date_start' in vals and vals.get('date_start')) or \
+                ('date_end' in vals and vals.get('date_end')):
+            Fiscal = self.env['account.fiscalyear']
+            for proj in self:
+                proj_fiscals = proj.budget_plan_ids.mapped('fiscalyear_id')
+                fiscals = Fiscal.search([('date_start', '>=', proj.date_start),
+                                         ('date_stop', '<=', proj.date_end)])
+                fiscals -= proj_fiscals
+                plan_lines = []
+                for fiscal in fiscals:
+                    plan_lines.append((0, 0, {'fiscalyear_id': fiscal.id}))
+                proj.write({'budget_plan_ids': plan_lines})
+
 
 class ResProjectMember(models.Model):
     _name = 'res.project.member'
@@ -416,7 +451,6 @@ class ResProjectBudgetPlan(models.Model):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
-        required=True,
     )
     m1 = fields.Float(
         string='Oct',
@@ -522,6 +556,12 @@ class ResProjectBudgetPlan(models.Model):
         if len(set(changes).intersection(test_keys)) > 0:
             vals.update({'synced': False})  # Line updated
         return super(ResProjectBudgetPlan, self).write(vals)
+
+    @api.multi
+    def unlink(self):
+        """ As the line is deleted, also delete the related budget control """
+        self.mapped('sync_budget_line_id').unlink()
+        return super(ResProjectBudgetPlan, self).unlink()
 
 
 class ResProjectBudgetSummary(models.Model):
