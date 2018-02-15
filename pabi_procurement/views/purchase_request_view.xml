@@ -1,17 +1,23 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-    <record model="ir.ui.view" id="view_purchase_request_form">
-        <field name="name">purchase.request.form</field>
-        <field name="model">purchase.request</field>
-        <field name="inherit_id" ref="purchase_request.view_purchase_request_form"/>
+        <record model="ir.ui.view" id="view_purchase_request_form">
+            <field name="name">purchase.request.form</field>
+            <field name="model">purchase.request</field>
+            <field name="inherit_id" ref="purchase_request.view_purchase_request_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//form[@string='Purchase Request']" position="attributes">
                     <attribute name="create">false</attribute>
                 </xpath>
                 <xpath expr="//field[@name='requested_by']" position="after">
-                    <field name="is_central_purchase" />
-                    <field name="is_small_amount" />
+                    <field name="is_central_purchase"/>
+                    <label for="is_small_amount"/>
+                    <div>
+                        <div>
+                            <field name="is_small_amount"/>
+                            <field name="accept_reason_txt" attrs="{'invisible': [('accept_reason_txt', '=', False)]}" class="oe_inline"/>
+                        </div>
+                    </div>
                 </xpath>
 
                 <xpath expr="//form/sheet/group/group/field[@name='assigned_to']" position="after">
@@ -32,13 +38,13 @@
                     <field name="fiscalyear_id"/>
                 </xpath>
                 <!--<xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='date_required']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
+                <!--<attribute name="invisible">1</attribute>-->
                 <!--</xpath>-->
                 <xpath expr="//form/sheet/group/group/field[@name='product_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <!--<xpath expr="//form/sheet/group/group/field[@name='date_required']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
+                <!--<attribute name="invisible">1</attribute>-->
                 <!--</xpath>-->
                 <xpath expr="//form/sheet/group/group/field[@name='description']" position="before">
                     <field name="objective"/>
@@ -65,16 +71,33 @@
                 <xpath expr="//label[@string=',']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='origin']" position="replace">
-
-                </xpath>
+                <xpath expr="//field[@name='origin']" position="replace"></xpath>
                 <xpath expr="//field[@name='state']" position="attributes">
                     <attribute name="statusbar_visible">draft,approved,done</attribute>
                 </xpath>
                 <xpath expr="//button[@name='button_approved']" position="attributes">
                     <attribute name="string">Accept</attribute>
                     <attribute name="groups">purchase_request.group_purchase_request_user</attribute>
-
+                    <attribute name="states"></attribute>
+                    <attribute name="attrs">{'invisible': ['|', ('state', '!=', 'to_approve'), ('is_small_amount', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='button_approved']" position="after">
+                    <!-- For small amount case -->
+                    <button
+                        name="%(action_accept_with_reason)d"
+                        type="action"
+                        class="oe_highlight"
+                        attrs="{'invisible': ['|', ('state', '!=', 'to_approve'), ('is_small_amount', '=', False)]}"
+                        string="Disagree and Accept"
+                        groups="purchase_request.group_purchase_request_user"
+                        help="Disagree with small amount, but still accept as normal PR process."/>
+                    <button
+                        name="button_agree_and_done"
+                        type="object"
+                        string="Agree and Done"
+                        class="oe_highlight"
+                        attrs="{'invisible': ['|', ('state', '!=', 'to_approve'), ('is_small_amount', '=', False)]}"
+                        help="Agree with small amount and done the PR process (to start again with EX process)"/>
                 </xpath>
                 <xpath expr="//button[@name='button_rejected']" position="attributes">
                     <attribute name="string">Cancel</attribute>
@@ -94,19 +117,14 @@
                     <field name="tax_ids" widget="many2many_tags"/>
                     <field name="price_subtotal"/>
                 </xpath>
-                <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']"
-                       position="after">
+                <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']" position="after">
                     <group class="oe_subtotal_footer oe_right">
-                        <field name="amount_untaxed" widget="monetary"
-                        options="{'currency_field': 'currency_id'}"/>
-                        <field name="amount_tax" widget="monetary"
-                        options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                         <div class="oe_subtotal_footer_separator oe_inline">
-                        <label for="amount_total"/>
+                            <label for="amount_total"/>
                         </div>
-                        <field name="amount_total" nolabel="1"
-                               class="oe_subtotal_footer_separator" widget="monetary"
-                               options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                     </group>
                     <div class="oe_clear"/>
                 </xpath>
@@ -122,33 +140,34 @@
                         </field>
                     </page>
                     <page string="Attachments">
-                        <field name="attachment_ids"
+                        <field
+                            name="attachment_ids"
                             context="{'tree_view_ref': 'pabi_attachment_helper.view_attachment_history_tree',
                                       'default_type': 'url',
                                       'default_res_model': 'purchase.request'}"/>
                     </page>
                 </xpath>
             </field>
-    </record>
-    <record model="ir.ui.view" id="budget_acc_view_purchase_request_form">
-        <field name="name">purchase.request.form</field>
-        <field name="model">purchase.request</field>
-        <field name="inherit_id" ref="account_budget_activity.view_purchase_request_form"/>
+        </record>
+        <record model="ir.ui.view" id="budget_acc_view_purchase_request_form">
+            <field name="name">purchase.request.form</field>
+            <field name="model">purchase.request</field>
+            <field name="inherit_id" ref="account_budget_activity.view_purchase_request_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='price_unit']" position="replace" />
+                <xpath expr="//field[@name='price_unit']" position="replace"/>
                 <xpath expr="//field[@name='product_uom_id']" position="after">
                     <field name="price_unit"/>
                 </xpath>
             </field>
-    </record>
-    <record model="ir.ui.view" id="view_purchase_request_tree">
-        <field name="name">purchase.request.tree</field>
-        <field name="model">purchase.request</field>
-        <field name="inherit_id" ref="purchase_request.view_purchase_request_tree"/>
+        </record>
+        <record model="ir.ui.view" id="view_purchase_request_tree">
+            <field name="name">purchase.request.tree</field>
+            <field name="model">purchase.request</field>
+            <field name="inherit_id" ref="purchase_request.view_purchase_request_tree"/>
             <field name="arch" type="xml">
                 <!-- #  Note :: take out when this up to production -->
                 <!--<xpath expr="//tree" position="attributes">-->
-                    <!--<attribute name="create">false</attribute>-->
+                <!--<attribute name="create">false</attribute>-->
                 <!--</xpath>-->
                 <xpath expr="//field[@name='requested_by']" position="after">
                     <field name="responsible_uid"/>
@@ -163,86 +182,76 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
-    </record>
-    <record model="ir.ui.view" id="view_purchase_request_search">
-        <field name="name">purchase.request.search</field>
-        <field name="model">purchase.request</field>
-        <field name="inherit_id" ref="purchase_request.view_purchase_request_search"/>
+        </record>
+        <record model="ir.ui.view" id="view_purchase_request_search">
+            <field name="name">purchase.request.search</field>
+            <field name="model">purchase.request</field>
+            <field name="inherit_id" ref="purchase_request.view_purchase_request_search"/>
             <field name="arch" type="xml">
                 <xpath expr="//filter[@string='To Approve']" position="attributes">
-                        <attribute name="string">To Accept</attribute>
+                    <attribute name="string">To Accept</attribute>
                 </xpath>
                 <xpath expr="//filter[@string='Approved']" position="attributes">
-                        <attribute name="string">Accepted</attribute>
+                    <attribute name="string">Accepted</attribute>
                 </xpath>
                 <xpath expr="//group/filter[@string='Assigned to']" position="replace">
-                        <filter string="Responsible"
-                                domain="[]"
-                                context="{'group_by':'responsible_uid'}"/>
+                    <filter string="Responsible" domain="[]" context="{'group_by':'responsible_uid'}"/>
                 </xpath>
                 <xpath expr="//group/filter[@string='Start Date']" position="after">
-                        <filter string="Status"
-                                domain="[]"
-                                context="{'group_by':'state'}"/>
+                    <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
                 </xpath>
                 <xpath expr="//filter[@name='state_rejected']" position="after">
-                        <filter name="my_responsible" domain="[('responsible_uid','=',uid)]" string="My Responsible"/>
-                        <filter name="my_responsible_to_do"
-                                domain="[('responsible_uid','=',uid),('state','=','to_approve')]"
-                                string="My Responsible (To Accept)"/>
+                    <filter name="my_responsible" domain="[('responsible_uid','=',uid)]" string="My Responsible"/>
+                    <filter name="my_responsible_to_do" domain="[('responsible_uid','=',uid),('state','=','to_approve')]" string="My Responsible (To Accept)"/>
+                    <filter name="is_small_amount" domain="[('is_small_amount','=',True)]" string="Small Amount"/>
                 </xpath>
-                <xpath expr="//filter[@name='state_rejected']" position="after">
-
-                </xpath>
+                <xpath expr="//filter[@name='state_rejected']" position="after"></xpath>
             </field>
-    </record>
-    <record model="ir.actions.act_window" id="purchase_request.purchase_request_form_action">
-        <field name="name">Purchase Requests</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">purchase.request</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="context">{"search_default_my_responsible_to_do":uid}</field>
-        <field name="search_view_id" ref="view_purchase_request_search"/>
-        <field name="help" type="html">
-          <p class="oe_view_nocontent_create">
-            Click to start a new purchase request process.
-          </p><p>
-            A purchase request is an instruction to Purchasing to procure
-            a certain quantity of materials services, so that they are
-            available at a certain point in time.
-          </p>
-        </field>
-    </record>
+        </record>
+        <record model="ir.actions.act_window" id="purchase_request.purchase_request_form_action">
+            <field name="name">Purchase Requests</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{"search_default_my_responsible_to_do":uid}</field>
+            <field name="search_view_id" ref="view_purchase_request_search"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to start a new purchase request process.
+                </p>
+                <p>
+                    A purchase request is an instruction to Purchasing to procure a certain quantity of materials services, so that they are available at a certain point in time.
+                </p>
+            </field>
+        </record>
 
-    <record model="ir.ui.view" id="reject_view_purchase_request_form">
-        <field name="name">purchase.request.form</field>
-        <field name="model">purchase.request</field>
-        <field name="inherit_id" ref="purchase_request_reject_reason.view_purchase_request_form"/>
+        <record model="ir.ui.view" id="reject_view_purchase_request_form">
+            <field name="name">purchase.request.form</field>
+            <field name="model">purchase.request</field>
+            <field name="inherit_id" ref="purchase_request_reject_reason.view_purchase_request_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='%(purchase_request_reject_reason.action_order_reject)d']" position="attributes">
                     <attribute name="groups">purchase_request.group_purchase_request_user</attribute>
                 </xpath>
             </field>
-    </record>
-    <record model="ir.ui.view" id="purchase_request_line_form">
-        <field name="name">purchase.request.line.form</field>
-        <field name="model">purchase.request.line</field>
-        <field name="inherit_id" ref="purchase_request.purchase_request_line_form"/>
+        </record>
+        <record model="ir.ui.view" id="purchase_request_line_form">
+            <field name="name">purchase.request.line.form</field>
+            <field name="model">purchase.request.line</field>
+            <field name="inherit_id" ref="purchase_request.purchase_request_line_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//sheet" position="before">
                     <header>
-                        <field name="state" widget="statusbar"
-                               statusbar_visible="open,close"
-                               statusbar_colors='{"open":"blue"}'/>
+                        <field name="state" widget="statusbar" statusbar_visible="open,close" statusbar_colors='{"open":"blue"}'/>
                     </header>
                 </xpath>
             </field>
-    </record>
-    <record model="ir.ui.view" id="view_purchase_request_line_tree">
-        <field name="name">purchase.request.line.tree</field>
-        <field name="model">purchase.request.line</field>
-        <field name="inherit_id" ref="purchase_request.purchase_request_line_tree"/>
+        </record>
+        <record model="ir.ui.view" id="view_purchase_request_line_tree">
+            <field name="name">purchase.request.line.tree</field>
+            <field name="model">purchase.request.line</field>
+            <field name="inherit_id" ref="purchase_request.purchase_request_line_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='assigned_to']" position="replace">
                     <field name="responsible_uid"/>
@@ -256,19 +265,17 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <!--<xpath expr="//field[@name='date_required']" position="attributes">-->
-                        <!--<attribute name="invisible">1</attribute>-->
+                <!--<attribute name="invisible">1</attribute>-->
                 <!--</xpath>-->
             </field>
-    </record>
-    <record model="ir.ui.view" id="view_purchase_request_line_search">
-        <field name="name">purchase.request.line.search</field>
-        <field name="model">purchase.request.line</field>
-        <field name="inherit_id" ref="purchase_request.purchase_request_line_search"/>
+        </record>
+        <record model="ir.ui.view" id="view_purchase_request_line_search">
+            <field name="name">purchase.request.line.search</field>
+            <field name="model">purchase.request.line</field>
+            <field name="inherit_id" ref="purchase_request.purchase_request_line_search"/>
             <field name="arch" type="xml">
                 <xpath expr="//filter[@string='Assigned to']" position="replace">
-                        <filter string="Responsible"
-                                domain="[]"
-                                context="{'group_by':'responsible_uid'}"/>
+                    <filter string="Responsible" domain="[]" context="{'group_by':'responsible_uid'}"/>
                 </xpath>
                 <xpath expr="//filter[@name='request_state_rejected']" position="after">
                     <filter name="my_responsible" domain="[('responsible_uid','=',uid)]" string="My Responsible"/>
@@ -276,47 +283,44 @@
                     <filter name="no_bid" domain="[('requisition_state','=','none')]" string="No Bid"/>
                 </xpath>
             </field>
-    </record>
-    <record id="purchase_request.purchase_request_line_form_action" model="ir.actions.act_window">
-        <field name="name">Purchase Request Lines</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">purchase.request.line</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="context">
-            {
-                "search_default_my_responsible_no_bid":uid,
-            }
-        </field>
-        <field name="domain">[('request_state','!=','draft')]</field>
-        <field name="search_view_id" ref="view_purchase_request_line_search"/>
-    </record>
+        </record>
+        <record id="purchase_request.purchase_request_line_form_action" model="ir.actions.act_window">
+            <field name="name">Purchase Request Lines</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.request.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">
+                { "search_default_my_responsible_no_bid":uid, }
+            </field>
+            <field name="domain">[('request_state','!=','draft')]</field>
+            <field name="search_view_id" ref="view_purchase_request_line_search"/>
+        </record>
 
-
-    <record model="ir.ui.view" id="acc_budget_view_purchase_request_form">
-        <field name="name">purchase.request.form</field>
-        <field name="model">purchase.request</field>
-        <field name="inherit_id" ref="account_budget_activity.view_purchase_request_form"/>
+        <record model="ir.ui.view" id="acc_budget_view_purchase_request_form">
+            <field name="name">purchase.request.form</field>
+            <field name="model">purchase.request</field>
+            <field name="inherit_id" ref="account_budget_activity.view_purchase_request_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='activity_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <!--<xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='activity_group_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
+                <!--<attribute name="invisible">1</attribute>-->
                 <!--</xpath>-->
                 <xpath expr="//field[@name='line_ids']/form/sheet/group/group/field[@name='activity_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <!--<xpath expr="//field[@name='line_ids']/form/sheet/group/group/field[@name='activity_group_id']" position="attributes">-->
-                    <!--<attribute name="invisible">1</attribute>-->
+                <!--<attribute name="invisible">1</attribute>-->
                 <!--</xpath>-->
             </field>
-    </record>
+        </record>
 
-    <record model="ir.ui.view" id="request_to_requisition_view_purchase_request_form">
-        <field name="name">purchase.request.form</field>
-        <field name="model">purchase.request</field>
-        <field name="inherit_id" ref="purchase_request_to_requisition.view_purchase_request_form"/>
+        <record model="ir.ui.view" id="request_to_requisition_view_purchase_request_form">
+            <field name="name">purchase.request.form</field>
+            <field name="model">purchase.request</field>
+            <field name="inherit_id" ref="purchase_request_to_requisition.view_purchase_request_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//page[@name='requisition_lines']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -328,24 +332,24 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
-    </record>
-    <record model="ir.ui.view" id="request_to_requisition_view_purchase_request_tree">
-        <field name="name">purchase.request.form</field>
-        <field name="model">purchase.request</field>
-        <field name="inherit_id" ref="purchase_request_operating_unit.view_purchase_request_tree"/>
+        </record>
+        <record model="ir.ui.view" id="request_to_requisition_view_purchase_request_tree">
+            <field name="name">purchase.request.form</field>
+            <field name="model">purchase.request</field>
+            <field name="inherit_id" ref="purchase_request_operating_unit.view_purchase_request_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='operating_unit_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
-    </record>
+        </record>
 
-    <!--Hide Purchase Request Menu-->
-    <record id="make_invisible" model="res.groups">
-        <field name="name">Invisible</field>
-    </record>
-    <record model="ir.ui.menu" id="purchase_request.parent_menu_purchase_request">
-        <field name="groups_id" eval="[(6,0,[ref('make_invisible')])]"/>
-    </record>
+        <!--Hide Purchase Request Menu-->
+        <record id="make_invisible" model="res.groups">
+            <field name="name">Invisible</field>
+        </record>
+        <record model="ir.ui.menu" id="purchase_request.parent_menu_purchase_request">
+            <field name="groups_id" eval="[(6,0,[ref('make_invisible')])]"/>
+        </record>
     </data>
 </openerp>

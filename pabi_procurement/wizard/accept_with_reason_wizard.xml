@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="accept_with_reason_view" model="ir.ui.view">
+            <field name="name">accept.with.reason.view</field>
+            <field name="model">purchase.request.accept.reason</field>
+            <field name="arch" type="xml">
+             <form string="Reason">
+                <p class="oe_grey">
+                    Reason for rejecting small amount, and accept to process as normal.
+                </p>
+                <group>
+                    <field name="accept_reason_txt" required="1"/>
+                </group>
+                <footer>
+                    <button name="action_accept_with_reason"
+                        string="Accept with Reason" type="object"
+                        class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link"
+                        special="cancel" />
+                </footer>
+            </form>
+            </field>
+        </record>
+
+        <record id="action_accept_with_reason" model="ir.actions.act_window">
+            <field name="name">Accept with Reason</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.request.accept.reason</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="accept_with_reason_view"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>
