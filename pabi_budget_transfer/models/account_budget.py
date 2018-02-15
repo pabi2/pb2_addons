@@ -50,6 +50,14 @@ class AccountBudget(models.Model):
                 if budget.release_diff_rolling > 0.0:
                     _ids.append(budget.id)
             args += [('id', 'in', _ids)]
+        if self._context.get('search_budget_by_section', False):
+            budgets = self.search(args)
+            sections = self.env['res.section'].search([
+                '|', '|', ('name', 'ilike', name),
+                ('code', 'ilike', name), ('name_short', 'ilike', name)])
+            budgets = budgets.filtered(lambda l: l.section_id in sections)
+            args = [('id', 'in', budgets.ids)]
+            name = ''
         return super(AccountBudget, self).name_search(name=name,
                                                       args=args,
                                                       operator=operator,
