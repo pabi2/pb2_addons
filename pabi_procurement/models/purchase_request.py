@@ -196,6 +196,11 @@ class PurchaseRequest(models.Model):
         },
         default=False,
     )
+    accept_reason_txt = fields.Char(
+        string='Accept Reason',
+        readonly=True,
+        copy=False,
+    )
 
     @api.onchange('is_central_purchase')
     def _onchange_is_central_purchase(self):
@@ -352,6 +357,13 @@ class PurchaseRequest(models.Model):
         PWInterface = self.env['purchase.web.interface']
         PWInterface.send_pbweb_action_request(self, 'cancel')
         return res
+
+    @api.multi
+    def button_agree_and_done(self):
+        self.write({'state': 'done'})
+        PWInterface = self.env['purchase.web.interface']
+        PWInterface.send_pbweb_action_request(self, 'agree_and_done')
+        return True
 
 
 class PurchaseRequestLine(models.Model):

@@ -55,6 +55,7 @@ PABI2 - Procurement Module
         "wizard/purchase_requisition_partner_view.xml",
         "wizard/purchase_request_line_close_view.xml",
         "wizard/force_done_reason_view.xml",
+        "wizard/accept_with_reason_wizard.xml",
         "views/purchase_request_view.xml",
         "views/purchase_requisition_view.xml",
         "views/purchase_view.xml",

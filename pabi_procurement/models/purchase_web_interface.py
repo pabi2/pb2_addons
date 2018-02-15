@@ -386,15 +386,22 @@ class PurchaseWebInterface(models.Model):
     def send_pbweb_action_request(self, request, action):
         alfresco = \
             self.env['pabi.web.config.settings']._get_alfresco_connect('pcm')
+        comment = ''
         if alfresco is False:
             return False
-        if action == "accept":
-            send_act = "C2"
-        else:
-            send_act = "X2"
-        comment = request.reject_reason_txt or ''
+        if action == 'accept':
+            send_act = 'C2'
+            if request.is_small_amount:
+                comment = u'ไม่เห็นชอบ - %s ' % request.accept_reason_txt
+        elif action == 'cancel':
+            send_act = 'X2'
+            comment = request.reject_reason_txt or ''
+        elif action == 'agree_and_done':
+            send_act = 'C3'
+
         result = alfresco.req.action(request.name, send_act,
                                      comment, self.env.user.login)
+
         if not result['success']:
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
