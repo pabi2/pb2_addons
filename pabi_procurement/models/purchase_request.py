@@ -187,6 +187,15 @@ class PurchaseRequest(models.Model):
         },
         default=False,
     )
+    is_small_amount = fields.Boolean(
+        string='Small Amount',
+        readonly=True,
+        states={
+            'draft': [('readonly', False)],
+            'to_approve': [('readonly', False)],
+        },
+        default=False,
+    )
 
     @api.onchange('is_central_purchase')
     def _onchange_is_central_purchase(self):

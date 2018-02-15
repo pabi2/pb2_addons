@@ -11,6 +11,7 @@
                 </xpath>
                 <xpath expr="//field[@name='requested_by']" position="after">
                     <field name="is_central_purchase" />
+                    <field name="is_small_amount" />
                 </xpath>
 
                 <xpath expr="//form/sheet/group/group/field[@name='assigned_to']" position="after">

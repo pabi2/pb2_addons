@@ -39,6 +39,9 @@ class AccountFiscalyear(models.Model):
         string='Remain NSTDA Policy',
         compute='_compute_latest_remain_policy',
     )
+    notes = fields.Text(
+        string='Notes',
+    )
 
     @api.multi
     def _compute_latest_remain_policy(self):
@@ -58,21 +61,21 @@ class AccountFiscalyear(models.Model):
             rec.latest_policy = sum(amounts.values())
             rec.remain_policy = rec.overall_policy - rec.latest_policy
 
-    def init(self, cr):
-        env = Environment(cr, SUPERUSER_ID, {})
-        Fiscal = env['account.fiscalyear']
-        fiscals = Fiscal.search([])
-        fiscals.generate_budget_allocations()
-
-    @api.multi
-    def generate_budget_allocations(self):
-        for fiscal in self:
-            if not fiscal.budget_allocation_ids:
-                lines = [(0, 0, {'revision': str(i)}) for i in range(13)]
-                fiscal.sudo().write({'budget_allocation_ids': lines})
-
-    @api.model
-    def create(self, vals):
-        fiscal = super(AccountFiscalyear, self).create(vals)
-        fiscal.generate_budget_allocations()
-        return fiscal
+    # def init(self, cr):
+    #     env = Environment(cr, SUPERUSER_ID, {})
+    #     Fiscal = env['account.fiscalyear']
+    #     fiscals = Fiscal.search([])
+    #     fiscals.generate_budget_allocations()
+    #
+    # @api.multi
+    # def generate_budget_allocations(self):
+    #     for fiscal in self:
+    #         if not fiscal.budget_allocation_ids:
+    #             lines = [(0, 0, {'revision': i}) for i in range(13)]
+    #             fiscal.sudo().write({'budget_allocation_ids': lines})
+    #
+    # @api.model
+    # def create(self, vals):
+    #     fiscal = super(AccountFiscalyear, self).create(vals)
+    #     fiscal.generate_budget_allocations()
+    #     return fiscal

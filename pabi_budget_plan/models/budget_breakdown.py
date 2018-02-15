@@ -39,13 +39,12 @@ class BudgetBreakdown(models.Model):
         store=True,
         readonly=True,
     )
-    revision = fields.Selection(
-        lambda self: [(str(x), str(x))for x in range(13)],
+    revision = fields.Integer(
         related='policy_line_id.policy_id.revision',
         string='Revision',
         store=True,
         readonly=True,
-        help="Revision 0 - 12, 0 is on on the fiscalyear open.",
+        help="Revision number",
     )
     planned_amount = fields.Float(
         string='Planned Overall',

@@ -112,8 +112,7 @@ class BudgetFundRule(models.Model):
                 raise ValidationError(_('Duplicated Fund Rule'))
 
     @api.one
-    @api.constrains('fund_rule_line_ids',
-                    'fund_rule_line_ids.account_ids')
+    @api.constrains('fund_rule_line_ids')
     def _check_fund_rule_line_ids(self):
         account_ids = []
         for line in self.fund_rule_line_ids:
@@ -143,6 +142,7 @@ class BudgetFundRule(models.Model):
         if not vals.get('template', False):
             vals['name'] = \
                 self.env['ir.sequence'].get('budget.fund.rule') or '/'
+        print vals
         return super(BudgetFundRule, self).create(vals)
 
     @api.model

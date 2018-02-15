@@ -114,6 +114,7 @@ class BudgetCarryOver(models.Model):
                 purchase_lines.mapped('budget_commit_ids') + \
                 request_lines.mapped('budget_commit_ids') + \
                 expense_lines.mapped('budget_commit_ids')
+            print commits
             commits.write({'monitor_fy_id': rec.fiscalyear_id.id})
         self.write({'state': 'done'})
 

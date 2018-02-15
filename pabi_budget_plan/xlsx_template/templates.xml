@@ -31,35 +31,37 @@
                         },
                         'plan_expense_line_ids[100]': {
                             'B11': 'charge_type${value and value.title() or ""}',
-                            'C11': 'activity_group_id.name${value or ""}',
-                            'D11': 'cost_control_id.name${value or ""}',
-                            'E11': 'description${value or ""}',
-                            'F11': 'reason${value or ""}',
-                            'G11': 'unit',
-                            'H11': 'activity_unit_price',
-                            'I11': 'activity_unit',
-                            'J11': 'total_budget',
-                            'K11': 'm0',
-                            'L11': 'm1',
-                            'M11': 'm2',
-                            'N11': 'm3',
-                            'O11': 'm4',
-                            'P11': 'm5',
-                            'Q11': 'm6',
-                            'R11': 'm7',
-                            'S11': 'm8',
-                            'T11': 'm9',
-                            'U11': 'm10',
-                            'V11': 'm11',
-                            'W11': 'm12',
+                            'C11': 'income_section_id${value and (value.org_id.name_short + "-" + value.name) or ""}',
+                            'D11': 'activity_group_id.name${value or ""}',
+                            'E11': 'cost_control_id.name${value or ""}',
+                            'F11': 'description${value or ""}',
+                            'G11': 'reason${value or ""}',
+                            'H11': 'unit',
+                            'I11': 'activity_unit_price',
+                            'J11': 'activity_unit',
+                            'K11': 'total_budget',
+                            'L11': 'm0',
+                            'M11': 'next_fy_commitment',
+                            'N11': 'm1',
+                            'O11': 'm2',
+                            'P11': 'm3',
+                            'Q11': 'm4',
+                            'R11': 'm5',
+                            'S11': 'm6',
+                            'T11': 'm7',
+                            'U11': 'm8',
+                            'V11': 'm9',
+                            'W11': 'm10',
+                            'X11': 'm11',
+                            'Y11': 'm12',
                         }
                     },
                     'Revenue': {
                         '_HEAD_': {
                             'D2': 'fiscalyear_id.name',
-                            'D3': 'org_id.name_short',
+                            'D3': 'org_id.name_short${value or ""}',
                             'D4': 'section_id.code',
-                            'D5': '${time.strftime("%Y-%m-%d")}',
+                            'D5': '${time.strftime("%d-%m-%Y")}',
                             'D6': 'user_id.name${value or ""}'
                         },
                         'plan_revenue_line_ids[50]': {
@@ -86,6 +88,15 @@
                             'V11': 'm11',
                             'W11': 'm12',
                         }
+                    },
+                    'List_Section_BU': {
+                        '_HEAD_': {},
+                        'master_internal_charge_ids': {
+                            'B5': 'org_id.name_short${value or ""}',
+                            'C5': 'code${value or ""}',
+                            'D5': 'name_short${value or ""}',
+                            'E5': 'name${value or ""}',
+                        },
                     },
                     'List_AG_EXP': {
                         '_HEAD_': {},
@@ -118,34 +129,36 @@
                         'plan_expense_line_ids[100]': {
                             # Determine if charge type has value, so this too
                             'B11${value and "expense" or ""}': 'budget_method',
-                            'B11': 'charge_type',
-                            'C11': 'activity_group_id',
-                            'D11': 'cost_control_id',
-                            'E11': 'description',
-                            'F11': 'reason',
-                            'G11': 'unit',
-                            'H11': 'activity_unit_price',
-                            'I11': 'activity_unit',
-                            'J11': 'total_budget',
-                            'K11': 'm0',
-                            'L11': 'm1',
-                            'M11': 'm2',
-                            'N11': 'm3',
-                            'O11': 'm4',
-                            'P11': 'm5',
-                            'Q11': 'm6',
-                            'R11': 'm7',
-                            'S11': 'm8',
-                            'T11': 'm9',
-                            'U11': 'm10',
-                            'V11': 'm11',
-                            'W11': 'm12',
+                            'B11${value and value.lower() or ""}': 'charge_type',
+                            'C11': 'income_section_id${value and value.split("-", 1)[1] or ""}',
+                            'D11': 'activity_group_id',
+                            'E11': 'cost_control_id',
+                            'F11': 'description',
+                            'G11': 'reason',
+                            'H11': 'unit',
+                            'I11': 'activity_unit_price',
+                            'J11': 'activity_unit',
+                            'K11': 'total_budget',
+                            'L11': 'm0',
+                            'M11': 'next_fy_commitment',
+                            'N11': 'm1',
+                            'O11': 'm2',
+                            'P11': 'm3',
+                            'Q11': 'm4',
+                            'R11': 'm5',
+                            'S11': 'm6',
+                            'T11': 'm7',
+                            'U11': 'm8',
+                            'V11': 'm9',
+                            'W11': 'm10',
+                            'X11': 'm11',
+                            'Y11': 'm12',
                         },
                     },
                     'Revenue': {
                         'plan_revenue_line_ids[100]': {
                             'B11${value and "revenue" or ""}': 'budget_method',
-                            'B11': 'charge_type',
+                            'B11${value and value.lower() or ""}': 'charge_type',
                             'C11': 'activity_group_id',
                             'D11': 'cost_control_id',
                             'E11': 'description',
@@ -439,6 +452,34 @@
           </field>
         </record>
 
+        <!-- Project Based Template -->
+        <record id="budget_plan_project_base_xlsx_tempalte" model="ir.attachment">
+            <field name="res_model">budget.plan.project</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_plan_project.xlsx</field>
+            <field name="name">Project Based Template</field>
+            <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Project': {
+                        '_HEAD_': {
+                            'E2': 'fiscalyear_id.name',
+                            'E3': 'program_id.name',
+                            'E4': 'program_group_id.name',
+                            'E5': 'functional_area_id.name',
+                            'E6': '${time.strftime("%d-%m-%Y")}',
+                            'E7': 'user_id.name${value or ""}'
+                        },
+                    },
+                },
+                '__IMPORT__': {
+                    'Project': {
+                    }
+                }
+            }
+          </field>
+        </record>
 
     </data>
 </openerp>

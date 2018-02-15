@@ -153,6 +153,8 @@
 			<field name="arch" type="xml">
 				<xpath expr="//div[@name='payto_div1']" position="after">
 					<field name="supplier_text" attrs="{'invisible': [('pay_to', '!=', 'supplier')]}"/>
+					<!-- PR Small Amount -->
+					<field name="origin_pr_id" attrs="{'invisible': [('origin_pr_id', '=', False)]}"/>
 				</xpath>
 			</field>
 		</record>
