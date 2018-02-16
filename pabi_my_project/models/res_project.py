@@ -385,8 +385,8 @@ class ResProject(LogCommon, models.Model):
             Fiscal = self.env['account.fiscalyear']
             for proj in self:
                 proj_fiscals = proj.budget_plan_ids.mapped('fiscalyear_id')
-                fiscals = Fiscal.search([('date_start', '>=', proj.date_start),
-                                         ('date_stop', '<=', proj.date_end)])
+                fiscals = Fiscal.search([('date_start', '<=', proj.date_end),
+                                         ('date_stop', '>=', proj.date_start)])
                 fiscals -= proj_fiscals
                 plan_lines = []
                 for fiscal in fiscals:
