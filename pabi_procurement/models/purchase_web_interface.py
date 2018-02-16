@@ -77,6 +77,8 @@ class PurchaseRequest(models.Model):
             print '4'
             fields, data = self._add_line_data(fields, data)
             print '5'
+            print fields
+            print data
             load_res = self.sudo().load(fields, data)
             print '6'
             res_id = load_res['ids'] and load_res['ids'][0] or False
