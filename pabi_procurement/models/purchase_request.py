@@ -91,9 +91,9 @@ class PurchaseRequest(models.Model):
     purchase_price_range_id = fields.Many2one(
         'purchase.price.range',
         string='Price Range',
-        required=True,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={'draft': [('readonly', False)],
+                'to_approve': [('readonly', False)]},
     )
     purchase_condition_id = fields.Many2one(
         'purchase.condition',
@@ -338,16 +338,15 @@ class PurchaseRequest(models.Model):
     @api.multi
     def _validate_required_fields(self):
         # purchase_method_id, purchase_type_id, and committee_ids must exists
+        _dict = {'purchase_type_id': 'Purchase Type',
+                 'purchase_method_id': 'Purchase Method',
+                 'purchase_price_range_id': 'Price Range',
+                 'committee_ids': 'Commitee', }
         for pr in self:
-            if not pr.purchase_type_id:
-                raise ValidationError(
-                    _('Purchase Type is required for %s') % pr.name)
-            if not pr.purchase_method_id:
-                raise ValidationError(
-                    _('Purchase Method is required for %s') % pr.name)
-            if not pr.committee_ids:
-                raise ValidationError(
-                    _('Commitee is required for %s') % pr.name)
+            for field in _dict.keys():
+                if field in pr and not pr[field]:
+                    raise ValidationError(
+                        _('%s is required for %s') % (_dict[field], pr.name))
 
     @api.multi
     def button_approved(self):
