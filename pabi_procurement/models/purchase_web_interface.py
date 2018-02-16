@@ -64,27 +64,44 @@ class PurchaseRequest(models.Model):
         if not test and not self.env.user.company_id.pabiweb_active:
             raise ValidationError(_('Odoo/PABIWeb Disconnected!'))
         ret = {}
+        print data_dict
         data_dict = self.sudo()._get_request_info(data_dict)
+        print '1'
         fields = data_dict.keys()
+        print '2'
         data = data_dict.values()
+        print '3'
         # Final Preparation of fields and data
         try:
             fields, data = self._prepare_data_to_load(fields, data)
+            print '4'
             fields, data = self._add_line_data(fields, data)
+            print '5'
             load_res = self.sudo().load(fields, data)
+            print '6'
             res_id = load_res['ids'] and load_res['ids'][0] or False
+            print res_id
+            print '7'
             if not res_id:
                 ret = {
                     'is_success': False,
                     'result': False,
+                    'RESULT_TEST1': 'NO RES_ID',
                     'messages': [m['message'] for m in load_res['messages']],
                 }
             else:
+                print '8'
                 res = self.sudo().browse(res_id)
+
+                print '9'
                 self.sudo().create_purchase_request_attachment(data_dict,
                                                                res_id)
+
+                print '10'
                 self.sudo().create_purchase_request_committee(data_dict,
                                                               res_id)
+
+                print '11'
                 ret = {
                     'is_success': True,
                     'result': {
@@ -93,13 +110,16 @@ class PurchaseRequest(models.Model):
                     },
                     'messages': _('PR has been created.'),
                 }
+                print '12'
                 res.button_to_approve()
+                print '13'
                 self.sudo().rewrite_create_uid(res)
             self._cr.commit()
         except Exception, e:
             ret = {
                 'is_success': False,
                 'result': False,
+                'RESULT_TEST1': 'EXCEPTION',
                 'messages': e,
             }
             self._cr.rollback()
