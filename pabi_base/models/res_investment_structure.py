@@ -192,6 +192,10 @@ class ResInvestConstructionPhase(ResCommon, models.Model):
     _description = 'Investment Construction Phase'
     _order = 'sequence, id'
 
+    name = fields.Char(
+        compute='_compute_name',
+        store=True,
+    )
     sequence = fields.Integer(
         string='Sequence',
         default=10,
@@ -220,11 +224,17 @@ class ResInvestConstructionPhase(ResCommon, models.Model):
     ]
 
     @api.multi
+    @api.depends('invest_construction_id', 'phase')
+    def _compute_name(self):
+        for rec in self:
+            rec.name = '%s / %s' % (rec.invest_construction_id.name,
+                                    CONSTRUCTION_PHASE[rec.phase])
+
+    @api.multi
     def name_get(self):
         result = []
         for rec in self:
-            result.append((rec.id, "[%s] %s - %s" %
+            result.append((rec.id, "[%s] %s" %
                            (rec.invest_construction_id.code,
-                            rec.invest_construction_id.name,
-                            CONSTRUCTION_PHASE[rec.phase])))
+                            rec.invest_construction_id.name, )))
         return result
