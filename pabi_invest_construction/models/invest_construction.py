@@ -354,9 +354,12 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         string='Org',
         related='invest_construction_id.org_id',
         store=True,
-        readonly=True,
-        states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+    )
+    costcenter_id = fields.Many2one(
+        'res.costcenter',
+        string='Costcenter',
+        related='invest_construction_id.costcenter_id',
+        store=True,
     )
     state = fields.Selection(
         [('draft', 'Draft'),
