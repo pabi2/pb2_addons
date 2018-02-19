@@ -10,7 +10,7 @@ class AccountBudget(models.Model):
         # 'activity_group_id': 'Activity Group',
         # 'activity_id': 'Activity',
         # Fund
-        'fund_id': 'Fund (for all)',
+        # 'fund_id': 'Fund (for all)',
         # Project Based
         'spa_id': 'SPA',
         'mission_id': 'Mission',
@@ -41,8 +41,7 @@ class AccountBudget(models.Model):
         # Code not cover Activity level yet
         # 'activity_group_id': 'account.activity.group',
         # 'activity_id': 'Activity'  # No Activity Level{
-        'fund_id': 'res.fund',
-
+        # 'fund_id': 'res.fund',
         'spa_id': 'res.spa',
         'mission_id': 'res.mission',
         'tag_type_id': 'res.tag.type',
@@ -85,29 +84,31 @@ class AccountBudget(models.Model):
             budget_type = rec.chart_view
             super(AccountBudget, rec)._validate_budget_level(budget_type)
 
-    @api.model
-    def _get_budget_monitor(self, fiscal, budget_type,
-                            budget_level, resource,
-                            ext_field=False,
-                            ext_res_id=False):
-        # For funding level, we go deeper, ext is required.
-        if budget_level == 'fund_id':
-            budget_type_dict = {
-                'unit_base': 'monitor_section_ids',
-                'project_base': 'monitor_project_ids',
-                'personnel': 'monitor_personnel_costcenter_ids',
-                'invest_asset': 'monitor_invest_asset_ids',
-                'invest_construction':
-                'monitor_invest_construction_phase_ids'
-            }
-            return resource[budget_type_dict[budget_type]].\
-                filtered(lambda x:
-                         (x.fiscalyear_id == fiscal and
-                          x[ext_field].id == ext_res_id))
-        else:
-            return super(AccountBudget, self).\
-                _get_budget_monitor(fiscal, budget_type,
-                                    budget_level, resource)
+    # DO NOT REMOVE, we remove this because we don't want to use fund_id level
+    # @api.model
+    # def _get_budget_monitor(self, fiscal, budget_type,
+    #                         budget_level, resource,
+    #                         ext_field=False,
+    #                         ext_res_id=False,
+    #                         blevel=False):
+    #     # For funding level, we go deeper, ext is required.
+    #     if budget_level == 'fund_id':
+    #         budget_type_dict = {
+    #             'unit_base': 'monitor_section_ids',
+    #             'project_base': 'monitor_project_ids',
+    #             'personnel': 'monitor_personnel_costcenter_ids',
+    #             'invest_asset': 'monitor_invest_asset_ids',
+    #             'invest_construction':
+    #             'monitor_invest_construction_phase_ids'
+    #         }
+    #         return resource[budget_type_dict[budget_type]].\
+    #             filtered(lambda x:
+    #                      (x.fiscalyear_id == fiscal and
+    #                       x[ext_field].id == ext_res_id))
+    #     else:
+    #         return super(AccountBudget, self).\
+    #             _get_budget_monitor(fiscal, budget_type,
+    #                                 budget_level, resource)
 
     @api.model
     def _get_doc_field_combination(self, doc_lines, args):
@@ -300,3 +301,18 @@ class AccountBudget(models.Model):
         dom += [('chart_view', '=', self.chart_view),
                 (dimension, '=', self[dimension].id)]
         return dom
+
+    @api.multi
+    def _compute_commitment_summary_line_ids(self):
+        """ Overwrite """
+        Commitment = self.env['budget.commitment.summary']
+        for budget in self:
+            if not budget.section_id:  # Extra
+                continue
+            domain = [('fiscalyear_id', '=', budget.fiscalyear_id.id),
+                      ('all_commit', '!=', 0.0),
+                      ('section_id', '=', budget.section_id.id)]  # Extra
+            budget.commitment_summary_expense_line_ids = \
+                Commitment.search(domain + [('budget_method', '=', 'expense')])
+            budget.commitment_summary_revenue_line_ids = \
+                Commitment.search(domain + [('budget_method', '=', 'revenue')])

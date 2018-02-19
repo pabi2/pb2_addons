@@ -265,11 +265,18 @@ class HRExpense(models.Model):
                 'credit': rev_dr_vals['debit'],
                 'account_id': exp_journal.default_credit_account_id.id
             })
-#             AccountMoveLine.with_context(ctx).create(exp_cr_vals)
+            # AccountMoveLine.with_context(ctx).create(exp_cr_vals)
             exp_move_lines.append((0, 0, exp_cr_vals))
             exp_move.with_context(ctx).write({'line_id': exp_move_lines})
             expense.write({'rev_ic_move_id': rev_move.id,
                            'exp_ic_move_id': exp_move.id})
+            # Post and budget check_budget
+            ctx = {}  # For internal charge and no check
+            if expense.pay_to == 'internal' and \
+                    period.fiscalyear_id.control_ext_charge_only:
+                ctx = {'force_no_budget_check': True}
+            rev_move.with_context(ctx).post()
+            exp_move.with_context(ctx).post()
 
     @api.multi
     def write(self, vals):

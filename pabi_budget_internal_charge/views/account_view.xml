@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <!-- More option in Budget Level -->
+        <record id="view_fiscalyear_budget_level_form" model="ir.ui.view">
+            <field name="name">view.fiscalyear.budget.level.form</field>
+            <field name="model">account.fiscalyear</field>
+            <field name="inherit_id" ref="account_budget_activity.view_fiscalyear_budget_level_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/group/group/field[@name='name']" position="after">
+                    <field name="control_ext_charge_only"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

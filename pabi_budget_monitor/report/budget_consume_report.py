@@ -53,3 +53,16 @@ class BudgetConsumeReport(ChartField, models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
                    (self._table, self._get_sql_view(),))
+
+
+class BudgetCommitmentSummary(ChartField, models.Model):
+    _inherit = 'budget.commitment.summary'
+
+    def _get_dimension(self):
+        dimensions = super(BudgetCommitmentSummary, self)._get_dimension()
+        return dimensions
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
+                   (self._table, self._get_sql_view(),))

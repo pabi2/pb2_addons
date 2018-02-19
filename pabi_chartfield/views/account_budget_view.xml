@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <record id="unit_base_budget_summary_tree_view" model="ir.ui.view">
+        <!-- <record id="unit_base_budget_summary_tree_view" model="ir.ui.view">
             <field name="name">budget.unit.summary.view</field>
             <field name="model">budget.unit.summary</field>
             <field name="arch" type="xml">
@@ -24,7 +24,7 @@
                     <field name="planned_amount" sum="planned_amount"/>
                 </tree>
             </field>
-        </record>
+        </record> -->
 
         <record id="account_budget_view_tree" model="ir.ui.view" >
             <field name="name">account.budget.view.tree</field>
@@ -144,7 +144,7 @@
                                       'default_fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'expense'}" />
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[last()]" position="after">
+                <!-- <xpath expr="/form/sheet/notebook/page[last()]" position="after">
                     <page string="Summary" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
                         <separator string="Budgeted Expense"/>
                         <field name="budget_summary_expense_line_ids"
@@ -156,8 +156,8 @@
                                 context="{'tree_view_ref': 'pabi_chartfield.unit_base_budget_summary_tree_view'}"/>
 
                     </page>
-                </xpath>
-                <xpath expr="/form/sheet/notebook/page[@name='expense']//group[@name='expense_extra2']" position="inside">
+                </xpath> -->
+                <!-- <xpath expr="/form/sheet/notebook/page[@name='expense']//group[@name='expense_extra2']" position="inside">
                     <field name="commitment_summary_expense_line_ids" nolabel="1">
                         <tree>
                             <field name="activity_group_id"/>
@@ -165,7 +165,7 @@
                             <field name="all_commit" sum="Total"/>
                         </tree>
                     </field>
-                </xpath>
+                </xpath> -->
             </field>
         </record>
 

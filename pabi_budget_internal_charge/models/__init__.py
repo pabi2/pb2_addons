@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from . import account
 from . import budget_plan_unit
 from . import hr_expense
 from . import analytic
