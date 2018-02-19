@@ -10,7 +10,7 @@ class HRExpenseExpense(models.Model):
     def _expense_budget_check(self):
         Budget = self.env['account.budget']
         for expense in self:
-            if expense.is_employee_advance:  # For AV, no budget check
+            if expense.is_employee_advance or expense.pay_to == 'internal':
                 continue
             doc_date = expense.date
             doc_lines = Budget.convert_lines_to_doc_lines(expense.line_ids)

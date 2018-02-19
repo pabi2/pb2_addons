@@ -7,6 +7,12 @@ class BudgetPlanReport(models.Model):
     _name = 'budget.plan.report'
     _auto = False
 
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        readonly=True,
+    )
     budget_method = fields.Selection(
         [('revenue', 'Revenue'),
          ('expense', 'Expense')],
@@ -109,7 +115,7 @@ class BudgetPlanReport(models.Model):
     def _get_sql_view(self):
         sql_view = """
             select abl.id, abl.budget_method, ab.creating_user_id as user_id,
-                abl.fiscalyear_id, ab.id as budget_id,
+                abl.charge_type, abl.fiscalyear_id, ab.id as budget_id,
                 -- Amount
                 case when ablps.sequence = 1
                     then ablps.amount  end as m1,

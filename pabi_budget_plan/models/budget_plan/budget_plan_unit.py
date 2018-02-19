@@ -253,6 +253,15 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     _description = "Unit - Budget Plan Line"
     _rec_name = 'activity_group_id'
 
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        required=True,
+        default='external',
+        help="Specify whether the budget plan line is for Internal Charge or "
+        "External Charge. Internal charged is for Unit Based only."
+    )
     # COMMON
     chart_view = fields.Selection(
         default='unit_base',  # Unit

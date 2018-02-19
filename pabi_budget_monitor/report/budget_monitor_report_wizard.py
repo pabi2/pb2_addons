@@ -121,8 +121,6 @@ class BudgetMonitorReportWizard(models.TransientModel):
     @api.model
     def _get_filter_unit_base(self):
         domain = []
-        if self.chart_view == 'unit_base':
-            return domain
         if self.org_id:
             domain.append(('org_id', '=', self.org_id.id))
         if self.sector_id:
@@ -138,8 +136,6 @@ class BudgetMonitorReportWizard(models.TransientModel):
     @api.model
     def _get_filter_project_base(self):
         domain = []
-        if self.chart_view == 'project_base':
-            return domain
         if self.functional_area_id:
             domain.append(('functional_area_id', '=',
                            self.functional_area_id.id))
@@ -151,6 +147,21 @@ class BudgetMonitorReportWizard(models.TransientModel):
             domain.append(('project_group_id', '=', self.project_group_id.id))
         if self.project_id:
             domain.append(('project_id', '=', self.project_id.id))
+        return domain
+
+    @api.model
+    def _get_filter_by_chart_view(self):
+        chart_view_dict = {
+            'unit_base': ['org_id', 'sector_id', 'subsector_id',
+                          'division_id', 'section_id'],
+            'project_base': ['functional_area_id', 'program_group_id',
+                             'program_id', 'project_group_id', 'project_id'],
+        }
+        domain = []
+        todos = chart_view_dict[self.chart_view]
+        for field in todos:
+            if self[field]:
+                domain.append((field, '=', self[field].id))
         return domain
 
     @api.model
@@ -196,8 +207,9 @@ class BudgetMonitorReportWizard(models.TransientModel):
         # Get filter
         domain = []
         domain += self._get_filter_header()
-        domain += self._get_filter_unit_base()
-        domain += self._get_filter_project_base()
+        domain += self._get_filter_by_chart_view()
+        # domain += self._get_filter_unit_base()
+        # domain += self._get_filter_project_base()
         result.update({'domain': domain})
         # Group by
         result['context'] = {}

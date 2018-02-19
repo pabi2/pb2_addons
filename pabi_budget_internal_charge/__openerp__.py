@@ -14,8 +14,6 @@
     ],
     'data': [
         'data/account_data.xml',
-        'report/budget_consume_report_view.xml',
-        'report/budget_plan_report_view.xml',
         'views/account_view.xml',
         'views/budget_plan_unit_view.xml',
         'views/hr_expense_view.xml',

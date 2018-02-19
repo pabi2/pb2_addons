@@ -37,6 +37,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='released_amount']" position="after">
 
+                    <field name="charge_type"/>
+
                     <field name="document"/>
 
                     <field name="spa_id"/>

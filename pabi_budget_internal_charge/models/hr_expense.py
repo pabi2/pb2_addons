@@ -271,12 +271,13 @@ class HRExpense(models.Model):
             expense.write({'rev_ic_move_id': rev_move.id,
                            'exp_ic_move_id': exp_move.id})
             # Post and budget check_budget
-            ctx = {}  # For internal charge and no check
+            ctx = {'force_no_budget_check': True}
+            rev_move.with_context(ctx).post()  # For revenue, always by pass
             if expense.pay_to == 'internal' and \
                     period.fiscalyear_id.control_ext_charge_only:
-                ctx = {'force_no_budget_check': True}
-            rev_move.with_context(ctx).post()
-            exp_move.with_context(ctx).post()
+                exp_move.with_context(ctx).post()
+            else:
+                exp_move.post()
 
     @api.multi
     def write(self, vals):

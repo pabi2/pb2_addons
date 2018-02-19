@@ -7,6 +7,12 @@ class BudgetMonitorReport(models.Model):
     _name = 'budget.monitor.report'
     _auto = False
 
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        readonly=True,
+    )
     budget_method = fields.Selection(
         [('revenue', 'Revenue'),
          ('expense', 'Expense')],
@@ -96,7 +102,7 @@ class BudgetMonitorReport(models.Model):
     def _get_sql_view(self):
         sql_view = """
             select row_number() over (order by period_id) as id,
-            budget_method, user_id, fiscalyear_id,
+            budget_method, user_id, charge_type, fiscalyear_id,
             -----> doc_ref, doc_id,
             planned_amount, released_amount, amount_so_commit,
             amount_pr_commit, amount_po_commit, amount_exp_commit,
@@ -104,7 +110,7 @@ class BudgetMonitorReport(models.Model):
             coalesce(pa1.id, pa2.id) as product_activity_id,
             %s
             from
-            (select budget_method, user_id, fiscalyear_id,
+            (select budget_method, user_id, charge_type, fiscalyear_id,
             ------> doc_ref, 'account.budget,' || budget_id as doc_id,
             planned_amount, released_amount,
             0.0 as amount_so_commit, 0.0 as amount_pr_commit,
@@ -116,7 +122,7 @@ class BudgetMonitorReport(models.Model):
             from budget_plan_report
             where state in ('done')
             UNION ALL
-            select budget_method, user_id, fiscalyear_id,
+            select budget_method, user_id, charge_type, fiscalyear_id,
             ------> doc_ref, doc_id,
             0.0 as planned_amount, 0.0 as released_amount,
             amount_so_commit, amount_pr_commit,

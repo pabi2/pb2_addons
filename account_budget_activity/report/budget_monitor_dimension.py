@@ -7,6 +7,12 @@ class MonitorView(models.AbstractModel):
     _name = 'monitor.view'
     _order = 'budget_method desc'
 
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        readonly=True,
+    )
     budget_method = fields.Selection(
         [('revenue', 'Revenue'),
          ('expense', 'Expense')],
@@ -58,8 +64,8 @@ class MonitorView(models.AbstractModel):
     _monitor_view_tempalte = """
         CREATE or REPLACE VIEW %s as (
             select dense_rank() OVER  -- Can't use row_number, it not persist
-                (ORDER BY budget_method, fiscalyear_id, %s) AS id,
-                budget_method, fiscalyear_id,
+                (ORDER BY budget_method, charge_type, fiscalyear_id, %s) AS id,
+                budget_method, charge_type, fiscalyear_id,
                 %s,
                 sum(planned_amount) planned_amount,
                 sum(released_amount) released_amount,
@@ -74,7 +80,7 @@ class MonitorView(models.AbstractModel):
                 sum(amount_balance) amount_balance
             from budget_monitor_report
             where %s
-            group by budget_method, fiscalyear_id, %s
+            group by budget_method, charge_type, fiscalyear_id, %s
         )
     """
 

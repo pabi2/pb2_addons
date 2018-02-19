@@ -5,6 +5,15 @@ from openerp import api, fields, models
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
+    charge_type = fields.Selection(  # Prepare for pabi_internal_charge
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        required=True,
+        default='external',
+        help="Specify whether the move line is for Internal Charge or "
+        "External Charge. Only expense internal charge to be set as internal",
+    )
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
@@ -13,6 +22,13 @@ class AccountMoveLine(models.Model):
         'account.activity',
         string='Activity',
     )
+
+    @api.model
+    def _prepare_analytic_line(self, obj_line):
+        vals = super(AccountMoveLine, self)._prepare_analytic_line(obj_line)
+        if obj_line.charge_type == 'internal':
+            vals['charge_type'] = 'internal'
+        return vals
 
     @api.model
     def _update_analytic_dimension(self, vals):

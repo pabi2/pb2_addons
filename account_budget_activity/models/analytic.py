@@ -58,6 +58,15 @@ class AccountAnalyticLine(models.Model):
     #     string='Budget Method',
     #     required=True,
     # )
+    charge_type = fields.Selection(  # Prepare for pabi_internal_charge
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        required=True,
+        default='external',
+        help="Specify whether the move line is for Internal Charge or "
+        "External Charge. Only expense internal charge to be set as internal",
+    )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',

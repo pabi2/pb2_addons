@@ -56,15 +56,6 @@ class BudgetPlanUnit(models.Model):
 class BudgetPlanUnitLine(models.Model):
     _inherit = "budget.plan.unit.line"
 
-    charge_type = fields.Selection(
-        [('internal', 'Internal'),
-         ('external', 'External')],
-        string='Charge Type',
-        required=True,
-        default='external',
-        help="Specify whether the budget plan line is for Internal Charge or "
-        "External Charge. Internal charged is for Unit Based only."
-    )
     income_section_id = fields.Many2one(
         'res.section',
         string='Income Section',

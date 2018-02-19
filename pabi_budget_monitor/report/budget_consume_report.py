@@ -55,11 +55,23 @@ class BudgetConsumeReport(ChartField, models.Model):
                    (self._table, self._get_sql_view(),))
 
 
-class BudgetCommitmentSummary(ChartField, models.Model):
+class BudgetCommitmentSummary(models.Model):
     _inherit = 'budget.commitment.summary'
+
+    section_id = fields.Many2one(
+        'res.section',
+        string='Section',
+        readonly=True,
+    )
+    cost_control_id = fields.Many2one(
+        'cost.control',
+        string='Job Order',
+        readonly=True,
+    )
 
     def _get_dimension(self):
         dimensions = super(BudgetCommitmentSummary, self)._get_dimension()
+        dimensions += ', cost_control_id, section_id'
         return dimensions
 
     def init(self, cr):

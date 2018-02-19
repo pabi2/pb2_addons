@@ -494,8 +494,8 @@ class AccountBudget(models.Model):
     @api.model
     def _get_budget_monitor(self, fiscal, budget_type,
                             budget_level, resource,
-                            add_field=False,
-                            add_res_id=False,
+                            # add_field=False,
+                            # add_res_id=False,
                             blevel=False):
         """ For budget check, expenses only """
         monitors = resource.monitor_ids.\
@@ -505,8 +505,9 @@ class AccountBudget(models.Model):
 
     @api.model
     def check_budget(self, fiscal_id, budget_type,
-                     budget_level, budget_level_res_id, amount,
-                     ext_field=False, ext_res_id=False,):
+                     budget_level, budget_level_res_id, amount
+                     # ext_field=False, ext_res_id=False,
+                     ):
         """ Amount must be in company currency only
         If amount = 0.0, will check current balance from monitor report """
         res = {  # current balance, and result after new amount is applied!
@@ -536,8 +537,6 @@ class AccountBudget(models.Model):
                                              budget_level_res_id)
         monitors = self._get_budget_monitor(fiscal, budget_type,
                                             budget_level, resource,
-                                            add_field=ext_field,
-                                            add_res_id=ext_res_id,
                                             blevel=blevel)
 
         # No plan and no control, do nothing
@@ -549,36 +548,35 @@ class AccountBudget(models.Model):
         if not monitors:  # No plan
             res['budget_ok'] = False
             res['message'] = _('%s\n'
-                               '[%s] the requested budget is %s,\n'
-                               'but there is no budget control for it.') % \
-                (fiscal.name, resource.name_get()[0][1],
-                 '{:,.2f}'.format(amount))
+                               '[%s] No active budget control.') % \
+                (fiscal.name, resource.name_get()[0][1])
             return res
         else:  # Current Budget Status
             res['budget_status'].update({
-                'planned_amount': monitors[0].planned_amount,
-                'released_amount': monitors[0].released_amount,
-                'amount_pr_commit': monitors[0].amount_pr_commit,
-                'amount_po_commit': monitors[0].amount_po_commit,
-                'amount_exp_commit': monitors[0].amount_exp_commit,
-                'amount_actual': monitors[0].amount_actual,
-                'amount_balance': monitors[0].amount_balance,
+                'planned_amount': sum(monitors.mapped('planned_amount')),
+                'released_amount': sum(monitors.mapped('released_amount')),
+                'amount_pr_commit': sum(monitors.mapped('amount_pr_commit')),
+                'amount_po_commit': sum(monitors.mapped('amount_po_commit')),
+                'amount_exp_commit': sum(monitors.mapped('amount_exp_commit')),
+                'amount_actual': sum(monitors.mapped('amount_actual')),
+                'amount_balance': sum(monitors.mapped('amount_balance')),
             })
         # If amount is False, we don't check.
-        if amount is not False and amount > monitors[0].amount_balance:
+        balance = sum(monitors.mapped('amount_balance'))
+        if amount is not False and amount > balance:
             res['budget_ok'] = False
             if amount == 0.0:  # 0.0 mean post check
                 res['message'] = _('%s\n'
                                    '%s, not enough budget, this transaction '
                                    'will result in %s฿ over budget!') % \
                     (fiscal.name, resource.name_get()[0][1],
-                     '{:,.2f}'.format(-monitors[0].amount_balance))
+                     '{:,.2f}'.format(-balance))
             else:
                 res['message'] = _('%s\n'
                                    '%s, remaining budget is %s,\n'
                                    'but the requested budget is %s') % \
                     (fiscal.name, resource.name_get()[0][1],
-                     '{:,.2f}'.format(monitors[0].amount_balance),
+                     '{:,.2f}'.format(balance),
                      '{:,.2f}'.format(amount))
 
         if self._context.get('force_no_budget_check', False) or \

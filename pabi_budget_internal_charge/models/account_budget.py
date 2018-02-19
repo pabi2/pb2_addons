@@ -98,15 +98,11 @@ class AccountBudget(models.Model):
     @api.model
     def _get_budget_monitor(self, fiscal, budget_type,
                             budget_level, resource,
-                            add_field=False,
-                            add_res_id=False,
                             blevel=False):
         """ If set to control only external charge """
         monitors = super(AccountBudget, self).\
             _get_budget_monitor(fiscal, budget_type,
                                 budget_level, resource,
-                                add_field=add_field,
-                                add_res_id=add_res_id,
                                 blevel=blevel)
         if blevel and fiscal.control_ext_charge_only:
             monitors = monitors.filtered(lambda l: l.charge_type == 'external')
