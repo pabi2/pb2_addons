@@ -182,6 +182,34 @@ class AccountBudget(models.Model):
         compute='_compute_release_diff_rolling',
         help="Release amount - rolling amount",
     )
+    budget_summary_expense_line_ids = fields.One2many(
+        'budget.summary',
+        'budget_id',
+        string='Summary by Activity Group',
+        readonly=True,
+        domain=[('budget_method', '=', 'expense')],
+        help="Summary by Activity Group View",
+    )
+    budget_summary_revenue_line_ids = fields.One2many(
+        'budget.summary',
+        'budget_id',
+        string='Summary by Activity Group',
+        readonly=True,
+        domain=[('budget_method', '=', 'revenue')],
+        help="Summary by Activity Group View",
+    )
+    commitment_summary_expense_line_ids = fields.Many2many(
+        'budget.commitment.summary',
+        compute='_compute_commitment_summary_line_ids',
+        readonly=True,
+        help="Summary by fiscal year and section",
+    )
+    commitment_summary_revenue_line_ids = fields.Many2many(
+        'budget.commitment.summary',
+        compute='_compute_commitment_summary_line_ids',
+        readonly=True,
+        help="Summary by fiscal year and section",
+    )
 
     @api.model
     def trx_budget_required(self, trx):
@@ -226,6 +254,14 @@ class AccountBudget(models.Model):
         return self.budget_expense_line_ids
 
     @api.multi
+    def _get_past_actual_amount(self):
+        self.ensure_one()
+        Consume = self.env['budget.consume.report']
+        dom = self._get_past_consumed_domain()
+        consumes = Consume.search(dom)
+        return sum(consumes.mapped('amount_actual'))
+
+    @api.multi
     def _get_future_plan_amount(self):
         self.ensure_one()
         Period = self.env['account.period']
@@ -247,12 +283,9 @@ class AccountBudget(models.Model):
 
     @api.multi
     def _compute_past_future_rolling(self):
-        Consume = self.env['budget.consume.report']
         for budget in self:
             # Past
-            dom = budget._get_past_consumed_domain()
-            budget.past_consumed = \
-                sum(Consume.search(dom).mapped('amount_actual'))
+            budget.past_consumed = budget._get_past_actual_amount()
             # Future
             budget.future_plan = budget._get_future_plan_amount()
             # Rolling
@@ -330,6 +363,17 @@ class AccountBudget(models.Model):
     def _compute_date(self):
         self.date_from = self.fiscalyear_id.date_start
         self.date_to = self.fiscalyear_id.date_stop
+
+    @api.multi
+    def _compute_commitment_summary_line_ids(self):
+        Commitment = self.env['budget.commitment.summary']
+        for budget in self:
+            domain = [('fiscalyear_id', '=', budget.fiscalyear_id.id),
+                      ('all_commit', '!=', 0.0)]
+            budget.commitment_summary_expense_line_ids = \
+                Commitment.search(domain + [('budget_method', '=', 'expense')])
+            budget.commitment_summary_revenue_line_ids = \
+                Commitment.search(domain + [('budget_method', '=', 'revenue')])
 
     @api.multi
     def _validate_budget_level(self, budget_type='check_budget'):
@@ -450,8 +494,9 @@ class AccountBudget(models.Model):
     @api.model
     def _get_budget_monitor(self, fiscal, budget_type,
                             budget_level, resource,
-                            add_field=False,
-                            add_res_id=False):
+                            # add_field=False,
+                            # add_res_id=False,
+                            blevel=False):
         """ For budget check, expenses only """
         monitors = resource.monitor_ids.\
             filtered(lambda x: x.fiscalyear_id == fiscal and
@@ -460,8 +505,9 @@ class AccountBudget(models.Model):
 
     @api.model
     def check_budget(self, fiscal_id, budget_type,
-                     budget_level, budget_level_res_id, amount,
-                     ext_field=False, ext_res_id=False,):
+                     budget_level, budget_level_res_id, amount
+                     # ext_field=False, ext_res_id=False,
+                     ):
         """ Amount must be in company currency only
         If amount = 0.0, will check current balance from monitor report """
         res = {  # current balance, and result after new amount is applied!
@@ -491,8 +537,7 @@ class AccountBudget(models.Model):
                                              budget_level_res_id)
         monitors = self._get_budget_monitor(fiscal, budget_type,
                                             budget_level, resource,
-                                            ext_field=ext_field,
-                                            ext_res_id=ext_res_id)
+                                            blevel=blevel)
 
         # No plan and no control, do nothing
         if not monitors and not blevel.is_budget_control:
@@ -503,39 +548,39 @@ class AccountBudget(models.Model):
         if not monitors:  # No plan
             res['budget_ok'] = False
             res['message'] = _('%s\n'
-                               '[%s] the requested budget is %s,\n'
-                               'but there is no budget control for it.') % \
-                (fiscal.name, resource.name_get()[0][1],
-                 '{:,.2f}'.format(amount))
+                               '[%s] No active budget control.') % \
+                (fiscal.name, resource.name_get()[0][1])
             return res
         else:  # Current Budget Status
             res['budget_status'].update({
-                'planned_amount': monitors[0].planned_amount,
-                'released_amount': monitors[0].released_amount,
-                'amount_pr_commit': monitors[0].amount_pr_commit,
-                'amount_po_commit': monitors[0].amount_po_commit,
-                'amount_exp_commit': monitors[0].amount_exp_commit,
-                'amount_actual': monitors[0].amount_actual,
-                'amount_balance': monitors[0].amount_balance,
+                'planned_amount': sum(monitors.mapped('planned_amount')),
+                'released_amount': sum(monitors.mapped('released_amount')),
+                'amount_pr_commit': sum(monitors.mapped('amount_pr_commit')),
+                'amount_po_commit': sum(monitors.mapped('amount_po_commit')),
+                'amount_exp_commit': sum(monitors.mapped('amount_exp_commit')),
+                'amount_actual': sum(monitors.mapped('amount_actual')),
+                'amount_balance': sum(monitors.mapped('amount_balance')),
             })
         # If amount is False, we don't check.
-        if amount is not False and amount > monitors[0].amount_balance:
+        balance = sum(monitors.mapped('amount_balance'))
+        if amount is not False and amount > balance:
             res['budget_ok'] = False
             if amount == 0.0:  # 0.0 mean post check
                 res['message'] = _('%s\n'
                                    '%s, not enough budget, this transaction '
                                    'will result in %s฿ over budget!') % \
                     (fiscal.name, resource.name_get()[0][1],
-                     '{:,.2f}'.format(-monitors[0].amount_balance))
+                     '{:,.2f}'.format(-balance))
             else:
                 res['message'] = _('%s\n'
                                    '%s, remaining budget is %s,\n'
                                    'but the requested budget is %s') % \
                     (fiscal.name, resource.name_get()[0][1],
-                     '{:,.2f}'.format(monitors[0].amount_balance),
+                     '{:,.2f}'.format(balance),
                      '{:,.2f}'.format(amount))
 
-        if not blevel.is_budget_control:
+        if self._context.get('force_no_budget_check', False) or \
+                not blevel.is_budget_control:
             res['budget_ok'] = True  # No control, just return information
         return res
 

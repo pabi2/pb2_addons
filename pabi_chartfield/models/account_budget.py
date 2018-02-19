@@ -92,35 +92,35 @@ class AccountBudget(ChartField, models.Model):
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    budget_summary_expense_line_ids = fields.One2many(
-        'budget.unit.summary',
-        'budget_id',
-        string='Summary by Activity Group',
-        readonly=True,
-        domain=[('budget_method', '=', 'expense')],
-        help="Summary by Activity Group View",
-    )
-    budget_summary_revenue_line_ids = fields.One2many(
-        'budget.unit.summary',
-        'budget_id',
-        string='Summary by Activity Group',
-        readonly=True,
-        domain=[('budget_method', '=', 'revenue')],
-        help="Summary by Activity Group View",
-    )
-    # Commitment Summary for Unit Based (for now, expense only)
-    commitment_summary_expense_line_ids = fields.Many2many(
-        'budget.commitment.summary',
-        compute='_compute_commitment_summary_line_ids',
-        readonly=True,
-        help="Summary by fiscal year and section",
-    )
-    commitment_summary_revenue_line_ids = fields.Many2many(
-        'budget.commitment.summary',
-        compute='_compute_commitment_summary_line_ids',
-        readonly=True,
-        help="Summary by fiscal year and section",
-    )
+    # budget_summary_expense_line_ids = fields.One2many(
+    #     'budget.unit.summary',
+    #     'budget_id',
+    #     string='Summary by Activity Group',
+    #     readonly=True,
+    #     domain=[('budget_method', '=', 'expense')],
+    #     help="Summary by Activity Group View",
+    # )
+    # budget_summary_revenue_line_ids = fields.One2many(
+    #     'budget.unit.summary',
+    #     'budget_id',
+    #     string='Summary by Activity Group',
+    #     readonly=True,
+    #     domain=[('budget_method', '=', 'revenue')],
+    #     help="Summary by Activity Group View",
+    # )
+    # # Commitment Summary for Unit Based (for now, expense only)
+    # commitment_summary_expense_line_ids = fields.Many2many(
+    #     'budget.commitment.summary',
+    #     compute='_compute_commitment_summary_line_ids',
+    #     readonly=True,
+    #     help="Summary by fiscal year and section",
+    # )
+    # commitment_summary_revenue_line_ids = fields.Many2many(
+    #     'budget.commitment.summary',
+    #     compute='_compute_commitment_summary_line_ids',
+    #     readonly=True,
+    #     help="Summary by fiscal year and section",
+    # )
 
     # cost_control_ids = fields.One2many(
     #     'budget.unit.job.order',
@@ -254,19 +254,19 @@ class AccountBudget(ChartField, models.Model):
             self.message_post(body=message)
         return super(AccountBudget, self).write(vals)
 
-    @api.multi
-    def _compute_commitment_summary_line_ids(self):
-        Commitment = self.env['budget.commitment.summary']
-        for budget in self:
-            if budget.chart_view != 'unit_base' or not budget.section_id:
-                continue
-            domain = [('fiscalyear_id', '=', budget.fiscalyear_id.id),
-                      ('section_id', '=', budget.section_id.id),
-                      ('all_commit', '!=', 0.0)]
-            budget.commitment_summary_expense_line_ids = \
-                Commitment.search(domain + [('budget_method', '=', 'expense')])
-            budget.commitment_summary_revenue_line_ids = \
-                Commitment.search(domain + [('budget_method', '=', 'revenue')])
+    # @api.multi
+    # def _compute_commitment_summary_line_ids(self):
+    #     Commitment = self.env['budget.commitment.summary']
+    #     for budget in self:
+    #         if budget.chart_view != 'unit_base' or not budget.section_id:
+    #             continue
+    #         domain = [('fiscalyear_id', '=', budget.fiscalyear_id.id),
+    #                   ('section_id', '=', budget.section_id.id),
+    #                   ('all_commit', '!=', 0.0)]
+    #         budget.commitment_summary_expense_line_ids = \
+    #             Commitment.search(domain + [('budget_method', '=', 'expense')])
+    #         budget.commitment_summary_revenue_line_ids = \
+    #             Commitment.search(domain + [('budget_method', '=', 'revenue')])
 
 
 class AccountBudgetLine(ChartField, models.Model):

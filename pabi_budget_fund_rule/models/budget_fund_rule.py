@@ -168,16 +168,26 @@ class BudgetFundRule(models.Model):
         return rules
 
     @api.model
+    def _get_doc_field_combination(self, doc_lines, args):
+        combinations = []
+        for l in doc_lines:
+            val = ()
+            for f in args:
+                val += (l[f],)
+            if False not in val:
+                combinations.append(val)
+        return combinations
+
+    @api.model
     def document_check_fund_spending(self, doc_lines, amount_field):
         res = {'budget_ok': True,
                'message': False}
-        Budget = self.env['account.budget']
         if not doc_lines:
             return res
         # Project / Fund unique (to find matched fund rules
-        project_fund_vals = Budget._get_doc_field_combination(doc_lines,
-                                                              ['project_id',
-                                                               'fund_id'])
+        project_fund_vals = self._get_doc_field_combination(doc_lines,
+                                                            ['project_id',
+                                                             'fund_id'])
         # Find all matching rules for this transaction
         rules = self._get_matched_fund_rule(project_fund_vals)
         # Check against each rule

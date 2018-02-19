@@ -10,7 +10,7 @@ class AccountBudget(models.Model):
         # 'activity_group_id': 'Activity Group',
         # 'activity_id': 'Activity',
         # Fund
-        'fund_id': 'Fund (for all)',
+        # 'fund_id': 'Fund (for all)',
         # Project Based
         'spa_id': 'SPA',
         'mission_id': 'Mission',
@@ -41,8 +41,7 @@ class AccountBudget(models.Model):
         # Code not cover Activity level yet
         # 'activity_group_id': 'account.activity.group',
         # 'activity_id': 'Activity'  # No Activity Level{
-        'fund_id': 'res.fund',
-
+        # 'fund_id': 'res.fund',
         'spa_id': 'res.spa',
         'mission_id': 'res.mission',
         'tag_type_id': 'res.tag.type',
@@ -85,40 +84,31 @@ class AccountBudget(models.Model):
             budget_type = rec.chart_view
             super(AccountBudget, rec)._validate_budget_level(budget_type)
 
-    @api.model
-    def _get_budget_monitor(self, fiscal, budget_type,
-                            budget_level, resource,
-                            ext_field=False,
-                            ext_res_id=False):
-        # For funding level, we go deeper, ext is required.
-        if budget_level == 'fund_id':
-            budget_type_dict = {
-                'unit_base': 'monitor_section_ids',
-                'project_base': 'monitor_project_ids',
-                'personnel': 'monitor_personnel_costcenter_ids',
-                'invest_asset': 'monitor_invest_asset_ids',
-                'invest_construction':
-                'monitor_invest_construction_phase_ids'
-            }
-            return resource[budget_type_dict[budget_type]].\
-                filtered(lambda x:
-                         (x.fiscalyear_id == fiscal and
-                          x[ext_field].id == ext_res_id))
-        else:
-            return super(AccountBudget, self).\
-                _get_budget_monitor(fiscal, budget_type,
-                                    budget_level, resource)
-
-    @api.model
-    def _get_doc_field_combination(self, doc_lines, args):
-        combinations = []
-        for l in doc_lines:
-            val = ()
-            for f in args:
-                val += (l[f],)
-            if False not in val:
-                combinations.append(val)
-        return combinations
+    # DO NOT REMOVE, we remove this because we don't want to use fund_id level
+    # @api.model
+    # def _get_budget_monitor(self, fiscal, budget_type,
+    #                         budget_level, resource,
+    #                         ext_field=False,
+    #                         ext_res_id=False,
+    #                         blevel=False):
+    #     # For funding level, we go deeper, ext is required.
+    #     if budget_level == 'fund_id':
+    #         budget_type_dict = {
+    #             'unit_base': 'monitor_section_ids',
+    #             'project_base': 'monitor_project_ids',
+    #             'personnel': 'monitor_personnel_costcenter_ids',
+    #             'invest_asset': 'monitor_invest_asset_ids',
+    #             'invest_construction':
+    #             'monitor_invest_construction_phase_ids'
+    #         }
+    #         return resource[budget_type_dict[budget_type]].\
+    #             filtered(lambda x:
+    #                      (x.fiscalyear_id == fiscal and
+    #                       x[ext_field].id == ext_res_id))
+    #     else:
+    #         return super(AccountBudget, self).\
+    #             _get_budget_monitor(fiscal, budget_type,
+    #                                 budget_level, resource)
 
     @api.model
     def pre_commit_budget_check(self, doc_date, doc_lines,
@@ -152,18 +142,15 @@ class AccountBudget(models.Model):
             return {'budget_ok': False,
                     'budget_status': {},
                     'message': 'Budget level(s) is not set!'}
-        # Check for all budget types
+        # Check for all budget types (unit base, project base, etc...)
         for budget_type in dict(self.BUDGET_LEVEL_TYPE).keys():
             budget_level = budget_levels[budget_type]
-            sel_fields = self._prepare_sel_budget_fields(budget_type,
-                                                         budget_level)
             # For document only
-            group_vals = self._get_doc_field_combination(doc_lines, sel_fields)
-            for val in group_vals:
-                res_id, ext_field, ext_res_id, filtered_lines = \
-                    self._prepare_resource_fields(sel_fields, val, doc_lines)
-                if not res_id:
-                    continue
+            vals = list(set([x[budget_level] for x in doc_lines]))
+            res_ids = list(filter(lambda a: a is not False, vals))
+            for res_id in res_ids:
+                filtered_lines = filter(lambda a: a[budget_level] == res_id,
+                                        doc_lines)
                 amount = 0.0
                 if amount_field:
                     amount = sum(map(lambda l:
@@ -173,28 +160,19 @@ class AccountBudget(models.Model):
                                         budget_type,  # eg, project_base
                                         budget_level,  # eg, project_id
                                         res_id,
-                                        amount,
-                                        ext_field=ext_field,
-                                        ext_res_id=ext_res_id)
+                                        amount)
                 if not res['budget_ok']:
                     return res
         return res
 
     @api.model
     def simple_check_budget(self, doc_date, budget_type,
-                            amount, res_id, fund_id=False):
+                            amount, res_id):
         """ This method is used to check budget of one type and one res_id
-            If the budget level is not below basic 5 structure, i.e.,
-            For project_base, with level = project_id,
-                res_id = project_id (int)
-            If level = Fund,
-                res_id = fund_id and ext_res_id = project_id
-
             :param date: doc_date, document date or date to check budget
             :param budget_type: 1 of the 5 budget types
             :param amount: Check amount, to just check status, use False
             :param res_id: resource's id, differ for each type of budget
-            :param fund_id: Fund
             :return: dict of result
         """
         res = {'budget_ok': True,
@@ -208,29 +186,30 @@ class AccountBudget(models.Model):
                     'message': 'Budget level(s) is not set!'}
         # Check for single budget type
         budget_level = budget_levels[budget_type]
-        sel_fields = self._prepare_sel_budget_fields(budget_type,
-                                                     budget_level)
-        ext_res_id = False
-        ext_field = False
-        if len(sel_fields) > 1 and 'fund_id' in sel_fields:
-            if not fund_id:
-                return {'budget_ok': False,
-                        'budget_status': {},
-                        'message': 'Fund is not selected!'}
-            else:
-                ext_field = len(sel_fields) == 2 and sel_fields[1] or False
-                # Reassign
-                ext_res_id = res_id
-                res_id = fund_id
+        # sel_fields = self._prepare_sel_budget_fields(budget_type,
+        #                                              budget_level)
+        # ext_res_id = False
+        # ext_field = False
+        # if len(sel_fields) > 1 and 'fund_id' in sel_fields:
+        #     if not fund_id:
+        #         return {'budget_ok': False,
+        #                 'budget_status': {},
+        #                 'message': 'Fund is not selected!'}
+        #     else:
+        #         ext_field = len(sel_fields) == 2 and sel_fields[1] or False
+        #         # Reassign
+        #         ext_res_id = res_id
+        #         res_id = fund_id
 
         amount = self._calc_amount_company_currency(amount)
         res = self.check_budget(fiscal_id,
                                 budget_type,  # eg, project_base
                                 budget_level,  # eg, project_id
                                 res_id,
-                                amount,
-                                ext_field=ext_field,
-                                ext_res_id=ext_res_id)
+                                amount
+                                # ext_field=ext_field,
+                                # ext_res_id=ext_res_id
+                                )
         return res
 
     @api.model
@@ -243,19 +222,19 @@ class AccountBudget(models.Model):
                 return False
         return True
 
-    @api.model
-    def _prepare_sel_budget_fields(self, budget_type, budget_level):
-        """ For level fund, will be 2 fields comination to check budget """
-        sel_fields = [budget_level]
-        if budget_level == 'fund_id':
-            budget_type_dict = {
-                'unit_base': 'section_id',
-                'project_base': 'project_id',
-                'personnel': 'personnel_costcenter_id',
-                'invest_asset': 'investment_asset_id',
-                'invest_construction': 'invest_construction_phase_id'}
-            sel_fields.append(budget_type_dict[budget_type])
-        return sel_fields
+    # @api.model
+    # def _prepare_sel_budget_fields(self, budget_type, budget_level):
+    #     """ For level fund, will be 2 fields comination to check budget """
+    #     sel_fields = [budget_level]
+    #     if budget_level == 'fund_id':
+    #         budget_type_dict = {
+    #             'unit_base': 'section_id',
+    #             'project_base': 'project_id',
+    #             'personnel': 'personnel_costcenter_id',
+    #             'invest_asset': 'investment_asset_id',
+    #             'invest_construction': 'invest_construction_phase_id'}
+    #         sel_fields.append(budget_type_dict[budget_type])
+    #     return sel_fields
 
     @api.model
     def _calc_amount_company_currency(self, amount):
@@ -268,10 +247,8 @@ class AccountBudget(models.Model):
         return amount
 
     @api.model
-    def _prepare_resource_fields(self, sel_fields, val, doc_lines):
-        res_id = val[0]
-        ext_field = False
-        ext_res_id = False
+    def _prepare_resource_fields(self, budget_level, val, doc_lines):
+        res_id = val
         filtered_lines = doc_lines
         i = 0
         for f in sel_fields:
@@ -300,3 +277,18 @@ class AccountBudget(models.Model):
         dom += [('chart_view', '=', self.chart_view),
                 (dimension, '=', self[dimension].id)]
         return dom
+
+    @api.multi
+    def _compute_commitment_summary_line_ids(self):
+        """ Overwrite """
+        Commitment = self.env['budget.commitment.summary']
+        for budget in self:
+            if not budget.section_id:  # Extra
+                continue
+            domain = [('fiscalyear_id', '=', budget.fiscalyear_id.id),
+                      ('all_commit', '!=', 0.0),
+                      ('section_id', '=', budget.section_id.id)]  # Extra
+            budget.commitment_summary_expense_line_ids = \
+                Commitment.search(domain + [('budget_method', '=', 'expense')])
+            budget.commitment_summary_revenue_line_ids = \
+                Commitment.search(domain + [('budget_method', '=', 'revenue')])

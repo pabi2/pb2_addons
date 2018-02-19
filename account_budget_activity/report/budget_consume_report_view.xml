@@ -33,7 +33,6 @@
                	 <field name="product_id" />
                  <field name="activity_group_id" />
                  <field name="activity_id" />
-                 <field name="account_id"/>
                  <field name="user_id" />
                  <field name="fiscalyear_id" />
                  <field name="date" />

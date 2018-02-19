@@ -76,6 +76,30 @@
             </field>
         </record>
 
+        <record id="budget_summary_tree_view" model="ir.ui.view">
+            <field name="name">budget.summary.view</field>
+            <field name="model">budget.summary</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Summary Lines" editable="bottom">
+                    <field name="budget_method" invisible="True"/>
+                    <field name="activity_group_id" />
+                    <field name="m1" sum="m1"/>
+                    <field name="m2" sum="m2"/>
+                    <field name="m3" sum="m3"/>
+                    <field name="m4" sum="m4"/>
+                    <field name="m5" sum="m5"/>
+                    <field name="m6" sum="m6"/>
+                    <field name="m7" sum="m7"/>
+                    <field name="m8" sum="m8"/>
+                    <field name="m9" sum="m9"/>
+                    <field name="m10" sum="m10"/>
+                    <field name="m11" sum="m11"/>
+                    <field name="m12" sum="m12"/>
+                    <field name="planned_amount" sum="planned_amount"/>
+                </tree>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="account_budget_view_form">
             <field name="name">account.budget.view.form</field>
             <field name="model">account.budget</field>
@@ -126,8 +150,8 @@
                                 <div name="expense_extra"></div>
                                 <field name="budget_expense_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}" context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'fiscalyear_id': fiscalyear_id}"/>
                                 <group>
-                                    <group name="expense_extra2"></group>
-                                    <group class="oe_subtotal_footer oe_right">
+                                    <group class="oe_subtotal_footer oe_right" name="expense_extra2"></group>
+                                    <group class="oe_subtotal_footer oe_right" name="expense_footer">
                                         <field name="past_consumed"/>
                                         <field name="future_plan"/>
                                         <field name="rolling" class="oe_subtotal_footer_separator"/>
@@ -142,6 +166,36 @@
                                     nolabel="1"
                                     attrs="{'readonly':[('state','!=','draft')]}"
                                     context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'fiscalyear_id': fiscalyear_id, 'default_budget_method': 'revenue'}"/>
+                            </page>
+                            <page string="Plan Summary">
+                                <separator string="Budgeted Expense"/>
+                                <field name="budget_summary_expense_line_ids"
+                                        colspan="4" nolabel="1"
+                                        context="{'tree_view_ref': 'account_budget_activity.budget_summary_tree_view'}"/>
+                                <separator string="Budgeted Revenue"/>
+                                <field name="budget_summary_revenue_line_ids"
+                                        colspan="4" nolabel="1"
+                                        context="{'tree_view_ref': 'account_budget_activity.budget_summary_tree_view'}"/>
+                            </page>
+                            <page string="Commitment Summary" name="commitment_summary">
+                                <group>
+                                    <group string="Revenue">
+                                      <field name="commitment_summary_revenue_line_ids" nolabel="1">
+                                          <tree>
+                                              <field name="activity_group_id"/>
+                                              <field name="all_commit" sum="Total"/>
+                                          </tree>
+                                      </field>
+                                    </group>
+                                    <group string="Expense">
+                                      <field name="commitment_summary_expense_line_ids" nolabel="1">
+                                          <tree>
+                                              <field name="activity_group_id"/>
+                                              <field name="all_commit" sum="Total"/>
+                                          </tree>
+                                      </field>
+                                    </group>
+                                </group>
                             </page>
                             <!-- <page string="Revisions" name="revisions">
                                 <field name="prev_revision_ids" nolabel="1">

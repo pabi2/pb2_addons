@@ -14,6 +14,7 @@
     ],
     'data': [
         'data/account_data.xml',
+        'views/account_view.xml',
         'views/budget_plan_unit_view.xml',
         'views/hr_expense_view.xml',
         'views/account_budget_view.xml',

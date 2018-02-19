@@ -7,6 +7,12 @@ class BudgetConsumeReport(models.Model):
     _name = 'budget.consume.report'
     _auto = False
 
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        readonly=True,
+    )
     budget_method = fields.Selection(
         [('revenue', 'Revenue'),
          ('expense', 'Expense')],
@@ -86,7 +92,7 @@ class BudgetConsumeReport(models.Model):
 
     def _get_select_clause(self):
         sql_select = """
-        select aal.id, aal.user_id, aal.date,
+        select aal.id, aal.charge_type, aal.user_id, aal.date,
             aal.monitor_fy_id fiscalyear_id,
             -------------> aal.doc_ref, aal.doc_id,
             -- Amount
@@ -137,6 +143,56 @@ class BudgetConsumeReport(models.Model):
     def _get_dimension(self):
         return 'aal.product_id, aal.activity_group_id, aal.activity_id, ' + \
             'aal.account_id, aal.period_id, aal.quarter'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
+                   (self._table, self._get_sql_view(),))
+
+
+class BudgetCommitmentSummary(models.Model):
+    _name = 'budget.commitment.summary'
+    _auto = False
+
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        readonly=True,
+    )
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscal Year',
+    )
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+    )
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        string='Activity Group',
+    )
+    all_commit = fields.Float(
+        string='Budget Committed Amount',
+    )
+
+    def _get_sql_view(self):
+        sql_view = """
+            select * from (
+                select min(id) as id, charge_type, fiscalyear_id, %s,
+                    sum(coalesce(amount_so_commit ,0.0) +
+                        coalesce(amount_pr_commit, 0,0) +
+                        coalesce(amount_po_commit, 0.0) +
+                        coalesce(amount_exp_commit, 0.0)) as all_commit
+                from budget_consume_report
+                group by charge_type, fiscalyear_id, %s) a
+            where all_commit > 0.0
+        """ % (self._get_dimension(), self._get_dimension())
+        return sql_view
+
+    def _get_dimension(self):
+        return 'budget_method, activity_group_id'
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)

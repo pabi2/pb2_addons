@@ -38,25 +38,45 @@
             <field name="model">account.budget</field>
             <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
             <field name="arch" type="xml">
+                <xpath expr="/form/sheet//field[@name='fiscalyear_id']" position="after">
+                    <field name="control_ext_charge_only" invisible="0"/>
+                </xpath>
                 <xpath expr="/form/sheet/notebook/page[@name='expense']/div[@name='expense_extra']" position="inside">
                     <group>
                         <group>
-                            <field name="budgeted_expense_external" string="External"/>
+                            <field name="budgeted_expense_internal" string="Internal"/>
                         </group>
                         <group>
-                            <field name="budgeted_expense_internal" string="Internal"/>
+                            <field name="budgeted_expense_external" string="External"/>
                         </group>
                     </group>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[@name='revenue']/div[@name='revenue_extra']" position="inside">
                     <group>
                         <group>
-                            <field name="budgeted_revenue_external" string="External"/>
-                        </group>
-                        <group>
                             <field name="budgeted_revenue_internal" string="Internal"/>
                         </group>
+                        <group>
+                            <field name="budgeted_revenue_external" string="External"/>
+                        </group>
                     </group>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@name='expense']//group[@name='expense_extra2']" position="inside">
+                    <separator string="Internal Charge"  colspan="2" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
+                    <field name="past_consumed_internal" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
+                    <field name="future_plan_internal" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
+                    <field name="rolling_internal" class="oe_subtotal_footer_separator" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@name='expense']//group[@name='expense_footer']//field[@name='past_consumed']" position="before">
+                    <separator string="External Charge" colspan="2" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@name='commitment_summary']//field[@name='commitment_summary_revenue_line_ids']//field[@name='activity_group_id']" position="before">
+                    <field name="charge_type"/>
+                    <field name="cost_control_id"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@name='commitment_summary']//field[@name='commitment_summary_expense_line_ids']//field[@name='activity_group_id']" position="before">
+                    <field name="charge_type"/>
+                    <field name="cost_control_id"/>
                 </xpath>
             </field>
         </record>

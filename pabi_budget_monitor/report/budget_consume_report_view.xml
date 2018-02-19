@@ -29,6 +29,8 @@
 			<field name="arch" type="xml">
 				<xpath expr="//field[@name='amount']" position="after">
 
+					<field name="charge_type"/>
+
 					<field name="document"/>
 
 					<field name="spa_id"/>
