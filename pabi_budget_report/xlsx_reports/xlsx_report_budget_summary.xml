@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="xlsx_report_budget_summary_view" model="ir.ui.view">
+            <field name="name">xlsx.report.budget.summary.view</field>
+            <field name="model">xlsx.report.budget.summary</field>
+            <field name="arch" type="xml">
+                <form string="Budget Summary (TEST)">
+
+                    <!-- required fields -->
+                    <field name="state" invisible="1"/>
+                    <field name="name" invisible="1"/>
+
+                    <!-- search criteria -->
+                    <group states="choose">
+                        <group>
+                            <field name="fiscalyear_id"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+
+                    <!-- required common fields -->
+                    <div states="get">
+                        <h2>Complete Prepare Report (.xlsx)</h2>
+                        <p>Here is the report file:
+                            <field name="data" readonly="1" filename="name"/></p>
+                    </div>
+                    <footer states="choose">
+                        <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
+                        or
+                        <button special="cancel" string="Cancel" type="object" class="oe_link"/>
+                    </footer>
+                    <footer states="get">
+                        <button special="cancel" string="Close" type="object"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_budget_summary" model="ir.actions.act_window">
+            <field name="name">Budget Summary (TEST)</field>
+            <field name="res_model">xlsx.report.budget.summary</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_budget_summary" name="Budget Summary (TEST)" parent="menu_budget_report" action="action_xlsx_report_budget_summary" sequence="100"/>
+
+        <record id="xlsx_report_budget_summary" model="ir.attachment">
+            <field name="res_model">xlsx.report.budget.summary</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_budget_summary.xlsx</field>
+            <field name="name">Budget Summary (TEST)</field>
+            <field name="parent_id" eval="ref('dir_budget_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B3': 'fiscalyear_id.name',
+                        },
+                        'results[5]': {
+                            'A7': 'chart_view${value and value.title() or ""}',
+                            'B7': 'plan',
+                            'C7': 'policy',
+                            'D7': 'released',
+                            'E7': 'pr_commit',
+                            'F7': 'po_commit',
+                            'G7': 'exp_commit',
+                            'H7': 'actual_total',
+                            'I7': 'balance',
+                            'J7': 'actual_percent',
+                            'K7': 'commit_total',
+                            'L7': 'commit_percent',
+                        },
+                    }
+                }
+            }
+          </field>
+        </record>
+
+
+
+    </data>
+</openerp>
