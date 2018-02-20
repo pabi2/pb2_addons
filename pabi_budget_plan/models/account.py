@@ -26,7 +26,6 @@ class AccountFiscalyear(models.Model):
         'budget.allocation',
         'fiscalyear_id',
         string='Budget Allocations',
-        track_visibility='onchange',
     )
     overall_policy = fields.Float(
         string='NSTDA Policy',

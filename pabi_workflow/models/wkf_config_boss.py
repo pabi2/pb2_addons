@@ -11,6 +11,21 @@ class WkfCmdBossLevelApproval(models.Model):
         string='Section',
         required=True,
     )
+    division_id = fields.Many2one(
+        'res.division',
+        string='Division',
+        related='section_id.division_id',
+    )
+    subsector_id = fields.Many2one(
+        'res.subsector',
+        string='Subsector',
+        related='section_id.division_id',
+    )
+    sector_id = fields.Many2one(
+        'res.sector',
+        string='Sector',
+        related='section_id.sector_id',
+    )
     org_id = fields.Many2one(
         'res.org',
         related='section_id.org_id',
