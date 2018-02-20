@@ -40,7 +40,7 @@ class HRSalaryExpense(models.Model):
                 'salaryNo': salary.number,
                 'sectionId': str(section.id),
                 'objective': salary.name,
-                'total': str(salary.amount_total or 0.0),
+                'total': str(salary.summary_total or 0.0),
                 'reqBy': user.login,
                 'doc': {'name': salary_doc.name,
                         'content': salary_doc.datas},
