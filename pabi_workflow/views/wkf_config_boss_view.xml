@@ -42,7 +42,14 @@
             <field name="name">view.wkf.cmd.boss.level.approval.search</field>
             <field name="model">wkf.cmd.boss.level.approval</field>
             <field name="arch" type="xml">
-                <search string="Boss Level Approval]">
+                <search string="Boss Level Approval">
+                    <field name="org_id"/>
+                    <field name="sector_id"/>
+                    <field name="subsector_id"/>
+                    <field name="division_id"/>
+                    <field name="section_id"/>
+                    <field name="employee_id"/>
+                    <field name="level"/>
                     <group expand="0" string="Group By">
                         <filter name="org_id" string="Org." context="{'group_by':'org_id'}"/>
                         <filter name="section_id" string="Section" context="{'group_by':'section_id'}"/>
