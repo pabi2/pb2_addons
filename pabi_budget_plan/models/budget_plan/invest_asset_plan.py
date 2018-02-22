@@ -513,7 +513,7 @@ class InvestAssetPlanPrevFYView(PrevFYCommon, models.Model):
     _ex_view_fields = ['org_id', 'invest_asset_id']
     _ex_domain_fields = ['org_id']  # Each plan is by this domain of view
     _ex_active_domain = [('carry_forward', '>', 0.0)]
-    _prev_fy_only = True  # Will the result of his view focus on prev fy only
+    _filter_fy = 1  # Will the result of his view focus on prev fy only
 
     org_id = fields.Many2one(
         'res.org',

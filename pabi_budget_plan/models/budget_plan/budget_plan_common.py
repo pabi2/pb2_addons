@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import tools
-from openerp import fields, api
+from openerp import fields, api, _
 from openerp.addons.pabi_chartfield.models.chartfield import ChartField
+from openerp.exceptions import ValidationError
 
 # This is the most detailed stats for any budget plan structure.
 # We make it common, but not necessary to use all of them
@@ -425,8 +426,14 @@ class PrevFYCommon(object):
                    'prev_fiscalyear_id': prev_fy.id}
             # Lookup for previous year performance only
             domain = []
-            if self._prev_fy_only:
+            # filter: 1 = Previous Year Only, 2 = Prev and Current Planning
+            if self._filter_fy not in (False, 1, 2):
+                raise ValidationError(_('_filter_fy must be False, 1, 2'))
+            if self._filter_fy == 1:
                 domain = [('fiscalyear_id', '=', prev_fy.id)]
+            elif self._filter_fy == 2:
+                domain = ['|', ('fiscalyear_id', '=', prev_fy.id),
+                          ('fiscalyear_id', '=', plan.fiscalyear_id.id)]
             for field in self._ex_domain_fields:
                 domain.append((field, '=', plan[field].id))
             if self._ex_active_domain:

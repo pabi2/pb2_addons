@@ -5,30 +5,6 @@ from openerp.exceptions import ValidationError
 from .budget_plan_common import BPCommon, BPLMonthCommon, PrevFYCommon
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
-# from openerp.addons.document_status_history.models.document_history import \
-#     LogCommon
-
-# We need status as extra column for sorting purposes
-
-# _STATUS = [('1', 'Draft'),
-#            ('2', 'Submitted'),
-#            ('3', 'Approved'),
-#            ('4', 'Cancelled'),
-#            ('5', 'Rejected'),
-#            ('6', 'Verified'),
-#            ('7', 'Accepted'),
-#            ('8', 'Done'),
-#            ]
-#
-# _STATE_TO_STATUS = {'draft': '1',
-#                     'submit': '2',
-#                     'approve': '3',
-#                     'cancel': '4',
-#                     'reject': '5',
-#                     'verify': '6',
-#                     'accept': '7',
-#                     'done': '8',
-#                     }
 
 
 class BudgetPlanUnit(BPCommon, models.Model):
@@ -476,7 +452,7 @@ class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
                        'activity_group_id', 'cost_control_id']
     _ex_domain_fields = ['section_id']  # Each plan is by this domain of view
     _ex_active_domain = [('all_commit', '>', 0.0)]
-    _prev_fy_only = True  # Will the result of his view focus on prev fy only
+    _filter_fy = 2  # Will the result of his view focus on prev fy only
 
     section_id = fields.Many2one(
         'res.section',
@@ -502,18 +478,20 @@ class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
     def _prepare_prev_fy_lines(self):
         """ Given search result from this view, prepare lines tuple """
         plan_lines = []
-        plan_fiscalyear_id = self._context.get('plan_fiscalyear_id')
-        for rec in self:
-            a = rec.section_id
-            expenses = a.monitor_expense_ids
+        prev_fy_id = self._context.get('prev_fiscalyear_id')
+        plan_fy_id = self._context.get('plan_fiscalyear_id')
+        plan_fy_lines = self.filtered(lambda l:
+                                      l.fiscalyear_id.id == plan_fy_id)
+        prev_fy_lines = self.filtered(lambda l:
+                                      l.fiscalyear_id.id == prev_fy_id)
+        for rec in prev_fy_lines:
             if not rec.all_commit:
                 continue
             # Next FY PR/PO/EX
-            next_fy_ex = expenses.filtered(
-                lambda l: l.fiscalyear_id.id == plan_fiscalyear_id)
-            next_fy_commit = sum(next_fy_ex.mapped('amount_pr_commit') +
-                                 next_fy_ex.mapped('amount_po_commit') +
-                                 next_fy_ex.mapped('amount_exp_commit'))
+            plan_fy_ag_lines = plan_fy_lines.filtered(
+                lambda l: l.activity_group_id == rec.activity_group_id and
+                l.document == rec.document)
+            next_fy_commit = sum(plan_fy_ag_lines.mapped('all_commit'))
             val = {'activity_group_id': rec.activity_group_id.id,
                    'cost_control_id': rec.cost_control_id.id,
                    'm0': rec.all_commit,
