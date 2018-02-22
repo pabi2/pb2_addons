@@ -317,22 +317,22 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     #     readonly=True,
     # )
     division_id = fields.Many2one(
-        related='section_id.division_id',
+        related='plan_id.section_id.division_id',
         store=True,
         readonly=True,
     )
     subsector_id = fields.Many2one(
-        related='section_id.subsector_id',
+        related='plan_id.section_id.subsector_id',
         store=True,
         readonly=True,
     )
     sector_id = fields.Many2one(
-        related='section_id.sector_id',
+        related='plan_id.section_id.sector_id',
         store=True,
         readonly=True,
     )
     org_id = fields.Many2one(
-        related='section_id.org_id',
+        related='plan_id.section_id.org_id',
         store=True,
         readonly=True,
     )
