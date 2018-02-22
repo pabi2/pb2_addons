@@ -2,7 +2,7 @@
 from openerp import models, fields, api
 
 
-class PrintWhtCertWizard(models.TransientModel):
+class PrintWhtCertWizard(models.Model):
     _inherit = 'print.wht.cert.wizard'
 
     @api.model
@@ -38,7 +38,7 @@ class PrintWhtCertWizard(models.TransientModel):
             super(PrintWhtCertWizard, self)._save_selection()
 
 
-class WhtCertTaxLine(models.TransientModel):
+class WhtCertTaxLine(models.Model):
     _inherit = 'wht.cert.tax.line'
 
     pit_id = fields.Many2one(
