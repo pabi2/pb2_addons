@@ -260,7 +260,7 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
     _ex_domain_fields = ['org_id']  # Each plan is by this domain
     _ex_active_domain = \
         [('invest_construction_id.state', '=', 'approve')]
-    _prev_fy_only = False  # Will the result of his view focus on prev fy only
+    _filter_fy = False
 
     org_id = fields.Many2one(
         'res.org',
