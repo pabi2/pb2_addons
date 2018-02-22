@@ -8,7 +8,7 @@ WHT_CERT_INCOME_TYPE = [('1', 'เงินเดือน ค่าจ้าง
                         ('6', 'ธุรกิจพาณิชย์ เกษตร อื่นๆ')]
 
 
-class WhtCertTaxLine(models.TransientModel):
+class WhtCertTaxLine(models.Model):
     _inherit = 'wht.cert.tax.line'
 
     wht_cert_income_type = fields.Selection(

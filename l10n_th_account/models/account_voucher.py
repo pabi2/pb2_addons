@@ -102,6 +102,12 @@ class AccountVoucher(common_voucher, models.Model):
         string='WHT Period',
         readonly=True,
     )
+    wht_cert_ids = fields.One2many(
+        'print.wht.cert.wizard',
+        'voucher_id',
+        string='WTH Cert(s)',
+        readonly=True,
+    )
     tax_payer = fields.Selection(
         TAX_PAYER,
         string='Tax Payer',
@@ -130,6 +136,25 @@ class AccountVoucher(common_voucher, models.Model):
          'unique (wht_period_id, wht_sequence, income_tax_form)',
          'WHT Sequence must be unique!'),
     ]
+
+    @api.multi
+    def open_wht_cert(self):
+        self.ensure_one()
+        if not self.wht_cert_ids:
+            raise ValidationError(_('No WHT Cert!'))
+        view = self.env.ref('l10n_th_account.view_print_wht_cert')
+        result = {
+            'name': _("WHT Cert."),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'print.wht.cert.wizard',
+            'view_id': view.id,
+            'res_id': self.wht_cert_ids[0].id,
+            'type': 'ir.actions.act_window',
+            'context': {},
+            'nodestroy': True,
+        }
+        return result
 
     @api.multi
     def proforma_voucher(self):

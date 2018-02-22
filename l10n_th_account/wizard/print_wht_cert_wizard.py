@@ -7,8 +7,9 @@ from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
 
 
-class PrintWhtCertWizard(models.TransientModel):
+class PrintWhtCertWizard(models.Model):
     _name = 'print.wht.cert.wizard'
+    _rec_name = 'voucher_id'
 
     voucher_id = fields.Many2one(
         'account.voucher',
@@ -51,6 +52,7 @@ class PrintWhtCertWizard(models.TransientModel):
     )
     wht_sequence_display = fields.Char(
         string='WHT Sequence',
+        related='voucher_id.wht_sequence_display',
     )
     wht_line = fields.One2many(
         'wht.cert.tax.line',
@@ -63,12 +65,83 @@ class PrintWhtCertWizard(models.TransientModel):
         default='withholding',
         required=True,
     )
+    # Computed fields to be displayed in WHT Cert.
+    x_voucher_number = fields.Char(compute='_compute_cert_fields')
+    x_date_value = fields.Date(compute='_compute_cert_fields')
+    x_company_name = fields.Char(compute='_compute_cert_fields')
+    x_supplier_name = fields.Char(compute='_compute_cert_fields')
+    x_company_taxid = fields.Char(compute='_compute_cert_fields')
+    x_supplier_taxid = fields.Char(compute='_compute_cert_fields')
+    x_supplier_address = fields.Char(compute='_compute_cert_fields')
+    x_company_address = fields.Char(compute='_compute_cert_fields')
+    x_pnd1 = fields.Char(compute='_compute_cert_fields')
+    x_pnd3 = fields.Char(compute='_compute_cert_fields')
+    x_pnd53 = fields.Char(compute='_compute_cert_fields')
+    x_wht_sequence_display = fields.Char(compute='_compute_cert_fields')
+    x_withholding = fields.Char(compute='_compute_cert_fields')
+    x_paid_one_time = fields.Char(compute='_compute_cert_fields')
+    x_total_base = fields.Float(compute='_compute_cert_fields')
+    x_total_tax = fields.Float(compute='_compute_cert_fields')
+    x_type_1_base = fields.Float(compute='_compute_cert_fields')
+    x_type_1_tax = fields.Float(compute='_compute_cert_fields')
+    x_type_2_base = fields.Float(compute='_compute_cert_fields')
+    x_type_2_tax = fields.Float(compute='_compute_cert_fields')
+    x_type_3_base = fields.Float(compute='_compute_cert_fields')
+    x_type_3_tax = fields.Float(compute='_compute_cert_fields')
+    x_type_5_base = fields.Float(compute='_compute_cert_fields')
+    x_type_5_tax = fields.Float(compute='_compute_cert_fields')
+    x_type_5_desc = fields.Float(compute='_compute_cert_fields')
+    x_type_6_base = fields.Float(compute='_compute_cert_fields')
+    x_type_6_tax = fields.Float(compute='_compute_cert_fields')
+    x_type_6_desc = fields.Float(compute='_compute_cert_fields')
+    x_signature = fields.Char(compute='_compute_cert_fields')
 
-    @api.one
-    @api.depends('company_partner_id', 'supplier_partner_id')
+    @api.multi
+    def _compute_cert_fields(self):
+        for rec in self:
+            voucher = rec.voucher_id
+            company = self.env.user.company_id.partner_id
+            supplier = voucher.partner_id
+            rec.x_voucher_number = voucher.number
+            rec.x_date_value = voucher.date_value
+            rec.x_company_name = company.name_get()[0][1]
+            rec.x_supplier_name = supplier.name_get()[0][1]
+            rec.x_company_taxid = len(company.vat) == 13 and company.vat or ''
+            rec.x_supplier_taxid = \
+                len(supplier.vat) == 13 and supplier.vat or ''
+            rec.x_supplier_address = rec.supplier_address
+            rec.x_company_address = rec.company_address
+            rec.x_pnd1 = voucher.income_tax_form == 'pnd1' and 'X' or ''
+            rec.x_pnd3 = voucher.income_tax_form == 'pnd3' and 'X' or ''
+            rec.x_pnd53 = voucher.income_tax_form == 'pnd53' and 'X' or ''
+            rec.x_wht_sequence_display = voucher.wht_sequence_display
+            rec.x_withholding = \
+                voucher.tax_payer == 'withholding' and 'X' or ''
+            rec.x_paid_one_time = \
+                voucher.tax_payer == 'paid_one_time' and 'X' or ''
+            rec.x_total_base = rec._get_summary_by_type('base')
+            rec.x_total_tax = rec._get_summary_by_type('tax')
+            rec.x_type_1_base = rec._get_summary_by_type('base', '1')
+            rec.x_type_1_tax = rec._get_summary_by_type('tax', '1')
+            rec.x_type_2_base = rec._get_summary_by_type('base', '2')
+            rec.x_type_2_tax = rec._get_summary_by_type('tax', '2')
+            rec.x_type_3_base = rec._get_summary_by_type('base', '3')
+            rec.x_type_3_tax = rec._get_summary_by_type('tax', '3')
+            rec.x_type_5_base = rec._get_summary_by_type('base', '5')
+            rec.x_type_5_tax = rec._get_summary_by_type('tax', '5')
+            rec.x_type_5_desc = rec._get_summary_by_type('desc', '5')
+            rec.x_type_6_base = rec._get_summary_by_type('base', '6')
+            rec.x_type_6_tax = rec._get_summary_by_type('tax', '6')
+            rec.x_type_6_desc = rec._get_summary_by_type('desc', '6')
+            rec.x_signature = voucher.validate_user_id.name_get()[0][1]
+
+    @api.multi
     def _compute_address(self):
-        self.company_address = self._prepare_address(self.company_partner_id)
-        self.supplier_address = self._prepare_address(self.supplier_partner_id)
+        for rec in self:
+            rec.company_address = \
+                self._prepare_address(rec.company_partner_id)
+            rec.supplier_address = \
+                self._prepare_address(rec.supplier_partner_id)
 
     @api.model
     def _prepare_wht_line(self, voucher):
@@ -98,72 +171,26 @@ class PrintWhtCertWizard(models.TransientModel):
         res['supplier_partner_id'] = supplier.id
         res['income_tax_form'] = (voucher.income_tax_form or
                                   supplier.income_tax_form)
-        res['wht_sequence_display'] = voucher.wht_sequence_display
         res['tax_payer'] = (voucher.tax_payer or False)
         res['wht_line'] = self._prepare_wht_line(voucher)
         return res
 
     @api.multi
     def run_report(self):
-        data = {'parameters': {}}
         self._save_selection()
         self.voucher_id._assign_wht_sequence()
-        form_data = self._get_form_data()
-        data['parameters'] = form_data
-        res = {
-            'type': 'ir.actions.report.xml',
-            'report_name': 'report_withholding_cert',
-            'datas': data,
-            'context': {'lang': 'th_TH'},
-        }
+
+    @api.multi
+    def write(self, vals):
+        res = super(PrintWhtCertWizard, self).write(vals)
+        if 'wht_line' in vals:
+            for rec in self:
+                rec._save_selection()
         return res
 
-    @api.model
-    def _get_form_data(self):
-        """ Data to pass as parameter in iReport """
-        data = {}
-        TH = {'lang': 'th_TH'}
-        voucher = self.with_context(TH).voucher_id
-        data['voucher_number'] = voucher.number
-        data['date_value'] = voucher.date_value
-        company = self.with_context(TH).env.user.company_id.partner_id
-        supplier = voucher.partner_id
-        if not company.vat or not supplier.vat:
-            raise ValidationError(_('No Tax ID on Company or Supplier'))
-        data['company_name'] = company.name_get()[0][1]
-        data['supplier_name'] = supplier.name_get()[0][1]
-        company_taxid = len(company.vat) == 13 and company.vat or ''
-        data['company_taxid'] = list(company_taxid)
-        supplier_taxid = len(supplier.vat) == 13 and supplier.vat or ''
-        data['supplier_taxid'] = list(supplier_taxid)
-        data['company_address'] = self.company_address
-        data['supplier_address'] = self.supplier_address
-        data['pnd1'] = voucher.income_tax_form == 'pnd1' and 'X' or ''
-        data['pnd3'] = voucher.income_tax_form == 'pnd3' and 'X' or ''
-        data['pnd53'] = voucher.income_tax_form == 'pnd53' and 'X' or ''
-        data['wht_sequence_display'] = voucher.wht_sequence_display
-        data['withholding'] = voucher.tax_payer == 'withholding' and 'X' or ''
-        data['paid_one_time'] = (voucher.tax_payer == 'paid_one_time' and
-                                 'X' or '')
-        data['total_base'] = self._get_summary_by_type('base')
-        data['total_tax'] = self._get_summary_by_type('tax')
-        data['type_1_base'] = self._get_summary_by_type('base', '1')
-        data['type_1_tax'] = self._get_summary_by_type('tax', '1')
-        data['type_2_base'] = self._get_summary_by_type('base', '2')
-        data['type_2_tax'] = self._get_summary_by_type('tax', '2')
-        data['type_3_base'] = self._get_summary_by_type('base', '3')
-        data['type_3_tax'] = self._get_summary_by_type('tax', '3')
-        data['type_5_base'] = self._get_summary_by_type('base', '5')
-        data['type_5_tax'] = self._get_summary_by_type('tax', '5')
-        data['type_5_desc'] = self._get_summary_by_type('desc', '5')
-        data['type_6_base'] = self._get_summary_by_type('base', '6')
-        data['type_6_tax'] = self._get_summary_by_type('tax', '6')
-        data['type_6_desc'] = self._get_summary_by_type('desc', '6')
-        data['signature'] = voucher.validate_user_id.name_get()[0][1]
-        return data
-
-    @api.model
+    @api.multi
     def _get_summary_by_type(self, column, ttype='all'):
+        self.ensure_one()
         wht_lines = self.wht_line
         if ttype != 'all':
             wht_lines = wht_lines.filtered(lambda l:
@@ -186,8 +213,9 @@ class PrintWhtCertWizard(models.TransientModel):
                               address_list)
         return ' '.join(address_list).strip()
 
-    @api.model
+    @api.multi
     def _save_selection(self):
+        self.ensure_one()
         if not self.voucher_id.income_tax_form:
             self.voucher_id.income_tax_form = self.income_tax_form
         self.voucher_id.tax_payer = self.tax_payer
@@ -199,7 +227,7 @@ class PrintWhtCertWizard(models.TransientModel):
         return
 
 
-class WhtCertTaxLine(models.TransientModel):
+class WhtCertTaxLine(models.Model):
     _name = 'wht.cert.tax.line'
 
     wizard_id = fields.Many2one(
