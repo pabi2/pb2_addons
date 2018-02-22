@@ -3,7 +3,7 @@ from openerp import models, fields, api
 from .budget_common_report_wizard import Common
 
 
-class BudgetPlanUnitAnalysisReportWizard(models.Model, Common):
+class BudgetPlanUnitAnalysisReportWizard(models.TransientModel, Common):
 
     _name = 'budget.plan.unit.analysis.report.wizard'
 

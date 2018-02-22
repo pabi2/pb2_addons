@@ -11,6 +11,7 @@
         'report_xls',
         'account_budget_activity',
         'pabi_budget_plan',
+        'pabi_utils',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -19,6 +20,8 @@
         'wizards/budget_detail_report_wizard.xml',
         'wizards/budget_plan_unit_analysis_report_wizard.xml',
         'wizards/budget_plan_project_analysis_report_wizard.xml',
+        'xlsx_reports/directory.xml',
+        'xlsx_reports/xlsx_report_budget_summary.xml',
     ],
     'demo': [
     ],

@@ -3,7 +3,7 @@ from openerp import models, fields, api
 from .budget_common_report_wizard import Common
 
 
-class BudgetDetailReportWizard(models.Model, Common):
+class BudgetDetailReportWizard(models.TransientModel, Common):
     _name = 'budget.detail.report.wizard'
 
     period_id = fields.Many2one(
