@@ -88,7 +88,8 @@ class BudgetPlanUnitAnalysisReportXLSParser(report_sxw.rml_parse):
 
         # Browse Report
         Report = self.pool.get('budget.plan.unit.line')
-        domain = [('fiscalyear_id', '=', fiscalyear_id)]
+        domain = [('fiscalyear_id', '=', fiscalyear_id),
+                  ('state', 'not in', ('1_draft', '4_cancel', '5_reject'))]
         if org:
             domain += [('org_id', '=', org_id)]
         if sector:
