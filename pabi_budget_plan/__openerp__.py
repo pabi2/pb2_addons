@@ -31,6 +31,7 @@
         'data/report_data.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/xlsx_template_wizard.xml',
+        'xlsx_template/load_template.xml',
         # 'data/history_rule.xml',
         'views/budget_plan_menu.xml',
         # 'wizard/convert_to_budget_control_wizard.xml',

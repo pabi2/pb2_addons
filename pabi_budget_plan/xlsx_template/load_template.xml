@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- This function is called after all ir.attachment is loaded
+            to load the file content to relevant template_ids -->
+        <function model="ir.attachment" name="load_xlsx_template">
+            <value eval="[ref('budget_plan_unit_base_xlsx_template'),
+                          ref('budget_breakdown_unit_base_xlsx_template'),
+                          ref('invest_asset_plan_xlsx_template'),
+                          ref('budget_plan_project_base_xlsx_template')]"/>
+            <value>pabi_budget_plan/xlsx_template</value>
+        </function>
+    </data>
+</openerp>

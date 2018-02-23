@@ -22,6 +22,7 @@
         'wizards/budget_plan_project_analysis_report_wizard.xml',
         'xlsx_reports/directory.xml',
         'xlsx_reports/xlsx_report_budget_summary.xml',
+        'xlsx_reports/load_template.xml',
     ],
     'demo': [
     ],

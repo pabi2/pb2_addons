@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "NSTDA :: PABI2 - Traial Balance Extension for GFMIS",
+    "name": "NSTDA :: PABI2 - Trial Balance Extension for GFMIS",
     "summary": "",
     "version": "1.0",
     "category": "Human Resources",
@@ -19,6 +19,7 @@ Add ability to export Trial Balance with mapped account for GFMIS as xlsx
     "data": [
         "xlsx_template/xlsx_template_wizard.xml",
         "xlsx_template/templates.xml",
+        "xlsx_template/load_template.xml",
         "data/pabi.data.map.type.csv",
         "data/pabi.data.map.csv",
         "views/account_view.xml",
