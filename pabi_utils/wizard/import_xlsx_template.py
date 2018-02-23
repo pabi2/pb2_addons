@@ -325,6 +325,7 @@ class ImportXlsxTemplate(models.TransientModel):
         - Delete fields' data according to data_dict['__IMPORT__']
         - Import data from excel according to data_dict['__IMPORT__']
         """
+        self = self.sudo()
         record = self.env[res_model].browse(res_id)
         data_dict = literal_eval(template.description.strip())
         if not data_dict.get('__IMPORT__'):
