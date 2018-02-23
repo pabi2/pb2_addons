@@ -11,7 +11,7 @@
                 <form string="Section Budget Transfer">
                     <header>
                         <button string="Confirm" name="button_confirm" states="draft" type="object" class="oe_highlight"/>
-                        <button string="Approve" name="button_approve" states="confirm" type="object" class="oe_highlight" groups="pabi_base.group_budget_manager"/>
+                        <button string="Approve" name="button_approve" states="confirm" type="object" class="oe_highlight" groups="pabi_base.group_budget_manager,pabi_base.group_operating_unit_budget"/>
                         <button string="Transfer" name="button_transfer" states="approve" type="object" class="oe_highlight"/>
                         <button string="Cancel" name="button_cancel" states="draft,confirm,approve" type="object"/>
                         <button string="Set to Draft" name="button_draft" states="cancel" type="object" class="oe_highlight"/>
