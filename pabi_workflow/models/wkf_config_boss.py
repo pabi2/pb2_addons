@@ -99,19 +99,3 @@ class WkfCmdBossSpecailLevel(models.Model):
         string='Section',
         required=True,
     )
-
-
-class WkfCmdSectionAssign(models.Model):
-    _name = 'wkf.cmd.section.assign'
-    _description = 'Section Assignment'
-
-    employee_id = fields.Many2one(
-        'hr.employee',
-        string='Employee',
-        required=True,
-    )
-    section_id = fields.Many2one(
-        'res.section',
-        string='Section',
-        required=True,
-    )

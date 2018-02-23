@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <openerp>
-    <data>        
-    
+    <data>
+
 		<record id="view_employee_filter" model="ir.ui.view">
             <field name="name">view.employee.filter</field>
             <field name="model">hr.employee</field>
@@ -14,7 +14,7 @@
 	            </xpath>
 	        </field>
 	    </record>
-    
+
 		<record id="view_hr_employee_form_pabi" model="ir.ui.view">
             <field name="name">hr.employee.form.pabi</field>
             <field name="model">hr.employee</field>
@@ -33,14 +33,15 @@
 							<field name="is_management"/>
 						</group>
 						<group string="PABI2 Org." >
-							<field name="org_id"/> 
+							<field name="org_id"/>
 							<field name="section_id"/>
+              <field name="section_assign_ids" widget="many2many_tags"/>
 							<field name="costcenter_id"/>
-							<field name="org_ids" string="Additional Orgs" widget="many2many_tags"/> 
+							<field name="org_ids" string="Additional Orgs" widget="many2many_tags"/>
 						</group>
-					</group>	 	
-				</xpath> 
+					</group>
+				</xpath>
 			</field>
-        </record>	
+        </record>
     </data>
 </openerp>

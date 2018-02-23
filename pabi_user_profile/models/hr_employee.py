@@ -40,6 +40,12 @@ class HREmployee(models.Model):
         'res.section',
         string='Section',
     )
+    section_assign_ids = fields.Many2many(
+        'res.section',
+        'section_employee_rel',
+        'employee_id', 'section_id',
+        string='Section Assignment',
+    )
     org_id = fields.Many2one(
         'res.org',
         related='section_id.org_id',
@@ -91,6 +97,8 @@ class HREmployee(models.Model):
         if 'org_ids' in vals or 'section_id' in vals:
             for employee in self:
                 employee.user_id.write({})  # Write to clear cache
+        if 'user_id' in vals:
+            self.mapped('user_id')._compute_operating_unit()
         return res
 
     # Kitti U. Remove this otherwise, can't update Related user on Employee
