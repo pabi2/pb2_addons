@@ -11,6 +11,11 @@ CHARGE_TYPE = {
     'external': 'External',
 }
 
+BUDGET_METHOD = {
+    'revenue': 'Revenue',
+    'expense': 'Expense',
+}
+
 COLUMN_SIZES = [
     ('org', 25),
     ('sector', 25),
@@ -18,6 +23,7 @@ COLUMN_SIZES = [
     ('division', 25),
     ('section', 25),
     ('section_program', 25),
+    ('budget_method', 25),
     ('charge_type', 25),
     ('activity_group', 25),
     ('job_order', 25),
@@ -240,6 +246,8 @@ class BudgetPlanUnitAnalysisReportXLS(report_xls):
             ('section', 1, 0, 'text', _('Section'), None, cell_style),
             ('section_program', 1, 0, 'text', _('Section Program'),
                 None, cell_style),
+            ('budget_method', 1, 0, 'text', _('Budget Method'),
+                None, cell_style),
             ('charge_type', 1, 0, 'text', _('Charge Type'), None, cell_style),
             ('activity_group', 1, 0, 'text', ('Activity Group'), None,
                 cell_style),
@@ -285,20 +293,20 @@ class BudgetPlanUnitAnalysisReportXLS(report_xls):
             num_format_str=report_xls.decimal_format)
         for line in _p.report:
             total_budget_formula = \
-                rowcol_to_cell(row_pos, 11) + '*' + \
-                rowcol_to_cell(row_pos, 12) + '*' + rowcol_to_cell(row_pos, 13)
-            total_of_phased_entries_start = rowcol_to_cell(row_pos, 16)
-            total_of_phased_entries_end = rowcol_to_cell(row_pos, 27)
+                rowcol_to_cell(row_pos, 12) + '*' + \
+                rowcol_to_cell(row_pos, 13) + '*' + rowcol_to_cell(row_pos, 14)
+            total_of_phased_entries_start = rowcol_to_cell(row_pos, 17)
+            total_of_phased_entries_end = rowcol_to_cell(row_pos, 28)
             total_of_phased_entries_formula = \
                 'SUM(' + total_of_phased_entries_start + ':' + \
                 total_of_phased_entries_end + ')'
             total_minus_phased_total_formula = \
-                'IF(' + rowcol_to_cell(row_pos, 14) + '-' + \
-                rowcol_to_cell(row_pos, 28) + '<>0,' + \
-                rowcol_to_cell(row_pos, 14) + '-' + \
-                rowcol_to_cell(row_pos, 28) + ',0)'
+                'IF(' + rowcol_to_cell(row_pos, 15) + '-' + \
+                rowcol_to_cell(row_pos, 29) + '<>0,' + \
+                rowcol_to_cell(row_pos, 15) + '-' + \
+                rowcol_to_cell(row_pos, 29) + ',0)'
             check_total_minus_phased_total_formula = \
-                'IF(ABS(' + rowcol_to_cell(row_pos, 29) + ')>0,"Error","")'
+                'IF(ABS(' + rowcol_to_cell(row_pos, 30) + ')>0,"Error","")'
             c_specs = [
                 ('org', 1, 0, 'text',
                     '%s%s' %
@@ -338,6 +346,9 @@ class BudgetPlanUnitAnalysisReportXLS(report_xls):
                      line.section_program_id.name_short and
                      line.section_program_id.name_short or
                      line.section_program_id.name or ''), None, cell_style),
+                ('budget_method', 1, 0, 'text',
+                    BUDGET_METHOD.get(line.budget_method, None), None,
+                    cell_style),
                 ('charge_type', 1, 0, 'text',
                     CHARGE_TYPE.get(line.charge_type, None), None, cell_style),
                 ('activity_group', 1, 0, 'text', line.activity_group_id.name,
@@ -387,63 +398,63 @@ class BudgetPlanUnitAnalysisReportXLS(report_xls):
         cell_style_decimal = xlwt.easyxf(
             cell_format + _xs['right'],
             num_format_str=report_xls.decimal_format)
-        total_budget_start = rowcol_to_cell(row_start, 14)
-        total_budget_end = rowcol_to_cell(row_pos - 1, 14)
+        total_budget_start = rowcol_to_cell(row_start, 15)
+        total_budget_end = rowcol_to_cell(row_pos - 1, 15)
         total_budget_formula = \
             'SUM(' + total_budget_start + ':' + total_budget_end + ')'
-        previous_year_commitment_start = rowcol_to_cell(row_start, 15)
-        previous_year_commitment_end = rowcol_to_cell(row_pos - 1, 15)
+        previous_year_commitment_start = rowcol_to_cell(row_start, 16)
+        previous_year_commitment_end = rowcol_to_cell(row_pos - 1, 16)
         previous_year_commitment_formula = \
             'SUM(' + previous_year_commitment_start + ':' + \
             previous_year_commitment_end + ')'
-        oct_start = rowcol_to_cell(row_start, 16)
-        oct_end = rowcol_to_cell(row_pos - 1, 16)
+        oct_start = rowcol_to_cell(row_start, 17)
+        oct_end = rowcol_to_cell(row_pos - 1, 17)
         oct_formula = 'SUM(' + oct_start + ':' + oct_end + ')'
-        nov_start = rowcol_to_cell(row_start, 17)
-        nov_end = rowcol_to_cell(row_pos - 1, 17)
+        nov_start = rowcol_to_cell(row_start, 18)
+        nov_end = rowcol_to_cell(row_pos - 1, 18)
         nov_formula = 'SUM(' + nov_start + ':' + nov_end + ')'
-        dec_start = rowcol_to_cell(row_start, 18)
-        dec_end = rowcol_to_cell(row_pos - 1, 18)
+        dec_start = rowcol_to_cell(row_start, 19)
+        dec_end = rowcol_to_cell(row_pos - 1, 19)
         dec_formula = 'SUM(' + dec_start + ':' + dec_end + ')'
-        jan_start = rowcol_to_cell(row_start, 19)
-        jan_end = rowcol_to_cell(row_pos - 1, 19)
+        jan_start = rowcol_to_cell(row_start, 20)
+        jan_end = rowcol_to_cell(row_pos - 1, 20)
         jan_formula = 'SUM(' + jan_start + ':' + jan_end + ')'
-        feb_start = rowcol_to_cell(row_start, 20)
-        feb_end = rowcol_to_cell(row_pos - 1, 20)
+        feb_start = rowcol_to_cell(row_start, 21)
+        feb_end = rowcol_to_cell(row_pos - 1, 21)
         feb_formula = 'SUM(' + feb_start + ':' + feb_end + ')'
-        mar_start = rowcol_to_cell(row_start, 21)
-        mar_end = rowcol_to_cell(row_pos - 1, 21)
+        mar_start = rowcol_to_cell(row_start, 22)
+        mar_end = rowcol_to_cell(row_pos - 1, 22)
         mar_formula = 'SUM(' + mar_start + ':' + mar_end + ')'
-        apr_start = rowcol_to_cell(row_start, 22)
-        apr_end = rowcol_to_cell(row_pos - 1, 22)
+        apr_start = rowcol_to_cell(row_start, 23)
+        apr_end = rowcol_to_cell(row_pos - 1, 23)
         apr_formula = 'SUM(' + apr_start + ':' + apr_end + ')'
-        may_start = rowcol_to_cell(row_start, 23)
-        may_end = rowcol_to_cell(row_pos - 1, 23)
+        may_start = rowcol_to_cell(row_start, 24)
+        may_end = rowcol_to_cell(row_pos - 1, 24)
         may_formula = 'SUM(' + may_start + ':' + may_end + ')'
-        jun_start = rowcol_to_cell(row_start, 24)
-        jun_end = rowcol_to_cell(row_pos - 1, 24)
+        jun_start = rowcol_to_cell(row_start, 25)
+        jun_end = rowcol_to_cell(row_pos - 1, 25)
         jun_formula = 'SUM(' + jun_start + ':' + jun_end + ')'
-        jul_start = rowcol_to_cell(row_start, 25)
-        jul_end = rowcol_to_cell(row_pos - 1, 25)
+        jul_start = rowcol_to_cell(row_start, 26)
+        jul_end = rowcol_to_cell(row_pos - 1, 26)
         jul_formula = 'SUM(' + jul_start + ':' + jul_end + ')'
-        aug_start = rowcol_to_cell(row_start, 26)
-        aug_end = rowcol_to_cell(row_pos - 1, 26)
+        aug_start = rowcol_to_cell(row_start, 27)
+        aug_end = rowcol_to_cell(row_pos - 1, 27)
         aug_formula = 'SUM(' + aug_start + ':' + aug_end + ')'
-        sep_start = rowcol_to_cell(row_start, 27)
-        sep_end = rowcol_to_cell(row_pos - 1, 27)
+        sep_start = rowcol_to_cell(row_start, 28)
+        sep_end = rowcol_to_cell(row_pos - 1, 28)
         sep_formula = 'SUM(' + sep_start + ':' + sep_end + ')'
-        total_of_phased_entries_start = rowcol_to_cell(row_start, 28)
-        total_of_phased_entries_end = rowcol_to_cell(row_pos - 1, 28)
+        total_of_phased_entries_start = rowcol_to_cell(row_start, 29)
+        total_of_phased_entries_end = rowcol_to_cell(row_pos - 1, 29)
         total_of_phased_entries_formula = \
             'SUM(' + total_of_phased_entries_start + ':' + \
             total_of_phased_entries_end + ')'
-        total_minus_phased_total_start = rowcol_to_cell(row_start, 29)
-        total_minus_phased_total_end = rowcol_to_cell(row_pos - 1, 29)
+        total_minus_phased_total_start = rowcol_to_cell(row_start, 30)
+        total_minus_phased_total_end = rowcol_to_cell(row_pos - 1, 30)
         total_minus_phased_total_formula = \
             'SUM(' + total_minus_phased_total_start + ':' + \
             total_minus_phased_total_end + ')'
         check_total_minus_phased_total_formula = \
-            'IF(ABS(' + rowcol_to_cell(row_pos, 29) + ')>0,"Error","")'
+            'IF(ABS(' + rowcol_to_cell(row_pos, 30) + ')>0,"Error","")'
         c_specs = [
             ('org', 1, 0, 'text', None, None, cell_style),
             ('sector', 1, 0, 'text', None, None, cell_style),
@@ -451,6 +462,7 @@ class BudgetPlanUnitAnalysisReportXLS(report_xls):
             ('division', 1, 0, 'text', None, None, cell_style),
             ('section', 1, 0, 'text', None, None, cell_style),
             ('section_program', 1, 0, 'text', None, None, cell_style),
+            ('budget_method', 1, 0, 'text', None, None, cell_style),
             ('charge_type', 1, 0, 'text', None, None, cell_style),
             ('activity_group', 1, 0, 'text', None, None, cell_style),
             ('job_order', 1, 0, 'text', None, None, cell_style),
