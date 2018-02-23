@@ -9,7 +9,7 @@
             <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
         </record>
 
-        <record id="gfmis_tempalte" model="ir.attachment">
+        <record id="gfmis_template" model="ir.attachment">
             <field name="res_model">account.trial.balance.report</field>
             <field name="datas"></field>
             <field name="datas_fname">gfmis.xlsx</field>

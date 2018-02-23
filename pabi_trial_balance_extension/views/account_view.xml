@@ -42,7 +42,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="pabi_utils.view_pabi_data_map_type_search"/>
-            <field name="context" eval="{'default_app_name': 'gfmis_report', 'default_default_template_id': ref('gfmis_tempalte')}"/>
+            <field name="context" eval="{'default_app_name': 'gfmis_report', 'default_default_template_id': ref('gfmis_template')}"/>
             <field name="domain" eval="[('app_name', '=', 'gfmis_report')]"/>
         </record>
         <record id="action_pabi_data_map_type_gfmis_report_tree" model="ir.actions.act_window.view">
