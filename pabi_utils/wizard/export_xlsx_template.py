@@ -3,6 +3,8 @@ import re
 import os
 import math
 import openpyxl
+from openpyxl.styles import colors
+from openpyxl.styles import Font, Color
 import base64
 import cStringIO
 import time
@@ -271,6 +273,7 @@ class ExportXlsxTemplate(models.TransientModel):
                                          'min_label': 'Minimum',
                                          'max_label': 'Maximum', }
                                 st[new_rc] = label[f]
+                                st[new_rc].font = Font(color=colors.RED, italic=True)
                             else:
                                 st[new_rc] = eval('%s(%s)' %
                                                   (f, vals[field]))
