@@ -40,6 +40,6 @@ PABI2's Configuration work flow Odoo to Alfresco
         'views/wkf_config_purchase_view.xml',
         'views/wkf_config_project_view.xml',
         'views/res_section_view.xml',
-        'views/hr_employee_view.xml',
+        # 'views/hr_employee_view.xml',
     ],
 }

@@ -105,53 +105,5 @@
         </record>
 
         <menuitem name="Special Level" id="menu_wkf_cmd_boss_special_level" action="action_wkf_cmd_boss_special_level" parent="menu_wkf_config_boss" sequence="2"/>
-
-        #Section Assignment
-        <record id="view_wkf_cmd_section_assign_tree" model="ir.ui.view">
-            <field name="name">view.wkf.cmd.section.assign.tree</field>
-            <field name="model">wkf.cmd.section.assign</field>
-            <field name="arch" type="xml">
-                <tree string="Section Assignment">
-                    <field name="employee_id"/>
-                    <field name="section_id"/>
-                </tree>
-            </field>
-        </record>
-
-        <record id="view_wkf_cmd_section_assign_form" model="ir.ui.view">
-            <field name="name">view.wkf.cmd.section.assign.form</field>
-            <field name="model">wkf.cmd.section.assign</field>
-            <field name="arch" type="xml">
-                <form string="Section Assignment">
-                    <group>
-                        <group>
-                            <field name="employee_id"/>
-                            <field name="section_id"/>
-                        </group>
-                        <group></group>
-                    </group>
-                </form>
-            </field>
-        </record>
-
-        <record id="view_wkf_cmd_section_assign_search" model="ir.ui.view">
-            <field name="name">view.wkf.cmd.section.assign.search</field>
-            <field name="model">wkf.cmd.section.assign</field>
-            <field name="arch" type="xml">
-                <search string="Section Assignment">
-                    <field name="employee_id" string="Employee" filter_domain="[('employee_id','child_of',self)]"/>
-                    <field name="section_id" string="Section" filter_domain="[('section_id','child_of',self)]"/>
-                </search>
-            </field>
-        </record>
-
-        <record id="action_wkf_cmd_section_assign" model="ir.actions.act_window">
-            <field name="name">Section Assignment</field>
-            <field name="res_model">wkf.cmd.section.assign</field>
-            <field name="view_type">form</field>
-            <field name="view_id" ref="view_wkf_cmd_section_assign_tree"/>
-        </record>
-
-        <menuitem name="Section Assignment" id="menu_wkf_cmd_section_assign" action="action_wkf_cmd_section_assign" parent="menu_wkf_config_boss" sequence="3"/>
     </data>
 </openerp>
