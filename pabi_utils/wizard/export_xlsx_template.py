@@ -116,14 +116,15 @@ class ExportXlsxTemplate(models.TransientModel):
     def default_get(self, fields):
         res_model = self._context.get('active_model', False)
         res_id = self._context.get('active_id', False)
-        template = self.env['ir.attachment'].\
+        templates = self.env['ir.attachment'].\
             search([('res_model', '=', res_model)])
-        if not template:
+        if not templates:
             raise ValidationError(_('No template found!'))
         defaults = super(ExportXlsxTemplate, self).default_get(fields)
-        if not template.datas:
-            raise ValidationError(_('No file in %s') % (template.name,))
-        defaults['template_id'] = len(template) == 1 and template.id or False
+        for template in templates:
+            if not template.datas:
+                raise ValidationError(_('No file in %s') % (template.name,))
+        defaults['template_id'] = len(templates) == 1 and templates.id or False
         defaults['res_id'] = res_id
         defaults['res_model'] = res_model
         return defaults

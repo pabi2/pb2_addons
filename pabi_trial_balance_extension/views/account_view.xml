@@ -2,16 +2,16 @@
 <openerp>
     <data>
 
-        # Data map for GFMIS
-        <record id="view_pabi_data_map_type_gfmis_report_form" model="ir.ui.view">
-            <field name="name">view.pabi.data.map.type.gfmis.report.form</field>
+        # Data map type
+        <record id="view_pabi_data_map_type_form" model="ir.ui.view">
+            <field name="name">view.pabi.data.map.type.form</field>
             <field name="model">pabi.data.map.type</field>
             <field name="priority">100</field>
             <field name="arch" type="xml">
-                <form string="GFMIS Data Mapper(s)">
+                <form string="Data Mapper(s)">
                     <group>
                         <group>
-                            <field name="name"/>
+                            <field name="name" readonly="1"/>
                         </group>
                         <group>
                             <field name="app_name" readonly="1"/>
@@ -26,39 +26,33 @@
                             <field name="out_value" string="GFMIS Account Code"/>
                         </tree>
                     </field>
-                    <p>
-                      <h3>Remarks:</h3>
-                    </p>
-                    <p>
-                      During export of GFMIS Trial Balance report in excel, it will add the mapped GFMIS account code.
-                    </p>
                 </form>
             </field>
         </record>
 
-        <record id="action_pabi_data_map_type_gfmis_report" model="ir.actions.act_window">
-            <field name="name">GFMIS GL</field>
+        <record id="action_pabi_data_map_type" model="ir.actions.act_window">
+            <field name="name">Ext. Account Map</field>
             <field name="res_model">pabi.data.map.type</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="pabi_utils.view_pabi_data_map_type_search"/>
-            <field name="context" eval="{'default_app_name': 'gfmis_report', 'default_default_template_id': ref('gfmis_template')}"/>
-            <field name="domain" eval="[('app_name', '=', 'gfmis_report')]"/>
+            <field name="context" eval="{'default_app_name': 'tb_external'}"/>
+            <field name="domain" eval="[('app_name', '=', 'tb_external')]"/>
         </record>
-        <record id="action_pabi_data_map_type_gfmis_report_tree" model="ir.actions.act_window.view">
+        <record id="action_pabi_data_map_type_tree" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
             <field name="view_id" ref="pabi_utils.view_pabi_data_map_type_tree"/>
-            <field name="act_window_id" ref="action_pabi_data_map_type_gfmis_report"/>
+            <field name="act_window_id" ref="action_pabi_data_map_type"/>
         </record>
-        <record id="action_pabi_data_map_type_gfmis_report_form" model="ir.actions.act_window.view">
+        <record id="action_pabi_data_map_type_form" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="view_pabi_data_map_type_gfmis_report_form"/>
-            <field name="act_window_id" ref="action_pabi_data_map_type_gfmis_report"/>
+            <field name="view_id" ref="view_pabi_data_map_type_form"/>
+            <field name="act_window_id" ref="action_pabi_data_map_type"/>
         </record>
 
-        <menuitem action="action_pabi_data_map_type_gfmis_report" sequence="100" id="menu_pabi_data_map_type_gfmis_report" parent="account.account_account_menu" groups="account.group_account_user"/>
+        <menuitem action="action_pabi_data_map_type" sequence="100" id="menu_pabi_data_map_type" parent="account.account_account_menu" groups="account.group_account_user"/>
 
     </data>
 </openerp>

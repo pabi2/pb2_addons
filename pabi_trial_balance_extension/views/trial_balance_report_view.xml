@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_account_trial_balance_report_form" model="ir.ui.view">
+            <field name="name">view.account.trial.balance.report.form</field>
+            <field name="model">account.trial.balance.report</field>
+            <field name="inherit_id" ref="account_trial_balance_report.view_account_trial_balance_report_form"/>
+            <field name="arch" type="xml">
+                <field name="line_ids" position="after">
+                    <!-- GFMIS Lines -->
+                    <field name="gfmis_line_ids" invisible="1">
+                        <tree>
+                            <field name="account_code"/>
+                            <field name="account_name"/>
+                            <field name="initial"/>
+                            <field name="debit"/>
+                            <field name="credit"/>
+                            <field name="balance"/>
+                            <field name="final_balance"/>
+                        </tree>
+                    </field>
+                    <!-- CFO Lines -->
+                    <field name="cfo_line_ids" invisible="1">
+                        <tree>
+                            <field name="account_code"/>
+                            <field name="account_name"/>
+                            <field name="initial"/>
+                            <field name="debit"/>
+                            <field name="credit"/>
+                            <field name="balance"/>
+                            <field name="final_balance"/>
+                        </tree>
+                    </field>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

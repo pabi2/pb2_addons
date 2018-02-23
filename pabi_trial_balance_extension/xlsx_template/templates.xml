@@ -1,6 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+        <!-- NSTDA -->
+        <record model="document.directory" id="dir_nstda_template">
+            <field name="name">NSTDA Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <record id="nstda_template" model="ir.attachment">
+            <field name="res_model">account.trial.balance.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">nstda.xlsx</field>
+            <field name="name">NSTDA</field>
+            <field name="parent_id" eval="ref('dir_nstda_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B3': 'fiscalyear_id.name',
+                        },
+                        'line_ids': {
+                            'A6': 'account_id.code',
+                            'B6': 'account_id.name',
+                            'C6': 'initial${float_compare(value, 0.0, 2) == 1 and value or 0.0}@{sum}',
+                            'D6': 'initial${float_compare(value, 0.0, 2) == -1 and -value or 0.0}@{sum}',
+                            'E6': 'debit@{sum}',
+                            'F6': 'credit@{sum}',
+                            'G6': 'balance${float_compare(value, 0.0, 2) == 1 and value or 0.0}@{sum}',
+                            'H6': 'balance${float_compare(value, 0.0, 2) == -1 and -value or 0.0}@{sum}',
+                            'I6': 'final_balance${float_compare(value, 0.0, 2) == 1 and value or 0.0}@{sum}',
+                            'J6': 'final_balance${float_compare(value, 0.0, 2) == -1 and -value or 0.0}@{sum}',
+                        },
+                    },
+                }
+            }
+          </field>
+        </record>
+
+        <!-- GFMIS -->
         <record model="document.directory" id="dir_gfmis_template">
             <field name="name">GFMIS Templates</field>
             <field name="parent_id" ref="document.dir_root"/>
@@ -13,7 +54,7 @@
             <field name="res_model">account.trial.balance.report</field>
             <field name="datas"></field>
             <field name="datas_fname">gfmis.xlsx</field>
-            <field name="name">Export for GFMIS</field>
+            <field name="name">GFMIS</field>
             <field name="parent_id" eval="ref('dir_gfmis_template')"/>
             <field name="description">
               {
@@ -22,19 +63,57 @@
                         '_HEAD_': {
                             'B3': 'fiscalyear_id.name',
                         },
-                        'line_ids': {
-                            'A6': 'account_id.code',
-                            'B6': 'account_id.name',
-                            'C6': 'account_id.code${env["pabi.data.map"].get_out_value("GFMIS Report", "account.account", "code", value) and env["pabi.data.map"].get_out_value("GFMIS Report", "account.account", "code", value).split(" - ")[0] or ""}',
-                            'D6': 'account_id.code${env["pabi.data.map"].get_out_value("GFMIS Report", "account.account", "code", value) and env["pabi.data.map"].get_out_value("GFMIS Report", "account.account", "code", value).split(" - ")[1] or ""}@{sum_label}',
-                            'E6': 'initial${float_compare(value, 0.0, 2) == 1 and value or 0.0}@{sum}',
-                            'F6': 'initial${float_compare(value, 0.0, 2) == -1 and -value or 0.0}@{sum}',
-                            'G6': 'debit@{sum}',
-                            'H6': 'credit@{sum}',
-                            'I6': 'balance${float_compare(value, 0.0, 2) == 1 and value or 0.0}@{sum}',
-                            'J6': 'balance${float_compare(value, 0.0, 2) == -1 and -value or 0.0}@{sum}',
-                            'K6': 'final_balance${float_compare(value, 0.0, 2) == 1 and value or 0.0}@{sum}',
-                            'L6': 'final_balance${float_compare(value, 0.0, 2) == -1 and -value or 0.0}@{sum}',
+                        'gfmis_line_ids': {
+                            'A6': 'account_code',
+                            'B6': 'account_name',
+                            'C6': 'initial${float_compare(value, 0.0, 2) == 1 and value or 0.0}@{sum}',
+                            'D6': 'initial${float_compare(value, 0.0, 2) == -1 and -value or 0.0}@{sum}',
+                            'E6': 'debit@{sum}',
+                            'F6': 'credit@{sum}',
+                            'G6': 'balance${float_compare(value, 0.0, 2) == 1 and value or 0.0}@{sum}',
+                            'H6': 'balance${float_compare(value, 0.0, 2) == -1 and -value or 0.0}@{sum}',
+                            'I6': 'final_balance${float_compare(value, 0.0, 2) == 1 and value or 0.0}@{sum}',
+                            'J6': 'final_balance${float_compare(value, 0.0, 2) == -1 and -value or 0.0}@{sum}',
+                        },
+                    },
+                }
+            }
+          </field>
+        </record>
+
+        <!-- CFO -->
+        <record model="document.directory" id="dir_cfo_template">
+            <field name="name">CFO Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <record id="cfo_template" model="ir.attachment">
+            <field name="res_model">account.trial.balance.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">cfo.xlsx</field>
+            <field name="name">CFO</field>
+            <field name="parent_id" eval="ref('dir_cfo_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B3': 'fiscalyear_id.name',
+                        },
+                        'cfo_line_ids': {
+                            'A6': 'account_code',
+                            'B6': 'account_name',
+                            'C6': 'initial${float_compare(value, 0.0, 2) == 1 and value or 0.0}@{sum}',
+                            'D6': 'initial${float_compare(value, 0.0, 2) == -1 and -value or 0.0}@{sum}',
+                            'E6': 'debit@{sum}',
+                            'F6': 'credit@{sum}',
+                            'G6': 'balance${float_compare(value, 0.0, 2) == 1 and value or 0.0}@{sum}',
+                            'H6': 'balance${float_compare(value, 0.0, 2) == -1 and -value or 0.0}@{sum}',
+                            'I6': 'final_balance${float_compare(value, 0.0, 2) == 1 and value or 0.0}@{sum}',
+                            'J6': 'final_balance${float_compare(value, 0.0, 2) == -1 and -value or 0.0}@{sum}',
                         },
                     },
                 }
