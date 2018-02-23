@@ -7,5 +7,5 @@ class PABIDataMapType(models.Model):
 
     # Add new type wil lbe used specifically for this addon
     app_name = fields.Selection(
-        selection_add=[('gfmis_report', 'GFMIS Report')]
+        selection_add=[('tb_external', 'Trial Balance for External Org')]
     )
