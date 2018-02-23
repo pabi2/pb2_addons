@@ -39,6 +39,7 @@
         <!--Division-->
         <record id="rule_res_division_budget_user" model="ir.rule">
             <field name="name">Division - Budget User</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_division"/>
             <field name="domain_force">[('id', '=', user.partner_id.employee_id.section_id.division_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_budget_user'))]"/>
@@ -46,6 +47,7 @@
 
         <record id="rule_res_division_budget_manager" model="ir.rule">
             <field name="name">Division - Budget Manager</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_division"/>
             <field name="domain_force">[('id', '=', user.partner_id.employee_id.section_id.division_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_budget_manager'))]"/>
@@ -53,6 +55,7 @@
 
         <record id="rule_res_division_org_manager" model="ir.rule">
             <field name="name">Division - Budget Org Manager</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_division"/>
             <field name="domain_force">[('org_id', '=', user.partner_id.employee_id.org_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
@@ -60,6 +63,7 @@
 
         <record id="rule_res_division_cooperate_manager" model="ir.rule">
             <field name="name">Division - Budget Cooperate Manager</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_division"/>
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget'))]"/>
@@ -68,6 +72,7 @@
         <!--SubSector-->
         <record id="rule_res_subsector_budget_user" model="ir.rule">
             <field name="name">Subsector - Budget User</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_subsector"/>
             <field name="domain_force">[('id', '=', user.partner_id.employee_id.section_id.subsector_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_budget_user'))]"/>
@@ -75,6 +80,7 @@
 
         <record id="rule_res_subsector_budget_manager" model="ir.rule">
             <field name="name">Subsector - Budget Manager</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_subsector"/>
             <field name="domain_force">[('id', '=', user.partner_id.employee_id.section_id.subsector_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_budget_manager'))]"/>
@@ -82,6 +88,7 @@
 
         <record id="rule_res_subsector_org_manager" model="ir.rule">
             <field name="name">Subsector - Budget Org Manager</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_subsector"/>
             <field name="domain_force">[('org_id', '=', user.partner_id.employee_id.org_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
@@ -89,6 +96,7 @@
 
         <record id="rule_res_subsector_cooperate_manager" model="ir.rule">
             <field name="name">Subsector - Budget Cooperate Manager</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_subsector"/>
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget'))]"/>
@@ -98,6 +106,7 @@
         <!--Sector-->
         <record id="rule_res_sector_budget_user" model="ir.rule">
             <field name="name">Sector - Budget User</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_sector"/>
             <field name="domain_force">[('id', '=', user.partner_id.employee_id.section_id.sector_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_budget_user'))]"/>
@@ -105,6 +114,7 @@
 
         <record id="rule_res_sector_budget_manager" model="ir.rule">
             <field name="name">Sector - Budget Manager</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_sector"/>
             <field name="domain_force">[('id', '=', user.partner_id.employee_id.section_id.sector_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_budget_manager'))]"/>
@@ -112,6 +122,7 @@
 
         <record id="rule_res_sector_org_manager" model="ir.rule">
             <field name="name">Sector - Budget Org Manager</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_sector"/>
             <field name="domain_force">[('org_id', '=', user.partner_id.employee_id.org_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
@@ -119,6 +130,7 @@
 
         <record id="rule_res_sector_cooperate_manager" model="ir.rule">
             <field name="name">Sector - Budget Cooperate Manager</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_sector"/>
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget'))]"/>
@@ -128,6 +140,7 @@
         <!--Org-->
         <record id="rule_res_org_budget_user" model="ir.rule">
             <field name="name">Org - Budget User</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_org"/>
             <field name="domain_force">[('id', '=', user.partner_id.employee_id.org_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_budget_user'))]"/>
@@ -135,6 +148,7 @@
 
         <record id="rule_res_org_budget_manager" model="ir.rule">
             <field name="name">Org - Budget Manager</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_org"/>
             <field name="domain_force">[('id', '=', user.partner_id.employee_id.org_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_budget_manager'))]"/>
@@ -142,6 +156,7 @@
 
         <record id="rule_res_org_org_manager" model="ir.rule">
             <field name="name">Org - Budget Org Manager</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_org"/>
             <field name="domain_force">[('id', '=', user.partner_id.employee_id.org_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
@@ -149,6 +164,7 @@
 
         <record id="rule_res_org_cooperate_manager" model="ir.rule">
             <field name="name">Org - Budget Cooperate Manager</field>
+            <field name="active">False</field> <!-- inactivate -->
             <field name="model_id" ref="pabi_base.model_res_org"/>
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget'))]"/>
