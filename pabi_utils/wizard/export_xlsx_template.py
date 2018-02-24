@@ -3,6 +3,8 @@ import re
 import os
 import math
 import openpyxl
+from openpyxl.styles import colors
+from openpyxl.styles import PatternFill, Alignment, Font
 import base64
 import cStringIO
 import time
@@ -40,6 +42,71 @@ def get_field_condition(field):
         except:
             return (field, False)
     return (field, False)
+
+
+def get_field_format(field):
+    """
+        Available formats
+        - font = bold, bold_red
+        - fill = red, blue, yellow, green, grey
+        - align = left, center, right
+        - number = true, false
+
+        i.e., 'field%{font=bold;fill=red;align=center;number=true}'
+    """
+    if '#{' in field and '}' in field:
+        i = field.index('#{')
+        j = field.index('}')
+        cond = field[i + 2:j]
+        # try:
+        if len(cond) > 0:
+            return (field.replace('#{%s}' % cond, ''), cond)
+        # except:
+        #     return (field, False)
+    return (field, False)
+
+
+def fill_cell_format(field, field_format):
+    avail_format = {
+        'font': {
+            'bold': Font(bold=True),
+            'bold_red': Font(color=colors.RED, bold=True),
+        },
+        'fill': {
+            'red': PatternFill("solid", fgColor="FF0000"),
+            'grey': PatternFill("solid", fgColor="DDDDDD"),
+            'yellow': PatternFill("solid", fgColor="FFFCB7"),
+            'blue': PatternFill("solid", fgColor="9BF3FF"),
+            'green': PatternFill("solid", fgColor="B0FF99"),
+        },
+        'align': {
+            'left': Alignment(horizontal='left'),
+            'center': Alignment(horizontal='center'),
+            'right': Alignment(horizontal='right'),
+        },
+        'number': {
+            'true': 'General',
+            'false': False,
+        },
+    }
+    formats = field_format.split(';')
+    for f in formats:
+        (key, value) = f.split('=')
+        if key not in avail_format.keys():
+            raise ValidationError(_('Invalid format type %s' % key))
+        if value.lower() not in avail_format[key].keys():
+            raise ValidationError(
+                _('Invalid value %s for format type %s' % (value, key)))
+        cell_format = avail_format[key][value]
+        if key == 'font':
+            field.font = cell_format
+        if key == 'fill':
+            field.fill = cell_format
+        if key == 'align':
+            field.alignment = cell_format
+        if key == 'number':
+            if cell_format:
+                field.number_format = cell_format
 
 
 def get_line_max(line_field):
@@ -204,84 +271,87 @@ class ExportXlsxTemplate(models.TransientModel):
         """ Fill data from record with format in data_dict to workbook """
         if not record or not data_dict:
             return
-        # try:
-        for sheet_name in data_dict:
-            worksheet = data_dict[sheet_name]
-            st = False
-            if isinstance(sheet_name, str):
-                st = get_sheet_by_name(workbook, sheet_name)
-            elif isinstance(sheet_name, int):
-                st = workbook.worksheets[sheet_name - 1]
-            if not st:
-                raise ValidationError(
-                    _('Sheet %s not found!') % sheet_name)
-            # HEAD
-            for rc, field in worksheet.get('_HEAD_', {}).iteritems():
-                tmp_field, eval_cond = get_field_condition(field)
-                value = tmp_field and self._get_val(record, tmp_field)
-                if isinstance(value, basestring):
-                    value = value.encode('utf-8')
-                # Case Eval
-                if eval_cond:  # Get eval_cond of a raw field
-                    eval_context = {'float_compare': float_compare,
-                                    'time': time,
-                                    'datetime': datetime,
-                                    'value': value,
-                                    'model': self.env[record._name],
-                                    'env': self.env,
-                                    'context': self._context,
-                                    }
-                    # str() throw cordinal not in range error
-                    value = eval(eval_cond, eval_context)
-                    # value = str(eval(eval_cond, eval_context))
-                st[rc] = value
-            # Line Items
-            line_fields = filter(lambda l: l != '_HEAD_', worksheet)
-            for line_field in line_fields:
-                fields = [field for rc, field
-                          in worksheet.get(line_field, {}).iteritems()]
-                vals, aggre_func = \
-                    self._get_line_vals(record, line_field, fields)
-                for rc, field in worksheet.get(line_field, {}).iteritems():
-                    col, row = split_row_col(rc)  # starting point
-                    i = 0
-                    new_row = 0
-                    for val in vals[field]:
-                        new_row = row + i
-                        new_rc = '%s%s' % (col, new_row)
-                        st[new_rc] = val
-                        i += 1
-                    # Add footer line if at least one field have func
-                    has_aggre_func = [x for x in aggre_func.values() if x]
-                    if has_aggre_func:
-                        f = aggre_func.get(field, False)
-                        if f:
-                            # # Line Separator
-                            # new_row += 1
-                            # new_rc = '%s%s' % (col, new_row)
-                            # col_width = st.column_dimensions[col].width
-                            # st[new_rc] = \
-                            #     '-' * int(math.ceil(col_width)) * 2
-                            # # --
-                            # Aggregation Amount
-                            new_row += 1
+        try:
+            for sheet_name in data_dict:
+                worksheet = data_dict[sheet_name]
+                st = False
+                if isinstance(sheet_name, str):
+                    st = get_sheet_by_name(workbook, sheet_name)
+                elif isinstance(sheet_name, int):
+                    st = workbook.worksheets[sheet_name - 1]
+                if not st:
+                    raise ValidationError(
+                        _('Sheet %s not found!') % sheet_name)
+                # HEAD
+                for rc, field in worksheet.get('_HEAD_', {}).iteritems():
+                    tmp_field, eval_cond = get_field_condition(field)
+                    tmp_field, field_format = get_field_format(tmp_field)
+                    value = tmp_field and self._get_val(record, tmp_field)
+                    if isinstance(value, basestring):
+                        value = value.encode('utf-8')
+                    # Case Eval
+                    if eval_cond:  # Get eval_cond of a raw field
+                        eval_context = {'float_compare': float_compare,
+                                        'time': time,
+                                        'datetime': datetime,
+                                        'value': value,
+                                        'model': self.env[record._name],
+                                        'env': self.env,
+                                        'context': self._context,
+                                        }
+                        # str() throw cordinal not in range error
+                        value = eval(eval_cond, eval_context)
+                        # value = str(eval(eval_cond, eval_context))
+                    st[rc] = value
+                    if field_format:
+                        fill_cell_format(st[rc], field_format)
+                # Line Items
+                line_fields = filter(lambda l: l != '_HEAD_', worksheet)
+                for line_field in line_fields:
+                    fields = [field for rc, field
+                              in worksheet.get(line_field, {}).iteritems()]
+                    vals, aggre_func = \
+                        self._get_line_vals(record, line_field, fields)
+                    for rc, field in worksheet.get(line_field, {}).iteritems():
+                        col, row = split_row_col(rc)  # starting point
+                        i = 0
+                        new_row = 0
+                        for val in vals[field]:
+                            new_row = row + i
                             new_rc = '%s%s' % (col, new_row)
-                            if 'label' in f:
-                                label = {'sum_label': 'Total',
-                                         'avg_label': 'Average',
-                                         'min_label': 'Minimum',
-                                         'max_label': 'Maximum', }
-                                st[new_rc] = label[f]
-                            else:
-                                st[new_rc] = eval('%s(%s)' %
-                                                  (f, vals[field]))
-        # except ValueError, e:
-        #     message = str(e).format(rc)
-        #     raise ValidationError(message)
-        # except KeyError, e:
-        #     raise except_orm(_('Key Error!'), e)
-        # except Exception, e:
-        #     raise except_orm(_('Error filling data into excel sheets!'), e)
+                            st[new_rc] = val
+                            i += 1
+                        # Add footer line if at least one field have func
+                        has_aggre_func = [x for x in aggre_func.values() if x]
+                        if has_aggre_func:
+                            f = aggre_func.get(field, False)
+                            if f:
+                                # # Line Separator
+                                # new_row += 1
+                                # new_rc = '%s%s' % (col, new_row)
+                                # col_width = st.column_dimensions[col].width
+                                # st[new_rc] = \
+                                #     '-' * int(math.ceil(col_width)) * 2
+                                # # --
+                                # Aggregation Amount
+                                new_row += 1
+                                new_rc = '%s%s' % (col, new_row)
+                                if 'label' in f:
+                                    label = {'sum_label': 'Total',
+                                             'avg_label': 'Average',
+                                             'min_label': 'Minimum',
+                                             'max_label': 'Maximum', }
+                                    st[new_rc] = label[f]
+                                else:
+                                    st[new_rc] = eval('%s(%s)' %
+                                                      (f, vals[field]))
+        except ValueError, e:
+            message = str(e).format(rc)
+            raise ValidationError(message)
+        except KeyError, e:
+            raise except_orm(_('Key Error!'), e)
+        except Exception, e:
+            raise except_orm(_('Error filling data into excel sheets!'), e)
 
     @api.model
     def _export_template(self, template, res_model, res_id):

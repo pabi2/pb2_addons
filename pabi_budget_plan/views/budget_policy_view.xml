@@ -12,8 +12,8 @@
                     <field name="fiscalyear_id"/>
                     <field name="revision"/>
                     <field name="new_policy_amount" sum="New Policy Amount"/>
-                    <field name="planned_amount" sum="Planned Amount"/>
-                    <field name="policy_amount" sum="Policy Amount"/>
+                    <field name="planned_amount" sum="Planned Amount" invisible="1"/>
+                    <field name="policy_amount" sum="Policy Amount" invisible="1"/>
                     <field name="state"/>
                 </tree>
             </field>
