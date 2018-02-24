@@ -139,8 +139,8 @@
                     <field name="fiscalyear_id"/>
                     <field name="revision"/>
                     <field name="new_policy_amount"/>
-                    <field name="planned_amount"/>
-                    <field name="policy_amount"/>
+                    <field name="planned_amount" invisible="1"/>
+                    <field name="policy_amount" invisible="1"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -157,8 +157,8 @@
                     <field name="fiscalyear_id"/>
                     <field name="revision"/>
                     <field name="new_policy_amount"/>
-                    <field name="planned_amount"/>
-                    <field name="policy_amount"/>
+                    <field name="planned_amount" invisible="1"/>
+                    <field name="policy_amount" invisible="1"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -176,8 +176,8 @@
                     <field name="fiscalyear_id"/>
                     <field name="revision"/>
                     <field name="new_policy_amount"/>
-                    <field name="planned_amount"/>
-                    <field name="policy_amount"/>
+                    <field name="planned_amount" invisible="1"/>
+                    <field name="policy_amount" invisible="1"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -190,13 +190,16 @@
                 <search string="Budget Breakdown">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Breakdown"/>
                     <field name="state"/>
+                    <field name="fiscalyear_id"/>
                     <field name="org_id"/>
                     <field name="chart_view"/>
+                    <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
                     <group expand="0" string="Group By">
                         <filter string="Status" context="{'group_by':'state'}"/>
                         <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
                         <filter string="Org" context="{'group_by':'org_id'}"/>
                         <filter string="Budget View" context="{'group_by':'chart_view'}"/>
+                        <filter string="Revision" context="{'group_by':'revision'}"/>
                     </group>
                 </search>
             </field>
