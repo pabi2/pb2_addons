@@ -26,6 +26,7 @@
         'data/payment_export_data.xml',
         'data/asset_data.xml',
         'data/hr_salary_data.xml',
+        'data/cheque_data.xml',
         'qweb_reports/account/layouts.xml',
         'qweb_reports/account/adjustment_voucher.xml',
         'qweb_reports/account/bank_receipt_voucher.xml',
