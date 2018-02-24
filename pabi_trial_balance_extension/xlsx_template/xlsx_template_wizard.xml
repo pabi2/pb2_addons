@@ -2,8 +2,8 @@
 <openerp>
     <data>
 
-        <act_window id="action_gfmis_export_xlsx_tempalte"
-            name="Export for GFMIS (.xlsx)"
+        <act_window id="action_export_xlsx_template"
+            name="Export to Excel"
             res_model="export.xlsx.template"
             src_model="account.trial.balance.report"
             view_mode="form"

@@ -1,2 +1,3 @@
 "id","name","app_name","default_template_id/id"
-"map_type_gfmis_report","GFMIS Report","gfmis_report","gfmis_template"
+"map_type_gfmis_report","GFMIS Report","tb_external","gfmis_template"
+"map_type_cfo_report","CFO Report","tb_external","cfo_template"
