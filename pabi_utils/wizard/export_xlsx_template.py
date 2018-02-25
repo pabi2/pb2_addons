@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+import operator
 import re
 import os
 import math
 import openpyxl
 from openpyxl.styles import colors
-from openpyxl.styles import PatternFill, Alignment, Font
+from openpyxl.styles import PatternFill, Alignment, Font, NamedStyle
 import base64
 import cStringIO
 import time
@@ -17,10 +18,10 @@ from openerp.exceptions import except_orm, ValidationError
 
 
 def get_field_aggregation(field):
-    """ i..e, 'field@{sum/avg/max/min}' """
+    """ i..e, 'field@{sum/average/max/min}' """
     if '@{' in field and '}' in field:
         i = field.index('@{')
-        j = field.index('}')
+        j = field.index('}', i)
         cond = field[i + 2:j]
         try:
             if len(cond) > 0:
@@ -34,7 +35,7 @@ def get_field_condition(field):
     """ i..e, 'field${value > 0 and value or False}' """
     if '${' in field and '}' in field:
         i = field.index('${')
-        j = field.index('}')
+        j = field.index('}', i)
         cond = field[i + 2:j]
         try:
             if len(cond) > 0:
@@ -56,13 +57,13 @@ def get_field_format(field):
     """
     if '#{' in field and '}' in field:
         i = field.index('#{')
-        j = field.index('}')
+        j = field.index('}', i)
         cond = field[i + 2:j]
-        # try:
-        if len(cond) > 0:
-            return (field.replace('#{%s}' % cond, ''), cond)
-        # except:
-        #     return (field, False)
+        try:
+            if len(cond) > 0:
+                return (field.replace('#{%s}' % cond, ''), cond)
+        except:
+            return (field, False)
     return (field, False)
 
 
@@ -84,9 +85,9 @@ def fill_cell_format(field, field_format):
             'center': Alignment(horizontal='center'),
             'right': Alignment(horizontal='right'),
         },
-        'number': {
-            'true': 'General',
-            'false': False,
+        'number_format': {
+            'number': '#,##0.00',
+            'date': 'dd/mm/yyyy',
         },
     }
     formats = field_format.split(';')
@@ -104,9 +105,8 @@ def fill_cell_format(field, field_format):
             field.fill = cell_format
         if key == 'align':
             field.alignment = cell_format
-        if key == 'number':
-            if cell_format:
-                field.number_format = cell_format
+        if key == 'number_format':
+            field.number_format = cell_format
 
 
 def get_line_max(line_field):
@@ -231,16 +231,17 @@ class ExportXlsxTemplate(models.TransientModel):
         # Get field condition & aggre function
         field_cond_dict = {}
         aggre_func_dict = {}
-        aggre_func_list = ['sum', 'sum_label', 'avg', 'avg_label',
-                           'max', 'max_label', 'min', 'min_label']
+        field_format_dict = {}
         pair_fields = []  # I.e., ('debit${value and . or .}@{sum}', 'debit')
         for field in fields:
             temp_field, eval_cond = get_field_condition(field)
+            temp_field, field_format = get_field_format(temp_field)
             raw_field, aggre_func = get_field_aggregation(temp_field)
-            if aggre_func and aggre_func not in aggre_func_list:
-                raise ValidationError(_('"%", not a valid aggregate function'))
+            # Dict of all special conditions
             field_cond_dict.update({field: eval_cond})
             aggre_func_dict.update({field: aggre_func})
+            field_format_dict.update({field: field_format})
+            # --
             pair_fields.append((field, raw_field))
         # --
         for line in lines:
@@ -264,7 +265,7 @@ class ExportXlsxTemplate(models.TransientModel):
                     value = eval(eval_cond, eval_context)
                 # --
                 vals[field[0]].append(value)
-        return (vals, aggre_func_dict)
+        return (vals, aggre_func_dict, field_format_dict)
 
     @api.model
     def _fill_workbook_data(self, workbook, record, data_dict):
@@ -282,7 +283,8 @@ class ExportXlsxTemplate(models.TransientModel):
                 if not st:
                     raise ValidationError(
                         _('Sheet %s not found!') % sheet_name)
-                # HEAD
+
+                # ================ HEAD ================
                 for rc, field in worksheet.get('_HEAD_', {}).iteritems():
                     tmp_field, eval_cond = get_field_condition(field)
                     tmp_field, field_format = get_field_format(tmp_field)
@@ -305,14 +307,19 @@ class ExportXlsxTemplate(models.TransientModel):
                     st[rc] = value
                     if field_format:
                         fill_cell_format(st[rc], field_format)
-                # Line Items
-                line_fields = filter(lambda l: l != '_HEAD_', worksheet)
+
+                # ================ Line Items ================
+                line_fields = \
+                    filter(lambda l: l[0:6] not in ('_HEAD_', '_TAIL_'),
+                           worksheet)
+                tail_fields = {}  # Keep tail cell, to be used in _TAIL_
                 for line_field in line_fields:
                     fields = [field for rc, field
                               in worksheet.get(line_field, {}).iteritems()]
-                    vals, aggre_func = \
+                    (vals, func, field_format) = \
                         self._get_line_vals(record, line_field, fields)
                     for rc, field in worksheet.get(line_field, {}).iteritems():
+                        tail_fields[rc] = False
                         col, row = split_row_col(rc)  # starting point
                         i = 0
                         new_row = 0
@@ -320,31 +327,60 @@ class ExportXlsxTemplate(models.TransientModel):
                             new_row = row + i
                             new_rc = '%s%s' % (col, new_row)
                             st[new_rc] = val
+                            if field_format.get(field, False):
+                                fill_cell_format(st[new_rc],
+                                                 field_format[field])
                             i += 1
                         # Add footer line if at least one field have func
-                        has_aggre_func = [x for x in aggre_func.values() if x]
-                        if has_aggre_func:
-                            f = aggre_func.get(field, False)
-                            if f:
-                                # # Line Separator
-                                # new_row += 1
-                                # new_rc = '%s%s' % (col, new_row)
-                                # col_width = st.column_dimensions[col].width
-                                # st[new_rc] = \
-                                #     '-' * int(math.ceil(col_width)) * 2
-                                # # --
-                                # Aggregation Amount
-                                new_row += 1
-                                new_rc = '%s%s' % (col, new_row)
-                                if 'label' in f:
-                                    label = {'sum_label': 'Total',
-                                             'avg_label': 'Average',
-                                             'min_label': 'Minimum',
-                                             'max_label': 'Maximum', }
-                                    st[new_rc] = label[f]
-                                else:
-                                    st[new_rc] = eval('%s(%s)' %
-                                                      (f, vals[field]))
+                        f = func.get(field, False)
+                        if f:
+                            new_row += 1
+                            f_rc = '%s%s' % (col, new_row)
+                            st[f_rc] = '=%s(%s:%s)' % (f, rc, new_rc)
+                        tail_fields[rc] = new_rc   # Last row field
+
+                # ================ TAIL ================
+                # Similar to header, excep it will set cell after last row
+                # Get all tails, i.e., _TAIL_0, _TAIL_1 order by number
+                tails = filter(lambda l: l[0:6] == '_TAIL_', worksheet.keys())
+                tail_dicts = {key: worksheet[key] for key in tails}
+                for tail_key, tail_dict in tail_dicts.iteritems():
+                    row_skip = tail_key[6:] != '' and int(tail_key[6:]) or 0
+                    # For each _TAIL_ and row skipper 0, 1, 2, ...
+                    for rc, field in tail_dict.iteritems():
+                        if rc not in tail_fields.keys():
+                            raise ValidationError(
+                                _('%s is not in detail field and can '
+                                  'not be used as tail field.') % rc)
+                        tmp_field, eval_cond = get_field_condition(field)
+                        tmp_field, field_format = get_field_format(tmp_field)
+                        tmp_field, func = get_field_aggregation(tmp_field)
+                        value = tmp_field and self._get_val(record, tmp_field)
+                        if isinstance(value, basestring):
+                            value = value.encode('utf-8')
+                        # Case Eval
+                        if eval_cond:  # Get eval_cond of a raw field
+                            eval_context = {'float_compare': float_compare,
+                                            'time': time,
+                                            'datetime': datetime,
+                                            'value': value,
+                                            'model': self.env[record._name],
+                                            'env': self.env,
+                                            'context': self._context,
+                                            }
+                            # str() throw cordinal not in range error
+                            value = eval(eval_cond, eval_context)
+                            # value = str(eval(eval_cond, eval_context))
+                        last_rc = tail_fields[rc]  # Last row of rc column
+                        col, row = split_row_col(last_rc)
+                        tail_rc = '%s%s' % (col, row + row_skip + 1)
+                        if value:
+                            st[tail_rc] = value
+                        if func:
+                            st[tail_rc] = '=%s(%s:%s)' % (func, rc, last_rc)
+                        if field_format:
+                            fill_cell_format(st[tail_rc], field_format)
+
         except ValueError, e:
             message = str(e).format(rc)
             raise ValidationError(message)

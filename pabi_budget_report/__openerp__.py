@@ -20,9 +20,10 @@
         'wizards/budget_detail_report_wizard.xml',
         'wizards/budget_plan_unit_analysis_report_wizard.xml',
         'wizards/budget_plan_project_analysis_report_wizard.xml',
-        'xlsx_reports/directory.xml',
-        'xlsx_reports/xlsx_report_budget_summary.xml',
-        'xlsx_reports/load_template.xml',
+        'reports/xlsx_report_budget_plan_construction_analysis.xml',
+        'reports/xlsx_report_budget_summary.xml',
+        'xlsx_template/templates.xml',
+        'xlsx_template/load_template.xml',
     ],
     'demo': [
     ],
