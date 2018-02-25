@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory for Budget XLSX Reports -->
+        <record model="document.directory" id="dir_budget_reports">
+            <field name="name">Budget Reports</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        # Budget Summary Report
+        <record id="xlsx_report_budget_summary" model="ir.attachment">
+            <field name="res_model">xlsx.report.budget.summary</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_budget_summary.xlsx</field>
+            <field name="name">Budget Summary (TEST)</field>
+            <field name="parent_id" eval="ref('dir_budget_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B3': 'fiscalyear_id.name',
+                        },
+                        'results[5]': {
+                            'A7': 'chart_view${value and value.title() or ""}',
+                            'B7': 'plan',
+                            'C7': 'policy',
+                            'D7': 'released',
+                            'E7': 'pr_commit',
+                            'F7': 'po_commit',
+                            'G7': 'exp_commit',
+                            'H7': 'actual_total',
+                            'I7': 'balance',
+                            'J7': 'actual_percent',
+                            'K7': 'commit_total',
+                            'L7': 'commit_percent',
+                        },
+                    }
+                }
+            }
+          </field>
+        </record>
+
+        # Budget Plan Analysis for Invest Construction
+        <record id="xlsx_report_budget_plan_construction_analysis" model="ir.attachment">
+            <field name="res_model">xlsx.report.budget.plan.construction.analysis</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_budget_plan_construction_analysis.xlsx</field>
+            <field name="name">Budget Plan Analysis for Invest Construction</field>
+            <field name="parent_id" eval="ref('dir_budget_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B1': 'fiscalyear_id.name${value or ""}',
+                            'B2': 'org_id.name_short${value or ""}',
+                            'B3': 'invest_construction_id.name${value or ""}',
+                        },
+                        'results': {
+                            'A8': 'c_or_n${value and value.title() or ""}',
+                            'B8': 'name${value or ""}',
+                            'C8': 'description${value or ""}',
+                            'D8': 'activity_group_id.name${value or ""}',
+                            'E8': 'org_id.name_short${value or ""}',
+                            'F8': 'month_duration',
+                            'G8': 'date_start${value or ""}#{number_format=date}',
+                            'H8': 'date_end${value or ""}#{number_format=date}',
+                            'I8': 'operation_area${value or ""}',
+                            'J8': 'project_readiness${value or ""}',
+                            'K8': 'reason${value or ""}',
+                            'L8': 'expected_result${value or ""}',
+                            'M8': 'pm_employee_id.name${value or ""}',
+                            'N8': 'pm_section_id.name${value or ""}',
+                            'O8': 'amount_budget#{number_format=number}',
+                            'P8': 'amount_before#{number_format=number}',
+                            'Q8': 'amount_fy1#{number_format=number}',
+                            'R8': 'amount_fy2#{number_format=number}',
+                            'S8': 'amount_fy3#{number_format=number}',
+                            'T8': 'amount_fy4#{number_format=number}',
+                            'U8': 'amount_fy5#{number_format=number}',
+                            'V8': 'amount_beyond#{number_format=number}',
+                            'W8': 'overall_released#{number_format=number}',
+                            'X8': 'overall_all_commit#{number_format=number}',
+                            'Y8': 'overall_pr_commit#{number_format=number}',
+                            'Z8': 'overall_po_commit#{number_format=number}',
+                            'AA8': 'overall_exp_commit#{number_format=number}',
+                            'AB8': 'overall_actual#{number_format=number}',
+                            'AC8': 'overall_consumed#{number_format=number}',
+                            'AD8': 'overall_balance#{number_format=number}',
+                            'AE8': 'next_fy_commitment#{number_format=number}',
+                        },
+                        '_TAIL_0': {
+                            'N8': '${"TOTAL"}#{font=bold;align=center;fill=blue}',
+                            'O8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'P8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'Q8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'R8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'S8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'T8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'U8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'V8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'W8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'X8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'Y8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'Z8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AA8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AB8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AC8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AD8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AE8': '@{sum}#{font=bold;align=right;number_format=number}',
+                        },
+                    }
+                }
+            }
+          </field>
+        </record>
+
+
+    </data>
+</openerp>

@@ -17,7 +17,7 @@ def get_field_condition(field):
     """ i..e, 'field${value > 0 and value or False}' """
     if '${' in field and '}' in field:
         i = field.index('${')
-        j = field.index('}')
+        j = field.index('}', i)
         cond = field[i + 2:j]
         try:
             if len(cond) > 0:
@@ -31,7 +31,7 @@ def get_line_max(line_field):
     """ i.e., line_field = line_ids[100], max = 100 else 0 """
     if '[' in line_field and ']' in line_field:
         i = line_field.index('[')
-        j = line_field.index(']')
+        j = line_field.index(']', i)
         max_str = line_field[i + 1:j]
         try:
             if len(max_str) > 0:

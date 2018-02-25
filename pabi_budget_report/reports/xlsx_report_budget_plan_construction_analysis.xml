@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="xlsx_report_budget_plan_construction_analysis_view" model="ir.ui.view">
+            <field name="name">xlsx.report.budget.plan.construction.analysis.view</field>
+            <field name="model">xlsx.report.budget.plan.construction.analysis</field>
+            <field name="arch" type="xml">
+                <form string="Budget Plan Analysis for Invest Construction">
+
+                    <!-- required fields -->
+                    <field name="state" invisible="1"/>
+                    <field name="name" invisible="1"/>
+
+                    <!-- search criteria -->
+                    <group states="choose">
+                        <group>
+                            <field name="fiscalyear_id"/>
+                            <field name="org_id"/>
+                            <field name="invest_construction_id"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+
+                    <!-- required common fields -->
+                    <div states="get">
+                        <h2>Complete Prepare Report (.xlsx)</h2>
+                        <p>Here is the report file:
+                            <field name="data" readonly="1" filename="name"/></p>
+                    </div>
+                    <footer states="choose">
+                        <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
+                        or
+                        <button special="cancel" string="Cancel" type="object" class="oe_link"/>
+                    </footer>
+                    <footer states="get">
+                        <button special="cancel" string="Close" type="object"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_report_budget_plan_construction_analysis" model="ir.actions.act_window">
+            <field name="name">Budget Plan Analysis for Invest Construction</field>
+            <field name="res_model">xlsx.report.budget.plan.construction.analysis</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_report_budget_plan_construction_analysis"
+          name="Budget Plan Analysis"
+          parent="pabi_budget_plan.menu_action_budget_plan_invest_construction"
+          action="action_report_budget_plan_construction_analysis"
+          sequence="100"/>
+
+    </data>
+</openerp>
