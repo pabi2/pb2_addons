@@ -19,7 +19,6 @@
                     <p>This wizard select cheque form based on Bank</p>
                     <group>
                         <field name="bank_print"/>
-                        <field name="lang"/>
                     </group>
                     <footer>
                         <button name="action_print_payment_cheque" type="object" string="Print" class="oe_highlight"/>

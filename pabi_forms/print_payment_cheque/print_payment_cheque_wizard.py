@@ -3,18 +3,10 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 
 CHEQUE_REPORT_MAP = {
-    'en': {
-        'bay_cheque': 'supplier.payment.bay.cheque',
-        'bbl_cheque': 'supplier.payment.bbl.cheque',
-        'ktb_cheque': 'supplier.payment.ktb.cheque',
-        'scb_cheque': 'supplier.payment.scb.cheque',
-    },
-    'th': {
-        'bay_cheque': 'supplier.payment.bay.cheque',
-        'bbl_cheque': 'supplier.payment.bbl.cheque',
-        'ktb_cheque': 'supplier.payment.ktb.cheque',
-        'scb_cheque': 'supplier.payment.scb.cheque',
-    },
+    'bay_cheque': 'supplier.payment.bay.cheque',
+    'bbl_cheque': 'supplier.payment.bbl.cheque',
+    'ktb_cheque': 'supplier.payment.ktb.cheque',
+    'scb_cheque': 'supplier.payment.scb.cheque',
 }
 
 
@@ -26,13 +18,6 @@ class PrintPaymentChequeWizard(models.TransientModel):
         string="Bank Cheque",
         required=True,
     )
-    lang = fields.Selection(
-        [('en', 'English'),
-         ('th', 'Thai'), ],
-        default='th',
-        string="Language",
-        required=True,
-    )
 
     @api.multi
     def action_print_payment_cheque(self):
@@ -40,8 +25,7 @@ class PrintPaymentChequeWizard(models.TransientModel):
         ids = self._context.get('active_ids')
         data['parameters']['ids'] = ids
         try:
-            report_name = CHEQUE_REPORT_MAP.get(self.lang, False).\
-                get(self.bank_print, False)
+            report_name = CHEQUE_REPORT_MAP.get(self.bank_print, False)
         except Exception:
             raise ValidationError(_('No form for for this Cheque'))
         res = {
