@@ -255,10 +255,10 @@
                 '__EXPORT__': {
                     'Asset_Item_Plan': {
                         '_HEAD_': {
-                            'D2': 'fiscalyear_id.name',
-                            'D3': 'org_id.name_short',
-                            'D4': '${time.strftime("%d-%m-%Y")}',
-                            'D5': '${env.user.name or ""}',
+                            'E2': 'fiscalyear_id.name',
+                            'E3': 'org_id.name_short',
+                            'E4': '${time.strftime("%d-%m-%Y")}',
+                            'E5': '${env.user.name or ""}',
                         },
                         'plan_line_ids[20]': {
                             'B10': 'priority',
@@ -271,14 +271,14 @@
                             'H10': 'name${value or ""}',
 
                             'K10': 'request_user_id.name${value or ""}',
-                            'L10': 'owner_section_id.name${value or ""}',
+                            'L10': 'owner_section_id.display_name_2${value or ""}',
                             'M10': 'owner_section_id.division_id.name${value or ""}',
                             'N10': 'location${value or ""}',
                             'O10': 'quantity',
                             'P10': 'price_unit',
                             'R10': 'price_other',
                             'T10': 'amount_plan_total',
-                            'U10': 'reason_purchase${value or ""}',
+                            'U10': 'reason_purchase${value and value == "new" and "ใหม่" or (value == "replace" and "ทดแทน" or (value == "extra" and "เพิ่มเติม")) or ""}',
                             'V10': 'reason_purchase_text${value or ""}',
                             'W10': 'expect_output${value or ""}',
                             'X10': 'planned_utilization',
@@ -326,13 +326,13 @@
                             'H10': 'name',
 
                             'K10': 'request_user_id',
-                            'L10': 'owner_section_id${value and value[1:7] or ""}',
+                            'L10${value and value[1:7] or ""}': 'owner_section_id',
                             'N10': 'location',
                             'O10': 'quantity',
                             'P10': 'price_unit',
                             'R10': 'price_other',
                             'T10': 'amount_plan_total',
-                            'U10': 'reason_purchase',
+                            'U10${value and value == "ใหม่" and "new" or (value == "ทดแทน" and "replace" or (value == "เพิ่มเติม" and "extra")) or ""}': 'reason_purchase',
                             'V10': 'reason_purchase_text',
                             'W10': 'expect_output',
                             'X10': 'planned_utilization',
