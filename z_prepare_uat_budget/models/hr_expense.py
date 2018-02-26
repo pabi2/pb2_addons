@@ -32,15 +32,10 @@ class HRExpense(models.Model):
 
         for ex in datas.keys():
             expense = self.search([('number', '=', ex)])
-            print 'xxxxxxxxxxx'
-            print ex
             if not expense:
                 raise ValidationError('%s not found' % ex)
             for s in datas[ex]:
-
-                print s
                 section = self.env['res.section'].search([('code', '=', s)])
-                print section
                 expense.with_context(new_section_id=section.id).copy()
 
 
