@@ -26,6 +26,15 @@ class ResCommon(object):
         default=False,
         help="Specially used, i.e., Special Project GL",
     )
+    display_name_2 = fields.Char(
+        'Diaplsy Name 2 as [code] name',
+        compute='_compute_display_name_2',
+    )
+
+    @api.multi
+    def _compute_display_name_2(self):
+        for rec in self:
+            rec.display_name_2 = '[%s] %s' % (rec.code, rec.name)
 
     @api.multi
     def name_get(self):
