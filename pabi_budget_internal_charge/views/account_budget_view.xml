@@ -9,7 +9,7 @@
             <field name="inherit_id" ref="pabi_chartfield.unit_base_tree_view"/>
             <field name="arch" type="xml">
                 <xpath expr="/tree/field[@name='budget_method']" position="after">
-                    <field name="charge_type" />
+                    <field name="charge_type"/>
                 </xpath>
                 <xpath expr="/tree" position="attributes">
                     <attribute name="colors">blue:(charge_type == 'external');green:(charge_type == 'internal')</attribute>
@@ -24,14 +24,13 @@
             <field name="inherit_id" ref="pabi_chartfield.project_base_tree_view"/>
             <field name="arch" type="xml">
                 <xpath expr="/tree/field[@name='budget_method']" position="after">
-                    <field name="charge_type" />
+                    <field name="charge_type"/>
                 </xpath>
                 <xpath expr="/tree" position="attributes">
                     <attribute name="colors">blue:(charge_type == 'external');green:(charge_type == 'internal')</attribute>
                 </xpath>
             </field>
         </record>
-
 
         <record id="account_budget_view_form" model="ir.ui.view">
             <field name="name">account.budget.view.form</field>
@@ -41,28 +40,8 @@
                 <xpath expr="/form/sheet//field[@name='fiscalyear_id']" position="after">
                     <field name="control_ext_charge_only" invisible="0"/>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@name='expense']/div[@name='expense_extra']" position="inside">
-                    <group>
-                        <group>
-                            <field name="budgeted_expense_internal" string="Internal"/>
-                        </group>
-                        <group>
-                            <field name="budgeted_expense_external" string="External"/>
-                        </group>
-                    </group>
-                </xpath>
-                <xpath expr="/form/sheet/notebook/page[@name='revenue']/div[@name='revenue_extra']" position="inside">
-                    <group>
-                        <group>
-                            <field name="budgeted_revenue_internal" string="Internal"/>
-                        </group>
-                        <group>
-                            <field name="budgeted_revenue_external" string="External"/>
-                        </group>
-                    </group>
-                </xpath>
                 <xpath expr="/form/sheet/notebook/page[@name='expense']//group[@name='expense_extra2']" position="inside">
-                    <separator string="Internal Charge"  colspan="2" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
+                    <separator string="Internal Charge" colspan="2" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
                     <field name="past_consumed_internal" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
                     <field name="future_plan_internal" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
                     <field name="rolling_internal" class="oe_subtotal_footer_separator" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
@@ -81,6 +60,33 @@
             </field>
         </record>
 
+        <record id="account_budget_view_form2" model="ir.ui.view">
+            <field name="name">account.budget.view.form</field>
+            <field name="model">account.budget</field>
+            <field name="inherit_id" ref="pabi_budget_plan.account_budget_view_form"/>
+            <field name="arch" type="xml">
+              <xpath expr="/form/sheet/notebook/page[@name='expense']/div[@name='expense_extra']" position="inside">
+                  <group attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
+                      <group>
+                          <field name="budgeted_expense_internal" string="Internal"/>
+                      </group>
+                      <group>
+                          <field name="budgeted_expense_external" string="External"/>
+                      </group>
+                  </group>
+              </xpath>
+              <xpath expr="/form/sheet/notebook/page[@name='revenue']/div[@name='revenue_extra']" position="inside">
+                  <group attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
+                      <group>
+                          <field name="budgeted_revenue_internal" string="Internal"/>
+                      </group>
+                      <group>
+                          <field name="budgeted_revenue_external" string="External"/>
+                      </group>
+                  </group>
+              </xpath>
+            </field>
+        </record>
 
     </data>
 </openerp>
