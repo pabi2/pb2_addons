@@ -12,6 +12,12 @@
                     <field name="name" string="Employees"
                     	filter_domain="['|','|','|','|','|','|',('last_name','ilike',self),('mid_name','ilike',self),('first_name','ilike',self),('employee_code','ilike',self),('first_name','ilike',self),('work_email','ilike',self),('name','ilike',self)]"/>
 	            </xpath>
+                <xpath expr='/search/field[@name="department_id"]' position="after">
+                    <field name="org_id"
+                        filter_domain="['|','|',('org_id.name','ilike',self),('org_id.code','ilike',self),('org_id.name_short','ilike',self)]"/>
+                    <field name="section_id"
+                        filter_domain="['|','|',('section_id.name','ilike',self),('section_id.code','ilike',self),('section_id.name_short','ilike',self)]"/>
+                </xpath>
 	        </field>
 	    </record>
 
@@ -35,7 +41,7 @@
 						<group string="PABI2 Org." >
 							<field name="org_id"/>
 							<field name="section_id"/>
-              <field name="section_assign_ids" widget="many2many_tags"/>
+                            <field name="section_assign_ids" widget="many2many_tags"/>
 							<field name="costcenter_id"/>
 							<field name="org_ids" string="Additional Orgs" widget="many2many_tags"/>
 						</group>
