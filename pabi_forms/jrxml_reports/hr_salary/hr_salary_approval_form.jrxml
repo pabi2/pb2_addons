@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_salary_approval" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
 	<property name="ireport.zoom" value="0.846710895080685"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="51"/>
+	<property name="ireport.y" value="185"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;summary_ids&quot;]"/>
 	<style name="table">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
@@ -69,6 +69,19 @@
 	<variable name="amount_total" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount} == null ? 0.0 : $F{amount}]]></variableExpression>
 	</variable>
+	<group name="Summary">
+		<groupFooter>
+			<band height="20">
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="451" y="0" width="104" height="20" backcolor="#D1D1D1"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+						<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_total}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -292,33 +305,26 @@
 			</textField>
 		</band>
 	</detail>
-	<summary>
-		<band height="105">
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="table" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="451" y="0" width="104" height="20" backcolor="#D1D1D1"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single" markup="none">
-					<font fontName="SansSerif" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_total}]]></textFieldExpression>
-			</textField>
+	<lastPageFooter>
+		<band height="76">
 			<rectangle>
-				<reportElement x="137" y="29" width="138" height="76"/>
+				<reportElement x="138" y="0" width="138" height="76"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="275" y="29" width="138" height="76"/>
+				<reportElement x="276" y="0" width="138" height="76"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="413" y="29" width="141" height="76"/>
+				<reportElement x="414" y="0" width="141" height="76"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="137" y="34" width="138" height="15"/>
+				<reportElement x="138" y="5" width="138" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[2. ผู้บันทึก]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="275" y="34" width="138" height="27"/>
+				<reportElement x="276" y="5" width="138" height="27"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -326,64 +332,64 @@
 หัวหน้าโครงการ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="413" y="34" width="141" height="15"/>
+				<reportElement x="414" y="5" width="141" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[4. ผู้อนุมัติวงเงิน]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="137" y="67" width="138" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="138" y="38" width="138" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{prepare_user}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="413" y="67" width="141" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="414" y="38" width="141" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{approve_user}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="137" y="85" width="138" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="138" y="56" width="138" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_prepare}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="413" y="85" width="141" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="414" y="56" width="141" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_approve}]]></textFieldExpression>
 			</textField>
 			<rectangle>
-				<reportElement x="-1" y="29" width="138" height="76"/>
+				<reportElement x="0" y="0" width="138" height="76"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="-1" y="34" width="138" height="15"/>
+				<reportElement x="0" y="5" width="138" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[1. ผู้ขอ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="-1" y="67" width="138" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="0" y="38" width="138" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{submit_user}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="0" y="85" width="138" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="1" y="56" width="138" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_submit}]]></textFieldExpression>
 			</textField>
 		</band>
-	</summary>
+	</lastPageFooter>
 </jasperReport>

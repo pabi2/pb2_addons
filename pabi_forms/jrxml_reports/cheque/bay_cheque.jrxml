@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="supplier_payment_ktb_cheque" language="groovy" pageWidth="842" pageHeight="300" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
-	<property name="ireport.zoom" value="0.6830134553650727"/>
+	<property name="ireport.zoom" value="1.071794405000001"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="payee">
@@ -151,14 +151,13 @@
 				<textFieldExpression class="java.util.Date"><![CDATA[(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).parse($F{date})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="92" y="80" width="149" height="24" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="92" y="80" width="364" height="24" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_transdebt} == true ?
 $F{transferdebt_partner_name}.substring(0, Math.min(20, $F{transferdebt_partner_name}.length())):
-$F{partner_name}.substring(0, Math.min(20, $F{partner_name}.length()))
-]]></textFieldExpression>
+$F{partner_name}.substring(0, Math.min(20, $F{partner_name}.length()))]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="75" y="5" width="149" height="27"/>
