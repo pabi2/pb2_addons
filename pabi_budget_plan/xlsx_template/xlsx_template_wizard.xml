@@ -38,14 +38,16 @@
   		<record id="action_budget_breakdown_unit_export_xlsx_tempalte" model="ir.actions.act_window">
     			<field name="context"
             eval="{'template_fname': 'budget_breakdown_unit_base.xlsx',
-                   'template_context': {}}"/>
+                   'template_context': {},
+                   'template_import_states': []}"/>
       </record>
 
       <!-- Optional: To be specific to some template and context -->
    		<record id="action_budget_breakdown_unit_import_xlsx_tempalte" model="ir.actions.act_window">
      			<field name="context"
             eval="{'template_fname': 'budget_breakdown_unit_base.xlsx',
-                   'template_context': {}}"/>
+                   'template_context': {},
+                   'template_import_states': []}"/>
       </record>
 
       # Asset Item Plan
@@ -62,6 +64,12 @@
           src_model="invest.asset.plan"
           view_mode="form"
           target="new"/>
+      <!-- Optional: To be specific to some template and context -->
+  		<record id="action_invest_asset_plan_import_xlsx_tempalte" model="ir.actions.act_window">
+    			<field name="context"
+            eval="{'template_import_states': ['draft', 'submit']}"/>
+      </record>
+
 
       # Project Based
       <!-- Budget Plan Project Based -->
