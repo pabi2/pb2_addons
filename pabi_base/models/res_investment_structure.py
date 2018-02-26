@@ -56,9 +56,9 @@ class InvestAssetCommon(object):
         string='Other Expenses',
     )
     reason_purchase = fields.Selection(
-        [('new', 'New'),
-         ('replace', 'Replacement'),
-         ('extra', 'Extra')],
+        [('new', u'ใหม่'),
+         ('replace', u'ทดแทน'),
+         ('extra', u'เพิ่มเติม')],
         string='Reason',
     )
     reason_purchase_text = fields.Text(
