@@ -265,7 +265,7 @@
                             'C10': 'select${value and "X" or ""}',
                             'D10': 'approved${value and "X" or ""}',
 
-                            'E10': 'owner_program_id.name${value or ""}',
+                            'E10': 'owner_program_id.display_name_2${value or ""}',
                             'F10': 'invest_asset_categ_id.name${value or ""}',
                             'G10': 'name_common${value or ""}',
                             'H10': 'name${value or ""}',
@@ -299,7 +299,7 @@
                     },
                     'TAB_List': {
                         'master_program_ids': {
-                            'B5': 'name'
+                            'B5': 'display_name_2'
                         },
                         'master_requester_ids': {
                             'D5': 'name'
@@ -320,7 +320,7 @@
                             'C10${value and True or False}': 'select',
                             'D10${value and True or False}': 'approved',
 
-                            'E10': 'owner_program_id',
+                            'E10${value and value[1:6] or ""}': 'owner_program_id',
                             'F10': 'invest_asset_categ_id',
                             'G10': 'name_common',
                             'H10': 'name',
@@ -332,7 +332,7 @@
                             'P10': 'price_unit',
                             'R10': 'price_other',
                             'T10': 'amount_plan_total',
-                            'U10${value and value == "ใหม่" and "new" or (value == "ทดแทน" and "replace" or (value == "เพิ่มเติม" and "extra")) or ""}': 'reason_purchase',
+                            'U10': 'reason_purchase',
                             'V10': 'reason_purchase_text',
                             'W10': 'expect_output',
                             'X10': 'planned_utilization',
