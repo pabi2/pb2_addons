@@ -289,11 +289,11 @@
                             'AB10': 'pr_commitment',
                             'AC10': 'po_commitment',
                             'AD10': 'exp_commitment',
-                            'AE10': 'total_commitment',
+                            # 'AE10': 'total_commitment',
                             'AF10': 'actual_amount',
-                            'AG10': 'budget_usage',
-                            'AH10': 'budget_remaining',
-                            'AI10': 'budget_carry_forward',
+                            # 'AG10': 'budget_usage',
+                            # 'AH10': 'budget_remaining',
+                            # 'AI10': 'budget_carry_forward',
                             'AJ10': 'next_fy_commitment',
                         },
                     },
@@ -305,7 +305,7 @@
                             'D5': 'name'
                         },
                         'master_section_ids': {
-                            'F5': 'name',
+                            'F5': 'display_name_2',
                             'G5': 'division_id.name'
                         },
                         'master_asset_categ_ids': {
@@ -326,7 +326,7 @@
                             'H10': 'name',
 
                             'K10': 'request_user_id',
-                            'L10': 'owner_section_id',
+                            'L10': 'owner_section_id${value and value[1:7] or ""}',
                             'N10': 'location',
                             'O10': 'quantity',
                             'P10': 'price_unit',
