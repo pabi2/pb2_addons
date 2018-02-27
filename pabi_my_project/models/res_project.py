@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
+import time
 from openerp import models, api, fields, _
 from openerp import tools
 from openerp.exceptions import ValidationError
@@ -48,6 +51,9 @@ class ResProject(LogCommon, models.Model):
     project_status = fields.Char(
         string='Project Status',
     )
+    proposal_status = fields.Char(
+        string='Proposal Status',
+    )
     project_date_end_proposal = fields.Date(
         string='Project End Date (by proposal)',
     )
@@ -67,6 +73,9 @@ class ResProject(LogCommon, models.Model):
         string='Project Manager Section',
         related='pm_employee_id.section_id',
     )
+    external_pm = fields.Char(
+        string='External PM',
+    )
     owner_division_id = fields.Many2one(
         'res.division',
         string='Project Division',
@@ -85,6 +94,10 @@ class ResProject(LogCommon, models.Model):
     ref_program_id = fields.Many2one(
         'res.program',
         string='Program Reference',
+    )
+    proposal_program_id = fields.Many2one(
+        'res.program',
+        string='Proposal Program',
     )
     external_fund_type = fields.Selection(
         [('government', 'Government'),
@@ -385,7 +398,10 @@ class ResProject(LogCommon, models.Model):
             Fiscal = self.env['account.fiscalyear']
             for proj in self:
                 proj_fiscals = proj.budget_plan_ids.mapped('fiscalyear_id')
-                fiscals = Fiscal.search([('date_start', '<=', proj.date_end),
+                proj_date_end = datetime.strptime(proj.date_end, '%Y-%m-%d')
+                proj_date_end = proj_date_end + relativedelta(years=1)
+                date_end = proj_date_end.strftime('%Y-%m-%d')
+                fiscals = Fiscal.search([('date_start', '<=', date_end),
                                          ('date_stop', '>=', proj.date_start)])
                 fiscals -= proj_fiscals
                 plan_lines = []
@@ -451,6 +467,9 @@ class ResProjectBudgetPlan(models.Model):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
+    )
+    description = fields.Text(
+        string='Description',
     )
     m1 = fields.Float(
         string='Oct',

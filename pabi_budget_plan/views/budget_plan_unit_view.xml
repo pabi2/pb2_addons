@@ -76,7 +76,7 @@
                         <button string="Accept" groups="pabi_base.group_cooperate_budget" name="action_accept" states="6_verify" type="object" class="oe_highlight"/>
                         <button string="Back to Approved" groups="pabi_base.group_cooperate_budget" name="action_approve" states="6_verify" type="object" class="oe_highlight"/>
                         <button string="Back to Verified" groups="pabi_base.group_cooperate_budget" name="action_verify" states="7_accept" type="object" class="oe_highlight"/>
-                        <button string="Reject" groups="pabi_base.group_budget_manager" name="action_reject" states="2_submit,3_approve" type="object"/>
+                        <button string="Reject" groups="pabi_base.group_budget_manager,pabi_base.group_operating_unit_budget" name="action_reject" states="2_submit,3_approve" type="object"/>
                         <button string="Reset to Draft" name="action_draft" states="2_submit,4_cancel,5_reject" type="object"/>
                         <button string="Cancel" name="action_cancel" states="1_draft" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="1_draft,2_submit,3_approve,6_verify,7_accept,8_done"/>

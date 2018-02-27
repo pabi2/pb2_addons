@@ -78,6 +78,7 @@
                             <group>
                                 <field name="pm_employee_id"/>
                                 <field name="pm_section_id"/>
+                                <field name="external_pm"/>
                                 <field name="owner_division_id"/>
                                 <field name="analyst_employee_id"/>
                                 <field name="analyst_section_id"/>
@@ -98,6 +99,7 @@
                                     <tree editable="bottom">
                                         <field name="fiscalyear_id"/>
                                         <field name="activity_group_id" required="1"/>
+                                        <field name="description"/>
                                         <field name="m1"/>
                                         <field name="m2"/>
                                         <field name="m3"/>
@@ -159,7 +161,9 @@
                                     </group>
                                     <group>
                                         <field name="project_status"/>
+                                        <field name="proposal_status"/>
                                         <field name="ref_program_id"/>
+                                        <field name="proposal_program_id"/>
                                         <field name="external_fund_type"/>
                                         <field name="external_fund_name"/>
                                         <field name="priority"/>
@@ -194,6 +198,34 @@
                                         <field name="pfm_commercial_prototypes"/>
                                     </group>
                                 </group>
+                            </page>
+                            <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget">
+                                <separator string="Expense"/>
+                                <field name="monitor_expense_ids">
+                                    <tree string="Monitor" editable="bottom">
+                                        <field name="fiscalyear_id"/>
+                                        <field name="planned_amount"/>
+                                        <field name="released_amount"/>
+                                        <field name="amount_pr_commit"/>
+                                        <field name="amount_po_commit"/>
+                                        <field name="amount_exp_commit"/>
+                                        <field name="amount_actual"/>
+                                        <field name="amount_consumed"/>
+                                        <field name="amount_balance"/>
+                                    </tree>
+                                </field>
+                                <separator string="Revenue"/>
+                                <field name="monitor_revenue_ids">
+                                    <tree string="Monitor" editable="bottom">
+                                        <field name="fiscalyear_id"/>
+                                        <field name="planned_amount"/>
+                                        <field name="released_amount"/>
+                                        <field name="amount_so_commit"/>
+                                        <field name="amount_actual"/>
+                                        <field name="amount_consumed"/>
+                                        <field name="amount_balance"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page string="Status History">
                                 <field name="auditlog_line_ids"/>
