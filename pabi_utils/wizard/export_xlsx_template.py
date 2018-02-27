@@ -323,6 +323,7 @@ class ExportXlsxTemplate(models.TransientModel):
                         col, row = split_row_col(rc)  # starting point
                         i = 0
                         new_row = 0
+                        new_rc = rc
                         for val in vals[field]:
                             new_row = row + i
                             new_rc = '%s%s' % (col, new_row)
