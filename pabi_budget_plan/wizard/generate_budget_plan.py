@@ -48,6 +48,6 @@ class GenerateBudgetPlan(models.TransientModel):
         plan_ids = self.env[model].generate_plans(fiscalyear_id=fiscalyear_id)
         action = self.env.ref(view)
         result = action.read()[0]
-        dom = [('id', '=', plan_ids)]
+        dom = [('id', 'in', plan_ids)]
         result.update({'domain': dom})
         return result

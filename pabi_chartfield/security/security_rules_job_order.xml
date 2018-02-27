@@ -2,6 +2,14 @@
 <openerp>
     <data noupdate="1">
 
+        <!-- NSTDA Level -->
+        <record id="rule_job_order_public_level_budget_user" model="ir.rule">
+            <field name="name">Budget User - Job Order - Public</field>
+            <field name="model_id" ref="model_cost_control"/>
+            <field name="domain_force">[('public', '=', True), ('owner_level', '=', False)]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_user'))]"/>
+        </record>
+
         <!--Owner Level = Org-->
         <record id="rule_job_order_org_level_budget_user" model="ir.rule">
             <field name="name">Budget User - Job Order - Org Level</field>

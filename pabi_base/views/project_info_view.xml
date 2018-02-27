@@ -34,12 +34,18 @@
         <menuitem name="Master Plan" id="menu_project_master_plan" action="action_project_master_plan" parent="menu_res_project" sequence="40"/>
 
         <!-- NSTDA Strategy -->
+        <record id="action_project_nstda_strategy_group" model="ir.actions.act_window">
+            <field name="name">NSTDA Strategy Group</field>
+            <field name="res_model">project.nstda.strategy.group</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem name="NSTDA Strategy Group" id="menu_project_nstda_strategy_group" action="action_project_nstda_strategy_group" parent="menu_res_project" sequence="50"/>
         <record id="action_project_nstda_strategy" model="ir.actions.act_window">
             <field name="name">NSTDA Strategy</field>
             <field name="res_model">project.nstda.strategy</field>
             <field name="view_type">form</field>
         </record>
-        <menuitem name="NSTDA Strategy" id="menu_project_nstda_strategy" action="action_project_nstda_strategy" parent="menu_res_project" sequence="50"/>
+        <menuitem name="NSTDA Strategy" id="menu_project_nstda_strategy" action="action_project_nstda_strategy" parent="menu_res_project" sequence="60"/>
 
     </data>
 </openerp>

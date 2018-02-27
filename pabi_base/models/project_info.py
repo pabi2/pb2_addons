@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models
+from openerp import models, fields
 from .res_common import ResCommon
 
 
@@ -21,3 +21,12 @@ class ProjectMasterPlan(ResCommon, models.Model):
 
 class ProjectNSTDAStrategy(ResCommon, models.Model):
     _name = 'project.nstda.strategy'
+
+    group_id = fields.Many2one(
+        'project.nstda.strategy.group',
+        string='Group',
+    )
+
+
+class ProjectNSTDAStrategyGroup(ResCommon, models.Model):
+    _name = 'project.nstda.strategy.group'

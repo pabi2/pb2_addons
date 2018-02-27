@@ -153,18 +153,90 @@
             <field name="code">61</field>
         </record>
 
-        <!-- Project NSTDA Strategy -->
-        <record id="project_nstda_strategy_1" model="project.nstda.strategy">
-            <field name="name">ประเด็นมุ่งเน้น</field>
+        <!-- Project NSTDA Strategy Group -->
+        <record id="project_nstda_strategy_group_1" model="project.nstda.strategy.group">
+            <field name="name">ประเด็นมุ่งเน้นของ สวทช.</field>
             <field name="code">1</field>
         </record>
-        <record id="project_nstda_strategy_2" model="project.nstda.strategy">
+        <record id="project_nstda_strategy_group_2" model="project.nstda.strategy.group">
             <field name="name">เทคโนโลยีฐานแบบบูรณาการ</field>
             <field name="code">2</field>
         </record>
-        <record id="project_nstda_strategy_3" model="project.nstda.strategy">
+        <record id="project_nstda_strategy_group_3" model="project.nstda.strategy.group">
             <field name="name">เทคโนโลยีฐาน</field>
             <field name="code">3</field>
         </record>
+        <record id="project_nstda_strategy_group_4" model="project.nstda.strategy.group">
+            <field name="name">อื่นๆ</field>
+            <field name="code">4</field>
+        </record>
+
+        <!-- Project NSTDA Strategy -->
+        <record id="project_nstda_strategy_1" model="project.nstda.strategy">
+            <field name="name">อาหารเพื่ออนาคต</field>
+            <field name="code">1.1</field>
+            <field name="group_id">1</field>
+        </record>
+        <record id="project_nstda_strategy_2" model="project.nstda.strategy">
+            <field name="name">ระบบขนส่งสมัยใหม่</field>
+            <field name="code">1.2</field>
+            <field name="group_id">1</field>
+        </record>
+        <record id="project_nstda_strategy_3" model="project.nstda.strategy">
+            <field name="name">การสร้างเสริมสุขภาพ และคุณภาพชีวิต</field>
+            <field name="code">1.3</field>
+            <field name="group_id">1</field>
+        </record>
+        <record id="project_nstda_strategy_4" model="project.nstda.strategy">
+            <field name="name">เคมีชีวภาพและเชื้อเพลิงชีวภาพ</field>
+            <field name="code">1.4</field>
+            <field name="group_id">1</field>
+        </record>
+        <record id="project_nstda_strategy_5" model="project.nstda.strategy">
+            <field name="name">นวัตกรรมเพื่อการเกษตรยั่งยืน</field>
+            <field name="code">1.5</field>
+            <field name="group_id">1</field>
+        </record>
+        <record id="project_nstda_strategy_6" model="project.nstda.strategy">
+            <field name="name">Sensors</field>
+            <field name="code">2.1</field>
+            <field name="group_id">2</field>
+        </record>
+        <record id="project_nstda_strategy_7" model="project.nstda.strategy">
+            <field name="name">High-performance computing &amp; data analytics (HPC&amp;DA)</field>
+            <field name="code">2.2</field>
+            <field name="group_id">2</field>
+        </record>
+        <record id="project_nstda_strategy_8" model="project.nstda.strategy">
+            <field name="name">Bio-based materials</field>
+            <field name="code">2.3</field>
+            <field name="group_id">2</field>
+        </record>
+        <record id="project_nstda_strategy_9" model="project.nstda.strategy">
+            <field name="name">เทคโนโลยีชีวภาพ</field>
+            <field name="code">3.1</field>
+            <field name="group_id">3</field>
+        </record>
+        <record id="project_nstda_strategy_10" model="project.nstda.strategy">
+            <field name="name">เทคโนโลยีวัสดุ</field>
+            <field name="code">3.2</field>
+            <field name="group_id">3</field>
+        </record>
+        <record id="project_nstda_strategy_11" model="project.nstda.strategy">
+            <field name="name">เทคโนโลยีดิจิทัล</field>
+            <field name="code">3.3</field>
+            <field name="group_id">3</field>
+        </record>
+        <record id="project_nstda_strategy_12" model="project.nstda.strategy">
+            <field name="name">นาโนเทคโนโลยี</field>
+            <field name="code">3.4</field>
+            <field name="group_id">3</field>
+        </record>
+        <record id="project_nstda_strategy_13" model="project.nstda.strategy">
+            <field name="name">อื่นๆ</field>
+            <field name="code">4.1</field>
+            <field name="group_id">4</field>
+        </record>
+
     </data>
 </openerp>
