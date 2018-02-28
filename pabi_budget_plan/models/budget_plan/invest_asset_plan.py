@@ -135,6 +135,11 @@ class InvestAssetPlan(models.Model):
         sring='Section Master Data',
         compute='_compute_master_section_ids',
     )
+    master_strategy_ids = fields.Many2many(
+        'project.nstda.strategy',
+        sring='Strategy Master Data',
+        compute='_compute_master_strategy_ids',
+    )
     _sql_constraints = [
         ('uniq_plan', 'unique(org_id, fiscalyear_id)',
          'Duplicated budget plan for the same org is not allowed!'),
@@ -164,6 +169,12 @@ class InvestAssetPlan(models.Model):
         for rec in self:
             employees = Employee.search([('org_id', '=', rec.org_id.id)])
             rec.master_requester_ids = employees.mapped('user_id')
+
+    @api.multi
+    def _compute_master_strategy_ids(self):
+        Strategy = self.env['project.nstda.strategy']
+        for rec in self:
+            rec.master_strategy_ids = Strategy.search([]).ids
 
     @api.model
     def _get_doc_number(self, fiscalyear_id, model, res_id):
@@ -388,6 +399,10 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
         'res.invest.asset',
         string='Invest Asset',
         readonly=True,  # Not allow user to choose, it should come from history
+    )
+    strategy_id = fields.Many2one(
+        'project.nstda.strategy',
+        string='Strategy',
     )
     # Additional Information to res.invest.asset
     name = fields.Char(
