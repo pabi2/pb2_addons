@@ -128,7 +128,7 @@
             </field>
         </record>
         <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_budget_plan_invest_asset_view" action="action_budget_plan_invest_asset_view" sequence="10"
-            groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+            groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
 
         <!-- Budget Plan Line -->
 
@@ -197,7 +197,7 @@
         </record>
 
         <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_act_budget_plan_invest_asset_line_view" action="act_budget_plan_invest_asset_line_view" sequence="20"
-            groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+            groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
 
     </data>
 </openerp>
