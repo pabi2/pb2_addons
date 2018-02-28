@@ -82,8 +82,13 @@ class PABIUtilsXLS(models.AbstractModel):
         """ Get 2 field type """
         try:
             record = self.env[model].new()
+            print '=============='
+            print field
+            print record
             for f in field.split('/'):
+                print f
                 field_type = record._fields[f].type
+                print field_type
                 if field_type in ('one2many', 'many2many'):
                     record = record[f]
                 else:
