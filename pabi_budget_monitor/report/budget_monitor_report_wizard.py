@@ -156,8 +156,13 @@ class BudgetMonitorReportWizard(models.TransientModel):
                           'division_id', 'section_id'],
             'project_base': ['functional_area_id', 'program_group_id',
                              'program_id', 'project_group_id', 'project_id'],
+            'invest_asset': [],
+            'invest_construction': [],
+            'personnel': [],
         }
         domain = []
+        if not self.chart_view:
+            return domain
         todos = chart_view_dict[self.chart_view]
         for field in todos:
             if self[field]:
