@@ -204,6 +204,8 @@ class InvestAssetPlan(models.Model):
             'state': 'submit',
             'date_submit': fields.Date.context_today(self),
         })
+        # Reset all lines' approved flag to False
+        self.mapped('plan_line_ids').write({'approved': False})
         return True
 
     @api.multi
@@ -527,7 +529,8 @@ class InvestAssetPlanPrevFYView(PrevFYCommon, models.Model):
     _chart_view = 'invest_asset'
     _ex_view_fields = ['org_id', 'invest_asset_id']
     _ex_domain_fields = ['org_id']  # Each plan is by this domain of view
-    _ex_active_domain = [('carry_forward', '>', 0.0)]
+    _ex_active_domain = ['|', ('all_commit', '>', 0.0),
+                         ('carry_forward', '>', 0.0)]
     _filter_fy = 1  # Will the result of his view focus on prev fy only
 
     org_id = fields.Many2one(
