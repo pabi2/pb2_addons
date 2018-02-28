@@ -223,6 +223,11 @@ class BudgetPlanUnit(BPCommon, models.Model):
             self.message_post(body=message)
         return super(BudgetPlanUnit, self).write(vals)
 
+    @api.multi
+    def action_submit(self):
+        self.write({'state': '2_submit',
+                    'user_id': self.env.user.id})
+
 
 class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     _name = 'budget.plan.unit.line'
