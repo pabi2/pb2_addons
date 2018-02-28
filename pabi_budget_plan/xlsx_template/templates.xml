@@ -277,7 +277,7 @@
                             'O10': 'quantity',
                             'P10': 'price_unit',
                             'R10': 'price_other',
-                            'T10': 'amount_plan_total',
+                            # 'T10': 'amount_plan_total',
                             'U10': 'reason_purchase${value and value == "new" and "ใหม่" or (value == "replace" and "ทดแทน" or (value == "extra" and "เพิ่มเติม")) or ""}',
                             'V10': 'reason_purchase_text${value or ""}',
                             'W10': 'expect_output${value or ""}',
@@ -311,6 +311,10 @@
                         'master_asset_categ_ids': {
                             'H5': 'name'
                         },
+                        'master_strategy_ids': {
+                            'J5': 'name',
+                            'K5': 'group_id.name',
+                        },
                     },
                 },
                 '__IMPORT__': {
@@ -324,7 +328,7 @@
                             'F10': 'invest_asset_categ_id',
                             'G10': 'name_common',
                             'H10': 'name',
-
+                            'I10': ''
                             'K10': 'request_user_id',
                             'L10${value and value[1:7] or ""}': 'owner_section_id',
                             'N10': 'location',
