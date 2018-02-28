@@ -83,15 +83,14 @@ class PABIUtilsXLS(models.AbstractModel):
         try:
             record = self.env[model].new()
             for f in field.split('/'):
-                if not f or f == '':
-                    continue
                 field_type = record._fields[f].type
                 if field_type in ('one2many', 'many2many'):
                     record = record[f]
                 else:
                     return field_type
         except Exception:
-            raise ValidationError(_('%s has no valid field type') % field)
+            raise ValidationError(
+                _('Invalid delaration, %s has no valid field type') % field)
 
     @api.model
     def _get_field_types(self, model, fields):
