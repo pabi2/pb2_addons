@@ -29,7 +29,7 @@
                               <field name="program_id"/>
                               <field name="program_group_id"/>
                               <field name="functional_area_id"/>
-                              <field name="user_id"/>
+                              <field name="user_id" readonly="1"/>
                               <field name="planned_overall"/>
                             </group>
                             <group>

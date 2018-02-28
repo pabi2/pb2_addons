@@ -94,7 +94,7 @@
                                 <field name="section_id" readonly="1"/>
                                 <field name="division_id"/>
                                 <field name="org_id"/>
-                                <field name="user_id"/>
+                                <field name="user_id" readonly="1"/>
                                 <field name="planned_revenue"/>
                                 <field name="planned_expense"/>
                                 <field name="planned_overall"/>
