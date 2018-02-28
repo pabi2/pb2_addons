@@ -4,16 +4,16 @@
 
         <!-- OU see plans in same OU -->
         <record id="property_rule_invest_asset_plan_org" model="ir.rule">
-            <field name="name">OU Budget - Invest Asset Plan Access</field>
+            <field name="name">Asset OU Budget - Invest Asset Plan Access</field>
             <field name="model_id" ref="model_invest_asset_plan"/>
             <field name="domain_force">[('org_id','=',user.partner_id.employee_id.section_id.org_id.id)]</field>
-            <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
+            <field name="groups" eval="[(4,ref('pabi_base.group_asset_ou_budget'))]"/>
         </record>
         <record id="property_rule_invest_asset_plan_org_line" model="ir.rule">
-            <field name="name">OU Budget - Invest Asset Plan Line Access</field>
+            <field name="name">Asset OU Budget - Invest Asset Plan Line Access</field>
             <field name="model_id" ref="model_invest_asset_plan_item"/>
             <field name="domain_force">['|', ('org_id', '=', False), ('org_id','=',user.partner_id.employee_id.section_id.org_id.id)]</field>
-            <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
+            <field name="groups" eval="[(4,ref('pabi_base.group_asset_ou_budget'))]"/>
         </record>
         <!-- Cooperate see all plans -->
         <record id="property_rule_invest_asset_plan_cooperate" model="ir.rule">

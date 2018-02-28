@@ -9,15 +9,15 @@
                 <form string="Budget Plan" create="0" delete="0">
                     <header>
                         <button string="Submit" name="button_submit" states="draft" type="object" class="oe_highlight"
-                            groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+                            groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
                         <button string="Approve" name="button_approve" states="submit" type="object" class="oe_highlight"
                             groups="pabi_base.group_cooperate_budget"/>
                         <button string="Reject" name="button_reject" states="submit" type="object" class="oe_highlight"
                             groups="pabi_base.group_cooperate_budget"/>
                         <button string="Reset to Draft" name="button_draft" states="cancel" type="object"
-                            groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+                            groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
                         <button string="Cancel" name="button_cancel" states="draft,reject" type="object"
-                            groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+                            groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
                         <button name="%(action_asset_plan_to_budget_plan)d" type="action" class="oe_highlight" string="Convert to Budget Plan" states="approve"
                             groups="pabi_base.group_cooperate_budget"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,done"/>
@@ -172,7 +172,7 @@
             </field>
         </record>
         <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_invest_asset_plan_view" action="action_invest_asset_plan_view" sequence="5"
-          groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+          groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
 
         <!-- Investment Asset Plan Items -->
         <record id="view_invest_asset_plan_item_filter" model="ir.ui.view">
@@ -297,7 +297,7 @@
         </record>
 
         <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_act_invest_asset_plan_item_view" action="act_invest_asset_plan_item_view" sequence="6"
-          groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+          groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
 
     </data>
 </openerp>
