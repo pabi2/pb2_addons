@@ -328,7 +328,7 @@
                             'F10': 'invest_asset_categ_id',
                             'G10': 'name_common',
                             'H10': 'name',
-                            'I10': ''
+                            'I10': '',
                             'K10': 'request_user_id',
                             'L10${value and value[1:7] or ""}': 'owner_section_id',
                             'N10': 'location',

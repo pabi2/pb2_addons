@@ -2,30 +2,6 @@
 <openerp>
     <data>
 
-        <!-- <record id="unit_base_budget_summary_tree_view" model="ir.ui.view">
-            <field name="name">budget.unit.summary.view</field>
-            <field name="model">budget.unit.summary</field>
-            <field name="arch" type="xml">
-                <tree string="Budget Summary Lines" editable="bottom">
-                    <field name="budget_method" invisible="True"/>
-                    <field name="activity_group_id" />
-                    <field name="m1" sum="m1"/>
-                    <field name="m2" sum="m2"/>
-                    <field name="m3" sum="m3"/>
-                    <field name="m4" sum="m4"/>
-                    <field name="m5" sum="m5"/>
-                    <field name="m6" sum="m6"/>
-                    <field name="m7" sum="m7"/>
-                    <field name="m8" sum="m8"/>
-                    <field name="m9" sum="m9"/>
-                    <field name="m10" sum="m10"/>
-                    <field name="m11" sum="m11"/>
-                    <field name="m12" sum="m12"/>
-                    <field name="planned_amount" sum="planned_amount"/>
-                </tree>
-            </field>
-        </record> -->
-
         <record id="account_budget_view_tree" model="ir.ui.view" >
             <field name="name">account.budget.view.tree</field>
             <field name="model">account.budget</field>
@@ -81,16 +57,14 @@
                         attrs="{'invisible': [('chart_view','!=','unit_base')],
                             'required': [('chart_view','=','unit_base')],
                             'readonly': [('state','!=','draft')]}"/>
-                    <!-- <field name="personnel_costcenter_id"
-                        domain="[('special', '=', False)]"
-                        attrs="{'invisible': [('chart_view','!=','personnel')],
-                            'required': [('chart_view','=','personnel')],
-                            'readonly': [('state','!=','draft')]}"/> -->
                     <field name="org_id"
                         domain="[('special', '=', False)]"
                         attrs="{'invisible': [('chart_view','not in',('invest_asset','invest_construction'))],
                             'required': [('chart_view','in',('invest_asset','invest_construction'))],
                             'readonly': [('state','!=','draft')]}"/>
+                </xpath>
+                <xpath expr="/form/sheet/group/group//field[@name='budgeted_revenue']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('chart_view', '!=', 'unit_base')]}</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook//field[@name='budget_revenue_line_ids']" position="replace">
                     <field name="budget_revenue_line_unit_base" colspan="4" nolabel="1"
@@ -144,28 +118,6 @@
                                       'default_fiscalyear_id': fiscalyear_id,
                                       'default_budget_method': 'expense'}" />
                 </xpath>
-                <!-- <xpath expr="/form/sheet/notebook/page[last()]" position="after">
-                    <page string="Summary" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
-                        <separator string="Budgeted Expense"/>
-                        <field name="budget_summary_expense_line_ids"
-                                colspan="4" nolabel="1"
-                                context="{'tree_view_ref': 'pabi_chartfield.unit_base_budget_summary_tree_view'}"/>
-                        <separator string="Budgeted Revenue"/>
-                        <field name="budget_summary_revenue_line_ids"
-                                colspan="4" nolabel="1"
-                                context="{'tree_view_ref': 'pabi_chartfield.unit_base_budget_summary_tree_view'}"/>
-
-                    </page>
-                </xpath> -->
-                <!-- <xpath expr="/form/sheet/notebook/page[@name='expense']//group[@name='expense_extra2']" position="inside">
-                    <field name="commitment_summary_expense_line_ids" nolabel="1">
-                        <tree>
-                            <field name="activity_group_id"/>
-                            <field name="cost_control_id"/>
-                            <field name="all_commit" sum="Total"/>
-                        </tree>
-                    </field>
-                </xpath> -->
             </field>
         </record>
 
