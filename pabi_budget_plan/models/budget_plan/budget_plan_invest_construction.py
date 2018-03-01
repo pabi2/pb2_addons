@@ -65,7 +65,7 @@ class BudgetPlanInvestConstruction(BPCommon, models.Model):
     def _compute_master_org_ids(self):
         Org = self.env['res.org']
         for rec in self:
-            rec.master_org_ids = Org.search([])
+            rec.master_org_ids = Org.search([('special', '=', False)])
 
     @api.multi
     def _compute_master_employee_ids(self):
@@ -187,9 +187,9 @@ class BudgetPlanInvestConstructionLine(BPLMonthCommon, ActivityCommon,
     amount_fy5 = fields.Float(
         string='FY5',
     )
-    amount_beyond = fields.Float(
-        string='Beyond FY5',
-    )
+    # amount_beyond = fields.Float(
+    #     string='Beyond FY5',
+    # )
     overall_released = fields.Float(
         string='Overall Released'
     )

@@ -385,8 +385,8 @@
                             'C10': 'org_id.name_short${value or ""}',
                             'D10': 'name${value or ""}',
                             'E10': 'month_duration',
-                            'F10': 'date_start${value and value.strftime("%Y-%m-%d") or ""}',
-                            'G10': 'date_end${value and value.strftime("%Y-%m-%d") or ""}',
+                            'F10': 'date_start',
+                            # 'G10': 'date_end',
                             'H10': 'operation_area${value or ""}',
                             'I10': 'project_readiness${value or ""}',
                             'J10': 'reason${value or ""}',
@@ -405,8 +405,9 @@
                             'Y10': 'overall_po_commit',
                             'Z10': 'overall_exp_commit',
                             'AA10': 'overall_actual',
-                            'AB10': 'overall_consumed',
-                            'AC10': 'overall_balance',
+                            # 'AB10': 'overall_consumed',
+                            # 'AC10': 'overall_balance',
+                            'AD10': 'next_fy_commitment',
                         }
                     },
                     'TAB_List': {
@@ -449,6 +450,7 @@
                             'AA10': 'overall_actual',
                             'AB10': 'overall_consumed',
                             'AC10': 'overall_balance',
+                            'AD10': 'next_fy_commitment',
                         }
                     }
                 }

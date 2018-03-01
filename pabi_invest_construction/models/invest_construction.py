@@ -96,6 +96,10 @@ class ResInvestConstruction(LogCommon, models.Model):
                 'unapprove': [('readonly', False)]},
         write=['pabi_base.group_cooperate_budget'],  # Only Corp can edit
     )
+    amount_before = fields.Float(
+        string='Before FY1',
+        compute='_compute_amount_fy',
+    )
     amount_fy1 = fields.Float(
         string='FY1',
         compute='_compute_amount_fy',
@@ -116,10 +120,10 @@ class ResInvestConstruction(LogCommon, models.Model):
         string='FY5',
         compute='_compute_amount_fy',
     )
-    amount_beyond = fields.Float(
-        string='FY6 and Beyond',
-        compute='_compute_amount_fy',
-    )
+    # amount_beyond = fields.Float(
+    #     string='FY6 and Beyond',
+    #     compute='_compute_amount_fy',
+    # )
     amount_phase_approve = fields.Float(
         string='Approved Budget (Phases)',
         compute='_compute_amount_phase_approve',
@@ -158,17 +162,26 @@ class ResInvestConstruction(LogCommon, models.Model):
 
     @api.multi
     def _compute_amount_fy(self):
-        """ Converse year plan into fields amount_fy1 - amount_fy5 """
+        Fiscal = self.env['account.fiscalyear']
+        current_fy = Fiscal.browse(Fiscal.find())
+
         for rec in self:
-            plans = rec.budget_plan_ids.sorted(key=lambda l: l.fiscalyear_id)
-            amount_beyond = 0.0
-            years = len(plans)
+            plans = rec.budget_plan_ids
+            # Find current and previous years plan line
+            prev_plans = plans.filtered(lambda l: l.fiscalyear_id.date_start <=
+                                        current_fy.date_start)
+            rec.amount_before = sum(prev_plans.mapped('amount_plan'))
+            future_plans = plans - prev_plans  # Only future
+            future_plans = future_plans.sorted(
+                key=lambda l: l.fiscalyear_id.date_start)
+            # amount_beyond = 0.0
+            years = len(future_plans)
             for i in range(0, years):
                 if i < 5:  # only fy1 - fy5
-                    rec['amount_fy%s' % (i + 1)] = plans[i].amount_plan
-                else:
-                    amount_beyond += plans[i].amount_plan
-            rec.amount_beyond = amount_beyond
+                    rec['amount_fy%s' % (i + 1)] = future_plans[i].amount_plan
+                # else:
+                #     amount_beyond += future_plans[i].amount_plan
+            # rec.amount_beyond = amount_beyond
 
     @api.multi
     @api.constrains('budget_plan_ids')
