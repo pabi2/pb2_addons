@@ -3,11 +3,14 @@
     <data>
 
         <!-- Top menu item -->
-        <menuitem name="Project (C)" id="menu_main_construction" groups="" sequence="40"/>
+          <menuitem name="Project (C)" id="menu_main_construction" sequence="40"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
 
-        <menuitem name="Construction Projects" id="menu_construction" parent="menu_main_construction" groups="" sequence="1"/>
+        <menuitem name="Construction Projects" id="menu_construction" parent="menu_main_construction" sequence="1"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
 
-        <menuitem name="Reports" id="menu_construction_report" parent="menu_main_construction" groups="" sequence="60"/>
+        <menuitem name="Reports" id="menu_construction_report" parent="menu_main_construction" sequence="60"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
 
         <!-- Phase -->
         <record id="view_invest_construction_phase_search" model="ir.ui.view">
@@ -244,7 +247,8 @@
             <field name="act_window_id" ref="action_invest_construction"/>
         </record>
 
-        <menuitem action="action_invest_construction" id="menu_invest_construction" name="Projects" parent="menu_construction" sequence="1"/>
+        <menuitem action="action_invest_construction" id="menu_invest_construction" name="Projects" parent="menu_construction" sequence="1"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
 
         <!-- Phases -->
         <record id="view_invest_construction_phase_form" model="ir.ui.view">
@@ -429,7 +433,8 @@
             <field name="act_window_id" ref="action_invest_construction_phase"/>
         </record>
 
-        <menuitem action="action_invest_construction_phase" id="menu_invest_construction_phase" name="Phases" parent="menu_construction" sequence="3"/>
+        <menuitem action="action_invest_construction_phase" id="menu_invest_construction_phase" name="Phases" parent="menu_construction" sequence="3"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
 
         # Reports
         <!-- Project Plan Phase-->
@@ -467,7 +472,8 @@
             <field name="context">{}</field>
         </record>
 
-        <menuitem action="action_invest_construction_budget_plan" id="menu_invest_construction_budget_plan" name="Project Plan Report" parent="menu_construction_report" sequence="1"/>
+        <menuitem action="action_invest_construction_budget_plan" id="menu_invest_construction_budget_plan" name="Project Plan Report" parent="menu_construction_report" sequence="1"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
 
         <!-- Phase Report -->
         <record id="view_invest_construction_phase_plan_graph" model="ir.ui.view">
@@ -490,7 +496,8 @@
             <field name="context">{'search_default_project': 1, 'search_default_fiscal': 1, 'search_default_period': 1}</field>
         </record>
 
-        <menuitem action="action_invest_construction_phase_plan" id="menu_invest_construction_phase_plan" name="Project Phase Report" parent="menu_construction_report" sequence="2"/>
+        <menuitem action="action_invest_construction_phase_plan" id="menu_invest_construction_phase_plan" name="Project Phase Report" parent="menu_construction_report" sequence="2"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
 
     </data>
 </openerp>
