@@ -427,8 +427,8 @@
                             'B1': 'fiscalyear_id.name${value or ""}',
                             'B2': 'org_id.name_short${value or ""}',
                             'B3': 'invest_construction_id.name${value or ""}',
-                            'B5': '${time.strftime("%d-%m-%Y")}',
-                            'B6': '${env.user.name}',
+                            'B4': '${time.strftime("%d-%m-%Y")}',
+                            'B5': '${env.user.name}',
                         },
                         'results': {
                             'A8': 'c_or_n${value and value.title() or ""}',
