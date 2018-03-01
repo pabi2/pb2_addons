@@ -18,7 +18,7 @@ access_res_project_group,access_res_project_group,model_res_project_group,base.g
 access_res_project,access_res_project,model_res_project,base.group_user,1,0,0,0
 access_res_taxbranch,access_res_taxbranch,model_res_taxbranch,base.group_user,1,0,0,0
 access_res_personnel_costcenter,access_res_personnel_costcenter,model_res_personnel_costcenter,,1,0,0,0
-access_res_invest_asset,access_res_invest_asset,model_res_invest_asset,,1,0,0,0
+access_res_invest_asset,access_res_invest_asset,model_res_invest_asset,,1,1,1,1
 access_res_invest_asset_category,access_res_invest_asset_category,model_res_invest_asset_category,,1,0,0,0
 access_res_invest_construction,access_res_invest_construction,model_res_invest_construction,,1,0,0,0
 access_res_invest_construction_phase,access_res_invest_construction_phase,model_res_invest_construction_phase,,1,0,0,0

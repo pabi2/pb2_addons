@@ -7,7 +7,8 @@
             <value eval="[ref('budget_plan_unit_base_xlsx_template'),
                           ref('budget_breakdown_unit_base_xlsx_template'),
                           ref('invest_asset_plan_xlsx_template'),
-                          ref('budget_plan_project_base_xlsx_template')]"/>
+                          ref('budget_plan_project_base_xlsx_template'),
+                          ref('budget_plan_invest_construction_xlsx_template')]"/>
             <value>pabi_budget_plan/xlsx_template</value>
         </function>
     </data>
