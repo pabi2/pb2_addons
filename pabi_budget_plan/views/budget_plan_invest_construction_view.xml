@@ -119,7 +119,7 @@
             </field>
         </record>
         <menuitem parent="menu_action_budget_plan_invest_construction" id="menu_budget_plan_invest_construction_view" action="action_budget_plan_invest_construction_view" sequence="10"
-            groups="pabi_base.group_cooperate_budget"/>
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget"/>
 
         <!-- Budget Plan Line -->
 
@@ -248,7 +248,7 @@
         </record>
 
         <menuitem parent="menu_action_budget_plan_invest_construction" id="menu_act_budget_plan_invest_construction_line_view" action="act_budget_plan_invest_construction_line_view" sequence="20"
-            groups="pabi_base.group_cooperate_budget"/>
+          groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget"/>
 
     </data>
 </openerp>
