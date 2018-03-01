@@ -75,16 +75,6 @@ class ResInvestConstruction(LogCommon, models.Model):
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
     )
-    # org_id = fields.Many2one(
-    #     'res.org',
-    #     string='Org',
-    #     required=True,
-    #     readonly=True,
-    #     states={'draft': [('readonly', False)],
-    #             'submit': [('readonly', False)]},
-    #     help="Org where this construction project belong to. "
-    #     "Use default as PM's org, but changable."
-    # )
     mission_id = fields.Many2one(
         'res.mission',
         string='Core Mission',
@@ -444,6 +434,10 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         'res.invest.construction.phase.plan',
         'invest_construction_phase_id',
         string='Budget Planning (Phase)',
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)],
+                'unapprove': [('readonly', False)]},
     )
     fiscalyear_ids = fields.Many2many(
         'account.fiscalyear',
