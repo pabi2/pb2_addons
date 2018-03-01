@@ -126,6 +126,10 @@
                 },
                 '__IMPORT__': {
                     'Expense': {
+                        '_HEAD_': {
+                            'D2': 'fiscalyear_id',
+                            'D4': 'section_id',
+                        },
                         'plan_expense_line_ids[100]': {
                             # Determine if charge type has value, so this too
                             'B11${value and "expense" or ""}': 'budget_method',

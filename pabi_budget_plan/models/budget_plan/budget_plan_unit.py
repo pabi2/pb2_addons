@@ -210,7 +210,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
         self.action_approve()
 
     @api.multi
-    def write(self, vals):
+    def _post_message(self, vals):
         todo = {'plan_expense_line_ids': ('Expense line',
                                           'account.activity.group',
                                           'activity_group_id'),
@@ -221,6 +221,24 @@ class BudgetPlanUnit(BPCommon, models.Model):
         messages = PlanLine._change_content(vals, todo)
         for message in messages:
             self.message_post(body=message)
+
+    @api.multi
+    def _validate_header(self, vals):
+        """ Make sure that, some header fields must not change """
+        nochange_fields = {'fiscalyear_id': _('Fiscal Year'),
+                           'section_id': _('Section'), }
+        for field in nochange_fields.keys():
+            if field in vals:
+                for rec in self:
+                    if rec[field].id != vals[field]:
+                        raise ValidationError(
+                            _('You can not change header field %s.' %
+                              nochange_fields[field]))
+
+    @api.multi
+    def write(self, vals):
+        self._validate_header(vals)
+        self._post_message(vals)
         return super(BudgetPlanUnit, self).write(vals)
 
     @api.multi
