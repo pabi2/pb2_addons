@@ -18,7 +18,7 @@ class InvestAssetCommon(object):
     org_id = fields.Many2one(
         'res.org',
         string='Org',
-        required=False,
+        required=True,
     )
     invest_asset_categ_id = fields.Many2one(
         'res.invest.asset.category',
@@ -30,6 +30,7 @@ class InvestAssetCommon(object):
     owner_section_id = fields.Many2one(
         'res.section',
         string='Owner Section',
+        required=True,
         help="Not related to budgeting, this field hold the "
         "section owner of this asset",
     )
