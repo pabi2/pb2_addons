@@ -36,6 +36,15 @@ class XLSXReportBudgetPlanProjectAnalysis(models.TransientModel):
          ('expense', 'Expense')],
         string='Budget Method',
     )
+    status = fields.Selection(
+        [('1_draft', 'Draft'),
+         ('4_cancel', 'Cancelled'),
+         ('6_verify', 'Verified'),
+         ('7_accept', 'Accepted'),
+         ('8_done', 'Done'), ],
+        string='State',
+        default=False,
+    )
     # Report Result
     results = fields.Many2many(
         'budget.plan.project.line',
@@ -61,4 +70,6 @@ class XLSXReportBudgetPlanProjectAnalysis(models.TransientModel):
             dom += [('project_id', '=', self.project_id.id)]
         if self.budget_method:
             dom += [('budget_method', '=', self.budget_method)]
+        if self.status:
+            dom += [('state', '=', self.status)]
         self.results = Result.search(dom)

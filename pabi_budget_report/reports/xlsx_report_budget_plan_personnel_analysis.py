@@ -36,6 +36,13 @@ class XLSXReportBudgetPlanPersonnelAnalysis(models.TransientModel):
          ('expense', 'Expense')],
         string='Budget Method',
     )
+    status = fields.Selection(
+        [('1_draft', 'Draft'),
+         ('4_cancel', 'Cancelled'),
+         ('7_accept', 'Accepted'),
+         ('8_done', 'Done'), ],
+        string='State',
+    )
     # Report Result
     results = fields.Many2many(
         'budget.plan.personnel.line',
@@ -61,4 +68,6 @@ class XLSXReportBudgetPlanPersonnelAnalysis(models.TransientModel):
             dom += [('section_id', '=', self.section_id.id)]
         if self.budget_method:
             dom += [('budget_method', '=', self.budget_method)]
+        if self.status:
+            dom += [('state', '=', self.status)]
         self.results = Result.search(dom)

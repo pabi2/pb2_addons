@@ -20,6 +20,15 @@ class XLSXReportAssetItemPlanAnalysis(models.TransientModel):
         'res.section',
         string='Section',
     )
+    status = fields.Selection(
+        [('draft', 'Draft'),
+         ('submit', 'Submitted'),
+         ('cancel', 'Cancelled'),
+         ('reject', 'Rejected'),
+         ('approve', 'Approve'),
+         ('done', 'Done'), ],
+        string='State',
+    )
     # Report Result
     results = fields.Many2many(
         'invest.asset.plan.item',
@@ -37,4 +46,6 @@ class XLSXReportAssetItemPlanAnalysis(models.TransientModel):
             dom += [('org_id', '=', self.org_id.id)]
         if self.owner_section_id:
             dom += [('owner_section_id', '=', self.owner_section_id.id)]
+        if self.status:
+            dom += [('state', '=', self.status)]
         self.results = Result.search(dom)

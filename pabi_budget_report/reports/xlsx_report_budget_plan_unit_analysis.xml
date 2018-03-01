@@ -22,7 +22,8 @@
                             <field name="section_id"/>
                         </group>
                         <group>
-                            <field name="budget_method"/>
+                            <field name="budget_method" invisible="0"/>
+                            <field name="status"/>
                         </group>
                     </group>
 

@@ -19,6 +19,7 @@
                             <field name="owner_section_id"/>
                         </group>
                         <group>
+                            <field name="status"/>
                         </group>
                     </group>
 
