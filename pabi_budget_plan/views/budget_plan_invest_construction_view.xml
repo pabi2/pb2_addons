@@ -49,7 +49,7 @@
                                         <field name="c_or_n"/>
                                         <field name="invest_construction_id" invisible="1"/>
                                         <field name="name" string="New Project"/>
-                                        <field name="description" string="Description"/>
+                                        <field name="description" string="Description" invisible="1"/>
                                         <field name="activity_group_id" invisible="0"/>
 
                                         <button name="edit_invest_construction" string="Info." icon="gtk-justify-fill" type="object" class="oe_link"/>
@@ -147,7 +147,7 @@
 
                       <field name="c_or_n"/>
                       <field name="name" string="New Project"/>
-                      <field name="description" string="Description"/>
+                      <field name="description" string="Description" invisible="1"/>
                       <field name="invest_construction_id" invisible="1"/>
                       <field name="activity_group_id"/>
 
@@ -169,7 +169,6 @@
                       <field name="amount_fy3"/>
                       <field name="amount_fy4"/>
                       <field name="amount_fy5"/>
-                      <field name="amount_beyond"/>
 
                       <field name="overall_released"/>
                       <field name="overall_all_commit"/>
@@ -204,7 +203,7 @@
                             <field name="c_or_n"/>
                             <field name="invest_construction_id" invisible="1"/>
                             <field name="name" string="New Project"/>
-                            <field name="description"/>
+                            <field name="description" invisible="1"/>
                             <field name="month_duration"/>
                             <field name="date_start"/>
                             <field name="date_end"/>
@@ -223,7 +222,6 @@
                             <field name="amount_fy3"/>
                             <field name="amount_fy4"/>
                             <field name="amount_fy5"/>
-                            <field name="amount_beyond"/>
                             <field name="overall_released"/>
                             <field name="overall_all_commit"/>
                             <field name="overall_pr_commit"/>
