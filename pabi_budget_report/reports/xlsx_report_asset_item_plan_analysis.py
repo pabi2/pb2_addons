@@ -2,8 +2,8 @@
 from openerp import models, fields, api
 
 
-class XLSXReportBudgetPlanConstructionAnalysis(models.TransientModel):
-    _name = 'xlsx.report.budget.plan.construction.analysis'
+class XLSXReportAssetItemPlanAnalysis(models.TransientModel):
+    _name = 'xlsx.report.asset.item.plan.analysis'
     _inherit = 'xlsx.report'
 
     # Search Criteria
@@ -16,18 +16,13 @@ class XLSXReportBudgetPlanConstructionAnalysis(models.TransientModel):
         'res.org',
         string='Org',
     )
-    invest_construction_id = fields.Many2one(
-        'res.invest.construction',
-        string='Project (C)',
-    )
-    budget_method = fields.Selection(
-        [('revenue', 'Revenue'),
-         ('expense', 'Expense')],
-        string='Budget Method',
+    owner_section_id = fields.Many2one(
+        'res.section',
+        string='Section',
     )
     # Report Result
     results = fields.Many2many(
-        'budget.plan.invest.construction.line',
+        'invest.asset.plan.item',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
@@ -36,13 +31,10 @@ class XLSXReportBudgetPlanConstructionAnalysis(models.TransientModel):
     @api.multi
     def _compute_results(self):
         self.ensure_one()
-        Result = self.env['budget.plan.invest.construction.line']
+        Result = self.env['invest.asset.plan.item']
         dom = [('fiscalyear_id', '=', self.fiscalyear_id.id)]
         if self.org_id:
             dom += [('org_id', '=', self.org_id.id)]
-        if self.invest_construction_id:
-            dom += [('invest_construction_id', '=',
-                     self.invest_construction_id.id)]
-        if self.budget_method:
-            dom += [('budget_method', '=', self.budget_method)]
+        if self.owner_section_id:
+            dom += [('owner_section_id', '=', self.owner_section_id.id)]
         self.results = Result.search(dom)

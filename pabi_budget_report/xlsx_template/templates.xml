@@ -10,34 +10,402 @@
             <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
         </record>
 
-        # Budget Summary Report
-        <record id="xlsx_report_budget_summary" model="ir.attachment">
-            <field name="res_model">xlsx.report.budget.summary</field>
+        # Budget Plan Analysis for Unit Based
+        <record id="xlsx_report_budget_plan_unit_analysis" model="ir.attachment">
+            <field name="res_model">xlsx.report.budget.plan.unit.analysis</field>
             <field name="datas"></field>
-            <field name="datas_fname">xlsx_report_budget_summary.xlsx</field>
-            <field name="name">Budget Summary (TEST)</field>
+            <field name="datas_fname">xlsx_report_budget_plan_unit_analysis.xlsx</field>
+            <field name="name">Budget Plan Analysis for Unit Based</field>
             <field name="parent_id" eval="ref('dir_budget_reports')"/>
             <field name="description">
               {
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
-                            'B3': 'fiscalyear_id.name',
+                            'B1': 'fiscalyear_id.name${value or ""}',
+                            'B2': 'org_id.display_name${value or ""}',
+                            'B3': 'sector_id.display_name${value or ""}',
+                            'B4': 'subsector_id.display_name${value or ""}',
+                            'B5': 'division_id.display_name${value or ""}',
+                            'B6': 'section_id.display_name${value or ""}',
+                            'B7': '${time.strftime("%d-%m-%Y")}',
+                            'B8': '${env.user.name}',
                         },
-                        'results[5]': {
-                            'A7': 'chart_view${value and value.title() or ""}',
-                            'B7': 'plan',
-                            'C7': 'policy',
-                            'D7': 'released',
-                            'E7': 'pr_commit',
-                            'F7': 'po_commit',
-                            'G7': 'exp_commit',
-                            'H7': 'actual_total',
-                            'I7': 'balance',
-                            'J7': 'actual_percent',
-                            'K7': 'commit_total',
-                            'L7': 'commit_percent',
+                        'results': {
+                            'A11': 'plan_id.display_name${value or ""}',
+                            'B11': 'budget_method${value and value.title() or ""}',
+                            'C11': 'charge_type${value and value.title() or ""}',
+                            'D11': 'income_section_code${value or ""}',
+                            'E11': 'income_section_name${value or ""}',
+                            'F11': 'income_section_name_short${value or ""}',
+                            'G11': 'org_id.display_name${value or ""}',
+                            'H11': 'sector_id.display_name${value or ""}',
+                            'I11': 'subsector_id.display_name${value or ""}',
+                            'J11': 'division_id.display_name${value or ""}',
+                            'K11': 'section_code${value or ""}',
+                            'L11': 'section_name_short${value or ""}',
+                            'M11': 'section_name${value or ""}',
+                            'N11': 'section_program_id.display_name${value or ""}',
+                            'O11': 'mission_id.display_name${value or ""}',
+                            'P11': 'activity_group_id.display_name${value or ""}',
+                            'Q11': 'cost_control_code${value or ""}',
+                            'R11': 'unit#{number_format=number}',
+                            'S11': 'activity_unit_price#{number_format=number}',
+                            'T11': 'activity_unit#{number_format=number}',
+                            'U11': 'total_budget#{number_format=number}',
+                            'V11': 'name${value or ""}',
+                            'W11': 'reason${value or ""}',
+                            'X11': 'm0#{number_format=number}',
+                            'Y11': 'next_fy_commitment#{number_format=number}',
+                            'Z11': 'm1#{number_format=number}',
+                            'AA11': 'm2#{number_format=number}',
+                            'AB11': 'm3#{number_format=number}',
+                            'AC11': 'm4#{number_format=number}',
+                            'AD11': 'm5#{number_format=number}',
+                            'AE11': 'm6#{number_format=number}',
+                            'AF11': 'm7#{number_format=number}',
+                            'AG11': 'm8#{number_format=number}',
+                            'AH11': 'm9#{number_format=number}',
+                            'AI11': 'm10#{number_format=number}',
+                            'AJ11': 'm11#{number_format=number}',
+                            'AK11': 'm12#{number_format=number}',
+                            'AL11': 'planned_amount#{number_format=number}',
                         },
+                        '_TAIL_0': {
+                            'Q11': '${"TOTAL"}#{font=bold;align=center;fill=blue}',
+                            'R11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'S11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'T11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'U11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'X11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'Y11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'Z11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AA11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AB11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AC11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AD11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AE11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AF11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AG11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AH11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AI11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AJ11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AK11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AL11': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+        # Budget Plan Analysis for Project Based
+        <record id="xlsx_report_budget_plan_project_analysis" model="ir.attachment">
+            <field name="res_model">xlsx.report.budget.plan.project.analysis</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_budget_plan_project_analysis.xlsx</field>
+            <field name="name">Budget Plan Analysis for Project Based</field>
+            <field name="parent_id" eval="ref('dir_budget_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B1': 'fiscalyear_id.name${value or ""}',
+                            'B2': 'functional_area_id.display_name${value or ""}',
+                            'B3': 'program_group_id.display_name${value or ""}',
+                            'B4': 'program_id.display_name${value or ""}',
+                            'B5': 'project_group_id.display_name${value or ""}',
+                            'B6': 'project_id.display_name${value or ""}',
+                            'B7': '${time.strftime("%d-%m-%Y")}',
+                            'B8': '${env.user.name}',
+                        },
+                        'results': {
+                            'A11': 'project_id.display_name${value or ""}',
+                            'B11': 'name${value or ""}',
+                            'C11': 'c_or_n${value and value.title() or ""}',
+                            'D11': 'functional_area_id.display_name${value or ""}',
+                            'E11': 'program_id.display_name${value or ""}',
+                            'F11': 'project_group_id.display_name${value or ""}',
+                            'G11': 'nstda_strategy_id.display_name${value or ""}',
+                            'H11': 'project_objective${value or ""}',
+                            'I11': 'section_program_id.display_name${value or ""}',
+                            'J11': 'mission_id.display_name${value or ""}',
+                            'K11': 'project_kind${value and value.title() or ""}',
+                            'L11': 'project_type${value or ""}',
+                            'M11': 'org_id.display_name${value or ""}',
+                            'N11': 'costcenter_id.display_name${value or ""}',
+                            'O11': 'owner_division_id.display_name${value or ""}',
+                            'P11': 'pm_employee_id.display_name${value or ""}',
+                            'Q11': 'budget_method${value and value.title() or ""}',
+                            'R11': 'date_start${value or ""}#{number_format=date}',
+                            'S11': 'date_end${value or ""}#{number_format=date}',
+                            'T11': 'project_duration${value or 0}',
+                            'U11': 'project_status${value or ""}',
+                            'V11': 'analyst_employee_id.display_name${value or ""}',
+                            'W11': 'ref_program_id.display_name${value or ""}',
+                            'X11': 'external_fund_type${value and value.title() or ""}',
+                            'Y11': 'external_fund_name${value or ""}',
+                            'Z11': 'priority${value or ""}',
+                            'AA11': 'fy1#{number_format=number}',
+                            'AB11': 'fy2#{number_format=number}',
+                            'AC11': 'fy3#{number_format=number}',
+                            'AD11': 'fy4#{number_format=number}',
+                            'AE11': 'fy5#{number_format=number}',
+                            'AF11': 'revenue_budget#{number_format=number}',
+                            'AG11': 'overall_revenue_plan#{number_format=number}',
+                            'AH11': 'pfm_publications${value or 0}',
+                            'AI11': 'pfm_patents${value or 0}',
+                            'AJ11': 'pfm_petty_patents${value or 0}',
+                            'AK11': 'pfm_copyrights${value or 0}',
+                            'AL11': 'pfm_trademarks${value or 0}',
+                            'AM11': 'pfm_plant_varieties${value or 0}',
+                            'AN11': 'pfm_laboratory_prototypes${value or 0}',
+                            'AO11': 'pfm_field_prototypes${value or 0}',
+                            'AP11': 'pfm_commercial_prototypes${value or 0}',
+                            'AQ11': 'overall_revenue#{number_format=number}',
+                            'AR11': 'current_revenue#{number_format=number}',
+                            'AS11': 'overall_expense_budget#{number_format=number}',
+                            'AT11': 'overall_actual#{number_format=number}',
+                            'AU11': 'overall_commit#{number_format=number}',
+                            'AV11': 'overall_expense_balance#{number_format=number}',
+                            'AW11': 'planned#{number_format=number}',
+                            'AX11': 'released#{number_format=number}',
+                            'AY11': 'all_commit#{number_format=number}',
+                            'AZ11': 'actual#{number_format=number}',
+                            'BA11': 'balance#{number_format=number}',
+                            'BB11': 'est_commit#{number_format=number}',
+                            'BC11': 'm1#{number_format=number}',
+                            'BD11': 'm2#{number_format=number}',
+                            'BE11': 'm3#{number_format=number}',
+                            'BF11': 'm4#{number_format=number}',
+                            'BG11': 'm5#{number_format=number}',
+                            'BH11': 'm6#{number_format=number}',
+                            'BI11': 'm7#{number_format=number}',
+                            'BJ11': 'm8#{number_format=number}',
+                            'BK11': 'm9#{number_format=number}',
+                            'BL11': 'm10#{number_format=number}',
+                            'BM11': 'm11#{number_format=number}',
+                            'BN11': 'm12#{number_format=number}',
+                            'BO11': 'planned_amount#{number_format=number}',
+                        },
+                        '_TAIL_0': {
+                            'Z11': '${"TOTAL"}#{font=bold;align=center;fill=blue}',
+                            'AA11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AB11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AC11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AD11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AE11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AF11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AG11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AQ11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AR11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AS11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AT11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AU11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AV11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AW11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AX11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AY11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'AZ11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BA11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BB11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BC11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BD11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BE11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BF11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BG11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BH11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BI11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BJ11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BK11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BL11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BM11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BN11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'BO11': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+        # Budget Plan Analysis for Personnel
+        <record id="xlsx_report_budget_plan_personnel_analysis" model="ir.attachment">
+            <field name="res_model">xlsx.report.budget.plan.personnel.analysis</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_budget_plan_personnel_analysis.xlsx</field>
+            <field name="name">Budget Plan Analysis for Personnel</field>
+            <field name="parent_id" eval="ref('dir_budget_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B1': 'fiscalyear_id.name${value or ""}',
+                            'B2': 'org_id.display_name${value or ""}',
+                            'B3': 'sector_id.display_name${value or ""}',
+                            'B4': 'subsector_id.display_name${value or ""}',
+                            'B5': 'division_id.display_name${value or ""}',
+                            'B6': 'section_id.display_name${value or ""}',
+                            'B7': '${time.strftime("%d-%m-%Y")}',
+                            'B8': '${env.user.name}',
+                        },
+                        'results': {
+                            'A11': 'org_id.display_name${value or ""}',
+                            'B11': 'personnel_costcenter_id.display_name${value or ""}',
+                            'C11': 'fund_id.display_name${value or ""}',
+                            'D11': 'activity_group_id.display_name${value or ""}',
+                            'E11': 'm0#{number_format=number}',
+                            'F11': 'm1#{number_format=number}',
+                            'G11': 'm2#{number_format=number}',
+                            'H11': 'm3#{number_format=number}',
+                            'I11': 'm4#{number_format=number}',
+                            'J11': 'm5#{number_format=number}',
+                            'K11': 'm6#{number_format=number}',
+                            'L11': 'm7#{number_format=number}',
+                            'M11': 'm8#{number_format=number}',
+                            'N11': 'm9#{number_format=number}',
+                            'O11': 'm10#{number_format=number}',
+                            'P11': 'm11#{number_format=number}',
+                            'Q11': 'm12#{number_format=number}',
+                            'R11': 'planned_amount#{number_format=number}',
+                        },
+                        '_TAIL_0': {
+                            'D11': '${"TOTAL"}#{font=bold;align=center;fill=blue}',
+                            'E11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'F11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'G11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'H11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'I11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'J11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'K11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'L11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'M11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'N11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'O11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'P11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'Q11': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'R11': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+        # Asset Item Plan Analysis
+        <record id="xlsx_report_asset_item_plan_analysis" model="ir.attachment">
+            <field name="res_model">xlsx.report.asset.item.plan.analysis</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_asset_item_plan_analysis.xlsx</field>
+            <field name="name">Asset Item Plan Analysis</field>
+            <field name="parent_id" eval="ref('dir_budget_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B1': 'fiscalyear_id.name${value or ""}',
+                            'B2': 'org_id.display_name${value or ""}',
+                            'B3': 'owner_section_id.display_name${value or ""}',
+                            'B4': '${time.strftime("%d-%m-%Y")}',
+                            'B5': '${env.user.name}',
+                        },
+                        'results': {
+                            'A8': 'plan_id.display_name${value or ""}',
+                            'B8': 'priority${value or 0}',
+                            'C8': 'invest_asset_id.display_name${value or ""}',
+                            'D8': 'prev_fy_actual#{number_format=number}',
+                            'E8': 'amount_plan#{number_format=number}',
+                            'F8': 'pr_commitment#{number_format=number}',
+                            'G8': 'exp_commitment#{number_format=number}',
+                            'H8': 'po_commitment#{number_format=number}',
+                            'I8': 'total_commitment#{number_format=number}',
+                            'J8': 'actual_amount#{number_format=number}',
+                            'K8': 'budget_usage#{number_format=number}',
+                            'L8': 'budget_remaining#{number_format=number}',
+                            'M8': 'budget_carry_forward#{number_format=number}',
+                            'N8': 'next_fy_commitment#{number_format=number}',
+                            'O8': 'next_accum_commitment#{number_format=number}',
+                        },
+                        '_TAIL_0': {
+                            'C8': '${"TOTAL"}#{font=bold;align=center;fill=blue}',
+                            'D8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'E8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'F8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'G8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'H8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'I8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'J8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'K8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'L8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'M8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'N8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'O8': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+        # Budget Plan Analysis for Asset
+        <record id="xlsx_report_budget_plan_asset_analysis" model="ir.attachment">
+            <field name="res_model">xlsx.report.budget.plan.asset.analysis</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_budget_plan_asset_analysis.xlsx</field>
+            <field name="name">Budget Plan Analysis for Asset</field>
+            <field name="parent_id" eval="ref('dir_budget_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B1': 'fiscalyear_id.name${value or ""}',
+                            'B2': 'org_id.display_name${value or ""}',
+                            'B3': 'activity_group_id.display_name${value or ""}',
+                            'B4': 'activity_id.display_name${value or ""}',
+                            'B5': '${time.strftime("%d-%m-%Y")}',
+                            'B6': '${env.user.name}',
+                        },
+                        'results': {
+                            'A9': 'org_id.display_name${value or ""}',
+                            'B9': 'activity_group_id.display_name${value or ""}',
+                            'C9': 'invest_asset_id.display_name${value or ""}',
+                            'D9': 'fund_id.display_name${value or ""}',
+                            'E9': 'm0#{number_format=number}',
+                            'F9': 'm1#{number_format=number}',
+                            'G9': 'm2#{number_format=number}',
+                            'H9': 'm3#{number_format=number}',
+                            'I9': 'm4#{number_format=number}',
+                            'J9': 'm5#{number_format=number}',
+                            'K9': 'm6#{number_format=number}',
+                            'L9': 'm7#{number_format=number}',
+                            'M9': 'm8#{number_format=number}',
+                            'N9': 'm9#{number_format=number}',
+                            'O9': 'm10#{number_format=number}',
+                            'P9': 'm11#{number_format=number}',
+                            'Q9': 'm12#{number_format=number}',
+                            'R9': 'planned_amount#{number_format=number}',
+                        },
+                        '_TAIL_0': {
+                            'D9': '${"TOTAL"}#{font=bold;align=center;fill=blue}',
+                            'E9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'F9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'G9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'H9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'I9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'J9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'K9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'L9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'M9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'N9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'O9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'P9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'Q9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'R9': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
                     }
                 }
             }
@@ -59,6 +427,8 @@
                             'B1': 'fiscalyear_id.name${value or ""}',
                             'B2': 'org_id.name_short${value or ""}',
                             'B3': 'invest_construction_id.name${value or ""}',
+                            'B4': '${time.strftime("%d-%m-%Y")}',
+                            'B5': '${env.user.name}',
                         },
                         'results': {
                             'A8': 'c_or_n${value and value.title() or ""}',
@@ -119,6 +489,39 @@
           </field>
         </record>
 
+        # Budget Summary Report
+        <record id="xlsx_report_budget_summary" model="ir.attachment">
+            <field name="res_model">xlsx.report.budget.summary</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_budget_summary.xlsx</field>
+            <field name="name">Budget Summary (TEST)</field>
+            <field name="parent_id" eval="ref('dir_budget_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B3': 'fiscalyear_id.name',
+                        },
+                        'results[5]': {
+                            'A7': 'chart_view${value and value.title() or ""}',
+                            'B7': 'plan',
+                            'C7': 'policy',
+                            'D7': 'released',
+                            'E7': 'pr_commit',
+                            'F7': 'po_commit',
+                            'G7': 'exp_commit',
+                            'H7': 'actual_total',
+                            'I7': 'balance',
+                            'J7': 'actual_percent',
+                            'K7': 'commit_total',
+                            'L7': 'commit_percent',
+                        },
+                    }
+                }
+            }
+          </field>
+        </record>
 
     </data>
 </openerp>
