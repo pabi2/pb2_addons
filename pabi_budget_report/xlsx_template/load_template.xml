@@ -4,8 +4,15 @@
         <!-- This function is called after all ir.attachment is loaded
             to load the file content to relevant template_ids -->
         <function model="ir.attachment" name="load_xlsx_template">
-            <value eval="[ref('xlsx_report_budget_summary'),
-                          ref('xlsx_report_budget_plan_construction_analysis')]"/>
+            <value eval="[
+                ref('xlsx_report_budget_plan_unit_analysis'),
+                ref('xlsx_report_budget_plan_project_analysis'),
+                ref('xlsx_report_budget_plan_personnel_analysis'),
+                ref('xlsx_report_asset_item_plan_analysis'),
+                ref('xlsx_report_budget_plan_asset_analysis'),
+                ref('xlsx_report_budget_summary'),
+                ref('xlsx_report_budget_plan_construction_analysis'),
+            ]"/>
             <value>pabi_budget_report/xlsx_template</value>
         </function>
     </data>
