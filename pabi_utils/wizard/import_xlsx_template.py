@@ -153,7 +153,8 @@ class ImportXlsxTemplate(models.TransientModel):
     def default_get(self, fields):
         res_model = self._context.get('active_model', False)
         res_id = self._context.get('active_id', False)
-        template_dom = [('res_model', '=', res_model)]
+        template_dom = [('res_model', '=', res_model),
+                        ('parent_id', '!=', False)]
         template_fname = self._context.get('template_fname', False)
         if template_fname:  # Specific template
             template_dom.append(('datas_fname', '=', template_fname))
