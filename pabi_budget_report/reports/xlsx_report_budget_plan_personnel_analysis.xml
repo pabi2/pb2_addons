@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="xlsx_report_budget_plan_construction_analysis_view" model="ir.ui.view">
-            <field name="name">xlsx.report.budget.plan.construction.analysis.view</field>
-            <field name="model">xlsx.report.budget.plan.construction.analysis</field>
+        <record id="xlsx_report_budget_plan_personnel_analysis_view" model="ir.ui.view">
+            <field name="name">xlsx.report.budget.plan.personnel.analysis.view</field>
+            <field name="model">xlsx.report.budget.plan.personnel.analysis</field>
             <field name="arch" type="xml">
-                <form string="Budget Plan Analysis for Invest Construction">
+                <form string="Budget Plan Analysis for Personnel">
 
                     <!-- required fields -->
                     <field name="state" invisible="1"/>
@@ -16,7 +16,10 @@
                         <group>
                             <field name="fiscalyear_id"/>
                             <field name="org_id"/>
-                            <field name="invest_construction_id"/>
+                            <field name="sector_id"/>
+                            <field name="subsector_id"/>
+                            <field name="division_id"/>
+                            <field name="section_id"/>
                         </group>
                         <group>
                             <field name="budget_method"/>
@@ -41,19 +44,19 @@
             </field>
         </record>
 
-        <record id="action_report_budget_plan_construction_analysis" model="ir.actions.act_window">
-            <field name="name">Budget Plan Analysis for Invest Construction</field>
-            <field name="res_model">xlsx.report.budget.plan.construction.analysis</field>
+        <record id="action_report_budget_plan_personnel_analysis" model="ir.actions.act_window">
+            <field name="name">Budget Plan Analysis for Personnel</field>
+            <field name="res_model">xlsx.report.budget.plan.personnel.analysis</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_report_budget_plan_construction_analysis"
+        <menuitem id="menu_report_budget_plan_personnel_analysis"
           name="Budget Plan Analysis"
-          parent="pabi_budget_plan.menu_action_budget_plan_invest_construction"
-          action="action_report_budget_plan_construction_analysis"
-          sequence="100"/>
+          parent="pabi_budget_plan.menu_action_budget_plan_personnel"
+          action="action_report_budget_plan_personnel_analysis"
+          sequence="30"/>
 
     </data>
 </openerp>
