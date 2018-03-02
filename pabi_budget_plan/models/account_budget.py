@@ -144,3 +144,17 @@ class AccountBudget(models.Model):
                                    'user_id': False})
             control_ids.append(control.id)
         return control_ids
+
+
+class AccountBudgetLine(models.Model):
+    _inherit = 'account.budget.line'
+
+    # Chart Fields
+    invest_construction_phase_id = fields.Many2one(
+        'res.invest.construction.phase',
+        domain="[('invest_construction_id', '=', invest_construction_id)]",
+    )
+
+    @api.onchange('invest_construction_id')
+    def _onchange_invest_construction_id(self):
+        self.invest_construction_phase_id = False
