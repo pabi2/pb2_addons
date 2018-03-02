@@ -231,11 +231,11 @@ class ResInvestConstructionPhase(ResCommon, models.Model):
             rec.name = '%s / %s' % (rec.invest_construction_id.name,
                                     CONSTRUCTION_PHASE[rec.phase])
 
-    @api.multi
-    def name_get(self):
-        result = []
-        for rec in self:
-            result.append((rec.id, "[%s] %s" %
-                           (rec.invest_construction_id.code,
-                            rec.invest_construction_id.name, )))
-        return result
+    # @api.multi
+    # def name_get(self):
+    #     result = []
+    #     for rec in self:
+    #         result.append((rec.id, "[%s] %s" %
+    #                        (rec.invest_construction_id.code,
+    #                         rec.invest_construction_id.name, )))
+    #     return result
