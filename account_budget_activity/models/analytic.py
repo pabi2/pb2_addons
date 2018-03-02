@@ -121,6 +121,7 @@ class AccountAnalyticLine(models.Model):
     purchase_request_line_id = fields.Many2one(
         'purchase.request.line',
         string='Purchase Request Line',
+        ondelete='cascade',
         readonly=True,
         help="PR Commitment",
     )
@@ -135,6 +136,7 @@ class AccountAnalyticLine(models.Model):
     purchase_line_id = fields.Many2one(
         'purchase.order.line',
         string='Purchase Order Line',
+        ondelete='cascade',
         readonly=True,
         help="PO Commitment",
     )
@@ -149,6 +151,7 @@ class AccountAnalyticLine(models.Model):
     sale_line_id = fields.Many2one(
         'sale.order.line',
         string='Sales Order Line',
+        ondelete='cascade',
         readonly=True,
         help="SO Commitment",
     )
@@ -163,6 +166,7 @@ class AccountAnalyticLine(models.Model):
     expense_line_id = fields.Many2one(
         'hr.expense.line',
         string='Expense Line',
+        ondelete='cascade',
         readonly=True,
         help="Expense Commitment",
     )
