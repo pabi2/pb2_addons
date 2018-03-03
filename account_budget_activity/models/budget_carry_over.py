@@ -114,7 +114,6 @@ class BudgetCarryOver(models.Model):
                 purchase_lines.mapped('budget_commit_ids') + \
                 request_lines.mapped('budget_commit_ids') + \
                 expense_lines.mapped('budget_commit_ids')
-            print commits
             commits.write({'monitor_fy_id': rec.fiscalyear_id.id})
         self.write({'state': 'done'})
 
@@ -157,4 +156,4 @@ class BudgetCarryOverLine(models.Model):
         for rec in self:
             doc = rec.expense_line_id or rec.purchase_request_line_id or \
                 rec.purchase_line_id or rec.sale_line_id
-            rec.name = doc.name_get()[0][1]
+            rec.name = doc.display_name
