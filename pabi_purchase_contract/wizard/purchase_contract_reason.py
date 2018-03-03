@@ -48,7 +48,7 @@ class PurchaseContractReason(models.TransientModel):
                 [['user_id', '=', self._uid]],
                 limit=1)
             if Emp:
-                newline += str(Emp.name_get()[0][1]) + "\n "
+                newline += str(Emp.display_name) + "\n "
                 newline += _("Reason") + ": "
                 description = str(poc.description or '')
                 description += newline
@@ -106,7 +106,7 @@ class PurchaseContractReason(models.TransientModel):
                                      self._uid]
                                     ], limit=1)
             if Emp:
-                newline += str(Emp.name_get()[0][1]) + "\n"
+                newline += str(Emp.display_name) + "\n"
                 newline += _("Reason") + ": "
                 poc.write({'cancel_uid': Emp.id})
             cancel_date = datetime.datetime.now(timezone('UTC'))

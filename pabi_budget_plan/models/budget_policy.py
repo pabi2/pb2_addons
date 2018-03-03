@@ -476,7 +476,7 @@ class BudgetPolicy(models.Model):
                     invalid_sections = sub_entities.filtered(
                         lambda l: l.id not in subentity_ids)
                     for s in invalid_sections:
-                        msg.append("* %s" % s.name_get()[0][1])
+                        msg.append("* %s" % s.display_name)
                 else:
                     msg.append("Ready...")
             else:
