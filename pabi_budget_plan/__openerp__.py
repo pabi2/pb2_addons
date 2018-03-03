@@ -14,6 +14,7 @@
         # 'document_status_history',
     ],
     'data': [
+        'security/groups.xml',
         'security/security_rule_budget_unit.xml',
         'security/security_rule_budget_project.xml',
         'security/security_rule_budget_construction.xml',
@@ -51,6 +52,7 @@
         'views/budget_plan_invest_construction_view.xml',
         'views/invest_asset_plan_view.xml',
         'views/account_view.xml',
+        'views/project_balance_carry_forward_view.xml',
     ],
     'demo': [
     ],
