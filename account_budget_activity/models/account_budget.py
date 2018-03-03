@@ -413,7 +413,7 @@ class AccountBudget(models.Model):
                     raise ValidationError(
                         _('%s: rolling plan (%s) will exceed '
                           'released amount (%s) after this operation!') %
-                        (budget.name_get()[0][1],
+                        (budget.display_name,
                          '{:,.2f}'.format(budget.rolling),
                          '{:,.2f}'.format(budget.released_amount),
                          ))
@@ -427,7 +427,7 @@ class AccountBudget(models.Model):
                     raise ValidationError(
                         _('%s: released amount (%s) will exceed '
                           'policy amount (%s) after this operation!') %
-                        (budget.name_get()[0][1],
+                        (budget.display_name,
                          '{:,.2f}'.format(budget.released_amount),
                          '{:,.2f}'.format(budget.policy_amount),
                          ))
@@ -549,7 +549,7 @@ class AccountBudget(models.Model):
             res['budget_ok'] = False
             res['message'] = _('%s\n'
                                '[%s] No active budget control.') % \
-                (fiscal.name, resource.name_get()[0][1])
+                (fiscal.name, resource.display_name)
             return res
         else:  # Current Budget Status
             res['budget_status'].update({
@@ -569,13 +569,13 @@ class AccountBudget(models.Model):
                 res['message'] = _('%s\n'
                                    '%s, not enough budget, this transaction '
                                    'will result in %s฿ over budget!') % \
-                    (fiscal.name, resource.name_get()[0][1],
+                    (fiscal.name, resource.display_name,
                      '{:,.2f}'.format(-balance))
             else:
                 res['message'] = _('%s\n'
                                    '%s, remaining budget is %s,\n'
                                    'but the requested budget is %s') % \
-                    (fiscal.name, resource.name_get()[0][1],
+                    (fiscal.name, resource.display_name,
                      '{:,.2f}'.format(balance),
                      '{:,.2f}'.format(amount))
 

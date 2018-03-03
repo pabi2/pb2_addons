@@ -135,50 +135,50 @@ class BudgetTransition(models.Model):
             if rec.purchase_request_line_id and rec.purchase_line_id:
                 rec[source] = '%s, %s' % \
                     (rec.purchase_request_id.name,
-                     rec.purchase_request_line_id.name_get()[0][1])
+                     rec.purchase_request_line_id.display_name)
                 rec[target] = '%s, %s' % \
                     (rec.purchase_id.name,
-                     rec.purchase_line_id.name_get()[0][1])
+                     rec.purchase_line_id.display_name)
             # SO -> Invoice
             if rec.sale_line_id and rec.invoice_line_id:
                 rec[source] = '%s, %s' % \
                     (rec.sale_id.name,
-                     rec.sale_line_id.name_get()[0][1])
+                     rec.sale_line_id.display_name)
                 rec[target] = '%s, %s' % \
                     (rec.invoice_id.number,
-                     rec.invoice_line_id.name_get()[0][1])
+                     rec.invoice_line_id.display_name)
             # PO -> Invoice
             if rec.purchase_line_id and rec.invoice_line_id:
                 rec[source] = '%s, %s' % \
                     (rec.purchase_id.name,
-                     rec.purchase_line_id.name_get()[0][1])
+                     rec.purchase_line_id.display_name)
                 rec[target] = '%s, %s' % \
                     (rec.invoice_id.number,
-                     rec.invoice_line_id.name_get()[0][1])
+                     rec.invoice_line_id.display_name)
             # SO -> Picking
             if rec.sale_line_id and rec.stock_move_id:
                 rec[source] = '%s, %s' % \
                     (rec.sale_id.name,
-                     rec.sale_line_id.name_get()[0][1])
+                     rec.sale_line_id.display_name)
                 rec[target] = '%s, %s' % \
                     (rec.picking_id.name,
-                     rec.stock_move_id.name_get()[0][1])
+                     rec.stock_move_id.display_name)
             # PO -> Picking
             if rec.purchase_line_id and rec.stock_move_id:
                 rec[source] = '%s, %s' % \
                     (rec.purchase_id.name,
-                     rec.purchase_line_id.name_get()[0][1])
+                     rec.purchase_line_id.display_name)
                 rec[target] = '%s, %s' % \
                     (rec.picking_id.name,
-                     rec.stock_move_id.name_get()[0][1])
+                     rec.stock_move_id.display_name)
             # EXP -> Invoice
             if rec.expense_line_id and rec.invoice_line_id:
                 rec[source] = '%s, %s' % \
                     (rec.expense_id.number,
-                     rec.expense_line_id.name_get()[0][1])
+                     rec.expense_line_id.display_name)
                 rec[target] = '%s, %s' % \
                     (rec.invoice_id.number,
-                     rec.invoice_line_id.name_get()[0][1])
+                     rec.invoice_line_id.display_name)
         if not rec.source:
             rec.source = _('N/A')
         if not rec.target:

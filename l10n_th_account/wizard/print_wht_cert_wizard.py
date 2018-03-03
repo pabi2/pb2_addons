@@ -104,8 +104,8 @@ class PrintWhtCertWizard(models.Model):
             supplier = voucher.partner_id
             rec.x_voucher_number = voucher.number
             rec.x_date_value = voucher.date_value
-            rec.x_company_name = company.name_get()[0][1]
-            rec.x_supplier_name = supplier.name_get()[0][1]
+            rec.x_company_name = company.display_name
+            rec.x_supplier_name = supplier.display_name
             rec.x_company_taxid = len(company.vat) == 13 and company.vat or ''
             rec.x_supplier_taxid = \
                 len(supplier.vat) == 13 and supplier.vat or ''
@@ -133,7 +133,7 @@ class PrintWhtCertWizard(models.Model):
             rec.x_type_6_base = rec._get_summary_by_type('base', '6')
             rec.x_type_6_tax = rec._get_summary_by_type('tax', '6')
             rec.x_type_6_desc = rec._get_summary_by_type('desc', '6')
-            rec.x_signature = voucher.validate_user_id.name_get()[0][1]
+            rec.x_signature = voucher.validate_user_id.display_name
 
     @api.multi
     def _compute_address(self):

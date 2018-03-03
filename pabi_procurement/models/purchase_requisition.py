@@ -579,7 +579,7 @@ class PurchaseRequisition(models.Model):
                 if len(exist_pd_file) > 0:
                     exist_pd_file.unlink()
                 result = base64.b64encode(result)
-                file_name = self.name_get()[0][1]
+                file_name = self.display_name
                 file_name = re.sub(r'[^a-zA-Z0-9_-]', '_', file_name)
                 file_name += "_main_form.pdf"
                 Attachment.create({

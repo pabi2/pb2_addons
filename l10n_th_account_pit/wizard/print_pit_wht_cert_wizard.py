@@ -102,8 +102,8 @@ class PrintPITWhtCertWizard(models.TransientModel):
         supplier = self.supplier_partner_id
         if not company.vat or not supplier.vat:
             raise ValidationError(_('No Tax ID on Company or Supplier'))
-        data['company_name'] = company.name_get()[0][1]
-        data['supplier_name'] = supplier.name_get()[0][1]
+        data['company_name'] = company.display_name
+        data['supplier_name'] = supplier.display_name
         company_taxid = len(company.vat) == 13 and company.vat or ''
         data['company_taxid'] = list(company_taxid)
         supplier_taxid = len(supplier.vat) == 13 and supplier.vat or ''
@@ -113,7 +113,7 @@ class PrintPITWhtCertWizard(models.TransientModel):
         data['buddha_year'] = int(self.calendaryear_id.calendar_name) + 543
         data['total_base'] = self._get_summary_by_type('base')
         data['total_tax'] = self._get_summary_by_type('tax')
-        data['signature'] = self.with_context(TH).env.user.name_get()[0][1]
+        data['signature'] = self.with_context(TH).env.user.display_name
         return data
 
     @api.model
