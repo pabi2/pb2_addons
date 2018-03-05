@@ -12,7 +12,7 @@
                             groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
                         <button string="Approve" name="button_approve" states="submit" type="object" class="oe_highlight"
                             groups="pabi_base.group_cooperate_budget"/>
-                        <button string="Reject" name="button_reject" states="submit" type="object" class="oe_highlight"
+                        <button string="Reject" name="button_reject" states="submit,approve" type="object" class="oe_highlight"
                             groups="pabi_base.group_cooperate_budget"/>
                         <button string="Reset to Draft" name="button_draft" states="cancel" type="object"
                             groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
