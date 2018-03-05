@@ -1,6 +1,40 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from openerp.addons.connector.queue.job import job
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import FailedJobError
+
+
+@job(default_channel='root.xlsx_report')
+def get_report_job(session, model_name, res_id):
+    try:
+        out_file, out_name = session.pool[model_name].get_report(
+            session.cr, session.uid, [res_id], session.context)
+        # Make attachment and link ot job queue
+        job_uuid = session.context.get('job_uuid')
+        job = session.env['queue.job'].search([('uuid', '=', job_uuid)],
+                                              limit=1)
+        # Get init time
+        date_created = fields.Datetime.from_string(job.date_created)
+        ts = fields.Datetime.context_timestamp(job, date_created)
+        init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
+        # Description
+        desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
+        session.env['ir.attachment'].create({
+            'name': out_name,
+            'datas': out_file,
+            'datas_fname': out_name,
+            'res_model': 'queue.job',
+            'res_id': job.id,
+            'type': 'binary',
+            'parent_id': session.env.ref('pabi_utils.dir_spool_report').id,
+            'description': desc,
+            'user_id': job.user_id.id,
+        })
+        return _('Report created successfully')
+    except Exception, e:
+        raise FailedJobError(e)
 
 
 class XLSXReport(models.AbstractModel):
@@ -20,9 +54,18 @@ class XLSXReport(models.AbstractModel):
          ('get', 'get')],
         default='choose',
     )
+    async_process = fields.Boolean(
+        string='Run task in background?',
+        default=False,
+    )
+    uuid = fields.Char(
+        string='UUID',
+        readonly=True,
+        help="Job queue unique identifier",
+    )
 
     @api.multi
-    def action_get_report(self):
+    def get_report(self):
         self.ensure_one()
         Export = self.env['export.xlsx.template']
         Attachment = self.env['ir.attachment']
@@ -30,9 +73,21 @@ class XLSXReport(models.AbstractModel):
         if len(template) != 1:
             raise ValidationError(
                 _('The report template "%s" must be single') % self._name)
-        out_file, out_name = Export._export_template(template,
-                                                     self._name, self.id)
-        self.write({'state': 'get', 'data': out_file, 'name': out_name})
+        return Export._export_template(template, self._name, self.id)
+
+    @api.multi
+    def action_get_report(self):
+        self.ensure_one()
+        # Enqueue
+        if self.async_process:
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = 'XLSX Report - %s' % (self._name, )
+            uuid = get_report_job.delay(
+                session, self._name, self.id, description=description)
+            self.write({'state': 'get', 'uuid': uuid})
+        else:
+            out_file, out_name = self.get_report()
+            self.write({'state': 'get', 'data': out_file, 'name': out_name})
         return {
             'type': 'ir.actions.act_window',
             'res_model': self._name,
