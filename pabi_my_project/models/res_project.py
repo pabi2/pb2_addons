@@ -392,8 +392,9 @@ class ResProject(LogCommon, models.Model):
                 budgets.sync_budget_my_project()
 
     @api.multi
-    def prepare_fiscal_plan_line(self, vals):
-        if ('date_start' in vals and vals.get('date_start')) or \
+    def prepare_fiscal_plan_line(self, vals, force_run=False):
+        if force_run or \
+                ('date_start' in vals and vals.get('date_start')) or \
                 ('date_end' in vals and vals.get('date_end')):
             Fiscal = self.env['account.fiscalyear']
             for proj in self:
