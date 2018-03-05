@@ -10,7 +10,7 @@ import base64
 import cStringIO
 import time
 from copy import copy
-from datetime import datetime
+from datetime import datetime as dt
 from ast import literal_eval
 from openerp.tools import float_compare
 from openerp import models, fields, api, _
@@ -219,12 +219,10 @@ class ExportXlsxTemplate(models.TransientModel):
                 line_copy = line_copy[f]
                 if data_type == 'date':
                     if line_copy:
-                        line_copy = datetime.strptime(line_copy,
-                                                      '%Y-%m-%d')
+                        line_copy = dt.strptime(line_copy, '%Y-%m-%d')
                 elif data_type == 'datetime':
                     if line_copy:
-                        line_copy = datetime.strptime(line_copy,
-                                                      '%Y-%m-%d %H:%M:%S')
+                        line_copy = dt.strptime(line_copy, '%Y-%m-%d %H:%M:%S')
             return line_copy
 
         line_field, max_row = get_line_max(line_field)
@@ -259,7 +257,7 @@ class ExportXlsxTemplate(models.TransientModel):
                 if eval_cond:  # Get eval_cond of a raw field
                     eval_context = {'float_compare': float_compare,
                                     'time': time,
-                                    'datetime': datetime,
+                                    'datetime': dt,
                                     'value': value,
                                     'model': self.env[record._name],
                                     'env': self.env,
@@ -300,7 +298,7 @@ class ExportXlsxTemplate(models.TransientModel):
                     if eval_cond:  # Get eval_cond of a raw field
                         eval_context = {'float_compare': float_compare,
                                         'time': time,
-                                        'datetime': datetime,
+                                        'datetime': dt,
                                         'value': value,
                                         'model': self.env[record._name],
                                         'env': self.env,
@@ -368,7 +366,7 @@ class ExportXlsxTemplate(models.TransientModel):
                         if eval_cond:  # Get eval_cond of a raw field
                             eval_context = {'float_compare': float_compare,
                                             'time': time,
-                                            'datetime': datetime,
+                                            'datetime': dt,
                                             'value': value,
                                             'model': self.env[record._name],
                                             'env': self.env,
@@ -408,7 +406,7 @@ class ExportXlsxTemplate(models.TransientModel):
         decoded_data = base64.decodestring(template.datas)
         ConfParam = self.env['ir.config_parameter']
         ptemp = ConfParam.get_param('path_temp_file') or '/temp'
-        stamp = datetime.utcnow().strftime('%H%M%S%f')[:-3]
+        stamp = dt.utcnow().strftime('%H%M%S%f')[:-3]
         ftemp = '%s/temp%s.xlsx' % (ptemp, stamp)
         f = open(ftemp, 'w')
         f.write(decoded_data)
@@ -427,7 +425,11 @@ class ExportXlsxTemplate(models.TransientModel):
         content.seek(0)  # Set index to 0, and start reading
         out_file = base64.encodestring(content.read())
         if record and 'name' in record and record.name:
-            out_name = record.name.replace('/', '')
+            out_name = record.name.replace(' ', '').replace('/', '')
+        else:
+            fname = out_name.replace(' ', '').replace('/', '')
+            ts = fields.Datetime.context_timestamp(self, dt.now())
+            out_name = '%s_%s' % (fname, ts.strftime('%Y%m%d_%H%M%S'))
         return (out_file, '%s.xlsx' % out_name)
 
     @api.multi

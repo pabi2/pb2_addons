@@ -7,10 +7,6 @@
             <field name="arch" type="xml">
                 <form string="Budget Plan Analysis for Project Based">
 
-                    <!-- required fields -->
-                    <field name="state" invisible="1"/>
-                    <field name="name" invisible="1"/>
-
                     <!-- search criteria -->
                     <group states="choose">
                         <group>
@@ -27,20 +23,39 @@
                         </group>
                     </group>
 
-                    <!-- required common fields -->
-                    <div states="get">
-                        <h2>Complete Prepare Report (.xlsx)</h2>
-                        <p>Here is the report file:
-                            <field name="data" readonly="1" filename="name"/></p>
+                    <!-- xlsx.report common field -->
+                    <div name="xlsx.report">
+                        <field name="state" invisible="1"/>
+                        <field name="name" invisible="1"/>
+                        <div states="choose">
+                            <field name="async_process"/><label for="async_process"/>
+                        </div>
+                        <div states="get">
+                            <h2 attrs="{'invisible': [('async_process', '=', True)]}">
+                                Complete Prepare Report (.xlsx)
+                            </h2>
+                            <h2 attrs="{'invisible': [('async_process', '=', False)]}">
+                                Report Enqueued (.xlsx)
+                            </h2>
+                            <p attrs="{'invisible': [('async_process', '=', True)]}" colspan="4">
+                                Here is the report file:
+                                <field name="data" filename="name" class="oe_inline"/>
+                            </p>
+                            <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
+                                Report UUID:
+                                <field name="uuid" class="oe_inline"/>
+                            </p>
+                        </div>
+                        <footer states="choose">
+                            <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
+                            or
+                            <button special="cancel" string="Cancel" type="object" class="oe_link"/>
+                        </footer>
+                        <footer states="get">
+                            <button special="cancel" string="Close" type="object"/>
+                        </footer>
                     </div>
-                    <footer states="choose">
-                        <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
-                        or
-                        <button special="cancel" string="Cancel" type="object" class="oe_link"/>
-                    </footer>
-                    <footer states="get">
-                        <button special="cancel" string="Close" type="object"/>
-                    </footer>
+
                 </form>
             </field>
         </record>
