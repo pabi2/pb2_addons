@@ -385,6 +385,7 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
         'res.org',
         related='plan_id.org_id',
         string='Org',
+        required=False,
         store=True,
     )
     fiscalyear_id = fields.Many2one(
