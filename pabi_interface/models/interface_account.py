@@ -534,7 +534,9 @@ class InterfaceAccountEntry(models.Model):
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
             if res['is_success']:
                 res_id = res['result']['id']
-                self.browse(res_id).execute()
+                document = self.browse(res_id)
+                document.execute()
+                res['result']['number'] = document.number
         except Exception, e:
             res = {
                 'is_success': False,
