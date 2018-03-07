@@ -36,6 +36,7 @@
                             <field name="operating_unit_id"/>
                             <field name="active"/>
                             <field name="special"/>
+                            <field name="ehr_id"/>
                         </group>
                     </group>
                     <group string="Letter Head">
@@ -106,6 +107,7 @@
                             <field name="name_short"/>
                             <field name="active"/>
                             <field name="special"/>
+                            <field name="ehr_id"/>
                         </group>
                         <group></group>
                     </group>
@@ -168,6 +170,7 @@
                             <field name="name_short"/>
                             <field name="active"/>
                             <field name="special"/>
+                            <field name="ehr_id"/>
                         </group>
                         <group string="Based On">
                             <field name="org_id"/>
@@ -234,6 +237,7 @@
                             <field name="name_short"/>
                             <field name="active"/>
                             <field name="special"/>
+                            <field name="ehr_id"/>
                         </group>
                         <group string="Based On">
                             <field name="org_id"/>
@@ -306,6 +310,7 @@
                             <field name="name_short"/>
                             <field name="active"/>
                             <field name="special"/>
+                            <field name="ehr_id"/>
                         </group>
                         <group string="Based On">
                             <field name="org_id"/>
@@ -394,6 +399,7 @@
                             <field name="name_short"/>
                             <field name="active"/>
                             <field name="special"/>
+                            <field name="ehr_id"/>
                         </group>
                     </group>
                     <notebook></notebook>
@@ -458,6 +464,7 @@
                             <field name="name_short"/>
                             <field name="active"/>
                             <field name="special" invisible="1"/>
+                            <field name="ehr_id"/>
                         </group>
                     </group>
                     <notebook></notebook>
