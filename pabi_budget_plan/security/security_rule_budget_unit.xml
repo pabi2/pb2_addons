@@ -28,7 +28,7 @@
         <record id="property_rule_account_budget_unit_org" model="ir.rule">
             <field name="name">Budget Org Manager - Budget Unit Based Access</field>
             <field name="model_id" ref="account_budget_activity.model_account_budget"/>
-            <field name="domain_force">[('chart_view', '=', 'unit_base'), ('org_id','=',user.partner_id.employee_id.section_id.org_id.id)]</field>
+            <field name="domain_force">[('chart_view', 'in', ['unit_base', False]), ('org_id','=',user.partner_id.employee_id.section_id.org_id.id)]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
         </record>
         <record id="property_rule_account_budget_line_unit_org" model="ir.rule">
@@ -42,13 +42,13 @@
         <record id="property_rule_account_budget_unit_user" model="ir.rule">
             <field name="name">Budget User - Budget Unit Based Access</field>
             <field name="model_id" ref="account_budget_activity.model_account_budget"/>
-            <field name="domain_force">[('chart_view', '=', 'unit_base'), ('section_id.division_id','in',[x.division_id.id for x in user.partner_id.employee_id.section_assign_ids] + [user.partner_id.employee_id.section_id.division_id.id])]</field>
+            <field name="domain_force">[('chart_view', 'in', ['unit_base', False]), ('section_id.division_id','in',[x.division_id.id for x in user.partner_id.employee_id.section_assign_ids] + [user.partner_id.employee_id.section_id.division_id.id])]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_budget_user')), (4,ref('pabi_base.group_budget_manager'))]"/>
         </record>
         <record id="property_rule_account_budget_line_unit_user" model="ir.rule">
             <field name="name">Budget User - Budget Line Unit Based Access</field>
             <field name="model_id" ref="account_budget_activity.model_account_budget_line"/>
-            <field name="domain_force">[('chart_view', '=', 'unit_base'), ('section_id.division_id','in',[x.division_id.id for x in user.partner_id.employee_id.section_assign_ids] + [user.partner_id.employee_id.section_id.division_id.id])]</field>
+            <field name="domain_force">[('chart_view', 'in', ['unit_base', False]), ('section_id.division_id','in',[x.division_id.id for x in user.partner_id.employee_id.section_assign_ids] + [user.partner_id.employee_id.section_id.division_id.id])]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_budget_user')), (4,ref('pabi_base.group_budget_manager'))]"/>
         </record>
 
