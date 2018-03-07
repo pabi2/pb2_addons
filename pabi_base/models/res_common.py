@@ -11,7 +11,6 @@ class ResCommon(object):
     )
     name_short = fields.Char(
         string='Short Name',
-        size=10,
         translate=True,
     )
     code = fields.Char(
@@ -30,6 +29,9 @@ class ResCommon(object):
         'Diaplsy Name 2 as [code] name',
         compute='_compute_display_name_2',
     )
+    ehr_id = fields.Char(
+        string='EHR-ID',
+    )
 
     @api.multi
     def _compute_display_name_2(self):
@@ -47,9 +49,10 @@ class ResCommon(object):
                             name_short or name or '')))
         return result
 
-    @api.one
-    def copy_data(self, default=None):
-        if default is None:
-            default = {}
-        tmp_default = dict(default, name=_("%s (Copy)") % self.name)
-        return super(ResCommon, self).copy_data(default=tmp_default)
+    # As this is object, it can't call super. It throw error
+    # @api.one
+    # def copy_data(self, default=None):
+    #     if default is None:
+    #         default = {}
+    #     tmp_default = dict(default, name=_("%s (Copy)") % self.name)
+    #     return super(ResCommon, self).copy_data(default=tmp_default)
