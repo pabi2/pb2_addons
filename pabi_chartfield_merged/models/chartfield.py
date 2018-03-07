@@ -139,7 +139,7 @@ class ChartfieldView(models.Model):
             union all
         (select 3 seq, 'cp:' as type, 'res.invest.construction.phase' as model,
         p.id+3000000 as id, p.id as res_id, p.code, c.name as name,
-        phase as name_short, costcenter_id
+        phase as name_short, p.costcenter_id
         from res_invest_construction_phase p join res_invest_construction c on
         c.id = p.invest_construction_id where p.active=true)
             union all
