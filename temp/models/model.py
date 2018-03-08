@@ -2,6 +2,6 @@
 from openerp import api, models, fields
 
 
-class BudgetUnitSummary(models.Model):
-    _name = "budget.unt.summary"
+class ProjectObjective(models.Model):
+    _name = "project.objective"
     _auto = False

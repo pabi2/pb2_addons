@@ -192,7 +192,7 @@
                                 <group>
                                     <group>
                                         <field name="nstda_strategy_id"/>
-                                        <field name="objective_id"/>
+                                        <field name="subprogram_id"/>
                                         <field name="project_type_id"/>
                                         <field name="project_kind"/>
                                         <field name="operation_id"/>

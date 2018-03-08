@@ -251,9 +251,9 @@ class ResProject(LogCommon, models.Model):
         string='Project Kind',
         store=True,
     )
-    objective_id = fields.Many2one(
-        'project.objective',
-        string='Objective',
+    subprogram_id = fields.Many2one(
+        'project.subprogram',
+        string='Subprogram',
     )
 
     @api.onchange('pm_employee_id')

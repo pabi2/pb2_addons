@@ -488,7 +488,7 @@
                             'F12': 'project_group_id.name${value or ""}',
                             'G12': 'nstda_strategy_id.name${value or ""}',
                             # 'H12': '',
-                            'I12': 'objective_id.name${value or ""}',
+                            'I12': 'subprogram_id.name${value or ""}',
                             'J12': 'mission_id.name${value or ""}',
                             'K12': 'project_type_id.name${value or ""}',
                             # 'L12': '',

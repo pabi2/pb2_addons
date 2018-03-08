@@ -282,9 +282,9 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
         'project.fund.type',
         string='Fund Type',
     )
-    objective_id = fields.Many2one(
-        'project.objective',
-        string='Objective',
+    subprogram_id = fields.Many2one(
+        'project.subprogram',
+        string='Subprogram',
     )
     project_type_id = fields.Many2one(
         'project.type',
