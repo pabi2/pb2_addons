@@ -23,8 +23,14 @@ class ProjectOperation(ResCommon, models.Model):
     _name = 'project.operation'
 
 
-class ProjectObjective(ResCommon, models.Model):
-    _name = 'project.objective'
+class ProjectSubprogram(ResCommon, models.Model):
+    _name = 'project.subprogram'
+
+    program_id = fields.Many2one(
+        'res.program',
+        string='Program',
+        required=True,
+    )
 
 
 class ProjectMasterPlan(ResCommon, models.Model):
