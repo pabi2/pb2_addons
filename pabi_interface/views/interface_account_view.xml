@@ -56,6 +56,8 @@
                                 <field name="partner_id" attrs="{'invisible': [('type', '=', 'reverse')]}"/>
                                 <field name="validate_user_id" />
                                 <field name="validate_date" />
+                                <field name="preprint_number" attrs="{'invisible': [('type', '!=', 'voucher')]}"/>
+                                <field name="cancel_reason" attrs="{'invisible': [('type', '!=', 'reverse')]}"/>
                             </group>
                             <group>
                                 <field name="system_id"/>

@@ -177,6 +177,17 @@ class ResPartner(models.Model):
         return partner
 
     @api.model
+    def create_partner(self, vals):
+        WS = self.env['pabi.utils.ws']
+        res = WS.friendly_create_data(self._name, vals)
+        if res['is_success']:
+            res_id = res['result']['id']
+            partner = self.browse(res_id)
+            res['result']['name'] = partner.name
+            res['result']['search_key'] = partner.search_key
+        return res
+
+    @api.model
     def _pre_category_change(self, vals):
         # Do not allow change of partner tag,
         # if it result in change of its accounting
