@@ -18,8 +18,6 @@ class PABIUtilsWS(models.AbstractModel):
         res = {}
         # Final Preparation of fields and data
         fields, data = self._finalize_data_to_load(data_dict)
-        print fields
-        print data
         load_res = self.env[model].load(fields, data)
         res_id = load_res['ids'] and load_res['ids'][0] or False
         if not res_id:
@@ -84,12 +82,66 @@ class PABIUtilsWS(models.AbstractModel):
                 line_dict = {k: v for k, v in line_data_dict.iteritems()
                              if k in rec_fields}
                 if line_fields:
-                    raise ValidationError(
-                        _('update_data() not support > 1 level of lines'))
+                    raise ValidationError(_('friendly_update_data() support '
+                                            'only 1 level of one2many lines'))
                 line_dict = self._finalize_data_to_write(lines, line_dict)
                 final_line_dict.append((0, 0, line_dict))
             rec_dict[line_field] = final_line_dict
         rec.write(rec_dict)
+        res = {
+            'is_success': True,
+            'result': {
+                'id': rec.id,
+            },
+            'messages': _('Record created successfully'),
+        }
+        return res
+
+    @api.model
+    def friendly_create_data(self, model, data_dict):
+        """ Accept friendly data_dict in following format to create data
+            data_dict:
+            {'field1': value1,
+             'field2_id': value2,  # can be ID or name search string
+             'line_ids': [{
+                'field2': value2,
+             }]
+            }
+        """
+        res = {}
+        rec = self.env[model].new()  # Dummy reccord
+        rec_fields = []
+        line_fields = []
+        for field, model_field in rec._fields.iteritems():
+            if field in data_dict and model_field.type != 'one2many':
+                rec_fields.append(field)
+            elif field in data_dict:
+                line_fields.append(field)
+        rec_dict = {k: v for k, v in data_dict.iteritems() if k in rec_fields}
+        rec_dict = self._finalize_data_to_write(rec, rec_dict)
+        # Prepare Line Dict (o2m)
+        for line_field in line_fields:
+            final_line_dict = []
+            # Loop all o2m lines, and recreate it
+            for line_data_dict in data_dict[line_field]:
+                rec_fields = []
+                line_fields = []
+                for field, model_field in rec[line_field]._fields.iteritems():
+                    if field in line_data_dict and \
+                            model_field.type != 'one2many':
+                        rec_fields.append(field)
+                    elif field in line_data_dict:
+                        line_fields.append(field)
+                line_dict = {k: v for k, v in line_data_dict.iteritems()
+                             if k in rec_fields}
+                if line_fields:
+                    raise ValidationError(_('friendly_create_data() support '
+                                            'only 1 level of one2many lines'))
+                line_dict = self._finalize_data_to_write(rec[line_field],
+                                                         line_dict)
+                final_line_dict.append((0, 0, line_dict))
+            rec_dict[line_field] = final_line_dict
+        rec = rec.create(rec_dict)
         res = {
             'is_success': True,
             'result': {
@@ -109,9 +161,11 @@ class PABIUtilsWS(models.AbstractModel):
                 if rec_dict[key] and isinstance(rec_dict[key], basestring):
                     values = self.env[model].name_search(rec_dict[key])
                     if len(values) > 1:
-                        raise ValidationError(_('%s match more > 1 record.'))
+                        raise ValidationError(
+                            _('%s match more > 1 record.') % rec_dict[key])
                     elif not values:
-                        raise ValidationError(_('%s found no match.'))
+                        raise ValidationError(
+                            _('%s found no match.') % rec_dict[key])
                     value = values[0][0]
             final_dict.update({key: value})
         return final_dict

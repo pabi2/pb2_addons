@@ -8,23 +8,20 @@
             <field name="description">Default system. All transaction created within will be set with this system</field>
         </record>
 
-        <!-- <record model="interface.action" id="action_sale_invoice_entry">
-            <field name="name">Sales Invoice</field>
-            <field name="description">Create journal entry for customer invoice</field>
-            <field name="journal_id"  model="account.journal" search="[('type', '=', 'sale')]" />
+        <record model="interface.system" id="system_mysales">
+            <field name="name">mySales</field>
+            <field name="description">mySales</field>
         </record>
-        <record model="interface.action" id="action_sale_refund_entry">
-            <field name="name">Sales Refund</field>
-            <field name="description">Create journal entry for customer refund</field>
-            <field name="journal_id"  model="account.journal" search="[('type', '=', 'sale_refund')]" />
+
+        <record model="interface.system" id="system_mycc">
+            <field name="name">myCC</field>
+            <field name="description">myCC</field>
         </record>
-        <record model="interface.action" id="action_receipt_entry">
-            <field name="name">Receipt</field>
-            <field name="description">Create journal entry for receipt</field>
+
+        <record model="interface.system" id="system_myproperty">
+            <field name="name">myProperty</field>
+            <field name="description">myProperty</field>
         </record>
-        <record model="interface.action" id="action_payment_entry">
-            <field name="name">Payment</field>
-            <field name="description">Create journal entry for payment</field>
-        </record> -->
+
     </data>
 </openerp>

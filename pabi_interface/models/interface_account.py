@@ -132,10 +132,17 @@ class InterfaceAccountEntry(models.Model):
         store=True,
         help="Remaining amount due.",
     )
+    preprint_number = fields.Char(
+        string='Pre-print No.'
+    )
+    cancel_reason = fields.Char(
+        string='Cancel Reason'
+    )
 
     @api.onchange('to_reverse_entry_id')
     def _onchange_to_reverse_entry_id(self):
         self.journal_id = self.to_reverse_entry_id.journal_id
+        self.system_id = self.to_reverse_entry_id.system_id
 
     @api.onchange('type')
     def _onchange_type(self):
@@ -179,6 +186,14 @@ class InterfaceAccountEntry(models.Model):
                     line.reconcile_partial_id.id)
             self.residual += line_amount
         self.residual = max(self.residual, 0.0)
+
+    @api.model
+    def create(self, vals):
+        if not vals.get('system_id', False) and \
+                vals.get('to_reverse_entry_id', False):
+            reverse_entry = self.browse(vals['to_reverse_entry_id'])
+            vals['system_id'] = reverse_entry.system_id.id
+        return super(InterfaceAccountEntry, self).create(vals)
 
     # ================== Main Execution Method ==================
     @api.model
@@ -536,7 +551,10 @@ class InterfaceAccountEntry(models.Model):
                 res_id = res['result']['id']
                 document = self.browse(res_id)
                 document.execute()
+                # More info
                 res['result']['number'] = document.number
+                res['result']['fiscalyear'] = \
+                    document.move_id.period_id.fiscalyear_id.name
         except Exception, e:
             res = {
                 'is_success': False,
