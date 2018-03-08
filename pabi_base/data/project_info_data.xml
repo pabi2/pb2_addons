@@ -27,42 +27,52 @@
         <record id="project_type_11" model="project.type">
             <field name="name">ภายในสวทช.</field>
             <field name="code">11</field>
+            <field name="project_kind">research</field>
         </record>
         <record id="project_type_12" model="project.type">
             <field name="name">Research แหล่งเงินภายใน CPMO</field>
             <field name="code">12</field>
+            <field name="project_kind">research</field>
         </record>
         <record id="project_type_13" model="project.type">
             <field name="name">Research แหล่งเงินภายใน NC</field>
             <field name="code">13</field>
+            <field name="project_kind">research</field>
         </record>
         <record id="project_type_14" model="project.type">
             <field name="name">Research Extramural - CPMO</field>
             <field name="code">14</field>
+            <field name="project_kind">research</field>
         </record>
         <record id="project_type_15" model="project.type">
             <field name="name">Research Extramural - NC</field>
             <field name="code">15</field>
+            <field name="project_kind">research</field>
         </record>
         <record id="project_type_21" model="project.type">
             <field name="name">NResearch แหล่งเงินภายนอก</field>
             <field name="code">21</field>
+            <field name="project_kind">non_research</field>
         </record>
         <record id="project_type_22" model="project.type">
             <field name="name">NResearch แหล่งเงินภายใน CPMO</field>
             <field name="code">22</field>
+            <field name="project_kind">non_research</field>
         </record>
         <record id="project_type_23" model="project.type">
             <field name="name">NResearch แหล่งเงินภายใน NC</field>
             <field name="code">23</field>
+            <field name="project_kind">non_research</field>
         </record>
         <record id="project_type_30" model="project.type">
             <field name="name">Management Program / Cluster</field>
             <field name="code">30</field>
+            <field name="project_kind">management</field>
         </record>
         <record id="project_type_90" model="project.type">
             <field name="name">Construction</field>
             <field name="code">90</field>
+            <field name="project_kind">construction</field>
         </record>
 
         <!-- Project Operation -->

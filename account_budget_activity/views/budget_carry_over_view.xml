@@ -38,20 +38,26 @@
                                 <field name="fiscalyear_id"/>
                             </group>
                             <group>
-                                <field name="write_uid"/>
-                                <field name="write_date"/>
+                                <field name="write_uid" readonly="1"/>
+                                <field name="write_date" readonly="1"/>
                             </group>
                         </group>
-                        <field name="line_ids">
-                            <tree string="Carry Over Lines" editable="bottom">
-                                <field name="name"/>
-                                <field name="purchase_request_line_id" invisible="1"/>
-                                <field name="purchase_line_id" invisible="1"/>
-                                <field name="expense_line_id" invisible="1"/>
-                                <field name="sale_line_id" invisible="1"/>
-                                <field name="commit_amount"/>
-                            </tree>
-                        </field>
+                          <!-- <field name="line_ids">
+                              <tree string="Carry Over Lines" editable="bottom">
+                                  <field name="name"/>
+                                  <field name="purchase_request_line_id" invisible="1"/>
+                                  <field name="purchase_line_id" invisible="1"/>
+                                  <field name="expense_line_id" invisible="1"/>
+                                  <field name="sale_line_id" invisible="1"/>
+                                  <field name="commit_amount"/>
+                              </tree>
+                          </field> -->
+                          <field name="line_view_ids">
+                              <tree string="Carry Over Lines" editable="bottom">
+                                  <field name="name"/>
+                                  <field name="commit_amount"/>
+                              </tree>
+                          </field>
                     </sheet>
                 </form>
             </field>

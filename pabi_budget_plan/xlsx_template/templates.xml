@@ -466,7 +466,7 @@
         <record id="budget_plan_project_base_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.project</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_project_20180212.xlsx</field>
+            <field name="datas_fname">budget_plan_project_20180214.xlsx</field>
             <field name="name">Project Based Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
@@ -481,7 +481,98 @@
                             'E6': '${time.strftime("%d-%m-%Y")}',
                             'E7': 'user_id.name${value or ""}'
                         },
+                        'line_ids[500]': {
+                            'C12': 'c_or_n${value == "continue" and "ต่อเนื่อง" or "ใหม่"}',
+                            'D12': 'project_id.code${value or ""}',
+                            'E12': 'project_id.name${value or ""}',
+                            'F12': 'project_group_id.name${value or ""}',
+                            'G12': 'nstda_strategy_id.name${value or ""}',
+                            # 'H12': '',
+                            'I12': 'objective_id.name${value or ""}',
+                            'J12': 'mission_id.name${value or ""}',
+                            'K12': 'project_type_id.name${value or ""}',
+                            # 'L12': '',
+                            'M12': 'operating_id.name${value or ""}',
+                            'N12': 'fund_type_id.name${value or ""}',
+                            'O12': 'pm_employee_id.display_name${value or ""}',
+                            'P12': 'pm_section_id.display_name${value or ""}',',
+                            'Q12': 'owner_division_id.display_name${value or ""}',
+                            'R12': 'org_id.display_name',
+                            'S12': 'date_start',
+                            'T12': 'date_end',
+                            'U12': 'project_duration',
+                            'V12': 'project_status',
+                            'W12': 'analyst_employee_id.display_name${value or ""}',
+                            'X12': 'proposal_program_id.display_name_2${value or ""}',
+                            'Y12': 'ref_program_id.display_name_2${value or ""}',
+                            'Z12': 'external_fund_type${value and value.title() or ""}',
+                            'AA12': 'external_fund_type${value or ""}',
+                            'AB12': 'priority',
+                            'AC12': 'pfm_publications',
+                            'AD12': 'pfm_patents',
+                            'AE12': 'pfm_petty_patents',
+                            'AF12': 'pfm_copyrights',
+                            'AG12': 'pfm_trademarks',
+                            'AH12': 'pfm_plant_varieties',
+                            'AI12': 'pfm_laboratory_prototypes',
+                            'AJ12': 'pfm_field_prototypes',
+                            'AK12': 'pfm_commercial_prototypes',
+                            'AL12': 'revenue_budget',
+                            'AM12': 'overall_revenue_plan',
+                            'AN12': 'overall_revenue',
+                            'AO12': 'current_revenue',
+                            'AP12': 'amount_before',
+                            'AQ12': 'amount_fy1',
+                            'AR12': 'amount_fy2',
+                            'AS12': 'amount_fy3',
+                            'AT12': 'amount_fy4',
+                            'AU12': 'amount_fy5',
+                            'AV12': 'm1',
+                            'AW12': 'm2',
+                            'AX12': 'm3',
+                            'AY12': 'm4',
+                            'AZ12': 'm5',
+                            'BA12': 'm6',
+                            'BB12': 'm7',
+                            'BC12': 'm8',
+                            'BD12': 'm9',
+                            'BE12': 'm10',
+                            'BF12': 'm11',
+                            'BG12': 'm12',
+                            'BH12': 'overall_expense_budget',
+                            'BI12': 'overall_actual',
+                            'BJ12': 'overall_commit',
+                            # 'BK12': 'overall_expense_balance',
+                            'BL12': 'planned  ',
+                            'BM12': 'released',
+                            'BN12': 'all_commit',
+                            'BO12': 'actual',
+                            # 'BP12': 'balance',
+                            'BQ12': 'est_commitment',
+
+                            # Continue with internal charge
+                        }
                     },
+                    'TAB_List': {
+                        'master_program_ids': {
+                            'B5': 'display_name_2'
+                        },
+                        'master_requester_ids': {
+                            'D5': 'name'
+                        },
+                        'master_section_ids': {
+                            'F5': 'display_name_2',
+                            'G5': 'division_id.name'
+                        },
+                        'master_asset_categ_ids': {
+                            'H5': 'name'
+                        },
+                        'master_strategy_ids': {
+                            'J5': 'name',
+                            'K5': 'group_id.name',
+                        },
+                    },
+
                 },
                 '__IMPORT__': {
                     'Project': {

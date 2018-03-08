@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 from openerp import fields, models, api
+from openerp import tools
 
 
 class BudgetCarryOver(models.Model):
@@ -34,6 +35,12 @@ class BudgetCarryOver(models.Model):
         readonly=True,
         copy=False,
         states={'draft': [('readonly', False)]},
+    )
+    line_view_ids = fields.One2many(
+        'budget.carry.over.line.view',
+        'carry_over_id',
+        string='Carry Over Lines',
+        readonly=True,
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -83,6 +90,7 @@ class BudgetCarryOver(models.Model):
             'purchase_order': ['purchase.order.line', 'purchase_line_id'],
             'employee_expense': ['hr.expense.line', 'expense_line_id'],
         }
+        self = self.sudo()
         for rec in self:
             rec.line_ids.unlink()
             model = doctypes[rec.doctype][0]
@@ -103,6 +111,7 @@ class BudgetCarryOver(models.Model):
 
     @api.multi
     def action_carry_over(self):
+        self = self.sudo()
         for rec in self:
             sale_lines = rec.line_ids.mapped('sale_line_id')
             request_lines = \
@@ -124,6 +133,7 @@ class BudgetCarryOverLine(models.Model):
     name = fields.Char(
         string='Document',
         compute='_compute_name',
+        store=True,
     )
     carry_over_id = fields.Many2one(
         'budget.carry.over',
@@ -152,8 +162,42 @@ class BudgetCarryOverLine(models.Model):
     )
 
     @api.multi
+    @api.depends('purchase_request_line_id', 'sale_line_id',
+                 'purchase_line_id', 'expense_line_id')
     def _compute_name(self):
         for rec in self:
             doc = rec.expense_line_id or rec.purchase_request_line_id or \
                 rec.purchase_line_id or rec.sale_line_id
             rec.name = doc.display_name
+
+
+class BudgetCarryOverLineView(models.Model):
+    _name = 'budget.carry.over.line.view'
+    _auto = False
+    _order = 'name'
+
+    carry_over_id = fields.Many2one(
+        'budget.carry.over',
+        string='Carry Over',
+        readonly=True,
+    )
+    name = fields.Char(
+        string='Name',
+        readonly=True,
+    )
+    commit_amount = fields.Float(
+        string='Commitment',
+        readonly=True,
+    )
+
+    def _get_sql_view(self):
+        sql_view = """
+            SELECT id, carry_over_id, commit_amount, name
+            FROM budget_carry_over_line
+        """
+        return sql_view
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %
+                   (self._table, self._get_sql_view(), ))

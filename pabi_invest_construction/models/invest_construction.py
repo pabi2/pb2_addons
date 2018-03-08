@@ -120,10 +120,10 @@ class ResInvestConstruction(LogCommon, models.Model):
         string='FY5',
         compute='_compute_amount_fy',
     )
-    # amount_beyond = fields.Float(
-    #     string='FY6 and Beyond',
-    #     compute='_compute_amount_fy',
-    # )
+    amount_beyond = fields.Float(
+        string='FY6 and Beyond',
+        compute='_compute_amount_fy',
+    )
     amount_phase_approve = fields.Float(
         string='Approved Budget (Phases)',
         compute='_compute_amount_phase_approve',
@@ -174,14 +174,14 @@ class ResInvestConstruction(LogCommon, models.Model):
             future_plans = plans - prev_plans  # Only future
             future_plans = future_plans.sorted(
                 key=lambda l: l.fiscalyear_id.date_start)
-            # amount_beyond = 0.0
+            amount_beyond = 0.0
             years = len(future_plans)
             for i in range(0, years):
                 if i < 5:  # only fy1 - fy5
                     rec['amount_fy%s' % (i + 1)] = future_plans[i].amount_plan
-                # else:
-                #     amount_beyond += future_plans[i].amount_plan
-            # rec.amount_beyond = amount_beyond
+                else:
+                    amount_beyond += future_plans[i].amount_plan
+            rec.amount_beyond = amount_beyond
 
     @api.multi
     @api.constrains('budget_plan_ids')

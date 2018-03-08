@@ -25,6 +25,14 @@
         </record>
         <menuitem name="Operation" id="menu_project_operation" action="action_project_operation" parent="menu_res_project" sequence="30"/>
 
+        <!-- Objective -->
+        <record id="action_project_objective" model="ir.actions.act_window">
+            <field name="name">Objective</field>
+            <field name="res_model">project.objective</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem name="Objective" id="menu_project_objective" action="action_project_objective" parent="menu_res_project" sequence="35"/>
+
         <!-- Master Plan -->
         <record id="action_project_master_plan" model="ir.actions.act_window">
             <field name="name">Master Plan</field>

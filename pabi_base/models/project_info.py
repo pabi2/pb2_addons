@@ -10,9 +10,21 @@ class ProjectFundType(ResCommon, models.Model):
 class ProjectType(ResCommon, models.Model):
     _name = 'project.type'
 
+    project_kind = fields.Selection(
+        [('research', 'Research'),
+         ('non_research', 'Non Research'),
+         ('management', 'Management Program/Cluster'),
+         ('construction', 'Construction'), ],
+        string='Project Kind',
+    )
+
 
 class ProjectOperation(ResCommon, models.Model):
     _name = 'project.operation'
+
+
+class ProjectObjective(ResCommon, models.Model):
+    _name = 'project.objective'
 
 
 class ProjectMasterPlan(ResCommon, models.Model):

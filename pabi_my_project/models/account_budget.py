@@ -31,9 +31,7 @@ class AccountBudget(models.Model):
         # Find matched phases for this budget control
         Project = self.env['res.project']
         BudgetLine = self.env['account.budget.line']
-        projects = Project.search([
-            ('program_id', '=', self.program_id.id),
-        ])
+        projects = Project.search([('program_id', '=', self.program_id.id)])
         # Clear budget_line without sync ref (myproject, we can't create here)
         prj_budget_lines = self.project_plan_ids.mapped('sync_budget_line_id')
         diff_lines = self.budget_line_ids - prj_budget_lines
@@ -50,6 +48,9 @@ class AccountBudget(models.Model):
                     budget_line_dict = {
                         'budget_id': self.id,
                         'activity_group_id': project_plan.activity_group_id.id,
+                        'charge_type': project_plan.charge_type,
+                        'budget_method': project_plan.budget_method,
+                        'income_section_id': project_plan.income_section_id.id,
                         'project_id': project.id,
                         'fund_id': (project.fund_ids and
                                     project.fund_ids[0].id or False),

@@ -64,7 +64,7 @@
                             'readonly': [('state','!=','draft')]}"/>
                 </xpath>
                 <xpath expr="/form/sheet/group/group//field[@name='budgeted_revenue']" position="attributes">
-                    <attribute name="attrs">{'invisible': [('chart_view', '!=', 'unit_base')]}</attribute>
+                    <attribute name="attrs">{'invisible': [('chart_view', 'not in', ('project_base', 'unit_base'))]}</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook//field[@name='budget_revenue_line_ids']" position="replace">
                     <field name="budget_revenue_line_unit_base" colspan="4" nolabel="1"
