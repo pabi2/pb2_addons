@@ -10,6 +10,7 @@
             <field name="arch" type="xml">
                 <xpath expr="/tree/field[@name='budget_method']" position="after">
                     <field name="charge_type"/>
+                    <field name="income_section_id"/>
                 </xpath>
                 <xpath expr="/tree" position="attributes">
                     <attribute name="colors">blue:(charge_type == 'external');green:(charge_type == 'internal')</attribute>
@@ -25,6 +26,7 @@
             <field name="arch" type="xml">
                 <xpath expr="/tree/field[@name='budget_method']" position="after">
                     <field name="charge_type"/>
+                    <field name="income_section_id"/>
                 </xpath>
                 <xpath expr="/tree" position="attributes">
                     <attribute name="colors">blue:(charge_type == 'external');green:(charge_type == 'internal')</attribute>
@@ -41,13 +43,13 @@
                     <field name="control_ext_charge_only" invisible="0"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[@name='expense']//group[@name='expense_extra2']" position="inside">
-                    <separator string="Internal Charge" colspan="2" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
-                    <field name="past_consumed_internal" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
-                    <field name="future_plan_internal" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
-                    <field name="rolling_internal" class="oe_subtotal_footer_separator" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
+                    <separator string="Internal Charge" colspan="2" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', 'not in', ('project_base', 'unit_base'))]}"/>
+                    <field name="past_consumed_internal" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', 'not in', ('project_base', 'unit_base'))]}"/>
+                    <field name="future_plan_internal" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', 'not in', ('project_base', 'unit_base'))]}"/>
+                    <field name="rolling_internal" class="oe_subtotal_footer_separator" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', 'not in', ('project_base', 'unit_base'))]}"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[@name='expense']//group[@name='expense_footer']//field[@name='past_consumed']" position="before">
-                    <separator string="External Charge" colspan="2" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', '!=', 'unit_base')]}"/>
+                    <separator string="External Charge" colspan="2" attrs="{'invisible': ['|', ('control_ext_charge_only', '=', False), ('chart_view', 'not in', ('project_base', 'unit_base'))]}"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[@name='commitment_summary']//field[@name='commitment_summary_revenue_line_ids']//field[@name='activity_group_id']" position="before">
                     <field name="charge_type"/>
@@ -66,7 +68,7 @@
             <field name="inherit_id" ref="pabi_budget_plan.account_budget_view_form"/>
             <field name="arch" type="xml">
               <xpath expr="/form/sheet/notebook/page[@name='expense']/div[@name='expense_extra']" position="inside">
-                  <group attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
+                  <group attrs="{'invisible': [('chart_view', 'not in', ('project_base', 'unit_base'))]}">
                       <group>
                           <field name="budgeted_expense_internal" string="Internal"/>
                       </group>
@@ -76,7 +78,7 @@
                   </group>
               </xpath>
               <xpath expr="/form/sheet/notebook/page[@name='revenue']/div[@name='revenue_extra']" position="inside">
-                  <group attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
+                  <group attrs="{'invisible': [('chart_view', 'not in', ('project_base', 'unit_base'))]}">
                       <group>
                           <field name="budgeted_revenue_internal" string="Internal"/>
                       </group>

@@ -38,7 +38,6 @@ class ResProject(models.Model):
         """ Friendly update data, sample data_dict,
         data_dict = {
             'code': 'XXX', 'pm_employee_id': '102190',
-            'project_objective': 'Test Objective', ...
             'budget_plan_ids': [{'fiscalyear_id': '2018',
                                  'activity_group_id': 'AG0001',
                                  'm1': 102020.00, 'm3': 929201.00}]

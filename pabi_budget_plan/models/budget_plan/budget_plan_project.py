@@ -62,10 +62,56 @@ class BudgetPlanProject(BPCommon, models.Model):
         readonly=True,
         store=True,
     )
+    # Master Datas
+    master_pg_ids = fields.Many2many(
+        'res.project.group',
+        string='Project Group',
+        compute='_compute_master_pg_ids'
+    )
+    master_strategy_ids = fields.Many2many(
+        'project.nstda.strategy',
+        sring='Strategy Master Data',
+        compute='_compute_master_strategy_ids',
+    )
+    master_mission_ids = fields.Many2many(
+        'res.mission',
+        sring='Mission Master Data',
+        compute='_compute_master_mission_ids',
+    )
+    master_pt_ids = fields.Many2many(
+        'project.type',
+        string='Project Type',
+        compute='_compute_master_pt_ids'
+    )
+
     _sql_constraints = [
         ('uniq_plan', 'unique(program_id, fiscalyear_id)',
          'Duplicated budget plan for the same program is not allowed!'),
     ]
+
+    @api.multi
+    def _compute_master_pg_ids(self):
+        PG = self.env['res.project.group']
+        for rec in self:
+            rec.master_pg_ids = PG.search([]).ids
+
+    @api.multi
+    def _compute_master_strategy_ids(self):
+        Strategy = self.env['project.nstda.strategy']
+        for rec in self:
+            rec.master_strategy_ids = Strategy.search([]).ids
+
+    @api.multi
+    def _compute_master_mission_ids(self):
+        M = self.env['res.mission']
+        for rec in self:
+            rec.master_mission_ids = M.search([]).ids
+
+    @api.multi
+    def _compute_master_pt_ids(self):
+        PT = self.env['project.type']
+        for rec in self:
+            rec.master_project_type_ids = PT.search([]).ids
 
     @api.model
     def create(self, vals):
@@ -192,20 +238,26 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
         help="Next fiscalyear commitment PO Invoice Plan",
     )
     # Project Detail
-    fy1 = fields.Float(
+    amount_before = fields.Float(
+        string='Amount before FY1',
+    )
+    amount_fy1 = fields.Float(
         string='FY1',
     )
-    fy2 = fields.Float(
+    amount_fy2 = fields.Float(
         string='FY2',
     )
-    fy3 = fields.Float(
+    amount_fy3 = fields.Float(
         string='FY3',
     )
-    fy4 = fields.Float(
+    amount_fy4 = fields.Float(
         string='FY4',
     )
-    fy5 = fields.Float(
+    amount_fy5 = fields.Float(
         string='FY5',
+    )
+    amount_beyond = fields.Float(
+        string='Amount FY6 and Beyond',
     )
     revenue_budget = fields.Float(
         string='Revenue Budget',
@@ -215,15 +267,27 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     )
     project_kind = fields.Selection(
         [('research', 'Research'),
-         ('non_research', 'Non-Research'),
-         ('management', 'Management'),
+         ('non_research', 'Non Research'),
+         ('management', 'Management Program/Cluster'),
          ('construction', 'Construction'), ],
+        related='project_type_id.project_kind',
         string='Project Kind',
+        store=True,
     )
-    project_objective = fields.Char(
+    operation_id = fields.Many2one(
+        'project.operation',
+        string='Operation',
+    )
+    fund_type_id = fields.Many2one(
+        'project.fund.type',
+        string='Fund Type',
+    )
+    objective_id = fields.Many2one(
+        'project.objective',
         string='Objective',
     )
-    project_type = fields.Char(
+    project_type_id = fields.Many2one(
+        'project.type',
         string='Project Type',
     )
     pm_employee_id = fields.Many2one(
@@ -256,9 +320,9 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
         string='Program Reference',
     )
     external_fund_type = fields.Selection(
-        [('government', 'Government'),
-         ('private', 'Private Organization'),
-         ('oversea', 'Oversea')],
+        [('government', '1. ภาครัฐ'),
+         ('private', '2. ภาคเอกชน'),
+         ('oversea', '3. ต่างประเทศ')],
         string='External Fund Type',
     )
     external_fund_name = fields.Char(

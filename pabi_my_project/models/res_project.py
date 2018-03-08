@@ -100,9 +100,9 @@ class ResProject(LogCommon, models.Model):
         string='Proposal Program',
     )
     external_fund_type = fields.Selection(
-        [('government', 'Government'),
-         ('private', 'Private Organization'),
-         ('oversea', 'Oversea')],
+        [('government', '1. ภาครัฐ'),
+         ('private', '2. ภาคเอกชน'),
+         ('oversea', '3. ต่างประเทศ')],
         string='External Fund Type',
     )
     external_fund_name = fields.Char(
@@ -115,6 +115,18 @@ class ResProject(LogCommon, models.Model):
         'res.project.budget.plan',
         'project_id',
         string='Budget Lines',
+    )
+    budget_plan_expense_ids = fields.One2many(
+        'res.project.budget.plan',
+        'project_id',
+        domain=[('budget_method', '=', 'expense')],
+        string='Budget Expense Lines',
+    )
+    budget_plan_revenue_ids = fields.One2many(
+        'res.project.budget.plan',
+        'project_id',
+        domain=[('budget_method', '=', 'revenue')],
+        string='Budget Revenue Lines',
     )
     budget_release_ids = fields.One2many(
         'res.project.budget.release',
@@ -141,6 +153,20 @@ class ResProject(LogCommon, models.Model):
         'res.project.budget.summary',
         'project_id',
         string='Project Summary',
+        readonly=True,
+    )
+    summary_expense_ids = fields.One2many(
+        'res.project.budget.summary',
+        'project_id',
+        string='Project Summary',
+        domain=[('budget_method', '=', 'expense')],
+        readonly=True,
+    )
+    summary_revenue_ids = fields.One2many(
+        'res.project.budget.summary',
+        'project_id',
+        string='Project Summary',
+        domain=[('budget_method', '=', 'revenue')],
         readonly=True,
     )
     member_ids = fields.One2many(
@@ -182,21 +208,27 @@ class ResProject(LogCommon, models.Model):
         string='Commercial Prototype',
     )
     # Project Detail    # Project Detail
-    fy1 = fields.Float(
-        string='FY1',
-    )
-    fy2 = fields.Float(
-        string='FY2',
-    )
-    fy3 = fields.Float(
-        string='FY3',
-    )
-    fy4 = fields.Float(
-        string='FY4',
-    )
-    fy5 = fields.Float(
-        string='FY5',
-    )
+    # amount_before = fields.Float(
+    #     string='Amount before FY1',
+    # )
+    # amount_fy1 = fields.Float(
+    #     string='FY1',
+    # )
+    # amount_fy2 = fields.Float(
+    #     string='FY2',
+    # )
+    # amount_fy3 = fields.Float(
+    #     string='FY3',
+    # )
+    # amount_fy4 = fields.Float(
+    #     string='FY4',
+    # )
+    # amount_fy5 = fields.Float(
+    #     string='FY5',
+    # )
+    # amount_beyond = fields.Float(
+    #     string='Amount FY6 and Beyond',
+    # )
     revenue_budget = fields.Float(
         string='Revenue Budget',
     )
@@ -206,18 +238,22 @@ class ResProject(LogCommon, models.Model):
     overall_expense_budget = fields.Float(
         string='Overall Expense Budget',
     )
+    project_type_id = fields.Many2one(
+        'project.type',
+        string='Project Type',
+    )
     project_kind = fields.Selection(
         [('research', 'Research'),
-         ('non_research', 'Non-Research'),
-         ('management', 'Management'),
+         ('non_research', 'Non Research'),
+         ('management', 'Management Program/Cluster'),
          ('construction', 'Construction'), ],
+        related='project_type_id.project_kind',
         string='Project Kind',
+        store=True,
     )
-    project_objective = fields.Char(
+    objective_id = fields.Many2one(
+        'project.objective',
         string='Objective',
-    )
-    project_type = fields.Char(
-        string='Project Type',
     )
 
     @api.onchange('pm_employee_id')
@@ -280,9 +316,13 @@ class ResProject(LogCommon, models.Model):
                 if not sync.sync_budget_line_id or sync.synced:
                     continue
                 vals = {}
-                vals['fiscalyear_id'] = sync.fiscalyear_id.id
-                vals['activity_group_id'] = sync.activity_group_id.id
-                vals['released_amount'] = sync.released_amount
+                vals.update({
+                    'fiscalyear_id': sync.fiscalyear_id.id,
+                    'budget_method': sync.budget_method,
+                    'charge_type': sync.charge_type,
+                    'income_section_id': sync.income_section_id.id,
+                    'activity_group_id': sync.activity_group_id.id,
+                    'released_amount': sync.released_amount})
                 for i in range(1, 13):
                     vals['m' + str(i)] = sync['m' + str(i)]
                 sync.sync_budget_line_id.write(vals)
@@ -391,24 +431,33 @@ class ResProject(LogCommon, models.Model):
                     proj.fiscalyear_ids.ids, [proj.program_id.id])
                 budgets.sync_budget_my_project()
 
+    @api.model
+    def _prepare_fiscal_plan_lines(self, project, budget_method):
+        proj_fiscals = project.budget_plan_ids.\
+            filtered(lambda l: l.budget_method == budget_method).\
+            mapped('fiscalyear_id')
+        Fiscal = self.env['account.fiscalyear']
+        proj_date_end = datetime.strptime(project.date_end, '%Y-%m-%d')
+        proj_date_end = proj_date_end + relativedelta(years=1)
+        date_end = proj_date_end.strftime('%Y-%m-%d')
+        fiscals = Fiscal.search([('date_start', '<=', date_end),
+                                 ('date_stop', '>=', project.date_start)])
+        fiscals -= proj_fiscals
+        plan_lines = []
+        for fiscal in fiscals:
+            # Add both expense and revenue
+            plan_lines.append((0, 0, {'fiscalyear_id': fiscal.id,
+                                      'budget_method': budget_method}))
+        project.write({'budget_plan_ids': plan_lines})
+
     @api.multi
     def prepare_fiscal_plan_line(self, vals, force_run=False):
         if force_run or \
                 ('date_start' in vals and vals.get('date_start')) or \
                 ('date_end' in vals and vals.get('date_end')):
-            Fiscal = self.env['account.fiscalyear']
             for proj in self:
-                proj_fiscals = proj.budget_plan_ids.mapped('fiscalyear_id')
-                proj_date_end = datetime.strptime(proj.date_end, '%Y-%m-%d')
-                proj_date_end = proj_date_end + relativedelta(years=1)
-                date_end = proj_date_end.strftime('%Y-%m-%d')
-                fiscals = Fiscal.search([('date_start', '<=', date_end),
-                                         ('date_stop', '>=', proj.date_start)])
-                fiscals -= proj_fiscals
-                plan_lines = []
-                for fiscal in fiscals:
-                    plan_lines.append((0, 0, {'fiscalyear_id': fiscal.id}))
-                proj.write({'budget_plan_ids': plan_lines})
+                self._prepare_fiscal_plan_lines(proj, 'expense')
+                self._prepare_fiscal_plan_lines(proj, 'revenue')
 
 
 class ResProjectMember(models.Model):
@@ -468,6 +517,25 @@ class ResProjectBudgetPlan(models.Model):
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
+    )
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+        default='expense',
+        required=True,
+    )
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        required=True,
+        default='external',
+    )
+    income_section_id = fields.Many2one(
+        'res.section',
+        string='Income Section',
+        domain=[('internal_charge', '=', True)],
     )
     description = fields.Text(
         string='Description',
@@ -554,6 +622,14 @@ class ResProjectBudgetPlan(models.Model):
         help="Checked when it is synced. Unchecked when plan is updated"
         "then it will be synced again",
     )
+    expense_synced = fields.Boolean(
+        string='Synced',
+        related='synced',
+    )
+    revenue_synced = fields.Boolean(
+        string='Synced',
+        related='synced',
+    )
 
     @api.multi
     @api.depends('m1', 'm2', 'm3', 'm4', 'm5', 'm6',
@@ -571,7 +647,8 @@ class ResProjectBudgetPlan(models.Model):
         changes = vals.keys()
         test_keys = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6',
                      'm7', 'm8', 'm9', 'm10', 'm11', 'm12',
-                     'fiscalyear_id', 'activity_group_id', 'released_amount']
+                     'fiscalyear_id', 'activity_group_id', 'released_amount',
+                     'charge_type', 'budget_method', 'income_section_id']
         # If budget line table is changed at least 1 field, mark synced = False
         if len(set(changes).intersection(test_keys)) > 0:
             vals.update({'synced': False})  # Line updated
@@ -600,6 +677,12 @@ class ResProjectBudgetSummary(models.Model):
         string='fiscalyear',
         readonly=True,
     )
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+        readonly=True,
+    )
     planned_amount = fields.Float(
         string='Planned Amount',
         readonly=True,
@@ -612,11 +695,11 @@ class ResProjectBudgetSummary(models.Model):
     def init(self, cr):
 
         _sql = """
-            select min(id) as id, project_id, fiscalyear_id,
+            select min(id) as id, project_id, fiscalyear_id, budget_method,
                 sum(m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11+m12) as planned_amount,
                 sum(released_amount) as released_amount
             from res_project_budget_plan
-            group by project_id, fiscalyear_id
+            group by project_id, fiscalyear_id, budget_method
         """
 
         tools.drop_view_if_exists(cr, self._table)

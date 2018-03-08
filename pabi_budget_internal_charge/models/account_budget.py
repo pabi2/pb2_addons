@@ -168,3 +168,8 @@ class AccountBudgetLine(models.Model):
         help="Specify whether the budget plan line is for Internal Charge or "
         "External Charge. Internal charged is for Unit Based only."
     )
+    income_section_id = fields.Many2one(
+        'res.section',
+        string='Income Section',
+        domain=[('internal_charge', '=', True)],
+    )

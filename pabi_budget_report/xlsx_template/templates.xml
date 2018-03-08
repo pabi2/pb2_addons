@@ -128,7 +128,7 @@
                             'E11': 'program_id.display_name${value or ""}',
                             'F11': 'project_group_id.display_name${value or ""}',
                             'G11': 'nstda_strategy_id.display_name${value or ""}',
-                            'H11': 'project_objective${value or ""}',
+                            'H11': 'objective_id.name${value or ""}',
                             'I11': 'section_program_id.display_name${value or ""}',
                             'J11': 'mission_id.display_name${value or ""}',
                             'K11': 'project_kind${value and value.title() or ""}',

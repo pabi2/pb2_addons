@@ -166,9 +166,11 @@
                         <filter name="nstda_strategy_id" string="NSTDA Strategy" domain="[]" context="{'group_by':'nstda_strategy_id'}"/>
                         <filter name="section_program_id" string="Section Program" domain="[]" context="{'group_by':'section_program_id'}"/>
                         <filter name="mission_id" string="Mission" domain="[]" context="{'group_by':'mission_id'}"/>
+                        <filter name="objective_id" string="Objective" domain="[]" context="{'group_by':'objective_id'}"/>
+                        <filter name="project_type_id" string="Type" domain="[]" context="{'group_by':'project_type_id'}"/>
                         <filter name="project_kind" string="Project Kind" domain="[]" context="{'group_by':'project_kind'}"/>
-                        <filter name="project_objective" string="Objective" domain="[]" context="{'group_by':'project_objective'}"/>
-                        <filter name="project_type" string="Type" domain="[]" context="{'group_by':'project_type'}"/>
+                        <filter name="operation_id" string="Operation" domain="[]" context="{'group_by':'operation_id'}"/>
+                        <filter name="fund_type_id" string="Fund Type" domain="[]" context="{'group_by':'fund_type_id'}"/>
                         <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
                         <filter name="costcenter_id" string="Costcenter" domain="[]" context="{'group_by':'costcenter_id'}"/>
                         <filter name="owner_division_id" string="Division" domain="[]" context="{'group_by':'owner_division_id'}"/>
@@ -199,11 +201,13 @@
                     <field name="program_id"/>
                     <field name="project_group_id"/>
                     <field name="nstda_strategy_id"/>
-                    <field name="project_objective"/>
+                    <field name="objective_id"/>
                     <field name="section_program_id"/>
                     <field name="mission_id"/>
+                    <field name="project_type_id"/>
                     <field name="project_kind"/>
-                    <field name="project_type"/>
+                    <field name="operation_id"/>
+                    <field name="fund_type_id"/>
                     <field name="org_id"/>
                     <field name="costcenter_id"/>
                     <field name="owner_division_id"/>
@@ -218,11 +222,13 @@
                     <field name="external_fund_type"/>
                     <field name="external_fund_name"/>
                     <field name="priority"/>
-                    <field name="fy1"/>
-                    <field name="fy2"/>
-                    <field name="fy3"/>
-                    <field name="fy4"/>
-                    <field name="fy5"/>
+                    <field name="amount_before"/>
+                    <field name="amount_fy1"/>
+                    <field name="amount_fy2"/>
+                    <field name="amount_fy3"/>
+                    <field name="amount_fy4"/>
+                    <field name="amount_fy5"/>
+                    <field name="amount_beyond"/>
                     <field name="revenue_budget"/>
                     <field name="overall_revenue_plan"/>
 
@@ -291,10 +297,12 @@
                             <field name="program_id"/>
                             <field name="project_group_id"/>
                             <field name="nstda_strategy_id"/>
-                            <field name="project_objective"/>
+                            <field name="objective_id"/>
                             <field name="mission_id"/>
+                            <field name="project_type_id"/>
                             <field name="project_kind"/>
-                            <field name="project_type"/>
+                            <field name="operation_id"/>
+                            <field name="fund_type_id"/>
                             <field name="org_id"/>
                             <field name="costcenter_id"/>
                             <field name="owner_division_id"/>
@@ -310,11 +318,12 @@
                             <field name="external_fund_type"/>
                             <field name="external_fund_name"/>
                             <field name="priority"/>
-                            <field name="fy1"/>
-                            <field name="fy2"/>
-                            <field name="fy3"/>
-                            <field name="fy4"/>
-                            <field name="fy5"/>
+                            <field name="amount_fy1"/>
+                            <field name="amount_fy2"/>
+                            <field name="amount_fy3"/>
+                            <field name="amount_fy4"/>
+                            <field name="amount_fy5"/>
+                            <field name="amount_beyond"/>
                             <field name="revenue_budget"/>
                             <field name="overall_revenue_plan"/>
                         </group>

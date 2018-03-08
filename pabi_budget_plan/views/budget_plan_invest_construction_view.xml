@@ -173,6 +173,7 @@
                       <field name="amount_fy3"/>
                       <field name="amount_fy4"/>
                       <field name="amount_fy5"/>
+                      <field name="amount_beyond"/>
 
                       <field name="overall_released"/>
                       <field name="overall_all_commit"/>
@@ -226,6 +227,7 @@
                             <field name="amount_fy3"/>
                             <field name="amount_fy4"/>
                             <field name="amount_fy5"/>
+                            <field name="amount_beyond"/>
                             <field name="overall_released"/>
                             <field name="overall_all_commit"/>
                             <field name="overall_pr_commit"/>
