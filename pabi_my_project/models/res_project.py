@@ -72,6 +72,7 @@ class ResProject(LogCommon, models.Model):
         'res.section',
         string='Project Manager Section',
         related='pm_employee_id.section_id',
+        readonly=True,
     )
     external_pm = fields.Char(
         string='External PM',
@@ -80,6 +81,7 @@ class ResProject(LogCommon, models.Model):
         'res.division',
         string='Project Division',
         related='pm_employee_id.section_id.division_id',
+        readonly=True,
     )
     analyst_employee_id = fields.Many2one(
         'hr.employee',
@@ -90,6 +92,7 @@ class ResProject(LogCommon, models.Model):
         'res.section',
         string='Project Analyst Section',
         related='analyst_employee_id.section_id',
+        readonly=True,
     )
     ref_program_id = fields.Many2one(
         'res.program',
@@ -250,6 +253,7 @@ class ResProject(LogCommon, models.Model):
         related='project_type_id.project_kind',
         string='Project Kind',
         store=True,
+        readonly=True,
     )
     subprogram_id = fields.Many2one(
         'project.subprogram',
