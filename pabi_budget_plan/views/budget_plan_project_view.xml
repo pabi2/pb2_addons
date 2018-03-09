@@ -191,6 +191,7 @@
 
                     <field name="project_group_id"/>
                     <field name="nstda_strategy_id"/>
+                    <field name="program_id" invisible="1"/>
                     <field name="subprogram_id"/>
                     <field name="section_program_id"/>
                     <field name="mission_id"/>
@@ -296,6 +297,7 @@
                             <field name="c_or_n"/>
                             <field name="project_group_id"/>
                             <field name="nstda_strategy_id"/>
+                            <field name="program_id" invisible="1"/>
                             <field name="subprogram_id"/>
                             <field name="mission_id"/>
                             <field name="project_type_id"/>
