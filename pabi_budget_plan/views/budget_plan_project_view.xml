@@ -159,9 +159,6 @@
                     <group expand="0" string="Group By">
                         <filter name="c_or_n" string="C/N" domain="[]" context="{'group_by':'c_or_n'}"/>
                         <filter name="project_id" string="Project" domain="[]" context="{'group_by':'project_id'}"/>
-                        <filter name="functional_area_id" string="Functional Area" domain="[]" context="{'group_by':'functional_area_id'}"/>
-                        <filter name="program_group_id" string="Program Group" domain="[]" context="{'group_by':'program_group_id'}"/>
-                        <filter name="program_id" string="Program" domain="[]" context="{'group_by':'program_id'}"/>
                         <filter name="project_group_id" string="Project Group" domain="[]" context="{'group_by':'project_group_id'}"/>
                         <filter name="nstda_strategy_id" string="NSTDA Strategy" domain="[]" context="{'group_by':'nstda_strategy_id'}"/>
                         <filter name="section_program_id" string="Section Program" domain="[]" context="{'group_by':'section_program_id'}"/>
@@ -171,13 +168,9 @@
                         <filter name="project_kind" string="Project Kind" domain="[]" context="{'group_by':'project_kind'}"/>
                         <filter name="operation_id" string="Operation" domain="[]" context="{'group_by':'operation_id'}"/>
                         <filter name="fund_type_id" string="Fund Type" domain="[]" context="{'group_by':'fund_type_id'}"/>
-                        <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
                         <filter name="costcenter_id" string="Costcenter" domain="[]" context="{'group_by':'costcenter_id'}"/>
-                        <filter name="owner_division_id" string="Division" domain="[]" context="{'group_by':'owner_division_id'}"/>
-                        <filter name="pm_employee_id" string="Manager" domain="[]" context="{'group_by':'pm_employee_id'}"/>
                         <filter name="project_duration" string="Duration" domain="[]" context="{'group_by':'project_duration'}"/>
                         <filter name="project_status" string="Status" domain="[]" context="{'group_by':'project_status'}"/>
-                        <filter name="analyst_employee_id" string="Analyst" domain="[]" context="{'group_by':'analyst_employee_id'}"/>
                         <filter name="ref_program_id" string="Ref Program" domain="[]" context="{'group_by':'ref_program_id'}"/>
                         <filter name="external_fund_type" string="Ext. Fund Type" domain="[]" context="{'group_by':'external_fund_type'}"/>
                         <filter name="external_fund_name" string="Ext. Fund Name" domain="[]" context="{'group_by':'external_fund_name'}"/>
@@ -197,8 +190,6 @@
                     <field name="name"/>
                     <field name="c_or_n"/>
 
-                    <field name="functional_area_id"/>
-                    <field name="program_id"/>
                     <field name="project_group_id"/>
                     <field name="nstda_strategy_id"/>
                     <field name="subprogram_id"/>
@@ -208,20 +199,22 @@
                     <field name="project_kind"/>
                     <field name="operation_id"/>
                     <field name="fund_type_id"/>
-                    <field name="org_id"/>
-                    <field name="costcenter_id"/>
-                    <field name="owner_division_id"/>
+                    <field name="org"/>
+                    <field name="division"/>
+                    <field name="section"/>
 
-                    <field name="pm_employee_id"/>
+                    <field name="pm_employee"/>
                     <field name="date_start"/>
                     <field name="date_end"/>
                     <field name="project_duration"/>
                     <field name="project_status"/>
-                    <field name="analyst_employee_id"/>
+                    <field name="analyst_employee"/>
                     <field name="ref_program_id"/>
+                    <field name="proposal_program_id"/>
                     <field name="external_fund_type"/>
                     <field name="external_fund_name"/>
                     <field name="priority"/>
+
                     <field name="amount_before"/>
                     <field name="amount_fy1"/>
                     <field name="amount_fy2"/>
@@ -229,6 +222,15 @@
                     <field name="amount_fy4"/>
                     <field name="amount_fy5"/>
                     <field name="amount_beyond"/>
+
+                    <field name="amount_before_internal"/>
+                    <field name="amount_fy1_internal"/>
+                    <field name="amount_fy2_internal"/>
+                    <field name="amount_fy3_internal"/>
+                    <field name="amount_fy4_internal"/>
+                    <field name="amount_fy5_internal"/>
+                    <field name="amount_beyond_internal"/>
+
                     <field name="revenue_budget"/>
                     <field name="overall_revenue_plan"/>
 
@@ -293,8 +295,6 @@
                             <field name="project_id"/>
                             <field name="name"/>
                             <field name="c_or_n"/>
-                            <field name="functional_area_id"/>
-                            <field name="program_id"/>
                             <field name="project_group_id"/>
                             <field name="nstda_strategy_id"/>
                             <field name="subprogram_id"/>
@@ -303,27 +303,39 @@
                             <field name="project_kind"/>
                             <field name="operation_id"/>
                             <field name="fund_type_id"/>
-                            <field name="org_id"/>
-                            <field name="costcenter_id"/>
-                            <field name="owner_division_id"/>
+                            <field name="org"/>
+                            <field name="division"/>
+                            <field name="section"/>
                         </group>
                         <group>
-                            <field name="pm_employee_id"/>
+                            <field name="pm_employee"/>
                             <field name="date_start"/>
                             <field name="date_end"/>
                             <field name="project_duration"/>
                             <field name="project_status"/>
-                            <field name="analyst_employee_id"/>
+                            <field name="analyst_employee"/>
                             <field name="ref_program_id"/>
+                            <field name="proposal_program_id"/>
                             <field name="external_fund_type"/>
                             <field name="external_fund_name"/>
                             <field name="priority"/>
+
+                            <field name="amount_before"/>
                             <field name="amount_fy1"/>
                             <field name="amount_fy2"/>
                             <field name="amount_fy3"/>
                             <field name="amount_fy4"/>
                             <field name="amount_fy5"/>
                             <field name="amount_beyond"/>
+
+                            <field name="amount_before_internal"/>
+                            <field name="amount_fy1_internal"/>
+                            <field name="amount_fy2_internal"/>
+                            <field name="amount_fy3_internal"/>
+                            <field name="amount_fy4_internal"/>
+                            <field name="amount_fy5_internal"/>
+                            <field name="amount_beyond_internal"/>
+
                             <field name="revenue_budget"/>
                             <field name="overall_revenue_plan"/>
                         </group>

@@ -141,7 +141,7 @@ class PABIUtilsWS(models.AbstractModel):
                                                          line_dict)
                 final_line_dict.append((0, 0, line_dict))
             rec_dict[line_field] = final_line_dict
-        rec = rec.create(rec_dict)
+        rec.create(rec_dict)
         res = {
             'is_success': True,
             'result': {

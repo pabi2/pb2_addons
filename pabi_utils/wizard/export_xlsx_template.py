@@ -161,7 +161,7 @@ class ExportXlsxTemplate(models.TransientModel):
         'ir.attachment',
         string='Template',
         required=True,
-        ondelete='set null',
+        ondelete='cascade',
         domain="[('res_model', '=', res_model)]",
     )
     res_id = fields.Integer(
