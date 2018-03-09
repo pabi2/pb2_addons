@@ -220,12 +220,12 @@ class ResInvestConstruction(LogCommon, models.Model):
             if rec.date_end and rec.date_start and \
                     rec.date_end < rec.date_start:
                 raise ValidationError(
-                    _('End Date must start after than Start Date!'))
+                    _('End Date must start after Start Date!'))
             # Expansion Date must >= End date
             if rec.date_expansion and rec.date_end and \
                     rec.date_expansion < rec.date_end:
                 raise ValidationError(
-                    _('Expansion Date must start after than End Date!'))
+                    _('Expansion Date must start after End Date!'))
 
     @api.multi
     @api.depends('budget_plan_ids.amount_plan')
@@ -507,19 +507,19 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
             if rec.date_end and rec.date_start and \
                     rec.date_end < rec.date_start:
                 raise ValidationError(
-                    _('End Date must start after than Start Date!'))
+                    _('End Date must start after Start Date!'))
             # Expansion Date must >= End date
             if rec.date_expansion and rec.date_end and \
                     rec.date_expansion < rec.date_end:
                 raise ValidationError(
-                    _('Expansion Date must start after than End Date!'))
+                    _('Expansion Date must start after End Date!'))
             # -- Check with Project -- #
             c = rec.invest_construction_id
             # Date Start must >= Project's Date start
             if rec.date_start and c.date_start and \
                     rec.date_start < c.date_start:
                 raise ValidationError(
-                    _('Start Date must start after than Project Start Date!'))
+                    _('Start Date must start after Project Start Date!'))
             # Date End must <= Project's Date End/Expansion
             if rec.date_end and (c.date_expansion or c.date_end) and \
                     rec.date_end > (c.date_expansion or c.date_end):

@@ -63,25 +63,45 @@ class BudgetPlanProject(BPCommon, models.Model):
         store=True,
     )
     # Master Datas
-    master_pg_ids = fields.Many2many(
+    master_project_group_ids = fields.Many2many(
         'res.project.group',
         string='Project Group',
-        compute='_compute_master_pg_ids'
+        compute='_compute_master_project_group_ids'
     )
     master_strategy_ids = fields.Many2many(
         'project.nstda.strategy',
         sring='Strategy Master Data',
         compute='_compute_master_strategy_ids',
     )
+    master_subprogram_ids = fields.Many2many(
+        'project.subprogram',
+        string='Subprogram',
+        compute='_compute_master_subprogram_ids',
+    )
     master_mission_ids = fields.Many2many(
         'res.mission',
         sring='Mission Master Data',
         compute='_compute_master_mission_ids',
     )
-    master_pt_ids = fields.Many2many(
+    master_project_type_ids = fields.Many2many(
         'project.type',
         string='Project Type',
-        compute='_compute_master_pt_ids'
+        compute='_compute_master_project_type_ids'
+    )
+    master_operation_ids = fields.Many2many(
+        'project.operation',
+        string='Project Operation',
+        compute='_compute_master_operation_ids'
+    )
+    master_program_ids = fields.Many2many(
+        'res.program',
+        string='Program',
+        compute='_compute_master_program_ids'
+    )
+    master_fund_type_ids = fields.Many2many(
+        'project.fund.type',
+        string='Fund Type',
+        compute='_compute_master_fund_type_ids'
     )
 
     _sql_constraints = [
@@ -90,10 +110,10 @@ class BudgetPlanProject(BPCommon, models.Model):
     ]
 
     @api.multi
-    def _compute_master_pg_ids(self):
+    def _compute_master_project_group_ids(self):
         PG = self.env['res.project.group']
         for rec in self:
-            rec.master_pg_ids = PG.search([]).ids
+            rec.master_project_group_ids = PG.search([]).ids
 
     @api.multi
     def _compute_master_strategy_ids(self):
@@ -102,16 +122,41 @@ class BudgetPlanProject(BPCommon, models.Model):
             rec.master_strategy_ids = Strategy.search([]).ids
 
     @api.multi
+    def _compute_master_subprogram_ids(self):
+        Subprogram = self.env['project.subprogram']
+        for rec in self:
+            rec.master_subprogram_ids = Subprogram.search(
+                [('program_id', '=', rec.program_id.id)]).ids
+
+    @api.multi
     def _compute_master_mission_ids(self):
         M = self.env['res.mission']
         for rec in self:
             rec.master_mission_ids = M.search([]).ids
 
     @api.multi
-    def _compute_master_pt_ids(self):
+    def _compute_master_project_type_ids(self):
         PT = self.env['project.type']
         for rec in self:
             rec.master_project_type_ids = PT.search([]).ids
+
+    @api.multi
+    def _compute_master_operation_ids(self):
+        Operation = self.env['project.operation']
+        for rec in self:
+            rec.master_operation_ids = Operation.search([]).ids
+
+    @api.multi
+    def _compute_master_program_ids(self):
+        Program = self.env['res.program']
+        for rec in self:
+            rec.master_program_ids = Program.search([]).ids
+
+    @api.multi
+    def _compute_master_fund_type_ids(self):
+        FundType = self.env['project.fund.type']
+        for rec in self:
+            rec.master_fund_type_ids = FundType.search([]).ids
 
     @api.model
     def create(self, vals):
@@ -155,6 +200,24 @@ class BudgetPlanProject(BPCommon, models.Model):
                                                       head_src_model,
                                                       line_src_model)
         return budget
+
+    @api.multi
+    def _validate_header(self, vals):
+        """ Make sure that, some header fields must not change """
+        nochange_fields = {'fiscalyear_id': _('Fiscal Year'),
+                           'program_id': _('Program'), }
+        for field in nochange_fields.keys():
+            if field in vals:
+                for rec in self:
+                    if rec[field].id != vals[field]:
+                        raise ValidationError(
+                            _('You can not change header field %s.' %
+                              nochange_fields[field]))
+
+    @api.multi
+    def write(self, vals):
+        self._validate_header(vals)
+        return super(BudgetPlanProject, self).write(vals)
 
 
 class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
@@ -259,6 +322,29 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     amount_beyond = fields.Float(
         string='Amount FY6 and Beyond',
     )
+    # For internal charge
+    amount_before_internal = fields.Float(
+        string='Amount before FY1 (I)',
+    )
+    amount_fy1_internal = fields.Float(
+        string='FY1 (I)',
+    )
+    amount_fy2_internal = fields.Float(
+        string='FY2 (I)',
+    )
+    amount_fy3_internal = fields.Float(
+        string='FY3 (I)',
+    )
+    amount_fy4_internal = fields.Float(
+        string='FY4 (I)',
+    )
+    amount_fy5_internal = fields.Float(
+        string='FY5 (I)',
+    )
+    amount_beyond_internal = fields.Float(
+        string='Amount FY6 and Beyond (I)',
+    )
+    # --
     revenue_budget = fields.Float(
         string='Revenue Budget',
     )
@@ -290,14 +376,17 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
         'project.type',
         string='Project Type',
     )
-    pm_employee_id = fields.Many2one(
-        'hr.employee',
+    pm_employee = fields.Char(
         string='Project Manager',
     )
-    owner_division_id = fields.Many2one(
-        'res.division',
-        string='Owner Division',
-        related='pm_employee_id.section_id.division_id',
+    section = fields.Char(
+        string='Section',
+    )
+    division = fields.Char(
+        string='Division',
+    )
+    org = fields.Char(
+        string='Org',
     )
     date_start = fields.Date(
         string='Start Date',
@@ -311,13 +400,16 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     project_status = fields.Char(
         string='Project Status',
     )
-    analyst_employee_id = fields.Many2one(
-        'hr.employee',
+    analyst_employee = fields.Char(
         string='Project Analyst',
     )
     ref_program_id = fields.Many2one(
         'res.program',
         string='Program Reference',
+    )
+    proposal_program_id = fields.Many2one(
+        'res.program',
+        string='Proposal Program',
     )
     external_fund_type = fields.Selection(
         [('government', '1. ภาครัฐ'),
@@ -462,7 +554,13 @@ class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
             val = {'c_or_n': 'continue',
                    'project_id': rec.project_id.id,
                    'name': rec.project_id.name,
-                   'fund_id': rec.fund_id.id, }
+                   'fund_id': rec.fund_id.id,
+                   # some misc fields
+                   'pm_employee': rec.project_id.pm_employee_id.name,
+                   'analyst_employee': rec.project_id.analyst_employee_id.name,
+                   'section': rec.project_id.pm_section_id.name,
+                   'division': rec.project_id.owner_division_id.name,
+                   'org': rec.project_id.org_id.name, }
             # 2) Project Info
             for field in common_fields:
                 if field in rec.project_id and \
@@ -470,7 +568,8 @@ class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
                                       'write_uid', 'write_date',
                                       'create_uid', 'create_date',
                                       'state',
-                                      # Related fields
+                                      # Related fields should not get updated,
+                                      # it unnecessary slow
                                       'program_id', 'section_program_id',
                                       'owner_division_id',
                                       ]:
