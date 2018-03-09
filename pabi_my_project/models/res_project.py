@@ -211,27 +211,64 @@ class ResProject(LogCommon, models.Model):
         string='Commercial Prototype',
     )
     # Project Detail    # Project Detail
-    # amount_before = fields.Float(
-    #     string='Amount before FY1',
-    # )
-    # amount_fy1 = fields.Float(
-    #     string='FY1',
-    # )
-    # amount_fy2 = fields.Float(
-    #     string='FY2',
-    # )
-    # amount_fy3 = fields.Float(
-    #     string='FY3',
-    # )
-    # amount_fy4 = fields.Float(
-    #     string='FY4',
-    # )
-    # amount_fy5 = fields.Float(
-    #     string='FY5',
-    # )
-    # amount_beyond = fields.Float(
-    #     string='Amount FY6 and Beyond',
-    # )
+    amount_before = fields.Float(
+        string='Before FY1',
+        compute='_compute_amount_fy',
+    )
+    amount_fy1 = fields.Float(
+        string='FY1',
+        compute='_compute_amount_fy',
+        help="FY1 means next fiscalyear, based on current date",
+    )
+    amount_fy2 = fields.Float(
+        string='FY2',
+        compute='_compute_amount_fy',
+    )
+    amount_fy3 = fields.Float(
+        string='FY3',
+        compute='_compute_amount_fy',
+    )
+    amount_fy4 = fields.Float(
+        string='FY4',
+        compute='_compute_amount_fy',
+    )
+    amount_fy5 = fields.Float(
+        string='FY5',
+        compute='_compute_amount_fy',
+    )
+    amount_beyond = fields.Float(
+        string='FY6 and Beyond',
+        compute='_compute_amount_fy',
+    )
+    amount_before_internal = fields.Float(
+        string='Before FY1 (I)',
+        compute='_compute_amount_fy',
+    )
+    amount_fy1_internal = fields.Float(
+        string='FY1 (I)',
+        compute='_compute_amount_fy',
+        help="FY1 means next fiscalyear, based on current date",
+    )
+    amount_fy2_internal = fields.Float(
+        string='FY2 (I)',
+        compute='_compute_amount_fy',
+    )
+    amount_fy3_internal = fields.Float(
+        string='FY3 (I)',
+        compute='_compute_amount_fy',
+    )
+    amount_fy4_internal = fields.Float(
+        string='FY4 (I)',
+        compute='_compute_amount_fy',
+    )
+    amount_fy5_internal = fields.Float(
+        string='FY5 (I)',
+        compute='_compute_amount_fy',
+    )
+    amount_beyond_internal = fields.Float(
+        string='FY6 and Beyond (I)',
+        compute='_compute_amount_fy',
+    )
     revenue_budget = fields.Float(
         string='Revenue Budget',
     )
@@ -462,6 +499,56 @@ class ResProject(LogCommon, models.Model):
             for proj in self:
                 self._prepare_fiscal_plan_lines(proj, 'expense')
                 self._prepare_fiscal_plan_lines(proj, 'revenue')
+
+    @api.multi
+    def _compute_amount_fy(self):
+
+        Fiscal = self.env['account.fiscalyear']
+        current_fy = Fiscal.browse(Fiscal.find())
+
+        for rec in self:
+            for charge_type in ['external', 'internal']:
+                if rec.code != 'P1450891':
+                    continue
+                plans = rec.budget_plan_expense_ids.\
+                    filtered(lambda l: l.charge_type == charge_type)
+
+                # Find current and previous years plan line
+                prev_plans = plans.filtered(
+                    lambda l: l.fiscalyear_id.date_start <=
+                    current_fy.date_start)
+
+                if charge_type == 'external':
+                    rec.amount_before = \
+                        sum(prev_plans.mapped('planned_amount'))
+                else:  # internal
+                    rec.amount_before_internal = \
+                        sum(prev_plans.mapped('planned_amount'))
+
+                future_plans = plans - prev_plans  # Only future
+                future_plans = future_plans.sorted(
+                    key=lambda l: l.fiscalyear_id.date_start)
+                amount_beyond = 0.0
+                amount_beyond_internal = 0.0
+                years = len(future_plans)
+
+                if charge_type == 'external':
+                    for i in range(0, years):
+                        if i < 5:  # only fy1 - fy5
+                            rec['amount_fy%s' % (i + 1)] = \
+                                future_plans[i].planned_amount
+                        else:
+                            amount_beyond += future_plans[i].planned_amount
+                    rec.amount_beyond = amount_beyond
+                else:  # internal
+                    for i in range(0, years):
+                        if i < 5:  # only fy1 - fy5
+                            rec['amount_fy%s_internal' % (i + 1)] = \
+                                future_plans[i].planned_amount
+                        else:
+                            amount_beyond_internal += \
+                                future_plans[i].planned_amount
+                    rec.amount_beyond_internal = amount_beyond_internal
 
 
 class ResProjectMember(models.Model):
