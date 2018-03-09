@@ -146,6 +146,14 @@ class InvestAssetPlan(models.Model):
     ]
 
     @api.multi
+    def write(self, vals):
+        if 'state' in vals:
+            for rec in self:
+                if not rec.creating_user_id:
+                    vals['creating_user_id'] = self.env.user.id
+        return super(InvestAssetPlan, self).write(vals)
+
+    @api.multi
     def _compute_master_asset_categ_ids(self):
         Category = self.env['res.invest.asset.category']
         for rec in self:

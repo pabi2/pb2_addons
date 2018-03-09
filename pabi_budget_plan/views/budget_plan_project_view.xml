@@ -52,7 +52,7 @@
 
                                         <field name="c_or_n"/>
 
-                                        <field name="project_id"/>
+                                        <field name="code"/>
                                         <field name="name"/>
 
                                         <button name="edit_project" string="Info." icon="gtk-justify-fill" type="object" class="oe_link"/>
@@ -158,7 +158,6 @@
                 <search string="Search Budget Plan Line">
                     <group expand="0" string="Group By">
                         <filter name="c_or_n" string="C/N" domain="[]" context="{'group_by':'c_or_n'}"/>
-                        <filter name="project_id" string="Project" domain="[]" context="{'group_by':'project_id'}"/>
                         <filter name="project_group_id" string="Project Group" domain="[]" context="{'group_by':'project_group_id'}"/>
                         <filter name="nstda_strategy_id" string="NSTDA Strategy" domain="[]" context="{'group_by':'nstda_strategy_id'}"/>
                         <filter name="section_program_id" string="Section Program" domain="[]" context="{'group_by':'section_program_id'}"/>
@@ -186,7 +185,7 @@
             <field name="arch" type="xml">
                 <tree string="Budget Plan Lines">
 
-                    <field name="project_id"/>
+                    <field name="code"/>
                     <field name="name"/>
                     <field name="c_or_n"/>
 
@@ -292,7 +291,7 @@
                 <form string="Project Plan">
                     <group string="Project Information">
                         <group>
-                            <field name="project_id"/>
+                            <field name="code"/>
                             <field name="name"/>
                             <field name="c_or_n"/>
                             <field name="project_group_id"/>

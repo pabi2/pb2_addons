@@ -483,8 +483,8 @@
                       },
                       'plan_line_ids[500]': {
                           'C12': 'c_or_n${value == "continue" and "ต่อเนื่อง" or "ใหม่"}',
-                          'D12': 'project_id.code${value or ""}',
-                          'E12': 'project_id.name${value or ""}',
+                          'D12': 'code${value or ""}',
+                          'E12': 'name${value or ""}',
                           'F12': 'project_group_id.display_name_2${value or ""}',
                           'G12': 'nstda_strategy_id.name${value or ""}',
                           # 'H12': '',
@@ -500,7 +500,7 @@
                           'R12': 'org${value or ""}',
                           'S12': 'date_start',
                           'T12': 'date_end',
-                          'U12': 'project_duration',
+                          # 'U12': 'project_duration',
                           'V12': 'project_status',
                           'W12': 'analyst_employee${value or ""}',
                           'X12': 'proposal_program_id.display_name_2${value or ""}',
@@ -594,7 +594,7 @@
                       },
                       'plan_line_ids[500]': {
                           'C12': 'c_or_n',
-                          'D12': 'project_id',
+                          # 'D12': 'code',
                           'E12': 'name',
                           'F12': 'project_group_id${value and value[value.find("[")+1:value.find("]")]}',
                           'G12': 'nstda_strategy_id',

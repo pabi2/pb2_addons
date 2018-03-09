@@ -109,6 +109,14 @@ class BPCommon(Common):
         track_visibility='onchange',
     )
 
+    @api.multi
+    def write(self, vals):
+        if 'state' in vals:
+            for rec in self:
+                if not rec.user_id:
+                    vals['user_id'] = self.env.user.id
+        return super(BPCommon, self).write(vals)
+
     @api.model
     def _get_doc_number(self, fiscalyear_id, model, res_id=False, code=False):
         _prefix = 'PLAN'
