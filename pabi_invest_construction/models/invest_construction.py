@@ -103,6 +103,7 @@ class ResInvestConstruction(LogCommon, models.Model):
     amount_fy1 = fields.Float(
         string='FY1',
         compute='_compute_amount_fy',
+        help="FY1 means next fiscalyear, based on current date",
     )
     amount_fy2 = fields.Float(
         string='FY2',

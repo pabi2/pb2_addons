@@ -263,8 +263,8 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     )
     # Project Based Specific
     c_or_n = fields.Selection(
-        [('continue', 'Continue'),
-         ('new', 'New')],
+        [('continue', u'ต่อเนื่อง'),
+         ('new', u'ใหม่')],
         string='C/N',
         default='new',
     )
