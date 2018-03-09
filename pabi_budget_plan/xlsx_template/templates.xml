@@ -594,7 +594,7 @@
                       },
                       'plan_line_ids[500]': {
                           'C12': 'c_or_n',
-                          # 'D12': 'code',
+                          'D12': 'code',
                           'E12': 'name',
                           'F12': 'project_group_id${value and value[value.find("[")+1:value.find("]")] or ""}',
                           'G12': 'nstda_strategy_id',
