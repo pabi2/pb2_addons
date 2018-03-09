@@ -236,6 +236,9 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
         required=True,
     )
     # Extra
+    code = fields.Char(
+        string='Project Code',
+    )
     name = fields.Char(
         string='Project Name',
     )
@@ -371,6 +374,7 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     subprogram_id = fields.Many2one(
         'project.subprogram',
         string='Subprogram',
+        domain="[('program_id', '=', program_id)]",
     )
     project_type_id = fields.Many2one(
         'project.type',
@@ -552,7 +556,7 @@ class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
 
             # 1) Begins
             val = {'c_or_n': 'continue',
-                   'project_id': rec.project_id.id,
+                   'code': rec.project_id.code,
                    'name': rec.project_id.name,
                    'fund_id': rec.fund_id.id,
                    # some misc fields
