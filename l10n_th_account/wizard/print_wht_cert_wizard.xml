@@ -7,10 +7,11 @@
             <field name="arch" type="xml">
                 <form string="Withholding Tax Certificate" create="0" edit="1" delete="0">
                     <h1 attrs="{'invisible': [('wht_sequence_display', '=', False)], 'readonly': [('wht_sequence_display', '!=', False)]}">
-                        <field name="voucher_id"/>
+                        <field name="display_name"/>
                     </h1>
                     <group>
                         <group>
+                            <field name="voucher_id" invisible="1"/>
                             <field name="id" invisible="1"/>
                             <field name="company_partner_id"/>
                             <field name="company_taxid" string="Tax ID"/>
@@ -37,8 +38,8 @@
                             <field name="invoice_id"/>
                             <field name="wht_cert_income_type"/>
                             <field name="wht_cert_income_desc"/>
-                            <field name="base" sum="Total Base"/>
-                            <field name="amount" sum="Total Tax"/>
+                            <field name="base" sum="Total Base" readonly="1"/>
+                            <field name="amount" sum="Total Tax" readonly="1"/>
                         </tree>
                     </field>
                     <footer attrs="{'invisible': [('id', '!=', False)]}">

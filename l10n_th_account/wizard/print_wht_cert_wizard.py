@@ -23,7 +23,7 @@ class PrintWhtCertWizard(models.Model):
     supplier_partner_id = fields.Many2one(
         'res.partner',
         string='Supplier',
-        readonly=True,
+        required=True,
     )
     company_taxid = fields.Char(
         related='company_partner_id.vat',
@@ -163,16 +163,17 @@ class PrintWhtCertWizard(models.Model):
         res = super(PrintWhtCertWizard, self).default_get(fields)
         active_model = self._context.get('active_model')
         active_id = self._context.get('active_id')
-        voucher = self.env[active_model].browse(active_id)
-        company_partner = self.env.user.company_id.partner_id
-        supplier = voucher.partner_id
-        res['voucher_id'] = voucher.id
-        res['company_partner_id'] = company_partner.id
-        res['supplier_partner_id'] = supplier.id
-        res['income_tax_form'] = (voucher.income_tax_form or
-                                  supplier.income_tax_form)
-        res['tax_payer'] = (voucher.tax_payer or False)
-        res['wht_line'] = self._prepare_wht_line(voucher)
+        if active_model == 'account.voucher':
+            voucher = self.env[active_model].browse(active_id)
+            company_partner = self.env.user.company_id.partner_id
+            supplier = voucher.partner_id
+            res['voucher_id'] = voucher.id
+            res['company_partner_id'] = company_partner.id
+            res['supplier_partner_id'] = supplier.id
+            res['income_tax_form'] = (voucher.income_tax_form or
+                                      supplier.income_tax_form)
+            res['tax_payer'] = (voucher.tax_payer or False)
+            res['wht_line'] = self._prepare_wht_line(voucher)
         return res
 
     @api.multi
@@ -216,14 +217,16 @@ class PrintWhtCertWizard(models.Model):
     @api.multi
     def _save_selection(self):
         self.ensure_one()
-        if not self.voucher_id.income_tax_form:
-            self.voucher_id.income_tax_form = self.income_tax_form
-        self.voucher_id.tax_payer = self.tax_payer
+        if self.voucher_id:
+            if not self.voucher_id.income_tax_form:
+                self.voucher_id.income_tax_form = self.income_tax_form
+            self.voucher_id.tax_payer = self.tax_payer
         for line in self.wht_line:
-            line.voucher_tax_id.write({
-                'wht_cert_income_type': line.wht_cert_income_type,
-                'wht_cert_income_desc': line.wht_cert_income_desc,
-            })
+            if line.voucher_tax_id:  # Write seleciton to account.voucher.tax
+                line.voucher_tax_id.write({
+                    'wht_cert_income_type': line.wht_cert_income_type,
+                    'wht_cert_income_desc': line.wht_cert_income_desc,
+                })
         return
 
 
@@ -258,11 +261,11 @@ class WhtCertTaxLine(models.Model):
     )
     base = fields.Float(
         string='Base Amount',
-        readonly=True,
+        readonly=False,
     )
     amount = fields.Float(
         string='Tax Amount',
-        readonly=True,
+        readonly=False,
     )
 
     @api.onchange('wht_cert_income_type')
