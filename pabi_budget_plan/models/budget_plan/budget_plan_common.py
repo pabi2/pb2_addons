@@ -120,11 +120,17 @@ class BPCommon(Common):
     @api.model
     def _get_doc_number(self, fiscalyear_id, model, res_id=False, code=False):
         _prefix = 'PLAN'
+        chart_view = {'budget.plan.unit': 'UNIT',
+                      'budget.plan.project': 'PROJ',
+                      'budget.plan.invest.asset': 'ASSET',
+                      'budget.plan.invest.construction': 'CONST',
+                      'budget.plan.personnel': 'PERSONNEL'}
         fiscal = self.env['account.fiscalyear'].browse(fiscalyear_id)
         if res_id:
             res = self.env[model].browse(res_id)
             code = res.code or res.name_short or res.name
-        return '%s/%s/%s' % (_prefix, fiscal.code, code)
+        return '%s/%s/%s/%s' % (_prefix, chart_view[self._name],
+                                fiscal.code, code)
 
     @api.multi
     @api.depends('plan_line_ids',
