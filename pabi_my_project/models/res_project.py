@@ -232,12 +232,8 @@ class ResProject(LogCommon, models.Model):
         string='FY4',
         compute='_compute_amount_fy',
     )
-    amount_fy5 = fields.Float(
-        string='FY5',
-        compute='_compute_amount_fy',
-    )
     amount_beyond = fields.Float(
-        string='FY6 and Beyond',
+        string='FY5 and Beyond',
         compute='_compute_amount_fy',
     )
     amount_before_internal = fields.Float(
@@ -261,12 +257,8 @@ class ResProject(LogCommon, models.Model):
         string='FY4 (I)',
         compute='_compute_amount_fy',
     )
-    amount_fy5_internal = fields.Float(
-        string='FY5 (I)',
-        compute='_compute_amount_fy',
-    )
     amount_beyond_internal = fields.Float(
-        string='FY6 and Beyond (I)',
+        string='FY5 and Beyond (I)',
         compute='_compute_amount_fy',
     )
     revenue_budget = fields.Float(
@@ -534,7 +526,7 @@ class ResProject(LogCommon, models.Model):
 
                 if charge_type == 'external':
                     for i in range(0, years):
-                        if i < 5:  # only fy1 - fy5
+                        if i < 4:  # only fy1 - fy4
                             rec['amount_fy%s' % (i + 1)] = \
                                 future_plans[i].planned_amount
                         else:
@@ -542,7 +534,7 @@ class ResProject(LogCommon, models.Model):
                     rec.amount_beyond = amount_beyond
                 else:  # internal
                     for i in range(0, years):
-                        if i < 5:  # only fy1 - fy5
+                        if i < 4:  # only fy1 - fy5
                             rec['amount_fy%s_internal' % (i + 1)] = \
                                 future_plans[i].planned_amount
                         else:

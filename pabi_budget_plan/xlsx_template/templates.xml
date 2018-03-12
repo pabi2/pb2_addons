@@ -371,7 +371,7 @@
         <record id="budget_plan_invest_construction_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.invest.construction</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_invest_construction_20180202.xlsx</field>
+            <field name="datas_fname">budget_plan_invest_construction_20180310.xlsx</field>
             <field name="name">Invest Construction Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
@@ -379,82 +379,79 @@
                 '__EXPORT__': {
                     'Construction Project': {
                         '_HEAD_': {
-                            'D2': 'fiscalyear_id.name',
-                            'D3': 'org_id.name_short',
-                            'D4': '${time.strftime("%d-%m-%Y")}',
+                            'C2': 'fiscalyear_id.name',
+                            'C3': 'org_id.name_short',
+                            'D4': '${time.strftime("%d/%m/%Y")}',
                             'D5': 'user_id.name${value or ""}'
                         },
                         'plan_expense_line_ids[20]': {
-                            'B10': 'c_or_n${value == "continue" and "ต่อเนื่อง" or "ใหม่"}',
-                            'C10': 'org_id.name_short${value or ""}',
-                            'D10': 'name${value or ""}',
-                            'E10': 'month_duration',
-                            'F10': 'date_start',
-                            # 'G10': 'date_end',
-                            'H10': 'operation_area${value or ""}',
-                            'I10': 'project_readiness${value or ""}',
-                            'J10': 'reason${value or ""}',
-                            'K10': 'expected_result${value or ""}',
-                            'L10': 'pm_employee_id.name${value or ""}',
-                            'O10': 'amount_budget',
-                            'P10': 'amount_before',
-                            'Q10': 'amount_fy1',
-                            'R10': 'amount_fy2',
-                            'S10': 'amount_fy3',
-                            'T10': 'amount_fy4',
-                            'U10': 'amount_fy5',
-                            'V10': 'overall_released',
-                            'W10': 'overall_all_commit',
-                            'X10': 'overall_pr_commit',
-                            'Y10': 'overall_po_commit',
-                            'Z10': 'overall_exp_commit',
-                            'AA10': 'overall_actual',
-                            # 'AB10': 'overall_consumed',
-                            # 'AC10': 'overall_balance',
-                            'AD10': 'next_fy_commitment',
+                            'B11': 'c_or_n${value == "continue" and "ต่อเนื่อง" or "ใหม่"}',
+                            'C11': 'name${value or ""}',
+                            'D11': 'month_duration',
+                            'E11': 'date_start',
+                            # 'F11': 'date_end',
+                            'G11': 'operation_area${value or ""}',
+                            'H11': 'project_readiness${value or ""}',
+                            'I11': 'reason${value or ""}',
+                            'J11': 'expected_result${value or ""}',
+                            'K11': 'pm_employee_id.name${value or ""}',
+                            # L11, M11, N11
+                            'O11': 'amount_budget',
+                            'P11': 'amount_before',
+                            'Q11': 'amount_fy1',
+                            'R11': 'amount_fy2',
+                            'S11': 'amount_fy3',
+                            'T11': 'amount_fy4',
+                            'U11': 'amount_beyond',
+                            'V11': 'overall_released',
+                            # 'W11': 'overall_all_commit',
+                            'X11': 'overall_pr_commit',
+                            'Y11': 'overall_po_commit',
+                            'Z11': 'overall_exp_commit',
+                            'AA11': 'overall_actual',
+                            # 'AB11': 'overall_consumed',
+                            # 'AC11': 'overall_balance',
+                            'AD11': 'next_fy_commitment',
                         }
                     },
                     'TAB_List': {
-                        'master_org_ids': {
-                            'B5': 'name_short'
-                        },
                         'master_employee_ids': {
-                            'D5': 'name',
-                            'E5': 'section_id.name',
-                            'F5': 'section_id.division_id.name',
+                            'C5': 'display_name',
+                            'D5': 'section_id.name',
+                            'E5': 'section_id.division_id.name',
                         },
                     },
                 },
                 '__IMPORT__': {
                     'Construction Project': {
                         'plan_expense_line_ids[20]': {
-                            'B10': 'c_or_n',
-                            'C10': 'org_id',
-                            'D10': 'name',
-                            'E10': 'month_duration',
-                            'F10': 'date_start',
-                            'G10': 'date_end',
-                            'H10': 'operation_area',
-                            'I10': 'project_readiness',
-                            'J10': 'reason',
-                            'K10': 'expected_result',
-                            'L10${value and value[value.find("[")+1:value.find("]")] or ""}': 'pm_employee_id',
-                            'O10': 'amount_budget',
-                            'P10': 'amount_before',
-                            'Q10': 'amount_fy1',
-                            'R10': 'amount_fy2',
-                            'S10': 'amount_fy3',
-                            'T10': 'amount_fy4',
-                            'U10': 'amount_fy5',
-                            'V10': 'overall_released',
-                            'W10': 'overall_all_commit',
-                            'X10': 'overall_pr_commit',
-                            'Y10': 'overall_po_commit',
-                            'Z10': 'overall_exp_commit',
-                            'AA10': 'overall_actual',
-                            'AB10': 'overall_consumed',
-                            'AC10': 'overall_balance',
-                            'AD10': 'next_fy_commitment',
+                            'B11': 'c_or_n',
+                            'C11': 'name',
+                            'D11': 'month_duration',
+                            'E11': 'date_start',
+                            'F11': 'date_end',
+                            'G11': 'operation_area',
+                            'H11': 'project_readiness',
+                            'I11': 'reason',
+                            'J11': 'expected_result',
+                            'K11${value and value[value.find("[")+1:value.find("]")] or ""}': 'pm_employee_id',
+                            # L11, M11, N11
+                            'O11': 'amount_budget',
+                            'P11': 'amount_before',
+                            'Q11': 'amount_fy1',
+                            'R11': 'amount_fy2',
+                            'S11': 'amount_fy3',
+                            'T11': 'amount_fy4',
+                            'U11': 'amount_beyond',
+                            'V11': 'overall_released',
+                            'W11': 'overall_all_commit',
+                            'X11': 'overall_pr_commit',
+                            'Y11': 'overall_po_commit',
+                            'Z11': 'overall_exp_commit',
+                            'AA11': 'overall_actual',
+                            'AB11': 'overall_consumed',
+                            'AC11': 'overall_balance',
+                            'AD11': 'next_fy_commitment',
                         }
                     }
                 }
@@ -526,7 +523,7 @@
                           'AR12': 'amount_fy2',
                           'AS12': 'amount_fy3',
                           'AT12': 'amount_fy4',
-                          'AU12': 'amount_fy5',
+                          'AU12': 'amount_beyond',
                           'AV12': 'm1',
                           'AW12': 'm2',
                           'AX12': 'm3',
@@ -554,7 +551,7 @@
                           'BT12': 'amount_fy2_internal',
                           'BU12': 'amount_fy3_internal',
                           'BV12': 'amount_fy4_internal',
-                          'BW12': 'amount_fy5_internal',
+                          'BW12': 'amount_beyond_internal',
                       }
                   },
                   'TAB_List': {
@@ -637,7 +634,7 @@
                           'AR12': 'amount_fy2',
                           'AS12': 'amount_fy3',
                           'AT12': 'amount_fy4',
-                          'AU12': 'amount_fy5',
+                          'AU12': 'amount_beyond',
                           'AV12': 'm1',
                           'AW12': 'm2',
                           'AX12': 'm3',
@@ -665,7 +662,7 @@
                           'BT12': 'amount_fy2_internal',
                           'BU12': 'amount_fy3_internal',
                           'BV12': 'amount_fy4_internal',
-                          'BW12': 'amount_fy5_internal',
+                          'BW12': 'amount_beyond_internal',
                         }
                     }
                 }

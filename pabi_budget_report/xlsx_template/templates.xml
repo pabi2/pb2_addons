@@ -451,7 +451,7 @@
                             'R8': 'amount_fy2#{number_format=number}',
                             'S8': 'amount_fy3#{number_format=number}',
                             'T8': 'amount_fy4#{number_format=number}',
-                            'U8': 'amount_fy5#{number_format=number}',
+                            'U8': 'amount_beyond#{number_format=number}',
                             'V8': 'overall_released#{number_format=number}',
                             'W8': 'overall_all_commit#{number_format=number}',
                             'X8': 'overall_pr_commit#{number_format=number}',

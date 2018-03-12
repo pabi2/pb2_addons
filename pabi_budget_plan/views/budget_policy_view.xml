@@ -31,6 +31,7 @@
                         <button string="Create Breakdown and Done" name="action_done" type="object"
                           attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('chart_view', 'in', ('project_base', 'invest_construction'))]}" class="oe_highlight"
                           confirm="This operation can not be reverted, are you sure you want to proceed?"/>
+                        <button string="Reset to Draft" name="action_draft" type="object" attrs="{'invisible': ['|', ('state', '!=', 'done'), ('chart_view', 'not in', ('invest_construction'))]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>
