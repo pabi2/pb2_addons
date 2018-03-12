@@ -117,12 +117,8 @@ class ResInvestConstruction(LogCommon, models.Model):
         string='FY4',
         compute='_compute_amount_fy',
     )
-    amount_fy5 = fields.Float(
-        string='FY5',
-        compute='_compute_amount_fy',
-    )
     amount_beyond = fields.Float(
-        string='FY6 and Beyond',
+        string='FY5 and Beyond',
         compute='_compute_amount_fy',
     )
     amount_phase_approve = fields.Float(
@@ -178,7 +174,7 @@ class ResInvestConstruction(LogCommon, models.Model):
             amount_beyond = 0.0
             years = len(future_plans)
             for i in range(0, years):
-                if i < 5:  # only fy1 - fy5
+                if i < 4:  # only fy1 - fy4
                     rec['amount_fy%s' % (i + 1)] = future_plans[i].amount_plan
                 else:
                     amount_beyond += future_plans[i].amount_plan
@@ -774,6 +770,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
     # Statuses
     @api.multi
     def action_submit(self):
+        self._check_amount_plan_approve()
         self.write({'state': 'submit'})
 
     @api.multi

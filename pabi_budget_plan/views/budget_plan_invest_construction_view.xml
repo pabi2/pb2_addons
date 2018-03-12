@@ -104,6 +104,15 @@
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="state"/>
+                    <filter domain="[('state','=','1_draft')]" string="Draft"/>
+                    <filter domain="[('state','=','2_submit')]" string="Submitted"/>
+                    <filter domain="[('state','=','7_accept')]" string="Accepted"/>
+                    <filter domain="[('state','=','8_done')]" string="Done"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Org" context="{'group_by':'org_id'}"/>
+                        <filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+                        <filter string="Status" context="{'group_by':'state'}"/>
+                    </group>
                 </search>
             </field>
         </record>
@@ -135,7 +144,6 @@
                     <group expand="0" string="Group By">
                         <filter name="org_id" string="Org" domain="[]" context="{'group_by':'org_id'}"/>
                         <filter name="pm_section_id" string="Owner Section" domain="[]" context="{'group_by':'pm_section_id'}"/>
-
                         <filter name="activity_group_id" string="Activity Group" domain="[]" context="{'group_by':'activity_group_id'}"/>
                         <filter name="invest_construction_id" string="Construction" domain="[]" context="{'group_by':'invest_construction_id'}"/>
                     </group>
@@ -172,7 +180,6 @@
                       <field name="amount_fy2"/>
                       <field name="amount_fy3"/>
                       <field name="amount_fy4"/>
-                      <field name="amount_fy5"/>
                       <field name="amount_beyond"/>
 
                       <field name="overall_released"/>
@@ -226,7 +233,6 @@
                             <field name="amount_fy2"/>
                             <field name="amount_fy3"/>
                             <field name="amount_fy4"/>
-                            <field name="amount_fy5"/>
                             <field name="amount_beyond"/>
                             <field name="overall_released"/>
                             <field name="overall_all_commit"/>

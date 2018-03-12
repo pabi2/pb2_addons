@@ -355,6 +355,34 @@
                                     </group>
                                 </group>
                             </page>
+                            <page string="Budget Monitor">
+                                <separator string="Expense"/>
+                                <field name="monitor_expense_ids">
+                                    <tree string="Monitor" editable="bottom">
+                                        <field name="fiscalyear_id"/>
+                                        <field name="planned_amount"/>
+                                        <field name="released_amount"/>
+                                        <field name="amount_pr_commit"/>
+                                        <field name="amount_po_commit"/>
+                                        <field name="amount_exp_commit"/>
+                                        <field name="amount_actual"/>
+                                        <field name="amount_consumed"/>
+                                        <field name="amount_balance"/>
+                                    </tree>
+                                </field>
+                                <separator string="Revenue"/>
+                                <field name="monitor_revenue_ids">
+                                    <tree string="Monitor" editable="bottom">
+                                        <field name="fiscalyear_id"/>
+                                        <field name="planned_amount"/>
+                                        <field name="released_amount"/>
+                                        <field name="amount_so_commit"/>
+                                        <field name="amount_actual"/>
+                                        <field name="amount_consumed"/>
+                                        <field name="amount_balance"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="Syncronize Status">
                                 <p>
                                     When palnning amount is approved and/or updated, the

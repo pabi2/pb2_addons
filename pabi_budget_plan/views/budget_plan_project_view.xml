@@ -220,7 +220,6 @@
                     <field name="amount_fy2"/>
                     <field name="amount_fy3"/>
                     <field name="amount_fy4"/>
-                    <field name="amount_fy5"/>
                     <field name="amount_beyond"/>
 
                     <field name="amount_before_internal"/>
@@ -228,7 +227,6 @@
                     <field name="amount_fy2_internal"/>
                     <field name="amount_fy3_internal"/>
                     <field name="amount_fy4_internal"/>
-                    <field name="amount_fy5_internal"/>
                     <field name="amount_beyond_internal"/>
 
                     <field name="revenue_budget"/>
@@ -326,7 +324,6 @@
                             <field name="amount_fy2"/>
                             <field name="amount_fy3"/>
                             <field name="amount_fy4"/>
-                            <field name="amount_fy5"/>
                             <field name="amount_beyond"/>
 
                             <field name="amount_before_internal"/>
@@ -334,7 +331,6 @@
                             <field name="amount_fy2_internal"/>
                             <field name="amount_fy3_internal"/>
                             <field name="amount_fy4_internal"/>
-                            <field name="amount_fy5_internal"/>
                             <field name="amount_beyond_internal"/>
 
                             <field name="revenue_budget"/>

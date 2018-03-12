@@ -319,11 +319,8 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     amount_fy4 = fields.Float(
         string='FY4',
     )
-    amount_fy5 = fields.Float(
-        string='FY5',
-    )
     amount_beyond = fields.Float(
-        string='Amount FY6 and Beyond',
+        string='FY6 and Beyond',
     )
     # For internal charge
     amount_before_internal = fields.Float(
@@ -341,11 +338,8 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     amount_fy4_internal = fields.Float(
         string='FY4 (I)',
     )
-    amount_fy5_internal = fields.Float(
-        string='FY5 (I)',
-    )
     amount_beyond_internal = fields.Float(
-        string='Amount FY6 and Beyond (I)',
+        string='FY5 and Beyond (I)',
     )
     # --
     revenue_budget = fields.Float(
