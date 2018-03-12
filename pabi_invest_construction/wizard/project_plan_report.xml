@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        # Project Plan Report
+        <record id="view_invest_construction_project_plan_wizard" model="ir.ui.view">
+            <field name="name">Project Plan Report</field>
+            <field name="model">invest.construction.project.plan.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Project Plan Report">
+                    <group>
+                        <group>
+                            <field name="state"/>
+                        </group>
+                        <group>
+                            <field name="fiscalyear_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="invest_construction_ids">
+                            <tree>
+                                <field name="code"/>
+                                <field name="name"/>
+                                <field name="pm_employee_id"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="open_report" string="Open Report" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_invest_construction_project_plan_report" model="ir.actions.act_window">
+            <field name="name">Project Plan Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">invest.construction.project.plan.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_invest_construction_project_plan_wizard"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem action="action_invest_construction_project_plan_report" id="menu_invest_construction_budget_plan" name="Project Plan Report" parent="menu_construction_report" sequence="1"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
+
+
+        # Project Phase Report
+        <record id="view_invest_construction_phase_plan_wizard" model="ir.ui.view">
+            <field name="name">Project Phase Report</field>
+            <field name="model">invest.construction.phase.plan.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Project Phase Report">
+                    <group>
+                        <group>
+                            <field name="state"/>
+                        </group>
+                        <group>
+                            <field name="fiscalyear_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="invest_construction_ids" required="1">
+                            <tree>
+                                <field name="code"/>
+                                <field name="name"/>
+                                <field name="pm_employee_id"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="open_report" string="Open Report" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_invest_construction_phase_plan_report" model="ir.actions.act_window">
+            <field name="name">Project Phase Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">invest.construction.phase.plan.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_invest_construction_phase_plan_wizard"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem action="action_invest_construction_phase_plan_report" id="menu_invest_construction_phase_plan" name="Project Phase Report" parent="menu_construction_report" sequence="2"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
+
+    </data>
+</openerp>

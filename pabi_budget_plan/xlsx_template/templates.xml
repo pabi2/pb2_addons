@@ -381,8 +381,8 @@
                         '_HEAD_': {
                             'C2': 'fiscalyear_id.name',
                             'C3': 'org_id.name_short',
-                            'D4': '${time.strftime("%d/%m/%Y")}',
-                            'D5': 'user_id.name${value or ""}'
+                            'C4': '${time.strftime("%d/%m/%Y")}',
+                            'C5': 'user_id.name${value or ""}'
                         },
                         'plan_expense_line_ids[20]': {
                             'B11': 'c_or_n${value == "continue" and "ต่อเนื่อง" or "ใหม่"}',

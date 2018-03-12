@@ -500,9 +500,6 @@
             <field name="context">{}</field>
         </record>
 
-        <menuitem action="action_invest_construction_budget_plan" id="menu_invest_construction_budget_plan" name="Project Plan Report" parent="menu_construction_report" sequence="1"
-            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
-
         <!-- Phase Report -->
         <record id="view_invest_construction_phase_plan_graph" model="ir.ui.view">
             <field name="name">view.invest.construction.phase.plan.graph</field>
@@ -523,9 +520,6 @@
             <field name="search_view_id" ref="view_invest_construction_phase_plan_search"/>
             <field name="context">{'search_default_project': 1, 'search_default_fiscal': 1, 'search_default_period': 1}</field>
         </record>
-
-        <menuitem action="action_invest_construction_phase_plan" id="menu_invest_construction_phase_plan" name="Project Phase Report" parent="menu_construction_report" sequence="2"
-            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
 
     </data>
 </openerp>

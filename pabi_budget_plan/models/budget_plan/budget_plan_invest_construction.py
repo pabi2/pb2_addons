@@ -71,7 +71,10 @@ class BudgetPlanInvestConstruction(BPCommon, models.Model):
     def _compute_master_employee_ids(self):
         Employee = self.env['hr.employee']
         for rec in self:
-            employees = Employee.search([('org_id', '=', rec.org_id.id)])
+            employees = Employee.search([('org_id', '=', rec.org_id.id),
+                                         ('id', '!=', 1),
+                                         ('employee_code', '!=', False)],
+                                        order='employee_code')
             rec.master_employee_ids = employees
 
     @api.model
