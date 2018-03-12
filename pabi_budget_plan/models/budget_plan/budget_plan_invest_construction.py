@@ -190,6 +190,11 @@ class BudgetPlanInvestConstructionLine(BPLMonthCommon, ActivityCommon,
     amount_beyond = fields.Float(
         string='FY5 and Beyond',
     )
+    # FY1 -> m1, always as we don't use m1-m12 here
+    m1 = fields.Float(
+        related='amount_fy1',
+        store=True,
+    )
     overall_released = fields.Float(
         string='Overall Released'
     )
