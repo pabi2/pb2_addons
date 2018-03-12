@@ -22,8 +22,10 @@
                     <field name="phase" string="Phase Number"/>
                     <field name="invest_construction_id"/>
                     <group expand="0" string="Group By">
+                        <filter string="Org" name="org_id" context="{'group_by':'org_id'}"/>
                         <filter string="Project (C)" name="project" context="{'group_by':'invest_construction_id'}"/>
                         <filter string="Phase" name="phase" context="{'group_by':'phase'}"/>
+                        <filter string="State" name="state" context="{'group_by':'state'}"/>
                     </group>
                 </search>
             </field>
@@ -99,37 +101,38 @@
                                 <field name="amount_budget"/>
                             </group>
                             <group>
-                                <field name="fund_ids" widget="many2many_tags"/>
+                                <field name="fund_ids" widget="many2many_tags" required="1"/>
                                 <field name="mission_id"/>
                             </group>
                         </group>
                         <group>
                             <group>
-                                <field name="month_duration"/>
+                                <field name="month_duration" required="1"/>
                                 <field name="date_start" required="1"/>
                                 <field name="date_end" required="1"/>
                                 <field name="date_expansion"/>
                             </group>
                             <group>
+                                <field name="create_uid" readonly="1"/>
                                 <field name="pm_employee_id"/>
                                 <field name="pm_section_id"/>
                                 <field name="org_id" required="1" attrs="{'readonly': [('state', 'not in', ('draft', 'submit'))]}"/>
-                                <field name="costcenter_id" required="1"/>
+                                <field name="costcenter_id" required="1" invisible="1"/>
                             </group>
                         </group>
                         <notebook>
                             <page string="Other Info">
                                 <group>
-                                    <field name="operation_area"/>
+                                    <field name="operation_area" required="1"/>
                                 </group>
                                 <group>
                                     <group>
-                                        <field name="approval_info"/>
-                                        <field name="project_readiness"/>
+                                        <field name="approval_info" required="1"/>
+                                        <field name="project_readiness" required="1"/>
                                     </group>
                                     <group>
-                                        <field name="reason"/>
-                                        <field name="expected_result"/>
+                                        <field name="reason" required="1"/>
+                                        <field name="expected_result" required="1"/>
                                     </group>
                                 </group>
                             </page>
@@ -189,6 +192,7 @@
                     <filter name="close" string="Closed" domain="[('state','=','close')]"/>
                     <group expand="0" string="Group By">
                         <filter string="Org" name="org" context="{'group_by':'org_id'}"/>
+                        <filter string="State" name="state" context="{'group_by':'state'}"/>
                     </group>
                 </search>
             </field>
@@ -201,6 +205,7 @@
                 <tree string="Projects">
                     <field name="code"/>
                     <field name="name"/>
+                    <field name="create_uid"/>
                     <field name="pm_employee_id"/>
                     <field name="amount_budget_plan" sum="Total Plan"/>
                     <field name="amount_budget" sum="Total Approved Budget"/>
@@ -335,7 +340,7 @@
                                     </group>
                                 </group>
                                 <field name="phase_plan_ids">
-                                    <tree editable="bottom">
+                                    <tree editable="bottom" create="0" delete="0">
                                         <field name="id" invisible="1"/>
                                         <field name="fiscalyear_id" invisible="1"/>
                                         <field name="calendar_period_id" attrs="{'readonly': [('id', '!=', False)]}"/>
