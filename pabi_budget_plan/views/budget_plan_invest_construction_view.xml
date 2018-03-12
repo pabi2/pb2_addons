@@ -53,6 +53,7 @@
                                         <field name="c_or_n"/>
                                         <field name="invest_construction_id" invisible="1"/>
                                         <field name="name" string="New Project"/>
+                                        <field name="pm_employee_id"/>
                                         <field name="description" string="Description" invisible="1"/>
                                         <field name="activity_group_id" invisible="0"/>
 
@@ -103,6 +104,7 @@
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Plan"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
+                    <field name="fiscalyear_id"/>
                     <field name="state"/>
                     <filter domain="[('state','=','1_draft')]" string="Draft"/>
                     <filter domain="[('state','=','2_submit')]" string="Submitted"/>
@@ -159,6 +161,7 @@
 
                       <field name="c_or_n"/>
                       <field name="name" string="New Project"/>
+                      <field name="pm_employee_id"/>
                       <field name="description" string="Description" invisible="1"/>
                       <field name="invest_construction_id" invisible="1"/>
                       <field name="activity_group_id"/>
