@@ -75,8 +75,9 @@
                                     attrs="{'invisible': [('invest_asset_id', '!=', False)]}"/>
                                 <field name="invest_asset_categ_id" invisible="1"/>
                                 <field name="fiscalyear_id" invisible="1"/>
+                                <field name="strategy_id" invisible="1"/>
                                 <field name="org_id" invisible="1"/>
-                                <field name="owner_section_id" invisible="1"/>
+                                <field name="owner_section_id" invisible="0"/>
                                 <field name="owner_division_id" invisible="1"/>
                                 <field name="owner_program_id" invisible="1"/>
                                 <field name="name_common" invisible="1"/>
@@ -199,6 +200,7 @@
                     <field name="invest_asset_id"/>
                     <field name="invest_asset_categ_id" invisible="1"/>
                     <field name="fiscalyear_id" invisible="1"/>
+                    <field name="strategy_id" invisible="1"/>
                     <field name="org_id" invisible="1"/>
                     <field name="owner_section_id" invisible="1"/>
                     <field name="owner_division_id" invisible="1"/>
@@ -255,6 +257,7 @@
                             <field name="name_common"/>
                         </group>
                         <group>
+                            <field name="strategy_id"/>
                             <field name="org_id"/>
                             <field name="costcenter_id"/>
                         </group>
