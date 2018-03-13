@@ -142,7 +142,6 @@ class BudgetFundRule(models.Model):
         if not vals.get('template', False):
             vals['name'] = \
                 self.env['ir.sequence'].get('budget.fund.rule') or '/'
-        print vals
         return super(BudgetFundRule, self).create(vals)
 
     @api.model
@@ -200,9 +199,9 @@ class BudgetFundRule(models.Model):
                 rule_activity_ids += [x.id for x in rule_line.activity_ids]
             xlines = filter(lambda l:
                             l['project_id'] == project.id and
-                            l['fund_id'] == fund,
+                            l['fund_id'] == fund.id,
                             doc_lines)
-            activity_ids = [x.activity.id for x in xlines]
+            activity_ids = [x['activity_rpt_id'] for x in xlines]
             # Only activity in doc_lines that match rule is allowed
             if not (set(activity_ids) < set(rule_activity_ids)):
                 res['budget_ok'] = False
@@ -216,11 +215,15 @@ class BudgetFundRule(models.Model):
                 xlines = filter(lambda l:
                                 l['project_id'] == project.id and
                                 l['fund_id'] == fund.id and
-                                l['activity_id'] in activity_ids,
+                                l['activity_rpt_id'] in activity_ids,
                                 doc_lines)
-                amount = sum(map(lambda l: l[amount_field], xlines))
-                if amount <= 0.00:
-                    continue
+                amount = 0.0
+                if amount_field:  # Having amount_field means pre commit check
+                    amount = sum(map(lambda l: l[amount_field], xlines))
+                    amount = self.env['account.budget'].\
+                        _calc_amount_company_currency(amount)
+                    if amount <= 0.00:
+                        continue
                 res = self.check_fund_activity_spending(rule_line.id,
                                                         amount)
                 if not res['budget_ok']:
@@ -240,13 +243,16 @@ class BudgetFundRule(models.Model):
                  rule_line.fund_rule_id.project_id.code)
             return res
         max_percent = rule_line.max_spending_percent
+        spending_percent = 0.0
         expense_group = rule_line.expense_group_id
-        if not rule_line.amount or rule_line.amount <= 0:
+        if not rule_line.amount or rule_line.amount <= 0.0:
             res['budget_ok'] = False
             res['message'] = _('No amount has been allocated for '
                                'Expense Group %s!') % (expense_group.name,)
             return res
-        future_amount = rule_line.amount_consumed + amount
+        # If amount == 0.0, post commit check, amount_consumed is future
+        future_amount = amount == 0.0 and rule_line.amount_consumed or \
+            rule_line.amount_consumed + amount
         spending_percent = 100.0 * future_amount / rule_line.amount
         if spending_percent > max_percent:
             res['budget_ok'] = False
@@ -336,7 +342,7 @@ class BudgetFundRuleLine(models.Model):
                 from budget_consume_report
                 where project_id = %s
                     and fund_id = %s
-                    and activity_id in %s
+                    and activity_rpt_id in %s
             """, (rec.project_id.id,
                   rec.fund_id.id,
                   rec.activity_ids._ids,))

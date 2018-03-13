@@ -273,7 +273,7 @@
                             'G10': 'invest_asset_categ_id.name${value or ""}',
                             'H10': 'name_common${value or ""}',
                             'I10': 'name${value or ""}',
-                            'J10': 'strategy_id${value or ""}',
+                            'J10': 'strategy_id.name${value or ""}',
                             'L10': 'request_user_id.name${value or ""}',
                             'M10': 'owner_section_id.display_name_2${value or ""}',
                             'N10': 'owner_section_id.division_id.name${value or ""}',

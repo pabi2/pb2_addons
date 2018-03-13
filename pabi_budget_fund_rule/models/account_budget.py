@@ -16,6 +16,4 @@ class AccountBudget(models.Model):
         FundRule = self.env['budget.fund.rule']
         res = FundRule.document_check_fund_spending(doc_lines,
                                                     amount_field)
-        if not res['budget_ok']:
-            return res
         return res
