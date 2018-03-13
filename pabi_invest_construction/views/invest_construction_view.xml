@@ -137,7 +137,7 @@
                                 </group>
                             </page>
                             <page string="Budget Planning">
-                                <field name="budget_plan_ids">
+                                <field name="budget_plan_ids" create="0" delete="0">
                                     <tree editable="bottom">
                                         <field name="fiscalyear_id"/>
                                         <field name="amount_plan" sum="Total Plan"/>

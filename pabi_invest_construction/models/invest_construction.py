@@ -289,13 +289,21 @@ class ResInvestConstruction(LogCommon, models.Model):
             phases = []
             i = 1
             for phase in sorted(CONSTRUCTION_PHASE.items()):
-                phases.append((0, 0, {'sequence': i, 'phase': phase[0]}))
+                phases.append((0, 0, {'sequence': i,
+                                      'phase': phase[0],
+                                      'date_start': rec.date_start,
+                                      'fund_ids': [(6, 0, rec.fund_ids.ids)],
+                                      }))
                 i += 1
             rec.write({'phase_ids': phases})
 
     # Statuses
     @api.multi
     def action_submit(self):
+        for rec in self:
+            if not rec.amount_budget_plan:
+                raise ValidationError(
+                    _('Cannot submit project without planned amount.'))
         self.write({'state': 'submit'})
 
     @api.multi
