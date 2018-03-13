@@ -246,22 +246,6 @@ class AccountBudget(models.Model):
                 amount = currency.compute(amount, company_currency)
         return amount
 
-    @api.model
-    def _prepare_resource_fields(self, budget_level, val, doc_lines):
-        res_id = val
-        filtered_lines = doc_lines
-        i = 0
-        for f in sel_fields:
-            filtered_lines = filter(lambda l:
-                                    f in l and l[f] and l[f] == val[i],
-                                    filtered_lines)
-            i += 1
-        # For funding case, add more dimension
-        if len(sel_fields) == 2:
-            ext_res_id = val[1]
-            ext_field = sel_fields[1]
-        return (res_id, ext_field, ext_res_id, filtered_lines)
-
     @api.multi
     def _get_past_consumed_domain(self):
         self.ensure_one()
