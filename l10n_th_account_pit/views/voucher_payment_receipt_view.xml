@@ -12,7 +12,7 @@
                 <data>
                     <button name="%(l10n_th_account.action_print_wht_cert)d" position="after">
                         <button name="%(l10n_th_account.action_print_wht_cert)d" type="action" string="Print PIT WHT Cert." class="oe_highlight"
-                            attrs="{'invisible': ['|', ('state', '!=', 'posted'), ('pit_withhold', '=', False)]}"
+                            attrs="{'invisible': ['|', '|', ('state', '!=', 'posted'), ('pit_withhold', '=', False), ('wht_cert_ids', '!=', [])]}"
                             context="{'pit_withhold': pit_withhold}"/>
                     </button>
                     <page string="Tax" position="after">

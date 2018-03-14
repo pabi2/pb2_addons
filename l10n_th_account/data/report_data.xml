@@ -6,7 +6,7 @@
 		<record id="report_withholding_cert" model="ir.actions.report.xml">
 			<field name="string">Withholding Tax Certificate</field>
 			<field name="auto">True</field>
-			<field name="model">print.wht.cert.wizard</field>
+			<field name="model">account.wht.cert</field>
 			<field name="name">Withholding Tax Certificate</field>
 			<field name="report_name">report_withholding_cert</field>
 			<field name="report_rml">l10n_th_account/report/withholding_cert.jrxml</field>
@@ -21,7 +21,7 @@
 
 		<record id="report_withholding_cert_values" model="ir.values">
 			<field name="name">Withholding Tax Certificate</field>
-			<field name="model">print.wht.cert.wizard</field>
+			<field name="model">account.wht.cert</field>
 			<field name="key2" eval="'client_print_multi'"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_withholding_cert)"/>
 		</record>

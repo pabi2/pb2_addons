@@ -1,29 +1,61 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
-from openerp.addons.l10n_th_account.models.account_voucher \
-    import WHT_CERT_INCOME_TYPE, TAX_PAYER
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
 
+WHT_CERT_INCOME_TYPE = [('1', '1.เงินเดือน ค่าจ้าง ฯลฯ 40(1)'),
+                        ('2', '2.ค่าธรรมเนียม ค่านายหน้า ฯลฯ 40(2)'),
+                        ('3', '3.ค่าแห่งลิขสิทธิ์ ฯลฯ 40(3)'),
+                        ('5', '5.ค่าจ้างทำของ ค่าบริการ ฯลฯ 3 เตรส'),
+                        ('6', '6.อื่นๆ')]
 
-class PrintWhtCertWizard(models.Model):
-    _name = 'print.wht.cert.wizard'
-    _rec_name = 'voucher_id'
+TAX_PAYER = [('withholding', 'Withholding'),
+             ('paid_one_time', 'Paid One Time')]
 
+
+class AccountWhtCert(models.Model):
+    _name = 'account.wht.cert'
+    _rec_name = 'number'
+
+    number = fields.Char(
+        string='Number',
+        readonly=True,
+    )
+    date = fields.Date(
+        string='Date',
+        required=True,
+        readonly=True,
+        copy=False,
+        states={'draft': [('readonly', False)]},
+    )
+    state = fields.Selection(
+        [('draft', 'Darft'),
+         ('done', 'Done'),
+         ('cancel', 'Cancelled')],
+        string='Status',
+        default='draft',
+        copy=False,
+    )
     voucher_id = fields.Many2one(
         'account.voucher',
         string='Voucher',
+        copy=False,
     )
     company_partner_id = fields.Many2one(
         'res.partner',
         string='Company',
         readonly=True,
+        copy=False,
     )
     supplier_partner_id = fields.Many2one(
         'res.partner',
         string='Supplier',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=False,
     )
     company_taxid = fields.Char(
         related='company_partner_id.vat',
@@ -49,22 +81,47 @@ class PrintWhtCertWizard(models.Model):
         INCOME_TAX_FORM,
         string='Income Tax Form',
         required=True,
-    )
-    wht_sequence_display = fields.Char(
-        string='WHT Sequence',
-        related='voucher_id.wht_sequence_display',
+        copy=False,
     )
     wht_line = fields.One2many(
         'wht.cert.tax.line',
-        'wizard_id',
+        'cert_id',
         string='Withholding Line',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        copy=False,
+    )
+    # Moved from account.voucher
+    sequence = fields.Integer(
+        string='WHT Sequence',
+        readonly=True,
+        copy=False,
+        help="Running sequence for the same period. Reset every period",
+    )
+    sequence_display = fields.Char(
+        string='WHT Sequence',
+        compute='_compute_wht_sequence_display',
+        store=True,
+    )
+    period_id = fields.Many2one(
+        'account.period',
+        string='WHT Period',
+        readonly=True,
+        copy=False,
     )
     tax_payer = fields.Selection(
         TAX_PAYER,
         string='Tax Payer',
         default='withholding',
         required=True,
+        copy=False,
     )
+    _sql_constraints = [
+        ('wht_seq_uunique',
+         'unique (period_id, sequence, income_tax_form)',
+         'WHT Sequence must be unique!'),
+    ]
+
     # Computed fields to be displayed in WHT Cert.
     x_voucher_number = fields.Char(compute='_compute_cert_fields')
     x_date_value = fields.Date(compute='_compute_cert_fields')
@@ -77,7 +134,7 @@ class PrintWhtCertWizard(models.Model):
     x_pnd1 = fields.Char(compute='_compute_cert_fields')
     x_pnd3 = fields.Char(compute='_compute_cert_fields')
     x_pnd53 = fields.Char(compute='_compute_cert_fields')
-    x_wht_sequence_display = fields.Char(compute='_compute_cert_fields')
+    x_sequence_display = fields.Char(compute='_compute_cert_fields')
     x_withholding = fields.Char(compute='_compute_cert_fields')
     x_paid_one_time = fields.Char(compute='_compute_cert_fields')
     x_total_base = fields.Float(compute='_compute_cert_fields')
@@ -99,26 +156,26 @@ class PrintWhtCertWizard(models.Model):
     @api.multi
     def _compute_cert_fields(self):
         for rec in self:
-            voucher = rec.voucher_id
             company = self.env.user.company_id.partner_id
-            supplier = voucher.partner_id
-            rec.x_voucher_number = voucher.number
-            rec.x_date_value = voucher.date_value
+            supplier = rec.supplier_partner_id
+            rec.x_voucher_number = rec.voucher_id.number
+            rec.x_date_value = rec.date
             rec.x_company_name = company.display_name
             rec.x_supplier_name = supplier.display_name
-            rec.x_company_taxid = len(company.vat) == 13 and company.vat or ''
+            rec.x_company_taxid = \
+                company.vat and len(company.vat) == 13 and company.vat or ''
             rec.x_supplier_taxid = \
-                len(supplier.vat) == 13 and supplier.vat or ''
+                supplier.vat and len(supplier.vat) == 13 and supplier.vat or ''
             rec.x_supplier_address = rec.supplier_address
             rec.x_company_address = rec.company_address
-            rec.x_pnd1 = voucher.income_tax_form == 'pnd1' and 'X' or ''
-            rec.x_pnd3 = voucher.income_tax_form == 'pnd3' and 'X' or ''
-            rec.x_pnd53 = voucher.income_tax_form == 'pnd53' and 'X' or ''
-            rec.x_wht_sequence_display = voucher.wht_sequence_display
+            rec.x_pnd1 = rec.income_tax_form == 'pnd1' and 'X' or ''
+            rec.x_pnd3 = rec.income_tax_form == 'pnd3' and 'X' or ''
+            rec.x_pnd53 = rec.income_tax_form == 'pnd53' and 'X' or ''
+            rec.x_sequence_display = rec.sequence_display
             rec.x_withholding = \
-                voucher.tax_payer == 'withholding' and 'X' or ''
+                rec.tax_payer == 'withholding' and 'X' or ''
             rec.x_paid_one_time = \
-                voucher.tax_payer == 'paid_one_time' and 'X' or ''
+                rec.tax_payer == 'paid_one_time' and 'X' or ''
             rec.x_total_base = rec._get_summary_by_type('base')
             rec.x_total_tax = rec._get_summary_by_type('tax')
             rec.x_type_1_base = rec._get_summary_by_type('base', '1')
@@ -133,7 +190,7 @@ class PrintWhtCertWizard(models.Model):
             rec.x_type_6_base = rec._get_summary_by_type('base', '6')
             rec.x_type_6_tax = rec._get_summary_by_type('tax', '6')
             rec.x_type_6_desc = rec._get_summary_by_type('desc', '6')
-            rec.x_signature = voucher.validate_user_id.display_name
+            rec.x_signature = rec.create_uid.display_name
 
     @api.multi
     def _compute_address(self):
@@ -158,9 +215,21 @@ class PrintWhtCertWizard(models.Model):
             wht_lines.append((0, 0, vals))
         return wht_lines
 
+    @api.multi
+    @api.depends('sequence')
+    def _compute_wht_sequence_display(self):
+        for rec in self:
+            if rec.period_id and rec.sequence:
+                date_start = rec.period_id.date_start
+                mo = datetime.strptime(date_start,
+                                       '%Y-%m-%d').date().month
+                month = '{:02d}'.format(mo)
+                sequence = '{:04d}'.format(rec.sequence)
+                rec.sequence_display = '%s/%s' % (month, sequence)
+
     @api.model
     def default_get(self, fields):
-        res = super(PrintWhtCertWizard, self).default_get(fields)
+        res = super(AccountWhtCert, self).default_get(fields)
         active_model = self._context.get('active_model')
         active_id = self._context.get('active_id')
         if active_model == 'account.voucher':
@@ -168,6 +237,7 @@ class PrintWhtCertWizard(models.Model):
             company_partner = self.env.user.company_id.partner_id
             supplier = voucher.partner_id
             res['voucher_id'] = voucher.id
+            res['date'] = voucher.date_value
             res['company_partner_id'] = company_partner.id
             res['supplier_partner_id'] = supplier.id
             res['income_tax_form'] = (voucher.income_tax_form or
@@ -177,13 +247,76 @@ class PrintWhtCertWizard(models.Model):
         return res
 
     @api.multi
+    def _assign_number(self):
+        for cert in self:
+            if cert.voucher_id:
+                cert.number = cert.voucher_id.number
+
+    @api.multi
+    def _assign_wht_sequence(self):
+        """ Only if not assigned, this method will assign next sequence """
+        Period = self.env['account.period']
+        for cert in self:
+            if not cert.income_tax_form:
+                raise ValidationError(_("No Income Tax Form selected, "
+                                        "can not assign WHT Sequence"))
+            if cert.sequence:
+                continue
+            period = Period.find(cert.date)[:1]
+            sequence = \
+                cert._get_next_wht_sequence(cert.income_tax_form, period)
+            cert.write({'period_id': period.id,
+                        'sequence': sequence})
+
+    @api.model
+    def _get_seq_search_domain(self, income_tax_form, period):
+        domain = [('income_tax_form', '=', income_tax_form),
+                  ('period_id', '=', period.id)]
+        return domain
+
+    @api.model
+    def _get_next_wht_sequence(self, income_tax_form, period):
+        Sequence = self.env['ir.sequence']
+        WHTSequence = self.env['withholding.tax.sequence']
+        domain = self._get_seq_search_domain(income_tax_form, period)
+        seq = WHTSequence.search(domain, limit=1)
+        if not seq:
+            seq = self._create_sequence(income_tax_form, period)
+        return int(Sequence.next_by_id(seq.sequence_id.id))
+
+    @api.model
+    def _get_seq_name(self, income_tax_form, period):
+        name = 'WHT-%s-%s' % (income_tax_form, period.code,)
+        return name
+
+    @api.model
+    def _prepare_wht_seq(self, income_tax_form, period, new_sequence):
+        vals = {
+            'income_tax_form': income_tax_form,
+            'period_id': period.id,
+            'sequence_id': new_sequence.id,
+        }
+        return vals
+
+    @api.model
+    def _create_sequence(self, income_tax_form, period):
+        seq_vals = {'name': self._get_seq_name(income_tax_form, period),
+                    'implementation': 'no_gap'}
+        new_sequence = self.env['ir.sequence'].sudo().create(seq_vals)
+        vals = self._prepare_wht_seq(income_tax_form, period, new_sequence)
+        return self.env['withholding.tax.sequence'].create(vals)
+
+    @api.multi
     def run_report(self):
+        self.ensure_one()
         self._save_selection()
-        self.voucher_id._assign_wht_sequence()
+        self._assign_wht_sequence()
+        self._assign_number()
+        self.write({'state': 'done'})
 
     @api.multi
     def write(self, vals):
-        res = super(PrintWhtCertWizard, self).write(vals)
+        res = super(AccountWhtCert, self).write(vals)
         if 'wht_line' in vals:
             for rec in self:
                 rec._save_selection()
@@ -233,9 +366,9 @@ class PrintWhtCertWizard(models.Model):
 class WhtCertTaxLine(models.Model):
     _name = 'wht.cert.tax.line'
 
-    wizard_id = fields.Many2one(
-        'print.wht.cert.wizard',
-        string='Wizard',
+    cert_id = fields.Many2one(
+        'account.wht.cert',
+        string='WHT Cert',
         index=True,
     )
     voucher_tax_id = fields.Many2one(
@@ -275,3 +408,30 @@ class WhtCertTaxLine(models.Model):
             self.wht_cert_income_desc = select_dict[self.wht_cert_income_type]
         else:
             self.wht_cert_income_desc = False
+
+
+class WithholdingTaxSequence(models.Model):
+    _name = 'withholding.tax.sequence'
+    _description = 'Keep track of WHT sequences'
+    _rec_name = 'period_id'
+
+    period_id = fields.Many2one(
+        'account.period',
+        string='Period',
+    )
+    income_tax_form = fields.Selection(
+        INCOME_TAX_FORM,
+        string='Income Tax Form',
+        readonly=True,
+        help="Specify form for withholding tax, default with setup in supplier"
+    )
+    sequence_id = fields.Many2one(
+        'ir.sequence',
+        string='Sequence',
+        ondelete='restrict',
+    )
+    number_next_actual = fields.Integer(
+        string='Next Number',
+        related='sequence_id.number_next_actual',
+        readonly=True,
+    )

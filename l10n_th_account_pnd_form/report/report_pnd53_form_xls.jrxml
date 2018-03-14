@@ -34,7 +34,7 @@ supplier_name, title, supplier_street, supplier_street2, supplier_township,
 supplier_district, supplier_province, supplier_zip, supplier_country,
 base_total, tax_total, title_th, supplier_name_th,
 a.state, wht_period, tax_percent, wht_cert_income_type, wht_cert_income_desc, base, tax
-from report_pnd_form a join report_pnd_form_line b on a.id = b.voucher_id
+from report_pnd_form a join report_pnd_form_line b on a.id = b.cert_id
 where a.wht_period_id = $P{wht_period_id} and a.income_tax_form = $P{income_tax_form}]]>
 	</queryString>
 	<field name="wht_sequence_display" class="java.lang.String"/>

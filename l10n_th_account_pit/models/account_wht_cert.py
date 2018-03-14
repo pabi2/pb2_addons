@@ -2,8 +2,8 @@
 from openerp import models, fields, api
 
 
-class PrintWhtCertWizard(models.Model):
-    _inherit = 'print.wht.cert.wizard'
+class AccountWhtCert(models.Model):
+    _inherit = 'account.wht.cert'
 
     @api.model
     def _prepare_wht_line(self, voucher):
@@ -19,23 +19,26 @@ class PrintWhtCertWizard(models.Model):
                 }
                 wht_lines.append((0, 0, vals))
         else:
-            wht_lines = super(PrintWhtCertWizard,
+            wht_lines = super(AccountWhtCert,
                               self)._prepare_wht_line(voucher)
         return wht_lines
 
-    @api.model
+    @api.multi
     def _save_selection(self):
+        self.ensure_one()
         if self._context.get('pit_withhold', False):
-            if not self.voucher_id.income_tax_form:
-                self.voucher_id.income_tax_form = self.income_tax_form
-            self.voucher_id.tax_payer = self.tax_payer
+            if self.voucher_id:
+                if not self.voucher_id.income_tax_form:
+                    self.voucher_id.income_tax_form = self.income_tax_form
+                self.voucher_id.tax_payer = self.tax_payer
             for line in self.wht_line:
-                line.pit_id.write({
-                    'wht_cert_income_type': line.wht_cert_income_type,
-                    'wht_cert_income_desc': line.wht_cert_income_desc,
-                })
+                if line.pit_id:
+                    line.pit_id.write({
+                        'wht_cert_income_type': line.wht_cert_income_type,
+                        'wht_cert_income_desc': line.wht_cert_income_desc,
+                    })
         else:
-            super(PrintWhtCertWizard, self)._save_selection()
+            super(AccountWhtCert, self)._save_selection()
 
 
 class WhtCertTaxLine(models.Model):

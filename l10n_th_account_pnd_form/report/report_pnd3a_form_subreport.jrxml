@@ -4,21 +4,21 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;pnd_form_line&quot;]"/>
-	<parameter name="voucher_id" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[$P{voucher_id}]]></defaultValueExpression>
+	<parameter name="cert_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[$P{cert_id}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="income_tax_form" class="java.lang.String"/>
 	<parameter name="supplier_taxid" class="java.lang.String"/>
 	<parameter name="fiscalyear_id" class="java.lang.Integer"/>
 	<queryString>
 		<![CDATA[SELECT * FROM report_pnd_form_line
-INNER JOIN report_pnd_form ON report_pnd_form.voucher_id = report_pnd_form_line.voucher_id
+INNER JOIN report_pnd_form ON report_pnd_form.cert_id = report_pnd_form_line.cert_id
 WHERE report_pnd_form.wht_period_id in (SELECT id FROM account_period WHERE fiscalyear_id = $P{fiscalyear_id})
 AND report_pnd_form.income_tax_form = $P{income_tax_form}
 AND report_pnd_form.supplier_taxid = $P{supplier_taxid}]]>
 	</queryString>
 	<field name="id" class="java.lang.Integer"/>
-	<field name="voucher_id" class="java.lang.Integer">
+	<field name="cert_id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[Voucher]]></fieldDescription>
 	</field>
 	<field name="income_tax_form" class="java.lang.String">

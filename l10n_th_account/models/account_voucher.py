@@ -7,15 +7,8 @@ from openerp.exceptions import ValidationError
 import openerp.addons.decimal_precision as dp
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
-
-WHT_CERT_INCOME_TYPE = [('1', '1.เงินเดือน ค่าจ้าง ฯลฯ 40(1)'),
-                        ('2', '2.ค่าธรรมเนียม ค่านายหน้า ฯลฯ 40(2)'),
-                        ('3', '3.ค่าแห่งลิขสิทธิ์ ฯลฯ 40(3)'),
-                        ('5', '5.ค่าจ้างทำของ ค่าบริการ ฯลฯ 3 เตรส'),
-                        ('6', '6.อื่นๆ')]
-
-TAX_PAYER = [('withholding', 'Withholding'),
-             ('paid_one_time', 'Paid One Time')]
+from openerp.addons.l10n_th_account.models.account_wht_cert \
+    import WHT_CERT_INCOME_TYPE, TAX_PAYER
 
 
 class common_voucher(object):
@@ -87,23 +80,8 @@ class AccountVoucher(common_voucher, models.Model):
         readonly=True,
         help="Specify form for withholding tax, default with setup in supplier"
     )
-    wht_sequence = fields.Integer(
-        string='WHT Sequence',
-        readonly=True,
-        help="Running sequence for the same period. Reset every period",
-    )
-    wht_sequence_display = fields.Char(
-        string='WHT Sequence',
-        compute='_compute_wht_sequence_display',
-        store=True,
-    )
-    wht_period_id = fields.Many2one(
-        'account.period',
-        string='WHT Period',
-        readonly=True,
-    )
     wht_cert_ids = fields.One2many(
-        'print.wht.cert.wizard',
+        'account.wht.cert',
         'voucher_id',
         string='WTH Cert(s)',
         readonly=True,
@@ -131,11 +109,6 @@ class AccountVoucher(common_voucher, models.Model):
         help="Computed as the difference between the amount stated in the "
         "voucher and the sum of allocation on the voucher lines.",
     )
-    _sql_constraints = [
-        ('wht_seq_uunique',
-         'unique (wht_period_id, wht_sequence, income_tax_form)',
-         'WHT Sequence must be unique!'),
-    ]
 
     @api.multi
     def open_wht_cert(self):
@@ -147,7 +120,7 @@ class AccountVoucher(common_voucher, models.Model):
             'name': _("WHT Cert."),
             'view_type': 'form',
             'view_mode': 'form',
-            'res_model': 'print.wht.cert.wizard',
+            'res_model': 'account.wht.cert',
             'view_id': view.id,
             'res_id': self.wht_cert_ids[0].id,
             'type': 'ir.actions.act_window',
@@ -200,6 +173,7 @@ class AccountVoucher(common_voucher, models.Model):
                     raise ValidationError(
                         _('To Unreconcile this payment, you must reverse '
                           'the Recognized VAT Entry first.'))
+            voucher.wht_cert_ids.write({'state': 'cancel'})
         super(AccountVoucher, self).cancel_voucher()
 
     @api.model
@@ -724,98 +698,6 @@ class AccountVoucher(common_voucher, models.Model):
         else:
             super(AccountVoucher, self).action_move_line_create()
         return True
-
-    @api.multi
-    def _assign_wht_sequence(self):
-        """ Only if not assigned, this method will assign next sequence """
-        Period = self.env['account.period']
-        for voucher in self:
-            if not voucher.income_tax_form:
-                raise ValidationError(_("No Income Tax Form selected, "
-                                        "can not assign WHT Sequence"))
-            if voucher.wht_sequence:
-                continue
-            wht_period = Period.find(voucher.date_value)[:1]
-            wht_sequence = \
-                voucher._get_next_wht_sequence(voucher.income_tax_form,
-                                               wht_period)
-            voucher.write({'wht_period_id': wht_period.id,
-                           'wht_sequence': wht_sequence})
-
-    # @api.model
-    # def _get_next_wht_sequence(self, income_tax_form, wht_period_id):
-    #     self._cr.execute("""
-    #         select coalesce(max(wht_sequence), 0) + 1
-    #         from account_voucher
-    #         where wht_period_id = %s and income_tax_form = %s
-    #     """, (wht_period_id, income_tax_form))
-    #     next_sequence = self._cr.fetchone()[0]
-    #     return next_sequence
-
-    @api.model
-    def _get_seq_search_domain(self, income_tax_form, wht_period):
-        domain = [('income_tax_form', '=', income_tax_form),
-                  ('period_id', '=', wht_period.id)]
-        return domain
-
-    @api.model
-    def _get_next_wht_sequence(self, income_tax_form, wht_period):
-        Sequence = self.env['ir.sequence']
-        WHTSequence = self.env['withholding.tax.sequence']
-        domain = self._get_seq_search_domain(income_tax_form, wht_period)
-        seq = WHTSequence.search(domain, limit=1)
-        if not seq:
-            seq = self._create_sequence(income_tax_form, wht_period)
-        return int(Sequence.next_by_id(seq.sequence_id.id))
-
-    @api.model
-    def _get_seq_name(self, income_tax_form, wht_period):
-        name = 'WHT-%s-%s' % (income_tax_form, wht_period.code,)
-        return name
-
-    @api.model
-    def _prepare_wht_seq(self, income_tax_form, wht_period, new_sequence):
-        vals = {
-            'income_tax_form': income_tax_form,
-            'period_id': wht_period.id,
-            'sequence_id': new_sequence.id,
-        }
-        return vals
-
-    @api.model
-    def _create_sequence(self, income_tax_form, wht_period):
-        seq_vals = {'name': self._get_seq_name(income_tax_form, wht_period),
-                    'implementation': 'no_gap'}
-        new_sequence = self.env['ir.sequence'].sudo().create(seq_vals)
-        vals = self._prepare_wht_seq(income_tax_form, wht_period, new_sequence)
-        return self.env['withholding.tax.sequence'].create(vals)
-
-
-class WithholdingTaxSequence(models.Model):
-    _name = 'withholding.tax.sequence'
-    _description = 'Keep track of WHT sequences'
-    _rec_name = 'period_id'
-
-    period_id = fields.Many2one(
-        'account.period',
-        string='Period',
-    )
-    income_tax_form = fields.Selection(
-        INCOME_TAX_FORM,
-        string='Income Tax Form',
-        readonly=True,
-        help="Specify form for withholding tax, default with setup in supplier"
-    )
-    sequence_id = fields.Many2one(
-        'ir.sequence',
-        string='Sequence',
-        ondelete='restrict',
-    )
-    number_next_actual = fields.Integer(
-        string='Next Number',
-        related='sequence_id.number_next_actual',
-        readonly=True,
-    )
 
 
 class AccountVoucherLine(common_voucher, models.Model):
