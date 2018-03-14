@@ -63,18 +63,21 @@ class AccountActivityGroup(models.Model):
         'account.activity.group.monitor.view',
         'activity_group_id',
         string='Activity Group Monitor',
+        readonly=True,
         help="Plan vs actual per fiscal year for activity group"
     )
     monitor_revenue_ids = fields.One2many(
         'account.activity.group.monitor.view',
         'activity_group_id',
         string='Activity Group Monitor',
+        readonly=True,
         domain=[('budget_method', '=', 'revenue')],
     )
     monitor_expense_ids = fields.One2many(
         'account.activity.group.monitor.view',
         'activity_group_id',
         string='Activity Group Monitor',
+        readonly=True,
         domain=[('budget_method', '=', 'expense')],
     )
     _sql_constraints = [
