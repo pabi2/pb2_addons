@@ -29,7 +29,7 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 	<field name="date_value" class="java.sql.Date"/>
 	<field name="income_tax_form" class="java.lang.String"/>
 	<field name="wht_period_id" class="java.lang.Integer"/>
-	<field name="voucher_id" class="java.lang.Integer"/>
+	<field name="cert_id" class="java.lang.Integer"/>
 	<field name="tax_payer" class="java.lang.String"/>
 	<field name="supplier_taxid" class="java.lang.String"/>
 	<field name="supplier_branch" class="java.lang.String"/>
@@ -359,8 +359,8 @@ where wht_period_id = $P{wht_period_id} and income_tax_form = $P{income_tax_form
 			</textField>
 			<subreport isUsingCache="true">
 				<reportElement x="409" y="1" width="368" height="52"/>
-				<subreportParameter name="voucher_id">
-					<subreportParameterExpression><![CDATA[$F{voucher_id}]]></subreportParameterExpression>
+				<subreportParameter name="cert_id">
+					<subreportParameterExpression><![CDATA[$F{cert_id}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "report_pnd53_form_subreport.jasper"]]></subreportExpression>

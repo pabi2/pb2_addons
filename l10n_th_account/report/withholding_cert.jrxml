@@ -43,8 +43,8 @@
 	<field name="pnd53" class="java.lang.String">
 		<fieldDescription><![CDATA[x_pnd53]]></fieldDescription>
 	</field>
-	<field name="wht_sequence_display" class="java.lang.String">
-		<fieldDescription><![CDATA[x_wht_sequence_display]]></fieldDescription>
+	<field name="sequence_display" class="java.lang.String">
+		<fieldDescription><![CDATA[x_sequence_display]]></fieldDescription>
 	</field>
 	<field name="withholding" class="java.lang.String">
 		<fieldDescription><![CDATA[x_withholding]]></fieldDescription>
@@ -456,7 +456,7 @@
 				<textElement verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{wht_sequence_display}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sequence_display}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement isPrintRepeatedValues="false" x="81" y="694" width="17" height="25"/>

@@ -204,9 +204,9 @@
                             <group>
                                 <group>
                                     <field name="income_tax_form"/>
-                                    <field name="wht_period_id" invisible="1"/>
+                                    <!-- <field name="wht_period_id" invisible="1"/>
                                     <field name="wht_sequence" invisible="1"/>
-                                    <field name="wht_sequence_display"/>
+                                    <field name="wht_sequence_display"/> -->
                                 </group>
                                 <group>
                                     <field name="tax_payer"/>

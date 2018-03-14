@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_print_wht_cert" model="ir.ui.view">
+            <field name="name">Create Withholding Tax Certificate</field>
+            <field name="model">account.wht.cert</field>
+            <field name="arch" type="xml">
+                <header attrs="{'invisible': [('number', '=', False)]}">
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done" clickable="True"/>
+                </header>
+                <sheet>
+                    <form string="Withholding Tax Certificate" create="0" edit="1" delete="0">
+                        <h1 attrs="{'invisible': [('number', '=', False)]}">
+                            <field name="number"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="voucher_id" invisible="1"/>
+                                <field name="id" invisible="1"/>
+                                <field name="company_partner_id"/>
+                                <field name="company_taxid" string="Tax ID"/>
+                                <field name="company_address" string="Address"/>
+                            </group>
+                            <group>
+                                <field name="supplier_partner_id"/>
+                                <field name="supplier_taxid" string="Tax ID"/>
+                                <field name="supplier_address" string="Address"/>
+                            </group>
+                        </group>
+                        <group string="WHT Cert Options">
+                            <group>
+                                <field name="income_tax_form" widget="radio" attrs="{'readonly': [('sequence_display', '!=', False)]}"/>
+                                <field name="sequence_display" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="period_id" invisible="1"/>
+                                <field name="tax_payer" attrs="{'readonly': [('sequence_display', '!=', False)]}"/>
+                            </group>
+                        </group>
+                        <field name="wht_line">
+                            <tree editable="bottom" create="0">
+                                <field name="voucher_tax_id" invisible="1"/>
+                                <field name="invoice_id"/>
+                                <field name="wht_cert_income_type"/>
+                                <field name="wht_cert_income_desc"/>
+                                <field name="base" sum="Total Base" readonly="1"/>
+                                <field name="amount" sum="Total Tax" readonly="1"/>
+                            </tree>
+                        </field>
+                        <footer attrs="{'invisible': [('id', '!=', False)]}">
+                            <button string="Update WHT Cert." name="run_report" type="object" class="oe_highlight"/>
+                            or
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                    </form>
+                </sheet>
+            </field>
+        </record>
+
+        <record id="action_print_wht_cert" model="ir.actions.act_window">
+            <field name="name">Print Withholding Tax Certificate</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.wht.cert</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_print_wht_cert"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="view_print_wht_cert_tree" model="ir.ui.view">
+            <field name="name">view.print.wht.cert.tree</field>
+            <field name="model">account.wht.cert</field>
+            <field name="arch" type="xml">
+                <tree string="Withholding Tax Cert.">
+                    <field name="number"/>
+                    <field name="sequence_display"/>
+                    <field name="supplier_partner_id"/>
+                    <field name="income_tax_form"/>
+                    <field name="tax_payer"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_print_wht_cert_search" model="ir.ui.view">
+            <field name="name">view.print.wht.cert.search</field>
+            <field name="model">account.wht.cert</field>
+            <field name="arch" type="xml">
+                <search string="Fund">
+                    <field name="voucher_id" filter_domain="['|',('voucher_id.number','ilike',self),('sequence_display','ilike',self)]" string="WHT Cert."/>
+                    <field name="supplier_partner_id"/>
+                    <group expand="0" string="Group By">
+                        <filter name="income_tax_form" string="Tax Form" context="{'group_by':'income_tax_form'}"/>
+                        <filter name="tax_payer" string="Tax Payer" context="{'group_by':'tax_payer'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_print_wht_cert_menu" model="ir.actions.act_window">
+            <field name="name">Withholding Certs.</field>
+            <field name="res_model">account.wht.cert</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_print_wht_cert_tree"/>
+        </record>
+
+        <menuitem name="Withholding Certs" id="menu_print_wht_cert" action="action_print_wht_cert_menu" parent="account.menu_finance_payables" sequence="13"/>
+
+
+    </data>
+</openerp>
