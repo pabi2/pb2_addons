@@ -87,8 +87,8 @@
             <field name="name">view.print.wht.cert.search</field>
             <field name="model">account.wht.cert</field>
             <field name="arch" type="xml">
-                <search string="Fund">
-                    <field name="voucher_id" filter_domain="['|',('voucher_id.number','ilike',self),('sequence_display','ilike',self)]" string="WHT Cert."/>
+                <search string="WHT Cert.">
+                    <field name="number" string="WHT Cert." filter_domain="['|',('number','ilike',self),('sequence_display','ilike',self)]"/>
                     <field name="supplier_partner_id"/>
                     <group expand="0" string="Group By">
                         <filter name="income_tax_form" string="Tax Form" context="{'group_by':'income_tax_form'}"/>
