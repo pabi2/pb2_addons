@@ -27,7 +27,7 @@
                             <br/>
                             <label for="name" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="name" readonly="1"/>
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
@@ -122,9 +122,9 @@
             <field name="model">invest.asset.plan</field>
             <field name="arch" type="xml">
                 <tree string="Investment Asset Planning" create="0" delete="0">
+                    <field name="fiscalyear_id"/>
                     <field name="name"/>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
+                    <field name="verified_amount"/>
                     <field name="creating_user_id"/>
                     <field name="state"/>
                 </tree>

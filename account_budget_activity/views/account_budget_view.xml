@@ -282,6 +282,7 @@
                     <field name="budget_method"/>
                     <field name="budget_id" invisible="1"/>
                     <field name="fiscalyear_id"/>
+                    <field name="description"/>
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="budget_release" invisible="1"/>
                     <button name="%(action_budget_release_wizard)d" attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}" string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>

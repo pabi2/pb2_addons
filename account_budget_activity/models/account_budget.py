@@ -701,6 +701,9 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         string='Current Period',
         compute='_compute_current_period',
     )
+    description = fields.Char(
+        string='Description',
+    )
     m1 = fields.Float(
         string='Oct',
     )

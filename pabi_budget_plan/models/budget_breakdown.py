@@ -469,13 +469,19 @@ class BudgetBreakdownLine(ChartField, models.Model):
         string='Policy Amount',
     )
 
+    @api.model
+    def _get_planned_expense_hook(self, breakdown, budget_plan):
+        planned_amount = budget_plan and budget_plan.planned_expense or 0.0
+        return planned_amount
+
     @api.multi
     @api.depends('budget_plan_id', 'budget_id')
     def _compute_amount(self):
         for line in self:
             # From Budget Plan
-            line.planned_amount = line.budget_plan_id and \
-                line.budget_plan_id.planned_expense or 0.0
+            budget_plan = line.budget_plan_id
+            line.planned_amount = \
+                self._get_planned_expense_hook(line.breakdown_id, budget_plan)
             line.latest_policy_amount = line.budget_id and \
                 line.budget_id.policy_amount or 0.0
             # From Budget Control

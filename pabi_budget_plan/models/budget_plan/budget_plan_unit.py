@@ -3,6 +3,7 @@ from openerp import tools
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from .budget_plan_common import BPCommon, BPLMonthCommon, PrevFYCommon
+from openerp.tools import float_compare, float_round
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 
@@ -132,7 +133,14 @@ class BudgetPlanUnit(BPCommon, models.Model):
     def _compute_master_cc_ids(self):
         CostControl = self.env['cost.control']
         for rec in self:
-            rec.master_cc_ids = CostControl.search([]).ids
+            # # see all in the same Org and public
+            domain = ['|', ('public', '=', True),
+                      '|', ('org_id', '=', rec.org_id.id),
+                      '|', ('sector_id.org_id', '=', rec.org_id.id),
+                      '|', ('subsector_id.org_id', '=', rec.org_id.id),
+                      '|', ('division_id.org_id', '=', rec.org_id.id),
+                      ('section_id.org_id', '=', rec.org_id.id)]
+            rec.master_cc_ids = CostControl.search(domain).ids
 
     # @api.multi
     # @api.depends('state')
@@ -245,6 +253,16 @@ class BudgetPlanUnit(BPCommon, models.Model):
     def action_submit(self):
         self.write({'state': '2_submit',
                     'user_id': self.env.user.id})
+
+    @api.multi
+    def post_import_validation(self):
+        for rec in self:
+            # 1) total_budget and planned_amount should equal
+            total_budget = sum(rec.plan_line_ids.mapped('total_budget'))
+            planned_amount = sum(rec.plan_line_ids.mapped('planned_amount'))
+            if float_compare(total_budget, planned_amount, 2) != 0:
+                raise ValidationError(
+                    _("Excel's total budget not equal planned amount"))
 
 
 class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):

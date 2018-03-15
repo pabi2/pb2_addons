@@ -15,7 +15,7 @@
         <record id="budget_plan_unit_base_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.unit</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_unit_base_20180208.xlsx</field>
+            <field name="datas_fname">budget_plan_unit_base_20180315.xlsx</field>
             <field name="name">Unit Based Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
@@ -25,7 +25,7 @@
                         '_HEAD_': {
                             'D2': 'fiscalyear_id.name',
                             'D3': 'org_id.name_short',
-                            'D4': 'section_id.code',
+                            'D4': 'section_id.display_name',
                             'D5': '${time.strftime("%d-%m-%Y")}',
                             'D6': 'user_id.name${value or ""}'
                         },
@@ -128,7 +128,7 @@
                     'Expense': {
                         '_HEAD_': {
                             'D2': 'fiscalyear_id',
-                            'D4': 'section_id',
+                            'D4': 'section_id${value and value[value.find("[")+1:value.find("]")] or ""}',
                         },
                         'plan_expense_line_ids[100]': {
                             # Determine if charge type has value, so this too
@@ -185,8 +185,11 @@
                             'V11': 'm11',
                             'W11': 'm12',
                         },
-                    }
-                }
+                    },
+                },
+                '__POST_IMPORT__': [
+                  '${object.post_import_validation()}',
+                ],
             }
           </field>
         </record>
