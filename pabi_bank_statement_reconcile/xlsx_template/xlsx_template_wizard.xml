@@ -4,14 +4,14 @@
 
       <!-- PABI Bank Statement -->
       <act_window id="action_bank_statement_export_xlsx_tempalte"
-          name="Get Import Template (.xlsx)"
+          name="Export (.xlsx)"
           res_model="export.xlsx.template"
           src_model="pabi.bank.statement"
           view_mode="form"
           target="new"
           context="{'lang': 'th_TH'}"/>
       <act_window id="action_bank_statement_import_xlsx_tempalte"
-          name="Import Template Data (.xlsx)"
+          name="Import Template (.xlsx)"
           res_model="import.xlsx.template"
           src_model="pabi.bank.statement"
           view_mode="form"
