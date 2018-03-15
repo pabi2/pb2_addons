@@ -5,14 +5,14 @@
       # Budget Plan
       <!-- Budget Plan Unit Based -->
       <act_window id="action_budget_plan_unit_export_xlsx_tempalte"
-          name="Get Import Template (.xlsx)"
+          name="Export Template (.xlsx)"
           res_model="export.xlsx.template"
           src_model="budget.plan.unit"
           view_mode="form"
           target="new"
           context="{'lang': 'th_TH'}"/>
       <act_window id="action_budget_plan_unit_import_xlsx_tempalte"
-          name="Import Template Data (.xlsx)"
+          name="Import Template (.xlsx)"
           res_model="import.xlsx.template"
           src_model="budget.plan.unit"
           view_mode="form"
@@ -20,14 +20,14 @@
 
       <!-- Budget Plan Invest Construction -->
       <act_window id="action_budget_plan_invest_construction_export_xlsx_tempalte"
-          name="Get Import Template (.xlsx)"
+          name="Export Template (.xlsx)"
           res_model="export.xlsx.template"
           src_model="budget.plan.invest.construction"
           view_mode="form"
           target="new"
           context="{'lang': 'th_TH'}"/>
       <act_window id="action_budget_plan_invest_construction_import_xlsx_tempalte"
-          name="Import Template Data (.xlsx)"
+          name="Import Template (.xlsx)"
           res_model="import.xlsx.template"
           src_model="budget.plan.invest.construction"
           view_mode="form"
@@ -52,14 +52,14 @@
 
       # Asset Item Plan
       <act_window id="action_invest_asset_plan_export_xlsx_tempalte"
-          name="Get Import Template (.xlsx)"
+          name="Export Template (.xlsx)"
           res_model="export.xlsx.template"
           src_model="invest.asset.plan"
           view_mode="form"
           target="new"
           context="{'lang': 'th_TH'}"/>
       <act_window id="action_invest_asset_plan_import_xlsx_tempalte"
-          name="Import Template Data (.xlsx)"
+          name="Import Template (.xlsx)"
           res_model="import.xlsx.template"
           src_model="invest.asset.plan"
           view_mode="form"
@@ -74,14 +74,14 @@
       # Project Based
       <!-- Budget Plan Project Based -->
       <act_window id="action_budget_plan_project_export_xlsx_tempalte"
-          name="Get Import Template (.xlsx)"
+          name="Export Template (.xlsx)"
           res_model="export.xlsx.template"
           src_model="budget.plan.project"
           view_mode="form"
           target="new"
           context="{'lang': 'th_TH'}"/>
       <act_window id="action_budget_plan_project_import_xlsx_tempalte"
-          name="Import Template Data (.xlsx)"
+          name="Import Template (.xlsx)"
           res_model="import.xlsx.template"
           src_model="budget.plan.project"
           view_mode="form"
