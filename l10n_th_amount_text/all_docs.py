@@ -66,13 +66,13 @@ class AmountToWord(object):
 
         return res
 
-    def copy(self, cr, uid, id, default=None, context=None):
+    def copy(self, cr, uid, id, default, context=None):
         if default is None:
             default = {}
         default.update({'amount_total_text_en': False,
                         'amount_total_text_th': False})
         return super(AmountToWord, self).copy(cr, uid, id,
-                                              default=default, context=context)
+                                              default, context=context)
 
 
 class account_invoice(AmountToWord, osv.osv):
