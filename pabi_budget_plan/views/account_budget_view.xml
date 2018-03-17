@@ -29,8 +29,10 @@
                 </xpath>
                 <div name="remarks" position="attributes">
                     <attribute name="style">color:red;font-size:18px</attribute>
-                    <attribute name="readonly">True</attribute>
                 </div>
+                <field name="remarks" position="attributes">
+                    <attribute name="readonly">True</attribute>
+                </field>
             </field>
         </record>
 

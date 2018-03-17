@@ -57,18 +57,28 @@ class AccountBudget(models.Model):
                  'budget_revenue_line_invest_construction',
                  'budget_expense_line_invest_construction')
     def _compute_budgeted_overall(self):
-        super(AccountBudget, self)._compute_budgeted_overall()
+        """ Overwrite """
         for rec in self:
             revenue_external = 0.0
             revenue_internal = 0.0
             expense_external = 0.0
             expense_internal = 0.0
-            for line in rec.budget_revenue_line_ids:
+            revenue_lines = rec.budget_revenue_line_unit_base or \
+                rec.budget_revenue_line_project_base or \
+                rec.budget_revenue_line_personnel or \
+                rec.budget_revenue_line_invest_asset or \
+                rec.budget_revenue_line_invest_construction
+            expense_lines = rec.budget_expense_line_unit_base or \
+                rec.budget_expense_line_project_base or \
+                rec.budget_expense_line_personnel or \
+                rec.budget_expense_line_invest_asset or \
+                rec.budget_expense_line_invest_construction
+            for line in revenue_lines:
                 if line.charge_type == 'external':
                     revenue_external += line.planned_amount
                 else:
                     revenue_internal += line.planned_amount
-            for line in rec.budget_expense_line_ids:
+            for line in expense_lines:
                 if line.charge_type == 'external':
                     expense_external += line.planned_amount
                 else:
@@ -77,6 +87,8 @@ class AccountBudget(models.Model):
             rec.budgeted_revenue_internal = revenue_internal
             rec.budgeted_expense_external = expense_external
             rec.budgeted_expense_internal = expense_internal
+            rec.budgeted_revenue = revenue_external + revenue_internal
+            rec.budgeted_expense = expense_external + expense_internal
 
     @api.multi
     def _budget_expense_lines_hook(self):

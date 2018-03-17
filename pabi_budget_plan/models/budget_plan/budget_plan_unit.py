@@ -14,11 +14,13 @@ class BudgetPlanUnit(BPCommon, models.Model):
     _description = "Unit - Budget Plan"
     _order = 'fiscalyear_id desc, id desc'
 
-    # TO BE REMOVED
-    @api.multi
-    def show_message(self):
-        raise ValidationError('Under construction!')
-
+    section_program_id = fields.Many2one(
+        'res.section.program',
+        related='section_id.section_program_id',
+        string='Section Program',
+        store=True,
+        readonly=True,
+    )
     # COMMON
     plan_line_ids = fields.One2many(
         'budget.plan.unit.line',
@@ -319,6 +321,7 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
         readonly=True,
     )
     section_program_id = fields.Many2one(
+        'res.section.program',
         related='plan_id.section_id.section_program_id',
         string='Section Program',
         store=True,
