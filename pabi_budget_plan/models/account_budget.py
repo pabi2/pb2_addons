@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
+from openerp.tools import float_compare
 from openerp.exceptions import ValidationError
 
 
@@ -11,6 +12,26 @@ class AccountBudget(models.Model):
         string='Policy Amount',
         readonly=True,
     )
+    remarks = fields.Text(
+        compute='_compute_remarks',
+        reaonly=True,
+    )
+
+    @api.multi
+    def _compute_remarks(self):
+        for rec in self:
+            # Rolling > Released
+            if float_compare(rec.rolling, rec.released_amount, 2) == 1:
+                rolling = '{:,.2f}'.format(rec.rolling)
+                diff = '{:,.2f}'.format(rec.rolling - rec.released_amount)
+                rec.remarks = _('Rolling Amount: %s\n'
+                                'Rolling > Released = %s') % (rolling, diff)
+            # Rolling < Released
+            if float_compare(rec.rolling, rec.released_amount, 2) == -1:
+                rolling = '{:,.2f}'.format(rec.rolling)
+                diff = '{:,.2f}'.format(rec.released_amount - rec.rolling)
+                rec.remarks = _('Rolling Amount: %s\n'
+                                'Rolling < Released = %s') % (rolling, diff)
 
     @api.multi
     def _get_doc_number(self):

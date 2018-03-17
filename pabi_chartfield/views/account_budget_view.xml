@@ -162,6 +162,9 @@
                     <field name="activity_group_id" invisible="0"/>
                     <field name="activity_id" invisible="1" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
 
+                    <!-- DESC -->
+                    <field name="description" invisible="0"/>
+
                     <!-- PERIOD -->
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="budget_release" invisible="1"/>
@@ -232,6 +235,9 @@
                     <field name="activity_group_id" invisible="0"/>
                     <field name="activity_id" invisible="1" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
 
+                    <!-- DESC -->
+                    <field name="description" invisible="1"/>
+
                     <!-- PERIOD -->
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="budget_release" invisible="1"/>
@@ -292,6 +298,10 @@
                     <!-- ACTIVITY -->
                     <field name="activity_group_id" invisible="0"/>
                     <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
+
+                    <!-- DESC -->
+                    <field name="description" invisible="1"/>
+
                     <!-- PERIOD -->
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="budget_release" invisible="1"/>
@@ -355,6 +365,8 @@
                     <!-- ACTIVITY -->
                     <field name="activity_group_id" invisible="1"/>
                     <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
+                    <!-- DESC -->
+                    <field name="description" invisible="1"/>
                     <!-- PERIOD -->
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="budget_release" invisible="1"/>
@@ -422,8 +434,10 @@
                     <field name="activity_group_id" invisible="1"/>
                     <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
 
-                    <!-- PERIOD -->
+                    <!-- DESC -->
+                    <field name="description" invisible="1"/>
 
+                    <!-- PERIOD -->
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="budget_release" invisible="1"/>
                     <button name="%(account_budget_activity.action_budget_release_wizard)d"

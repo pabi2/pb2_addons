@@ -210,6 +210,11 @@ class AccountBudget(models.Model):
         readonly=True,
         help="Summary by fiscal year and section",
     )
+    remarks = fields.Text(
+        string='Remarks',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
 
     @api.model
     def trx_budget_required(self, trx):
@@ -700,6 +705,9 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     current_period = fields.Integer(
         string='Current Period',
         compute='_compute_current_period',
+    )
+    description = fields.Char(
+        string='Description',
     )
     m1 = fields.Float(
         string='Oct',

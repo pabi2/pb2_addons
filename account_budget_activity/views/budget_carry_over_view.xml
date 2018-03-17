@@ -36,6 +36,7 @@
                             <group>
                                 <field name="doctype"/>
                                 <field name="fiscalyear_id"/>
+                                <field name="amount_total"/>
                             </group>
                             <group>
                                 <field name="write_uid" readonly="1"/>

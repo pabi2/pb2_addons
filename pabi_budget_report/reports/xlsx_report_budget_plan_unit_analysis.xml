@@ -12,10 +12,10 @@
                         <group>
                             <field name="fiscalyear_id"/>
                             <field name="org_id"/>
-                            <field name="sector_id"/>
-                            <field name="subsector_id"/>
-                            <field name="division_id"/>
-                            <field name="section_id"/>
+                            <field name="sector_id" context="{'org_id': org_id}"/>
+                            <field name="subsector_id" context="{'org_id': org_id, 'sector_id': sector_id}"/>
+                            <field name="division_id" context="{'org_id': org_id, 'sector_id': sector_id, 'subsector_id': subsector_id}"/>
+                            <field name="section_id" context="{'org_id': org_id, 'sector_id': sector_id, 'subsector_id': subsector_id, 'division_id': division_id}"/>
                         </group>
                         <group>
                             <field name="budget_method" invisible="0"/>

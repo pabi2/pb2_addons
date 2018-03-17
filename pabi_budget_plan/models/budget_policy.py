@@ -358,7 +358,7 @@ class BudgetPolicy(models.Model):
                             (field, '=', entity_id)]
                 # Total plan for each entity
                 plans = self.env[plan_model].search(plan_dom)
-                planned_expense = sum(plans.mapped('planned_expense'))
+                planned_expense = self._get_planned_expense_hook(policy, plans)
                 vals = {'planned_amount': planned_expense, }
                 if model:
                     vals.update({field: entity_id})
@@ -380,6 +380,11 @@ class BudgetPolicy(models.Model):
             policy.write({policy_line: lines})
 
         self.message_post(body=_('Regenerate Policy Lines, all amount reset!'))
+
+    @api.model
+    def _get_planned_expense_hook(self, plans):
+        """ We have this hook as with internal charge module may change it """
+        return sum(plans.mapped('planned_expense'))
 
     @api.multi
     def action_draft(self):

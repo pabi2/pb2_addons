@@ -27,6 +27,12 @@
                 <xpath expr="//page[@name='revenue']" position="attributes">
                     <attribute name="attrs">{'invisible': [('chart_view', 'not in', ('project_base', 'unit_base'))]}</attribute>
                 </xpath>
+                <div name="remarks" position="attributes">
+                    <attribute name="style">color:red;font-size:18px</attribute>
+                </div>
+                <field name="remarks" position="attributes">
+                    <attribute name="readonly">True</attribute>
+                </field>
             </field>
         </record>
 

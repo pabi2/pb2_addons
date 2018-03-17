@@ -87,9 +87,8 @@
             <field name="model">budget.plan.invest.construction</field>
             <field name="arch" type="xml">
                 <tree string="Budget">
+                    <field name="fiscalyear_id"/>
                     <field name="name"/>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
                     <field name="user_id"/>
                     <field name="state"/>
                 </tree>

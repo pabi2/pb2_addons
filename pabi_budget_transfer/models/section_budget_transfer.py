@@ -233,6 +233,12 @@ class SectionBudgetTransferLine(models.Model):
         related='from_budget_id.name',
         readonly=True,
     )
+    from_section_id = fields.Many2one(
+        'res.section',
+        string='From Secton',
+        related='from_budget_id.section_id',
+        readonly=True,
+    )
     amount_transfer = fields.Float(
         string='Transfer Amount',
         required=True,
@@ -246,6 +252,12 @@ class SectionBudgetTransferLine(models.Model):
     to_budget = fields.Char(
         string='To Budget',
         related='to_budget_id.name',
+        readonly=True,
+    )
+    to_section_id = fields.Many2one(
+        'res.section',
+        string='To Secton',
+        related='to_budget_id.section_id',
         readonly=True,
     )
     notes = fields.Text(

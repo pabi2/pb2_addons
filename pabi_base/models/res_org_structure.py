@@ -39,10 +39,17 @@ class ResOrg(ResCommon, models.Model):
         translate=True,
     )
 
+    @api.model
+    def _add_name_search_domain(self):
+        """ Additiona domain for context's name serach """
+        domain = []
+        return domain
+
 
 class ResSector(ResCommon, models.Model):
     _name = 'res.sector'
     _description = 'Sector'
+    _rescommon_name_search_list = ['org_id']
 
     org_id = fields.Many2one(
         'res.org',
@@ -54,6 +61,7 @@ class ResSector(ResCommon, models.Model):
 class ResSubsector(ResCommon, models.Model):
     _name = 'res.subsector'
     _description = 'Subsector'
+    _rescommon_name_search_list = ['org_id', 'sector_id']
 
     sector_id = fields.Many2one(
         'res.sector',
@@ -72,6 +80,7 @@ class ResSubsector(ResCommon, models.Model):
 class ResDivision(ResCommon, models.Model):
     _name = 'res.division'
     _description = 'Division'
+    _rescommon_name_search_list = ['org_id', 'sector_id', 'subsector_id']
 
     subsector_id = fields.Many2one(
         'res.subsector',
@@ -97,6 +106,8 @@ class ResDivision(ResCommon, models.Model):
 class ResSection(ResCommon, models.Model):
     _name = 'res.section'
     _description = 'Section'
+    _rescommon_name_search_list = ['org_id', 'sector_id',
+                                   'subsector_id', 'division_id']
 
     division_id = fields.Many2one(
         'res.division',

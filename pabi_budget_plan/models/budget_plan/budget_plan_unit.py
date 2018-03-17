@@ -3,6 +3,7 @@ from openerp import tools
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from .budget_plan_common import BPCommon, BPLMonthCommon, PrevFYCommon
+from openerp.tools import float_compare, float_round
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 
@@ -13,11 +14,13 @@ class BudgetPlanUnit(BPCommon, models.Model):
     _description = "Unit - Budget Plan"
     _order = 'fiscalyear_id desc, id desc'
 
-    # TO BE REMOVED
-    @api.multi
-    def show_message(self):
-        raise ValidationError('Under construction!')
-
+    section_program_id = fields.Many2one(
+        'res.section.program',
+        related='section_id.section_program_id',
+        string='Section Program',
+        store=True,
+        readonly=True,
+    )
     # COMMON
     plan_line_ids = fields.One2many(
         'budget.plan.unit.line',
@@ -132,7 +135,14 @@ class BudgetPlanUnit(BPCommon, models.Model):
     def _compute_master_cc_ids(self):
         CostControl = self.env['cost.control']
         for rec in self:
-            rec.master_cc_ids = CostControl.search([]).ids
+            # # see all in the same Org and public
+            domain = ['|', ('public', '=', True),
+                      '|', ('org_id', '=', rec.org_id.id),
+                      '|', ('sector_id.org_id', '=', rec.org_id.id),
+                      '|', ('subsector_id.org_id', '=', rec.org_id.id),
+                      '|', ('division_id.org_id', '=', rec.org_id.id),
+                      ('section_id.org_id', '=', rec.org_id.id)]
+            rec.master_cc_ids = CostControl.search(domain).ids
 
     # @api.multi
     # @api.depends('state')
@@ -246,6 +256,19 @@ class BudgetPlanUnit(BPCommon, models.Model):
         self.write({'state': '2_submit',
                     'user_id': self.env.user.id})
 
+    @api.multi
+    def post_import_validation(self):
+        for rec in self:
+            # 1) total_budget and planned_amount should equal
+            total_budget = sum(rec.plan_line_ids.mapped('total_budget'))
+            planned_amount = sum(rec.plan_line_ids.mapped('planned_amount'))
+            if float_compare(total_budget, planned_amount, 2) != 0:
+                raise ValidationError(
+                    _("Excel's total budget not equal planned amount"))
+            # 2) If external line has income_section_id, remove it.
+            rec.plan_line_ids.filtered(lambda l: l.charge_type == 'external').\
+                write({'income_section_id': False})
+
 
 class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     _name = 'budget.plan.unit.line'
@@ -298,6 +321,7 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
         readonly=True,
     )
     section_program_id = fields.Many2one(
+        'res.section.program',
         related='plan_id.section_id.section_program_id',
         string='Section Program',
         store=True,

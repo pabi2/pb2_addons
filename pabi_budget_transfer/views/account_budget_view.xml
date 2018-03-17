@@ -13,8 +13,8 @@
                                 <field name="in_unit_transfer_ids" nolabel="1">
                                     <tree editable="bottom">
                                         <field name="transfer_id" string="Reference"/>
-                                        <field name="from_budget_id" context="{'display_as_section': True}"/>
-                                        <field name="from_budget"/>
+                                        <field name="from_budget_id" invisible="1"/>
+                                        <field name="from_section_id"/>
                                         <field name="amount_transfer" sum="Total Amount"/>
                                         <field name="notes"/>
                                     </tree>
@@ -24,8 +24,8 @@
                                 <field name="out_unit_transfer_ids" nolabel="1">
                                     <tree editable="bottom">
                                         <field name="transfer_id" string="Reference"/>
-                                        <field name="to_budget_id" context="{'display_as_section': True}"/>
-                                        <field name="to_budget"/>
+                                        <field name="to_budget_id" invisible="1"/>
+                                        <field name="to_section_id"/>
                                         <field name="amount_transfer" sum="Total Amount"/>
                                         <field name="notes"/>
                                     </tree>
