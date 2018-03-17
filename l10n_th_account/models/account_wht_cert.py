@@ -147,10 +147,10 @@ class AccountWhtCert(models.Model):
     x_type_3_tax = fields.Float(compute='_compute_cert_fields')
     x_type_5_base = fields.Float(compute='_compute_cert_fields')
     x_type_5_tax = fields.Float(compute='_compute_cert_fields')
-    x_type_5_desc = fields.Float(compute='_compute_cert_fields')
+    x_type_5_desc = fields.Char(compute='_compute_cert_fields')
     x_type_6_base = fields.Float(compute='_compute_cert_fields')
     x_type_6_tax = fields.Float(compute='_compute_cert_fields')
-    x_type_6_desc = fields.Float(compute='_compute_cert_fields')
+    x_type_6_desc = fields.Char(compute='_compute_cert_fields')
     x_signature = fields.Char(compute='_compute_cert_fields')
 
     @api.multi
@@ -335,8 +335,9 @@ class AccountWhtCert(models.Model):
             return round(sum([x.amount for x in wht_lines]), 2)
         if column == 'desc':
             descs = [x.wht_cert_income_desc for x in wht_lines]
-            descs = filter(lambda x: x is not False and x != '', descs)
-            return ', '.join(descs)
+            descs = filter(lambda x: x and x != '', descs)
+            desc = ', '.join(descs)
+            return desc
 
     @api.model
     def _prepare_address(self, partner):
