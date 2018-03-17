@@ -263,6 +263,9 @@ class BudgetPlanUnit(BPCommon, models.Model):
             if float_compare(total_budget, planned_amount, 2) != 0:
                 raise ValidationError(
                     _("Excel's total budget not equal planned amount"))
+            # 2) If external line has income_section_id, remove it.
+            rec.plan_line_ids.filtered(lambda l: l.charge_type == 'external').\
+                write({'income_section_id': False})
 
 
 class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):

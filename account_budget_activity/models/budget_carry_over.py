@@ -49,6 +49,15 @@ class BudgetCarryOver(models.Model):
         default='draft',
         readonly=True,
     )
+    amount_total = fields.Float(
+        string='Total Amount',
+        compute='_compute_amount_total',
+    )
+
+    @api.multi
+    def _compute_amount_total(self):
+        for rec in self:
+            rec.amount_total = sum(rec.line_ids.mapped('commit_amount'))
 
     @api.model
     def default_get(self, fields):

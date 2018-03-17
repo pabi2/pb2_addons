@@ -273,19 +273,18 @@
                     <field name="section_name" />
                     <field name="section_program_id"/>
                     <field name="mission_id" />
-                    <field name="section_program_id" />
                     <!-- <field name="program_rpt_id" /> -->
                     <field name="fund_id" invisible="1"/>
                     <field name="activity_group_id"/>
                     <field name="cost_control_id" invisible="1"/>
                     <field name="cost_control_code"/>
                     <field name="cost_control_name"/>
+                    <field name="description"/>
+                    <field name="reason"/>
                     <field name="unit"/>
                     <field name="activity_unit_price"/>
                     <field name="activity_unit"/>
                     <field name="total_budget"/>
-                    <field name="description"/>
-                    <field name="reason"/>
                     <field name="m0"/>
                     <field name="next_fy_commitment" sum="Next FY Commitment"/>
                     <field name="m1"/>
@@ -301,7 +300,7 @@
                     <field name="m11"/>
                     <field name="m12"/>
                     <field name="planned_amount" sum="Planned Amount"/>
-                    <field name="state" invisible="1"/>
+                    <field name="state"/>
                     <!-- <field name="status" invisible="1"/> -->
                 </tree>
             </field>

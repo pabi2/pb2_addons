@@ -53,7 +53,7 @@ def get_field_format(field):
         - align = left, center, right
         - number = true, false
 
-        i.e., 'field%{font=bold;fill=red;align=center;number=true}'
+        i.e., 'field#{font=bold;fill=red;align=center;number_format=number}'
     """
     if '#{' in field and '}' in field:
         i = field.index('#{')

@@ -49,10 +49,49 @@ class ResCommon(object):
                             name_short or name or '')))
         return result
 
-    # As this is object, it can't call super. It throw error
-    # @api.one
-    # def copy_data(self, default=None):
-    #     if default is None:
-    #         default = {}
-    #     tmp_default = dict(default, name=_("%s (Copy)") % self.name)
-    #     return super(ResCommon, self).copy_data(default=tmp_default)
+    # Domain name_search
+    # This is a required variable, if any object with ResCommon needs to domain
+    # They need to have context in view
+    _rescommon_name_search_list = []
+
+    @api.model
+    def _add_name_search_domain(self):
+        """ Additiona domain for context's name serach """
+        domain = []
+        ctx = self._context.copy()
+        for i in self._rescommon_name_search_list:
+            if ctx.get(i):
+                domain += [(i, '=', ctx.get(i))]
+        return domain
+
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=80):
+        if args is None:
+            args = []
+        args += self._add_name_search_domain()
+        return super(ResCommon, self).name_search(name=name, args=args,
+                                                  operator=operator,
+                                                  limit=limit)
+
+    @api.model
+    def search_read(self, domain=None, fields=None, offset=0,
+                    limit=None, order=None):
+        if domain is None:
+            domain = []
+        domain += self._add_name_search_domain()
+        res = super(ResCommon, self).search_read(domain=domain, fields=fields,
+                                                 offset=offset, limit=limit,
+                                                 order=order)
+        return res
+    # End domain name_search
+
+    @api.model
+    def read_group(self, domain, fields, groupby, offset=0, limit=None,
+                   orderby=False, lazy=True):
+        if domain is None:
+            domain = []
+        domain += self._add_name_search_domain()
+        res = super(ResCommon, self).read_group(domain, fields, groupby,
+                                                offset=offset, limit=limit,
+                                                orderby=orderby, lazy=lazy)
+        return res

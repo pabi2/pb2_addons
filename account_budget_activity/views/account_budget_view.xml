@@ -143,6 +143,9 @@
                                         attrs="{'required': [('budget_release', '=', 'manual_header')]}"/>
                                     <button name="%(action_change_release_amount)d" string="⇒ Update" type="action" class="oe_link"/>
                                 </div>
+                                <div name="remarks" colspan="2">
+                                    <field name="remarks" placeholder="Remarks..."/>
+                                </div>
                             </group>
                         </group>
                         <notebook>

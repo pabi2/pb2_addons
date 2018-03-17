@@ -210,6 +210,11 @@ class AccountBudget(models.Model):
         readonly=True,
         help="Summary by fiscal year and section",
     )
+    remarks = fields.Text(
+        string='Remarks',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
 
     @api.model
     def trx_budget_required(self, trx):

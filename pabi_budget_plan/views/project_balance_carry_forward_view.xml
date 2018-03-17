@@ -36,6 +36,7 @@
                             <group>
                                 <field name="from_fiscalyear_id"/>
                                 <field name="to_fiscalyear_id"/>
+                                <field name="amount_total"/>
                             </group>
                             <group>
                                 <field name="write_uid"/>
