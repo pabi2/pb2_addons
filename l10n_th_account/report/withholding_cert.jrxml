@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="withholding_cert" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0000000000000084"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="26"/>
+	<property name="ireport.y" value="288"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir") + "/../../../pb2_generic/l10n_th_account/report/"]]></defaultValueExpression>
 	</parameter>
@@ -135,7 +135,7 @@
 				<textElement verticalAlignment="Bottom" lineSpacing="1_1_2">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{type_5_desc}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{type_5_desc}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="499" y="75" width="10" height="25"/>
@@ -479,7 +479,7 @@
 				<textElement verticalAlignment="Bottom" lineSpacing="1_1_2">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{type_6_desc}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{type_6_desc}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 				<reportElement isPrintRepeatedValues="false" x="321" y="609" width="120" height="35">

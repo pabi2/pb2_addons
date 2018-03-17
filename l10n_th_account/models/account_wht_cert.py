@@ -43,6 +43,11 @@ class AccountWhtCert(models.Model):
         string='Voucher',
         copy=False,
     )
+    voucher_number = fields.Char(
+        string='Voucher',
+        related='voucher_id.number',
+        readonly=True,
+    )
     company_partner_id = fields.Many2one(
         'res.partner',
         string='Company',
