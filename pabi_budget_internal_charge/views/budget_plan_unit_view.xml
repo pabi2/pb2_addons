@@ -52,10 +52,10 @@
                 <xpath expr="/form/sheet/notebook/page[@name='revenue']//div[@name='revenue_extra']" position="inside">
                     <group>
                         <group>
-                            <field name="planned_revenue_external" string="External"/>
+                          <field name="planned_revenue_internal" string="Internal"/>
                         </group>
                         <group>
-                            <field name="planned_revenue_internal" string="Internal"/>
+                          <field name="planned_revenue_external" string="External"/>
                         </group>
                     </group>
                 </xpath>
