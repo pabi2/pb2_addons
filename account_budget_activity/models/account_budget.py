@@ -246,11 +246,13 @@ class AccountBudget(models.Model):
     @api.multi
     def _get_past_consumed_domain(self):
         self.ensure_one()
-        Period = self.env['account.period']
-        current_period = Period.find()
+        # Period = self.env['account.period']
+        # current_period = Period.find()
         dom = [('fiscalyear_id', '=', self.fiscalyear_id.id),
-               ('period_id', '<=', current_period.id),
-               ('budget_method', '=', 'expense')]
+               ('budget_method', '=', 'expense'),
+               # May says, past actually should include future one
+               # ('period_id', '<=', current_period.id),
+               ]
         return dom
 
     @api.multi
