@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <tree editable="bottom">
                     <field name="activity_group_id"/>
-                    <field name="budget_method" invisible="1"/>
+                    <field name="badd udget_method" invisible="1"/>
 
                     <field name="m0" sum="M0" invisible="1"/>
                     <field name="m1" sum="M1"/>
@@ -96,9 +96,6 @@
                                 <field name="division_id"/>
                                 <field name="org_id"/>
                                 <field name="user_id" readonly="1"/>
-                                <field name="planned_revenue"/>
-                                <field name="planned_expense"/>
-                                <field name="planned_overall"/>
                             </group>
                             <group>
                                 <field name="date"/>
@@ -109,6 +106,15 @@
                                     -
                                     <field name="date_to" class="oe_inline" nolabel="1"/>
                                 </div>
+                            </group>
+                        </group>
+                        <group>
+                            <group name="extra_planned">
+                            </group>
+                            <group string="Overall">
+                                <field name="planned_revenue"/>
+                                <field name="planned_expense"/>
+                                <field name="planned_overall"/>
                             </group>
                         </group>
                         <notebook>

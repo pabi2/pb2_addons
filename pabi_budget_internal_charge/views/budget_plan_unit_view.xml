@@ -49,25 +49,17 @@
             <field name="model">budget.plan.unit</field>
             <field name="inherit_id" ref="pabi_budget_plan.view_budget_plan_unit_form"/>
             <field name="arch" type="xml">
-                <xpath expr="/form/sheet/notebook/page[@name='revenue']//div[@name='revenue_extra']" position="inside">
-                    <group>
-                        <group>
-                          <field name="planned_revenue_internal" string="Internal"/>
-                        </group>
-                        <group>
-                          <field name="planned_revenue_external" string="External"/>
-                        </group>
-                    </group>
+                <xpath expr="/form/sheet//group[@name='extra_planned']" position="attributes">
+                    <attribute name="string">Internal</attribute>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@name='expense']//div[@name='expense_extra']" position="inside">
-                    <group>
-                        <group>
-                            <field name="planned_expense_internal" string="Internal"/>
-                        </group>
-                        <group>
-                          <field name="planned_expense_external" string="External"/>
-                        </group>
-                    </group>
+                <xpath expr="/form/sheet//group[@name='extra_planned']" position="inside">
+                    <field name="planned_revenue_internal"/>
+                    <field name="planned_expense_internal"/>
+                    <field name="planned_internal_overall"/>
+                    <separator string="External" colspan="2"/>
+                    <field name="planned_revenue_external"/>
+                    <field name="planned_expense_external"/>
+                    <field name="planned_external_overall"/>
                 </xpath>
             </field>
         </record>

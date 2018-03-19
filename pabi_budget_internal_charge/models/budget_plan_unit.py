@@ -25,6 +25,16 @@ class BudgetPlanUnit(models.Model):
         compute='_compute_planned_overall',
         store=True,
     )
+    planned_internal_overall = fields.Float(
+        string='Total Internal Planned',
+        compute='_compute_planned_overall',
+        store=True,
+    )
+    planned_external_overall = fields.Float(
+        string='Total External Planned',
+        compute='_compute_planned_overall',
+        store=True,
+    )
 
     @api.multi
     @api.depends('plan_line_ids',
@@ -51,6 +61,8 @@ class BudgetPlanUnit(models.Model):
             rec.planned_revenue_internal = revenue_internal
             rec.planned_expense_external = expense_external
             rec.planned_expense_internal = expense_internal
+            rec.planned_internal_overall = revenue_internal - expense_internal
+            rec.planned_external_overall = revenue_external - expense_external
 
 
 class BudgetPlanUnitLine(models.Model):
