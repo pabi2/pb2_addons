@@ -163,7 +163,7 @@
             <field name="model">budget.plan.unit</field>
             <field name="arch" type="xml">
                 <search string="Budget">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Plan"/>
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('plan_id','ilike',self)]" string="Budget Plan"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="state"/>
