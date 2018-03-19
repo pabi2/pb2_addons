@@ -11,9 +11,21 @@ _TRANSFER_STATE = [('draft', 'Draft'),
 
 class SectionBudgetTransfer(models.Model):
     _name = 'section.budget.transfer'
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = "Section Budget Transfer"
     _order = 'id desc'
+
+    _track = {
+        'state': {
+            'pabi_budget_transfer.mt_transferd_draft_to_confirmed':
+                lambda self, cr, uid, obj, ctx=None: obj.state == 'confirm',
+        },
+    }
+
+    @api.model
+    def _needaction_domain_get(self):
+        """ Show as unread to everyone as it is transfered """
+        return [('state', '=', 'draft')]
 
     name = fields.Char(
         string='Name',
@@ -158,6 +170,15 @@ class SectionBudgetTransfer(models.Model):
 
     @api.multi
     def button_draft(self):
+        # TEST
+        x = self.message_post(
+            subject='TEST',
+            body='XXXXXXXXXX',
+            partner_ids=[2804],
+            type='email'
+        )
+        print x
+        # --
         self.write({'state': 'draft'})
         return True
 

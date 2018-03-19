@@ -14,6 +14,7 @@
     'data': [
         'security/rule_section_budget_transfer.xml',
         'security/ir.model.access.csv',
+        'data/section_transfer_data.xml',
         'data/sequence.xml',
         'views/section_budget_transfer_view.xml',
         'views/account_budget_view.xml',
