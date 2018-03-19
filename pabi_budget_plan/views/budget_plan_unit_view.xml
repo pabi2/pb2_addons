@@ -8,9 +8,9 @@
             <field name="arch" type="xml">
                 <tree editable="bottom">
                     <field name="activity_group_id"/>
-                    <field name="budget_method"/>
+                    <field name="budget_method" invisible="1"/>
 
-                    <field name="m0" sum="M0"/>
+                    <field name="m0" sum="M0" invisible="1"/>
                     <field name="m1" sum="M1"/>
                     <field name="m2" sum="M2"/>
                     <field name="m3" sum="M3"/>
