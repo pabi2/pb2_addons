@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <tree editable="bottom">
                     <field name="activity_group_id"/>
-                    <field name="badd udget_method" invisible="1"/>
+                    <field name="budget_method" invisible="1"/>
 
                     <field name="m0" sum="M0" invisible="1"/>
                     <field name="m1" sum="M1"/>
@@ -164,12 +164,25 @@
             </field>
         </record>
 
+        <record id="view_budget_plan_unit_graph" model="ir.ui.view">
+            <field name="name">view.budget.plan.unit.graph</field>
+            <field name="model">budget.plan.unit</field>
+            <field name="arch" type="xml">
+                <graph string="Budget Plan" type="pivot">
+                    <field name="org_id" type="row"/>
+                    <field name="planned_revenue" type="measure"/>
+                    <field name="planned_expense" type="measure"/>
+                    <field name="planned_overall" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
         <record id="view_budget_plan_unit_search" model="ir.ui.view">
             <field name="name">view.budget.plan.unit.search</field>
             <field name="model">budget.plan.unit</field>
             <field name="arch" type="xml">
                 <search string="Budget">
-                    <field name="name" filter_domain="['|', ('name','ilike',self), ('plan_id','ilike',self)]" string="Budget Plan"/>
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Plan"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="state"/>
@@ -225,7 +238,7 @@
             <field name="model">budget.plan.unit.line</field>
             <field name="arch" type="xml">
                 <search string="Search Budget Plan Line">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Budget Plan"/>
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('plan_id','ilike',self)]" string="Budget Plan"/>
                     <field name="state"/>
                     <field name="org_id"/>
                     <field name="sector_id"/>
