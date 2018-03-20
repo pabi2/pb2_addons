@@ -14,4 +14,4 @@ class BudgetBreakdownLine(models.Model):
             return planned_amount
         else:
             return super(BudgetBreakdownLine, self).\
-                _get_planned_expense_hook(budget_plan)
+                _get_planned_expense_hook(breakdown, budget_plan)

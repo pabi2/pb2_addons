@@ -88,7 +88,7 @@
             <field name="name">view.section.budget.transfer.tree</field>
             <field name="model">section.budget.transfer</field>
             <field name="arch" type="xml">
-                <tree string="Section Budget Transfer">
+                <tree string="Section Budget Transfer" fonts="bold:message_unread==True">
                     <field name="name"/>
                     <field name="fiscalyear_id"/>
                     <field name="org_id"/>
@@ -98,6 +98,7 @@
                     <field name="date_transfer"/>
                     <field name="total_transfer_amt" sum="Transferred Amount"/>
                     <field name="state"/>
+                    <field name="message_unread" invisible="1"/>
                 </tree>
             </field>
         </record>
