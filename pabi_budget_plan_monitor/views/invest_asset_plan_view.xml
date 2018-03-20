@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_invest_asset_plan_form">
+            <field name="name">view.invest.asset.plan.form</field>
+            <field name="model">invest.asset.plan</field>
+            <field name="inherit_id" ref="pabi_budget_plan.view_invest_asset_plan_form"/>
+            <field name="arch" type="xml">
+                <field name="plan_line_ids" position="before">
+                  <button name="compute_prev_fy_performance" string="Prev.FY Performance" type="object" icon="terp-stock_format-scientific"
+                    attrs="{'invisible': [('state', '!=', 'draft')]}" class="oe_right"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

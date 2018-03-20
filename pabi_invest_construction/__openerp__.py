@@ -12,7 +12,7 @@
     "depends": [
         "pabi_base",
         "account_budget_activity",
-        "pabi_budget_plan",
+        "pabi_budget_plan_monitor",  # Get prev fy from monitor report
         "l10n_th_account",  # use account.period.calendar
         "document_status_history",
     ],

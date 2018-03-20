@@ -44,10 +44,8 @@
                         </group>
                         <notebook>
                             <page string="Budget Plan">
-
-                                <button name="compute_prev_fy_performance" string="Prev.FY Performance" type="object" icon="terp-stock_format-scientific"
-                                  attrs="{'invisible': [('state', '!=', '1_draft')]}" class="oe_right"/>
-
+                                <!-- <button name="compute_prev_fy_performance" string="Prev.FY Performance" type="object" icon="terp-stock_format-scientific"
+                                  attrs="{'invisible': [('state', '!=', '1_draft')]}" class="oe_right"/> -->
                                 <field name="plan_line_ids" colspan="4" nolabel="1">
                                     <tree string="Next year plan" editable="bottom">
                                         <field name="c_or_n"/>

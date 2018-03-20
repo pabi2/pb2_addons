@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_budget_plan_unit_form">
+            <field name="name">view.budget.plan.unit.form</field>
+            <field name="model">budget.plan.unit</field>
+            <field name="inherit_id" ref="pabi_budget_plan.view_budget_plan_unit_form"/>
+            <field name="arch" type="xml">
+                <notebook position="before">
+                    <button name="compute_prev_fy_performance" string="Prev.FY Performance" type="object" icon="terp-stock_format-scientific"
+                      attrs="{'invisible': [('state', '!=', '1_draft')]}" class="oe_right"/>
+                </notebook>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -238,6 +238,10 @@ class BudgetBreakdown(models.Model):
         self.invest_asset_line_ids = False
 
     @api.multi
+    def action_draft(self):
+        self.write({'state': 'draft'})
+
+    @api.multi
     def action_done(self):
         for breakdown in self:
             if float_compare(breakdown.new_policy_amount,
@@ -376,10 +380,10 @@ class BudgetBreakdown(models.Model):
                 plan = line.budget_plan_id
                 budget = plan.convert_to_budget_control()
                 line.budget_id = budget
-            # New policy, set is set to draft, if policy change from prev.
-            if line.budget_id.policy_amount != line.policy_amount:
-                line.budget_id.write({'state': 'draft',
-                                      'policy_amount': line.policy_amount})
+            # New policy, set is set to draft, if policy change from prev
+            line.budget_id.policy_amount = line.policy_amount
+            if line.budget_id.released_amount != line.policy_amount:
+                line.budget_id.state = 'draft'
         self.write({'state': 'done'})
 
     @api.multi
@@ -453,6 +457,12 @@ class BudgetBreakdownLine(ChartField, models.Model):
         store=True,
         readonly=True,
     )
+    released_amount = fields.Float(
+        string='Released',
+        compute='_compute_amount',
+        store=True,
+        readonly=True,
+    )
     planned_amount = fields.Float(
         string='Planned Amount',
         compute='_compute_amount',
@@ -488,6 +498,7 @@ class BudgetBreakdownLine(ChartField, models.Model):
             line.future_plan = line.budget_id.future_plan
             line.past_consumed = line.budget_id.past_consumed
             line.rolling = line.budget_id.rolling
+            line.released_amount = line.budget_id.released_amount
 
     @api.model
     def _change_amount_content(self, breakdown, new_amount):

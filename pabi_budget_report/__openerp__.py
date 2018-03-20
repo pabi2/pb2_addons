@@ -11,6 +11,7 @@
         'report_xls',
         'account_budget_activity',
         'pabi_budget_plan',
+        'pabi_budget_monitor',
         'pabi_utils',
     ],
     'data': [
