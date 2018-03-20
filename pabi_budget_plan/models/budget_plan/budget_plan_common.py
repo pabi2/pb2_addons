@@ -226,11 +226,11 @@ class BPCommon(Common):
         budget['budget_line_ids'] = budget_lines
         return self.env['account.budget'].create(budget)
 
-    @api.multi
-    def compute_prev_fy_performance(self):
-        """ Prepre actual/commit amount from previous year from PR/PO/EX """
-        PrevFY = self.env['%s.prev.fy.view' % self._name]
-        PrevFY._fill_prev_fy_performance(self)  # self = plans
+    # @api.multi
+    # def compute_prev_fy_performance(self):
+    #     """ Prepre actual/commit amount from previous year from PR/PO/EX """
+    #     PrevFY = self.env['%s.prev.fy.view' % self._name]
+    #     PrevFY._fill_prev_fy_performance(self)  # self = plans
 
 
 class BPLCommon(ChartField, Common):

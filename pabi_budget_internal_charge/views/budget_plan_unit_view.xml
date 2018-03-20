@@ -44,6 +44,22 @@
             </field>
         </record>
 
+        <record id="view_budget_plan_unit_tree" model="ir.ui.view">
+            <field name="name">view.budget.plan.unit.tree</field>
+            <field name="model">budget.plan.unit</field>
+            <field name="inherit_id" ref="pabi_budget_plan.view_budget_plan_unit_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree/field[@name='planned_revenue']" position="before">
+                    <field name="planned_revenue_internal" string="Int-Revenue" sum="Total"/>
+                    <field name="planned_expense_internal" string="Int-Expense" sum="Total"/>
+                    <field name="planned_internal_overall" string="Internal" sum="Total"/>
+                    <field name="planned_revenue_external" string="Ext-Revenue" sum="Total"/>
+                    <field name="planned_expense_external" string="Ext-Expense" sum="Total"/>
+                    <field name="planned_external_overall" string="External" sum="Total"/>
+                </xpath>
+            </field>
+        </record>
+
         <record id="view_budget_plan_unit_form" model="ir.ui.view">
             <field name="name">view.budget.plan.unit.form</field>
             <field name="model">budget.plan.unit</field>

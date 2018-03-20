@@ -31,6 +31,10 @@ class XLSXReportBudgetPlanUnitAnalysis(models.TransientModel):
         'res.section',
         string='Section',
     )
+    section_program_id = fields.Many2one(
+        'res.section.program',
+        string='Section Program',
+    )
     budget_method = fields.Selection(
         [('revenue', 'Revenue'),
          ('expense', 'Expense')],
@@ -71,6 +75,8 @@ class XLSXReportBudgetPlanUnitAnalysis(models.TransientModel):
             dom += [('division_id', '=', self.division_id.id)]
         if self.section_id:
             dom += [('section_id', '=', self.section_id.id)]
+        if self.section_program_id:
+            dom += [('section_program_id', '=', self.section_program_id.id)]
         if self.budget_method:
             dom += [('budget_method', '=', self.budget_method)]
         if self.status:

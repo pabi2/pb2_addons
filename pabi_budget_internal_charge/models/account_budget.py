@@ -124,12 +124,14 @@ class AccountBudget(models.Model):
     def _get_past_actual_amount_internal(self):
         self.ensure_one()
         Consume = self.env['budget.consume.report']
-        Period = self.env['account.period']
-        current_period = Period.find()
+        # Period = self.env['account.period']
+        # current_period = Period.find()
         dom = [('fiscalyear_id', '=', self.fiscalyear_id.id),
-               ('period_id', '<=', current_period.id),
                ('budget_method', '=', 'expense'),
-               ('charge_type', '=', 'internal')]
+               ('charge_type', '=', 'internal'),
+               # May said, past actual should include the future one
+               # ('period_id', '<=', current_period.id),
+               ]
         consumes = Consume.search(dom)
         return sum(consumes.mapped('amount_actual'))
 

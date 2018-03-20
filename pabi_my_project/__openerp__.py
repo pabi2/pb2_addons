@@ -12,7 +12,7 @@
     "depends": [
         "pabi_base",
         "pabi_chartfield",
-        "pabi_budget_plan",
+        "pabi_budget_plan_monitor",  # Get prev fy from monitor report
         "document_status_history",
     ],
     "data": [
