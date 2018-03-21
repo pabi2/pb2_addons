@@ -11,21 +11,22 @@ _TRANSFER_STATE = [('draft', 'Draft'),
 
 class SectionBudgetTransfer(models.Model):
     _name = 'section.budget.transfer'
-    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _inherit = ['mail.thread']
+    # _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = "Section Budget Transfer"
     _order = 'id desc'
+    #
+    # _track = {
+    #     'state': {
+    #         'pabi_budget_transfer.mt_transferd_draft_to_confirmed':
+    #             lambda self, cr, uid, obj, ctx=None: obj.state == 'confirm',
+    #     },
+    # }
 
-    _track = {
-        'state': {
-            'pabi_budget_transfer.mt_transferd_draft_to_confirmed':
-                lambda self, cr, uid, obj, ctx=None: obj.state == 'confirm',
-        },
-    }
-
-    @api.model
-    def _needaction_domain_get(self):
-        """ Show as unread to everyone as it is transfered """
-        return [('state', '=', 'draft')]
+    # @api.model
+    # def _needaction_domain_get(self):
+    #     """ Show as unread to everyone as it is transfered """
+    #     return [('state', '=', 'draft')]
 
     name = fields.Char(
         string='Name',
