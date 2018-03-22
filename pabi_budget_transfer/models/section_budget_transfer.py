@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_compare
 
 _TRANSFER_STATE = [('draft', 'Draft'),
                    ('confirm', 'Confirmed'),
@@ -11,21 +12,22 @@ _TRANSFER_STATE = [('draft', 'Draft'),
 
 class SectionBudgetTransfer(models.Model):
     _name = 'section.budget.transfer'
-    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _inherit = ['mail.thread']
+    # _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = "Section Budget Transfer"
     _order = 'id desc'
+    #
+    # _track = {
+    #     'state': {
+    #         'pabi_budget_transfer.mt_transferd_draft_to_confirmed':
+    #             lambda self, cr, uid, obj, ctx=None: obj.state == 'confirm',
+    #     },
+    # }
 
-    _track = {
-        'state': {
-            'pabi_budget_transfer.mt_transferd_draft_to_confirmed':
-                lambda self, cr, uid, obj, ctx=None: obj.state == 'confirm',
-        },
-    }
-
-    @api.model
-    def _needaction_domain_get(self):
-        """ Show as unread to everyone as it is transfered """
-        return [('state', '=', 'draft')]
+    # @api.model
+    # def _needaction_domain_get(self):
+    #     """ Show as unread to everyone as it is transfered """
+    #     return [('state', '=', 'draft')]
 
     name = fields.Char(
         string='Name',
@@ -170,15 +172,6 @@ class SectionBudgetTransfer(models.Model):
 
     @api.multi
     def button_draft(self):
-        # TEST
-        x = self.message_post(
-            subject='TEST',
-            body='XXXXXXXXXX',
-            partner_ids=[2804],
-            type='email'
-        )
-        print x
-        # --
         self.write({'state': 'draft'})
         return True
 
@@ -191,9 +184,18 @@ class SectionBudgetTransfer(models.Model):
     def button_confirm(self):
         fiscalyear_id = self.env['account.fiscalyear'].find()
         for record in self:
+            # 1) Lines
             if sum(record.transfer_line_ids.mapped('amount_transfer')) == 0.0:
                 raise ValidationError(
                     _('You can not confirm without transfer line amount!'))
+            # 2) Can't transfer > room
+            for line in record.transfer_line_ids:
+                if float_compare(
+                        line.amount_transfer,
+                        line.from_budget_id.release_diff_rolling, 2) == 1:
+                    raise ValidationError(
+                        _('Your amount is bigger than '
+                          'available amount to transfer!'))
             name = self.env['ir.sequence'].\
                 with_context(fiscalyear_id=fiscalyear_id).\
                 next_by_code('section.budget.transfer')
@@ -319,12 +321,13 @@ class SectionBudgetTransferLine(models.Model):
                 self.from_budget_id.release_diff_rolling <= 0.0:
             raise ValidationError(
                 _("%s don't have enough budget to transfer.\n"
-                  "Make sure its amount rolling less than its released") %
+                  "Make sure its rolling amount is less than its released") %
                 self.from_budget_id.name)
         self.amount_transfer = self.from_budget_id.release_diff_rolling
 
     @api.onchange('amount_transfer')
     def _onchange_amount_transfer(self):
-        if self.amount_transfer > self.from_budget_id.release_diff_rolling:
+        if float_compare(self.amount_transfer,
+                         self.from_budget_id.release_diff_rolling, 2) == 1:
             raise ValidationError(
                 _('Your amount is bigger than available amount to transfer!'))

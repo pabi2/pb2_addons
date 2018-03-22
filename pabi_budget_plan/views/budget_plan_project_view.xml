@@ -30,7 +30,7 @@
                               <field name="program_group_id"/>
                               <field name="functional_area_id"/>
                               <field name="user_id" readonly="1"/>
-                              <field name="planned_overall"/>
+                              <field name="planned_expense"/>
                             </group>
                             <group>
                                 <field name="date"/>
@@ -100,7 +100,7 @@
                     <field name="functional_area_id"/>
                     <field name="program_group_id"/>
                     <field name="program_id"/>
-                    <field name="planned_overall"/>
+                    <field name="planned_expense" sum="Total"/>
                     <field name="user_id"/>
                     <field name="state"/>
                 </tree>
