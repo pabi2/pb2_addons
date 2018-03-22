@@ -30,7 +30,8 @@ class BudgetPlanUnit(BPCommon, models.Model):
         copy=True,
         readonly=True,
         states={'1_draft': [('readonly', False)],
-                '2_submit': [('readonly', False)]},
+                '2_submit': [('readonly', False)],
+                '3_approve': [('readonly', False)]},
     )
     plan_revenue_line_ids = fields.One2many(
         'budget.plan.unit.line',
@@ -39,7 +40,8 @@ class BudgetPlanUnit(BPCommon, models.Model):
         copy=True,
         readonly=True,
         states={'1_draft': [('readonly', False)],
-                '2_submit': [('readonly', False)]},
+                '2_submit': [('readonly', False)],
+                '3_approve': [('readonly', False)]},
         domain=[('budget_method', '=', 'revenue')],  # Have domain
     )
     plan_expense_line_ids = fields.One2many(
@@ -49,7 +51,8 @@ class BudgetPlanUnit(BPCommon, models.Model):
         copy=True,
         readonly=True,
         states={'1_draft': [('readonly', False)],
-                '2_submit': [('readonly', False)]},
+                '2_submit': [('readonly', False)],
+                '3_approve': [('readonly', False)]},
         domain=[('budget_method', '=', 'expense')],  # Have domain
     )
     plan_summary_revenue_line_ids = fields.One2many(
@@ -247,9 +250,24 @@ class BudgetPlanUnit(BPCommon, models.Model):
                               nochange_fields[field]))
 
     @api.multi
+    def _check_write_access(self, vals):
+        # 1) Only OU Budget can edit on state 3_approve
+        for rec in self:
+            if rec.state == '3_approve' and \
+                    ('plan_line_ids' in vals or
+                     'plan_revenue_line_ids' in vals or
+                     'plan_expense_line_ids' in vals) and \
+                    not self.env.user.has_group('pabi_base.'
+                                                'group_operating_unit_budget'):
+                raise ValidationError(
+                    _('Only Operating Unit Budget users are '
+                      'allowed to edit at this state!'))
+
+    @api.multi
     def write(self, vals):
         self._validate_header(vals)
         self._post_message(vals)
+        self._check_write_access(vals)
         return super(BudgetPlanUnit, self).write(vals)
 
     @api.multi
@@ -404,6 +422,11 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
         string='Next FY Commitment',
         readonly=True,
         help="Comitment on next fy PR/PO/EX",
+    )
+    # Default fund to NSTDA, so it will be sent to Budget Control too.
+    fund_id = fields.Many2one(
+        'res.fund',
+        default=lambda self: self.env.ref('base.fund_nstda'),
     )
 
     @api.model

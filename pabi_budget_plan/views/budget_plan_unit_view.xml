@@ -307,21 +307,21 @@
                     <field name="unit"/>
                     <field name="activity_unit_price"/>
                     <field name="activity_unit"/>
-                    <field name="total_budget"/>
-                    <field name="m0"/>
-                    <field name="next_fy_commitment" sum="Next FY Commitment"/>
-                    <field name="m1"/>
-                    <field name="m2"/>
-                    <field name="m3"/>
-                    <field name="m4"/>
-                    <field name="m5"/>
-                    <field name="m6"/>
-                    <field name="m7"/>
-                    <field name="m8"/>
-                    <field name="m9"/>
-                    <field name="m10"/>
-                    <field name="m11"/>
-                    <field name="m12"/>
+                    <field name="total_budget" sum="Total"/>
+                    <field name="m0" sum="Total"/>
+                    <field name="next_fy_commitment" sum="Total"/>
+                    <field name="m1" sum="Total"/>
+                    <field name="m2" sum="Total"/>
+                    <field name="m3" sum="Total"/>
+                    <field name="m4" sum="Total"/>
+                    <field name="m5" sum="Total"/>
+                    <field name="m6" sum="Total"/>
+                    <field name="m7" sum="Total"/>
+                    <field name="m8" sum="Total"/>
+                    <field name="m9" sum="Total"/>
+                    <field name="m10" sum="Total"/>
+                    <field name="m11" sum="Total"/>
+                    <field name="m12" sum="Total"/>
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="state"/>
                     <!-- <field name="status" invisible="1"/> -->

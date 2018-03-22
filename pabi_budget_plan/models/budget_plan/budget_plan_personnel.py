@@ -102,6 +102,11 @@ class BudgetPlanPersonnelLine(BPLMonthCommon, ActivityCommon, models.Model):
         'res.personnel.costcenter',
         required=True,
     )
+    # Default fund to NSTDA, so it will be sent to Budget Control too.
+    fund_id = fields.Many2one(
+        'res.fund',
+        default=lambda self: self.env.ref('base.fund_nstda'),
+    )
 
     # Required for updating dimension
     # FIND ONLY WHAT IS NEED AND USE related field.

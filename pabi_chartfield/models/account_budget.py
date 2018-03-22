@@ -254,20 +254,6 @@ class AccountBudget(ChartField, models.Model):
             self.message_post(body=message)
         return super(AccountBudget, self).write(vals)
 
-    # @api.multi
-    # def _compute_commitment_summary_line_ids(self):
-    #     Commitment = self.env['budget.commitment.summary']
-    #     for budget in self:
-    #         if budget.chart_view != 'unit_base' or not budget.section_id:
-    #             continue
-    #         domain = [('fiscalyear_id', '=', budget.fiscalyear_id.id),
-    #                   ('section_id', '=', budget.section_id.id),
-    #                   ('all_commit', '!=', 0.0)]
-    #         budget.commitment_summary_expense_line_ids = \
-    #             Commitment.search(domain + [('budget_method', '=', 'expense')])
-    #         budget.commitment_summary_revenue_line_ids = \
-    #             Commitment.search(domain + [('budget_method', '=', 'revenue')])
-
 
 class AccountBudgetLine(ChartField, models.Model):
     _inherit = 'account.budget.line'
@@ -276,22 +262,11 @@ class AccountBudgetLine(ChartField, models.Model):
         related='budget_id.chart_view',
         store=True,
     )
-    # item_id = fields.Many2one(
-    #     'invest.asset.plan.item',
-    #     string='Asset Info',
-    #     ondelete='restrict',
-    #     readonly=True,
-    #     help="Special field to store Asset Item information",
-    # )
     display_name = fields.Char(
         string='Display Name',
         readonly=True,
         compute='_compute_display_name',
     )
-    # breakdown_line_id = fields.Many2one(
-    #     'budget.unit.job.order.line',
-    #     string='Breakdown Job Order Line ref.',
-    # )
 
     @api.model
     def _get_budget_level_type_hook(self, budget_line):
