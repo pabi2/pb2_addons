@@ -205,7 +205,7 @@ class ResInvestConstruction(LogCommon, models.Model):
                                               rec.amount_budget,
                                               precision_digits=2) != 0:
                 raise ValidationError(
-                    _("Sum of all phases approved budget != "
+                    _("Sum of all phases approved budget <> "
                       "Project's approved budget"))
             rec.amount_phase_approve = amount_total
 

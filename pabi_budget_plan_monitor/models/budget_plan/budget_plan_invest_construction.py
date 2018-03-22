@@ -50,25 +50,25 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
         common_fields = list(project_fields & plan_line_fields)
         plan_fiscalyear_id = self._context.get('plan_fiscalyear_id')
         for rec in self:
+            const = rec.invest_construction_id
             val = {
                 'c_or_n': 'continue',
                 'invest_construction_id': rec.invest_construction_id.id,
             }
             # Project Info, if any
             for field in common_fields:
-                if field in rec.invest_construction_id and \
+                if field in const and \
                         field not in ['id', '__last_update',
                                       'write_uid', 'write_date',
                                       'create_uid', 'create_date',
-                                      'state', ]:
+                                      'state', 'name']:
                     try:
-                        val[field] = rec.invest_construction_id[field].id
+                        val[field] = const[field].id
                     except:
-                        val[field] = rec.invest_construction_id[field]
+                        val[field] = const[field]
 
             # Next FY Commitment
-            construction = rec.invest_construction_id
-            next_fy_ex = construction.monitor_expense_ids.filtered(
+            next_fy_ex = const.monitor_expense_ids.filtered(
                 lambda l: l.fiscalyear_id.id == plan_fiscalyear_id)
             next_fy_commit = sum(next_fy_ex.mapped('amount_pr_commit') +
                                  next_fy_ex.mapped('amount_po_commit') +
@@ -76,6 +76,7 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
 
             # Overall budget performance
             val.update({
+                'name': const.display_name,
                 'overall_released': rec.released,
                 'overall_all_commit': rec.all_commit,
                 'overall_pr_commit': rec.pr_commit,

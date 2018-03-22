@@ -57,16 +57,23 @@
 
                                         <button name="edit_invest_construction" string="Info." icon="gtk-justify-fill" type="object" class="oe_link"/>
 
-                                        <field name="amount_budget"/>
-                                        <field name="overall_released"/>
-                                        <field name="overall_all_commit"/>
-                                        <field name="overall_pr_commit"/>
-                                        <field name="overall_po_commit"/>
-                                        <field name="overall_exp_commit"/>
-                                        <field name="overall_actual"/>
-                                        <field name="overall_consumed"/>
-                                        <field name="overall_balance"/>
-                                        <field name="next_fy_commitment"/>
+                                        <field name="amount_budget" sum="Total"/>
+                                        <field name="amount_before" sum="Total"/>
+                                        <field name="amount_fy1" sum="Total"/>
+                                        <field name="amount_fy2" sum="Total"/>
+                                        <field name="amount_fy3" sum="Total"/>
+                                        <field name="amount_fy4" sum="Total"/>
+                                        <field name="amount_beyond" sum="Total"/>
+                                        
+                                        <field name="overall_released" sum="Total"/>
+                                        <field name="overall_all_commit" sum="Total"/>
+                                        <field name="overall_pr_commit" sum="Total"/>
+                                        <field name="overall_po_commit" sum="Total"/>
+                                        <field name="overall_exp_commit" sum="Total"/>
+                                        <field name="overall_actual" sum="Total"/>
+                                        <field name="overall_consumed" sum="Total"/>
+                                        <field name="overall_balance" sum="Total"/>
+                                        <field name="next_fy_commitment" sum="Total"/>
                                     </tree>
                                 </field>
                             </page>
@@ -91,6 +98,18 @@
                     <field name="planned_expense" sum="Total"/>
                     <field name="state"/>
                 </tree>
+            </field>
+        </record>
+
+        <record id="view_budget_plan_invest_construction_graph" model="ir.ui.view">
+            <field name="name">view.budget.plan.invest.construction.graph</field>
+            <field name="model">budget.plan.invest.construction</field>
+            <field name="arch" type="xml">
+                <graph string="Budget Plan" type="pivot">
+                    <field name="org_id" type="row"/>
+                    <field name="fiscalyear_id" type="col"/>
+                    <field name="planned_expense" type="measure"/>
+                </graph>
             </field>
         </record>
 
@@ -121,7 +140,7 @@
             <field name="name">Budget Plans</field>
             <field name="res_model">budget.plan.invest.construction</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,graph</field>
             <field name="view_id" ref="view_budget_plan_invest_construction_tree"/>
             <field name="search_view_id" ref="view_budget_plan_invest_construction_search"/>
             <field name="context">{}</field>
