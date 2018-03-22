@@ -29,7 +29,7 @@
                             <group>
                                 <field name="org_id" required="1"/>
                                 <field name="user_id"/>
-                                <field name="planned_overall"/>
+                                <field name="planned_expense"/>
                             </group>
                             <group>
                                 <field name="date"/>
@@ -88,6 +88,7 @@
                     <field name="fiscalyear_id"/>
                     <field name="name"/>
                     <field name="user_id"/>
+                    <field name="planned_expense" sum="Total"/>
                     <field name="state"/>
                 </tree>
             </field>

@@ -30,7 +30,7 @@
                             <group>
                                 <field name="org_id"/>
                                 <field name="user_id" readonly="1"/>
-                                <field name="planned_overall"/>
+                                <field name="planned_expense"/>
                             </group>
                             <group>
                                 <field name="date"/>
@@ -91,6 +91,7 @@
                     <field name="org_id"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
+                    <field name="planned_expense" sum="Total"/>
                     <field name="state"/>
                 </tree>
             </field>

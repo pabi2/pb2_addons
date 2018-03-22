@@ -219,7 +219,7 @@
             <field name="name">Budget Plans</field>
             <field name="res_model">budget.plan.unit</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,graph</field>
             <field name="view_id" ref="view_budget_plan_unit_tree"/>
             <field name="search_view_id" ref="view_budget_plan_unit_search"/>
             <field name="context">{}</field>
