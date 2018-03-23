@@ -178,7 +178,7 @@ class BudgetFundRule(models.Model):
         return combinations
 
     @api.model
-    def document_check_fund_spending(self, doc_lines, amount_field):
+    def document_check_fund_spending(self, doc_lines, amount_field='amount'):
         res = {'budget_ok': True,
                'message': False}
         if not doc_lines:

@@ -15,5 +15,5 @@ class AccountBudget(models.Model):
         # Add check by fund rule
         FundRule = self.env['budget.fund.rule']
         res = FundRule.document_check_fund_spending(doc_lines,
-                                                    amount_field)
+                                                    amount_field=amount_field)
         return res
