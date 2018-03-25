@@ -62,6 +62,14 @@ class BudgetFundRule(models.Model):
         states={'draft': [('readonly', False)]},
         help="Spending rule for activity groups",
     )
+    asset_rule_line_ids = fields.One2many(
+        'budget.asset.rule.line',
+        'fund_rule_id',
+        string='Max Asset Price',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Maxmimum amount allow on each asset purchase",
+    )
     state = fields.Selection(
         [('draft', 'Draft'),
          ('confirmed', 'Confirmed'),
@@ -265,6 +273,27 @@ class BudgetFundRule(models.Model):
             return res
         return res
 
+    @api.model
+    def validate_asset_price(self, select_asset_id, amount):
+        """ This will be called by PABI Web, simply to check max price """
+        res = {'budget_ok': True,
+               'message': False}
+        asset_rule = self.env['budget.asset.rule.line'].\
+            search([('id', '=', select_asset_id)], limit=1)
+        if not asset_rule or asset_rule.fund_rule_id.state != 'confirmed':
+            res['budget_ok'] = False
+            res['message'] = _(
+                'No valid max asset price setup for selected asset')
+            return res
+        elif amount > asset_rule.amount_total:
+            res['budget_ok'] = False
+            res['message'] = _(
+                "%s's price exceed its maximum amount (%s)") % \
+                (asset_rule.asset_name,
+                 '{:,.2f}'.format(asset_rule.amount_total))
+            return res
+        return res
+
 
 class BudgetFundRuleLine(models.Model):
     _name = "budget.fund.rule.line"
@@ -358,3 +387,37 @@ class BudgetFundRuleLine(models.Model):
             rec.activity_ids = Activity.search(
                 [('account_id', 'in', rec.account_ids.ids)])
         return
+
+
+class BudgetAssetRuleLine(models.Model):
+    _name = "budget.asset.rule.line"
+    _description = "Maxmimum amount allow on each purchase"
+
+    fund_rule_id = fields.Many2one(
+        'budget.fund.rule',
+        string='Funding Rule',
+        index=True,
+        ondelete='cascade',
+    )
+    project_id = fields.Many2one(
+        'res.project',
+        string='Project',
+        related='fund_rule_id.project_id',
+        readonly=True,
+        store=True,
+    )
+    fund_id = fields.Many2one(
+        'res.fund',
+        string='Project',
+        related='fund_rule_id.fund_id',
+        readonly=True,
+        store=True,
+    )
+    asset_name = fields.Char(
+        string='Asset Name',
+        required=True,
+    )
+    amount_total = fields.Float(
+        string='Max Purhcase Amount',
+        required=True,
+    )
