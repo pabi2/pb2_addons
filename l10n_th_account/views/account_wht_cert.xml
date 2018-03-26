@@ -49,7 +49,7 @@
                                 <field name="amount" sum="Total Tax" readonly="1"/>
                             </tree>
                         </field>
-                        <footer attrs="{'invisible': [('id', '!=', False)]}">
+                        <footer attrs="{'invisible': [('number', '!=', False)]}">
                             <button string="Update WHT Cert." name="run_report" type="object" class="oe_highlight"/>
                             or
                             <button string="Cancel" class="oe_link" special="cancel"/>

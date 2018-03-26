@@ -61,6 +61,17 @@
                                 </tree>
                             </field>
                         </page>
+                        <page string="Max Asset Price">
+                            <p>
+                              Maximum price of asset line (by this project and fund) allowed on each purchase.
+                            </p>
+                            <field name="asset_rule_line_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="asset_name"/>
+                                    <field name="amount_total"/>
+                                </tree>
+                            </field>
+                        </page>
                     </notebook>
                 </form>
             </field>

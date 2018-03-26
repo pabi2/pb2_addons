@@ -307,6 +307,7 @@
                                 <field name="org_id" invisible="1"/>
                             </group>
                             <group>
+                                <field name="fund_type_id" required="1"/>
                                 <field name="fund_ids" required="1" widget="many2many_tags"/>
                                 <field name="amount_phase_plan"/>
                             </group>

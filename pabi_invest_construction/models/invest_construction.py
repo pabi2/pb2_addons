@@ -490,6 +490,14 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         string='Phase Summary',
         readonly=True,
     )
+    fund_type_id = fields.Many2one(
+        'project.fund.type',
+        string='Fund Type',
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'submit': [('readonly', False)],
+                'unapprove': [('readonly', False)]},
+    )
     _sql_constraints = [
         ('number_uniq', 'unique(code)',
          'Constuction Phase Code must be unique!'),
