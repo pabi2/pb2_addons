@@ -163,7 +163,9 @@ class InvestAssetPlan(models.Model):
     def _compute_master_program_ids(self):
         Program = self.env['res.program']
         for rec in self:
-            rec.master_program_ids = Program.search([])
+            # Exclude Investment Asset and Investmetn Construction Programs
+            rec.master_program_ids = Program.search([
+                ('functional_area_id.name', '!=', 'Investment')])
 
     @api.multi
     def _compute_master_section_ids(self):
@@ -176,7 +178,8 @@ class InvestAssetPlan(models.Model):
         Employee = self.env['hr.employee']
         for rec in self:
             employees = Employee.search([('org_id', '=', rec.org_id.id)])
-            rec.master_requester_ids = employees.mapped('user_id')
+            users = employees.mapped('user_id').sorted(key=lambda l: l.name)
+            rec.master_requester_ids = users
 
     @api.multi
     def _compute_master_strategy_ids(self):
