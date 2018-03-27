@@ -84,4 +84,25 @@ class InvestAssetPlanPrevFYView(PrevFYCommon, models.Model):
             val.update(a._invest_asset_common_dict())
             # --
             plan_lines.append((0, 0, val))
+        # ------------------------------------------------------------------
+        # Additional requirement to also list all assets, not in monitoring
+        # Those assets w/o code (code is generated on control activation)
+        excl_asset_ids = self.mapped('invest_asset_id').ids
+        incl_org_ids = self.mapped('org_id').ids
+        extra_assets = self.env['res.invest.asset'].search([
+            ('code', '=', False),  # No code
+            ('id', 'not in', excl_asset_ids),  # Not already pulled
+            ('org_id', 'in', incl_org_ids),  # in correct org
+        ])
+        for a in extra_assets:
+            val = {
+                'select': False,
+                'approved': False,
+                'priority': 999,
+                'invest_asset_id': a.id,
+                # Prev FY actual = all actual - current actal
+            }
+            val.update(a._invest_asset_common_dict())
+            plan_lines.append((0, 0, val))
+        # ------------------------------------------------------------------
         return plan_lines

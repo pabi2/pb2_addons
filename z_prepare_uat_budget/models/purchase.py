@@ -272,7 +272,6 @@ class PurchaseOrder(models.Model):
                     'P1450592-PH2',
                     'P1551062-PH2',
                     'P1651210-PH2',
-
                 ]
             }
         }

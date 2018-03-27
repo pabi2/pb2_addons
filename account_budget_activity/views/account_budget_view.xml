@@ -288,8 +288,8 @@
                     <field name="description"/>
                     <field name="planned_amount" sum="Planned Amount"/>
                     <field name="budget_release" invisible="1"/>
-                    <button name="%(action_budget_release_wizard)d" attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}" string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
-                    <field name="released_amount" sum="Released" attrs="{'invisible': [('budget_release', 'not in', ('auto', 'manual_line'))]}"/>
+                    <button name="%(action_budget_release_wizard)d" attrs="{'invisible': [('budget_release', 'in', ('manual_header'))]}" string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                    <field name="released_amount" sum="Released" attrs="{'invisible': [('budget_release', 'in', ('manual_header'))]}"/>
                     <field name="current_period" invisible="1"/>
                     <field name="m1" attrs="{'readonly': [('current_period', '>=', 1)]}" sum="m1"/>
                     <field name="m2" attrs="{'readonly': [('current_period', '>=', 2)]}" sum="m2"/>

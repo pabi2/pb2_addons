@@ -166,6 +166,16 @@ class AccountBudget(models.Model):
             control_ids.append(control.id)
         return control_ids
 
+    @api.multi
+    def budget_done(self):
+        # For Invest Asset, activation will set code for all assets
+        for rec in self:
+            assets = \
+                rec.budget_expense_line_invest_asset.mapped('invest_asset_id')
+            assets.with_context(
+                {'fiscalyear_id': rec.fiscalyear_id.id}).generate_code()
+        return super(AccountBudget, self).budget_done()
+
 
 class AccountBudgetLine(models.Model):
     _inherit = 'account.budget.line'

@@ -848,6 +848,16 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                 sequence += 1
 
     @api.multi
+    def auto_release_budget(self):
+        for rec in self:
+            budget_release = rec.budget_id.budget_level_id.budget_release
+            if rec.id and budget_release == 'auto':
+                self._cr.execute("""
+                    update account_budget_line set released_amount = %s
+                    where id = %s
+                """, (rec.planned_amount, rec.id))
+
+    @api.multi
     @api.depends('m1', 'm2', 'm3', 'm4', 'm5', 'm6',
                  'm7', 'm8', 'm9', 'm10', 'm11', 'm12',)
     def _compute_planned_amount(self):
@@ -857,12 +867,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                 rec.m7, rec.m8, rec.m9, rec.m10, rec.m11, rec.m12])
             rec.planned_amount = planned_amount
             # If budget release is auto, update to released_amount
-            budget_release = rec.budget_id.budget_level_id.budget_release
-            if rec.id and budget_release == 'auto':
-                self._cr.execute("""
-                    update account_budget_line set released_amount = %s
-                    where id = %s
-                """, (planned_amount, rec.id))
+            rec.auto_release_budget()
 
     @api.model
     def _get_budget_level_type_hook(self, budget_line):

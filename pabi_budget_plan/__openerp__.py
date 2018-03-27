@@ -34,6 +34,7 @@
         'xlsx_template/load_template.xml',
         # 'data/history_rule.xml',
         'views/budget_plan_menu.xml',
+        'views/invest_asset.xml',
         # 'wizard/convert_to_budget_control_wizard.xml',
         'wizard/asset_plan_to_budget_plan_wizard.xml',
         # 'wizard/invest_asset_select_wizard_view.xml',

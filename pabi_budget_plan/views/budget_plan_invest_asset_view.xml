@@ -87,6 +87,7 @@
             <field name="model">budget.plan.invest.asset</field>
             <field name="arch" type="xml">
                 <tree string="Budget" create="0" delete="0">
+                    <field name="fiscalyear_id"/>
                     <field name="name"/>
                     <field name="org_id"/>
                     <field name="date_from"/>
@@ -106,9 +107,15 @@
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="state"/>
+                    <separator/>
+                    <filter domain="[('state','=','1_draft')]" string="Draft"/>
+                    <filter domain="[('state','=','7_accept')]" string="Accepted"/>
+                    <filter domain="[('state','=','4_cancel')]" string="Cancelled"/>
+                    <filter domain="[('state','=','8_done')]" string="Done"/>
                     <group expand="0" string="Group By">
                         <filter string="Fiscalyear" context="{'group_by':'fiscalyear_id'}"/>
                         <filter string="Org" context="{'group_by':'org_id'}"/>
+                        <filter string="State" context="{'group_by':'state'}"/>
                     </group>
                 </search>
             </field>

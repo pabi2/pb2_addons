@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, _
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountBudget(models.Model):
@@ -77,6 +78,10 @@ class AccountBudget(models.Model):
         'invest_asset': 'Investment Asset',
         'invest_construction': 'Investment Construction',
     }
+
+    budget_release = fields.Selection(
+        selection_add=[('auto_rolling', 'Auto Release as Rolling')],
+    )
 
     @api.multi
     def _validate_budget_level(self, budget_type='check_budget'):
@@ -276,3 +281,67 @@ class AccountBudget(models.Model):
                 Commitment.search(domain + [('budget_method', '=', 'expense')])
             budget.commitment_summary_revenue_line_ids = \
                 Commitment.search(domain + [('budget_method', '=', 'revenue')])
+
+
+class AccountBudgetLine(models.Model):
+    _inherit = 'account.budget.line'
+
+    budget_release = fields.Selection(
+        selection_add=[('auto_rolling', 'Auto Release as Rolling')],
+    )
+
+    @api.multi
+    def _get_past_actual_amount(self):
+        """ Will avaliable only if line unique with chart_view """
+        budget_type_dict = {
+            # 'unit_base': False,
+            # 'project_base': False,
+            # 'personnel': False,
+            # 'invest_construction': False,
+            'invest_asset': 'invest_asset_id',
+        }
+        self.ensure_one()
+        Consume = self.env['budget.consume.report']
+        if self.chart_view not in budget_type_dict.keys():
+            raise ValidationError(
+                _('This budget (%s) can not use release by rolling') %
+                (self.chart_view, ))
+        dimension = budget_type_dict[self.chart_view]
+        dom = [('chart_view', '=', self.chart_view),
+               ('fiscalyear_id', '=', self.fiscalyear_id.id),
+               (dimension, '=', self[dimension].id),
+               ]
+        consumes = Consume.search(dom)
+        return sum(consumes.mapped('amount_actual'))
+
+    @api.multi
+    def _get_future_plan_amount(self):
+        self.ensure_one()
+        Period = self.env['account.period']
+        period_num = 0
+        this_period_date_start = Period.find().date_start
+        if self.fiscalyear_id.date_start > this_period_date_start:
+            period_num = 0
+        elif self.fiscalyear_id.date_stop < this_period_date_start:
+            period_num = 12
+        else:
+            period_num = Period.get_num_period_by_period()
+        future_plan = 0.0
+        for line in self:
+            for i in range(period_num + 1, 13):
+                future_plan += line['m%s' % (i,)]
+        return future_plan
+
+    @api.multi
+    def auto_release_budget(self):
+        super(AccountBudgetLine, self).auto_release_budget()
+        for line in self:
+            budget_release = line.budget_id.budget_level_id.budget_release
+            if line.id and budget_release == 'auto_rolling':
+                past_consumed = line._get_past_actual_amount()
+                future_plan = line._get_future_plan_amount()
+                rolling = past_consumed + future_plan
+                self._cr.execute("""
+                    update account_budget_line set released_amount = %s
+                    where id = %s
+                """, (rolling, line.id))
