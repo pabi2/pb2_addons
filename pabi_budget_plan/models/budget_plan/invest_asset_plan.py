@@ -108,7 +108,6 @@ class InvestAssetPlan(models.Model):
         readonly=False,
         states={'approve': [('readonly', True)],
                 'done': [('readonly', True)]},
-
     )
     invest_asset_count = fields.Integer(
         string='Investment Asset Count',
@@ -510,7 +509,7 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
 
     @api.multi
     def convert_to_invest_asset(self):
-        """ Create if not exists, update if already Exists
+        """ Create if not exists, update if already Exists (except code)
         Use data in invest asset item to overwrite the existing data """
         InvestAsset = self.env['res.invest.asset']
         Attachment = self.env['ir.attachment']

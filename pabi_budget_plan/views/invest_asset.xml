@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        # Invest Asset
+        <record id="view_res_invest_asset_form" model="ir.ui.view">
+            <field name="name">view.res.invest.asset.form</field>
+            <field name="model">res.invest.asset</field>
+            <field name="inherit_id" ref="pabi_base.view_res_invest_asset_form"/>
+            <field name="arch" type="xml">
+                <field name="code" position="after">
+                  <button name="generate_code"
+                      string="=> Generate Asset Code" class="oe_inline oe_link oe_edit_only"
+                      attrs="{'invisible': [('code', '!=', False)]}"
+                      type="object" help="Generate code by fiscalyear if not already exists"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>
