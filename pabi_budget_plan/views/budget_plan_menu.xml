@@ -13,7 +13,7 @@
 
         <menuitem name="Budget Breakdown" id="menu_action_budget_breakdown" parent="account_budget_activity.menu_budgeting" sequence="13"/>
 
-        <menuitem name="Configuration" groups="base.group_system" id="account_budget_activity.menu_action_account_budget_config" parent="account_budget_activity.menu_budgeting" sequence="120"/>
+        <menuitem name="Configuration" groups="base.group_system,pabi_base.group_nstda_admin_business" id="account_budget_activity.menu_action_account_budget_config" parent="account_budget_activity.menu_budgeting" sequence="120"/>
 
 
         <!-- Import Templates -->

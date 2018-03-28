@@ -500,8 +500,7 @@ class ResProject(LogCommon, models.Model):
 
         for rec in self:
             for charge_type in ['external', 'internal']:
-                if rec.code != 'P1450891':
-                    continue
+
                 plans = rec.budget_plan_expense_ids.\
                     filtered(lambda l: l.charge_type == charge_type)
 

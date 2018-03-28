@@ -9,9 +9,11 @@
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page[@name='commitment_summary']//field[@name='commitment_summary_revenue_line_ids']//field[@name='activity_group_id']" position="before">
                     <field name="cost_control_id"/>
+                    <field name="budget_name"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[@name='commitment_summary']//field[@name='commitment_summary_expense_line_ids']//field[@name='activity_group_id']" position="before">
                     <field name="cost_control_id"/>
+                    <field name="budget_name"/>
                 </xpath>
             </field>
         </record>

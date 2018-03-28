@@ -276,7 +276,8 @@
             <field name="model">res.project</field>
             <field name="arch" type="xml">
                 <search string="Tasks">
-                    <field name="name" string="Project"/>
+                    <field name="name" string="Project" filter_domain="['|',('name','ilike',self),('code','ilike',self)]"/>
+                    <field name="program_id"/>
                     <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
                     <filter name="submit" string="Submitted" domain="[('state','=','submit')]"/>
                     <filter name="approve" string="Approved" domain="[('state','=','approve')]"/>
