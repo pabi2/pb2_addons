@@ -13,19 +13,7 @@ class BudgetConsumeReport(ChartField, models.Model):
         readonly=True,
         help="Reference to original document",
     )
-    # program_rpt_id = fields.Many2one(
-    #     'res.program',
-    #     string='Report Program',
-    # )
 
-    # def _get_sql_view(self):
-    #     sql_view = super(BudgetConsumeReport, self)._get_sql_view()
-    #     join_query = """
-    #         left join res_section section on section.id = aal.section_id
-    #         left join res_project project on project.id = aal.project_id
-    #     """
-    #     sql_view = sql_view + join_query
-    #     return sql_view
     def _get_from_clause(self):
         sql_from = super(BudgetConsumeReport, self)._get_from_clause()
         join_sql = """
@@ -92,7 +80,7 @@ class BudgetCommitmentSummary(models.Model):
         readonly=True,
     )
     invest_asset_id = fields.Many2one(
-        'res.invest.assset',
+        'res.invest.asset',
         string='Invest Asset',
         readonly=True,
     )
