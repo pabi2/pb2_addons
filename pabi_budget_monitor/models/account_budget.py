@@ -270,13 +270,19 @@ class AccountBudget(models.Model):
     @api.multi
     def _compute_commitment_summary_line_ids(self):
         """ Overwrite """
+        CHART_VIEWS = {'unit_base': 'section_id',
+                       'project_base': 'program_id',
+                       'personnel': False,
+                       'invest_asset': 'org_id',
+                       'invest_construction': 'org_id'}
         Commitment = self.env['budget.commitment.summary']
         for budget in self:
-            if not budget.section_id:  # Extra
-                continue
+            field = CHART_VIEWS[budget.chart_view]
             domain = [('fiscalyear_id', '=', budget.fiscalyear_id.id),
                       ('all_commit', '!=', 0.0),
-                      ('section_id', '=', budget.section_id.id)]  # Extra
+                      ('chart_view', '=', budget.chart_view)]
+            if field:
+                domain.append((field, '=', budget[field].id))
             budget.commitment_summary_expense_line_ids = \
                 Commitment.search(domain + [('budget_method', '=', 'expense')])
             budget.commitment_summary_revenue_line_ids = \

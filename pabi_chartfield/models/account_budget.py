@@ -92,44 +92,6 @@ class AccountBudget(ChartField, models.Model):
         states={'done': [('readonly', True)]},
         copy=True,
     )
-    # budget_summary_expense_line_ids = fields.One2many(
-    #     'budget.unit.summary',
-    #     'budget_id',
-    #     string='Summary by Activity Group',
-    #     readonly=True,
-    #     domain=[('budget_method', '=', 'expense')],
-    #     help="Summary by Activity Group View",
-    # )
-    # budget_summary_revenue_line_ids = fields.One2many(
-    #     'budget.unit.summary',
-    #     'budget_id',
-    #     string='Summary by Activity Group',
-    #     readonly=True,
-    #     domain=[('budget_method', '=', 'revenue')],
-    #     help="Summary by Activity Group View",
-    # )
-    # # Commitment Summary for Unit Based (for now, expense only)
-    # commitment_summary_expense_line_ids = fields.Many2many(
-    #     'budget.commitment.summary',
-    #     compute='_compute_commitment_summary_line_ids',
-    #     readonly=True,
-    #     help="Summary by fiscal year and section",
-    # )
-    # commitment_summary_revenue_line_ids = fields.Many2many(
-    #     'budget.commitment.summary',
-    #     compute='_compute_commitment_summary_line_ids',
-    #     readonly=True,
-    #     help="Summary by fiscal year and section",
-    # )
-
-    # cost_control_ids = fields.One2many(
-    #     'budget.unit.job.order',
-    #     'budget_id',
-    #     string='Job Order',
-    #     copy=True,
-    #     states={'draft': [('readonly', False)]},
-    #     track_visibility='onchange',
-    # )
 
     @api.model
     def _get_budget_level_type_hook(self, budget):
