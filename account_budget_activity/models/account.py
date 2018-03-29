@@ -126,6 +126,12 @@ class AccountFiscalyearBudgetLevel(models.Model):
         default=False,
         help="Allow user to adjust past period budget plan line amount",
     )
+    check_future_with_commit = fields.Boolean(
+        string='Check Future Plan with Commitment',
+        default=False,
+        help="When confirm budget control, check that sum "
+        "future plan amount no less the commitment amount"
+    )
 
 
 class AccountJournal(models.Model):
