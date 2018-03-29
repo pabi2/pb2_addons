@@ -277,6 +277,8 @@ class AccountBudget(models.Model):
                        'invest_construction': 'org_id'}
         Commitment = self.env['budget.commitment.summary']
         for budget in self:
+            if not budget.chart_view:
+                continue
             field = CHART_VIEWS[budget.chart_view]
             domain = [('fiscalyear_id', '=', budget.fiscalyear_id.id),
                       ('all_commit', '!=', 0.0),
