@@ -83,7 +83,6 @@ class ResCommon(object):
                                                  offset=offset, limit=limit,
                                                  order=order)
         return res
-    # End domain name_search
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None,

@@ -28,6 +28,7 @@
             </field>
         </record>
 
+        <!-- Main Form -->
         <record id="view_project_form" model="ir.ui.view">
             <field name="name">view.project.form</field>
             <field name="model">res.project</field>
@@ -111,7 +112,7 @@
                                         <field name="m11"/>
                                         <field name="m12"/>
                                         <field name="planned_amount" sum="Total Planned"/>
-                                        <button name="%(pabi_my_project.action_project_budget_release_wizard)d"
+                                        <button name="%(action_project_budget_release_wizard)d"
                                           string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
                                         <field name="released_amount" sum="Total Released" readonly="1"/>
                                         <field name="expense_synced"/>
@@ -151,7 +152,7 @@
                                         <field name="m11"/>
                                         <field name="m12"/>
                                         <field name="planned_amount" sum="Total Planned"/>
-                                        <button name="%(pabi_my_project.action_project_budget_release_wizard)d"
+                                        <button name="%(action_project_budget_release_wizard)d"
                                           string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
                                         <field name="released_amount" sum="Total Released" readonly="1"/>
                                         <field name="revenue_synced"/>
@@ -367,22 +368,22 @@
             <field name="model">res.project.budget.release</field>
             <field name="arch" type="xml">
                 <form string="Budget Release" edit="0" create="0" delete="0">
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name="project_id" attrs="{'readonly': [('write_date', '!=', False)]}"/>
-                                <field name="fiscalyear_id" attrs="{'readonly': [('write_date', '!=', False)]}"/>
-                                <field name="user_id"/>
-                                <field name="write_date" invisible="1"/>
-                            </group>
-                            <group>
-                                <h1>
-                                    <label string="Released Amount" />
-                                    <field name="released_amount" class="oe_inline" attrs="{'readonly': [('write_date', '!=', False)]}"/>
-                                </h1>
-                            </group>
+                    <group>
+                        <group invisible="context.get('default_project_id', False)">
+                            <field name="project_id" attrs="{'readonly': [('write_date', '!=', False)]}"/>
+                            <field name="fiscalyear_id" attrs="{'readonly': [('write_date', '!=', False)]}"/>
+                            <field name="user_id"/>
+                            <field name="write_date" invisible="1"/>
                         </group>
-                    </sheet>
+                        <group>
+                            <h2>
+                                <label string="Release Amount"/>
+                                <field name="released_amount" class="oe_inline" attrs="{'readonly': [('write_date', '!=', False)]}"/>
+                                <button name="dummy" type="object" string="Release Budget" class="oe_highlight oe_inline"
+                                  invisible="not context.get('default_project_id', False)"/>
+                            </h2>
+                        </group>
+                    </group>
                 </form>
             </field>
         </record>
@@ -402,9 +403,138 @@
             </field>
         </record>
 
+        <record id="action_release_project_budget_by_fiscal_wizard" model="ir.actions.act_window">
+            <field name="name">Release Budget by Fiscal</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.project.budget.release</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+
         <menuitem action="action_release_project_budget_by_fiscal" id="menu_release_project_budget_by_fiscal" name="Release Budget" parent="menu_project_interface" sequence="1"/>
 
+        <!-- Mini Project form for release budget -->
+        <record id="view_project_small_form" model="ir.ui.view">
+            <field name="name">view.project.small.form</field>
+            <field name="model">res.project</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <form string="Project" edit="0" create="0" delete="0">
+                        <h1>
+                            <label string="Project: "/>
+                            <field name="code" required="1" class="oe_inline"/>
+                        </h1>
+                        <h2>
+                            <label string="Name: "/>
+                            <field name="name" required="1" class="oe_inline"/>
+                        </h2>
+                        <group>
+                          <field name="state2" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Release Budget">
+                                <field name="summary_expense_ids" nolabel="1">
+                                    <tree editable="bottom" string="Summary" create="0" delete="0">
+                                        <field name="project_id" invisible="1"/>
+                                        <field name="fiscalyear_id"/>
+                                        <field name="planned_amount" sum="Total Plan"/>
+                                        <button name="%(action_release_project_budget_by_fiscal_wizard)d"
+                                          string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"
+                                          context="{'default_project_id': project_id,
+                                                    'default_fiscalyear_id': fiscalyear_id,}"/>
+                                        <field name="released_amount" sum="Total Release"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget">
+                                <separator string="Expense"/>
+                                <field name="monitor_expense_ids">
+                                    <tree string="Monitor" editable="bottom">
+                                        <field name="fiscalyear_id"/>
+                                        <field name="planned_amount"/>
+                                        <field name="released_amount"/>
+                                        <field name="amount_pr_commit"/>
+                                        <field name="amount_po_commit"/>
+                                        <field name="amount_exp_commit"/>
+                                        <field name="amount_actual"/>
+                                        <field name="amount_consumed"/>
+                                        <field name="amount_balance"/>
+                                    </tree>
+                                </field>
+                                <separator string="Revenue"/>
+                                <field name="monitor_revenue_ids">
+                                    <tree string="Monitor" editable="bottom">
+                                        <field name="fiscalyear_id"/>
+                                        <field name="planned_amount"/>
+                                        <field name="released_amount"/>
+                                        <field name="amount_so_commit"/>
+                                        <field name="amount_actual"/>
+                                        <field name="amount_consumed"/>
+                                        <field name="amount_balance"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Budget Release History">
+                                <field name="budget_release_ids" context="{'project_id': active_id}">
+                                    <tree editable="bottom">
+                                        <field name="fiscalyear_id" attrs="{'readonly': [('write_date', '!=', False)]}"/>
+                                        <field name="user_id"/>
+                                        <field name="released_amount" attrs="{'readonly': [('write_date', '!=', False)]}"/>
+                                        <field name="write_date"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                </form>
+            </field>
+        </record>
 
+        <record id="view_project_small_tree" model="ir.ui.view">
+            <field name="name">view.project.small.tree</field>
+            <field name="model">res.project</field>
+            <field name="arch" type="xml">
+                <tree string="Projects">
+                    <field name="org_id"/>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="program_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_project_small" model="ir.actions.act_window">
+            <field name="name">Release Budget</field>
+            <field name="res_model">res.project</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_project_search"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to start a new project.
+                </p>
+            </field>
+        </record>
+
+        <record id="action_project_small_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_project_small_form"/>
+            <field name="act_window_id" ref="action_project_small"/>
+        </record>
+
+        <record id="action_project_small_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_project_small_tree"/>
+            <field name="act_window_id" ref="action_project_small"/>
+        </record>
+
+        <menuitem action="action_project_small" id="menu_my_project_small" name="Release Budget" parent="menu_project" sequence="2"/>
 
     </data>
 </openerp>
