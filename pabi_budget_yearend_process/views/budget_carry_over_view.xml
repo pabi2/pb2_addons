@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <menuitem name="Year End Process" id="menu_action_budget_year_end_process"
+          parent="account_budget_activity.menu_budgeting" sequence="115"/>
 
         <record id="budget_carry_over_tree" model="ir.ui.view">
             <field name="name">budget.carry.over.tree</field>
@@ -55,7 +57,11 @@
                           </field> -->
                           <field name="line_view_ids">
                               <tree string="Carry Over Lines" editable="bottom">
+                                  <field name="doctype"/>
                                   <field name="name"/>
+                                  <field name="description"/>
+                                  <field name="chartfield_type"/>
+                                  <field name="chartfield_id"/>
                                   <field name="commit_amount"/>
                               </tree>
                           </field>

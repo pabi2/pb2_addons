@@ -12,7 +12,8 @@ class BudgetCarryOver(models.Model):
         readonly=True,
     )
     doctype = fields.Selection(
-        [('purchase_request', 'Purchase Request'),
+        [('all', 'All'),
+         ('purchase_request', 'Purchase Request'),
          ('sale_order', 'Sales Order'),
          ('purchase_order', 'Purchase Order'),
          ('employee_expense', 'Expense'), ],
@@ -90,31 +91,42 @@ class BudgetCarryOver(models.Model):
         """ This method, based on criteria, list all documents with,
         - Doctype as selected
         - commit_amount > 0
-        - For PR/PO, no future fiscalyear lines
+        - fiscalyear before selected year only
         """
-        doctypes = {
-            'purchase_request': ['purchase.request.line',
-                                 'purchase_request_line_id'],
-            'sale_order': ['sale.order.line', 'sale_line_id'],
-            'purchase_order': ['purchase.order.line', 'purchase_line_id'],
-            'employee_expense': ['hr.expense.line', 'expense_line_id'],
-        }
         self = self.sudo()
         for rec in self:
             rec.line_ids.unlink()
-            model = doctypes[rec.doctype][0]
-            domain = [('commit_amount', '!=', 0.0)]
-            if rec.doctype in ('purchase_request', 'purchase_order'):
-                domain += ['|', ('fiscalyear_id', '=', False),
-                           ('fiscalyear_id.date_start', '<',
-                            rec.fiscalyear_id.date_start)]  # No future fy
-            docs = self.env[model].search(domain)
             lines = []
-            for doc in docs:
-                vals = {}
-                line_field = doctypes[rec.doctype][1]
-                vals = {line_field: doc.id,
-                        'commit_amount': doc.commit_amount, }
+            doctypes = [rec.doctype]
+            if rec.doctype == 'all':
+                doctypes = ['purchase_request', 'sale_order',
+                            'purchase_order', 'employee_expense']
+            self._cr.execute("""
+            select * from (
+                select doctype, document, document_line,
+                    purchase_request_line_id, sale_line_id,
+                    purchase_line_id, expense_line_id,
+                    sum(amount_consumed) amount_consumed
+                from budget_consume_report rpt
+                join account_fiscalyear fiscal
+                    on rpt.fiscalyear_id = fiscal.id
+                where fiscal.date_start < %s and doctype in %s
+                group by doctype, document, document_line,
+                    purchase_request_line_id, sale_line_id,
+                    purchase_line_id, expense_line_id) a
+            where a.amount_consumed > 0
+            """, (rec.fiscalyear_id.date_start, tuple(doctypes)))
+            result = self._cr.dictfetchall()
+            for r in result:
+                vals = {
+                    'doctype': r['doctype'],
+                    'name': r['document'],
+                    'description': r['document_line'],
+                    'purchase_request_line_id': r['purchase_request_line_id'],
+                    'sale_line_id': r['sale_line_id'],
+                    'purchase_line_id': r['purchase_line_id'],
+                    'expense_line_id': r['expense_line_id'],
+                    'commit_amount': r['amount_consumed'], }
                 lines.append((0, 0, vals))
             rec.write({'line_ids': lines})
 
@@ -139,10 +151,13 @@ class BudgetCarryOver(models.Model):
 class BudgetCarryOverLine(models.Model):
     _name = 'budget.carry.over.line'
 
-    name = fields.Char(
-        string='Document',
-        compute='_compute_name',
-        store=True,
+    doctype = fields.Selection(
+        [('purchase_request', 'Purchase Request'),
+         ('sale_order', 'Sales Order'),
+         ('purchase_order', 'Purchase Order'),
+         ('employee_expense', 'Expense'), ],
+        string='Document Type',
+        readonly=True,
     )
     carry_over_id = fields.Many2one(
         'budget.carry.over',
@@ -150,34 +165,54 @@ class BudgetCarryOverLine(models.Model):
         index=True,
         ondelete='cascade',
     )
+    name = fields.Char(
+        string='Document',
+        readonly=True,
+    )
+    description = fields.Char(
+        string='Description',
+        readonly=True,
+    )
+    chartfield_id = fields.Many2one(
+        'chartfield.view',
+        string='Budget',
+        compute='_compute_chartfield',
+        store=True,
+    )
     purchase_request_line_id = fields.Many2one(
         'purchase.request.line',
         string='Purchase Request Line',
+        readonly=True,
     )
     sale_line_id = fields.Many2one(
         'sale.order.line',
         string='Sales Order Line',
+        readonly=True,
     )
     purchase_line_id = fields.Many2one(
         'purchase.order.line',
         string='Purchase Order Line',
+        readonly=True,
     )
     expense_line_id = fields.Many2one(
         'hr.expense.line',
         string='Expense Line',
+        readonly=True,
     )
     commit_amount = fields.Float(
         string='Commitment',
+        readonly=True,
     )
 
     @api.multi
     @api.depends('purchase_request_line_id', 'sale_line_id',
                  'purchase_line_id', 'expense_line_id')
-    def _compute_name(self):
+    def _compute_chartfield(self):
         for rec in self:
-            doc = rec.expense_line_id or rec.purchase_request_line_id or \
+            doc_line = rec.expense_line_id or \
+                rec.purchase_request_line_id or \
                 rec.purchase_line_id or rec.sale_line_id
-            rec.name = doc.display_name
+            rec.chartfield_id = doc_line.chartfield_id
 
 
 class BudgetCarryOverLineView(models.Model):
@@ -190,9 +225,35 @@ class BudgetCarryOverLineView(models.Model):
         string='Carry Over',
         readonly=True,
     )
+    doctype = fields.Selection(
+        [('purchase_request', 'Purchase Request'),
+         ('sale_order', 'Sales Order'),
+         ('purchase_order', 'Purchase Order'),
+         ('employee_expense', 'Expense'), ],
+        string='Document Type',
+        readonly=True,
+    )
     name = fields.Char(
         string='Name',
         readonly=True,
+    )
+    description = fields.Char(
+        string='Description',
+        readonly=True,
+    )
+    chartfield_id = fields.Many2one(
+        'chartfield.view',
+        string='Budget',
+        readonly=True,
+    )
+    chartfield_type = fields.Selection(
+        [('sc:', 'Section'),
+         ('pj:', 'Project'),
+         ('cp:', 'Construction Phase'),
+         ('ia:', 'Invest Asset'),
+         ('pc:', 'Personnel'), ],
+        string='Type',
+        related='chartfield_id.type',
     )
     commit_amount = fields.Float(
         string='Commitment',
@@ -201,7 +262,8 @@ class BudgetCarryOverLineView(models.Model):
 
     def _get_sql_view(self):
         sql_view = """
-            SELECT id, carry_over_id, commit_amount, name
+            SELECT id, doctype, carry_over_id,
+                commit_amount, name, description, chartfield_id
             FROM budget_carry_over_line
         """
         return sql_view

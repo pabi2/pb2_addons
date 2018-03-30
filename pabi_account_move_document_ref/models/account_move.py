@@ -34,7 +34,9 @@ DOCTYPE_SELECT = [('incoming_shipment', 'Incoming Shipment'),
                   ('purchase_order', 'Purchase Order'),
                   ('sale_order', 'Sales Order'),
                   # Non document related, adjustment
-                  ('adjustment', 'Adjustment'), ]
+                  ('adjustment', 'Adjustment'),
+                  # Special Type for Monitoring Report
+                  ('account_budget', 'Budget Control')]
 
 INVOICE_DOCTYPE = {'sale': 'out_invoice',
                    'sale_refund': 'out_refund',

@@ -288,7 +288,7 @@
                             'V10': 'reason_purchase${value and value == "new" and "ใหม่" or (value == "replace" and "ทดแทน" or (value == "extra" and "เพิ่มเติม")) or ""}',
                             'W10': 'reason_purchase_text${value or ""}',
                             'X10': 'expect_output${value or ""}',
-                            'Y10': 'planned_utilization',
+                            'Y10': 'planned_utilization${value or 0.0}',
                             'Z10': 'specification_summary${value or ""}',
 
                             'AA10': 'prev_fy_actual',

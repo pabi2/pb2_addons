@@ -2,6 +2,14 @@
 from openerp import api, models, fields
 
 
-class ProjectObjective(models.Model):
-    _name = "project.objective"
+class A(models.Model):
+    _name = "budget.carry.over"
+
+
+class B(models.Model):
+    _name = "budget.carry.over.line"
+
+
+class C(models.Model):
+    _name = "budget.carry.over.line.view"
     _auto = False

@@ -16,5 +16,4 @@ from . import stock_account
 from . import procurement
 from . import budget_transition
 from . import budget_commit
-from . import budget_carry_over
 from . import account_budget_summary
