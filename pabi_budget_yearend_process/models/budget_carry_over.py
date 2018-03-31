@@ -225,6 +225,16 @@ class BudgetCarryOverLineView(models.Model):
         string='Carry Over',
         readonly=True,
     )
+    budget_id = fields.Reference(
+        [('res.section', 'Section'),
+         ('res.project', 'Project'),
+         ('res.invest.asset', 'Asset'),
+         ('res.invest.construction.phase', 'Construction'),
+         ('res.personnel.costcenter', 'Personnel')],
+        string='Document Line',
+        compute='_compute_budget_id',
+        readonly=True,
+    )
     doctype = fields.Selection(
         [('purchase_request', 'Purchase Request'),
          ('sale_order', 'Sales Order'),
@@ -259,6 +269,12 @@ class BudgetCarryOverLineView(models.Model):
         string='Commitment',
         readonly=True,
     )
+
+    @api.multi
+    def _compute_budget_id(self):
+        for rec in self:
+            rec.budget_id = '%s,%s' % (rec.chartfield_id.model,
+                                       rec.chartfield_id.res_id)
 
     def _get_sql_view(self):
         sql_view = """

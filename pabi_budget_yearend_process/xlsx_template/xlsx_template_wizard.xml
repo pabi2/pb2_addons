@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+      <act_window id="action_budget_plan_unit_export_xlsx_tempalte"
+          name="Export (.xlsx)"
+          res_model="export.xlsx.template"
+          src_model="budget.carry.over"
+          view_mode="form"
+          target="new"
+          context="{'lang': 'th_TH'}"/>
+
+    </data>
+</openerp>

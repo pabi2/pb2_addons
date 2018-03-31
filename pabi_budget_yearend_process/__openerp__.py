@@ -13,6 +13,9 @@
     'data': [
         'security/groups.xml',
         'security/ir.model.access.csv',
+        'xlsx_template/templates.xml',
+        'xlsx_template/load_template.xml',
+        'xlsx_template/xlsx_template_wizard.xml',
         'views/budget_carry_over_view.xml',
         'views/project_balance_carry_forward_view.xml',
     ],
