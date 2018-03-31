@@ -198,6 +198,7 @@ class AccountWhtCert(models.Model):
             rec.x_signature = rec.create_uid.display_name
 
     @api.multi
+    @api.depends('supplier_partner_id', 'company_partner_id')
     def _compute_address(self):
         for rec in self:
             rec.company_address = \
