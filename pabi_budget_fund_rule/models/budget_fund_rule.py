@@ -285,10 +285,14 @@ class BudgetFundRule(models.Model):
                'message': False}
         asset_rule = self.env['budget.asset.rule.line'].\
             search([('id', '=', select_asset_id)], limit=1)
-        if not asset_rule or asset_rule.fund_rule_id.state != 'confirmed':
+        if not asset_rule:
             res['budget_ok'] = False
             res['message'] = _(
-                'No valid max asset price setup for selected asset')
+                'Selected asset not exists in fund rule!')
+        elif asset_rule.fund_rule_id.state != 'confirmed':
+            res['budget_ok'] = False
+            res['message'] = _(
+                'Fund rule for this project is not confirmed!')
             return res
         elif amount > asset_rule.amount_total:
             res['budget_ok'] = False
