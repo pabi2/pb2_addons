@@ -202,7 +202,6 @@ class BudgetFundRule(models.Model):
                                                              'fund_id'])
         # Find all matching rules for this transaction
         rules = self._get_matched_fund_rule(project_fund_vals)
-        print rules
         # Check against each rule
         for rule in rules:
             project = rule.project_id
