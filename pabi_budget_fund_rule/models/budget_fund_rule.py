@@ -30,6 +30,19 @@ class BudgetFundRule(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    project_id = fields.Many2one(
+        'res.project',
+        string='Project',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    fund_id = fields.Many2one(
+        'res.fund',
+        string='Fund',
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     template_id = fields.Many2one(
         'budget.fund.rule',
         string='Template',
@@ -40,19 +53,6 @@ class BudgetFundRule(models.Model):
     active = fields.Boolean(
         string='Active',
         default=True,
-    )
-    fund_id = fields.Many2one(
-        'res.fund',
-        string='Fund',
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    project_id = fields.Many2one(
-        'res.project',
-        string='Project',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
     )
     fund_rule_line_ids = fields.One2many(
         'budget.fund.rule.line',
@@ -130,6 +130,11 @@ class BudgetFundRule(models.Model):
             else:
                 account_ids += line.account_ids._ids
 
+    @api.onchange('project_id')
+    def _onchange_project_id(self):
+        self.fund_id = False
+        self.template_id = False
+
     @api.onchange('fund_id')
     def _onchange_fund_id(self):
         self.template_id = False
@@ -197,6 +202,7 @@ class BudgetFundRule(models.Model):
                                                              'fund_id'])
         # Find all matching rules for this transaction
         rules = self._get_matched_fund_rule(project_fund_vals)
+        print rules
         # Check against each rule
         for rule in rules:
             project = rule.project_id
@@ -211,7 +217,7 @@ class BudgetFundRule(models.Model):
                             doc_lines)
             activity_ids = [x['activity_rpt_id'] for x in xlines]
             # Only activity in doc_lines that match rule is allowed
-            if not (set(activity_ids) < set(rule_activity_ids)):
+            if not (set(activity_ids) <= set(rule_activity_ids)):
                 res['budget_ok'] = False
                 res['message'] = _('Selected Activity is '
                                    'not usable for Fund %s') % \

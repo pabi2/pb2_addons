@@ -500,7 +500,7 @@
                           'S12': 'date_start#{number_format=date}',
                           'T12': 'date_end#{number_format=date}',
                           # 'U12': 'project_duration',
-                          'V12': 'project_status',
+                          'V12': 'project_status${value or ""}',
                           'W12': 'analyst_employee${value or ""}',
                           'X12': 'proposal_program_id.display_name_2${value or ""}',
                           'Y12': 'ref_program_id.display_name_2${value or ""}',

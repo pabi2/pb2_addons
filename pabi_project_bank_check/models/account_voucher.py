@@ -20,8 +20,7 @@ class AccountVoucher(models.Model):
     use_project_journal = fields.Boolean(
         string='Use Project Bank Account',
         compute='_compute_project_journal_ids',
-        help="Projects has specific payment method"
-
+        help="Projects has specific payment method",
     )
     project_journal_ids = fields.Many2many(
         'account.journal',
