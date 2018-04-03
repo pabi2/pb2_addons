@@ -29,6 +29,7 @@
                             <field name="check_plan_with_released_amount"/>
                             <field name="check_release_with_policy_amount"/>
                             <field name="adjust_past_plan"/>
+                            <field name="check_future_with_commit"/>
                         </tree>
                     </field>
                 </form>

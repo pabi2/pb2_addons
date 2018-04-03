@@ -130,6 +130,10 @@ class AccountBudget(models.Model):
         string='Released Amount',
         compute='_compute_released_amount',
     )
+    commit_amount = fields.Float(
+        string='Expense Commitment Amount',
+        compute='_compute_commit_amount',
+    )
     budgeted_revenue = fields.Float(
         string='Total Revenue Budget',
         compute='_compute_budgeted_overall',
@@ -339,6 +343,13 @@ class AccountBudget(models.Model):
             budget.released_amount = \
                 sum(budget.budget_expense_line_ids.mapped('released_amount'))
 
+    @api.multi
+    def _compute_commit_amount(self):
+        for budget in self:
+            budget.commit_amount = \
+                sum(budget.commitment_summary_expense_line_ids.
+                    mapped('all_commit'))
+
     @api.model
     def _get_budget_level_type_hook(self, budget):
         return 'check_budget'
@@ -440,6 +451,23 @@ class AccountBudget(models.Model):
                          ))
         return True
 
+    @api.multi
+    def _validate_future_with_commit(self):
+        for budget in self:
+            print budget.budget_level_id.check_future_with_commit
+            print budget.future_plan
+            print budget.commit_amount
+            if budget.budget_level_id.check_future_with_commit:
+                if budget.future_plan < budget.commit_amount:
+                    raise ValidationError(
+                        _('%s:\n Future plan amount (%s) must not less than '
+                          'commitment amount (%s)!') %
+                        (budget.display_name,
+                         '{:,.2f}'.format(budget.future_plan),
+                         '{:,.2f}'.format(budget.commit_amount),
+                         ))
+        return True
+
     # @api.multi
     # def budget_confirm(self):
     #     self._validate_budget_level()
@@ -459,6 +487,7 @@ class AccountBudget(models.Model):
         self._validate_budget_level()
         self._validate_plan_vs_release()
         self._validate_release_vs_policy()
+        self._validate_future_with_commit()
         self.write({'state': 'done'})
 
     # ---- BUDGET CHECK ----

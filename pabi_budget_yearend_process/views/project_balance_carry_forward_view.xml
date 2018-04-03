@@ -76,7 +76,7 @@
         </record>
 
         <menuitem action="action_project_balance_carry_forward" id="menu_project_balance_carry_forward"
-          parent="account_budget_activity.menu_action_budget_year_end_process" sequence="20"
+          parent="menu_action_budget_year_end_process" sequence="20"
           groups="group_project_balance_carry_forward"/>
 
     </data>

@@ -306,7 +306,7 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     )
     # Project Detail
     amount_before = fields.Float(
-        string='Amount before FY1',
+        string='Before FY1',
     )
     amount_fy1 = fields.Float(
         string='FY1',
@@ -321,11 +321,14 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
         string='FY4',
     )
     amount_beyond = fields.Float(
-        string='FY6 and Beyond',
+        string='FY5 ++',
+    )
+    amount_overall = fields.Float(
+        string='Overall',
     )
     # For internal charge
     amount_before_internal = fields.Float(
-        string='Amount before FY1 (I)',
+        string='Before FY1 (I)',
     )
     amount_fy1_internal = fields.Float(
         string='FY1 (I)',
@@ -340,7 +343,10 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
         string='FY4 (I)',
     )
     amount_beyond_internal = fields.Float(
-        string='FY5 and Beyond (I)',
+        string='FY5 (I) ++',
+    )
+    amount_overall_internal = fields.Float(
+        string='Overall (Internal)',
     )
     # --
     revenue_budget = fields.Float(
@@ -556,7 +562,7 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
 #                    'fund_id': rec.fund_id.id,
 #                    # some misc fields
 #                    'pm_employee': rec.project_id.pm_employee_id.name,
-#                    'analyst_employee': rec.project_id.analyst_employee_id.name,
+#                  'analyst_employee': rec.project_id.analyst_employee_id.name,
 #                    'section': rec.project_id.pm_section_id.name,
 #                    'division': rec.project_id.owner_division_id.name,
 #                    'org': rec.project_id.org_id.name, }
@@ -567,7 +573,7 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
 #                                       'write_uid', 'write_date',
 #                                       'create_uid', 'create_date',
 #                                       'state',
-#                                       # Related fields should not get updated,
+#                                     # Related fields should not get updated,
 #                                       # it unnecessary slow
 #                                       'program_id', 'section_program_id',
 #                                       'owner_division_id',

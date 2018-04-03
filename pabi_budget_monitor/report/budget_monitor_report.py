@@ -3,15 +3,27 @@ from openerp import models, fields
 from openerp import tools
 from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_FIELDS, ChartField
+from openerp.addons.pabi_account_move_document_ref.models.account_move import \
+    DOCTYPE_SELECT
 
 
 class BudgetMonitorReport(ChartField, models.Model):
     _inherit = 'budget.monitor.report'
 
+    doctype = fields.Selection(
+        DOCTYPE_SELECT,
+        string='Doctype',
+        readonly=True,
+    )
     document = fields.Char(
         string='Document',
         readonly=True,
         help="Reference to original document",
+    )
+    document_line = fields.Char(
+        string='Document Line',
+        readonly=True,
+        help="Reference to original document line",
     )
     # program_rpt_id = fields.Many2one(
     #     'res.program',
@@ -25,7 +37,7 @@ class BudgetMonitorReport(ChartField, models.Model):
             dimensions += ', %s' % (d,)
         dimensions += ', chart_view'
         # Add document reference
-        dimensions += ', document'
+        dimensions += ', doctype, document, document_line'
         # dimensions += ', program_rpt_id'
         return dimensions
 

@@ -68,7 +68,7 @@
                             <field name="invest_construction_policy_id" invisible="1"/>
                             <button name="open_invest_construction_policy" type="object" icon="gtk-zoom-in" attrs="{'invisible': [('invest_construction_policy_id', '=', False)]}"/>
 
-                            <field name="amount_total" sum="Total"/>
+                            <field name="amount_total" sum="Total" invisible="1"/>
                         </tree>
                     </field>
                     <div class="oe_chatter">

@@ -318,39 +318,33 @@
                             <field name="external_fund_type"/>
                             <field name="external_fund_name"/>
                             <field name="priority"/>
-
+                        </group>
+                    </group>
+                    <hr/>
+                    <group string="Project Budget">
+                        <group>
                             <field name="amount_before"/>
                             <field name="amount_fy1"/>
                             <field name="amount_fy2"/>
                             <field name="amount_fy3"/>
                             <field name="amount_fy4"/>
                             <field name="amount_beyond"/>
-
+                            <hr colspan="2"/>
+                            <field name="amount_overall"/>
+                        </group>
+                        <group>
                             <field name="amount_before_internal"/>
                             <field name="amount_fy1_internal"/>
                             <field name="amount_fy2_internal"/>
                             <field name="amount_fy3_internal"/>
                             <field name="amount_fy4_internal"/>
                             <field name="amount_beyond_internal"/>
-
+                            <hr colspan="2"/>
+                            <field name="amount_overall_internal"/>
+                        </group>
+                        <group string="Project Revenue">
                             <field name="revenue_budget"/>
                             <field name="overall_revenue_plan"/>
-                        </group>
-                    </group>
-                    <hr/>
-                    <group string="Project Performance">
-                        <group>
-                            <field name="pfm_publications"/>
-                            <field name="pfm_patents"/>
-                            <field name="pfm_petty_patents"/>
-                            <field name="pfm_copyrights"/>
-                            <field name="pfm_trademarks"/>
-                        </group>
-                        <group>
-                            <field name="pfm_plant_varieties"/>
-                            <field name="pfm_laboratory_prototypes"/>
-                            <field name="pfm_field_prototypes"/>
-                            <field name="pfm_commercial_prototypes"/>
                         </group>
                     </group>
                     <hr/>
@@ -370,6 +364,22 @@
                             <field name="actual"/>
                             <field name="balance"/>
                             <field name="est_commit"/>
+                        </group>
+                    </group>
+                    <hr/>
+                    <group string="Project Performance">
+                        <group>
+                            <field name="pfm_publications"/>
+                            <field name="pfm_patents"/>
+                            <field name="pfm_petty_patents"/>
+                            <field name="pfm_copyrights"/>
+                            <field name="pfm_trademarks"/>
+                        </group>
+                        <group>
+                            <field name="pfm_plant_varieties"/>
+                            <field name="pfm_laboratory_prototypes"/>
+                            <field name="pfm_field_prototypes"/>
+                            <field name="pfm_commercial_prototypes"/>
                         </group>
                     </group>
                 </form>

@@ -850,3 +850,8 @@ class ResProjectBudgetRelease(models.Model):
                 rec.project_id._release_fiscal_budget(rec.fiscalyear_id,
                                                       rec.released_amount)
         return result
+
+    @api.multi
+    def dummy(self):
+        """ This will by default, trigger the write() to release budget """
+        return True

@@ -3,15 +3,48 @@ from openerp import models, fields, api
 from openerp import tools
 from openerp.addons.pabi_chartfield.models.chartfield import \
     CHART_FIELDS, CHART_VIEW_LIST, ChartField
+from openerp.addons.pabi_account_move_document_ref.models.account_move import \
+    DOCTYPE_SELECT
 
 
 class BudgetConsumeReport(ChartField, models.Model):
     _inherit = 'budget.consume.report'
 
+    doctype = fields.Selection(
+        DOCTYPE_SELECT,
+        string='Doctype',
+        readonly=True,
+    )
     document = fields.Char(
         string='Document',
         readonly=True,
         help="Reference to original document",
+    )
+    document_line = fields.Char(
+        string='Document Line',
+        readonly=True,
+        help="Reference to original document line",
+    )
+    # Doc lines
+    purchase_request_line_id = fields.Many2one(
+        'purchase.request.line',
+        string='Purchase Request Line',
+        readonly=True,
+    )
+    sale_line_id = fields.Many2one(
+        'sale.order.line',
+        string='Sales Order Line',
+        readonly=True,
+    )
+    purchase_line_id = fields.Many2one(
+        'purchase.order.line',
+        string='Purchase Order Line',
+        readonly=True,
+    )
+    expense_line_id = fields.Many2one(
+        'hr.expense.line',
+        string='Expense Line',
+        readonly=True,
     )
 
     def _get_from_clause(self):
@@ -30,7 +63,10 @@ class BudgetConsumeReport(ChartField, models.Model):
             dimensions += ', aal.%s' % (d,)
         dimensions += ', aal.chart_view'
         # Add dimensions for document reference
-        dimensions += ', aal.document'
+        dimensions += ', aal.doctype, aal.document, aal.document_line'
+        # Doclines (consume report only)
+        dimensions += """, aal.purchase_request_line_id, aal.sale_line_id,
+        aal.purchase_line_id, aal.expense_line_id"""
         # dimensions += '''
         #   , CASE WHEN aal.section_id is not null THEN section.program_rpt_id
         #          WHEN aal.project_id is not null THEN project.program_rpt_id

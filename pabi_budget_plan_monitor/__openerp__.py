@@ -11,13 +11,11 @@
         'pabi_budget_monitor',
     ],
     'data': [
-        'security/groups.xml',
         'security/ir.model.access.csv',
         'views/budget_plan_invest_construction_view.xml',
         'views/budget_plan_project_view.xml',
         'views/budget_plan_unit_view.xml',
         'views/invest_asset_plan_view.xml',
-        'views/project_balance_carry_forward_view.xml',
     ],
     'demo': [
     ],

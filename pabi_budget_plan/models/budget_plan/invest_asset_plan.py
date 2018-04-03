@@ -98,7 +98,7 @@ class InvestAssetPlan(models.Model):
         states={'approve': [('readonly', True)]},
     )
     verified_amount = fields.Float(
-        string='Verified Amount',
+        string='Approved Amount',
         compute='_compute_verified',
     )
     plan_line_ids = fields.One2many(

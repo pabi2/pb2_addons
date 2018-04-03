@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory Year End Processes -->
+        <record model="document.directory" id="dir_budget_yearend_process_template">
+            <field name="name">Budget Yearend Process</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <!-- Carry Over -->
+        <record id="budget_carry_over_xlsx_template" model="ir.attachment">
+            <field name="res_model">budget.carry.over</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_carry_over.xlsx</field>
+            <field name="name">Budget Carry Over Tempalte</field>
+            <field name="parent_id" eval="ref('dir_budget_yearend_process_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'C2': 'fiscalyear_id.name',
+                        },
+                        'line_view_ids': {
+                            'A5': 'doctype${value and dict([("employee_expense", "EX"), ("sale_order", "SO"), ("purchase_order", "PO"), ("purchase_request", "PR")]).get(value) or ""}',
+                            'B5': 'name${value or ""}',
+                            'C5': 'description${value or ""}',
+                            'D5': 'chartfield_type${value and dict([("pj:", "Project"), ("sc:", "Section"), ("cp:", "Construction"), ("ia:", "Asset"), ("pc:", "Personnel")]).get(value) or ""}',
+                            'E5': 'chartfield_id.code${value or ""}',
+                            'F5': 'chartfield_id.name${value or ""}',
+                            'G5': 'chartfield_id.costcenter_id.code${value or ""}',
+                            'H5': 'chartfield_id.costcenter_id.name${value or ""}',
+                            'I5': 'budget_id${"division_id" in value and value.division_id.display_name or ""}',
+                            'J5': 'budget_id${"subsector_id" in value and value.subsector_id.display_name or ""}',
+                            'K5': 'budget_id${"sector_id" in value and value.sector_id.display_name or ""}',
+                            'L5': 'budget_id${"org_id" in value and value.org_id.display_name or ""}',
+                            'M5': 'budget_id${"functional_area_id" in value and value.functional_area_id.display_name or ""}',
+                            'N5': 'budget_id${"program_group_id" in value and value.program_group_id.display_name or ""}',
+                            'O5': 'budget_id${"program_id" in value and value.program_id.display_name or ""}',
+                            'P5': 'budget_id${"project_group_id" in value and value.project_group_id.display_name or ""}',
+                            'Q5': 'budget_id${"section_program_id" in value and value.section_program_id.display_name or ""}',
+                            'R5': 'commit_amount${value or 0.0}',
+                        }
+                    },
+                },
+            }
+          </field>
+        </record>
+    </data>
+</openerp>

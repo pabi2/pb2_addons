@@ -12,12 +12,14 @@ from openerp.addons.document_status_history.models.document_history import \
 
 
 class ResInvestConstruction(LogCommon, models.Model):
-    _inherit = 'res.invest.construction'
+    _name = 'res.invest.construction'
+    _inherit = ['res.invest.construction', 'mail.thread']
 
     code = fields.Char(
         readonly=True,
         default='/',
         copy=False,
+        track_visibility='onchange',
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -34,6 +36,7 @@ class ResInvestConstruction(LogCommon, models.Model):
         readonly=True,
         copy=False,
         default='draft',
+        track_visibility='onchange',
     )
     month_duration = fields.Integer(
         string='Duration (months)',
@@ -42,6 +45,7 @@ class ResInvestConstruction(LogCommon, models.Model):
                 'submit': [('readonly', False)],
                 'unapprove': [('readonly', False)]},
         copy=False,
+        track_visibility='onchange',
     )
     date_start = fields.Date(
         string='Start Date',
@@ -50,6 +54,7 @@ class ResInvestConstruction(LogCommon, models.Model):
                 'submit': [('readonly', False)],
                 'unapprove': [('readonly', False)]},
         copy=False,
+        track_visibility='onchange',
     )
     date_end = fields.Date(
         string='End Date',
@@ -58,6 +63,7 @@ class ResInvestConstruction(LogCommon, models.Model):
                 'submit': [('readonly', False)],
                 'unapprove': [('readonly', False)]},
         copy=False,
+        track_visibility='onchange',
     )
     pm_employee_id = fields.Many2one(
         'hr.employee',
@@ -66,6 +72,7 @@ class ResInvestConstruction(LogCommon, models.Model):
         readonly=True,
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
+        track_visibility='onchange',
     )
     pm_section_id = fields.Many2one(
         'res.section',
@@ -74,6 +81,7 @@ class ResInvestConstruction(LogCommon, models.Model):
         readonly=True,
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
+        track_visibility='onchange',
     )
     mission_id = fields.Many2one(
         'res.mission',
@@ -82,11 +90,13 @@ class ResInvestConstruction(LogCommon, models.Model):
         readonly=True,
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)]},
+        track_visibility='onchange',
     )
     amount_budget_plan = fields.Float(
         string='Planned Budget',
         compute='_compute_amount_budget_plan',
         readonly=True,
+        track_visibility='onchange',
     )
     amount_budget = fields.Float(
         string='Approved Budget',
@@ -95,6 +105,7 @@ class ResInvestConstruction(LogCommon, models.Model):
         states={'submit': [('readonly', False)],
                 'unapprove': [('readonly', False)]},
         write=['pabi_base.group_cooperate_budget'],  # Only Corp can edit
+        track_visibility='onchange',
     )
     amount_before = fields.Float(
         string='Before FY1',
@@ -128,21 +139,27 @@ class ResInvestConstruction(LogCommon, models.Model):
     )
     operation_area = fields.Char(
         string='Operation Area',
+        track_visibility='onchange',
     )
     date_expansion = fields.Date(
         string='Expansion Date',
+        track_visibility='onchange',
     )
     approval_info = fields.Text(
         string='Approval Info',
+        track_visibility='onchange',
     )
     project_readiness = fields.Text(
         string='Project Readiness',
+        track_visibility='onchange',
     )
     reason = fields.Text(
         string='Reason',
+        track_visibility='onchange',
     )
     expected_result = fields.Text(
         string='Expected Result',
+        track_visibility='onchange',
     )
     budget_plan_ids = fields.One2many(
         'res.invest.construction.budget.plan',
@@ -940,15 +957,16 @@ class ResInvestConstructionPhasePlan(models.Model):
                 raise ValidationError(
                     _('Period must be within start and date!'))
 
-    @api.multi
-    def write(self, vals):
-        if 'amount_plan' in vals:
-            for rec in self:
-                today = fields.Date.context_today(self)
-                if rec.calendar_period_id.date_start < today:
-                    raise ValidationError(
-                        _('Changing past period amount is not allowed!'))
-        return super(ResInvestConstructionPhasePlan, self).write(vals)
+    # This will help protect user from edit past date
+    # @api.multi
+    # def write(self, vals):
+    #     if 'amount_plan' in vals:
+    #         for rec in self:
+    #             today = fields.Date.context_today(self)
+    #             if rec.calendar_period_id.date_start < today:
+    #                 raise ValidationError(
+    #                     _('Changing past period amount is not allowed!'))
+    #     return super(ResInvestConstructionPhasePlan, self).write(vals)
 
 
 class ResInvestConstructionPhaseSync(models.Model):

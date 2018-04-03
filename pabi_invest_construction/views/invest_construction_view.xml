@@ -78,7 +78,7 @@
                         <button name="action_close" string="Close" type="object" states="approve" class="oe_highlight"/>
                         <button name="action_delete" string="Delete" type="object" states="approve"/>
                         <button name="action_cancel" string="Cancel" type="object" states="approve"/>
-                        <button name="action_draft" string="Reset to Draft" type="object" states="reject,delete,cancel,close"/>
+                        <button name="action_draft" string="Reset to Draft" type="object" states="reject,delete,cancel,close,unapprove"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,close" readonly="1"/>
                     </header>
                     <sheet string="Project (C)">
@@ -137,7 +137,7 @@
                                 </group>
                             </page>
                             <page string="Budget Planning">
-                                <field name="budget_plan_ids">
+                                <field name="budget_plan_ids" attrs="{'readonly': [('state', '!=', 'draft')]}">
                                     <tree editable="bottom" create="0" delete="0">
                                         <field name="fiscalyear_id"/>
                                         <field name="amount_plan" sum="Total Plan"/>
@@ -145,7 +145,7 @@
                                 </field>
                             </page>
                             <page string="Phases">
-                                <field name="phase_ids">
+                                <field name="phase_ids"  attrs="{'readonly': [('state', '=', 'close')]}">
                                     <tree editable="bottom" create="0" delete="0">
                                         <field name="code"/>
                                         <field name="phase" readonly="1"/>
@@ -159,6 +159,10 @@
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -183,7 +187,10 @@
             <field name="model">res.invest.construction</field>
             <field name="arch" type="xml">
                 <search string="Tasks">
-                    <field name="name" string="Project (C)"/>
+                    <field name="name" string="Project (C)" filter_domain="['|',('name','ilike',self),('code','ilike',self)]"/>
+                    <field name="pm_employee_id"/>
+                    <field name="pm_section_id"/>
+                    <field name="org_id"/>
                     <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
                     <filter name="submit" string="Submitted" domain="[('state','=','submit')]"/>
                     <filter name="approve" string="Approved" domain="[('state','=','approve')]"/>
@@ -270,7 +277,7 @@
                         <button name="action_close" string="Close" type="object" states="approve" class="oe_highlight"/>
                         <button name="action_delete" string="Delete" type="object" states="approve"/>
                         <button name="action_cancel" string="Cancel" type="object" states="approve"/>
-                        <button name="action_draft" string="Reset to Draft" type="object" states="reject,delete,cancel,close"/>
+                        <button name="action_draft" string="Reset to Draft" type="object" states="reject,delete,cancel,close,unapprove"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,close" readonly="1"/>
                     </header>
                     <sheet string="Phase">

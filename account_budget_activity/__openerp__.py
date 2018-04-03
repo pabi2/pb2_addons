@@ -30,7 +30,6 @@ Note: This module provide only framework. There will be no budget check here.
     ],
     'data': [
         'data/account_data.xml',
-        'data/security_groups.xml',
         'security/ir.model.access.csv',
         'security/account_budget_security.xml',
         'wizard/budget_release_wizard_view.xml',
@@ -52,9 +51,7 @@ Note: This module provide only framework. There will be no budget check here.
         'views/hr_salary_view.xml',
         'views/stock_view.xml',
         'views/account_journal_view.xml',
-        'views/budget_carry_over_view.xml',
         'wizard/purchase_request_line_make_purchase_requisition_view.xml',
-        # 'workflow/account_budget_workflow.xml',
         'report/budget_consume_report_view.xml',
         'report/budget_plan_report_view.xml',
         'report/budget_monitor_report_view.xml',
