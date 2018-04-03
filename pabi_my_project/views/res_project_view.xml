@@ -286,7 +286,11 @@
                     <filter name="cancel" string="Cancelled" domain="[('state','=','cancel')]"/>
                     <filter name="close" string="Closed" domain="[('state','=','close')]"/>
                     <group expand="0" string="Group By">
+                        <filter string="Functionl Area" name="functional_area" context="{'group_by':'functional_area_id'}"/>
+                        <filter string="Program Group" name="program_group" context="{'group_by':'program_group_id'}"/>
                         <filter string="Program" name="program" context="{'group_by':'program_id'}"/>
+                        <filter string="Project Group" nameProgram="program" context="{'group_by':'project_group_id'}"/>
+                        <filter string="Org" name="program" context="{'group_by':'org_id'}"/>
                     </group>
                 </search>
             </field>

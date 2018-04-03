@@ -399,7 +399,8 @@ class ResProject(LogCommon, models.Model):
         return result
 
     @api.multi
-    @api.constrains('budget_plan_ids')
+    @api.constrains('budget_plan_ids', 'budget_plan_expense_ids',
+                    'budget_plan_revenue_ids')
     def _trigger_auto_sync(self):
         for project in self:
             to_sync_fiscals = project.budget_plan_ids.filtered(
@@ -803,6 +804,8 @@ class ResProjectBudgetRelease(models.Model):
         'res.project',
         string='Project',
         required=True,
+        index=True,
+        ondelete='cascade',
     )
     dummy_project_id = fields.Many2one(
         related='project_id',

@@ -25,6 +25,7 @@ class AccountBudget(models.Model):
         After synced, the synced = True, and it won't be pulled again.
         When phase is updated, it will reset synced = False, and ready for sync
         """
+        print self
         self.ensure_one()  # Make sure it is synced one by one
         if self.chart_view != 'project_base':
             raise ValidationError(_('Not a project based budget control'))
