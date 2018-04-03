@@ -289,6 +289,7 @@ class BudgetFundRule(models.Model):
             res['budget_ok'] = False
             res['message'] = _(
                 'Selected asset not exists in fund rule!')
+            return res
         elif asset_rule.fund_rule_id.state != 'confirmed':
             res['budget_ok'] = False
             res['message'] = _(
