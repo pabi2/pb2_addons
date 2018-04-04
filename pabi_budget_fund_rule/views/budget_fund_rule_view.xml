@@ -42,6 +42,7 @@
                             <field name="template_id" required="1"/>
                         </group>
                         <group>
+                            <field name="planned_budget"/>
                             <field name="active"/>
                         </group>
                     </group>
@@ -55,9 +56,9 @@
                                     <field name="expense_group_id"/>
                                     <field name="account_ids" widget="many2many_tags"/>
                                     <field name="activity_ids" widget="many2many_tags"/>
-                                    <field name="amount" required="1"/>
+                                    <field name="amount" required="1" sum="Total"/>
                                     <field name="max_spending_percent" required="1"/>
-                                    <field name="amount_consumed"/>
+                                    <field name="amount_consumed" sum="Total"/>
                                 </tree>
                             </field>
                         </page>
@@ -68,7 +69,7 @@
                             <field name="asset_rule_line_ids" nolabel="1">
                                 <tree editable="bottom">
                                     <field name="asset_name"/>
-                                    <field name="amount_total"/>
+                                    <field name="amount_total" sum="Total"/>
                                 </tree>
                             </field>
                         </page>
