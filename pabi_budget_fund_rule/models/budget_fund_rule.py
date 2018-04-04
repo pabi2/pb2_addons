@@ -363,6 +363,15 @@ class BudgetFundRuleLine(models.Model):
     )
 
     @api.multi
+    def write(self, vals):
+        if 'amount' in vals:
+            for rec in self:
+                if vals.get('amount') > rec.amount_consumed:
+                    raise ValidationError(
+                        _('Amount over consumed amount is not allowed!'))
+        return super(BudgetFundRuleLine, self).write(vals)
+
+    @api.multi
     @api.constrains('amount')
     def _check_amount(self):
         for rec in self:
