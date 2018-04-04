@@ -36,6 +36,10 @@ class BudgetFundRule(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    planned_budget = fields.Float(
+        string='Planned Budget',
+        compute='_compute_total_budget',
+    )
     fund_id = fields.Many2one(
         'res.fund',
         string='Fund',
@@ -83,6 +87,12 @@ class BudgetFundRule(models.Model):
     )
 
     @api.multi
+    def _compute_total_budget(self):
+        for rec in self:
+            expenses = rec.project_id.summary_expense_ids
+            rec.planned_budget = sum(expenses.mapped('planned_amount'))
+
+    @api.multi
     @api.constrains('project_id', 'template')
     def _check_project_template(self):
         for rec in self:
@@ -105,19 +115,20 @@ class BudgetFundRule(models.Model):
     def action_draft(self):
         self.write({'state': 'draft'})
 
-    @api.one
-    @api.constrains('name', 'template', 'fund_id', 'project_id')
+    @api.multi
+    @api.constrains('name', 'template', 'fund_id', 'project_id', 'active')
     def _check_unique(self):
-        if self.template:
-            if len(self.search([('template', '=', True),
-                                ('name', '=', self.name),
-                                ('fund_id', '=', self.fund_id.id)])) > 1:
-                raise ValidationError(_('Duplicated Template Name'))
-        else:
-            if len(self.search([('template', '=', False),
-                                ('project_id', '=', self.project_id.id),
-                                ('fund_id', '=', self.fund_id.id)])) > 1:
-                raise ValidationError(_('Duplicated Fund Rule'))
+        for rec in self:
+            if rec.template:
+                if len(self.search([('template', '=', True),
+                                    ('name', '=', rec.name),
+                                    ('fund_id', '=', rec.fund_id.id)])) > 1:
+                    raise ValidationError(_('Duplicated Template Name'))
+            else:
+                if len(self.search([('template', '=', False),
+                                    ('project_id', '=', rec.project_id.id),
+                                    ('fund_id', '=', rec.fund_id.id)])) > 1:
+                    raise ValidationError(_('Duplicated Fund Rule'))
 
     @api.one
     @api.constrains('fund_rule_line_ids')
@@ -437,6 +448,6 @@ class BudgetAssetRuleLine(models.Model):
         required=True,
     )
     amount_total = fields.Float(
-        string='Max Purhcase Amount',
+        string='Max Purhcase Amount / Time',
         required=True,
     )
