@@ -5,8 +5,8 @@ from openerp.exceptions import ValidationError
 
 
 class BudgetFundExpenseGroup(models.Model):
-    _name = "budget.fund.expense.group"
-    _description = "Expense Group"
+    _name = 'budget.fund.expense.group'
+    _description = 'Expense Group'
 
     name = fields.Char(
         string='Name',
@@ -15,7 +15,9 @@ class BudgetFundExpenseGroup(models.Model):
 
 
 class BudgetFundRule(models.Model):
-    _name = "budget.fund.rule"
+    _name = 'budget.fund.rule'
+    _inherit = 'mail.thread'
+
     _description = "Rule for Budget's Fund vs Project"
 
     name = fields.Char(
@@ -35,6 +37,7 @@ class BudgetFundRule(models.Model):
         string='Project',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     planned_budget = fields.Float(
         string='Planned Budget',
@@ -46,6 +49,7 @@ class BudgetFundRule(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     template_id = fields.Many2one(
         'budget.fund.rule',
@@ -53,6 +57,7 @@ class BudgetFundRule(models.Model):
         domain="[('template', '=', True), ('fund_id', '=', fund_id)]",
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     active = fields.Boolean(
         string='Active',
@@ -84,6 +89,7 @@ class BudgetFundRule(models.Model):
         index=True,
         copy=False,
         default='draft',
+        track_visibility='onchange',
     )
 
     @api.multi

@@ -107,6 +107,11 @@ class HRExpense(models.Model):
         #  - is_advance_clearing = False
         #  - is_employee_advance = False
         #  - internal_section_id OR internal_project_id (not both)
+        # 5) Petty Cash
+        #  - pay_to = 'pettycash'
+        #  - is_advance_clearing = False
+        #  - is_employee_advance = False
+        #  - pettycash_id.id = u'1'   (from account.pettycash)
         data_dict = {
             'pay_to': u'supplier',  # 'employee', 'supplier'
             'supplier_text': u'AAA Co., Ltd.',  # If Pay to Supplier
@@ -127,6 +132,7 @@ class HRExpense(models.Model):
             'receive_method': 'other_bank',  # salary_bank, other_bank
             'employee_bank_id.id': u'64',
             'advance_expense_number': u'',  # Case clearing, refer Exp Advance
+            'pettycash_id.id': u'1',  # Case pettycash, from account.pettycash
             'origin_pr_number': u'',  # If small amount, has origin_pr_number
             'line_ids': [  # 1 line only, Advance
                 {
