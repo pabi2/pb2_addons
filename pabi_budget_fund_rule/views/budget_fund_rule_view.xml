@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <menuitem name="External Fund Rule" id="menu_budget_external_fund_rule" parent="account_budget_activity.menu_action_account_budget_config" sequence="140"/>
+        <menuitem name="External Fund Rule" id="menu_budget_external_fund_rule" parent="pabi_my_project.menu_main_project" sequence="20"/>
 
         # Fund Rule
         <record id="view_budget_fund_rule_tree" model="ir.ui.view">

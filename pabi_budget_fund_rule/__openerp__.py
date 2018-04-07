@@ -22,6 +22,8 @@ For example,
         "pabi_base",
         "pabi_chartfield",
         "pabi_budget_monitor",
+        "pabi_my_project",  # because we need menu to be under myProject
+        "pabi_utils",
     ],
     "data": [
         "data/fund_rule_data.xml",

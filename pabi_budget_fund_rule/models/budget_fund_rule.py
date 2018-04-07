@@ -386,6 +386,13 @@ class BudgetFundRuleLine(models.Model):
                 if rec.amount_consumed > vals.get('amount'):
                     raise ValidationError(
                         _('Amount must not less than consumed amount!'))
+        # Log changes on line
+        track_fields = ['amount', 'max_spending_percent']
+        change_dict = {f: vals.get(f) for f in track_fields}
+        for line in self:
+            msg_title = line.expense_group_id.display_name
+            self.env['pabi.utils']._track_line_change(
+                msg_title, 'fund_rule_id', line, change_dict)
         return super(BudgetFundRuleLine, self).write(vals)
 
     @api.multi
