@@ -111,6 +111,10 @@ class BudgetFundRule(models.Model):
 
     @api.multi
     def action_confirm(self):
+        for rec in self:
+            for line in rec.fund_rule_line_ids:
+                if not line.amount_init:
+                    line.amount_init = line.amount
         self.write({'state': 'confirmed'})
 
     @api.multi
@@ -365,8 +369,12 @@ class BudgetFundRuleLine(models.Model):
         store=True,
         readonly=True,
     )
-    amount = fields.Float(
+    amount_init = fields.Float(
         string='Funded Amount',
+        readonly=True,
+    )
+    amount = fields.Float(
+        string='Lock Amount',
         default=0,
     )
     amount_consumed = fields.Float(

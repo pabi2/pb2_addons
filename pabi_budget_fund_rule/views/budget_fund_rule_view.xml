@@ -56,6 +56,7 @@
                                     <field name="expense_group_id"/>
                                     <field name="account_ids" widget="many2many_tags"/>
                                     <field name="activity_ids" widget="many2many_tags"/>
+                                    <field name="amount_init" sum="Total"/>
                                     <field name="amount" required="1" sum="Total"/>
                                     <field name="max_spending_percent" required="1"/>
                                     <field name="amount_consumed" sum="Total"/>
@@ -157,6 +158,7 @@
                                     <field name="expense_group_id"/>
                                     <field name="account_ids" widget="many2many_tags"/>
                                     <field name="activity_ids" widget="many2many_tags"/>
+                                    <field name="max_spending_percent" required="1"/>
                                 </tree>
                             </field>
                         </page>
