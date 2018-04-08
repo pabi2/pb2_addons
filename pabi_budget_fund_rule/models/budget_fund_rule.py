@@ -209,7 +209,7 @@ class BudgetFundRule(models.Model):
                 val += (l[f],)
             if False not in val:
                 combinations.append(val)
-        return combinations
+        return list(set(combinations))
 
     @api.model
     def document_check_fund_spending(self, doc_lines, amount_field='amount'):
@@ -217,6 +217,8 @@ class BudgetFundRule(models.Model):
                'message': False}
         if not doc_lines:
             return res
+        budget_ok = True  # Initial flag
+        messages = []
         # Project / Fund unique (to find matched fund rules
         project_fund_vals = self._get_doc_field_combination(doc_lines,
                                                             ['project_id',
@@ -224,6 +226,7 @@ class BudgetFundRule(models.Model):
         # Find all matching rules for this transaction
         rules = self._get_matched_fund_rule(project_fund_vals)
         # Check against each rule
+        Activity = self.env['account.activity']
         for rule in rules:
             project = rule.project_id
             fund = rule.fund_id
@@ -235,33 +238,43 @@ class BudgetFundRule(models.Model):
                             l['project_id'] == project.id and
                             l['fund_id'] == fund.id,
                             doc_lines)
-            activity_ids = [x['activity_rpt_id'] for x in xlines]
+            activity_ids = list(set([x['activity_rpt_id'] for x in xlines]))
             # Only activity in doc_lines that match rule is allowed
-            if not (set(activity_ids) <= set(rule_activity_ids)):
-                res['budget_ok'] = False
-                res['message'] = _('Selected Activity is '
-                                   'not usable for Fund %s') % \
-                    (rule.fund_id.name,)
-                return res
-            # 2) Check each rule line
-            for rule_line in rule.fund_rule_line_ids:
-                activity_ids = rule_line.activity_ids._ids
-                xlines = filter(lambda l:
-                                l['project_id'] == project.id and
-                                l['fund_id'] == fund.id and
-                                l['activity_rpt_id'] in activity_ids,
-                                doc_lines)
-                amount = 0.0
-                if amount_field:  # Having amount_field means pre commit check
-                    amount = sum(map(lambda l: l[amount_field], xlines))
-                    amount = self.env['account.budget'].\
-                        _calc_amount_company_currency(amount)
-                    if amount <= 0.00:
-                        continue
-                res = self.check_fund_activity_spending(rule_line.id,
-                                                        amount)
-                if not res['budget_ok']:
-                    return res
+            ex_ids = filter(lambda l: l not in rule_activity_ids, activity_ids)
+            activities = Activity.browse(ex_ids)
+            if activities:
+                if budget_ok:
+                    budget_ok = False
+                messages.append(
+                    _('Selected Activities: %s, is not usable for Fund %s') %
+                    (', '.join(activities.mapped('display_name')),
+                     rule.fund_id.display_name))
+
+            # 2) Pass first test, then check each rule line
+            else:
+                for rule_line in rule.fund_rule_line_ids:
+                    activity_ids = rule_line.activity_ids._ids
+                    xlines = filter(lambda l:
+                                    l['project_id'] == project.id and
+                                    l['fund_id'] == fund.id and
+                                    l['activity_rpt_id'] in activity_ids,
+                                    doc_lines)
+                    amount = 0.0
+                    if amount_field:  # amount_field means precommit check
+                        amount = sum(map(lambda l: l[amount_field], xlines))
+                        amount = self.env['account.budget'].\
+                            _calc_amount_company_currency(amount)
+                        if amount <= 0.00:
+                            continue
+                    result = self.check_fund_activity_spending(rule_line.id,
+                                                               amount)
+                    if budget_ok and not result['budget_ok']:
+                        budget_ok = False
+                    if not result['budget_ok']:
+                        messages.append(result['message'])
+        if not budget_ok:
+            res = {'budget_ok': False,
+                   'message': '\n'.join(messages)}
         return res
 
     @api.model
@@ -300,12 +313,49 @@ class BudgetFundRule(models.Model):
         return res
 
     @api.model
-    def validate_asset_price(self, select_asset_id, amount):
+    def document_validate_asset_price(self, doc_lines):
+        """ This method sum amount by asset and call
+            valiate_asset_price() multiple times, combine messages
+        :param doc_lines: list of line item, i.e.,
+            for asset_rule_line_id 1029 = 1,000
+            [{'asset_rule_line_id': 1029, 'amount': 400.00},
+             {'asset_rule_line_id': 1029, 'amount': 600.00}]
+        :return: dict of result (messages combined)
+        """
+        res = {'budget_ok': True,
+               'message': False}
+        if not doc_lines:
+            return res
+        budget_ok = True  # Initial flag
+        messages = []
+        asset_ids = filter(lambda l: l,
+                           map(lambda l:
+                               l.get('asset_rule_line_id', False), doc_lines))
+        asset_ids = list(set(asset_ids))  # Remove False
+        for a in asset_ids:
+            # On each asset in list, get matched lines
+            lines = \
+                filter(lambda l: l.get('asset_rule_line_id') == a, doc_lines)
+            amount = sum([x.get('amount', 0.0) for x in lines])
+            result = self.validate_asset_price(a, amount)
+            if budget_ok and not result['budget_ok']:
+                budget_ok = False
+            if not result['budget_ok']:
+                messages.append(result['message'])
+        if not budget_ok:
+            res = {'budget_ok': False,
+                   'message': '\n'.join(messages)}
+        return res
+
+    @api.model
+    def validate_asset_price(self, asset_rule_line_id, amount):
         """ This will be called by PABI Web, simply to check max price """
         res = {'budget_ok': True,
                'message': False}
+        amount = self.env['account.budget'].\
+            _calc_amount_company_currency(amount)
         asset_rule = self.env['budget.asset.rule.line'].\
-            search([('id', '=', select_asset_id)], limit=1)
+            search([('id', '=', asset_rule_line_id)], limit=1)
         if not asset_rule:
             res['budget_ok'] = False
             res['message'] = _(
@@ -319,8 +369,9 @@ class BudgetFundRule(models.Model):
         elif amount > asset_rule.amount_total:
             res['budget_ok'] = False
             res['message'] = _(
-                "%s's price exceed its maximum amount (%s)") % \
+                "%s's price (%s) exceed its maximum amount (%s)") % \
                 (asset_rule.asset_name,
+                 '{:,.2f}'.format(amount),
                  '{:,.2f}'.format(asset_rule.amount_total))
             return res
         return res
@@ -357,8 +408,12 @@ class BudgetFundRuleLine(models.Model):
         'fund_rule_line_account_rel',
         'fund_rule_line_id', 'account_id',
         string='GL Account',
-        domain=[('type', '!=', 'view')],
+        domain=[('type', '!=', 'view'),
+                '|',
+                ('user_type.code', 'ilike', 'fixed asset'),
+                ('user_type.code', 'ilike', 'expense')],
         required=True,
+        help="List only account type in [fixed asset, expense]",
     )
     activity_ids = fields.Many2many(
         'account.activity',
@@ -370,7 +425,7 @@ class BudgetFundRuleLine(models.Model):
         readonly=True,
     )
     amount_init = fields.Float(
-        string='Funded Amount',
+        string='Fund Amount',
         readonly=True,
     )
     amount = fields.Float(
@@ -395,7 +450,7 @@ class BudgetFundRuleLine(models.Model):
                     raise ValidationError(
                         _('Amount must not less than consumed amount!'))
         # Log changes on line
-        track_fields = ['amount', 'max_spending_percent']
+        track_fields = ['account_ids', 'amount', 'max_spending_percent']
         change_dict = {f: vals.get(f) for f in track_fields}
         for line in self:
             msg_title = line.expense_group_id.display_name
