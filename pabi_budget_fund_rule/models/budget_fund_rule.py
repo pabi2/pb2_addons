@@ -436,6 +436,10 @@ class BudgetFundRuleLine(models.Model):
         string='Consumed Amount',
         compute='_compute_amount_consumed',
     )
+    percent_consumed = fields.Float(
+        string='Consumed (%)',
+        compute='_compute_amount_consumed',
+    )
     max_spending_percent = fields.Integer(
         string='Max Spending (%)',
         default=100.0,
@@ -483,6 +487,8 @@ class BudgetFundRuleLine(models.Model):
                   rec.activity_ids._ids,))
             cr_res = self._cr.fetchone()
             rec.amount_consumed = cr_res[0]
+            rec.percent_consumed = rec.amount and \
+                (rec.amount_consumed * 100.00 / rec.amount) or 0.0
         return
 
     @api.multi

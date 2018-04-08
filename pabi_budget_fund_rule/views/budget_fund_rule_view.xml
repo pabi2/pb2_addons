@@ -75,6 +75,7 @@
                                     <field name="amount" required="1" sum="Total"/>
                                     <field name="max_spending_percent" required="1"/>
                                     <field name="amount_consumed" sum="Total"/>
+                                    <field name="percent_consumed"/>
                                 </tree>
                             </field>
                         </page>
