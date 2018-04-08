@@ -173,9 +173,11 @@ class BudgetFundRule(models.Model):
 
     @api.model
     def create(self, vals):
+        fiscalyear_id = self.env['account.fiscalyear'].find()
         if not vals.get('template', False):
-            vals['name'] = \
-                self.env['ir.sequence'].get('budget.fund.rule') or '/'
+            vals['name'] = self.env['ir.sequence'].\
+                with_context(fiscalyear_id=fiscalyear_id).\
+                get('budget.fund.rule') or '/'
         return super(BudgetFundRule, self).create(vals)
 
     @api.model
