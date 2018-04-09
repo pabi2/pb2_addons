@@ -64,10 +64,12 @@ class AccountBudget(models.Model):
             return res
 
         # 1) Simple check budget on each structure
-        amount = sum([x.get('amount', 0.0) for x in doc_lines])
-        res = Budget.simple_check_budget(doc_date, budget_type, amount, res_id)
-        if not res['budget_ok']:
-            return res
+        # PABIWeb want to call simple_check_budget directly
+        # amount = sum([x.get('amount', 0.0) for x in doc_lines])
+        # res = Budget.simple_check_budget(doc_date, budget_type,
+        #                                  amount, res_id)
+        # if not res['budget_ok']:
+        #     return res
 
         # 2) If budget_type == 'project_base', check fund rule
         if budget_type == 'project_base':
