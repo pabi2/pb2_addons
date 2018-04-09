@@ -28,7 +28,7 @@ class AccountBudget(models.Model):
         return res
 
     @api.model
-    def pabiweb_check_budget(self, doc_date, budget_type,
+    def pabiweb_check_budget(self, doc_type, doc_date, budget_type,
                              res_id, fund_id, doc_lines, currency_id=False):
         """ Combine 3 types of budget check
         1) Checkbudget by structure (i.e., unit_base, project_base, etc.)
@@ -36,6 +36,7 @@ class AccountBudget(models.Model):
         2) Check fund rule by activity_rpt_id
         For project_base + asset,
         3) Check asset max price
+        :param doc_type: pr, av, ex
         :param doc_date: doc_date, document date or date to check budget
         :param budget_type: 1 of the 5 budget types
         :param res_id: resource's id, differ for each type of budget
@@ -52,6 +53,15 @@ class AccountBudget(models.Model):
         ctx = {'currency_id': currency_id}
         Budget = self.env['account.budget'].with_context(ctx)
         FundRule = self.env['budget.fund.rule'].with_context(ctx)
+
+        # Check for valid doc_type
+        if doc_type not in ('pr', 'av', 'ex'):
+            res = {'budget_ok': False,
+                   'message': 'Invalid document type :not: pr, av, ex'}
+            return res
+
+        if doc_type == 'av':  # for AV do nothing
+            return res
 
         # 1) Simple check budget on each structure
         amount = sum([x.get('amount', 0.0) for x in doc_lines])
