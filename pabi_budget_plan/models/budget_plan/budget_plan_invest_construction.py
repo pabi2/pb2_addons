@@ -23,6 +23,8 @@ class BudgetPlanInvestConstruction(BPCommon, models.Model):
         string='Budget Plan Lines',
         copy=True,
         track_visibility='onchange',
+        readonly=True,
+        states={'1_draft': [('readonly', False)]},
     )
     plan_revenue_line_ids = fields.One2many(
         'budget.plan.invest.construction.line',
