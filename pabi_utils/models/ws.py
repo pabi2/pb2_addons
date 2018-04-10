@@ -159,7 +159,8 @@ class PABIUtilsWS(models.AbstractModel):
             if key in rec_dict.keys() and rec._fields[key].type == 'many2one':
                 model = rec._fields[key].comodel_name
                 if rec_dict[key] and isinstance(rec_dict[key], basestring):
-                    values = self.env[model].name_search(rec_dict[key])
+                    values = self.env[model].name_search(rec_dict[key],
+                                                         operator='=')
                     if len(values) > 1:
                         raise ValidationError(
                             _('%s match more > 1 record.') % rec_dict[key])

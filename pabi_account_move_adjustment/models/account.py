@@ -81,6 +81,9 @@ class AccountMove(models.Model):
     @api.multi
     def button_validate(self):
         for move in self:
+            if move.date < move.period_id.date_start or \
+                    move.date > move.period_id.date_stop:
+                raise ValidationError(_('Period conflict with date!'))
             # Validate for tax detail
             if True in move.line_id.mapped('is_tax_line') \
                     and not move.tax_detail_ids:

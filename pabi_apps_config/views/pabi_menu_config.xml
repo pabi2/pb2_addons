@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- New Configurations Menu -->
+        <menuitem id="menu_nstda_configurations" name="Configurations" sequence="450" groups="pabi_base.group_nstda_admin_business"/>
+
+        <!-- Sales -->
+        <menuitem id="base.menu_base_config" name="Sales"
+          parent="menu_nstda_configurations" sequence="10"/>
+        <!-- Purchase -->
+        <menuitem id="purchase.menu_purchase_config_purchase"
+          name="Purchase" parent="menu_nstda_configurations" sequence="20"/>
+        <!-- Accounting -->
+        <menuitem id="account.menu_finance_configuration"
+          name="Accounting" parent="menu_nstda_configurations" sequence="30"/>
+        <!-- Budgeting -->
+        <menuitem id="account_budget_activity.menu_action_account_budget_config"
+          name="Budgeting" parent="menu_nstda_configurations" sequence="40"/>
+        <!-- Assets -->
+        <menuitem id="account_asset_management.menu_finance_config_assets"
+          name="Assets" parent="menu_nstda_configurations" sequence="50"/>
+        <!-- Warehouse -->
+        <menuitem id="stock.menu_stock_configuration"
+          name="Warehouse" parent="menu_nstda_configurations" sequence="60"/>
+        <!-- HR -->
+        <menuitem id="hr.menu_hr_configuration"
+          name="Human Resources" parent="menu_nstda_configurations" sequence="70"/>
+
+    </data>
+</openerp>
