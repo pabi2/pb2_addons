@@ -182,9 +182,12 @@ class ResPartner(models.Model):
         res = WS.friendly_create_data(self._name, vals)
         if res['is_success']:
             res_id = res['result']['id']
-            partner = self.browse(res_id)
-            res['result']['name'] = partner.name
-            res['result']['search_key'] = partner.search_key
+            p = self.browse(res_id)
+            # overwrite partner's account with categ's account
+            p.property_account_payable = p.category_id.payable_account_id
+            p.property_account_receivable = p.category_id.receivable_account_id
+            res['result']['name'] = p.name
+            res['result']['search_key'] = p.search_key
         return res
 
     @api.model
