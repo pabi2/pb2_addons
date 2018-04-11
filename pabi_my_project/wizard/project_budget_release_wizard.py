@@ -43,9 +43,6 @@ class ProjectBudgetReleaseWizard(models.TransientModel):
         active_id = self._context.get('active_id')
         active_model = self._context.get('active_model')
         budget_line = self.env[active_model].browse(active_id)
-        print budget_line
-        print self.amount_to_release
-        print budget_line.planned_amount
         if self.amount_to_release > budget_line.planned_amount:
             raise ValidationError(
                 _('Release amount exceed planned amount!'))
