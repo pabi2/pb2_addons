@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory for Budget XLSX Reports -->
+        <record model="document.directory" id="dir_account_reports">
+            <field name="name">Account Reports</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        # Cheque Register
+        <record id="xlsx_report_cheque_register" model="ir.attachment">
+            <field name="res_model">xlsx.report.cheque.register</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_cheque_register.xlsx</field>
+            <field name="name">Cheque Register</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Cheque Register Report': {
+                        '_HEAD_': {
+                            'B1': 'cheque_lot_ids${value and ", ".join(value.mapped("name")) or ""}',
+                            'B2': 'number_from${value or ""}',
+                            'B3': 'number_to${value or ""}',
+                            'B4': 'status${value and value.title() or ""}',
+                        },
+                        'results': {
+                            'A7': 'journal_id.display_name${value or ""}',
+                            'B7': 'cheque_lot_id.name${value or ""}',
+                            'C7': 'number${value or ""}',
+                            'D7': 'voucher_id.number${value or ""}',
+                            'E7': 'voucher_id.amount${value or ""}',
+                            'F7': 'void${value and "X" or ""}',
+                            'G7': 'note${value or ""}',
+                            'H7': 'payment_export_id.name${value or ""}',
+                            'I7': 'cheque_lot_id.state${value and value.title() or ""}',
+                        },
+                        '_TAIL_0': {
+                            'D7': '${"TOTAL"}#{font=bold;align=center;fill=blue}',
+                            'E7': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+    </data>
+</openerp>

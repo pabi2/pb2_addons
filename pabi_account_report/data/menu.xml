@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+
+    <menuitem id="menu_pabi_account_report"
+      name="Reports"
+      parent="account.menu_finance"
+      sequence="20"/>
+
+  </data>
+</openerp>
