@@ -10,8 +10,6 @@ class MyProjectURL(http.Controller):
     @http.route('/myproject/', type='http', auth='public')
     def myproject_to_project(self, **kw):
         project = kw.get('project', False)
-        # project
-        # http://localhost:8069/myproject?project=ABC
         Project = request.registry.get('res.project')
         pids = Project.name_search(request.cr, SUPERUSER_ID,
                                    project, operator='=')
