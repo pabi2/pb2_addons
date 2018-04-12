@@ -542,5 +542,14 @@
 
         <menuitem action="action_project_small" id="menu_my_project_small" name="Release Budget" parent="menu_project" sequence="2"/>
 
+        <!-- Called form web controller -->
+        <record id="action_myproject_to_project" model="ir.actions.act_window">
+            <field name="name">Project</field>
+            <field name="res_model">res.project</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_project_small_form"/>
+        </record>
+
     </data>
 </openerp>
