@@ -144,6 +144,37 @@ def get_sheet_by_name(book, name):
     raise ValidationError(_("'%s' sheet not found") % (name,))
 
 
+def add_row_skips(vals):
+    """ Add row skips for side column when match with \\skiprow """
+    skips = {}
+    # Find all skips requried for each rows
+    for k, v in vals.iteritems():
+        if '\\skiprow' not in k:
+            continue  # No skip for this field
+        row = 0
+        for value in v:
+            num_skip = isinstance(value, basestring) and \
+                value.count('\\skiprow') or 0
+            if skips.get(row, 0) < num_skip:
+                skips.update({row: num_skip})
+            row += 1
+    if not skips:
+        return vals
+    # Add skips for all other fields
+    for k, v in vals.iteritems():
+        row = 0
+        for value in v:
+            num_skip = isinstance(value, basestring) and \
+                value.count('\\skiprow') or 0
+            if skips.get(row, 0) > num_skip:
+                value = str(value)
+                for x in range(skips[row] - num_skip):
+                    value += '\\skiprow'
+                v[row] = value
+            row += 1
+    return vals
+
+
 class ExportXlsxTemplate(models.TransientModel):
     """ This wizard is used with the template (ir.attachment) to export
     xlsx template filled with data form the active record """
@@ -321,6 +352,10 @@ class ExportXlsxTemplate(models.TransientModel):
                               in worksheet.get(line_field, {}).iteritems()]
                     (vals, func, field_format) = \
                         self._get_line_vals(record, line_field, fields)
+
+                    # value with '\\skiprow' signify line skipping
+                    vals = add_row_skips(vals)
+
                     for rc, field in worksheet.get(line_field, {}).iteritems():
                         tail_fields[rc] = False
                         col, row = split_row_col(rc)  # starting point
@@ -328,13 +363,16 @@ class ExportXlsxTemplate(models.TransientModel):
                         new_row = 0
                         new_rc = rc
                         for val in vals[field]:
-                            new_row = row + i
-                            new_rc = '%s%s' % (col, new_row)
-                            st[new_rc] = val
-                            if field_format.get(field, False):
-                                fill_cell_format(st[new_rc],
-                                                 field_format[field])
-                            i += 1
+                            row_vals = isinstance(val, basestring) and \
+                                val.split('\\skiprow') or [val]
+                            for row_val in row_vals:
+                                new_row = row + i
+                                new_rc = '%s%s' % (col, new_row)
+                                st[new_rc] = row_val
+                                if field_format.get(field, False):
+                                    fill_cell_format(st[new_rc],
+                                                     field_format[field])
+                                i += 1
                         # Add footer line if at least one field have func
                         f = func.get(field, False)
                         if f:

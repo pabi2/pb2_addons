@@ -15,6 +15,8 @@
         'data/menu.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/load_template.xml',
+        # Reports
+        'reports/xlsx_report_partner_list.xml',
         'reports/xlsx_report_cheque_register.xml',
     ],
     'demo': [

@@ -10,6 +10,62 @@
             <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
         </record>
 
+        # Partner List
+        <record id="xlsx_report_partner_list" model="ir.attachment">
+            <field name="res_model">xlsx.report.partner.list</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_partner_list.xlsx</field>
+            <field name="name">Partner List</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Partner List Report': {
+                        '_HEAD_': {
+                            'B1': 'category_ids${value and ", ".join(value.mapped("name")) or ""}',
+                            'B2': 'customer${value and "X" or ""}',
+                            'B3': 'supplier${value and "X" or ""}',
+                        },
+                        'results': {
+                            'A6': 'search_key${value or ""}',
+                            'B6': 'display_name${value or ""}',
+                            'C6': 'category_id.name${value or ""}',
+                            'D6': 'tag_ids${value and ", ".join(value.mapped("name")) or ""}',
+                            'E6': 'street${value or ""}',
+                            'F6': 'street2${value or ""}',
+                            'G6': 'township_id.name${value or ""}',
+                            'H6': 'district_id.name${value or ""}',
+                            'I6': 'province_id.name${value or ""}',
+                            'J6': 'country_id.name${value or ""}',
+                            'K6': 'zip${value or ""}',
+                            'L6': 'vat${value or ""}',
+                            'M6': 'taxbranch${value or ""}',
+                            'N6': 'mobile${value or ""}',
+                            'O6': 'fax${value or ""}',
+                            'P6': 'website${value or ""}',
+                            'Q6': 'email${value or ""}',
+                            'R6': 'comment${value or ""}',
+                            'S6': 'property_account_payable.code${value or ""}',
+                            'T6': 'property_account_payable.name${value or ""}',
+                            'U6': 'property_account_receivable.code${value or ""}',
+                            'V6': 'property_account_receivable.name${value or ""}',
+                            'W6': 'property_supplier_payment_term.name${value or ""}',
+                            'X6': 'property_payment_term.name${value or ""}',
+                            'Y6': 'credit${value or ""}',
+                            'Z6': 'debit${value or ""}',
+                            'AA6': 'bank_ids${value and "\\skiprow".join([x.acc_number for x in value]) or ""}',
+                            'AB6': 'bank_ids${value and "\\skiprow".join([x.bank.code for x in value]) or ""}',
+                            'AC6': 'bank_ids${value and "\\skiprow".join([x.partner_id.display_name for x in value]) or ""}',
+                            'AD6': 'bank_ids${value and "\\skiprow".join([x.active and "X" or "" for x in value]) or ""}',
+                            'AE6': 'bank_ids${value and "\\skiprow".join([x.default and "X" or "" for x in value]) or ""}',
+                            'AF6': 'income_tax_form${value and value.upper() or ""}',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
         # Cheque Register
         <record id="xlsx_report_cheque_register" model="ir.attachment">
             <field name="res_model">xlsx.report.cheque.register</field>
