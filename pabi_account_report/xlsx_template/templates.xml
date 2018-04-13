@@ -66,6 +66,38 @@
           </field>
         </record>
 
+        # Advance Status
+        <record id="xlsx_report_advance_status" model="ir.attachment">
+            <field name="res_model">xlsx.report.advance.status</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_advance_status.xlsx</field>
+            <field name="name">Advance Status</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Advance Status Report': {
+                        '_HEAD_': {
+                            'B1': '${date.today()}#{number_format=date}',
+                        },
+                        'results': {
+                            'A4': 'operating_unit_id.name${value or ""}',
+                            'B4': 'number${value or ""}',
+                            'C4': 'invoice_id.number${value or ""}',
+                            'D4': 'remark${value or ""}',
+                            'E4': 'invoice_id.date_invoice#{number_format=date}',
+                            'F4': 'date_due#{number_format=date}',
+                            'G4': 'employee_id.employee_code${value or ""}',
+                            'H4': 'employee_id${value and value.first_name + " " + value.last_name or ""}',
+                            'I4': 'amount_advanced${value or 0.0}',
+                            'J4': 'amount_to_clearing${value or 0.0}',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
         # Cheque Register
         <record id="xlsx_report_cheque_register" model="ir.attachment">
             <field name="res_model">xlsx.report.cheque.register</field>

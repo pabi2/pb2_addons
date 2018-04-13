@@ -10,7 +10,7 @@ import base64
 import cStringIO
 import time
 from copy import copy
-from datetime import datetime as dt
+from datetime import date, datetime as dt
 from ast import literal_eval
 from openerp.tools import float_compare
 from openerp import models, fields, api, _
@@ -289,6 +289,7 @@ class ExportXlsxTemplate(models.TransientModel):
                     eval_context = {'float_compare': float_compare,
                                     'time': time,
                                     'datetime': dt,
+                                    'date': date,
                                     'value': value,
                                     'model': self.env[record._name],
                                     'env': self.env,
@@ -330,6 +331,7 @@ class ExportXlsxTemplate(models.TransientModel):
                         eval_context = {'float_compare': float_compare,
                                         'time': time,
                                         'datetime': dt,
+                                        'date': date,
                                         'value': value,
                                         'model': self.env[record._name],
                                         'env': self.env,
@@ -405,6 +407,7 @@ class ExportXlsxTemplate(models.TransientModel):
                             eval_context = {'float_compare': float_compare,
                                             'time': time,
                                             'datetime': dt,
+                                            'date': date,
                                             'value': value,
                                             'model': self.env[record._name],
                                             'env': self.env,

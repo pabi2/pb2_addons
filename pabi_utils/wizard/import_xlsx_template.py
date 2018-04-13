@@ -6,7 +6,7 @@ import xlwt
 import itertools
 import cStringIO
 import time
-from datetime import datetime as dt
+from datetime import date, datetime as dt
 from openerp.tools import float_compare
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError, RedirectWarning
@@ -138,6 +138,7 @@ class ImportXlsxTemplate(models.TransientModel):
         eval_context = {'float_compare': float_compare,
                         'time': time,
                         'datetime': dt,
+                        'date': date,
                         'env': self.env,
                         'context': self._context,
                         'value': False,
