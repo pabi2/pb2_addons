@@ -6,6 +6,7 @@ import math
 import openpyxl
 from openpyxl.styles import colors
 from openpyxl.styles import PatternFill, Alignment, Font, NamedStyle
+from dateutil.parser import parse
 import base64
 import cStringIO
 import time
@@ -173,6 +174,48 @@ def add_row_skips(vals):
                 v[row] = value
             row += 1
     return vals
+
+
+def isfloat(input):
+    try:
+        float(input)
+        return True
+    except ValueError:
+        return False
+
+
+def isinteger(input):
+    try:
+        int(input)
+        return True
+    except ValueError:
+        return False
+
+
+def isdatetime(input):
+    try:
+        if len(input) == 10:
+            dt.strptime(input, '%Y-%m-%d')
+        elif len(input) == 19:
+            dt.strptime(input, '%Y-%m-%d %H:%M:%S')
+        else:
+            return False
+        return True
+    except ValueError:
+        return False
+
+
+def str_to_number(input):
+    if isinstance(input, basestring):
+        if isdatetime(input):
+            return parse(input)
+        elif isinteger(input):
+            if not (len(input) > 1 and input[:1] == '0'):
+                return int(input)
+        elif isfloat(input):
+            if not (input.find(".") > 2 and input[:1] == '0'):  # i..e, 00.123
+                return float(input)
+    return input
 
 
 class ExportXlsxTemplate(models.TransientModel):
@@ -370,7 +413,7 @@ class ExportXlsxTemplate(models.TransientModel):
                             for row_val in row_vals:
                                 new_row = row + i
                                 new_rc = '%s%s' % (col, new_row)
-                                st[new_rc] = row_val
+                                st[new_rc] = str_to_number(row_val)
                                 if field_format.get(field, False):
                                     fill_cell_format(st[new_rc],
                                                      field_format[field])

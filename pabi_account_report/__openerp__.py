@@ -18,6 +18,7 @@
         # Reports
         'reports/xlsx_report_partner_list.xml',
         'reports/xlsx_report_advance_status.xml',
+        'reports/xlsx_report_supplier_invoice_detail.xml',
         'reports/xlsx_report_cheque_register.xml',
     ],
     'demo': [
