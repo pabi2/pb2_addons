@@ -18,7 +18,8 @@ class XLSXReportSupplierInvoiceDetail(models.TransientModel):
     invoice_ids = fields.Many2many(
         'account.invoice',
         string='Invoice(s)',
-        domain=[('state', 'in', ('open', 'paid'))],
+        domain=[('state', 'in', ('open', 'paid')),
+                ('type', 'in', ('in_invoice', 'in_refund'))],
     )
     open = fields.Boolean(
         string='Open Invoices',
