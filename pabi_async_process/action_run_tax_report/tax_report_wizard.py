@@ -29,13 +29,22 @@ def action_run_tax_report(session, data, format):
         file_name = 'VAT Report'
         file_name = re.sub(r'[^a-zA-Z0-9_-]', '_', file_name)
         file_name += format == 'pdf' and '.pdf' or '.xls'
+        # Get init time
+        date_created = fields.Datetime.from_string(job.date_created)
+        ts = fields.Datetime.context_timestamp(job, date_created)
+        init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
+        # Description
+        desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
         session.env['ir.attachment'].create({
             'name': file_name,
             'datas': result,
             'datas_fname': file_name,
             'res_model': 'queue.job',
             'res_id': job.id,
-            'type': 'binary'
+            'type': 'binary',
+            'parent_id': session.env.ref('pabi_utils.dir_spool_report').id,
+            'description': desc,
+            'user_id': job.user_id.id,
         })
         return _('Tax Report created successfully')
     except Exception, e:

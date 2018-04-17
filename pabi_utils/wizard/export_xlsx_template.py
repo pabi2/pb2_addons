@@ -6,11 +6,12 @@ import math
 import openpyxl
 from openpyxl.styles import colors
 from openpyxl.styles import PatternFill, Alignment, Font, NamedStyle
+from dateutil.parser import parse
 import base64
 import cStringIO
 import time
 from copy import copy
-from datetime import datetime as dt
+from datetime import date, datetime as dt
 from ast import literal_eval
 from openerp.tools import float_compare
 from openerp import models, fields, api, _
@@ -144,6 +145,79 @@ def get_sheet_by_name(book, name):
     raise ValidationError(_("'%s' sheet not found") % (name,))
 
 
+def add_row_skips(vals):
+    """ Add row skips for side column when match with \\skiprow """
+    skips = {}
+    # Find all skips requried for each rows
+    for k, v in vals.iteritems():
+        if '\\skiprow' not in k:
+            continue  # No skip for this field
+        row = 0
+        for value in v:
+            num_skip = isinstance(value, basestring) and \
+                value.count('\\skiprow') or 0
+            if skips.get(row, 0) < num_skip:
+                skips.update({row: num_skip})
+            row += 1
+    if not skips:
+        return vals
+    # Add skips for all other fields
+    for k, v in vals.iteritems():
+        row = 0
+        for value in v:
+            num_skip = isinstance(value, basestring) and \
+                value.count('\\skiprow') or 0
+            if skips.get(row, 0) > num_skip:
+                value = str(value)
+                for x in range(skips[row] - num_skip):
+                    value += '\\skiprow'
+                v[row] = value
+            row += 1
+    return vals
+
+
+def isfloat(input):
+    try:
+        float(input)
+        return True
+    except ValueError:
+        return False
+
+
+def isinteger(input):
+    try:
+        int(input)
+        return True
+    except ValueError:
+        return False
+
+
+def isdatetime(input):
+    try:
+        if len(input) == 10:
+            dt.strptime(input, '%Y-%m-%d')
+        elif len(input) == 19:
+            dt.strptime(input, '%Y-%m-%d %H:%M:%S')
+        else:
+            return False
+        return True
+    except ValueError:
+        return False
+
+
+def str_to_number(input):
+    if isinstance(input, basestring):
+        if isdatetime(input):
+            return parse(input)
+        elif isinteger(input):
+            if not (len(input) > 1 and input[:1] == '0'):
+                return int(input)
+        elif isfloat(input):
+            if not (input.find(".") > 2 and input[:1] == '0'):  # i..e, 00.123
+                return float(input)
+    return input
+
+
 class ExportXlsxTemplate(models.TransientModel):
     """ This wizard is used with the template (ir.attachment) to export
     xlsx template filled with data form the active record """
@@ -258,6 +332,7 @@ class ExportXlsxTemplate(models.TransientModel):
                     eval_context = {'float_compare': float_compare,
                                     'time': time,
                                     'datetime': dt,
+                                    'date': date,
                                     'value': value,
                                     'model': self.env[record._name],
                                     'env': self.env,
@@ -299,6 +374,7 @@ class ExportXlsxTemplate(models.TransientModel):
                         eval_context = {'float_compare': float_compare,
                                         'time': time,
                                         'datetime': dt,
+                                        'date': date,
                                         'value': value,
                                         'model': self.env[record._name],
                                         'env': self.env,
@@ -321,6 +397,10 @@ class ExportXlsxTemplate(models.TransientModel):
                               in worksheet.get(line_field, {}).iteritems()]
                     (vals, func, field_format) = \
                         self._get_line_vals(record, line_field, fields)
+
+                    # value with '\\skiprow' signify line skipping
+                    vals = add_row_skips(vals)
+
                     for rc, field in worksheet.get(line_field, {}).iteritems():
                         tail_fields[rc] = False
                         col, row = split_row_col(rc)  # starting point
@@ -328,13 +408,16 @@ class ExportXlsxTemplate(models.TransientModel):
                         new_row = 0
                         new_rc = rc
                         for val in vals[field]:
-                            new_row = row + i
-                            new_rc = '%s%s' % (col, new_row)
-                            st[new_rc] = val
-                            if field_format.get(field, False):
-                                fill_cell_format(st[new_rc],
-                                                 field_format[field])
-                            i += 1
+                            row_vals = isinstance(val, basestring) and \
+                                val.split('\\skiprow') or [val]
+                            for row_val in row_vals:
+                                new_row = row + i
+                                new_rc = '%s%s' % (col, new_row)
+                                st[new_rc] = str_to_number(row_val)
+                                if field_format.get(field, False):
+                                    fill_cell_format(st[new_rc],
+                                                     field_format[field])
+                                i += 1
                         # Add footer line if at least one field have func
                         f = func.get(field, False)
                         if f:
@@ -367,6 +450,7 @@ class ExportXlsxTemplate(models.TransientModel):
                             eval_context = {'float_compare': float_compare,
                                             'time': time,
                                             'datetime': dt,
+                                            'date': date,
                                             'value': value,
                                             'model': self.env[record._name],
                                             'env': self.env,

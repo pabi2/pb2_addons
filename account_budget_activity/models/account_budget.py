@@ -454,9 +454,6 @@ class AccountBudget(models.Model):
     @api.multi
     def _validate_future_with_commit(self):
         for budget in self:
-            print budget.budget_level_id.check_future_with_commit
-            print budget.future_plan
-            print budget.commit_amount
             if budget.budget_level_id.check_future_with_commit:
                 if budget.future_plan < budget.commit_amount:
                     raise ValidationError(

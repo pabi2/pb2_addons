@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <record id="xlsx_report_supplier_invoice_detail_view" model="ir.ui.view">
+      <field name="name">xlsx.report.supplier.invoice.detail.view</field>
+      <field name="model">xlsx.report.supplier.invoice.detail</field>
+      <field name="arch" type="xml">
+        <form string="Supplier Invoice Detail Report">
+
+          <!-- search criteria -->
+          <group states="choose">
+            <group>
+              <field name="operating_unit_ids" widget="many2many_tags"/>
+              <field name="partner_ids" widget="many2many_tags"/>
+              <field name="invoice_ids" widget="many2many_tags"/>
+            </group>
+            <group>
+              <field name="open"/>
+              <field name="paid"/>
+            </group>
+          </group>
+
+          <!-- xlsx.report common field -->
+          <div name="xlsx.report">
+            <field name="state" invisible="1"/>
+            <field name="name" invisible="1"/>
+            <div states="choose">
+              <field name="async_process"/><label for="async_process"/>
+            </div>
+            <div states="get">
+              <h2 attrs="{'invisible': [('async_process', '=', True)]}">
+                Complete Prepare Report (.xlsx)
+              </h2>
+              <h2 attrs="{'invisible': [('async_process', '=', False)]}">
+                Report Enqueued (.xlsx)
+              </h2>
+              <p attrs="{'invisible': [('async_process', '=', True)]}" colspan="4">
+                Here is the report file:
+                <field name="data" filename="name" class="oe_inline"/>
+              </p>
+              <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
+                Report UUID:
+                <field name="uuid" class="oe_inline"/>
+              </p>
+            </div>
+            <footer states="choose">
+              <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
+              or
+              <button special="cancel" string="Cancel" type="object" class="oe_link"/>
+            </footer>
+            <footer states="get">
+              <button special="cancel" string="Close" type="object"/>
+            </footer>
+          </div>
+
+        </form>
+      </field>
+    </record>
+
+    <record id="action_report_supplier_invoice_detail" model="ir.actions.act_window">
+      <field name="name">Supplier Invoice Detail Report</field>
+      <field name="res_model">xlsx.report.supplier.invoice.detail</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_report_supplier_invoice_detail" name="Supplier Invoice Detail" parent="menu_pabi_account_report" action="action_report_supplier_invoice_detail" sequence="40"/>
+
+  </data>
+</openerp>

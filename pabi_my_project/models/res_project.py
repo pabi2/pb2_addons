@@ -36,6 +36,11 @@ class ResProject(LogCommon, models.Model):
         related='state',
         help="For display purposes",
     )
+    lock_release = fields.Boolean(
+        string='Lock Budget Release',
+        default=False,
+        help="If lock_budget is checked, release budget is not allowed",
+    )
     date_start = fields.Date(
         string='Start Date',
     )
@@ -735,6 +740,11 @@ class ResProjectBudgetPlan(models.Model):
         # If budget line table is changed at least 1 field, mark synced = False
         if len(set(changes).intersection(test_keys)) > 0:
             vals.update({'synced': False})  # Line updated
+        if 'released_amount' in vals:
+            for rec in self:
+                if rec.project_id.lock_release and \
+                        vals['released_amount'] != rec.released_amount:
+                    raise ValidationError(_('Budget released is locked!'))
         return super(ResProjectBudgetPlan, self).write(vals)
 
     @api.multi
