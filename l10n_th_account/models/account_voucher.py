@@ -455,6 +455,12 @@ class AccountVoucher(common_voucher, models.Model):
         net_tax_currency, vtml = self.compute_net_tax(voucher,
                                                       company_currency,
                                                       vtml)
+        # remove invalid key fields from dict
+        valid_fields = self.env['account.move.line']._fields.keys()
+        for ml in vtml:
+            invalid_fields = list(set(ml.keys()) - set(valid_fields))
+            for f in invalid_fields:
+                del ml[f]
         # Create move line,
         lines = [(0, 0, ml) for ml in vtml]
         move = move_obj.browse(move_id)
