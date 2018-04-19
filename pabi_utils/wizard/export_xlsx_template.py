@@ -3,10 +3,17 @@ import operator
 import re
 import os
 import math
+import pandas as pd
+import numpy as np
 import openpyxl
 from openpyxl.styles import colors
 from openpyxl.styles import PatternFill, Alignment, Font, NamedStyle
 from dateutil.parser import parse
+from openpyxl.utils import get_column_interval
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.utils import coordinate_from_string, column_index_from_string
+from openpyxl.utils.exceptions import IllegalCharacterError
+from openpyxl import load_workbook
 import base64
 import cStringIO
 import time
@@ -20,7 +27,7 @@ from openerp.exceptions import except_orm, ValidationError
 
 def get_field_aggregation(field):
     """ i..e, 'field@{sum/average/max/min}' """
-    if '@{' in field and '}' in field:
+    if field and '@{' in field and '}' in field:
         i = field.index('@{')
         j = field.index('}', i)
         cond = field[i + 2:j]
@@ -34,7 +41,7 @@ def get_field_aggregation(field):
 
 def get_field_condition(field):
     """ i..e, 'field${value > 0 and value or False}' """
-    if '${' in field and '}' in field:
+    if field and '${' in field and '}' in field:
         i = field.index('${')
         j = field.index('}', i)
         cond = field[i + 2:j]
@@ -56,7 +63,7 @@ def get_field_format(field):
 
         i.e., 'field#{font=bold;fill=red;align=center;number_format=number}'
     """
-    if '#{' in field and '}' in field:
+    if field and '#{' in field and '}' in field:
         i = field.index('#{')
         j = field.index('}', i)
         cond = field[i + 2:j]
@@ -113,7 +120,7 @@ def fill_cell_format(field, field_format):
 
 def get_line_max(line_field):
     """ i.e., line_field = line_ids[100], mas = 100 else 0 """
-    if '[' in line_field and ']' in line_field:
+    if line_field and '[' in line_field and ']' in line_field:
         i = line_field.index('[')
         j = line_field.index(']')
         max_str = line_field[i + 1:j]
@@ -150,7 +157,7 @@ def add_row_skips(vals):
     skips = {}
     # Find all skips requried for each rows
     for k, v in vals.iteritems():
-        if '\\skiprow' not in k:
+        if not k or '\\skiprow' not in k:
             continue  # No skip for this field
         row = 0
         for value in v:
@@ -216,6 +223,16 @@ def str_to_number(input):
             if not (input.find(".") > 2 and input[:1] == '0'):  # i..e, 00.123
                 return float(input)
     return input
+
+
+def load_workbook_range(range_string, ws):
+    """ Select worksheet range and return as pandas dataframe """
+    col_start, col_end = re.findall("[A-Z]+", range_string)
+    data_rows = []
+    for row in ws[range_string]:
+        data_rows.append([cell.value for cell in row])
+    return pd.DataFrame(data_rows,
+                        columns=get_column_interval(col_start, col_end))
 
 
 class ExportXlsxTemplate(models.TransientModel):
@@ -287,6 +304,8 @@ class ExportXlsxTemplate(models.TransientModel):
 
         def _get_field_data(_field, _line):
             """ Get field data, and convert data type if needed """
+            if not _field:
+                return None
             line_copy = _line
             for f in _field.split('.'):
                 data_type = line_copy._fields[f].type
@@ -351,6 +370,8 @@ class ExportXlsxTemplate(models.TransientModel):
         if not record or not data_dict:
             return
         try:
+            # variable to store data range of each worksheet
+            worksheet_range = {}
             for sheet_name in data_dict:
                 worksheet = data_dict[sheet_name]
                 st = False
@@ -383,18 +404,21 @@ class ExportXlsxTemplate(models.TransientModel):
                         # str() throw cordinal not in range error
                         value = eval(eval_cond, eval_context)
                         # value = str(eval(eval_cond, eval_context))
-                    st[rc] = value
+                    if value is not None:
+                        st[rc] = value
                     if field_format:
                         fill_cell_format(st[rc], field_format)
 
                 # ================ Line Items ================
+                all_rc = []
+                max_row = 0
                 line_fields = \
-                    filter(lambda l: l[0:6] not in ('_HEAD_', '_TAIL_'),
-                           worksheet)
+                    filter(lambda l: l[0:6]
+                           not in ('_HEAD_', '_TAIL_', '_BI_'), worksheet)
                 tail_fields = {}  # Keep tail cell, to be used in _TAIL_
                 for line_field in line_fields:
-                    fields = [field for rc, field
-                              in worksheet.get(line_field, {}).iteritems()]
+                    fields = worksheet.get(line_field, {}).values()
+                    all_rc += worksheet.get(line_field, {}).keys()
                     (vals, func, field_format) = \
                         self._get_line_vals(record, line_field, fields)
 
@@ -413,10 +437,13 @@ class ExportXlsxTemplate(models.TransientModel):
                             for row_val in row_vals:
                                 new_row = row + i
                                 new_rc = '%s%s' % (col, new_row)
-                                st[new_rc] = str_to_number(row_val)
+                                if row_val not in ('None', None):
+                                    st[new_rc] = str_to_number(row_val)
                                 if field_format.get(field, False):
                                     fill_cell_format(st[new_rc],
                                                      field_format[field])
+                                if new_row > max_row:
+                                    max_row = new_row
                                 i += 1
                         # Add footer line if at least one field have func
                         f = func.get(field, False)
@@ -462,18 +489,70 @@ class ExportXlsxTemplate(models.TransientModel):
                         last_rc = tail_fields[rc]  # Last row of rc column
                         col, row = split_row_col(last_rc)
                         tail_rc = '%s%s' % (col, row + row_skip + 1)
-                        if value:
+                        if value and value is not None:
                             st[tail_rc] = value
                         if func:
                             st[tail_rc] = '=%s(%s:%s)' % (func, rc, last_rc)
                         if field_format:
                             fill_cell_format(st[tail_rc], field_format)
 
+                # Find worksheet data range
+                if all_rc:
+                    begin_rc = min(all_rc)
+                    col, row = split_row_col(max(all_rc))
+                    end_rc = '%s%s' % (col, max_row)
+                    worksheet_range[sheet_name] = '%s:%s' % (begin_rc, end_rc)
+
+            # ================ BI Function ================
+            for sheet_name in data_dict:
+                worksheet = data_dict[sheet_name]
+                if isinstance(sheet_name, str):
+                    st = get_sheet_by_name(workbook, sheet_name)
+                elif isinstance(sheet_name, int):
+                    st = workbook.worksheets[sheet_name - 1]
+                if not st:
+                    raise ValidationError(
+                        _('Sheet %s not found!') % sheet_name)
+                if not worksheet.get('_BI_', False):
+                    continue
+                for rc, bi_dict in worksheet.get('_BI_', {}).iteritems():
+                    req_field = ['df', 'oper']
+                    key_field = bi_dict.keys()
+                    if set(req_field) != set(key_field):
+                        raise ValidationError(
+                            _('_BI_ requires \n'
+                              ' - df: initial DataFrame from worksheet\n'
+                              ' - oper: pandas operation function'))
+                    # Get dataframe
+                    src_df = bi_dict['df']
+                    src_st = get_sheet_by_name(workbook, src_df)
+                    df = load_workbook_range(worksheet_range[src_df], src_st)
+                    df = eval(bi_dict['oper'], {'df': df, 'pd': pd, 'np': np})
+                    rows = dataframe_to_rows(df, index=True, header=False)
+                    # Get init cell index
+                    xy = coordinate_from_string(rc)
+                    c = column_index_from_string(xy[0])
+                    r = xy[1]
+                    for r_idx, row in enumerate(rows, r):
+                        c_idx = c
+                        for value in row:
+                            if isinstance(value, (list, tuple)):
+                                for v in value:
+                                    st.cell(row=r_idx, column=c_idx, value=v)
+                                    c_idx += 1
+                            else:
+                                st.cell(row=r_idx, column=c_idx, value=value)
+                                c_idx += 1
+
         except ValueError, e:
             message = str(e).format(rc)
             raise ValidationError(message)
         except KeyError, e:
             raise except_orm(_('Key Error!'), e)
+        except IllegalCharacterError, e:
+            raise except_orm(
+                _('IllegalCharacterError!\n'
+                  'Some exporting data may contain special character'), e)
         except Exception, e:
             raise except_orm(_('Error filling data into excel sheets!'), e)
 
@@ -497,7 +576,7 @@ class ExportXlsxTemplate(models.TransientModel):
         f.seek(0)
         f.close()
         # Workbook created, temp fie removed
-        wb = openpyxl.load_workbook(ftemp)
+        wb = load_workbook(ftemp)
         os.remove(ftemp)
         # ============= Start working with workbook =============
         record = res_model and self.env[res_model].browse(res_id) or False
