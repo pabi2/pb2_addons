@@ -57,8 +57,14 @@ class PABIWebConfigSettings(models.TransientModel):
         related='company_id.pabiehr_data_url',
     )
     pabiehr_data_mapper = fields.Text(
-        string='Odoo & e-HR Mapper Dict',
+        string='Odoo & e-HR Mapper Dict {odoo_col: ehr_col}',
         related='company_id.pabiehr_data_mapper',
+    )
+    pabiehr_negate_code = fields.Char(
+        string='Negate Codes',
+        related='company_id.pabiehr_negate_code',
+        help="I.e., {'Q': {'J': ('31', '50')}} - "
+        "value 31, 50 in source column J will negate column Q",
     )
 
     @api.model

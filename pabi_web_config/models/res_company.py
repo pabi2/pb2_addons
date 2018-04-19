@@ -60,3 +60,6 @@ class ResCompany(models.Model):
     pabiehr_data_mapper = fields.Text(
         string='Odoo & e-HR Mapper Dict',
     )
+    pabiehr_negate_code = fields.Char(
+        string='Negate Codes',
+    )
