@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<openerp>
-	<data noupdate="1">
-		<record id="path_file_temp_ir_config_param" model="ir.config_parameter">
-			<field name="key">path_temp_file</field>
-			<field name="value">/tmp</field>
-		</record>
-	</data>
-</openerp>

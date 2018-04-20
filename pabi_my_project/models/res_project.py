@@ -50,6 +50,9 @@ class ResProject(LogCommon, models.Model):
     date_end = fields.Date(
         string='End Date',
     )
+    grace_period_date_end = fields.Date(
+        string='Grace Period End Date',
+    )
     project_duration = fields.Integer(
         string='Duration',
     )
@@ -468,7 +471,8 @@ class ResProject(LogCommon, models.Model):
                 # Find new budgets for this project
                 budgets = self.find_active_project_budget(
                     proj.fiscalyear_ids.ids, [proj.program_id.id])
-                budgets.sync_budget_my_project()
+                if budgets:
+                    budgets.sync_budget_my_project()
 
     @api.model
     def _prepare_fiscal_plan_lines(self, project, budget_method):

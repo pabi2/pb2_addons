@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- add the bank abbrev-->
+        <record id="view_project_form" model="ir.ui.view">
+            <field name="name">view.project.form</field>
+            <field name="model">res.project</field>
+            <field name="inherit_id" ref="pabi_my_project.view_project_form" />
+            <field name="arch" type="xml">
+                <field name="fund_ids" position="after">
+                    <field name="require_fund_rule"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

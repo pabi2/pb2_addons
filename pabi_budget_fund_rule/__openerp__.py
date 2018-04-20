@@ -30,5 +30,6 @@ For example,
         "data/budget_fund_rule_sequence.xml",
         "security/ir.model.access.csv",
         "views/budget_fund_rule_view.xml",
+        "views/res_project_view.xml",
     ],
 }

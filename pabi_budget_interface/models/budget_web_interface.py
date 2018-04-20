@@ -51,7 +51,6 @@ class AccountBudget(models.Model):
         if not doc_lines or not res_id or not budget_type:
             return res
         ctx = {'currency_id': currency_id}
-        Budget = self.env['account.budget'].with_context(ctx)
         FundRule = self.env['budget.fund.rule'].with_context(ctx)
 
         # Check for valid doc_type
@@ -64,7 +63,8 @@ class AccountBudget(models.Model):
             return res
 
         # 1) Simple check budget on each structure
-        # PABIWeb want to call simple_check_budget directly
+        # Note: PABIWeb want to call simple_check_budget directly, so ignore
+        # Budget = self.env['account.budget'].with_context(ctx)
         # amount = sum([x.get('amount', 0.0) for x in doc_lines])
         # res = Budget.simple_check_budget(doc_date, budget_type,
         #                                  amount, res_id)

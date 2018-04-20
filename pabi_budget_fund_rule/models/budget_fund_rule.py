@@ -182,9 +182,18 @@ class BudgetFundRule(models.Model):
 
     @api.model
     def _get_matched_fund_rule(self, project_fund_vals):
+        """
+        Find matched rule for project/fund combination
+        - Project not require fund, ignore rule
+        - Project require fund, but not found rule, error
+        """
         rules = []
         for val in project_fund_vals:
             project_id, fund_id = val[0], val[1]
+            project = self.env['res.project'].browse(project_id)
+            fund = self.env['res.fund'].browse(fund_id)
+            if not project.require_fund_rule:
+                continue
             # Find matching rule for this Project + Funding
             rule = self.env['budget.fund.rule'].\
                 search([('project_id', '=', project_id),
@@ -194,9 +203,11 @@ class BudgetFundRule(models.Model):
                         ])
             if len(rule) == 1:
                 rules.append(rule)
+            elif len(rule) == 0:
+                raise ValidationError(
+                    _('Fund rule for project %s / fund %s is not ready!') %
+                    (project.code, fund.name))
             elif len(rule) > 1:
-                project = self.env['res.project'].browse(project_id)
-                fund = self.env['res.fund'].browse(fund_id)
                 raise ValidationError(
                     _('More than 1 rule is found for project %s / fund %s!') %
                     (project.code, fund.name))
@@ -221,59 +232,70 @@ class BudgetFundRule(models.Model):
             return res
         budget_ok = True  # Initial flag
         messages = []
-        # Project / Fund unique (to find matched fund rules
+        # Project / Fund unique (to find matched fund rules)
         project_fund_vals = self._get_doc_field_combination(doc_lines,
                                                             ['project_id',
                                                              'fund_id'])
         # Find all matching rules for this transaction
-        rules = self._get_matched_fund_rule(project_fund_vals)
-        # Check against each rule
-        Activity = self.env['account.activity']
-        for rule in rules:
-            project = rule.project_id
-            fund = rule.fund_id
-            # 1) If rule is defined for a Project/Fund, Activity must be valid
-            rule_activity_ids = []
-            for rule_line in rule.fund_rule_line_ids:
-                rule_activity_ids += [x.id for x in rule_line.activity_ids]
-            xlines = filter(lambda l:
-                            l['project_id'] == project.id and
-                            l['fund_id'] == fund.id,
-                            doc_lines)
-            activity_ids = list(set([x['activity_rpt_id'] for x in xlines]))
-            # Only activity in doc_lines that match rule is allowed
-            ex_ids = filter(lambda l: l not in rule_activity_ids, activity_ids)
-            activities = Activity.browse(ex_ids)
-            if activities:
-                if budget_ok:
-                    budget_ok = False
-                messages.append(
-                    _('Selected Activities: %s, is not usable for Fund %s') %
-                    (', '.join(activities.mapped('display_name')),
-                     rule.fund_id.display_name))
-
-            # 2) Pass first test, then check each rule line
-            else:
+        try:
+            rules = self._get_matched_fund_rule(project_fund_vals)
+            # Check against each rule
+            Activity = self.env['account.activity']
+            for rule in rules:
+                project = rule.project_id
+                fund = rule.fund_id
+                # 1) If rule is defined for a Project/Fund, Ativity must valid
+                rule_activity_ids = []
                 for rule_line in rule.fund_rule_line_ids:
-                    activity_ids = rule_line.activity_ids._ids
-                    xlines = filter(lambda l:
-                                    l['project_id'] == project.id and
-                                    l['fund_id'] == fund.id and
-                                    l['activity_rpt_id'] in activity_ids,
-                                    doc_lines)
-                    amount = 0.0
-                    if amount_field:  # amount_field means precommit check
-                        amount = sum(map(lambda l: l[amount_field], xlines))
-                        amount = self.env['account.budget'].\
-                            _calc_amount_company_currency(amount)
-                        if amount <= 0.00:
-                            continue
-                    result = self.check_fund_activity_spending(rule_line.id,
-                                                               amount)
-                    if budget_ok and not result['budget_ok']:
-                        budget_ok = False
-                    if not result['budget_ok']:
-                        messages.append(result['message'])
+                    rule_activity_ids += [x.id for x in rule_line.activity_ids]
+                xlines = filter(lambda l:
+                                l['project_id'] == project.id and
+                                l['fund_id'] == fund.id,
+                                doc_lines)
+                activity_ids = list(set([x['activity_rpt_id']
+                                         for x in xlines]))
+                # Only activity in doc_lines that match rule is allowed
+                ex_ids = filter(lambda l:
+                                l not in rule_activity_ids, activity_ids)
+                ex_activities = Activity.browse(ex_ids)
+                if ex_activities:
+                    budget_ok = False
+                    messages.append(
+                        _('Selected Activities: %s, '
+                          'is not usable for Fund %s') %
+                        (', '.join(ex_activities.mapped('display_name')),
+                         rule.fund_id.display_name))
+
+                # 2) Pass first test, then check each rule line
+                else:
+                    for rule_line in rule.fund_rule_line_ids:
+                        activity_ids = rule_line.activity_ids._ids
+                        xlines = filter(lambda l:
+                                        l['project_id'] == project.id and
+                                        l['fund_id'] == fund.id and
+                                        l['activity_rpt_id'] in activity_ids,
+                                        doc_lines)
+                        amount = 0.0
+                        if amount_field:  # amount_field means precommit check
+                            amount = sum(map(lambda l:
+                                             l[amount_field], xlines))
+                            amount = self.env['account.budget'].\
+                                _calc_amount_company_currency(amount)
+                            if amount <= 0.00:
+                                continue
+                        result = \
+                            self.check_fund_activity_spending(rule_line.id,
+                                                              amount)
+                        if budget_ok and not result['budget_ok']:
+                            budget_ok = False
+                        if not result['budget_ok']:
+                            messages.append(result['message'])
+
+        except ValidationError, e:
+            budget_ok = False
+            messages.append(e[1])
+        except Exception:
+            raise
         if not budget_ok:
             res = {'budget_ok': False,
                    'message': '\n'.join(messages)}
