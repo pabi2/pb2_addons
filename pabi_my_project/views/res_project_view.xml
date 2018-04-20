@@ -75,6 +75,7 @@
                                 <field name="date_start" required="1"/>
                                 <field name="date_approve" required="1"/>
                                 <field name="date_end" required="1"/>
+                                <field name="grace_period_date_end" />
                                 <field name="fiscalyear_ids" widget="many2many_tags"/>
                             </group>
                             <group>

@@ -50,6 +50,9 @@ class ResProject(LogCommon, models.Model):
     date_end = fields.Date(
         string='End Date',
     )
+    grace_period_date_end = fields.Date(
+        string='Grace Period End Date',
+    )
     project_duration = fields.Integer(
         string='Duration',
     )
