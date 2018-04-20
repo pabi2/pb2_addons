@@ -135,14 +135,23 @@ class HRSalaryExpense(models.Model):
         """ Change data from REST API to CSV format """
         if not datas:
             return {}
-
+        mapper = {}
+        negate = {}
         try:
             mapper = self.env.user.company_id.pabiehr_data_mapper
             mapper = mapper and ast.literal_eval(mapper.strip()) or {}
+            negate = self.env.user.company_id.pabiehr_negate_code
+            negate = negate and ast.literal_eval(negate.strip()) or {}
         except:
             raise ValidationError(
                 _('Odoo & e-HR Mapper Dict is not well formed!'))
-
+        # Special data adjustment. If column 'J' is 31, 50, negate amount
+        # negate = {'Q': {'J': ('31', '50')}}
+        if negate:
+            for d in datas:
+                for k, v in negate.iteritems():
+                    if d.get(v.keys()[0]) in v.values()[0]:
+                        d[k] = "-%s" % d[k]
         # Prepare CSV string
         csv_file = StringIO.StringIO()
         csv_out = unicodecsv.writer(csv_file,

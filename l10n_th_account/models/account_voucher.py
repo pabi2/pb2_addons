@@ -132,7 +132,18 @@ class AccountVoucher(common_voucher, models.Model):
     @api.multi
     def proforma_voucher(self):
         try:
-            return super(AccountVoucher, self).proforma_voucher()
+            res = super(AccountVoucher, self).proforma_voucher()
+            # Test reconcile auto for unreconcile undue vat
+            for voucher in self:
+                # auto reconcile special account, get all releated move_lines
+                v_mlines = voucher.mapped('move_id').mapped('line_id')
+                i_mlines = voucher.mapped('line_ids').mapped('invoice_id').\
+                    mapped('move_id').mapped('line_id')
+                tt_mlines = \
+                    voucher.mapped('recognize_vat_move_id').mapped('line_id')
+                mlines = v_mlines + i_mlines + tt_mlines
+                mlines.reconcile_special_account()
+            return res
         except psycopg2.OperationalError:
             raise ValidationError(
                 _('Multiple client accessing same resource!\n'
@@ -444,6 +455,12 @@ class AccountVoucher(common_voucher, models.Model):
         net_tax_currency, vtml = self.compute_net_tax(voucher,
                                                       company_currency,
                                                       vtml)
+        # remove invalid key fields from dict
+        valid_fields = self.env['account.move.line']._fields.keys()
+        for ml in vtml:
+            invalid_fields = list(set(ml.keys()) - set(valid_fields))
+            for f in invalid_fields:
+                del ml[f]
         # Create move line,
         lines = [(0, 0, ml) for ml in vtml]
         move = move_obj.browse(move_id)

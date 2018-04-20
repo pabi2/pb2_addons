@@ -90,6 +90,11 @@
                                 <field name="pabiehr_data_mapper" placeholder="{&lt;odoo_field&gt;: &lt;e-HR field&gt;}, i.e., {'name': 'A', 'line_ids/account_id': 'X'}"
                                   attrs="{'required': [('pabiehr_active', '=', True)]}" class="oe_inline"/>
                             </div>
+                            <div attrs="{'invisible': [('pabiehr_active', '=', False)]}" >
+                                <br/>
+                                <label for="pabiehr_negate_code"/>
+                                <field name="pabiehr_negate_code" class="oe_inline" placeholder="i.e., {'amount': {'J': ('31', '50')}}"/>
+                            </div>
                         </div>
                     </group>
 

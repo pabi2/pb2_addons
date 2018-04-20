@@ -90,9 +90,30 @@
                             'G4': 'employee_id.employee_code${value or ""}',
                             'H4': 'employee_id${value and value.first_name + " " + value.last_name or ""}',
                             'I4': 'amount_advanced${value or 0.0}',
-                            'J4': 'amount_to_clearing${value or 0.0}',
+                            'J4': 'amount_clearing_0${value or 0.0}',
+                            'K4': 'amount_clearing_1${value or 0.0}',
+                            'L4': 'amount_clearing_2${value or 0.0}',
+                            'M4': 'amount_clearing_3${value or 0.0}',
+                            'N4': 'amount_to_clearing${value or 0.0}',
                         }
-                    }
+                    },
+                    'Summary': {
+                        '_BI_': {
+                            'A4': {
+                                'df': 'Advance Status Report',
+                                # 'oper': 'df[["A", "B", "C", "D", "J"]].groupby(["A", "B", "C", "D"]).sum()',
+                                'oper': 'pd.pivot_table(df[["A", "J", "K", "L", "M", "N"]],index=["A"],values=["J", "K", "L", "M", "N"],aggfunc=np.sum,fill_value=0,margins=True,margins_name="รวมทั้งหมด")',
+                            },
+                        },
+                    },
+                    'Detailed Summary': {
+                        '_BI_': {
+                            'A4': {
+                                'df': 'Advance Status Report',
+                                'oper': 'pd.pivot_table(df[["A", "H", "J", "K", "L", "M", "N"]],index=["A", "H"],values=["J", "K", "L", "M", "N"],aggfunc=np.sum,fill_value=0,margins=True,margins_name="รวมทั้งหมด")',
+                            },
+                        },
+                    },
                 }
             }
           </field>
