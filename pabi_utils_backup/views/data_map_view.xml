@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        # Mapping Type
+        <record id="view_pabi_data_map_type_search" model="ir.ui.view">
+            <field name="name">view.pabi.data.map.type.search</field>
+            <field name="model">pabi.data.map.type</field>
+            <field name="arch" type="xml">
+                <search string="Data Mapper(s)">
+                    <field name="name"/>
+                    <field name="app_name"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Application" domain="[]" context="{'group_by':'app_name'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_pabi_data_map_type_tree" model="ir.ui.view">
+            <field name="name">view.pabi.data.map.type.tree</field>
+            <field name="model">pabi.data.map.type</field>
+            <field name="arch" type="xml">
+                <tree string="Data Mapper(s)">
+                    <field name="name"/>
+                    <field name="app_name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_pabi_data_map_type_form" model="ir.ui.view">
+            <field name="name">view.pabi.data.map.type.form</field>
+            <field name="model">pabi.data.map.type</field>
+            <field name="arch" type="xml">
+                <form string="Data Mapper(s)">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="app_name" readonly="1"/>
+                            <field name="default_template_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="line_ids" options="{'web_x2m_defaults_from_previous': ['model_id']}">
+                        <tree editable="bottom">
+                            <field name="model_id" />
+                            <field name="field_id"/>
+                            <field name="in_value"/>
+                            <field name="out_value"/>
+                        </tree>
+                    </field>
+                    <p>
+                      <h3>Remarks:</h3>
+                    </p>
+                    <p>
+                      <li>Data Mapping is a generic stored of mapped values. It mostly used for import/export activity,
+                      where data field from outsider can be mapped before import/export into local system.</li>
+                      <li>This table is intended for system administrator to see overall data map, while implementation
+                      can be built as new menu/window for each appliation (each map type).</li>
+                    </p>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_pabi_data_map_type" model="ir.actions.act_window">
+            <field name="name">Data Mapper(s)</field>
+            <field name="res_model">pabi.data.map.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_pabi_data_map_type_search"/>
+            <field name="view_id" ref="view_pabi_data_map_type_tree"/>
+        </record>
+
+        <menuitem action="action_pabi_data_map_type" sequence="100" id="menu_pabi_data_map_type" parent="base.menu_custom" groups="base.group_no_one"/>
+
+    </data>
+</openerp>

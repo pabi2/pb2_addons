@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="export_xlsx_template_wizard" model="ir.ui.view">
+            <field name="name">export.xlsx.template.wizard</field>
+            <field name="model">export.xlsx.template</field>
+            <field name="arch" type="xml">
+              <form string="Get Import Template">
+                  <field invisible="1" name="state"/>
+                  <field name="name" invisible="1"/>
+                  <group states="choose">
+                      <group>
+                          <field name="template_id" widget="selection"/>
+                      </group>
+                      <group>
+                          <field name="res_model" invisible="1"/>
+                          <field name="res_id" invisible="1"/>
+                      </group>
+                  </group>
+                  <div states="get">
+                      <h2>Complete Prepare File (.xlsx)</h2>
+                      <p>Here is the exported file: <field name="data" readonly="1" filename="name"/></p>
+                      <p>This file is prefilled with data from the current active record (if any), using pattern in the
+                         data dict section '__EXPORT__'.
+                      </p>
+                  </div>
+                  <footer states="choose">
+                      <button name="act_getfile" string="Create Import Template" type="object" class="oe_highlight"/> or
+                      <button special="cancel" string="Cancel" type="object" class="oe_link"/>
+                  </footer>
+                  <footer states="get">
+                      <button special="cancel" string="Close" type="object"/>
+                  </footer>
+              </form>
+
+            </field>
+        </record>
+
+    </data>
+</openerp>
