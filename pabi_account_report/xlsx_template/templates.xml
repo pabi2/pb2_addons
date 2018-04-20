@@ -98,19 +98,25 @@
                         }
                     },
                     'Summary': {
+                        '_HEAD_': {
+                            'B1': '${date.today()}#{number_format=date}',
+                        },
                         '_BI_': {
                             'A4': {
                                 'df': 'Advance Status Report',
                                 # 'oper': 'df[["A", "B", "C", "D", "J"]].groupby(["A", "B", "C", "D"]).sum()',
-                                'oper': 'pd.pivot_table(df[["A", "J", "K", "L", "M", "N"]],index=["A"],values=["J", "K", "L", "M", "N"],aggfunc=np.sum,fill_value=0,margins=True,margins_name="รวมทั้งหมด")',
+                                'oper': 'pd.pivot_table(df[["A", "J", "K", "L", "M", "N"]],index=["A"],values=["J", "K", "L", "M", "N"],aggfunc=np.sum,fill_value=0,margins=True,margins_name="TOTAL")',
                             },
                         },
                     },
                     'Detailed Summary': {
+                        '_HEAD_': {
+                            'B1': '${date.today()}#{number_format=date}',
+                        },
                         '_BI_': {
                             'A4': {
                                 'df': 'Advance Status Report',
-                                'oper': 'pd.pivot_table(df[["A", "H", "J", "K", "L", "M", "N"]],index=["A", "H"],values=["J", "K", "L", "M", "N"],aggfunc=np.sum,fill_value=0,margins=True,margins_name="รวมทั้งหมด")',
+                                'oper': 'pd.pivot_table(df[["A", "H", "J", "K", "L", "M", "N"]],index=["A", "H"],values=["J", "K", "L", "M", "N"],aggfunc=np.sum,fill_value=0,margins=True,margins_name="TOTAL")',
                             },
                         },
                     },

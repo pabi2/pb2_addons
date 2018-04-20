@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_pabi_data_map_no_one,access_pabi_data_map_no_one,model_pabi_data_map,base.group_no_one,1,1,1,1
-access_pabi_data_map_type_no_one,access_pabi_data_map_type_no_one,model_pabi_data_map_type,base.group_no_one,1,1,1,1
-access_pabi_data_map_user,access_pabi_data_map_user,model_pabi_data_map,base.group_user,1,0,0,0
-access_pabi_data_map_type_user,access_pabi_data_map_type_user,model_pabi_data_map_type,base.group_user,1,0,0,0

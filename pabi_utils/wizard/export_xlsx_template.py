@@ -369,192 +369,203 @@ class ExportXlsxTemplate(models.TransientModel):
         """ Fill data from record with format in data_dict to workbook """
         if not record or not data_dict:
             return
-        try:
-            # variable to store data range of each worksheet
-            worksheet_range = {}
-            for sheet_name in data_dict:
-                worksheet = data_dict[sheet_name]
-                st = False
-                if isinstance(sheet_name, str):
-                    st = get_sheet_by_name(workbook, sheet_name)
-                elif isinstance(sheet_name, int):
-                    st = workbook.worksheets[sheet_name - 1]
-                if not st:
+        # try:
+        # variable to store data range of each worksheet
+        worksheet_range = {}
+        for sheet_name in data_dict:
+            ws = data_dict[sheet_name]
+            st = False
+            if isinstance(sheet_name, str):
+                st = get_sheet_by_name(workbook, sheet_name)
+            elif isinstance(sheet_name, int):
+                st = workbook.worksheets[sheet_name - 1]
+            if not st:
+                raise ValidationError(
+                    _('Sheet %s not found!') % sheet_name)
+
+            # ================ HEAD ================
+            self._fill_head(ws, st, record)
+            # ============= Line Items =============
+            all_rc, max_row, tail_fields = self._fill_lines(ws, st, record)
+            # ================ TAIL ================
+            self._fill_tail(ws, st, record, tail_fields)
+
+            # prepare worksheet data range, to be used in BI funtions
+            if all_rc:
+                begin_rc = min(all_rc)
+                col, row = split_row_col(max(all_rc))
+                end_rc = '%s%s' % (col, max_row)
+                worksheet_range[sheet_name] = '%s:%s' % (begin_rc, end_rc)
+
+        # ================ BI Function ================
+        self._fill_bi(workbook, data_dict, worksheet_range)
+
+        # except KeyError, e:
+        #     raise except_orm(_('Key Error!'), e)
+        # except IllegalCharacterError, e:
+        #     raise except_orm(
+        #         _('IllegalCharacterError!\n'
+        #           'Some exporting data may contain special character'), e)
+        # except Exception, e:
+        #     raise except_orm(_('Error filling data into excel sheets!'), e)
+
+    @api.model
+    def _fill_head(self, ws, st, record):
+        for rc, field in ws.get('_HEAD_', {}).iteritems():
+            tmp_field, eval_cond = get_field_condition(field)
+            tmp_field, field_format = get_field_format(tmp_field)
+            value = tmp_field and self._get_val(record, tmp_field)
+            if isinstance(value, basestring):
+                value = value.encode('utf-8')
+            # Case Eval
+            if eval_cond:  # Get eval_cond of a raw field
+                eval_context = {'float_compare': float_compare,
+                                'time': time,
+                                'datetime': dt,
+                                'date': date,
+                                'value': value,
+                                'model': self.env[record._name],
+                                'env': self.env,
+                                'context': self._context,
+                                }
+                # str() throw cordinal not in range error
+                value = eval(eval_cond, eval_context)
+                # value = str(eval(eval_cond, eval_context))
+            if value is not None:
+                st[rc] = value
+            if field_format:
+                fill_cell_format(st[rc], field_format)
+
+    @api.model
+    def _fill_lines(self, ws, st, record):
+        all_rc = []
+        max_row = 0
+        line_fields = \
+            filter(lambda l: l[0:6] not in ('_HEAD_', '_TAIL_', '_BI_'), ws)
+        tail_fields = {}  # Keep tail cell, to be used in _TAIL_
+        for line_field in line_fields:
+            fields = ws.get(line_field, {}).values()
+            all_rc += ws.get(line_field, {}).keys()
+            (vals, func, field_format) = \
+                self._get_line_vals(record, line_field, fields)
+
+            # value with '\\skiprow' signify line skipping
+            vals = add_row_skips(vals)
+
+            for rc, field in ws.get(line_field, {}).iteritems():
+                tail_fields[rc] = False
+                col, row = split_row_col(rc)  # starting point
+                i = 0
+                new_row = 0
+                new_rc = rc
+                for val in vals[field]:
+                    row_vals = isinstance(val, basestring) and \
+                        val.split('\\skiprow') or [val]
+                    for row_val in row_vals:
+                        new_row = row + i
+                        new_rc = '%s%s' % (col, new_row)
+                        if row_val not in ('None', None):
+                            st[new_rc] = str_to_number(row_val)
+                        if field_format.get(field, False):
+                            fill_cell_format(st[new_rc],
+                                             field_format[field])
+                        if new_row > max_row:
+                            max_row = new_row
+                        i += 1
+                # Add footer line if at least one field have func
+                f = func.get(field, False)
+                if f:
+                    new_row += 1
+                    f_rc = '%s%s' % (col, new_row)
+                    st[f_rc] = '=%s(%s:%s)' % (f, rc, new_rc)
+                tail_fields[rc] = new_rc   # Last row field
+        return all_rc, max_row, tail_fields
+
+    @api.model
+    def _fill_tail(self, ws, st, record, tail_fields):
+        # Similar to header, except it will set cell after last row
+        # Get all tails, i.e., _TAIL_0, _TAIL_1 order by number
+        tails = filter(lambda l: l[0:6] == '_TAIL_', ws.keys())
+        tail_dicts = {key: ws[key] for key in tails}
+        for tail_key, tail_dict in tail_dicts.iteritems():
+            row_skip = tail_key[6:] != '' and int(tail_key[6:]) or 0
+            # For each _TAIL_ and row skipper 0, 1, 2, ...
+            for rc, field in tail_dict.iteritems():
+                if rc not in tail_fields.keys():
                     raise ValidationError(
-                        _('Sheet %s not found!') % sheet_name)
+                        _('%s is not in detail field and can '
+                          'not be used as tail field.') % rc)
+                tmp_field, eval_cond = get_field_condition(field)
+                tmp_field, field_format = get_field_format(tmp_field)
+                tmp_field, func = get_field_aggregation(tmp_field)
+                value = tmp_field and self._get_val(record, tmp_field)
+                if isinstance(value, basestring):
+                    value = value.encode('utf-8')
+                # Case Eval
+                if eval_cond:  # Get eval_cond of a raw field
+                    eval_context = {'float_compare': float_compare,
+                                    'time': time,
+                                    'datetime': dt,
+                                    'date': date,
+                                    'value': value,
+                                    'model': self.env[record._name],
+                                    'env': self.env,
+                                    'context': self._context,
+                                    }
+                    # str() throw cordinal not in range error
+                    value = eval(eval_cond, eval_context)
+                    # value = str(eval(eval_cond, eval_context))
+                last_rc = tail_fields[rc]  # Last row of rc column
+                col, row = split_row_col(last_rc)
+                tail_rc = '%s%s' % (col, row + row_skip + 1)
+                if value and value is not None:
+                    st[tail_rc] = value
+                if func:
+                    st[tail_rc] = '=%s(%s:%s)' % (func, rc, last_rc)
+                if field_format:
+                    fill_cell_format(st[tail_rc], field_format)
 
-                # ================ HEAD ================
-                for rc, field in worksheet.get('_HEAD_', {}).iteritems():
-                    tmp_field, eval_cond = get_field_condition(field)
-                    tmp_field, field_format = get_field_format(tmp_field)
-                    value = tmp_field and self._get_val(record, tmp_field)
-                    if isinstance(value, basestring):
-                        value = value.encode('utf-8')
-                    # Case Eval
-                    if eval_cond:  # Get eval_cond of a raw field
-                        eval_context = {'float_compare': float_compare,
-                                        'time': time,
-                                        'datetime': dt,
-                                        'date': date,
-                                        'value': value,
-                                        'model': self.env[record._name],
-                                        'env': self.env,
-                                        'context': self._context,
-                                        }
-                        # str() throw cordinal not in range error
-                        value = eval(eval_cond, eval_context)
-                        # value = str(eval(eval_cond, eval_context))
-                    if value is not None:
-                        st[rc] = value
-                    if field_format:
-                        fill_cell_format(st[rc], field_format)
-
-                # ================ Line Items ================
-                all_rc = []
-                max_row = 0
-                line_fields = \
-                    filter(lambda l: l[0:6]
-                           not in ('_HEAD_', '_TAIL_', '_BI_'), worksheet)
-                tail_fields = {}  # Keep tail cell, to be used in _TAIL_
-                for line_field in line_fields:
-                    fields = worksheet.get(line_field, {}).values()
-                    all_rc += worksheet.get(line_field, {}).keys()
-                    (vals, func, field_format) = \
-                        self._get_line_vals(record, line_field, fields)
-
-                    # value with '\\skiprow' signify line skipping
-                    vals = add_row_skips(vals)
-
-                    for rc, field in worksheet.get(line_field, {}).iteritems():
-                        tail_fields[rc] = False
-                        col, row = split_row_col(rc)  # starting point
-                        i = 0
-                        new_row = 0
-                        new_rc = rc
-                        for val in vals[field]:
-                            row_vals = isinstance(val, basestring) and \
-                                val.split('\\skiprow') or [val]
-                            for row_val in row_vals:
-                                new_row = row + i
-                                new_rc = '%s%s' % (col, new_row)
-                                if row_val not in ('None', None):
-                                    st[new_rc] = str_to_number(row_val)
-                                if field_format.get(field, False):
-                                    fill_cell_format(st[new_rc],
-                                                     field_format[field])
-                                if new_row > max_row:
-                                    max_row = new_row
-                                i += 1
-                        # Add footer line if at least one field have func
-                        f = func.get(field, False)
-                        if f:
-                            new_row += 1
-                            f_rc = '%s%s' % (col, new_row)
-                            st[f_rc] = '=%s(%s:%s)' % (f, rc, new_rc)
-                        tail_fields[rc] = new_rc   # Last row field
-
-                # ================ TAIL ================
-                # Similar to header, excep it will set cell after last row
-                # Get all tails, i.e., _TAIL_0, _TAIL_1 order by number
-                tails = filter(lambda l: l[0:6] == '_TAIL_', worksheet.keys())
-                tail_dicts = {key: worksheet[key] for key in tails}
-                for tail_key, tail_dict in tail_dicts.iteritems():
-                    row_skip = tail_key[6:] != '' and int(tail_key[6:]) or 0
-                    # For each _TAIL_ and row skipper 0, 1, 2, ...
-                    for rc, field in tail_dict.iteritems():
-                        if rc not in tail_fields.keys():
-                            raise ValidationError(
-                                _('%s is not in detail field and can '
-                                  'not be used as tail field.') % rc)
-                        tmp_field, eval_cond = get_field_condition(field)
-                        tmp_field, field_format = get_field_format(tmp_field)
-                        tmp_field, func = get_field_aggregation(tmp_field)
-                        value = tmp_field and self._get_val(record, tmp_field)
-                        if isinstance(value, basestring):
-                            value = value.encode('utf-8')
-                        # Case Eval
-                        if eval_cond:  # Get eval_cond of a raw field
-                            eval_context = {'float_compare': float_compare,
-                                            'time': time,
-                                            'datetime': dt,
-                                            'date': date,
-                                            'value': value,
-                                            'model': self.env[record._name],
-                                            'env': self.env,
-                                            'context': self._context,
-                                            }
-                            # str() throw cordinal not in range error
-                            value = eval(eval_cond, eval_context)
-                            # value = str(eval(eval_cond, eval_context))
-                        last_rc = tail_fields[rc]  # Last row of rc column
-                        col, row = split_row_col(last_rc)
-                        tail_rc = '%s%s' % (col, row + row_skip + 1)
-                        if value and value is not None:
-                            st[tail_rc] = value
-                        if func:
-                            st[tail_rc] = '=%s(%s:%s)' % (func, rc, last_rc)
-                        if field_format:
-                            fill_cell_format(st[tail_rc], field_format)
-
-                # Find worksheet data range
-                if all_rc:
-                    begin_rc = min(all_rc)
-                    col, row = split_row_col(max(all_rc))
-                    end_rc = '%s%s' % (col, max_row)
-                    worksheet_range[sheet_name] = '%s:%s' % (begin_rc, end_rc)
-
-            # ================ BI Function ================
-            for sheet_name in data_dict:
-                worksheet = data_dict[sheet_name]
-                if isinstance(sheet_name, str):
-                    st = get_sheet_by_name(workbook, sheet_name)
-                elif isinstance(sheet_name, int):
-                    st = workbook.worksheets[sheet_name - 1]
-                if not st:
+    @api.model
+    def _fill_bi(self, workbook, data_dict, worksheet_range):
+        for sheet_name in data_dict:
+            worksheet = data_dict[sheet_name]
+            if isinstance(sheet_name, str):
+                st = get_sheet_by_name(workbook, sheet_name)
+            elif isinstance(sheet_name, int):
+                st = workbook.worksheets[sheet_name - 1]
+            if not st:
+                raise ValidationError(
+                    _('Sheet %s not found!') % sheet_name)
+            if not worksheet.get('_BI_', False):
+                continue
+            for rc, bi_dict in worksheet.get('_BI_', {}).iteritems():
+                req_field = ['df', 'oper']
+                key_field = bi_dict.keys()
+                if set(req_field) != set(key_field):
                     raise ValidationError(
-                        _('Sheet %s not found!') % sheet_name)
-                if not worksheet.get('_BI_', False):
-                    continue
-                for rc, bi_dict in worksheet.get('_BI_', {}).iteritems():
-                    req_field = ['df', 'oper']
-                    key_field = bi_dict.keys()
-                    if set(req_field) != set(key_field):
-                        raise ValidationError(
-                            _('_BI_ requires \n'
-                              ' - df: initial DataFrame from worksheet\n'
-                              ' - oper: pandas operation function'))
-                    # Get dataframe
-                    src_df = bi_dict['df']
-                    src_st = get_sheet_by_name(workbook, src_df)
-                    df = load_workbook_range(worksheet_range[src_df], src_st)
-                    df = eval(bi_dict['oper'], {'df': df, 'pd': pd, 'np': np})
-                    rows = dataframe_to_rows(df, index=True, header=False)
-                    # Get init cell index
-                    xy = coordinate_from_string(rc)
-                    c = column_index_from_string(xy[0])
-                    r = xy[1]
-                    for r_idx, row in enumerate(rows, r):
-                        c_idx = c
-                        for value in row:
-                            if isinstance(value, (list, tuple)):
-                                for v in value:
-                                    st.cell(row=r_idx, column=c_idx, value=v)
-                                    c_idx += 1
-                            else:
-                                st.cell(row=r_idx, column=c_idx, value=value)
+                        _('_BI_ requires \n'
+                          ' - df: initial DataFrame from worksheet\n'
+                          ' - oper: pandas operation function'))
+                # Get dataframe
+                src_df = bi_dict['df']
+                src_st = get_sheet_by_name(workbook, src_df)
+                df = load_workbook_range(worksheet_range[src_df], src_st)
+                df = eval(bi_dict['oper'], {'df': df, 'pd': pd, 'np': np})
+                rows = dataframe_to_rows(df, index=True, header=False)
+                # Get init cell index
+                xy = coordinate_from_string(rc)
+                c = column_index_from_string(xy[0])
+                r = xy[1]
+                for r_idx, row in enumerate(rows, r):
+                    c_idx = c
+                    for value in row:
+                        if isinstance(value, (list, tuple)):
+                            for v in value:
+                                st.cell(row=r_idx, column=c_idx, value=v)
                                 c_idx += 1
-
-        except ValueError, e:
-            message = str(e).format(rc)
-            raise ValidationError(message)
-        except KeyError, e:
-            raise except_orm(_('Key Error!'), e)
-        except IllegalCharacterError, e:
-            raise except_orm(
-                _('IllegalCharacterError!\n'
-                  'Some exporting data may contain special character'), e)
-        except Exception, e:
-            raise except_orm(_('Error filling data into excel sheets!'), e)
+                        else:
+                            st.cell(row=r_idx, column=c_idx, value=value)
+                            c_idx += 1
 
     @api.model
     def _export_template(self, template, res_model, res_id):
