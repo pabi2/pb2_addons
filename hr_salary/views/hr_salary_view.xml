@@ -68,7 +68,7 @@
                                     <field name="account_id"/>
                                     <field name="analytic_account_id" invisible="1"/>
                                     <field name="partner_id"/>
-                                    <field name="amount" sum="Total"/>
+                                    <field name="amount"/>
                                 </tree>
                             </field>
                             <group>
