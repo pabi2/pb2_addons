@@ -3,8 +3,8 @@ import operator
 import re
 import os
 import math
-import pandas as pd
-import numpy as np
+# import pandas as pd
+# import numpy as np
 import openpyxl
 from openpyxl.styles import colors
 from openpyxl.styles import PatternFill, Alignment, Font, NamedStyle
