@@ -95,8 +95,6 @@ class PurchaseRequestLine(CommitLineCommon, ActivityCommon, models.Model):
     #     readonly=True,
     # )
 
-
-
     @api.multi
     def name_get(self):
         result = []
