@@ -173,8 +173,11 @@ class PurchaseOrder(models.Model):
                         raise ValidationError(
                             _('For invoice plan mode "As 1 Job", '
                               'all line quantity must equal to 1'))
-            obj_precision = self.env['decimal.precision']
-            prec = obj_precision.precision_get('Account')
+            # kittiu: problem with decimal, so we dicide to test with 0
+            # obj_precision = self.env['decimal.precision']
+            # prec = obj_precision.precision_get('Account')
+            prec = 0
+            # --
             for order_line in self.order_line:
                 subtotal = order_line.price_subtotal
                 invoice_lines = self.env['purchase.invoice.plan'].search(
