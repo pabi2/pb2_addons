@@ -16,6 +16,7 @@
             <field name="arch" type="xml">
                 <search string="My Spool Reports">
                     <field name="name" string="Report" filter_domain="['|',('name','ilike',self),('description','ilike',self)]"/>
+                    <field name="user_id"/>
                     <group expand="0" string="Group By">
                         <filter string="Creation Date" domain="[]" context="{'group_by':'create_date'}"/>
                         <filter string="Owner" domain="[]" context="{'group_by':'user_id'}"/>
@@ -77,13 +78,13 @@
         </record>
 
         <record id="action_my_spool_report" model="ir.actions.act_window">
-            <field name="name">Attachments</field>
+            <field name="name">Spool Reports</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ir.attachment</field>
             <field name="view_type">form</field>
             <field name="view_mode">calendar,tree</field>
             <field name="search_view_id" ref="view_my_spool_report_search"/>
-            <field name="domain">[('user_id', '=', uid), ('parent_id.name', '=', 'SPOOL_REPORT')]</field>
+            <field name="domain">[('parent_id.name', '=', 'SPOOL_REPORT')]</field>
         </record>
 
         <record model="ir.actions.act_window.view" id="action_my_spool_report_tree">
@@ -108,10 +109,11 @@
         </record>
 
         <record id="my_spool_report" model="ir.ui.menu">
-            <field name="name">My Spool Reports</field>
+            <field name="name">Spool Reports</field>
             <field name="sequence" eval="200"/>
             <field name="action" ref="action_my_spool_report"/>
             <field name="parent_id" ref="mail.mail_feeds"/>
+            <field name="groups_id" eval="[(4,ref('group_see_own_spool_report'))]"/>
         </record>
 
     </data>

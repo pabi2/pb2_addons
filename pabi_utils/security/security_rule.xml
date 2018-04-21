@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <!-- Spool Reports -->
+        <record model="ir.rule" id="see_own_spool_reports">
+            <field name="name">See Own Spool Reports</field>
+            <field name="model_id" search="[('model','=','ir.attachment')]" model="ir.model"/>
+            <field name="domain_force">['|', ('parent_id.name', '!=', 'SPOOL_REPORT'),
+                                        '&amp;', ('user_id', '=', user.id), ('parent_id.name', '=', 'SPOOL_REPORT')]</field>
+            <field name="groups" eval="[(4,ref('group_see_own_spool_report'))]"/>
+        </record>
+
+        <record model="ir.rule" id="see_all_spool_reports">
+            <field name="name">See All Spool Reports</field>
+            <field name="model_id" search="[('model','=','ir.attachment')]" model="ir.model"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4,ref('group_see_all_spool_report'))]"/>
+        </record>
+
+    </data>
+</openerp>

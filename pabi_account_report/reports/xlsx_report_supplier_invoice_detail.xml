@@ -25,7 +25,7 @@
             <field name="state" invisible="1"/>
             <field name="name" invisible="1"/>
             <div states="choose">
-              <field name="async_process"/><label for="async_process"/>
+              <field name="async_process" groups="pabi_utils.group_see_own_spool_report"/><label for="async_process"/>
             </div>
             <div states="get">
               <h2 attrs="{'invisible': [('async_process', '=', True)]}">
