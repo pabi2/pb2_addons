@@ -23,6 +23,7 @@ from ast import literal_eval
 from openerp.tools import float_compare
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
+from openerp.tools.safe_eval import safe_eval
 
 
 def get_field_aggregation(field):
@@ -539,33 +540,36 @@ class ExportXlsxTemplate(models.TransientModel):
             if not worksheet.get('_BI_', False):
                 continue
             for rc, bi_dict in worksheet.get('_BI_', {}).iteritems():
-                req_field = ['df', 'oper']
+                req_field = ['df', 'oper_code']
                 key_field = bi_dict.keys()
                 if set(req_field) != set(key_field):
                     raise ValidationError(
                         _('_BI_ requires \n'
                           ' - df: initial DataFrame from worksheet\n'
-                          ' - oper: pandas operation function'))
+                          ' - oper_code: pandas operation code'))
                 # Get dataframe
                 src_df = bi_dict['df']
                 src_st = get_sheet_by_name(workbook, src_df)
                 df = load_workbook_range(worksheet_range[src_df], src_st)
-                df = eval(bi_dict['oper'], {'df': df, 'pd': pd, 'np': np})
-                rows = dataframe_to_rows(df, index=True, header=False)
+                eval_context = {'df': df, 'pd': pd, 'np': np}
+                # Get DF using safe_eval method
+                df = safe_eval(bi_dict['oper_code'], eval_context,
+                               mode="exec", nocopy=True)
+                if 'result' in eval_context:  # use result=...
+                    df = eval_context['result']
+                if df is None:
+                    df = eval(bi_dict['oper_code'], eval_context)
+                if df.empty:
+                    continue
+                df = df.reset_index()
+                rows = dataframe_to_rows(df, index=False, header=False)
                 # Get init cell index
                 xy = coordinate_from_string(rc)
                 c = column_index_from_string(xy[0])
                 r = xy[1]
                 for r_idx, row in enumerate(rows, r):
-                    c_idx = c
-                    for value in row:
-                        if isinstance(value, (list, tuple)):
-                            for v in value:
-                                st.cell(row=r_idx, column=c_idx, value=v)
-                                c_idx += 1
-                        else:
-                            st.cell(row=r_idx, column=c_idx, value=value)
-                            c_idx += 1
+                    for c_idx, value in enumerate(row, c):
+                        st.cell(row=r_idx, column=c_idx, value=value)
 
     @api.model
     def _export_template(self, template, res_model, res_id):
