@@ -45,12 +45,12 @@
                             'P6': 'website${value or ""}',
                             'Q6': 'email${value or ""}',
                             'R6': 'comment${value or ""}',
-                            'S6': 'property_account_payable.code${value or ""}',
-                            'T6': 'property_account_payable.name${value or ""}',
-                            'U6': 'property_account_receivable.code${value or ""}',
-                            'V6': 'property_account_receivable.name${value or ""}',
-                            'W6': 'property_supplier_payment_term.name${value or ""}',
-                            'X6': 'property_payment_term.name${value or ""}',
+                            'S6': 'prtransformty_account_payable.code${value or ""}',
+                            'T6': 'prtransformty_account_payable.name${value or ""}',
+                            'U6': 'prtransformty_account_receivable.code${value or ""}',
+                            'V6': 'prtransformty_account_receivable.name${value or ""}',
+                            'W6': 'prtransformty_supplier_payment_term.name${value or ""}',
+                            'X6': 'prtransformty_payment_term.name${value or ""}',
                             'Y6': 'credit${value or ""}',
                             'Z6': 'debit${value or ""}',
                             'AA6': 'bank_ids${value and "\\skiprow".join([x.acc_number for x in value]) or ""}',
@@ -78,7 +78,7 @@
                 '__EXPORT__': {
                     'Advance Status Report': {
                         '_HEAD_': {
-                            'B1': '${date.today()}#{number_format=date}',
+                            'B2': '${date.today()}#{number_format=date}',
                         },
                         'results': {
                             'A4': 'operating_unit_id.name${value or ""}',
@@ -99,24 +99,36 @@
                     },
                     'Summary': {
                         '_HEAD_': {
-                            'B1': '${date.today()}#{number_format=date}',
+                            'B2': '${date.today()}#{number_format=date}',
                         },
                         '_BI_': {
                             'A4': {
                                 'df': 'Advance Status Report',
-                                # 'oper': 'df[["A", "B", "C", "D", "J"]].groupby(["A", "B", "C", "D"]).sum()',
-                                'oper': 'pd.pivot_table(df[["A", "J", "K", "L", "M", "N"]],index=["A"],values=["J", "K", "L", "M", "N"],aggfunc=np.sum,fill_value=0,margins=True,margins_name="TOTAL")',
+                                # Group by A and add Subtotal (so we use pivot)
+                                # By scripting, we need result = ...
+                                'oper_code': """
+df = df[["A", "J", "K", "L", "M", "N"]]
+groupby = ["A"]
+sum_cols = ["J", "K", "L", "M", "N"]
+result = pd.pivot_table(df, index=groupby,
+                      values=sum_cols,
+                      aggfunc=np.sum,
+                      fill_value=0,
+                      margins=True,
+                      margins_name="Total")
+                                """,
                             },
                         },
                     },
                     'Detailed Summary': {
                         '_HEAD_': {
-                            'B1': '${date.today()}#{number_format=date}',
+                            'B2': '${date.today()}#{number_format=date}',
                         },
                         '_BI_': {
                             'A4': {
                                 'df': 'Advance Status Report',
-                                'oper': 'pd.pivot_table(df[["A", "H", "J", "K", "L", "M", "N"]],index=["A", "H"],values=["J", "K", "L", "M", "N"],aggfunc=np.sum,fill_value=0,margins=True,margins_name="TOTAL")',
+                                # Group by A, H. User will have to do subtotal themselves
+                                'oper_code': 'df[["A", "H", "J", "K", "L", "M", "N"]].groupby(["A", "H"]).sum()',
                             },
                         },
                     },
@@ -166,8 +178,8 @@
                             'V6': 'payment_ids${value and "\\skiprow".join([str(sum(x.document_id.tax_line_wht.mapped("amount"))) or "" for x in value]) or ""}#{number_format=number}',
                             'W6': 'user_id.display_name${value or ""}',
                             'X6': 'state${value and value.title() or ""}',
-                        }
-                    }
+                        },
+                    },
                 }
             }
           </field>
