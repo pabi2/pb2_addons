@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models, _
+from openerp import api, fields, models
 
 
 class InvestConstructionProjectPlanWizard(models.TransientModel):

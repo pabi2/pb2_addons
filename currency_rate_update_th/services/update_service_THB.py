@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 
 from openerp import _
-from openerp.exceptions import Warning
+from openerp.exceptions import Warning as UserError
 
 from openerp.addons.currency_rate_update.services.\
     currency_getter_interface import Currency_getter_interface
@@ -43,7 +43,7 @@ class THB_getter(Currency_getter_interface):
                 _logger.error(
                     "Exchange data for %s is not\
                         reported by Bank of Thailand." % curr)
-                raise Warning(_('Exchange data for %s is not '
+                raise UserError(_('Exchange data for %s is not '
                                 'reported by Bank of Thailand.'
                                 % str(curr)))
 
@@ -73,6 +73,6 @@ class THB_getter(Currency_getter_interface):
                     "Exchange data format error for Bank of Thailand -"
                     "%s. Please check provider data format "
                     "and/or source code." % curr)
-                raise Warning(_('Exchange data format error for '
+                raise UserError(_('Exchange data format error for '
                                 'Bank of Thailand - %s !' % str(curr)))
         return self.updated_currency, self.log_info

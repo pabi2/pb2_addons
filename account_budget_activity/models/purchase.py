@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models, _
-from openerp.exceptions import ValidationError
+from openerp import api, fields, models
 from .account_activity import ActivityCommon
 from .budget_commit import CommitCommon
 from .budget_commit import CommitLineCommon

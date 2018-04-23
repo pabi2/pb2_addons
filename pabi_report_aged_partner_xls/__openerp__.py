@@ -3,7 +3,6 @@
 #
 #   report_aged_partner_xls for Odoo
 #   Copyright (C) 2004-today OpenERP SA (<http://www.openerp.com>)
-#   Copyright (C) 2016-today Geminate Consultancy Services (<http://geminatecs.com>).
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as
@@ -27,7 +26,8 @@
     'category': 'Generic Modules/Accounting',
     'description': """
 
-    This module adds XLS export to the following Generic Reporting > Partners reports:
+    This module adds XLS export to the following
+    Generic Reporting > Partners reports:
         - Aged Partner Balance
 
     """,

@@ -163,7 +163,8 @@ class PabiLongTermInvestmentReportXLS(report_xls):
                     line.get('price_unit', 0.0),
                     line.get('price_subtotal', 0.0),
                     line.get('invoice_number', None),
-                    datetime.strptime(line.get('date_approve'), '%Y-%m-%d').strftime('%d/%m/%Y') or None,
+                    datetime.strptime(line.get('date_approve'), '%Y-%m-%d').
+                    strftime('%d/%m/%Y') or None,
                     line.get('invoice_desc', None),
                     line.get('amount_invoice', 0.0),
                     ref_payments

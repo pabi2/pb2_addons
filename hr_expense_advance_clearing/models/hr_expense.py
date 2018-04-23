@@ -126,9 +126,9 @@ class HRExpenseExpense(models.Model):
     def _module_installed(self, module_name):
         if not module_name:
             return False
-        self._cr.execute("SELECT count(*) FROM ir_module_module\
-                            WHERE name='%s' AND \
-                            state='installed'" % module_name)
+        self._cr.execute("""SELECT count(*) FROM ir_module_module
+                            WHERE name=%s AND
+                            state='installed'""", module_name)
         return self._cr.fetchone()[0] == 1
 
     @api.model

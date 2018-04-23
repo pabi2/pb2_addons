@@ -135,14 +135,15 @@ class AccountBilling(models.Model):
             result.append((billing.id, (billing.number or 'N/A')))
         return result
 
-    @api.one
+    @api.multi
     @api.depends('line_cr_ids')
     def _compute_billing_amount(self):
-        credit = 0.0
-        for l in self.line_cr_ids:
-            credit += l.amount
-        currency = self.currency_id or self.company_id.currency_id
-        self.billing_amount = currency.round(credit)
+        for rec in self:
+            credit = 0.0
+            for l in rec.line_cr_ids:
+                credit += l.amount
+            currency = rec.currency_id or rec.company_id.currency_id
+            rec.billing_amount = currency.round(credit)
 
     @api.model
     def create(self, vals):

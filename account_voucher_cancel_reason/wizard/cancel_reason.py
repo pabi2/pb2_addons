@@ -12,8 +12,9 @@ class AccountVoucherCancel(models.TransientModel):
         string="Reason",
         readonly=False)
 
-    @api.one
+    @api.multi
     def confirm_cancel(self):
+        self.ensure_one()
         act_close = {'type': 'ir.actions.act_window_close'}
         voucher_ids = self._context.get('active_ids')
         if voucher_ids is None:

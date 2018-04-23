@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from openerp import tools
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from .budget_plan_common import BPCommon, BPLMonthCommon

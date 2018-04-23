@@ -325,19 +325,20 @@ class BudgetPlanUnitAnalysisReportXLS(report_xls):
                     (line.subsector_id.code and
                      '[' + line.subsector_id.code + '] ' or '',
                      line.subsector_id.name_short and
-                     line.subsector_id.name_short or line.subsector_id.name
-                     or ''), None, cell_style),
+                     line.subsector_id.name_short or
+                     line.subsector_id.name or ''), None, cell_style),
                 ('division', 1, 0, 'text',
                     '%s%s' %
                     (line.division_id.code and
                      '[' + line.division_id.code + '] ' or '',
                      line.division_id.name_short and
-                     line.division_id.name_short or line.division_id.name or
-                     ''), None, cell_style),
+                     line.division_id.name_short or
+                     line.division_id.name or ''), None, cell_style),
                 ('section', 1, 0, 'text',
                     '%s%s' %
-                    (line.section_id.code and '[' + line.section_id.code + '] '
-                     or '', line.section_id.name_short and
+                    (line.section_id.code and
+                     '[' + line.section_id.code + '] ' or '',
+                     line.section_id.name_short and
                      line.section_id.name_short or line.section_id.name or ''),
                     None, cell_style),
                 ('section_program', 1, 0, 'text',

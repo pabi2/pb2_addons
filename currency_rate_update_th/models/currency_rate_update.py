@@ -4,9 +4,9 @@ from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
 
 from openerp import fields, models, api, _
-from openerp.exceptions import Warning
+from openerp.exceptions import Warning as UserError
 
-from ..services.currency_getter import Currency_getter_factory_THB
+from ..services.currency_getter import CurrencyGetterFactoryTHB
 import openerp.addons.currency_rate_update.\
     model.currency_rate_update as currency_rate_update
 
@@ -35,7 +35,7 @@ currency_rate_update.supported_currecies['THB_getter'] =\
     THB_BOT_supported_currency_array
 
 
-class Currency_rate_update_service(models.Model):
+class CurrencyRateUpdateService(models.Model):
     """Class keep services and currencies that
     have to be updated"""
     _inherit = "currency.rate.update.service"
@@ -71,17 +71,17 @@ class Currency_rate_update_service(models.Model):
                 main_currency = curr_obj.search(
                     [('base', '=', True)], limit=1)
             if main_currency.name != 'THB':
-                return super(Currency_rate_update_service,
+                return super(CurrencyRateUpdateService,
                              self).refresh_currency()
             if not main_currency:
-                raise Warning(_('There is no base currency set!'))
+                raise UserError(_('There is no base currency set!'))
             if main_currency.rate != 1:
-                raise Warning(_('Base currency rate should be 1.00!'))
+                raise UserError(_('Base currency rate should be 1.00!'))
             note = self.note or ''
             try:
                 # We initalize the class that will handle the request
                 # and return a dict of rate
-                factory = Currency_getter_factory_THB()
+                factory = CurrencyGetterFactoryTHB()
                 getter = factory.register(self.service)
                 curr_to_fetch = map(lambda x: x.name,
                                     self.currency_to_update)

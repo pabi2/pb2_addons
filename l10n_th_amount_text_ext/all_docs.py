@@ -25,23 +25,17 @@ class AmountToWordExt(AmountToWord):
         return amount_total
 
 
-class sale_order(AmountToWordExt, osv.osv):
-
+class SaleOrder(AmountToWordExt, osv.osv):
     _inherit = 'sale.order'
 
 
-class purchase_order(AmountToWordExt, osv.osv):
-
+class PurchaseOrder(AmountToWordExt, osv.osv):
     _inherit = 'purchase.order'
 
 
-class account_invoice(AmountToWordExt, osv.osv):
-
+class AccountInvoice(AmountToWordExt, osv.osv):
     _inherit = 'account.invoice'
 
 
-class account_voucher(AmountToWordExt, osv.osv):
-
+class AccountVoucher(AmountToWordExt, osv.osv):
     _inherit = 'account.voucher'
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

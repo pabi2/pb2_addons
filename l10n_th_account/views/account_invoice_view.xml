@@ -5,6 +5,7 @@
             <field name="name">invoice.form.ext</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form"/>
+      			<field eval="100" name="priority"/>
             <field name="arch" type="xml">
                 <xpath expr='/form/sheet/notebook/page/group//field[@name="amount_tax"]' position="after">
                     <field name="amount_retention" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -60,6 +61,7 @@
             <field name="name">invoice.supplier.form</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
+      			<field eval="100" name="priority"/>
             <field name="arch" type="xml">
                 <xpath expr='/form/sheet/notebook/page/group//field[@name="amount_tax"]' position="after">
                     <field name="amount_retention" widget="monetary" options="{'currency_field': 'currency_id'}"/>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, fields, _
+from openerp import models, api, _
 
 
 class ResProject(models.Model):

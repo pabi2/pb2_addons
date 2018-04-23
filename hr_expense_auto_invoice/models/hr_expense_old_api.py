@@ -6,7 +6,7 @@ from openerp.osv import fields, osv
 from openerp.addons import decimal_precision as dp
 
 
-class hr_expense_expense(osv.osv):
+class HRExpenseExpense(osv.osv):
     _inherit = "hr.expense.expense"
 
     """

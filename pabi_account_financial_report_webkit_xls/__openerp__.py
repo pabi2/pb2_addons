@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 {
     'name': 'NSTDA :: PABI2 - Add XLS export to accounting reports',
     'version': '8.0.0.4.0',

@@ -3,7 +3,6 @@
 #
 #   report_aged_partner_xls for Odoo
 #   Copyright (C) 2004-today OpenERP SA (<http://www.openerp.com>)
-#   Copyright (C) 2016-today Geminate Consultancy Services (<http://geminatecs.com>).
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as
@@ -22,6 +21,7 @@
 
 from openerp.osv import orm
 
+
 class aged_partner_balance_webkit_wizard(orm.TransientModel):
     _inherit = 'account.aged.trial.balance.webkit'
 
@@ -32,10 +32,13 @@ class aged_partner_balance_webkit_wizard(orm.TransientModel):
         context = context or {}
         if context.get('xls_export'):
             data = self.pre_print_report(cr, uid, ids, data, context=context)
-            return {'type': 'ir.actions.report.xml',
-                    'report_name': 'account.account_report_aged_partner_balance_xls',
-                    'datas': data}
+            return {
+                'type': 'ir.actions.report.xml',
+                'report_name':
+                'account.account_report_aged_partner_balance_xls',
+                'datas': data
+            }
         else:
-            return super(aged_partner_balance_webkit_wizard, self)._print_report(
-                cr, uid, ids, data, context=context)
+            return super(aged_partner_balance_webkit_wizard, self).\
+                _print_report(cr, uid, ids, data, context=context)
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

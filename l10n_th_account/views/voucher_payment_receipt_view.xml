@@ -6,6 +6,7 @@
             <field name="name">view.vendor.receipt.dialog.form.ext</field>
             <field name="model">account.voucher</field>
             <field name="inherit_id" ref="account_voucher.view_vendor_receipt_dialog_form"/>
+            <field eval="100" name="priority"/>
             <field name="arch" type="xml">
                 <data>
                     <xpath expr="//field[@name='partner_id']" position="attributes">
@@ -53,6 +54,7 @@
             <field name="model">account.voucher</field>
             <field name="type">form</field>
             <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
+            <field eval="100" name="priority"/>
             <field name="arch" type="xml">
                 <data>
                     <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="after">
@@ -123,6 +125,7 @@
             <field name="model">account.voucher</field>
             <field name="type">form</field>
             <field name="inherit_id" ref="account_voucher.view_vendor_payment_form"/>
+            <field eval="100" name="priority"/>
             <field name="arch" type="xml">
                 <data>
                     <button name="action_cancel_draft" position="after">

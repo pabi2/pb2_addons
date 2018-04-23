@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, api, _
+from openerp import fields, api
 
 
 class ResCommon(object):

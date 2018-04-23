@@ -11,8 +11,8 @@
                     <filter name="payment_type_cheque" string="Cheque" domain="[('payment_type','=','cheque')]" help="Payment Type Cheque"/>
                     <filter name="payment_type_transfer" string="Transfer" domain="[('payment_type','=','transfer')]" help="Payment Type Transfer"/>
                 </search>
-                <xpath expr="/search/field[@name='partner_id']" position="replace">
-                    <field name="partner_id" string="Partner" filter_domain="['|',('partner_code', 'like', self), ('partner_id', 'child_of', self)]"/>
+                <xpath expr="/search/field[@name='partner_id']" position="attributes">
+                    <attribute name="filter_domain">['|',('partner_code', 'like', self), ('partner_id', 'child_of', self)]</attribute>
                 </xpath>
                 <xpath expr="/search/field[@name='period_id']" position="attributes">
                     <attribute name="invisible">True</attribute>

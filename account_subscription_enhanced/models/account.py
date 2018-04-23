@@ -297,8 +297,9 @@ class AccountModel(models.Model):
           'e.g. ${object.name} will get the name of Define Recurring\n')
     )
 
-    @api.one
+    @api.multi
     def copy(self, default=None):
+        self.ensure_one()
         default = dict(default or {})
         default['name'] = _('%s (copy)') % self.name
         return super(AccountModel, self).copy(default)

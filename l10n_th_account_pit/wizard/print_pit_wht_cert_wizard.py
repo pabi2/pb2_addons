@@ -47,11 +47,14 @@ class PrintPITWhtCertWizard(models.TransientModel):
         required=True,
     )
 
-    @api.one
+    @api.multi
     @api.depends('company_partner_id', 'supplier_partner_id')
     def _compute_address(self):
-        self.company_address = self._prepare_address(self.company_partner_id)
-        self.supplier_address = self._prepare_address(self.supplier_partner_id)
+        for rec in self:
+            rec.company_address = \
+                self._prepare_address(rec.company_partner_id)
+            rec.supplier_address = \
+                self._prepare_address(rec.supplier_partner_id)
 
     @api.model
     def default_get(self, fields):

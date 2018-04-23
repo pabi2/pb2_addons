@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, _
-from openerp.exceptions import ValidationError
+from openerp import models, api
 
 
 class AccountBudget(models.Model):

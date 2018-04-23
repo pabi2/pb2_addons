@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import StringIO
-import base64
 import requests
 import ast
 import unicodecsv

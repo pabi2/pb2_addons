@@ -13,8 +13,9 @@ class AccountBankReceiptCancel(models.TransientModel):
         readonly=False
     )
 
-    @api.one
+    @api.multi
     def confirm_cancel(self):
+        self.ensure_one()
         act_close = {'type': 'ir.actions.act_window_close'}
         bank_receipt_ids = self._context.get('active_ids')
         if bank_receipt_ids is None:

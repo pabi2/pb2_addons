@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-
-from openerp import api, models, fields, _
-from openerp.exceptions import ValidationError
+from openerp import api, models
 
 
 class BudgetTechnicalCloseWizard(models.TransientModel):
