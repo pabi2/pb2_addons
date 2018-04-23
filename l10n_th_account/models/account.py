@@ -117,34 +117,35 @@ class AccountTaxCode(models.Model):
         help="For compute field"
     )
 
-    @api.one
+    @api.multi
     @api.depends('tax_ids', 'tax2_ids',
                  'tax_ids.is_wht', 'tax2_ids.is_wht',
                  'tax_ids.is_undue_tax', 'tax2_ids.is_undue_tax',)
     def _compute_tax_code_type(self):
-        res_undue = list(set([tax.is_undue_tax for tax in self.tax_ids] +
-                             [tax.is_undue_tax for tax in self.tax2_ids]))
-        is_undue_tax = False
-        if len(res_undue) == 1:
-            is_undue_tax = res_undue[0]
-        elif len(res_undue) > 1:
-            raise ValidationError(
-                _('Some tax using the same Tax Code '
-                  'is not of the same Due/Undue type!'))
-        res_wht = list(set([tax.is_wht for tax in self.tax_ids] +
-                           [tax.is_wht for tax in self.tax2_ids]))
-        is_wht = False
-        if len(res_wht) == 1:
-            is_wht = res_wht[0]
-        elif len(res_wht) > 1:
-            raise ValidationError(
-                _('Some tax using the same Tax Code '
-                  'is not of the same Withholding type!'))
-        self.tax_code_type = 'normal'
-        if is_wht:
-            self.tax_code_type = 'wht'
-        elif is_undue_tax:
-            self.tax_code_type = 'undue'
+        for rec in self:
+            res_undue = list(set([tax.is_undue_tax for tax in rec.tax_ids] +
+                                 [tax.is_undue_tax for tax in rec.tax2_ids]))
+            is_undue_tax = False
+            if len(res_undue) == 1:
+                is_undue_tax = res_undue[0]
+            elif len(res_undue) > 1:
+                raise ValidationError(
+                    _('Some tax using the same Tax Code '
+                      'is not of the same Due/Undue type!'))
+            res_wht = list(set([tax.is_wht for tax in rec.tax_ids] +
+                               [tax.is_wht for tax in rec.tax2_ids]))
+            is_wht = False
+            if len(res_wht) == 1:
+                is_wht = res_wht[0]
+            elif len(res_wht) > 1:
+                raise ValidationError(
+                    _('Some tax using the same Tax Code '
+                      'is not of the same Withholding type!'))
+            rec.tax_code_type = 'normal'
+            if is_wht:
+                rec.tax_code_type = 'wht'
+            elif is_undue_tax:
+                rec.tax_code_type = 'undue'
 
 
 class AccountPeriod(models.Model):

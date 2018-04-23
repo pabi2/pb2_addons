@@ -96,9 +96,9 @@ class LogCommon(object):
                     JOIN ir_model as model
                         ON (model.id = logline.model_id)
                     WHERE
-                        model.model = '%s' AND
-                        logline.res_id = %d
-                """ % (self._model, record.id))
+                        model.model = %s AND
+                        logline.res_id = %s
+                """, (self._name, record.id))
                 result = self._cr.fetchall()
                 line_ids = [r[0] for r in result]
                 record.auditlog_line_ids = [(6, 0, line_ids)]

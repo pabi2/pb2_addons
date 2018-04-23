@@ -2,7 +2,6 @@
 import pytz
 import logging
 from datetime import datetime
-from dateutil import parser
 from openerp import models, api, fields, SUPERUSER_ID
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT as DATETIME_FORMAT
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DATE_FORMAT

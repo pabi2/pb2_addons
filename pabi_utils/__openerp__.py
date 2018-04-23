@@ -30,9 +30,9 @@ Functions
         "connector",
     ],
     "data": [
-        "security/ir.model.access.csv",
         "security/security_groups.xml",
         "security/security_rule.xml",
+        "security/ir.model.access.csv",
         "data/xls_config.xml",
         # "data/queue_data.xml",
         "wizard/export_xlsx_template_wizard.xml",

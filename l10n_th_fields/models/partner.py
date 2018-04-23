@@ -42,38 +42,40 @@ class ResPartner(models.Model):
             res = self._cr.fetchone()
             partner.employee_id = res and res[0] or False
 
-    @api.one
+    @api.multi
     @api.constrains('vat')
     def _check_vat(self):
-        if self.vat and len(self.vat) != 13:
-            raise ValidationError(
-                _("Tax ID must be 13 digits!"))
+        for rec in self:
+            if rec.vat and len(rec.vat) != 13:
+                raise ValidationError(
+                    _("Tax ID must be 13 digits!"))
 
-    @api.one
+    @api.multi
     @api.constrains('taxbranch')
     def _check_taxbranch(self):
-        if self.taxbranch and len(self.taxbranch) != 5:
-            raise ValidationError(
-                _("Tax Branch must be 5 digits"))
+        for rec in self:
+            if rec.taxbranch and len(rec.taxbranch) != 5:
+                raise ValidationError(
+                    _("Tax Branch must be 5 digits"))
 
-    @api.one
+    @api.multi
     @api.constrains('name', 'supplier', 'customer')
     def _check_partner_name(self):
-        count = len(self.search([('name', '=', self.name)])._ids)
-        if count > 1:
-            raise ValidationError("Partner Name must be unique!")
+        for rec in self:
+            count = len(self.search([('name', '=', rec.name)])._ids)
+            if count > 1:
+                raise ValidationError("Partner Name must be unique!")
 
-    @api.one
+    @api.multi
     @api.constrains('vat', 'taxbranch')
     def _check_vat_taxbranch_unique(self):
-        if self.vat or self.taxbranch:
-            count = len(self.search(
-                ['|', ('parent_id', '=', False),
-                 ('is_company', '=', True),
-                 ('vat', '=', self.vat),
-                 ('taxbranch', '=', self.taxbranch)])._ids)
-            if count > 1:
-                raise ValidationError(
-                    _("Tax ID + Tax Branch ID must be unique!"))
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+        for rec in self:
+            if rec.vat or rec.taxbranch:
+                count = len(self.search(
+                    ['|', ('parent_id', '=', False),
+                     ('is_company', '=', True),
+                     ('vat', '=', self.vat),
+                     ('taxbranch', '=', self.taxbranch)])._ids)
+                if count > 1:
+                    raise ValidationError(
+                        _("Tax ID + Tax Branch ID must be unique!"))

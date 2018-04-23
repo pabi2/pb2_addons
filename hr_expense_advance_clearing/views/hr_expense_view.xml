@@ -6,8 +6,10 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense_sequence.view_expenses_form_sequence"/>
             <field name="arch" type="xml">
-                <xpath expr="//label[@string='Expense ']" position="replace">
-                    <label string="Expense " attrs="{'invisible': [('is_employee_advance', '=', True)]}" />
+                <xpath expr="//label[@string='Expense ']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('is_employee_advance', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//label[@string='Expense ']" position="after">
                     <label string="Advance " attrs="{'invisible': [('is_employee_advance', '=', False)]}" />
                 </xpath>
             </field>

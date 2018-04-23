@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from openerp.osv import orm
 # import logging
 # _logger = logging.getLogger(__name__)

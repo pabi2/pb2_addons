@@ -6,7 +6,10 @@
             <field name="model">account.bank.receipt</field>
             <field name="inherit_id" ref="account_bank_receipt.account_bank_receipt_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='cancel_bank_receipt']" position="replace">
+                <xpath expr="//button[@name='cancel_bank_receipt']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//button[@name='cancel_bank_receipt']" position="after">
                     <button name="%(action_account_bank_receipt_cancel)d" type="action" states="done" string="Cancel Bank Receipt" groups="account.group_account_user"/>
                 </xpath>
                 <xpath expr="//sheet/group" position="before">

@@ -3,7 +3,7 @@ from openerp.addons.currency_rate_update.\
     services.currency_getter import Currency_getter_factory, UnknowClassError
 
 
-class Currency_getter_factory_THB(Currency_getter_factory):
+class CurrencyGetterFactoryTHB(Currency_getter_factory):
     """Factory pattern class that will return
     a currency getter class base on the name passed
     to the register method

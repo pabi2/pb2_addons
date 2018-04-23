@@ -250,29 +250,32 @@ class AccountPIT(models.Model):
         copy=True,
     )
 
-    @api.one
+    @api.multi
     @api.depends('calendar_year')
     def _compute_date_effective(self):
-        self.date_effective = '%s-01-01' % (self.calendar_year,)
+        for rec in self:
+            rec.date_effective = '%s-01-01' % (rec.calendar_year,)
 
-    @api.one
+    @api.multi
     @api.constrains('rate_ids')
     def _check_rate_ids(self):
-        i = 0
-        prev_income_to = 0.0
-        accum_tax = 0.0
-        for rate in self.rate_ids:
-            if i == 0 and rate.income_from != 0.0:
-                raise ValidationError(_('Income amount must start from 0.0'))
-            if i > 0 and \
-                    float_compare(rate.income_from, prev_income_to, 2) != 0:
-                raise ValidationError(
-                    _('Discontinued income range!\n'
-                      'Please make sure Income From = Previous Income To'))
-            prev_income_to = rate.income_to
-            accum_tax += rate.amount_tax_max
-            rate.amount_tax_max_accum = accum_tax
-            i += 1
+        for rec in self:
+            i = 0
+            prev_income_to = 0.0
+            accum_tax = 0.0
+            for rate in rec.rate_ids:
+                if i == 0 and rate.income_from != 0.0:
+                    raise ValidationError(
+                        _('Income amount must start from 0.0'))
+                if i > 0 and float_compare(rate.income_from,
+                                           prev_income_to, 2) != 0:
+                    raise ValidationError(
+                        _('Discontinued income range!\n'
+                          'Please make sure Income From = Previous Income To'))
+                prev_income_to = rate.income_to
+                accum_tax += rate.amount_tax_max
+                rate.amount_tax_max_accum = accum_tax
+                i += 1
         return
 
     @api.model

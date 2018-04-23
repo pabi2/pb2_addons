@@ -1,6 +1,5 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from operator import add
-
 from .common_reports import CommonReportHeaderWebkit
 
 

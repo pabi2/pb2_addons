@@ -3,7 +3,7 @@
 import openerp
 from openerp import models, fields, api, _
 from openerp.tools.safe_eval import safe_eval as eval
-from openerp.exceptions import except_orm, Warning
+from openerp.exceptions import except_orm, Warning as UserError
 import types
 
 
@@ -11,7 +11,7 @@ def str2tuple(s):
     return eval('tuple(%s)' % (s or ''))
 
 
-class ir_test_action(models.TransientModel):
+class IrTestAction(models.TransientModel):
     _name = "ir.test.action"
     _description = "Test Action"
 
@@ -61,8 +61,8 @@ class ir_test_action(models.TransientModel):
             model = registry[model_name]
             if hasattr(model, method_name):
                 if len(args) > 9:
-                    raise Warning("Method with more than 9 arguments "
-                                  "is not allowed!")
+                    raise UserError(_('Method with more than 9 arguments '
+                                      'is not allowed!'))
                 if len(args) == 0:
                     res = getattr(model, method_name)(self._cr, self._uid)
                 if len(args) == 1:
@@ -99,10 +99,10 @@ class ir_test_action(models.TransientModel):
                         self._cr, self._uid, args[0], args[1], args[2],
                         args[3], args[4], args[5], args[6], args[7], args[8])
             else:
-                raise Warning("Method '%s.%s' does not exist." %
-                              (model_name, method_name))
+                raise UserError(_("Method '%s.%s' does not exist.") %
+                                (model_name, method_name))
         else:
-            raise Warning("Model '%s' does not exist." % model_name)
+            raise UserError("Model '%s' does not exist." % model_name)
 
         return res
 

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
-from openerp.api import Environment
-from openerp import SUPERUSER_ID
+from openerp import models, fields
 
 
 class AccountFiscalyear(models.Model):

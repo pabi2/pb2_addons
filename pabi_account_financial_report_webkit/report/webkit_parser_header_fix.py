@@ -7,6 +7,8 @@ from functools import partial
 
 
 from mako import exceptions
+from mako.template import Template
+from mako.lookup import TemplateLookup
 from openerp.osv.orm import except_orm
 from openerp.tools.translate import _
 from openerp import pooler
@@ -47,8 +49,6 @@ _logger = logging.getLogger('financial.reports.webkit')
 
 # redefine mako_template as this is overriden by jinja since saas-1
 # from openerp.addons.report_webkit.webkit_report import mako_template
-from mako.template import Template
-from mako.lookup import TemplateLookup
 
 
 def mako_template(text):

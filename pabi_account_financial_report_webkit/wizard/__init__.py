@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from . import balance_common
 from . import general_ledger_wizard
 from . import partners_ledger_wizard

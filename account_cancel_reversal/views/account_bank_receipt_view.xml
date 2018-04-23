@@ -6,7 +6,9 @@
             <field name="model">account.bank.receipt</field>
             <field name="inherit_id" ref="account_bank_receipt.account_bank_receipt_view_form"/>
             <field name="arch" type="xml">
-                <button name="backtodraft" position="replace" />
+                <button name="backtodraft" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </button>
                 <xpath expr="/form/sheet/group//field[@name='move_id']" position="after">
                     <field name="cancel_move_id" />
                 </xpath>

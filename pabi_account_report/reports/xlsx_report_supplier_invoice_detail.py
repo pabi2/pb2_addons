@@ -1,5 +1,4 @@
-from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from openerp import models, fields, api
 
 
 class XLSXReportSupplierInvoiceDetail(models.TransientModel):

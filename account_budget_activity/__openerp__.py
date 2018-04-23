@@ -57,9 +57,6 @@ Note: This module provide only framework. There will be no budget check here.
         'report/budget_monitor_report_view.xml',
     ],
     'demo': [
-        #         'demo/activity_demo.xml',
-        #         'demo/account_budget_demo.xml',
-        #         'demo/purchase_request_demo.xml',
     ],
     'installable': True,
     'auto_install': False,

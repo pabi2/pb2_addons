@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, _
+from openerp import models, api
 from openerp.addons.account_budget_activity_rpt.models.account_activity \
     import ActivityCommon
 from openerp.addons.pabi_chartfield.models.chartfield \

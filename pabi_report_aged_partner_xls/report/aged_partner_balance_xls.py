@@ -3,7 +3,6 @@
 #
 #   report_aged_partner_xls for Odoo
 #   Copyright (C) 2004-today OpenERP SA (<http://www.openerp.com>)
-#   Copyright (C) 2016-today Geminate Consultancy Services (<http://geminatecs.com>).
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as
@@ -21,12 +20,12 @@
 ###############################################################################
 
 import xlwt
-from datetime import datetime
 from openerp.addons.report_xls.report_xls import report_xls
-from openerp.addons.report_xls.utils import rowcol_to_cell
-from openerp.addons.pabi_account_financial_report_webkit.report.aged_partner_balance \
+from openerp.addons.\
+    pabi_account_financial_report_webkit.report.aged_partner_balance \
     import AccountAgedTrialBalanceWebkit
 from openerp.tools.translate import _
+
 
 class aged_partner_balance_xls(report_xls):
     column_sizes = [17, 17, 17, 17, 17, 17, 17, 17, 17, 17]
@@ -45,9 +44,9 @@ class aged_partner_balance_xls(report_xls):
         ws.footer_str = self.xls_footers['standard']
 
         # cf. account_report_general_ledger.mako
-        initial_balance_text = {'initial_balance': _('Computed'),
-                                'opening_balance': _('Opening Entries'),
-                                False: _('No')}
+        # initial_balance_text = {'initial_balance': _('Computed'),
+        #                         'opening_balance': _('Opening Entries'),
+        #                         False: _('No')}
 
         # Title
         cell_style = xlwt.easyxf(_xs['xls_title'])
@@ -123,14 +122,14 @@ class aged_partner_balance_xls(report_xls):
         # Column Header Row
         cell_format = _xs['bold'] + _xs['fill'] + _xs['borders_all']
         c_hdr_cell_style = xlwt.easyxf(cell_format)
-        c_hdr_cell_style_right = xlwt.easyxf(cell_format + _xs['right'])
-        c_hdr_cell_style_center = xlwt.easyxf(cell_format + _xs['center'])
-        c_hdr_cell_style_decimal = xlwt.easyxf(
-            cell_format + _xs['right'],
-            num_format_str=report_xls.decimal_format)
+        # c_hdr_cell_style_right = xlwt.easyxf(cell_format + _xs['right'])
+        # c_hdr_cell_style_center = xlwt.easyxf(cell_format + _xs['center'])
+        # c_hdr_cell_style_decimal = xlwt.easyxf(
+        #     cell_format + _xs['right'],
+        #     num_format_str=report_xls.decimal_format)
 
         cell_format = _xs['italic'] + _xs['borders_all']
-        c_init_cell_style = xlwt.easyxf(cell_format)
+        # c_init_cell_style = xlwt.easyxf(cell_format)
         c_init_cell_style_decimal = xlwt.easyxf(
             cell_format + _xs['right'],
             num_format_str=report_xls.decimal_format)
@@ -145,29 +144,30 @@ class aged_partner_balance_xls(report_xls):
         cnt = 0
         for range_title in _p.ranges_titles:
             cnt += 1
-            c_specs.append(('classification' + str(cnt), 1, 0, 'text', _(range_title), None, c_hdr_cell_style))
+            c_specs.append(('classification' + str(cnt), 1, 0, 'text',
+                            _(range_title), None, c_hdr_cell_style))
 
         c_hdr_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
 
         # cell styles for aged lines
-        ll_cell_format = _xs['borders_all']
-        ll_cell_style = xlwt.easyxf(ll_cell_format)
-        ll_cell_style_center = xlwt.easyxf(ll_cell_format + _xs['center'])
-        ll_cell_style_date = xlwt.easyxf(
-            ll_cell_format + _xs['left'],
-            num_format_str=report_xls.date_format)
-        ll_cell_style_decimal = xlwt.easyxf(
-            ll_cell_format + _xs['right'],
-            num_format_str=report_xls.decimal_format)
+        # ll_cell_format = _xs['borders_all']
+        # ll_cell_style = xlwt.easyxf(ll_cell_format)
+        # ll_cell_style_center = xlwt.easyxf(ll_cell_format + _xs['center'])
+        # ll_cell_style_date = xlwt.easyxf(
+        #     ll_cell_format + _xs['left'],
+        #     num_format_str=report_xls.date_format)
+        # ll_cell_style_decimal = xlwt.easyxf(
+        #     ll_cell_format + _xs['right'],
+        #     num_format_str=report_xls.decimal_format)
 
         cnt = 0
         for acc in objects:
             if _p.agged_lines_accounts[acc.id]:
                 cnt += 1
-                cumul_debit = 0.0
-                cumul_credit = 0.0
-                cumul_balance = 0.0
-                cumul_balance_curr = 0.0
+                # cumul_debit = 0.0
+                # cumul_credit = 0.0
+                # cumul_balance = 0.0
+                # cumul_balance_curr = 0.0
                 c_specs = [
                     ('acc_title', 11, 0, 'text',
                      ' - '.join([acc.code, acc.name])),
@@ -178,51 +178,65 @@ class aged_partner_balance_xls(report_xls):
                     ws, row_pos, row_data, c_title_cell_style)
                 row_pos += 1
                 row_pos = self.xls_write_row(ws, row_pos, c_hdr_data)
-                row_start = row_pos
+                # row_start = row_pos
 
-                for partner_name, p_id, p_ref, p_name in _p.partners_order[acc.id]:
+                for partner_name, p_id, p_ref, p_name in \
+                        _p.partners_order[acc.id]:
                     if _p.agged_lines_accounts[acc.id].get(p_id):
                         line = _p.agged_lines_accounts[acc.id][p_id]
                         c_specs = [
                             ('partner', 2, 0, 'text', _(partner_name or '')),
                             ('code', 1, 0, 'text', _(p_ref or '')),
-                            ('balance', 1, 0, 'number', line.get('balance'), None, c_init_cell_style_decimal)
+                            ('balance', 1, 0, 'number', line.get('balance'),
+                             None, c_init_cell_style_decimal)
                         ]
 
                         count = 0
                         for classif in _p.ranges:
                             count += 1
-                            c_specs.append(('classification' + str(count), 1, 0, 'number', line['aged_lines'][classif] or 0.0, None, c_init_cell_style_decimal))
+                            c_specs.append(('classification' + str(count),
+                                            1, 0, 'number',
+                                            line['aged_lines'][classif] or 0.0,
+                                            None, c_init_cell_style_decimal))
 
-                        row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
+                        row_data = self.xls_row_template(
+                            c_specs, [x[0] for x in c_specs])
                         row_pos = self.xls_write_row(ws, row_pos, row_data)
 
                 percents = _p.agged_percents_accounts[acc.id]
                 totals = _p.agged_totals_accounts[acc.id]
-                c_specs = [
-                            ('total', 3, 0, 'text', _('Total'), None, c_hdr_cell_style),
-                            ('balance', 1, 0, 'number', totals['balance'], None, c_init_cell_style_decimal_bold)
-                        ]
+                c_specs = [('total', 3, 0, 'text', _('Total'),
+                            None, c_hdr_cell_style),
+                           ('balance', 1, 0, 'number', totals['balance'],
+                            None, c_init_cell_style_decimal_bold)]
 
                 count = 0
                 for classif in _p.ranges:
                     count += 1
-                    c_specs.append(('classification' + str(count), 1, 0, 'number', totals[classif] or 0.0, None, c_init_cell_style_decimal_bold))
+                    c_specs.append(('classification' + str(count),
+                                    1, 0, 'number', totals[classif] or 0.0,
+                                    None, c_init_cell_style_decimal_bold))
 
-                row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
+                row_data = self.xls_row_template(
+                    c_specs, [x[0] for x in c_specs])
                 row_pos = self.xls_write_row(ws, row_pos, row_data)
-                c_specs = [('percents', 4, 0, 'text', _('Percents'), None, c_hdr_cell_style)]
+                c_specs = [('percents', 4, 0, 'text', _('Percents'),
+                            None, c_hdr_cell_style)]
 
                 count = 0
                 for classif in _p.ranges:
                     count += 1
-                    c_specs.append(('classification' + str(count), 1, 0, 'number', percents[classif]or 0.0, None, c_init_cell_style_decimal_bold))
+                    c_specs.append(('classification' + str(count),
+                                   1, 0, 'number', percents[classif]or 0.0,
+                                   None, c_init_cell_style_decimal_bold))
 
-                row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
+                row_data = self.xls_row_template(
+                    c_specs, [x[0] for x in c_specs])
                 row_pos = self.xls_write_row(ws, row_pos, row_data)
                 row_pos += 1
 
-aged_partner_balance_xls('report.account.account_report_aged_partner_balance_xls',
-                   'account.account',
-                   parser=AccountAgedTrialBalanceWebkit)
+
+aged_partner_balance_xls(
+    'report.account.account_report_aged_partner_balance_xls',
+    'account.account', parser=AccountAgedTrialBalanceWebkit)
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

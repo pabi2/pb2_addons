@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # TODO refactor helper in order to act more like mixin
 # By using properties we will have a more simple signature in fuctions
 
@@ -111,8 +111,8 @@ class CommonReportHeaderWebkit(common_report_header):
             sorted_accounts = []
             # add all accounts with same parent
             level_accounts = [account for account in accounts
-                              if account['parent_id']
-                              and account['parent_id'][0] == parent['id']]
+                              if account['parent_id'] and
+                              account['parent_id'][0] == parent['id']]
             # add consolidation children of parent, as they are logically on
             # the same level
             if parent.get('child_consol_ids'):
@@ -506,7 +506,9 @@ SELECT l.id AS id,
             l.partner_id AS lpartner_id,
             p.name AS partner_name,
             m.name AS move_name,
-            (SELECT rp.name FROM res_users ru LEFT JOIN res_partner rp ON rp.id = ru.partner_id WHERE ru.id = m.create_uid LIMIT 1) AS created_name,
+            (SELECT rp.name FROM res_users ru LEFT JOIN res_partner rp
+             ON rp.id = ru.partner_id WHERE ru.id = m.create_uid LIMIT 1)
+             AS created_name,
             COALESCE(partialrec.name, fullrec.name, '') AS rec_name,
             COALESCE(partialrec.id, fullrec.id, NULL) AS rec_id,
             m.id AS move_id,
@@ -516,10 +518,38 @@ SELECT l.id AS id,
             i.number AS invoice_number,
             l.date_maturity,
             m.date_document AS document_date,
-            (SELECT CONCAT(CASE WHEN cv.code IS NOT NULL THEN CONCAT('[',cv.code,'] ') ELSE '' END, CASE WHEN cv.name_short IS NOT NULL THEN cv.name_short WHEN cv.name IS NOT NULL THEN cv.name ELSE '' END) AS budget FROM chartfield_view cv WHERE cv.model = (CASE WHEN l.section_id IS NOT NULL THEN 'res.section' WHEN l.project_id IS NOT NULL THEN 'res.project' WHEN l.invest_asset_id IS NOT NULL THEN 'res.invest.asset' WHEN l.invest_construction_phase_id IS NOT NULL THEN 'res.invest.construction.phase' WHEN l.personnel_costcenter_id IS NOT NULL THEN 'res.personnel.costcenter' ELSE NULL END) AND cv.res_id = (CASE WHEN l.section_id IS NOT NULL THEN l.section_id WHEN l.project_id IS NOT NULL THEN l.project_id WHEN l.invest_asset_id IS NOT NULL THEN l.invest_asset_id WHEN l.invest_construction_phase_id IS NOT NULL THEN l.invest_construction_phase_id WHEN l.personnel_costcenter_id IS NOT NULL THEN l.personnel_costcenter_id ELSE NULL END) LIMIT 1) AS budget_name,
-            CONCAT(CASE WHEN rf.code IS NOT NULL THEN CONCAT('[',rf.code,'] ') ELSE '' END, CASE WHEN rf.name_short IS NOT NULL THEN rf.name_short WHEN rf.name IS NOT NULL THEN rf.name ELSE '' END) AS fund_name,
-            CONCAT(CASE WHEN rc.code IS NOT NULL THEN CONCAT('[',rc.code,'] ') ELSE '' END, CASE WHEN rc.name_short IS NOT NULL THEN rc.name_short WHEN rc.name IS NOT NULL THEN rc.name ELSE '' END) AS costcenter_name,
-            CONCAT(CASE WHEN rt.code IS NOT NULL THEN CONCAT('[',rt.code,'] ') ELSE '' END, CASE WHEN rt.name_short IS NOT NULL THEN rt.name_short WHEN rt.name IS NOT NULL THEN rt.name ELSE '' END) AS taxbranch_name,
+            (SELECT CONCAT(CASE WHEN cv.code IS NOT NULL THEN
+             CONCAT('[',cv.code,'] ') ELSE '' END, CASE WHEN cv.name_short
+             IS NOT NULL THEN cv.name_short WHEN cv.name
+             IS NOT NULL THEN cv.name ELSE '' END) AS budget
+             FROM chartfield_view cv WHERE cv.model =
+             (CASE WHEN l.section_id IS NOT NULL THEN 'res.section'
+             WHEN l.project_id IS NOT NULL THEN 'res.project'
+             WHEN l.invest_asset_id IS NOT NULL THEN 'res.invest.asset'
+             WHEN l.invest_construction_phase_id IS NOT NULL
+             THEN 'res.invest.construction.phase'
+             WHEN l.personnel_costcenter_id IS NOT NULL
+             THEN 'res.personnel.costcenter' ELSE NULL END)
+             AND cv.res_id = (CASE WHEN l.section_id IS NOT NULL
+             THEN l.section_id WHEN l.project_id IS NOT NULL
+             THEN l.project_id WHEN l.invest_asset_id IS NOT NULL
+             THEN l.invest_asset_id WHEN l.invest_construction_phase_id
+             IS NOT NULL THEN l.invest_construction_phase_id
+             WHEN l.personnel_costcenter_id IS NOT NULL
+             THEN l.personnel_costcenter_id ELSE NULL END) LIMIT 1)
+             AS budget_name,
+            CONCAT(CASE WHEN rf.code IS NOT NULL THEN CONCAT('[',rf.code,'] ')
+            ELSE '' END, CASE WHEN rf.name_short IS NOT NULL THEN rf.name_short
+            WHEN rf.name IS NOT NULL THEN rf.name ELSE '' END)
+            AS fund_name,
+            CONCAT(CASE WHEN rc.code IS NOT NULL THEN CONCAT('[',rc.code,'] ')
+            ELSE '' END, CASE WHEN rc.name_short IS NOT NULL THEN rc.name_short
+            WHEN rc.name IS NOT NULL THEN rc.name ELSE '' END)
+            AS costcenter_name,
+            CONCAT(CASE WHEN rt.code IS NOT NULL THEN CONCAT('[',rt.code,'] ')
+            ELSE '' END, CASE WHEN rt.name_short IS NOT NULL THEN rt.name_short
+            WHEN rt.name IS NOT NULL THEN rt.name ELSE '' END)
+            AS taxbranch_name,
             SUBSTRING(m.name, 1, 2) AS doctype,
             aag.name AS activity_group_name,
             aa.name AS activity_name

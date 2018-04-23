@@ -75,8 +75,7 @@ class AmountToWord(object):
                                               default, context=context)
 
 
-class account_invoice(AmountToWord, osv.osv):
-
+class AccountInvoice(AmountToWord, osv.osv):
     _inherit = 'account.invoice'
 
     def _amount_total_text_en(
@@ -105,7 +104,7 @@ class account_invoice(AmountToWord, osv.osv):
     }
 
 
-class account_voucher(AmountToWord, osv.osv):
+class AccountVoucher(AmountToWord, osv.osv):
     _inherit = 'account.voucher'
 
     def _amount_total_text_en(
@@ -134,8 +133,7 @@ class account_voucher(AmountToWord, osv.osv):
     }
 
 
-class sale_order(AmountToWord, osv.osv):
-
+class SaleOrder(AmountToWord, osv.osv):
     _inherit = 'sale.order'
 
     def _amount_total_text_en(
@@ -177,8 +175,7 @@ class sale_order(AmountToWord, osv.osv):
     }
 
 
-class purchase_order(AmountToWord, osv.osv):
-
+class PurchaseOrder(AmountToWord, osv.osv):
     _inherit = 'purchase.order'
 
     def _amount_total_text_en(
@@ -218,6 +215,3 @@ class purchase_order(AmountToWord, osv.osv):
                                          'product_qty'], 1000),
             }),
     }
-
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
