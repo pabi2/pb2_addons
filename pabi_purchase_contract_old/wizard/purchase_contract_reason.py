@@ -56,7 +56,7 @@ class PurchaseContractReason(models.TransientModel):
                 poc_last.write({'termination_uid': Emp.id})
             termination_date = datetime.datetime.now(timezone('UTC'))
             poc_last.write(
-                {'state': 'terminate',
+                {'state': 'Y',
                  'termination_date': termination_date,
                  'description': description})
             poc = poc_obj.search([['poc_code', '=', poc.poc_code]])
@@ -112,7 +112,7 @@ class PurchaseContractReason(models.TransientModel):
             cancel_date = datetime.datetime.now(timezone('UTC'))
             description = str(poc.description or '') + newline
             description += self.description + "\n\n"
-            poc.write({'state': 'cancel_generate',
+            poc.write({'state': 'X',
                        'cancel_date': cancel_date,
                        'description': description})
         return {'type': 'ir.actions.act_window_close'}

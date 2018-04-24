@@ -35,7 +35,7 @@
 <!-- 		<record model="res.groups" id="nstdaperm.group_nstda_dep3064"> -->
 <!-- 			<field name="implied_ids" eval="[(4, ref('base.group_pabi_purchase_contract_user_mtec'))]" /> -->
 <!-- 		</record> -->
-
+		
 		<!-- NECTEC -->
 		<record id="base.group_pabi_purchase_contract_user_nectec" model="res.groups">
 			<field name="name">NECTEC</field>
@@ -65,14 +65,14 @@
 <!-- 		<record model="res.groups" id="nstdaperm.group_nstda_dep6044"> -->
 <!-- 			<field name="implied_ids" eval="[(4, ref('base.group_pabi_purchase_contract_user_tmc'))]" /> -->
 <!-- 		</record> -->
-
+		
 		<!-- READ ALL -->
 		<record id="base.group_pabi_purchase_contract_user_readall" model="res.groups">
 			<field name="name">User ReadOnly All</field>
 			<field name="category_id" ref="base.module_category_pabi_purchase_contract" />
 			<field name="implied_ids" eval="[(4, ref('base.group_pabi_purchase_contract_user'))]" />
 		</record>
-
+		
 		<!-- Finance -->
 		<record id="base.group_pabi_purchase_contract_user_finance" model="res.groups">
 			<field name="name">Finance</field>
@@ -82,14 +82,14 @@
 <!-- 		<record model="res.groups" id="nstdaperm.group_nstda_dep6044"> -->
 <!-- 			<field name="implied_ids" eval="[(4, ref('base.group_pabi_purchase_contract_user_tmc'))]" /> -->
 <!-- 		</record> -->
-
+	
 		<!-- LAW -->
 		<record id="base.group_pabi_purchase_contract_user_law" model="res.groups">
 			<field name="name">Law</field>
 			<field name="category_id" ref="base.module_category_pabi_purchase_contract" />
 			<field name="implied_ids" eval="[]" />
 		</record>
-
+		
 		<!-- ADMIN -->
 		<record id="base.group_pabi_purchase_contract_admin" model="res.groups">
 			<field name="name">Admin</field>
@@ -114,10 +114,9 @@
 			<field name="perm_write" eval="True" />
 			<field name="perm_create" eval="False" />
 			<field name="perm_unlink" eval="False" />
-			<field name="domain_force">[]</field>
-			<!-- <field name="domain_force">[('admin_org_groups_id','in',[g.id for g in user.groups_id])]</field> -->
+			<field name="domain_force">[('admin_org_groups_id','in',[g.id for g in user.groups_id])]</field>
 		</record>
-
+		
 		<!-- Rule ReadOnly All -->
 		<record id="rule_pabi_purchase_contract_by_readall" model="ir.rule">
 			<field name="name">Purchase Contract By ReadOnly All</field>
@@ -129,7 +128,7 @@
 			<field name="perm_unlink" eval="False" />
 			<field name="domain_force">[(1,'=',1)]</field>
 		</record>
-
+		
 		<!-- Rule LAW -->
 		<record id="rule_pabi_purchase_contract_by_admin" model="ir.rule">
 			<field name="name">Purchase Contract By Law</field>
@@ -142,7 +141,7 @@
 			<field name="perm_unlink" eval="False" />
 			<field name="domain_force">[(1,'=',1)]</field>
 		</record>
-
+		
 		<!-- Rule Admin -->
 		<record id="rule_pabi_purchase_contract_by_admin" model="ir.rule">
 			<field name="name">Purchase Contract By Admin</field>
