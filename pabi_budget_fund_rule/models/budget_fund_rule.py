@@ -402,8 +402,9 @@ class BudgetFundRule(models.Model):
 
 
 class BudgetFundRuleLine(models.Model):
-    _name = "budget.fund.rule.line"
-    _description = "Spending Rule specific for Activity Groups"
+    _name = 'budget.fund.rule.line'
+    _rec_name = 'expense_group_id'
+    _description = 'Spending Rule specific for Activity Groups'
 
     fund_rule_id = fields.Many2one(
         'budget.fund.rule',
@@ -477,13 +478,11 @@ class BudgetFundRuleLine(models.Model):
                 if rec.amount_consumed > vals.get('amount'):
                     raise ValidationError(
                         _('Amount must not less than consumed amount!'))
-        # Log changes on line
+        # Track changes
+        fk = 'fund_rule_id'
         track_fields = ['account_ids', 'amount', 'max_spending_percent']
-        change_dict = {f: vals.get(f) for f in track_fields}
-        for line in self:
-            msg_title = line.expense_group_id.display_name
-            self.env['pabi.utils']._track_line_change(
-                msg_title, 'fund_rule_id', line, change_dict)
+        self.env['pabi.utils'].track_lines(vals, fk, track_fields, self)
+        # --
         return super(BudgetFundRuleLine, self).write(vals)
 
     @api.multi

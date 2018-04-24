@@ -321,13 +321,13 @@ class ResInvestConstruction(LogCommon, models.Model):
             if not rec.amount_budget_plan:
                 raise ValidationError(
                     _('Cannot submit project without planned amount.'))
-        self.write({'state': 'submit'})
+        self.with_context(button_click=True).write({'state': 'submit'})
 
     @api.multi
     def action_approve(self):
         self._check_cooperate_access()
         self.action_create_phase()
-        self.write({'state': 'approve'})
+        self.with_context(button_click=True).write({'state': 'approve'})
 
     @api.multi
     def action_unapprove(self):
@@ -335,57 +335,72 @@ class ResInvestConstruction(LogCommon, models.Model):
         for rec in self:
             rec.phase_ids.filtered(
                 lambda l: l.state == 'approve').action_unapprove()
-        self.write({'state': 'unapprove'})
+        self.with_context(button_click=True).write({'state': 'unapprove'})
 
     @api.multi
     def action_reject(self):
-        self.write({'state': 'reject'})
+        self.with_context(button_click=True).write({'state': 'reject'})
 
     @api.multi
     def action_delete(self):
-        self.write({'state': 'delete'})
+        self.with_context(button_click=True).write({'state': 'delete'})
 
     @api.multi
     def action_cancel(self):
-        self.write({'state': 'cancel'})
+        self.with_context(button_click=True).write({'state': 'cancel'})
 
     @api.multi
     def action_close(self):
-        self.write({'state': 'close'})
+        self.with_context(button_click=True).write({'state': 'close'})
 
     @api.multi
     def action_draft(self):
-        self.write({'state': 'draft'})
+        self.with_context(button_click=True).write({'state': 'draft'})
+
+    @api.multi
+    def write(self, vals):
+        # Only cooperate budget allowed to edit when state == 'submit'
+        button_click = self._context.get('button_click', False)
+        for rec in self:
+            if not button_click and rec.state == 'submit':
+                self._check_cooperate_access()
+        return super(ResInvestConstruction, self).write(vals)
 
 
 class RestInvestConstructionPhase(LogCommon, models.Model):
-    _inherit = 'res.invest.construction.phase'
+    _name = 'res.invest.construction.phase'
+    _inherit = ['res.invest.construction.phase', 'mail.thread']
 
     name = fields.Char(
         required=False,
+        track_visibility='onchange',
     )
     active = fields.Boolean(
         string='Active',
         compute='_compute_active',
         store=True,
+        track_visibility='onchange',
         help="Phase is activated only when approved",
     )
     code = fields.Char(
         readonly=True,
         default='/',
         copy=False,
+        track_visibility='onchange',
     )
     org_id = fields.Many2one(
         'res.org',
         string='Org',
         related='invest_construction_id.org_id',
         store=True,
+        track_visibility='onchange',
     )
     costcenter_id = fields.Many2one(
         'res.costcenter',
         string='Costcenter',
         related='invest_construction_id.costcenter_id',
         store=True,
+        track_visibility='onchange',
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -402,6 +417,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         required=True,
         copy=False,
         default='draft',
+        track_visibility='onchange',
     )
     amount_phase_approve = fields.Float(
         string='Approved Budget (Phase)',
@@ -410,6 +426,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)],
                 'unapprove': [('readonly', False)]},
+        track_visibility='onchange',
     )
     amount_phase_plan = fields.Float(
         string='Planned Budget (Phase)',
@@ -427,6 +444,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)],
                 'unapprove': [('readonly', False)]},
+        track_visibility='onchange',
     )
     date_start = fields.Date(
         string='Start Date',
@@ -434,6 +452,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)],
                 'unapprove': [('readonly', False)]},
+        track_visibility='onchange',
     )
     date_end = fields.Date(
         string='End Date',
@@ -441,30 +460,36 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)],
                 'unapprove': [('readonly', False)]},
+        track_visibility='onchange',
     )
     date_expansion = fields.Date(
         string='Date Expansion',
+        track_visibility='onchange',
     )
     contract_day_duration = fields.Integer(
         string='Contract Duration (days)',
         readonly=True,
         states={'approve': [('readonly', False)], },
+        track_visibility='onchange',
     )
     contract_date_start = fields.Date(
         string='Contract Start Date',
         readonly=True,
         states={'approve': [('readonly', False)], },
+        track_visibility='onchange',
     )
     contract_date_end = fields.Date(
         string='Contract End Date',
         readonly=True,
         states={'approve': [('readonly', False)], },
+        track_visibility='onchange',
     )
     contract_ids = fields.Many2many(
         'purchase.contract',
         string='Contract Number',
         readonly=True,
         states={'approve': [('readonly', False)], },
+        track_visibility='onchange',
     )
     phase_plan_ids = fields.One2many(
         'res.invest.construction.phase.plan',
@@ -481,7 +506,8 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         string='Related Fiscal Years',
         compute='_compute_fiscalyear_ids',
         store=True,
-        help="All related fiscal years for this phases"
+        help="All related fiscal years for this phases",
+        track_visibility='onchange',
     )
     budget_count = fields.Integer(
         string='Budget Control Count',
@@ -514,6 +540,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         states={'draft': [('readonly', False)],
                 'submit': [('readonly', False)],
                 'unapprove': [('readonly', False)]},
+        track_visibility='onchange',
     )
     _sql_constraints = [
         ('number_uniq', 'unique(code)',
@@ -586,6 +613,11 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
             for phase in self:
                 phase.sync_ids.filtered(lambda l: l.fiscalyear_id.id
                                         in year_ids).write({'synced': False})
+        # Track changes
+        fk = 'invest_construction_id'
+        track_fields = ['amount_phase_approve']
+        self.env['pabi.utils'].track_lines(vals, fk, track_fields, self)
+        # --
         return super(RestInvestConstructionPhase, self).write(vals)
 
     @api.multi
@@ -855,6 +887,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
 
 class ResInvestConstructionBudgetPlan(models.Model):
     _name = 'res.invest.construction.budget.plan'
+    _rec_name = 'fiscalyear_id'
     _description = 'Investment Construction Budget Plan'
     _order = 'fiscalyear_id'
 
@@ -873,15 +906,20 @@ class ResInvestConstructionBudgetPlan(models.Model):
         string='Amount',
         required=True,
     )
-    # _sql_constraints = [
-    #     ('construction_plan_uniq',
-    #      'unique(invest_construction_id, fiscalyear_id)',
-    #      'Fiscal year must be unique for a construction project!'),
-    # ]
+
+    @api.multi
+    def write(self, vals):
+        # Track changes
+        fk = 'invest_construction_id'
+        track_fields = ['amount_plan']
+        self.env['pabi.utils'].track_lines(vals, fk, track_fields, self)
+        # --
+        return super(ResInvestConstructionBudgetPlan, self).write(vals)
 
 
 class ResInvestConstructionPhasePlan(models.Model):
     _name = 'res.invest.construction.phase.plan'
+    _rec_name = 'calendar_period_id'
     _description = 'Investment Construction Phase Plan'
     _order = 'calendar_period_id'
 
@@ -967,6 +1005,15 @@ class ResInvestConstructionPhasePlan(models.Model):
     #                 raise ValidationError(
     #                     _('Changing past period amount is not allowed!'))
     #     return super(ResInvestConstructionPhasePlan, self).write(vals)
+
+    @api.multi
+    def write(self, vals):
+        # Track changes
+        fk = 'invest_construction_phase_id'
+        track_fields = ['amount_plan_init', 'amount_plan']
+        self.env['pabi.utils'].track_lines(vals, fk, track_fields, self)
+        # --
+        return super(ResInvestConstructionPhasePlan, self).write(vals)
 
 
 class ResInvestConstructionPhaseSync(models.Model):
