@@ -9,7 +9,6 @@
 PABI2 - Purchase Contract Module
 ==================================
 
-
     """,
     "website": "https://nstda.or.th/",
     "author": "Jakkrich.Cha",
@@ -23,7 +22,8 @@ PABI2 - Purchase Contract Module
     ],
     "data": [
         'security/module_data.xml',
-        'security/purchase_contract_security.xml',
+        'security/security_group.xml',
+        'security/security_rule.xml',
         'security/ir.model.access.csv',
         'data/purchase.contract.collateral.csv',
         'data/purchase.contract.type.csv',

@@ -101,7 +101,8 @@
                                 <field name="amount_budget"/>
                             </group>
                             <group>
-                                <field name="fund_ids" widget="many2many_tags" required="1"/>
+                                <field name="fund_ids" widget="many2many_tags" required="1"
+                                  string="Source of Fund" readonly="1"/>
                                 <field name="mission_id"/>
                             </group>
                         </group>
@@ -315,7 +316,8 @@
                             </group>
                             <group>
                                 <field name="fund_type_id" required="1"/>
-                                <field name="fund_ids" required="1" widget="many2many_tags"/>
+                                <field name="fund_ids" required="1" widget="many2many_tags"
+                                    string="Source of Fund" invisible="1"/>
                                 <field name="amount_phase_plan"/>
                             </group>
                         </group>
@@ -434,6 +436,7 @@
                     <field name="code"/>
                     <field name="phase"/>
                     <field name="invest_construction_id"/>
+                    <field name="amount_phase_plan" sum="Total Approved Phases Plan"/>
                     <field name="amount_phase_approve" sum="Total Approved Phases Budget"/>
                     <field name="to_sync"/>
                     <field name="state"/>

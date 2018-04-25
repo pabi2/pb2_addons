@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data noupdate="0">
+		<!--
+				1) User by Org -> เห็นเฉพาะของ Org ทำได้ทุกอย่าง กดปุ่มได้เกือบหมด เว้นบางปุ่ม เช่น Reflow / Close
+				2) Read All -> เห็ฯอย่างเดียวทำอะไรไม่ได้เลย
+				3) Admin -> เห็นหมด ทำได้หมดทุกอย่าง
+				4) Law -> เห็นอย่างเดียว + กดปุ่มได้บางปุ่ม เช่น Reflow / Verify
+				5) Finance ไม่เห็นปุ่มเลย แก้ได้บางฟิลด์ (อันไหนยังไม่รู้)
+		 -->
+
+		<!-- Users by OU-->
+		<record id="group_pabi_purchase_contract_user" model="res.groups">
+			<field name="name">User by Org</field>
+			<field name="category_id" ref="module_category_pabi_purchase_contract"/>
+		</record>
+
+		<!-- Readonly all -->
+		<record id="group_pabi_purchase_contract_readall" model="res.groups">
+			<field name="name">Readonly All</field>
+			<field name="category_id" ref="module_category_pabi_purchase_contract"/>
+		</record>
+
+		<!-- Lawyer, click some button -->
+		<record id="group_pabi_purchase_contract_lawyer" model="res.groups">
+			<field name="name">Lawyer</field>
+			<field name="category_id" ref="module_category_pabi_purchase_contract"/>
+			<field name="implied_ids" eval="[(4, ref('group_pabi_purchase_contract_user'))]" />
+		</record>
+
+		<!-- Admin see and edit all -->
+		<record id="group_pabi_purchase_contract_admin" model="res.groups">
+			<field name="name">Admin</field>
+			<field name="category_id" ref="module_category_pabi_purchase_contract" />
+			<field name="implied_ids" eval="[(4, ref('group_pabi_purchase_contract_user'))]" />
+			<field name="users" eval="[(4, ref('base.user_root'))]" />
+		</record>
+
+	</data>
+</openerp>

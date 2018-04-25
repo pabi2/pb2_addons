@@ -10,6 +10,7 @@ from openerp.exceptions import ValidationError, except_orm
 
 class PurchaseContract(models.Model):
     _name = 'purchase.contract'
+    _description = 'Purchase Contract'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _order = "org_id, year desc, running desc, poc_rev desc"
 
@@ -57,6 +58,12 @@ class PurchaseContract(models.Model):
         'res.org',
         string='Org',
         related='create_emp_id.org_id',
+        store=True,
+    )
+    operating_unit_id = fields.Many2one(
+        'operating.unit',
+        string='Operating Unit',
+        related='org_id.operating_unit_id',
         store=True,
     )
     contract_type_id = fields.Many2one(
@@ -491,6 +498,7 @@ class PurchaseContract(models.Model):
 
 class PurchaseContractCollateral(models.Model):
     _name = 'purchase.contract.collateral'
+    _description = 'Purchase Contract Collateral'
 
     name = fields.Char(
         string='Name',
@@ -499,6 +507,7 @@ class PurchaseContractCollateral(models.Model):
 
 class PurchaseContractType(models.Model):
     _name = 'purchase.contract.type'
+    _description = 'Purchase Contract Type'
 
     name = fields.Char(
         string='Name',

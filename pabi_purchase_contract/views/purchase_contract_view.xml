@@ -2,11 +2,7 @@
 <openerp>
 	<data>
 
-		<template id="assets_backend" name="purchase_contract assets" inherit_id="web.assets_backend">
-			<xpath expr="." position="inside">
-				<script type="text/javascript" src="/purchase_contract/static/src/js/purchase_contract.js"></script>
-			</xpath>
-		</template>
+		<!-- TODO: add multi selection action to verify, by lawer -->
 
 		<record model="ir.ui.view" id="purchase_contract_form_view">
 			<field name="name">purchase.contract.form</field>
@@ -14,95 +10,50 @@
 			<field name="arch" type="xml">
 				<form string="Purchase Contract">
 					<header>
-						<button
-							name="action_button_delete_reversion"
-							type="object"
-							attrs="{'invisible': ['|',('state','not in', ['generate']),('poc_rev','=', 0)]}"
-							string="Delete Reversion"
-							confirm="Would you like to Delete Purchase Contract Reversion?"
-							groups="base.group_pabi_purchase_contract_user_central,
-									base.group_pabi_purchase_contract_user_biotec,
-									base.group_pabi_purchase_contract_user_mtec,
-									base.group_pabi_purchase_contract_user_nectec,
-									base.group_pabi_purchase_contract_user_nanotec,
-									base.group_pabi_purchase_contract_user_tmc"/>
+						<button	name="action_button_delete_reversion" type="object"
+							attrs="{'invisible': ['|',('state','not in', ('generate')), ('poc_rev','=', 0)]}"
+							string="Delete Reversion" confirm="Would you like to Delete Purchase Contract Reversion?"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
 
-						<button
-							name="%(action_view_purchase_contract_termination)d"
-							string="Termination"
-							type="action"
-							states="send,close"
+						<!-- TODO: check this button -->
+						<button name="%(action_view_purchase_contract_termination)d"
+							string="Termination" type="action" states="send,close"
 							context="{'poc_id': id, 'state':'terminate', 'res_model': 'purchase.contract'}"
-							groups="base.group_pabi_purchase_contract_user_central,
-									base.group_pabi_purchase_contract_user_biotec,
-									base.group_pabi_purchase_contract_user_mtec,
-									base.group_pabi_purchase_contract_user_nectec,
-									base.group_pabi_purchase_contract_user_nanotec,
-									base.group_pabi_purchase_contract_user_tmc"/>
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
 
-						<button
-							name="%(action_view_purchase_contract_reason_cancel)d"
-							string="Cancel Code"
-							attrs="{'invisible': ['|',('state','not in', ['generate']),('poc_rev','>', 0)]}"
-							type="action"
+						<!-- TODO: check this button -->
+						<button	name="%(action_view_purchase_contract_reason_cancel)d"
+							string="Cancel Code" type="action"
+							attrs="{'invisible': ['|',('state','not in', ('generate')), ('poc_rev','>', 0)]}"
 							context="{'poc_id': id, 'state':'cancel_generate'}"
-							groups="base.group_pabi_purchase_contract_user_central,
-									base.group_pabi_purchase_contract_user_biotec,
-									base.group_pabi_purchase_contract_user_mtec,
-									base.group_pabi_purchase_contract_user_nectec,
-									base.group_pabi_purchase_contract_user_nanotec,
-									base.group_pabi_purchase_contract_user_tmc"/>
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
 
-						<button
-							name="action_button_send_doc"
-							type="object"
-							states="generate"
-							string="Send Documents"
-							confirm="Would you like to confirm send documents?"
-							groups="base.group_pabi_purchase_contract_user_central,
-									base.group_pabi_purchase_contract_user_biotec,
-									base.group_pabi_purchase_contract_user_mtec,
-									base.group_pabi_purchase_contract_user_nectec,
-									base.group_pabi_purchase_contract_user_nanotec,
-									base.group_pabi_purchase_contract_user_tmc"/>
+						<button name="action_button_send_doc" type="object" states="generate"
+							string="Send Documents" confirm="Would you like to confirm send documents?"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
 
-						<button
-							name="action_button_reversion"
-							type="object"
-							states="send,close"
-							string="Add Reversion"
-							confirm="Would you like to create Purchase Contract Reversion?"
-							groups="base.group_pabi_purchase_contract_user_central,
-									base.group_pabi_purchase_contract_user_biotec,
-									base.group_pabi_purchase_contract_user_mtec,
-									base.group_pabi_purchase_contract_user_nectec,
-									base.group_pabi_purchase_contract_user_nanotec,
-									base.group_pabi_purchase_contract_user_tmc"/>
+						<button	name="action_button_reversion"	type="object" states="send,close"
+							string="Add Reversion" confirm="Would you like to create Purchase Contract Reversion?"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
 
-						<button name="action_button_reflow" string="Reflow" confirm="Would you like to Reflow Purchase Contract?" type="object" states="send,close" groups="base.group_pabi_purchase_contract_admin,
-									base.group_pabi_purchase_contract_law"/>
+						<button name="action_button_reflow" string="Reflow" confirm="Would you like to Reflow Purchase Contract?"
+							type="object" states="send,close"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_admin,
+											pabi_purchase_contract.group_pabi_purchase_contract_lawyer"/>
 
-						<button name="action_button_close" string="Close" confirm="Would you like to Close Contract?" type="object" states="send" groups="base.group_pabi_purchase_contract_user_finance"/>
+						<button name="action_button_close" string="Close"
+							confirm="Would you like to Close Contract?" 	type="object" states="send"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_admin"/>
+							<!-- TODO: groups="base.group_pabi_purchase_contract_user_finance"/> -->
 
-						<button name="action_button_verify_doc" string="Verify" confirm="Would you like to Verify Contract?" type="object" attrs="{'invisible': ['|',('state','not in', ['close']),('is_verify','=',True)]}" groups="base.group_pabi_purchase_contract_law"/>
+						<button name="action_button_verify_doc" string="Verify" confirm="Would you like to Verify Contract?"
+							type="object" attrs="{'invisible': ['|',('state','not in', ['close']),('is_verify','=',True)]}"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_admin,
+											pabi_purchase_contract.group_pabi_purchase_contract_lawyer"/>
 
 						<field name="state" widget="statusbar" statusbar_visible="generate,close,send,terminate"/>
 					</header>
 					<sheet>
-						<group invisible="0" string="Debug">
-							<field name="id"/>
-							<field name="year" widget="char"/>
-							<field name="org_id"/>
-							<field name="poc_code"/>
-							<field name="poc_rev"/>
-							<field name="running"/>
-							<!-- <field name="admin_org_groups_id" /> -->
-							<field name="requisition_id"/>
-							<field name="verify_date"/>
-							<field name="send_date"/>
-							<field name="is_verify"/>
-						</group>
-
 						<br/>
 						<!-- ** เลขที่สัญญาไม่สามารถแก้ไขได้ หากกดออกเลขแล้ว ** on 20/09/2016 -->
 						<h1>
@@ -170,6 +121,21 @@
 								<label string="Remarks" for="description"/>
 								<field name="description" nolabel="1" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','send','delete'])]}"/>
 							</page>
+							<page string="Debug">
+								<group>
+									<field name="id"/>
+									<field name="year" widget="char"/>
+									<field name="org_id"/>
+									<field name="operating_unit_id"/>
+									<field name="poc_code"/>
+									<field name="poc_rev"/>
+									<field name="running"/>
+									<field name="requisition_id"/>
+									<field name="verify_date"/>
+									<field name="send_date"/>
+									<field name="is_verify"/>
+								</group>
+							</page>
 						</notebook>
 						<hr/>
 						<group>
@@ -195,16 +161,27 @@
 			</field>
 		</record>
 
+		<!-- Lawer, can't see Edit button (he will only click some button) -->
+		<record model="ir.ui.view" id="purchase_contract_form_view_hide_edit">
+        <field name="name">purchase.contract.form.view.hide.edit</field>
+        <field name="model">purchase.contract</field>
+        <field name="inherit_id" ref="purchase_contract_form_view"/>
+        <field name="groups_id" eval="[(4, ref('group_pabi_purchase_contract_lawyer'))]"/>
+        <field name="arch" type="xml">
+            <xpath expr="/form" position="attributes">
+                <attribute name="create">0</attribute>
+                <attribute name="edit">0</attribute>
+            </xpath>
+        </field>
+    </record>
+
 		<!-- override the automatically generated list view for purchase_contracts -->
 		<record model="ir.ui.view" id="purchase_contract_search_view">
 			<field name="name">purchase.contract.seach</field>
 			<field name="model">purchase.contract</field>
 			<field name="arch" type="xml">
 				<search string="Purchase Contract">
-					<field name="id" string="All" filter_domain="['|',
-		                ('poc_code','like',self),
-		                ('name','ilike',self)
-						]"/>
+					<field name="id" string="All" filter_domain="['|', ('poc_code','like',self), ('name','ilike',self)]"/>
 					<field name="poc_code"/>
 					<field name="name"/>
 					<field name="contract_type_id"/>
@@ -217,7 +194,7 @@
 			<field name="name">purchase.contract.tree</field>
 			<field name="model">purchase.contract</field>
 			<field name="arch" type="xml">
-				<tree string="Purchase Contract" colors="red:state == 'cancel_generate' ;red:state == 'terminate' ">
+				<tree string="Purchase Contract" colors="red:state=='cancel_generate';red:state=='terminate' ">
 					<field name="display_code"/>
 					<field name="contract_type_id"/>
 					<field name="name"/>
@@ -249,13 +226,6 @@
 			<field name="view_id" ref="purchase_contract_tree_view"/>
 		</record>
 
-		<!-- <record id="action_go_to_mycontract" model="ir.actions.act_url"> -->
-		<!-- <field name="name">Go to myContract</field> -->
-		<!-- <field name="type">ir.actions.act_url</field> -->
-		<!-- <field name="target">self</field> -->
-		<!-- <field name="url">http://localhost:8069/web?#page=0&amp;limit=80&amp;view_type=list&amp;model=nstda.gnc&amp;menu_id=796&amp;action=818 -->
-		<!-- </field> -->
-		<!-- </record> -->
 
 		<!-- ############################## Group Roles ############################## -->
 		<record model="ir.actions.act_window" id="action_purchase_contract_group_roles">
