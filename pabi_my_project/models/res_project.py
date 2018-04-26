@@ -107,7 +107,7 @@ class ResProject(LogCommon, models.Model):
     )
     proposal_program_id = fields.Many2one(
         'res.program',
-        string='Proposal Program',
+        string='Current Program',
     )
     external_fund_type = fields.Selection(
         [('government', '1. ภาครัฐ'),

@@ -21,7 +21,7 @@
                 <form string="Investment Asset">
                     <label for="name" class="oe_edit_only"/>
                     <h1>
-                        <field name="name" class="oe_inline" placeholder="Name"/> - 
+                        <field name="name" class="oe_inline" placeholder="Name"/> -
                         <field name="code" class="oe_inline" placeholder="Code"/>
                     </h1>
                     <group>
@@ -53,12 +53,21 @@
                             <field name="amount_plan_total"/>
                         </group>
                     </group>
-                    <group string="More Information" colspan="4">
-                        <field name="reason_purchase"/>
-                        <field name="reason_purchase_text"/>
-                        <field name="expect_output"/>
-                        <field name="planned_utilization"/>
-                        <field name="specification_summary"/>
+                    <group>
+                        <group string="More Information">
+                            <field name="reason_purchase"/>
+                            <field name="reason_purchase_text"/>
+                            <field name="expect_output"/>
+                            <field name="planned_utilization"/>
+                            <field name="specification_summary"/>
+                        </group>
+                        <group string="Dimensions">
+                            <field name="invest_asset_dimension1_id"/>
+                            <field name="invest_asset_dimension2_id"/>
+                            <field name="invest_asset_dimension3_id"/>
+                            <field name="invest_asset_dimension4_id"/>
+                            <field name="invest_asset_dimension5_id"/>
+                        </group>
                     </group>
                     <notebook>
                         <page string="Source of Funds">
@@ -251,6 +260,71 @@
         </record>
 
         <menuitem name="Investment Construction" id="menu_res_invest_construction" action="action_res_invest_construction" parent="menu_investment_structure" sequence="30"/>
+
+        # Asset Dimension
+        <record id="view_res_invest_asset_dimension_tree" model="ir.ui.view">
+            <field name="name">view.res.invest.asset.dimension.tree</field>
+            <field name="model">res.invest.asset.dimension</field>
+            <field name="arch" type="xml">
+                <tree string="Investment Asset Dimension">
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_res_invest_asset_dimension_form" model="ir.ui.view">
+            <field name="name">view.res.invest.asset.dimension.form</field>
+            <field name="model">res.invest.asset.dimension</field>
+            <field name="arch" type="xml">
+                <form string="Investment Asset Dimension">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_res_invest_asset_dimension_search" model="ir.ui.view">
+            <field name="name">view.res.invest.asset.dimension.search</field>
+            <field name="model">res.invest.asset.dimension</field>
+            <field name="arch" type="xml">
+                <search string="Investment Asset Dimension">
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_res_invest_asset_dimension" model="ir.actions.act_window">
+            <field name="name">Investment Asset Dimension</field>
+            <field name="res_model">res.invest.asset.dimension</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_invest_asset_dimension_tree"/>
+        </record>
+
+        <record id="action_view_res_invest_asset_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_res_invest_asset_form"/>
+            <field name="act_window_id" ref="action_res_invest_asset"/>
+        </record>
+        <record id="action_view_res_invest_asset_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_res_invest_asset_tree"/>
+            <field name="act_window_id" ref="action_res_invest_asset"/>
+        </record>
+
+        <menuitem name="Asset Dimension" id="menu_res_invest_asset_dimension" action="action_res_invest_asset_dimension" parent="menu_investment_structure" sequence="15"/>
 
     </data>
 </openerp>
