@@ -69,6 +69,7 @@ class BudgetFundRule(models.Model):
         string='Spending Rules',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        copy=True,
         help="Spending rule for activity groups",
     )
     asset_rule_line_ids = fields.One2many(
@@ -77,6 +78,7 @@ class BudgetFundRule(models.Model):
         string='Max Asset Price',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        copy=True,
         help="Maxmimum amount allow on each asset purchase",
     )
     state = fields.Selection(
@@ -137,7 +139,8 @@ class BudgetFundRule(models.Model):
             else:
                 if len(self.search([('template', '=', False),
                                     ('project_id', '=', rec.project_id.id),
-                                    ('fund_id', '=', rec.fund_id.id)])) > 1:
+                                    ('fund_id', '=', rec.fund_id.id),
+                                    ('state', '!=', 'cancel')])) > 1:
                     raise ValidationError(_('Duplicated Fund Rule'))
 
     @api.one

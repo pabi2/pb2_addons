@@ -425,6 +425,11 @@ class ResProject(LogCommon, models.Model):
             by distribute to the first AG first,
             show warning if released amount > planned amout
         """
+        # Not current year, no budget release allowed
+        if self.env['account.fiscalyear'].find() != fiscalyear.id:
+            raise ValidationError(
+                _('Not allow to release budget for fiscalyear %s!\nOnly '
+                  'current year budget is allowed.' % fiscalyear.name))
         for project in self:
             budget_plans = project.budget_plan_ids.\
                 filtered(lambda l: l.fiscalyear_id == fiscalyear)
