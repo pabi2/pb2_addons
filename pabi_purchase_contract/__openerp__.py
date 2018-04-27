@@ -9,7 +9,11 @@
 PABI2 - Purchase Contract Module
 ==================================
 
-    """,
+1) Purchase User -> Creator of document, see own OU
+2) Finance User -> Readonly on most field, can edit only some field **
+   (may need OCA access addon?)
+
+""",
     "website": "https://nstda.or.th/",
     "author": "Jakkrich.Cha",
     "license": "AGPL-3",

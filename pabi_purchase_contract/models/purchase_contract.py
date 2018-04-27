@@ -2,7 +2,6 @@
 import os
 from pytz import timezone
 from openerp import models, fields, api, _
-from openerp import SUPERUSER_ID
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta as rdelta
 from openerp.exceptions import ValidationError, except_orm
@@ -12,11 +11,18 @@ class PurchaseContract(models.Model):
     _name = 'purchase.contract'
     _description = 'Purchase Contract'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
-    _order = "org_id, year desc, running desc, poc_rev desc"
+    _order = 'org_id, fiscalyear_id desc, running desc, poc_rev desc'
 
+    name = fields.Char(
+        string='PO Name',
+        size=1000,
+        requried=True,
+        track_visibility='onchange',
+    )
     display_code = fields.Char(
-        string="PO No.",
-        compute='_compute_display_code'
+        string='Contract No.',
+        compute='_compute_display_code',
+        store=True,
     )
     requisition_id = fields.Many2one(
         'purchase.requisition',
@@ -33,15 +39,9 @@ class PurchaseContract(models.Model):
         related='requisition_id.is_central_purchase',
     )
     poc_code = fields.Char(
-        string='PO No.',
+        string='Contract Code.',
         size=1000,
         readonly=True
-    )
-    name = fields.Char(
-        string='PO Name',
-        size=1000,
-        requried=True,
-        track_visibility='onchange',
     )
     poc_rev = fields.Integer(
         string='Reversion',
@@ -63,8 +63,9 @@ class PurchaseContract(models.Model):
     operating_unit_id = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
-        related='org_id.operating_unit_id',
-        store=True,
+        default=lambda self: self.env['res.users'].
+        operating_unit_default_get(self._uid),
+        readonly=True,
     )
     contract_type_id = fields.Many2one(
         'purchase.contract.type',
@@ -73,8 +74,9 @@ class PurchaseContract(models.Model):
         track_visibility='onchange',
         required=True
     )
-    year = fields.Integer(
-        string='Year',
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscal Year',
         readonly=True
     )
     running = fields.Integer(
@@ -206,7 +208,7 @@ class PurchaseContract(models.Model):
          ('send', 'Sending'),
          ('close', 'Closed'),
          ('cancel_generate', 'Cancel Generated'),
-         ('terminate', 'Termination'),
+         ('terminate', 'Terminated'),
          ('delete', 'Delete'), ],
         string='Status',
         default='draft',
@@ -248,12 +250,12 @@ class PurchaseContract(models.Model):
     cancel_date = fields.Date(
         string='Cancel Date',
     )
-    termination_uid = fields.Many2one(
+    terminate_uid = fields.Many2one(
         'hr.employee',
-        string='Termination By',
+        string='Terminated By',
     )
-    termination_date = fields.Date(
-        string='Termination Date',
+    terminate_date = fields.Date(
+        string='Terminated Date',
     )
     reflow_uid = fields.Many2one(
         'hr.employee',
@@ -269,6 +271,10 @@ class PurchaseContract(models.Model):
     reversion_date = fields.Date(
         string='Reversion Date',
     )
+    _sql_constraints = [
+        ('code_uniq', 'UNIQUE(display_code)',
+         'The contract no must be unique!'),
+    ]
 
     @api.model
     def _default_requisition_id(self):
@@ -282,7 +288,7 @@ class PurchaseContract(models.Model):
         self.name = self.requisition_id.objective
         quotes = self.requisition_id.purchase_ids.\
             filtered(lambda l: l.state == 'done')
-        self.supplier_id = quotes and quotes[0].supplier_id or False
+        self.supplier_id = quotes and quotes[0].partner_id or False
         self.contract_amt = self.requisition_id.total_budget_value
 
     @api.multi
@@ -317,32 +323,27 @@ class PurchaseContract(models.Model):
                 _('You cannot create PO contract without Org!'))
         if not vals.get('action_date', False):
             raise ValidationError(_('No Action Date!'))
-        action_date = datetime.strptime(  # Action Date + 3 Months
-            vals['action_date'], '%Y-%m-%d') + rdelta(months=3)
+        Fiscal = self.env['account.fiscalyear']
+        fiscal_id = Fiscal.find(vals['action_date'])
+        fiscalyear = Fiscal.browse(fiscal_id)
         rev_no = vals.get('poc_rev', 0)
         # New Contract (CENTRAL-2016-322-R1)
-        year = action_date.year
         running = 0
         if rev_no == 0:
             running = self.sudo().search_count([
                 ('org_id', '=', create_org.id),
-                ('year', '=', year),
+                ('fiscalyear_id', '=', fiscalyear.id),
                 ('poc_rev', '=', 0)]) + 1
         else:  # Reversion (CO-51-2016-322-R1)
             running = vals.get('running', 0)
         org_str = create_org.code or create_org.name_short or 'N/A'
-        format_code = '%s-%s-%s' % (org_str, year, str(running))
+        format_code = '%s-%s-%s' % (org_str, fiscalyear.name, str(running))
         vals.update({'poc_rev': rev_no,
                      'poc_code': format_code,
-                     'year': year,
+                     'fiscalyear_id': fiscalyear.id,
                      'running': running,
                      'state': 'generate'})
         po_contract = super(PurchaseContract, self).create(vals)
-        return po_contract
-
-    @api.multi
-    def write(self, vals):
-        po_contract = super(PurchaseContract, self).write(vals)
         return po_contract
 
     @api.multi
@@ -359,19 +360,18 @@ class PurchaseContract(models.Model):
     def action_button_verify_doc(self):
         return self.write({
             'is_verify': True,
-            'verify_uid': self.env.user.employee_id or SUPERUSER_ID,
+            'verify_uid': self.env.user.employee_id.id,
             'verify_date': fields.Date.context_today(self), })
 
     @api.multi
     def action_button_send_doc(self):
-        employee = self.env.user.employee_id
         for rec in self:
             doc_count = self.env['ir.attachment'].search_count(
                 [('res_model', '=', 'purchase.contract'),
                  ('res_id', '=', rec.id)])
             if doc_count > 0:
                 rec.write({
-                    'send_uid': employee and employee.id or SUPERUSER_ID,
+                    'send_uid': self.env.user.employee_id.id,
                     'send_date': fields.Date.context_today(self),
                     'state': rec.verify_date and 'close' or 'send'
                 })
@@ -381,11 +381,10 @@ class PurchaseContract(models.Model):
 
     @api.multi
     def action_button_close(self):
-        employee = self.env.user.employee_id
         for rec in self:
             if rec.collateral_remand_date and rec.collateral_received_date:
                 rec.write({
-                    'close_uid': employee and employee.id or SUPERUSER_ID,
+                    'close_uid': self.env.user.employee_id.id,
                     'close_date': fields.Date.context_today(self),
                     'state': 'close'
                 })
@@ -396,8 +395,7 @@ class PurchaseContract(models.Model):
 
     @api.multi
     def action_button_reflow(self):
-        employee = self.env.user.employee_id
-        self.write({'reflow_uid': employee and employee.id or SUPERUSER_ID,
+        self.write({'reflow_uid': self.env.user.employee_id.id,
                     'reflow_date': fields.Date.context_today(self),
                     'state': 'generate'})
         return True
@@ -407,7 +405,7 @@ class PurchaseContract(models.Model):
         self.ensure_one()
         count_po_gen = self.sudo().search_count(
             [('poc_code', '=', self.poc_code), ('state', '=', 'generate')])
-        if count_po_gen == 0:
+        if count_po_gen == 0:  # No pending stateu "Generate", can reversion
             count_po_rev = self.sudo().search_count(
                 [('poc_code', '=', self.poc_code)])
             next_rev = count_po_rev
@@ -417,13 +415,12 @@ class PurchaseContract(models.Model):
                 [('res_model', '=', 'purchase.contract'),
                  ('res_id', '=', self.id)])
             for doc in docs:
-                revname = '_R%s.' % (next_rev - 1)
+                revname = '_R%s' % self.poc_rev
                 tempname = doc.name.replace(revname, '')
                 filename, file_extension = os.path.splitext(tempname)
                 name = '%s_R%s%s' % (filename, next_rev, file_extension)
                 doc.copy({'res_id': poc.id, 'name': name})
-            employee = self.env.user.employee_id
-            self.reflow_uid = employee and employee.id or SUPERUSER_ID
+            self.reflow_uid = self.env.user.employee_id.id,
             self.send_doc_date = fields.Date.context_today(self)
             form = self.env.ref(
                 'pabi_purchase_contract.purchase_contract_form_view', False)
@@ -439,7 +436,7 @@ class PurchaseContract(models.Model):
         else:
             raise except_orm(
                 _('Can not to be Reversion'),
-                _('The contract no. %s has not sent documents') %
+                _('The contract no. %s, not all documents are sent') %
                 (self.poc_code,))
 
     @api.multi
