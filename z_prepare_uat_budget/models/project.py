@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models, fields
-from openerp.exceptions import ValidationError
+from openerp import api, models
 
 
 class ResProject(models.Model):

@@ -281,7 +281,10 @@ class HRExpense(models.Model):
 
     @api.multi
     def write(self, vals):
-        self.ensure_one()
-        if self.pay_to == 'internal':  # For Internal Charge, no analytic_line
-            self = self.with_context(no_create_analytic_line=True)
+        pay_to = self.mapped('pay_to')
+        if 'internal' in pay_to:
+            if len(pay_to) == 1:
+                self = self.with_context(no_create_analytic_line=True)
+            else:
+                raise ValidationError(_('> 1 type of pay_to'))
         return super(HRExpense, self).write(vals)

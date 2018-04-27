@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="pabi_th_tax_report.view_account_tax_report_wizard"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='print_format']" position="before">
-                    <field name="async_process"/>
+                    <field name="async_process" groups="pabi_utils.group_see_own_spool_report"/>
                 </xpath>
             </field>
         </record>

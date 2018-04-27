@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # TODO refactor helper in order to act more like mixin
 # By using properties we will have a more simple signature in fuctions
 from collections import defaultdict

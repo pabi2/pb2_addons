@@ -5,13 +5,11 @@ from datetime import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 import openerp.addons.decimal_precision as dp
-from openerp.addons.l10n_th_account.models.res_partner \
-    import INCOME_TAX_FORM
-from openerp.addons.l10n_th_account.models.account_wht_cert \
-    import WHT_CERT_INCOME_TYPE, TAX_PAYER
+from .res_partner import INCOME_TAX_FORM
+from .account_wht_cert import WHT_CERT_INCOME_TYPE, TAX_PAYER
 
 
-class common_voucher(object):
+class CommonVoucher(object):
 
     @api.model
     def _to_invoice_currency(self, invoice, journal, amount):
@@ -36,7 +34,7 @@ class common_voucher(object):
         return amount
 
 
-class AccountVoucher(common_voucher, models.Model):
+class AccountVoucher(CommonVoucher, models.Model):
     _inherit = 'account.voucher'
 
     @api.multi
@@ -132,7 +130,18 @@ class AccountVoucher(common_voucher, models.Model):
     @api.multi
     def proforma_voucher(self):
         try:
-            return super(AccountVoucher, self).proforma_voucher()
+            res = super(AccountVoucher, self).proforma_voucher()
+            # Test reconcile auto for unreconcile undue vat
+            for voucher in self:
+                # auto reconcile special account, get all releated move_lines
+                v_mlines = voucher.mapped('move_id').mapped('line_id')
+                i_mlines = voucher.mapped('line_ids').mapped('invoice_id').\
+                    mapped('move_id').mapped('line_id')
+                tt_mlines = \
+                    voucher.mapped('recognize_vat_move_id').mapped('line_id')
+                mlines = v_mlines + i_mlines + tt_mlines
+                mlines.reconcile_special_account()
+            return res
         except psycopg2.OperationalError:
             raise ValidationError(
                 _('Multiple client accessing same resource!\n'
@@ -444,6 +453,12 @@ class AccountVoucher(common_voucher, models.Model):
         net_tax_currency, vtml = self.compute_net_tax(voucher,
                                                       company_currency,
                                                       vtml)
+        # remove invalid key fields from dict
+        valid_fields = self.env['account.move.line']._fields.keys()
+        for ml in vtml:
+            invalid_fields = list(set(ml.keys()) - set(valid_fields))
+            for f in invalid_fields:
+                del ml[f]
         # Create move line,
         lines = [(0, 0, ml) for ml in vtml]
         move = move_obj.browse(move_id)
@@ -700,7 +715,7 @@ class AccountVoucher(common_voucher, models.Model):
         return True
 
 
-class AccountVoucherLine(common_voucher, models.Model):
+class AccountVoucherLine(CommonVoucher, models.Model):
 
     _inherit = 'account.voucher.line'
 
@@ -830,19 +845,20 @@ class AccountVoucherLine(common_voucher, models.Model):
         return res
 
 
-class AccountVoucherTax(common_voucher, models.Model):
+class AccountVoucherTax(CommonVoucher, models.Model):
 
     _name = "account.voucher.tax"
     _description = "Voucher Tax"
     _order = 'sequence,invoice_id,name'
 
-    @api.one
+    @api.multi
     @api.depends('tax_amount', 'amount')
-    def _count_factor(self):
-        self.factor_tax = (self.amount != 0.0 and
-                           self.tax_amount / self.amount or 1.0)
-        self.factor_base = (self.base != 0.0 and
-                            self.base_amount / self.base or 1.0)
+    def _compute_count_factor(self):
+        for rec in self:
+            rec.factor_tax = (rec.amount != 0.0 and
+                              rec.tax_amount / rec.amount or 1.0)
+            rec.factor_base = (rec.base != 0.0 and
+                               rec.base_amount / rec.base or 1.0)
 
     voucher_id = fields.Many2one(
         'account.voucher',
@@ -931,11 +947,11 @@ class AccountVoucherTax(common_voucher, models.Model):
     )
     factor_base = fields.Float(
         string='Multipication factor for Base code',
-        compute='_count_factor',
+        compute='_compute_count_factor',
     )
     factor_tax = fields.Float(
         string='Multipication factor Tax code',
-        compute='_count_factor',
+        compute='_compute_count_factor',
     )
     wht_cert_income_type = fields.Selection(
         WHT_CERT_INCOME_TYPE,

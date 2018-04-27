@@ -22,7 +22,7 @@
                     <div name="xlsx.report">
                         <field name="state" invisible="1"/>
                         <field name="name" invisible="1"/>
-                        <div states="choose">
+                        <div states="choose" groups="pabi_utils.group_see_own_spool_report">
                             <field name="async_process"/><label for="async_process"/>
                         </div>
                         <div states="get">

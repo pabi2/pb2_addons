@@ -17,7 +17,7 @@ class AccountInvoice(models.Model):
     )
     retention_on_payment = fields.Boolean(
         string='Retention on Payment',
-        compute='_retention_on_payment',
+        compute='_compute_retention_on_payment',
         store=True,
         help="If checked, retention will done during payment",
     )
@@ -42,25 +42,26 @@ class AccountInvoice(models.Model):
             elif rec.state == 'open':
                 rec.date_paid = False
 
-    @api.one
+    @api.multi
     @api.depends('invoice_line.price_subtotal',
                  'tax_line.amount',
                  'amount_retention')
     def _compute_amount(self):
         super(AccountInvoice, self)._compute_amount()
-        self.amount_tax = sum(line.amount
-                              for line in self.tax_line)
-        amount_total = self.amount_untaxed + self.amount_tax
-        if not self.retention_on_payment:
-            self.amount_total = amount_total - self.amount_retention  # RET
-        else:
-            self.amount_total = amount_total
+        for rec in self:
+            rec.amount_tax = sum(line.amount for line in rec.tax_line)
+            amount_total = rec.amount_untaxed + rec.amount_tax
+            if not rec.retention_on_payment:
+                rec.amount_total = amount_total - rec.amount_retention  # RET
+            else:
+                rec.amount_total = amount_total
 
-    @api.one
+    @api.multi
     @api.depends('partner_id')
-    def _retention_on_payment(self):
-        self.retention_on_payment = \
-            self.env.user.company_id.retention_on_payment
+    def _compute_retention_on_payment(self):
+        for rec in self:
+            rec.retention_on_payment = \
+                self.env.user.company_id.retention_on_payment
 
     @api.multi
     def invoice_pay_customer(self):

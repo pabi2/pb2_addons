@@ -10,7 +10,7 @@
         <record id="seq_budget_fund_rule" model="ir.sequence">
             <field name="name">Budget Fund Rule</field>
             <field name="code">budget.fund.rule</field>
-            <field name="prefix">BG</field>
+            <field name="prefix">BG%(fy)s</field>
             <field name="padding">4</field>
             <field name="company_id" eval="False"/>
         </record>

@@ -143,7 +143,8 @@ class HRSalaryExpense(models.Model):
     @api.depends('line_ids.amount')
     def _compute_amount_total(self):
         for rec in self:
-            rec.amount_total = sum([x.amount for x in rec.line_ids])
+            lines = rec.line_ids.filtered(lambda l: l.amount > 0.0)
+            rec.amount_total = sum(lines.mapped('amount'))
 
     # kittiu: Just get data from eHR, no vailidation required at this moment
     # @api.multi
@@ -354,7 +355,7 @@ class HRSalaryLine(models.Model):
     account_id = fields.Many2one(
         'account.account',
         string='Account',
-        domain=[('type', '=', 'other')],
+        # domain=[('type', '=', 'other')],
     )
     amount = fields.Float(
         string='Amount',

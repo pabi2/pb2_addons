@@ -212,8 +212,8 @@ class BudgetPlanProjectAnalysisReportXLS(report_xls):
                 (_p.functional_area.code and
                  '[' + _p.functional_area.code + '] ' or '',
                  _p.functional_area.name_short and
-                 _p.functional_area.name_short or _p.functional_area.name
-                 or ''),
+                 _p.functional_area.name_short or
+                 _p.functional_area.name or ''),
              None, cell_style_value)
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
@@ -223,8 +223,9 @@ class BudgetPlanProjectAnalysisReportXLS(report_xls):
                 cell_style_title),
             ('program_group_value', 1, 0, 'text',
                 '%s%s' %
-                (_p.program_group.code and '[' + _p.program_group.code + '] '
-                 or '', _p.program_group.name_short and
+                (_p.program_group.code and
+                 '[' + _p.program_group.code + '] ' or
+                 '', _p.program_group.name_short and
                  _p.program_group.name_short or _p.program_group.name or ''),
                 None, cell_style_value),
         ]
@@ -246,8 +247,9 @@ class BudgetPlanProjectAnalysisReportXLS(report_xls):
                 cell_style_title),
             ('project_group_value', 1, 0, 'text',
                 '%s%s' %
-                (_p.project_group.code and '[' + _p.project_group.code + '] '
-                 or '', _p.project_group.name_short and
+                (_p.project_group.code and
+                 '[' + _p.project_group.code + '] ' or
+                 '', _p.project_group.name_short and
                  _p.project_group.name_short or _p.project_group.name or ''),
                 None, cell_style_value),
         ]
@@ -419,8 +421,9 @@ class BudgetPlanProjectAnalysisReportXLS(report_xls):
                     '%s%s' %
                     (line.project_id.code and
                      '[' + line.project_id.code + '] ' or '',
-                     line.project_id.name_short and line.project_id.name_short
-                     or line.project_id.name or ''), None, cell_style),
+                     line.project_id.name_short and
+                     line.project_id.name_short or
+                     line.project_id.name or ''), None, cell_style),
                 ('name', 1, 0, 'text', line.name, None, cell_style),
                 ('c_or_n', 1, 0, 'text', C_OR_N.get(line.c_or_n, None),
                     None, cell_style),
@@ -435,8 +438,9 @@ class BudgetPlanProjectAnalysisReportXLS(report_xls):
                     '%s%s' %
                     (line.program_id.code and
                      '[' + line.program_id.code + '] ' or '',
-                     line.program_id.name_short and line.program_id.name_short
-                     or line.program_id.name or ''), None, cell_style),
+                     line.program_id.name_short and
+                     line.program_id.name_short or
+                     line.program_id.name or ''), None, cell_style),
                 ('project_group', 1, 0, 'text',
                     '%s%s' %
                     (line.project_group_id.code and
@@ -477,8 +481,8 @@ class BudgetPlanProjectAnalysisReportXLS(report_xls):
                     (line.costcenter_id.code and
                      '[' + line.costcenter_id.code + '] ' or '',
                      line.costcenter_id.name_short and
-                     line.costcenter_id.name_short or line.costcenter_id.name
-                     or ''), None, cell_style),
+                     line.costcenter_id.name_short or
+                     line.costcenter_id.name or ''), None, cell_style),
                 ('owner_division', 1, 0, 'text',
                     '%s%s' %
                     (line.owner_division_id.code and

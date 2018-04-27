@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import xlwt
 from datetime import datetime
 from openerp.addons.report_xls.report_xls import report_xls

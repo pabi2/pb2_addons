@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models, _
-from openerp import tools
-from openerp.exceptions import ValidationError
+from openerp import api, fields, models
 from .account_activity import ActivityCommon
 from .budget_commit import CommitCommon
 from .budget_commit import CommitLineCommon
@@ -43,12 +41,6 @@ class PurchaseRequest(CommitCommon, models.Model):
         if vals.get('state') in ('draft', 'done', 'rejected'):
             self.release_all_committed_budget()
         return super(PurchaseRequest, self).write(vals)
-
-    @api.multi
-    def button_agree_and_done(self):
-        # Force done on small amount case, also release the budget if any
-        self.release_all_committed_budget()
-        return super(PurchaseRequest, self).button_agree_and_done()
 
 
 class PurchaseRequestLine(CommitLineCommon, ActivityCommon, models.Model):
@@ -100,8 +92,6 @@ class PurchaseRequestLine(CommitLineCommon, ActivityCommon, models.Model):
     #             '|', ('active', '=', True), ('active', '=', False)],
     #     readonly=True,
     # )
-
-
 
     @api.multi
     def name_get(self):

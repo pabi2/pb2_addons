@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models
-from openerp.addons.account_budget_activity_rpt.models.account_activity \
-    import ActivityCommon
+from .account_activity import ActivityCommon
 
 # During plannin, we may not need it.
 # class AccountBudgetLine(ActivityCommon, models.Model):

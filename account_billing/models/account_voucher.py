@@ -32,21 +32,21 @@ class AccountVoucher(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]})
 
-    @api.one
+    @api.multi
     def proforma_voucher(self):
-        # Write payment id back to Billing Document
-        if self.billing_id:
-            billing = self.billing_id
-            billing.payment_id = self.id
-            billing.state = 'billed'
+        for rec in self:
+            # Write payment id back to Billing Document
+            if rec.billing_id:
+                rec.billing_id.write({'payment_id': rec.id,
+                                      'state': 'billed'})
         return super(AccountVoucher, self).proforma_voucher()
 
-    @api.one
+    @api.multi
     def cancel_voucher(self):
-        # Set payment_id in Billing back to False
-        if self.billing_id:
-            billing = self.billing_id
-            billing.payment_id = False
+        for rec in self:
+            # Set payment_id in Billing back to False
+            if rec.billing_id:
+                rec.billing_id.payment_id = False
         return super(AccountVoucher, self).cancel_voucher()
 
     def onchange_billing_id(self, cr, uid, ids, partner_id, journal_id,
@@ -138,7 +138,7 @@ class AccountVoucher(models.Model):
         return account_move_lines
 
 
-class account_voucher_line(models.Model):
+class AccountVoucherLine(models.Model):
 
     _inherit = "account.voucher.line"
 

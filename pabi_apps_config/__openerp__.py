@@ -49,5 +49,6 @@ This module sits on top of other modules whose configuration is moved here.
     ],
     "data": [
         'views/pabi_apps_config.xml',
+        'views/pabi_menu_config.xml',
     ],
 }

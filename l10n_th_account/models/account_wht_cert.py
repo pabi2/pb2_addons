@@ -2,8 +2,7 @@
 from datetime import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
-from openerp.addons.l10n_th_account.models.res_partner \
-    import INCOME_TAX_FORM
+from .res_partner import INCOME_TAX_FORM
 
 WHT_CERT_INCOME_TYPE = [('1', '1.เงินเดือน ค่าจ้าง ฯลฯ 40(1)'),
                         ('2', '2.ค่าธรรมเนียม ค่านายหน้า ฯลฯ 40(2)'),

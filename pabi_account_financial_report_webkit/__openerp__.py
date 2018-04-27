@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 {
     'name': 'NSTDA :: PABI2 - Financial Reports - Webkit',
     'description': """

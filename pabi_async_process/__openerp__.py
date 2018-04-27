@@ -6,7 +6,7 @@
     'license': 'AGPL-3',
     'category': 'Generic Modules',
     'depends': [
-        'connector',
+        'pabi_utils',
         'purchase_invoice_plan',
         'pabi_procurement',
         'pabi_th_tax_report',

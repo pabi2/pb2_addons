@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, fields, _
+from openerp import models, api, _
 
 
 class ResProject(models.Model):
@@ -65,4 +65,35 @@ class ResProject(models.Model):
                 'messages': e,
             }
             self._cr.rollback()
+        return res
+
+    @api.model
+    def get_all_fy_budget_release(self, project_code):
+        """ Return result as dict i.e., {'2018': 234, '2019': 456} """
+        res = {
+            'is_success': False,
+            'result': False,
+            'messages': False,
+        }
+        project = self.name_search(project_code, operator='=')
+        if len(project) != 1:
+            res['messages'] = [_('%s not found!') % project_code]
+        else:
+            result = {}
+            p = self.browse(project[0][0])
+            for l in p.summary_expense_ids:
+                result[l.fiscalyear_id.name] = l.released_amount
+            res['is_success'] = True
+            res['result'] = result
+        return res
+
+    @api.model
+    def get_current_fy_budget_release(self, project_code):
+        """ Return result as float """
+        res = self.get_all_fy_budget_release(project_code)
+        if res['is_success']:
+            fiscalyear_id = self.env['account.fiscalyear'].find()
+            fiscal = self.env['account.fiscalyear'].browse(fiscalyear_id)
+            result = res['result'] or {}
+            res['result'] = result.get(fiscal.name, 0.0)
         return res

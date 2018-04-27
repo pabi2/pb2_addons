@@ -376,11 +376,12 @@ class AccountBudget(models.Model):
             rec.budgeted_expense = sum(amounts)
             rec.budgeted_overall = rec.budgeted_revenue - rec.budgeted_expense
 
-    @api.one
+    @api.multi
     @api.depends('fiscalyear_id')
     def _compute_date(self):
-        self.date_from = self.fiscalyear_id.date_start
-        self.date_to = self.fiscalyear_id.date_stop
+        for rec in self:
+            rec.date_from = rec.fiscalyear_id.date_start
+            rec.date_to = rec.fiscalyear_id.date_stop
 
     @api.multi
     def _compute_commitment_summary_line_ids(self):
@@ -454,9 +455,6 @@ class AccountBudget(models.Model):
     @api.multi
     def _validate_future_with_commit(self):
         for budget in self:
-            print budget.budget_level_id.check_future_with_commit
-            print budget.future_plan
-            print budget.commit_amount
             if budget.budget_level_id.check_future_with_commit:
                 if budget.future_plan < budget.commit_amount:
                     raise ValidationError(

@@ -129,8 +129,11 @@ class sale_order(models.Model):
     @api.one
     def _check_invoice_plan(self):
         if self.use_invoice_plan:
-            obj_precision = self.env['decimal.precision']
-            prec = obj_precision.precision_get('Account')
+            # kittiu: problem with decimal, so we dicide to test with 0
+            # obj_precision = self.env['decimal.precision']
+            # prec = obj_precision.precision_get('Account')
+            prec = 0
+            # --
             for order_line in self.order_line:
                 subtotal = self.price_include and \
                     order_line.product_uom_qty * order_line.price_unit or \

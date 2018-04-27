@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory for Budget XLSX Reports -->
+        <record model="document.directory" id="dir_account_reports">
+            <field name="name">Account Reports</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        # Partner List
+        <record id="xlsx_report_partner_list" model="ir.attachment">
+            <field name="res_model">xlsx.report.partner.list</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_partner_list.xlsx</field>
+            <field name="name">Partner List</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Partner List Report': {
+                        '_HEAD_': {
+                            'B1': 'category_ids${value and ", ".join(value.mapped("name")) or ""}',
+                            'B2': 'customer${value and "X" or ""}',
+                            'B3': 'supplier${value and "X" or ""}',
+                        },
+                        'results': {
+                            'A6': 'search_key${value or ""}',
+                            'B6': 'display_name${value or ""}',
+                            'C6': 'category_id.name${value or ""}',
+                            'D6': 'tag_ids${value and ", ".join(value.mapped("name")) or ""}',
+                            'E6': 'street${value or ""}',
+                            'F6': 'street2${value or ""}',
+                            'G6': 'township_id.name${value or ""}',
+                            'H6': 'district_id.name${value or ""}',
+                            'I6': 'province_id.name${value or ""}',
+                            'J6': 'country_id.name${value or ""}',
+                            'K6': 'zip${value or ""}',
+                            'L6': 'vat${value or ""}',
+                            'M6': 'taxbranch${value or ""}',
+                            'N6': 'mobile${value or ""}',
+                            'O6': 'fax${value or ""}',
+                            'P6': 'website${value or ""}',
+                            'Q6': 'email${value or ""}',
+                            'R6': 'comment${value or ""}',
+                            'S6': 'prtransformty_account_payable.code${value or ""}',
+                            'T6': 'prtransformty_account_payable.name${value or ""}',
+                            'U6': 'prtransformty_account_receivable.code${value or ""}',
+                            'V6': 'prtransformty_account_receivable.name${value or ""}',
+                            'W6': 'prtransformty_supplier_payment_term.name${value or ""}',
+                            'X6': 'prtransformty_payment_term.name${value or ""}',
+                            'Y6': 'credit${value or ""}',
+                            'Z6': 'debit${value or ""}',
+                            'AA6': 'bank_ids${value and "\\skiprow".join([x.acc_number for x in value]) or ""}',
+                            'AB6': 'bank_ids${value and "\\skiprow".join([x.bank.code for x in value]) or ""}',
+                            'AC6': 'bank_ids${value and "\\skiprow".join([x.partner_id.display_name for x in value]) or ""}',
+                            'AD6': 'bank_ids${value and "\\skiprow".join([x.active and "X" or "" for x in value]) or ""}',
+                            'AE6': 'bank_ids${value and "\\skiprow".join([x.default and "X" or "" for x in value]) or ""}',
+                            'AF6': 'income_tax_form${value and value.upper() or ""}',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+        # Advance Status
+        <record id="xlsx_report_advance_status" model="ir.attachment">
+            <field name="res_model">xlsx.report.advance.status</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_advance_status.xlsx</field>
+            <field name="name">Advance Status</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Advance Status Report': {
+                        '_HEAD_': {
+                            'B2': '${date.today()}#{number_format=date}',
+                        },
+                        'results': {
+                            'A4': 'operating_unit_id.name${value or ""}',
+                            'B4': 'number${value or ""}',
+                            'C4': 'invoice_id.number${value or ""}',
+                            'D4': 'remark${value or ""}',
+                            'E4': 'invoice_id.date_invoice#{number_format=date}',
+                            'F4': 'date_due#{number_format=date}',
+                            'G4': 'employee_id.employee_code${value or ""}',
+                            'H4': 'employee_id${value and value.first_name + " " + value.last_name or ""}',
+                            'I4': 'amount_advanced${value or 0.0}',
+                            'J4': 'amount_clearing_0${value or 0.0}',
+                            'K4': 'amount_clearing_1${value or 0.0}',
+                            'L4': 'amount_clearing_2${value or 0.0}',
+                            'M4': 'amount_clearing_3${value or 0.0}',
+                            'N4': 'amount_to_clearing${value or 0.0}',
+                        }
+                    },
+                    'Summary': {
+                        '_HEAD_': {
+                            'B2': '${date.today()}#{number_format=date}',
+                        },
+                        '_BI_': {
+                            'A4': {
+                                'df': 'Advance Status Report',
+                                # Group by A and add Subtotal (so we use pivot)
+                                # By scripting, we need result = ...
+                                'oper_code': """
+df = df[["A", "J", "K", "L", "M", "N"]]
+groupby = ["A"]
+sum_cols = ["J", "K", "L", "M", "N"]
+result = pd.pivot_table(df, index=groupby,
+                      values=sum_cols,
+                      aggfunc=np.sum,
+                      fill_value=0,
+                      margins=True,
+                      margins_name="Total")
+                                """,
+                            },
+                        },
+                    },
+                    'Detailed Summary': {
+                        '_HEAD_': {
+                            'B2': '${date.today()}#{number_format=date}',
+                        },
+                        '_BI_': {
+                            'A4': {
+                                'df': 'Advance Status Report',
+                                # Group by A, H. User will have to do subtotal themselves
+                                'oper_code': 'df[["A", "H", "J", "K", "L", "M", "N"]].groupby(["A", "H"]).sum()',
+                            },
+                        },
+                    },
+                }
+            }
+          </field>
+        </record>
+
+        # Supplier Invoice Detail
+        <record id="xlsx_report_supplier_invoice_detail" model="ir.attachment">
+            <field name="res_model">xlsx.report.supplier.invoice.detail</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_supplier_invoice_detail.xlsx</field>
+            <field name="name">Supplier Invoice Detail</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Supplier Invoice Detail Report': {
+                        '_HEAD_': {
+                            'B1': 'operating_unit_ids${value and ", ".join(value.mapped("name")) or ""}',
+                            'B2': 'open${value and "X" or ""}',
+                            'B3': 'paid${value and "X" or ""}',
+                        },
+                        'results': {
+                            'A6': 'partner_id.search_key${value or ""}',
+                            'B6': 'partner_id.display_name${value or ""}',
+                            'C6': 'operating_unit_id.name${value or ""}',
+                            'D6': 'supplier_invoice_number${value or ""}',
+                            'E6': 'purchase_billing_id.name${value or ""}',
+                            'F6': 'number${value or ""}',
+                            'G6': 'date_invoice#{number_format=date}',
+                            'H6': 'date_due#{number_format=date}',
+                            'I6': 'source_document_id${value and value.display_name or ""}',
+                            'J6': 'residual#{number_format=number}',
+                            'K6': 'amount_untaxed#{number_format=number}',
+                            'L6': 'amount_tax#{number_format=number}',
+                            'M6': 'amount_total#{number_format=number}',
+                            'N6': 'currency_id.name${value or ""}',
+                            'O6': 'tax_line${value and value[0].name or ""}',
+                            'P6': 'payment_ids${value and "\\skiprow".join([x.document_id.narration or "" for x in value]) or ""}',
+                            'Q6': 'payment_ids${value and "\\skiprow".join([x.document_id.number or "" for x in value]) or ""}',
+                            'R6': 'payment_ids${value and "\\skiprow".join([x.document_id.payment_export_id.name or "" for x in value]) or ""}',
+                            'S6': 'payment_ids${value and "\\skiprow".join([x.document_id.payment_type and x.document_id.payment_type.title() or "" for x in value]) or ""}',
+                            'T6': 'payment_ids${value and "\\skiprow".join([x.document_id.number_cheque or "" for x in value]) or ""}',
+                            'U6': 'payment_ids${value and "\\skiprow".join([x.document_id.tax_line_wht.name or "" for x in value]) or ""}',
+                            'V6': 'payment_ids${value and "\\skiprow".join([str(sum(x.document_id.tax_line_wht.mapped("amount"))) or "" for x in value]) or ""}#{number_format=number}',
+                            'W6': 'user_id.display_name${value or ""}',
+                            'X6': 'state${value and value.title() or ""}',
+                        },
+                    },
+                }
+            }
+          </field>
+        </record>
+
+        # Cheque Register
+        <record id="xlsx_report_cheque_register" model="ir.attachment">
+            <field name="res_model">xlsx.report.cheque.register</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_cheque_register.xlsx</field>
+            <field name="name">Cheque Register</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Cheque Register Report': {
+                        '_HEAD_': {
+                            'B1': 'cheque_lot_ids${value and ", ".join(value.mapped("name")) or ""}',
+                            'B2': 'number_from${value or ""}',
+                            'B3': 'number_to${value or ""}',
+                            'B4': 'status${value and value.title() or ""}',
+                        },
+                        'results': {
+                            'A7': 'journal_id.display_name${value or ""}',
+                            'B7': 'cheque_lot_id.name${value or ""}',
+                            'C7': 'number${value or ""}',
+                            'D7': 'voucher_id.number${value or ""}',
+                            'E7': 'voucher_id.amount${value or ""}',
+                            'F7': 'void${value and "X" or ""}',
+                            'G7': 'note${value or ""}',
+                            'H7': 'payment_export_id.name${value or ""}',
+                            'I7': 'cheque_lot_id.state${value and value.title() or ""}',
+                        },
+                        '_TAIL_0': {
+                            'D7': '${"TOTAL"}#{font=bold;align=center;fill=blue}',
+                            'E7': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+    </data>
+</openerp>

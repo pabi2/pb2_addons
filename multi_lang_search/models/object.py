@@ -11,8 +11,7 @@ ALLOWED_OPS = set(['ilike', 'like', '='])
 @tools.ormcache(skiparg=0)
 def _get_rec_names(self):
     "List of fields to search into"
-    self._cr.execute("SELECT id from ir_model where model = '%s'"
-                     % (str(self._model)))
+    self._cr.execute("SELECT id from ir_model where model = %s", (self._name,))
     model_id = self._cr.fetchone()
     model_id = model_id and model_id[0] or False
     model = self.env['ir.model'].browse(model_id)
@@ -92,9 +91,9 @@ def _extend_search_results_translation(self, sub_domain):
         self._cr.execute("""
             SELECT src
             FROM ir_translation
-            WHERE value ilike '%s' AND
-                name = '%s'
-        """ % (value, trans_name))
+            WHERE value ilike %s AND
+                name = %s
+        """, (value, trans_name))
         res = self._cr.fetchone()
         source_value = res and res[0] or False
         if source_value:

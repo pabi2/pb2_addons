@@ -66,6 +66,8 @@ class BPCommon(Common):
         # readonly=True,
         default=lambda self: self.env['account.period'].find().fiscalyear_id,
         track_visibility='onchange',
+        readonly=True,
+        states={'1_draft': [('readonly', False)]},
     )
     date_from = fields.Date(
         string='Start Date',

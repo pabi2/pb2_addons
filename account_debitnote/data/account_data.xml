@@ -9,7 +9,7 @@
         </record>
         <record forcecreate="1" id="central_contract_clearing_journal" model="account.journal">
             <field name="name">Sales Debit Note Journal</field>
-            <field name="code">SDNJ</field> 
+            <field name="code">SDNJ</field>
             <field name="type">sale_debitnote</field>
             <field name="sequence_id" ref="sale_debit_note_sequence"/>
             <field name="user_id" ref="base.user_root"/>
@@ -22,7 +22,7 @@
         </record>
         <record forcecreate="1" id="central_contract_clearing_journal_purchase" model="account.journal">
             <field name="name">Purchase Debit Note Journal</field>
-            <field name="code">PDNJ</field> 
+            <field name="code">PDNJ</field>
             <field name="type">purchase_debitnote</field>
             <field name="sequence_id" ref="purchase_debit_note_sequence"/>
             <field name="user_id" ref="base.user_root"/>

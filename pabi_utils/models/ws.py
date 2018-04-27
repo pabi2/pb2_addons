@@ -141,11 +141,11 @@ class PABIUtilsWS(models.AbstractModel):
                                                          line_dict)
                 final_line_dict.append((0, 0, line_dict))
             rec_dict[line_field] = final_line_dict
-        rec.create(rec_dict)
+        obj = rec.create(rec_dict)
         res = {
             'is_success': True,
             'result': {
-                'id': rec.id,
+                'id': obj.id,
             },
             'messages': _('Record created successfully'),
         }
@@ -159,7 +159,8 @@ class PABIUtilsWS(models.AbstractModel):
             if key in rec_dict.keys() and rec._fields[key].type == 'many2one':
                 model = rec._fields[key].comodel_name
                 if rec_dict[key] and isinstance(rec_dict[key], basestring):
-                    values = self.env[model].name_search(rec_dict[key])
+                    values = self.env[model].name_search(rec_dict[key],
+                                                         operator='=')
                     if len(values) > 1:
                         raise ValidationError(
                             _('%s match more > 1 record.') % rec_dict[key])

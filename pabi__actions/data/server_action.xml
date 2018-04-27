@@ -35,7 +35,7 @@
             <field name="code">self.write(cr, uid, context.get('active_ids', []), {'state': 'accept'}, context=context)</field>
         </record>
         # PO Service to Invoice
-        <record id="action_pr_to_po" model="ir.actions.server">
+        <record id="action_pr_to_inv" model="ir.actions.server">
             <field name="name">PO > WA > IN > IV > BL</field>
             <field name="condition">True</field>
             <field name="type">ir.actions.server</field>

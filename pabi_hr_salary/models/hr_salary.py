@@ -105,6 +105,7 @@ class HRSalarySummary(models.Model):
             activity_group_id, sum(amount) as amount
             from hr_salary_line
             where activity_group_id is not null
+            and amount > 0.0
             group by salary_id, activity_group_id
         """
         tools.drop_view_if_exists(cr, self._table)

@@ -24,8 +24,8 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def invoice_open(self):
-        """ Overwrite """
-        """ Change po.invoice_ids to all invoice with reference PO """
+        """ Overwrite
+        Change po.invoice_ids to all invoice with reference PO """
         self.ensure_one()
         Invoice = self.env['account.invoice']
         Data = self.env['ir.model.data']

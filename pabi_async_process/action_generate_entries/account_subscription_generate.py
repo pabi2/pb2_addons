@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-import ast
-
 from openerp import models, api, fields, _
 from ..models.common import PabiAsync
-
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import FailedJobError

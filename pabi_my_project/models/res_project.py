@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-import time
 from openerp import models, api, fields, _
 from openerp import tools
 from openerp.exceptions import ValidationError
@@ -36,6 +35,11 @@ class ResProject(LogCommon, models.Model):
         related='state',
         help="For display purposes",
     )
+    lock_release = fields.Boolean(
+        string='Lock Budget Release',
+        default=False,
+        help="If lock_budget is checked, release budget is not allowed",
+    )
     date_start = fields.Date(
         string='Start Date',
     )
@@ -44,6 +48,9 @@ class ResProject(LogCommon, models.Model):
     )
     date_end = fields.Date(
         string='End Date',
+    )
+    grace_period_date_end = fields.Date(
+        string='Grace Period End Date',
     )
     project_duration = fields.Integer(
         string='Duration',
@@ -463,7 +470,8 @@ class ResProject(LogCommon, models.Model):
                 # Find new budgets for this project
                 budgets = self.find_active_project_budget(
                     proj.fiscalyear_ids.ids, [proj.program_id.id])
-                budgets.sync_budget_my_project()
+                if budgets:
+                    budgets.sync_budget_my_project()
 
     @api.model
     def _prepare_fiscal_plan_lines(self, project, budget_method):
@@ -735,6 +743,11 @@ class ResProjectBudgetPlan(models.Model):
         # If budget line table is changed at least 1 field, mark synced = False
         if len(set(changes).intersection(test_keys)) > 0:
             vals.update({'synced': False})  # Line updated
+        if 'released_amount' in vals:
+            for rec in self:
+                if rec.project_id.lock_release and \
+                        vals['released_amount'] != rec.released_amount:
+                    raise ValidationError(_('Budget released is locked!'))
         return super(ResProjectBudgetPlan, self).write(vals)
 
     @api.multi

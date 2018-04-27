@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <menuitem name="External Fund Rule" id="menu_budget_external_fund_rule" parent="account_budget_activity.menu_action_account_budget_config" sequence="140"/>
+        <menuitem name="External Fund Rule" id="menu_budget_external_fund_rule" parent="pabi_my_project.menu_main_project" sequence="20"/>
 
         # Fund Rule
         <record id="view_budget_fund_rule_tree" model="ir.ui.view">
@@ -13,7 +13,21 @@
                     <field name="name"/>
                     <field name="project_id"/>
                     <field name="fund_id"/>
+                    <field name="template_id"/>
+                    <field name="create_uid"/>
                     <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_tree" model="ir.ui.view">
+            <field name="name">view.account.tree</field>
+            <field name="model">account.account</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="user_type"/>
                 </tree>
             </field>
         </record>
@@ -29,7 +43,6 @@
                         <button name="action_draft" string="Set to Draft" type="object" states="cancel"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
                     </header>
-
                     <label for="name" class="oe_edit_only"/>
                     <h1>
                         <field name="name" readonly="1" required="0" class="oe_inline" placeholder="Name"/>
@@ -44,6 +57,7 @@
                         <group>
                             <field name="planned_budget"/>
                             <field name="active"/>
+                            <field name="create_uid" readonly="1"/>
                         </group>
                     </group>
                     <notebook>
@@ -54,11 +68,14 @@
                                     <field name="project_id" invisible="1"/>
                                     <field name="fund_id" invisible="1"/>
                                     <field name="expense_group_id"/>
-                                    <field name="account_ids" widget="many2many_tags"/>
+                                    <field name="account_ids" widget="many2many_tags"
+                                      context="{'tree_view_ref': 'pabi_budget_fund_rule.view_account_tree'}"/>
                                     <field name="activity_ids" widget="many2many_tags"/>
+                                    <field name="amount_init" sum="Total"/>
                                     <field name="amount" required="1" sum="Total"/>
                                     <field name="max_spending_percent" required="1"/>
                                     <field name="amount_consumed" sum="Total"/>
+                                    <field name="percent_consumed"/>
                                 </tree>
                             </field>
                         </page>
@@ -75,6 +92,10 @@
                         </page>
                     </notebook>
                 </form>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
             </field>
         </record>
 
@@ -84,6 +105,17 @@
             <field name="arch" type="xml">
                 <search string="Fund">
                     <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="fund_id"/>
+                    <field name="project_id"/>
+                    <field name="template_id"/>
+                    <field name="create_uid"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Created by" domain="[]" context="{'group_by':'create_uid'}"/>
+                        <filter string="Fund" domain="[]" context="{'group_by':'fund_id'}"/>
+                        <filter string="Project" domain="[]" context="{'group_by':'project_id'}"/>
+                        <filter string="Template" domain="[]" context="{'group_by':'template_id'}"/>
+                    </group>
+
                 </search>
             </field>
         </record>
@@ -153,6 +185,7 @@
                                     <field name="expense_group_id"/>
                                     <field name="account_ids" widget="many2many_tags"/>
                                     <field name="activity_ids" widget="many2many_tags"/>
+                                    <field name="max_spending_percent" required="1"/>
                                 </tree>
                             </field>
                         </page>

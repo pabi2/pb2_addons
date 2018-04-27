@@ -216,6 +216,14 @@ class HRExpense(models.Model):
         invoice.amount_expense_request = invoice.amount_total
         return invoice
 
+    @api.model
+    def create(self, vals):
+        """ If this EX is created for a PR, release all committed budget """
+        if 'origin_pr_id' in vals and not vals['origin_pr_id']:
+            pr = self.env['purchase.request'].browse(vals['origin_pr_id'])
+            pr.release_all_committed_budget()
+        return super(HRExpense, self).create(vals)
+
 
 class HRExpenseAdvanceDueHistory(models.Model):
     _name = 'hr.expense.advance.due.history'

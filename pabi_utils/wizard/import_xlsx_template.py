@@ -6,7 +6,7 @@ import xlwt
 import itertools
 import cStringIO
 import time
-from datetime import datetime as dt
+from datetime import date, datetime as dt
 from openerp.tools import float_compare
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError, RedirectWarning
@@ -15,7 +15,7 @@ from openerp.tools.safe_eval import safe_eval as eval
 
 def get_field_condition(field):
     """ i..e, 'field${value > 0 and value or False}' """
-    if '${' in field and '}' in field:
+    if field and '${' in field and '}' in field:
         i = field.index('${')
         j = field.index('}', i)
         cond = field[i + 2:j]
@@ -29,7 +29,7 @@ def get_field_condition(field):
 
 def get_line_max(line_field):
     """ i.e., line_field = line_ids[100], max = 100 else 0 """
-    if '[' in line_field and ']' in line_field:
+    if line_field and '[' in line_field and ']' in line_field:
         i = line_field.index('[')
         j = line_field.index(']', i)
         max_str = line_field[i + 1:j]
@@ -138,6 +138,7 @@ class ImportXlsxTemplate(models.TransientModel):
         eval_context = {'float_compare': float_compare,
                         'time': time,
                         'datetime': dt,
+                        'date': date,
                         'env': self.env,
                         'context': self._context,
                         'value': False,

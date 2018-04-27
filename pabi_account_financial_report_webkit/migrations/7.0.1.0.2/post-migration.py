@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 def migrate(cr, version):
     if not version:
         # only run at first install

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-import math
-from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from openerp import models, api
 
 
 class StockPicking(models.Model):

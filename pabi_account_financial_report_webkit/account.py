@@ -12,7 +12,6 @@ class AccountAccount(orm.Model):
                  "the General Ledger report (the webkit one only), "
                  "only centralized amounts per period."),
     }
-
     _defaults = {
         'centralized': False,
     }
