@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
 	<data noupdate="0">
-		<!--
-				1) User by Org -> เห็นเฉพาะของ Org ทำได้ทุกอย่าง กดปุ่มได้เกือบหมด เว้นบางปุ่ม เช่น Reflow / Close
-				2) Read All -> เห็ฯอย่างเดียวทำอะไรไม่ได้เลย
-				3) Admin -> เห็นหมด ทำได้หมดทุกอย่าง
-				4) Law -> เห็นอย่างเดียว + กดปุ่มได้บางปุ่ม เช่น Reflow / Verify
-				5) Finance ไม่เห็นปุ่มเลย แก้ได้บางฟิลด์ (อันไหนยังไม่รู้)
-		 -->
 
 		<!-- Contract User by Org -->
 		<record id="group_pabi_purchase_contract_user" model="res.groups">

@@ -4,12 +4,12 @@
 
         <record id="group_budget_carry_over" model="res.groups">
             <field name="name">Perform budget carry over</field>
-            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="category_id" ref="pabi_base.module_category_account_budget"/>
         </record>
 
         <record id="group_project_balance_carry_forward" model="res.groups">
             <field name="name">Perform project balance carry forward</field>
-            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="category_id" ref="pabi_base.module_category_account_budget"/>
         </record>
 
     </data>

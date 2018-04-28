@@ -210,14 +210,38 @@
 			<field name="view_id" ref="purchase_contract_tree_view"/>
 		</record>
 
-
 		<!-- top level menu: no parent -->
-		<menuitem id="main_purchase_contract_menu" name="Purchase Contract"/>
-		<menuitem id="purchase_contract_sub_menu" name="Contract Management" parent="main_purchase_contract_menu" sequence="1"/>
+		<menuitem id="main_purchase_contract_menu" name="Contract (PO)" sequence="62"
+			groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close"/>
+		<menuitem id="purchase_contract_sub_menu" name="Contract Management" parent="main_purchase_contract_menu" sequence="1"
+			groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close"/>
 		<menuitem id="purchase_contract_menu" name="Purchase Contract" parent="purchase_contract_sub_menu" action="purchase_contract_action" sequence="1"/>
 		<menuitem id="purchase_contract_accept_menu" name="Waiting for Accept" parent="purchase_contract_sub_menu" action="purchase_contract_accept_action" sequence="1"/>
 
-		<menuitem id="purchase_contract_config" name="Configuration" parent="purchase_contract_sub_menu" sequence="3"/>
+		<!-- Collateral / Type -->
+		<record model="ir.actions.act_window" id="purchase_contract_type">
+			<field name="name">Contract Type</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">purchase.contract.type</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="purchase_contract_collateral">
+			<field name="name">Contract Collateral</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">purchase.contract.collateral</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem id="purchase_contract_config" name="Configuration" parent="purchase_contract_sub_menu" sequence="3"
+			groups="purchase.group_purchase_manager"/>
+
+		<menuitem id="menu_purchase_contract_type" name="Contract Type" parent="purchase_contract_config" sequence="1"
+			groups="purchase.group_purchase_manager"/>
+		<menuitem id="menu_purchase_contract_collateral" name="Contract Collateral" parent="purchase_contract_config" sequence="2"
+			groups="purchase.group_purchase_manager"/>
 
 
 	</data>

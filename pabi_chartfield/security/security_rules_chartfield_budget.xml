@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="1">
+    <data>
 
         <!--Section-->
         <record id="rule_res_section_budget_user" model="ir.rule">
