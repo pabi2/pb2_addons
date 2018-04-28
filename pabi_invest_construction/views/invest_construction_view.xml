@@ -3,7 +3,7 @@
     <data>
 
         <!-- Top menu item -->
-          <menuitem name="Project (C)" id="menu_main_construction" sequence="40"
+          <menuitem name="Project-C" id="menu_main_construction" sequence="55"
             groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
 
         <menuitem name="Construction Projects" id="menu_construction" parent="menu_main_construction" sequence="1"

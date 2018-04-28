@@ -36,7 +36,7 @@ class PurchaseContract(models.Model):
     )
     is_central_purchase = fields.Boolean(
         string="Central Purchase",
-        related='requisition_id.is_central_purchase',
+        compute='_compute_requisition_related',
     )
     poc_code = fields.Char(
         string='Contract Code.',
@@ -110,8 +110,7 @@ class PurchaseContract(models.Model):
     currency_id = fields.Many2one(
         'res.currency',
         string='Currency',
-        ondelete='set null',
-        related='requisition_id.currency_id',
+        compute='_compute_requisition_related',
     )
     num_of_period = fields.Integer(
         string='Period',
@@ -122,13 +121,13 @@ class PurchaseContract(models.Model):
     purchase_type_id = fields.Many2one(
         'purchase.type',
         string='Type',
-        related='requisition_id.purchase_type_id',
+        compute='_compute_requisition_related',
     )
     purchase_method_id = fields.Many2one(
         'purchase.method',
         ondelete='set null',
         string='Purchase Method',
-        related='requisition_id.purchase_method_id',
+        compute='_compute_requisition_related',
     )
     collateral_performance_amt = fields.Float(
         string='Collateral performance amount',
@@ -290,6 +289,16 @@ class PurchaseContract(models.Model):
             filtered(lambda l: l.state == 'done')
         self.supplier_id = quotes and quotes[0].partner_id or False
         self.contract_amt = self.requisition_id.total_budget_value
+
+    @api.multi
+    def _compute_requisition_related(self):
+        for rec in self:
+            if not rec.requisition_id:
+                continue
+            rec.is_central_purchase = rec.requisition_id.is_central_purchase
+            rec.currency_id = rec.requisition_id.currency_id
+            rec.purchase_type_id = rec.requisition_id.purchase_type_id
+            rec.purchase_method_id = rec.requisition_id.purchase_method_id
 
     @api.multi
     @api.depends('requisition_id')

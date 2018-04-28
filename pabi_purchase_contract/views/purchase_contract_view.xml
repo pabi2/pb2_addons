@@ -211,7 +211,7 @@
 		</record>
 
 		<!-- top level menu: no parent -->
-		<menuitem id="main_purchase_contract_menu" name="Contract (PO)" sequence="62"
+		<menuitem id="main_purchase_contract_menu" name="PO Contract" sequence="62"
 			groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close"/>
 		<menuitem id="purchase_contract_sub_menu" name="Contract Management" parent="main_purchase_contract_menu" sequence="1"
 			groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close"/>
