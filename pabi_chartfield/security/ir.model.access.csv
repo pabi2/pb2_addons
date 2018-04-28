@@ -1,8 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_cost_control,access_cost_control,model_cost_control,pabi_base.group_budget_user,1,1,1,1
 access_cost_control_type,access_cost_control_type,model_cost_control_type,,1,0,0,0
-access_hr_config_settings,access_hr_config_settings,model_hr_config_settings,,1,0,0,0
-access_account_config_settings,access_account_config_settings,model_account_config_settings,,1,0,0,0
-access_purchase_config_settings,access_purchase_config_settings,model_purchase_config_settings,,1,0,0,0
 access_budget_unit_summary,access_budget_unit_summary,model_budget_unit_summary,,1,0,0,0
 access_budget_commitment_summary,access_budget_commitment_summary,model_budget_commitment_summary,,1,0,0,0

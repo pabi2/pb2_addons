@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data noupdate='0'>
-        <record model="ir.module.category" id="base.module_category_pabi_purchase_contract">
-            <field name="name">Purchase Contract</field>
-            <field name="description">pabi_purchase_contract</field>
-        </record>
-    </data>
-</openerp>

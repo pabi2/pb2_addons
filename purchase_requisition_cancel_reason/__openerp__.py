@@ -24,7 +24,6 @@ Purchase - Call for Bids Cancel Reason
     ],
     "data": [
         "wizard/cancel_reason_view.xml",
-        "security/ir.model.access.csv",
         "views/purchase_requisition_view.xml",
     ],
 }

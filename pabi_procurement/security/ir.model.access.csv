@@ -18,3 +18,4 @@ purchase.access_account_move_line,account.move.line,account.model_account_move_l
 access_account_voucher,account.voucher,account_voucher.model_account_voucher,purchase.group_purchase_user,1,0,0,0
 access_account_bank_receipt,account.bank.receipt,account_bank_receipt.model_account_bank_receipt,purchase.group_purchase_user,1,0,0,0
 access_account_account_type,account.account.type,account.model_account_account_type,purchase.group_purchase_user,1,0,0,0
+access_purchase_committee_type_prweb_method,access_purchase_committee_type_prweb_method,model_purchase_committee_type_prweb_method,,1,0,0,0

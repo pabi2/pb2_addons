@@ -1,2 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-group_user_model_purchase_requisition_cancel,group_user_model_purchase_requisition_cancel,model_purchase_requisition_cancel,base.group_user,1,1,1,1
