@@ -107,7 +107,7 @@ class ResProject(LogCommon, models.Model):
     )
     proposal_program_id = fields.Many2one(
         'res.program',
-        string='Proposal Program',
+        string='Current Program',
     )
     external_fund_type = fields.Selection(
         [('government', '1. ภาครัฐ'),
@@ -425,6 +425,11 @@ class ResProject(LogCommon, models.Model):
             by distribute to the first AG first,
             show warning if released amount > planned amout
         """
+        # Not current year, no budget release allowed
+        if self.env['account.fiscalyear'].find() != fiscalyear.id:
+            raise ValidationError(
+                _('Not allow to release budget for fiscalyear %s!\nOnly '
+                  'current year budget is allowed.' % fiscalyear.name))
         for project in self:
             budget_plans = project.budget_plan_ids.\
                 filtered(lambda l: l.fiscalyear_id == fiscalyear)
@@ -549,6 +554,22 @@ class ResProject(LogCommon, models.Model):
                             amount_beyond_internal += \
                                 future_plans[i].planned_amount
                     rec.amount_beyond_internal = amount_beyond_internal
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        # Find matched project manager's projects
+        project_manager_emp_id = self._context.get('project_manager_emp_id',
+                                                   False)
+        if project_manager_emp_id:
+            PM = self.env['res.project.member']
+            projects = PM.search([('project_position', '=', 'manager'),
+                                  ('employee_id', '=', project_manager_emp_id)
+                                  ])
+            args += [('id', 'in', projects._ids)]
+        return super(ResProject, self).name_search(name=name,
+                                                   args=args,
+                                                   operator=operator,
+                                                   limit=limit)
 
 
 class ResProjectMember(models.Model):

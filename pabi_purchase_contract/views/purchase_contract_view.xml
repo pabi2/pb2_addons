@@ -1,12 +1,247 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- vim:fdn=3:
--->
+<?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-    <data>
-        <template id="assets_backend" name="purchase_contract assets" inherit_id="web.assets_backend">
-            <xpath expr="." position="inside">
-                <script type="text/javascript" src="/purchase_contract/static/src/js/purchase_contract.js"></script>
+	<data>
+
+		<record model="ir.ui.view" id="purchase_contract_form_view">
+			<field name="name">purchase.contract.form</field>
+			<field name="model">purchase.contract</field>
+			<field name="arch" type="xml">
+				<form string="Purchase Contract">
+					<header>
+
+						<button	name="action_button_reversion"	type="object" states="send,close" class="oe_highlight"
+							string="Add Reversion" confirm="Are you sure to create Purchase Contract Reversion?"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
+
+						<button name="action_button_send_doc" type="object" states="generate" class="oe_highlight"
+							string="Send Documents" confirm="Are you sure to confirm sending documents?"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
+
+						<button	name="action_button_delete_reversion" type="object"
+							attrs="{'invisible': ['|',('state','not in', ('generate')), ('poc_rev','=', 0)]}"
+							string="Delete Reversion" confirm="Are you sure to Delete Purchase Contract Reversion?"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
+
+						<button name="%(action_view_purchase_contract_termination)d"
+							string="Terminate" type="action" states="send,close"
+							context="{'poc_id': id, 'state':'terminate', 'res_model': 'purchase.contract'}"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
+
+						<button	name="%(action_view_purchase_contract_reason_cancel)d"
+							string="Cancel Contract" type="action"
+							attrs="{'invisible': ['|',('state','not in', ('generate')), ('poc_rev','>', 0)]}"
+							context="{'poc_id': id, 'state':'cancel_generate'}"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
+
+						<button name="action_button_reflow" string="Reflow" confirm="Are you sure to Reflow Purchase Contract?"
+							type="object" states="send,close"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
+
+						<button name="action_button_verify_doc" string="Verify" confirm="Are you sure to Verify Contract?"
+							class="oe_highlight" type="object" attrs="{'invisible': ['|',('state','not in', ['close']),('is_verify','=',True)]}"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_verify"/>
+
+						<button name="action_button_close" string="Close"
+							confirm="Are you sure to Close Contract?" 	type="object" states="send"
+							groups="pabi_purchase_contract.group_pabi_purchase_contract_close"/>
+
+						<field name="state" widget="statusbar" statusbar_visible="generate,close,send,terminate"/>
+					</header>
+					<sheet>
+						<h1>
+							<label string="Contract No." for="display_code"/>
+							<field name="display_code" class="oe_inline" readonly="1"/>
+						</h1>
+						<div style='float:right; height:1px; margin:10px'>
+							<img src='/pabi_purchase_contract/static/src/img/verified.png' attrs="{'invisible': [('verify_date','=', False)]}" style='margin: -60px 15px 0px 0px;width:200px'></img>
+						</div>
+						<notebook>
+							<page string="Tracking" attrs="{'invisible': [('state','not in', ['close','send','cancel_generate','terminate'])]}">
+								<group>
+									<group string="Info">
+										<field name="collateral_performance_amt" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+										<field name="collateral_agreement_amt" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+										<field name="advance_amt" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+										<field name="check_final_date" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="fine_rate" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="contractual_fines" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+										<field name="warranty" class="oe_inline" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="warranty_type" nolabel="1" class="oe_inline" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+									</group>
+									<group string="Collateral Agreement">
+										<field name="collateral_no" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="collateral_type_id" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="postdating" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="account" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="bank" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="branch" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="contractual_amt" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="collateral_remand_real_date" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="collateral_received_date" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="collateral_due_date" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="collateral_remand_date" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+									</group>
+								</group>
+							</page>
+							<page string="Contract Info">
+								<group string="Info">
+									<group>
+										<field name="is_central_purchase" readonly="1"/>
+										<field name="contract_type_id" required="1" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','send','delete'])]}"/>
+										<field name="purchase_type_id" readonly="1" options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}"/>
+										<field name="name" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','send','delete'])]}"/>
+										<field name="supplier_id" string="Supplier" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','send','delete'])]}"/>
+										<field name="currency_id" string="Currency" readonly="1" options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}"/>
+										<field name="purchase_method_id" string="Purchase Method" options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}" readonly="1"/>
+										<field name="num_of_period" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','send','delete'])]}"/>
+										<field name="contract_amt" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+									</group>
+									<group>
+										<field name="action_date" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','send','delete'])]}"/>
+										<field name="start_date" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','send','delete'])]}"/>
+										<field name="end_date" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','send','delete'])]}"/>
+										<field name="duration_start2end" readonly="1"/>
+									</group>
+								</group>
+								<hr/>
+								<label string="Remarks" for="description"/>
+								<field name="description" nolabel="1" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','send','delete'])]}"/>
+							</page>
+							<page string="Debug" invisible="1">
+								<group>
+									<field name="id"/>
+									<field name="fiscalyear_id"/>
+									<field name="operating_unit_id"/>
+									<field name="poc_code"/>
+									<field name="poc_rev"/>
+									<field name="running"/>
+									<field name="requisition_id"/>
+									<field name="verify_date"/>
+									<field name="send_date"/>
+									<field name="is_verify"/>
+								</group>
+							</page>
+						</notebook>
+						<hr/>
+						<group>
+							<group>
+								<field
+									name="create_emp_id"
+									string="Creator"
+									attrs="{'invisible':[('create_emp_id','=',False)],'readonly':[('state','in',['close','cancel_generate','terminate','generate','send','delete'])]}"
+									options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}"/>
+								<field name="write_emp_id" string="Last user updated" readonly='1' attrs="{'invisible':[('write_emp_id','=',False)]}" options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}"/>
+							</group>
+							<group>
+								<field name="create_date" string="Created Date" readonly='1' attrs="{'invisible':[('create_emp_id','=',False)]}"/>
+								<field name="write_date" string="Last Updated" readonly='1' attrs="{'invisible':[('write_emp_id','=',False)]}"/>
+							</group>
+						</group>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers"/>
+						<field name="message_ids" widget="mail_thread"/>
+					</div>
+				</form>
+			</field>
+		</record>
+
+		<!-- Lawer, can't see Edit button (he will only click some button) -->
+		<record model="ir.ui.view" id="purchase_contract_form_view_hide_edit">
+        <field name="name">purchase.contract.form.view.hide.edit</field>
+        <field name="model">purchase.contract</field>
+        <field name="inherit_id" ref="purchase_contract_form_view"/>
+        <field name="groups_id" eval="[(4, ref('group_pabi_purchase_contract_verify'))]"/>
+        <field name="arch" type="xml">
+            <xpath expr="/form" position="attributes">
+                <attribute name="create">0</attribute>
+                <attribute name="edit">0</attribute>
             </xpath>
-        </template>
-    </data>
+        </field>
+    </record>
+
+		<!-- override the automatically generated list view for purchase_contracts -->
+		<record model="ir.ui.view" id="purchase_contract_search_view">
+			<field name="name">purchase.contract.seach</field>
+			<field name="model">purchase.contract</field>
+			<field name="arch" type="xml">
+				<search string="Purchase Contract">
+					<field name="name" string="All" filter_domain="['|', ('poc_code','like',self), ('name','ilike',self)]"/>
+					<field name="contract_type_id"/>
+				</search>
+			</field>
+		</record>
+
+		<!-- override the automatically generated list view for purchase_contracts -->
+		<record model="ir.ui.view" id="purchase_contract_tree_view">
+			<field name="name">purchase.contract.tree</field>
+			<field name="model">purchase.contract</field>
+			<field name="arch" type="xml">
+				<tree string="Purchase Contract" colors="red:state=='cancel_generate';red:state=='terminate' ">
+					<field name="display_code"/>
+					<field name="contract_type_id"/>
+					<field name="name"/>
+					<field name="create_emp_id"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+		<!-- window action -->
+		<!-- The following tag is an action definition for a "window action", that is an action opening a view or a set of views -->
+		<record model="ir.actions.act_window" id="purchase_contract_action">
+			<field name="name">Purchase Contract</field>
+			<field name="res_model">purchase.contract</field>
+			<field name="domain"></field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="context" eval="{}"/>
+		</record>
+
+		<record model="ir.actions.act_window" id="purchase_contract_accept_action">
+			<field name="name">Waiting for Accept</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">purchase.contract</field>
+			<field name="domain">[('state','in', ['send','close']), ('verify_date','=',False)]</field>
+			<field name="context">{'verified_view': '1'}</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="purchase_contract_tree_view"/>
+		</record>
+
+		<!-- top level menu: no parent -->
+		<menuitem id="main_purchase_contract_menu" name="PO Contract" sequence="62"
+			groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close"/>
+		<menuitem id="purchase_contract_sub_menu" name="Contract Management" parent="main_purchase_contract_menu" sequence="1"
+			groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close"/>
+		<menuitem id="purchase_contract_menu" name="Purchase Contract" parent="purchase_contract_sub_menu" action="purchase_contract_action" sequence="1"/>
+		<menuitem id="purchase_contract_accept_menu" name="Waiting for Accept" parent="purchase_contract_sub_menu" action="purchase_contract_accept_action" sequence="1"/>
+
+		<!-- Collateral / Type -->
+		<record model="ir.actions.act_window" id="purchase_contract_type">
+			<field name="name">Contract Type</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">purchase.contract.type</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="purchase_contract_collateral">
+			<field name="name">Contract Collateral</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">purchase.contract.collateral</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem id="purchase_contract_config" name="Configuration" parent="purchase_contract_sub_menu" sequence="3"
+			groups="purchase.group_purchase_manager"/>
+
+		<menuitem id="menu_purchase_contract_type" name="Contract Type" parent="purchase_contract_config" sequence="1"
+			groups="purchase.group_purchase_manager"/>
+		<menuitem id="menu_purchase_contract_collateral" name="Contract Collateral" parent="purchase_contract_config" sequence="2"
+			groups="purchase.group_purchase_manager"/>
+
+
+	</data>
 </openerp>

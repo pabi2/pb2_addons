@@ -21,9 +21,9 @@
         'views/account_view.xml',
         'views/res_partner_view.xml',
         'views/account_invoice_view.xml',
+        'views/account_wht_cert.xml',
         'views/voucher_payment_receipt_view.xml',
         'views/account_config.xml',
-        'views/account_wht_cert.xml',
     ],
     'demo': [
     ],

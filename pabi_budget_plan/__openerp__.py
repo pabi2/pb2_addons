@@ -27,7 +27,7 @@
         'security/ir.model.access.csv',
         'data/sequence.xml',
         'data/actions.xml',
-        'data/default_value.xml',
+        # 'data/default_value.xml',
         'data/report_data.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/xlsx_template_wizard.xml',

@@ -2,14 +2,14 @@
 <openerp>
     <data>
         <record id="view_print_wht_cert" model="ir.ui.view">
-            <field name="name">Create Withholding Tax Certificate</field>
+            <field name="name">view.print.wht.cert</field>
             <field name="model">account.wht.cert</field>
             <field name="arch" type="xml">
-                <header attrs="{'invisible': [('number', '=', False)]}">
-                    <field name="state" widget="statusbar" statusbar_visible="draft,done" clickable="True"/>
-                </header>
-                <sheet>
-                    <form string="Withholding Tax Certificate" create="0" edit="1" delete="0">
+                <form string="Withholding Tax Certificate" create="0" edit="1" delete="0">
+                    <header attrs="{'invisible': [('number', '=', False)]}">
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done" clickable="True"/>
+                    </header>
+                    <sheet>
                         <h1 attrs="{'invisible': [('number', '=', False)]}">
                             <field name="number"/>
                         </h1>
@@ -54,8 +54,8 @@
                             or
                             <button string="Cancel" class="oe_link" special="cancel"/>
                         </footer>
-                    </form>
-                </sheet>
+                    </sheet>
+                </form>
             </field>
         </record>
 

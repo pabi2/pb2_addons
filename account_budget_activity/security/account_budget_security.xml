@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="1">
+    <data>
 
         <record model="res.users" id="base.user_root">
             <field eval="[(4,ref('analytic.group_analytic_accounting'))]" name="groups_id"/>

@@ -69,6 +69,7 @@ class BudgetFundRule(models.Model):
         string='Spending Rules',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        copy=True,
         help="Spending rule for activity groups",
     )
     asset_rule_line_ids = fields.One2many(
@@ -77,6 +78,7 @@ class BudgetFundRule(models.Model):
         string='Max Asset Price',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        copy=True,
         help="Maxmimum amount allow on each asset purchase",
     )
     state = fields.Selection(
@@ -104,7 +106,7 @@ class BudgetFundRule(models.Model):
         for rec in self:
             if rec.template and rec.project_id:
                 raise ValidationError(
-                    _('This is a tempalte rule, no project allowed!'))
+                    _('This is a template rule, no project allowed!'))
             if not rec.template and not rec.project_id:
                 raise ValidationError(
                     _('This is a project rule, template must not checked!'))
@@ -137,7 +139,8 @@ class BudgetFundRule(models.Model):
             else:
                 if len(self.search([('template', '=', False),
                                     ('project_id', '=', rec.project_id.id),
-                                    ('fund_id', '=', rec.fund_id.id)])) > 1:
+                                    ('fund_id', '=', rec.fund_id.id),
+                                    ('state', '!=', 'cancel')])) > 1:
                     raise ValidationError(_('Duplicated Fund Rule'))
 
     @api.one
@@ -402,8 +405,9 @@ class BudgetFundRule(models.Model):
 
 
 class BudgetFundRuleLine(models.Model):
-    _name = "budget.fund.rule.line"
-    _description = "Spending Rule specific for Activity Groups"
+    _name = 'budget.fund.rule.line'
+    _rec_name = 'expense_group_id'
+    _description = 'Spending Rule specific for Activity Groups'
 
     fund_rule_id = fields.Many2one(
         'budget.fund.rule',
@@ -477,13 +481,11 @@ class BudgetFundRuleLine(models.Model):
                 if rec.amount_consumed > vals.get('amount'):
                     raise ValidationError(
                         _('Amount must not less than consumed amount!'))
-        # Log changes on line
+        # Track changes
+        fk = 'fund_rule_id'
         track_fields = ['account_ids', 'amount', 'max_spending_percent']
-        change_dict = {f: vals.get(f) for f in track_fields}
-        for line in self:
-            msg_title = line.expense_group_id.display_name
-            self.env['pabi.utils']._track_line_change(
-                msg_title, 'fund_rule_id', line, change_dict)
+        self.env['pabi.utils'].track_lines(vals, fk, track_fields, self)
+        # --
         return super(BudgetFundRuleLine, self).write(vals)
 
     @api.multi

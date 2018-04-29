@@ -24,7 +24,6 @@ Purchase - Purchase Request Reject Reason
     ],
     "data": [
         "wizard/reject_reason_view.xml",
-        "security/ir.model.access.csv",
         "views/purchase_request_view.xml",
     ],
 }

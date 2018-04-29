@@ -9,8 +9,11 @@
 PABI2 - Purchase Contract Module
 ==================================
 
+1) Purchase User -> Creator of document, see own OU
+2) Finance User -> Readonly on most field, can edit only some field **
+   (may need OCA access addon?)
 
-    """,
+""",
     "website": "https://nstda.or.th/",
     "author": "Jakkrich.Cha",
     "license": "AGPL-3",
@@ -23,14 +26,12 @@ PABI2 - Purchase Contract Module
     ],
     "data": [
         'security/module_data.xml',
-        'security/purchase_contract_security.xml',
+        'security/security_group.xml',
+        'security/security_rule.xml',
         'security/ir.model.access.csv',
         'data/purchase.contract.collateral.csv',
         'data/purchase.contract.type.csv',
         'wizard/purchase_contract_reason.xml',
-        'views/purchase_contract.xml',
-        'views/purchase_contract_type.xml',
-        'views/purchase_contract_menu_item.xml',
         'views/purchase_contract_view.xml',
         'views/purchase_requisition_view.xml',
     ],

@@ -3,7 +3,7 @@
     <data>
 
         <!-- Top menu item -->
-        <menuitem name="myProjects" id="menu_main_project" groups="" sequence="39"/>
+        <menuitem name="myProjects" id="menu_main_project" groups="" sequence="53"/>
         <!-- Projects -->
         <menuitem name="Projects" id="menu_project" parent="menu_main_project" groups="" sequence="1"/>
         <!-- Interface -->

@@ -27,14 +27,14 @@ class PABIBankStatement(models.Model):
                 'bank': [('readonly', False)]},
     )
     use_xlsx_template = fields.Boolean(
-        string='Import Tempalte',
+        string='Import template',
         default=False,
         readonly=True,
         states={'draft': [('readonly', False)],
                 'nstda': [('readonly', False)],
                 'bank': [('readonly', False)]},
         help="If checked, we will use the selected template for import."
-        "Otherwise, simply use the standard raw tempalte for import."
+        "Otherwise, simply use the standard raw template for import."
     )
     xlsx_template_id = fields.Many2one(
         'ir.attachment',
