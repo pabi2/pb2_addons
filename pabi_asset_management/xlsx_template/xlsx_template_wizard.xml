@@ -3,7 +3,7 @@
     <data>
 
         <!-- Change Owner -->
-        <act_window id="action_asset_changeowner_import_xlsx_tempalte"
+        <act_window id="action_asset_changeowner_import_xlsx_template"
             name="Import Asset Change Owner (.xlsx)"
             res_model="import.xlsx.template"
             src_model="account.asset.changeowner"
@@ -11,7 +11,7 @@
             target="new"/>
 
         <!-- Transfer -->
-        <act_window id="action_asset_transfer_import_xlsx_tempalte"
+        <act_window id="action_asset_transfer_import_xlsx_template"
             name="Import Asset Transfer (.xlsx)"
             res_model="import.xlsx.template"
             src_model="account.asset.transfer"
@@ -19,7 +19,7 @@
             target="new"/>
 
         <!-- Removal -->
-        <act_window id="action_asset_removal_import_xlsx_tempalte"
+        <act_window id="action_asset_removal_import_xlsx_template"
             name="Import Asset Removal (.xlsx)"
             res_model="import.xlsx.template"
             src_model="account.asset.removal"
@@ -27,7 +27,7 @@
             target="new"/>
 
         <!-- Asset Receive -->
-        <act_window id="action_asset_receive_import_xlsx_tempalte"
+        <act_window id="action_asset_receive_import_xlsx_template"
             name="Import Asset Receive (.xlsx)"
             res_model="import.xlsx.template"
             src_model="stock.picking"

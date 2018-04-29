@@ -16,6 +16,7 @@ This module focus mainly on creating PDF and submit to Alfresco workflow
         "hr_salary",
         "pabi_web_config",
         "pabi_utils",
+        "account_budget_activity",
     ],
     "data": [
         "security/ir.model.access.csv",

@@ -111,7 +111,6 @@
 								<group>
 									<field name="id"/>
 									<field name="fiscalyear_id"/>
-									<field name="org_id"/>
 									<field name="operating_unit_id"/>
 									<field name="poc_code"/>
 									<field name="poc_rev"/>

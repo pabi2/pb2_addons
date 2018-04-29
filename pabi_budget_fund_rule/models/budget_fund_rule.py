@@ -106,7 +106,7 @@ class BudgetFundRule(models.Model):
         for rec in self:
             if rec.template and rec.project_id:
                 raise ValidationError(
-                    _('This is a tempalte rule, no project allowed!'))
+                    _('This is a template rule, no project allowed!'))
             if not rec.template and not rec.project_id:
                 raise ValidationError(
                     _('This is a project rule, template must not checked!'))

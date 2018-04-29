@@ -114,10 +114,10 @@ class PABIPartnerDunningReport(models.Model):
             rec.days_overdue = delta.days
 
     def init(self, cr):
+        # Enable crosstab feature in postgresql
         try:
-            with cr.savepoint():
-                cr.execute("CREATE EXTENSION tablefunc")
-        except psycopg2.Error:
+            cr.execute("CREATE EXTENSION tablefunc;")
+        except Exception:
             pass
         # View
         tools.drop_view_if_exists(cr, self._table)

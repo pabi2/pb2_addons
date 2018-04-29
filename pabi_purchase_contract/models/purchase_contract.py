@@ -11,7 +11,8 @@ class PurchaseContract(models.Model):
     _name = 'purchase.contract'
     _description = 'Purchase Contract'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
-    _order = 'org_id, fiscalyear_id desc, running desc, poc_rev desc'
+    _order = \
+        'operating_unit_id, fiscalyear_id desc, running desc, poc_rev desc'
 
     name = fields.Char(
         string='PO Name',
@@ -53,12 +54,6 @@ class PurchaseContract(models.Model):
         ondelete='set null',
         string='Creator',
         default=lambda self: self.env.user.employee_id,
-    )
-    org_id = fields.Many2one(
-        'res.org',
-        string='Org',
-        related='create_emp_id.org_id',
-        store=True,
     )
     operating_unit_id = fields.Many2one(
         'operating.unit',

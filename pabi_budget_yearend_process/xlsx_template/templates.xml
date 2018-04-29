@@ -15,7 +15,7 @@
             <field name="res_model">budget.carry.over</field>
             <field name="datas"></field>
             <field name="datas_fname">budget_carry_over.xlsx</field>
-            <field name="name">Budget Carry Over Tempalte</field>
+            <field name="name">Budget Carry Over template</field>
             <field name="parent_id" eval="ref('dir_budget_yearend_process_template')"/>
             <field name="description">
               {

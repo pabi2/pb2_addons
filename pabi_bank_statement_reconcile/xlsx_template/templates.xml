@@ -11,7 +11,7 @@
         </record>
 
         <!-- KTB Statement (Sample) -->
-        <record id="ktb_statement_tempalte" model="ir.attachment">
+        <record id="ktb_statement_template" model="ir.attachment">
             <field name="res_model">pabi.bank.statement</field>
             <field name="datas"></field>
             <field name="datas_fname">ktb_statement.xls</field>

@@ -61,7 +61,7 @@ class MonitorView(models.AbstractModel):
         readonly=True,
     )
 
-    _monitor_view_tempalte = """
+    _monitor_view_template = """
         CREATE or REPLACE VIEW %s as (
             select dense_rank() OVER  -- Can't use row_number, it not persist
                 (ORDER BY budget_method, charge_type, fiscalyear_id, %s) AS id,
@@ -89,7 +89,7 @@ class MonitorView(models.AbstractModel):
         where = ' and '.join(conds)
         tools.drop_view_if_exists(cr, self._table)
         cr.execute(
-            self._monitor_view_tempalte %
+            self._monitor_view_template %
             (self._table, field, field, where, field))
 
 

@@ -15,6 +15,7 @@ Thai Tax Report based on Tax Detail table
     "depends": [
         'jasper_reports',
         'l10n_th_account_tax_detail',
+        'pabi_account',
     ],
     "data": [
         'security/ir.model.access.csv',
