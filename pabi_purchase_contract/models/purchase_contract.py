@@ -190,8 +190,8 @@ class PurchaseContract(models.Model):
     account = fields.Char(
         string='Account',
     )
-    postdating = fields.Date(
-        string='Postdating',
+    collateral_date = fields.Date(
+        string='Collateral Date',
     )
     description = fields.Text(
         string='Description',
