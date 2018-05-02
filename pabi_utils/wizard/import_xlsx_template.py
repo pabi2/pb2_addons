@@ -334,7 +334,7 @@ class ImportXlsxTemplate(models.TransientModel):
             raise except_orm(_('Post import operation error!'), e)
 
     @api.model
-    def import_template(self, import_file, template, res_model, res_id):
+    def import_template(self, import_file, template, res_model, res_id=False):
         """
         - If res_id = False, create one first
         - Delete fields' data according to data_dict['__IMPORT__']

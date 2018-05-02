@@ -11,6 +11,7 @@
     "installable": True,
     "depends": [
         'sale',
+        'pabi_utils',
     ],
     "data": [
         'xlsx_template/templates.xml',

@@ -2,20 +2,20 @@
 <openerp>
     <data>
 
-        <record model="document.directory" id="dir_spool_report">
-            <field name="name">SPOOL_REPORT</field>
+        <record model="document.directory" id="dir_spool_import">
+            <field name="name">SPOOL_IMPORT</field>
             <field name="parent_id" ref="document.dir_root"/>
             <field name="user_id" ref="base.user_root"/>
             <field name="ressource_id">0</field>
             <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
         </record>
 
-        <record id="view_my_spool_report_search" model="ir.ui.view">
-            <field name="name">view.my.spool.report.search</field>
+        <record id="view_my_spool_import_search" model="ir.ui.view">
+            <field name="name">view.my.spool.import.search</field>
             <field name="model">ir.attachment</field>
             <field name="arch" type="xml">
-                <search string="My Spool Reports">
-                    <field name="name" string="Report" filter_domain="['|',('name','ilike',self),('description','ilike',self)]"/>
+                <search string="My Spool Imports">
+                    <field name="name" string="Import" filter_domain="['|',('name','ilike',self),('description','ilike',self)]"/>
                     <field name="user_id"/>
                     <group expand="0" string="Group By">
                         <filter string="Creation Date" domain="[]" context="{'group_by':'create_date'}"/>
@@ -25,8 +25,8 @@
             </field>
         </record>
 
-        <record model="ir.ui.view" id="view_my_spool_report_calendar">
-            <field name="name">My Spool Reports</field>
+        <record model="ir.ui.view" id="view_my_spool_import_calendar">
+            <field name="name">My Spool Imports</field>
             <field name="model">ir.attachment</field>
             <field name="arch" type="xml">
                 <calendar string="Claims" date_start="create_date" color="user_id">
@@ -35,12 +35,12 @@
             </field>
         </record>
 
-        <record id="view_my_spool_report_tree" model="ir.ui.view">
-            <field name="name">view.my.spool.report.tree</field>
+        <record id="view_my_spool_import_tree" model="ir.ui.view">
+            <field name="name">view.my.spool.import.tree</field>
             <field name="model">ir.attachment</field>
             <field name="arch" type="xml">
-                <tree string="My Spool Reports">
-                    <field name="name" string="Report Name"/>
+                <tree string="My Spool Imports">
+                    <field name="name" string="Import Name"/>
                     <field name="user_id" string="Owner"/>
                     <field name="description"/>
                     <field name="create_date"/>
@@ -48,12 +48,12 @@
             </field>
         </record>
 
-        <record id="view_my_spool_report_form" model="ir.ui.view">
-            <field name="name">view.my.spool.report.form</field>
+        <record id="view_my_spool_import_form" model="ir.ui.view">
+            <field name="name">view.my.spool.import.form</field>
             <field name="model">ir.attachment</field>
             <field name="priority" eval="100"/>
             <field name="arch" type="xml">
-                <form string="My Spool Reports">
+                <form string="My Spool Imports">
                     <sheet>
                         <h1>
                             <field name="name" readonly="1"/>
@@ -63,7 +63,7 @@
                                 <field name="datas" readonly="1" filename="name"/>
                             </group>
                         </group>
-                        <group string="Report Info.">
+                        <group string="Import Info.">
                             <group>
                                 <field name="description" readonly="1"/>
                             </group>
@@ -77,43 +77,43 @@
             </field>
         </record>
 
-        <record id="action_my_spool_report" model="ir.actions.act_window">
-            <field name="name">Spool Reports</field>
+        <record id="action_my_spool_import" model="ir.actions.act_window">
+            <field name="name">Spool Imports</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ir.attachment</field>
             <field name="view_type">form</field>
             <field name="view_mode">calendar,tree</field>
-            <field name="search_view_id" ref="view_my_spool_report_search"/>
-            <field name="domain">[('parent_id.name', '=', 'SPOOL_REPORT')]</field>
+            <field name="search_view_id" ref="view_my_spool_import_search"/>
+            <field name="domain">[('parent_id.name', '=', 'SPOOL_IMPORT')]</field>
         </record>
 
-        <record model="ir.actions.act_window.view" id="action_my_spool_report_tree">
+        <record model="ir.actions.act_window.view" id="action_my_spool_import_tree">
             <field name="sequence" eval="1"/>
             <field name="view_mode">tree</field>
-            <field name="view_id" ref="view_my_spool_report_tree"/>
-            <field name="act_window_id" ref="action_my_spool_report"/>
+            <field name="view_id" ref="view_my_spool_import_tree"/>
+            <field name="act_window_id" ref="action_my_spool_import"/>
         </record>
 
-        <record model="ir.actions.act_window.view" id="action_my_spool_report_form">
+        <record model="ir.actions.act_window.view" id="action_my_spool_import_form">
             <field name="sequence" eval="2"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="view_my_spool_report_form"/>
-            <field name="act_window_id" ref="action_my_spool_report"/>
+            <field name="view_id" ref="view_my_spool_import_form"/>
+            <field name="act_window_id" ref="action_my_spool_import"/>
         </record>
 
-        <record model="ir.actions.act_window.view" id="action_my_spool_report_calendar">
+        <record model="ir.actions.act_window.view" id="action_my_spool_import_calendar">
             <field name="sequence" eval="3"/>
             <field name="view_mode">calendar</field>
-            <field name="view_id" ref="view_my_spool_report_calendar"/>
-            <field name="act_window_id" ref="action_my_spool_report"/>
+            <field name="view_id" ref="view_my_spool_import_calendar"/>
+            <field name="act_window_id" ref="action_my_spool_import"/>
         </record>
 
-        <record id="my_spool_report" model="ir.ui.menu">
-            <field name="name">Spool Reports</field>
+        <record id="my_spool_import" model="ir.ui.menu">
+            <field name="name">Spool Imports</field>
             <field name="sequence" eval="200"/>
-            <field name="action" ref="action_my_spool_report"/>
+            <field name="action" ref="action_my_spool_import"/>
             <field name="parent_id" ref="mail.mail_feeds"/>
-            <field name="groups_id" eval="[(4,ref('group_see_own_spool_report'))]"/>
+            <field name="groups_id" eval="[(4,ref('group_see_own_spool_import'))]"/>
         </record>
 
     </data>
