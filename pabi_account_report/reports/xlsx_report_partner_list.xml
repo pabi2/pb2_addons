@@ -11,6 +11,7 @@
           <group states="choose">
             <group>
               <field name="category_ids" widget="many2many_tags"/>
+              <field name="active"/>
             </group>
             <group>
               <field name="customer"/>

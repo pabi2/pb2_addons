@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="xlsx_report_cheque_register_view" model="ir.ui.view">
-            <field name="name">xlsx.report.cheque.register.view</field>
-            <field name="model">xlsx.report.cheque.register</field>
+        <record id="xlsx_report_partner_detail_view" model="ir.ui.view">
+            <field name="name">xlsx.report.partner.detail.view</field>
+            <field name="model">xlsx.report.partner.detail</field>
             <field name="arch" type="xml">
-                <form string="Cheque Register Report">
+                <form string="Partner Detail Report">
 
                     <!-- search criteria -->
                     <group states="choose">
                         <group>
-                            <field name="cheque_lot_ids" widget="many2many_tags"/>
-                            <field name="number_from"/>
-                            <field name="number_to"/>
-                            <field name="status"/>
+                            <field name="category_ids" widget="many2many_tags"/>
+                            <field name="active"/>
                         </group>
                         <group>
+                            <field name="customer"/>
+                            <field name="customer_partner_ids" string=" "
+                                placeholder="Select specific customers"
+                                attrs="{'invisible': [('customer', '=', False)]}"
+                                widget="many2many_tags"/>
+                            <field name="supplier"/>
+                            <field name="supplier_partner_ids" string=" "
+                                placeholder="Select specific suppliers"
+                                attrs="{'invisible': [('supplier', '=', False)]}"
+                                widget="many2many_tags"/>
                         </group>
                     </group>
 
@@ -51,24 +59,19 @@
                             <button special="cancel" string="Close" type="object"/>
                         </footer>
                     </div>
-
                 </form>
             </field>
         </record>
 
-        <record id="action_report_cheque_register" model="ir.actions.act_window">
-            <field name="name">Cheque Register Report</field>
-            <field name="res_model">xlsx.report.cheque.register</field>
+        <record id="action_report_partner_detail" model="ir.actions.act_window">
+            <field name="name">Partner Detail Report</field>
+            <field name="res_model">xlsx.report.partner.detail</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_report_cheque_register"
-            name="Cheque Register"
-            parent="menu_pabi_account_report"
-            action="action_report_cheque_register"
-            sequence="60"/>
+        <menuitem id="menu_report_partner_detail" name="Partner Detail" parent="menu_pabi_account_report" action="action_report_partner_detail" sequence="11"/>
 
-    </data>
+  </data>
 </openerp>
