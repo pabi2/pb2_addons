@@ -321,10 +321,10 @@ class PurchaseContract(models.Model):
         # Get 2 Digits Org
         format_code = ''
         create_emp = self.env.user.employee_id
-        create_org = create_emp.org_id
-        if not create_org:
+        operating_unit = self.env.user.default_operating_unit_id
+        if not operating_unit:
             raise ValidationError(
-                _('You cannot create PO contract without Org!'))
+                _('You cannot create PO contract without Operating Unit!'))
         if not vals.get('action_date', False):
             raise ValidationError(_('No Action Date!'))
         Fiscal = self.env['account.fiscalyear']
@@ -335,12 +335,13 @@ class PurchaseContract(models.Model):
         running = 0
         if rev_no == 0:
             running = self.sudo().search_count([
-                ('org_id', '=', create_org.id),
+                ('operating_unit_id', '=', operating_unit.id),
                 ('fiscalyear_id', '=', fiscalyear.id),
                 ('poc_rev', '=', 0)]) + 1
         else:  # Reversion (CO-51-2016-322-R1)
             running = vals.get('running', 0)
-        org_str = create_org.code or create_org.name_short or 'N/A'
+        org_str = operating_unit.org_id.code or \
+            operating_unit.org_id.name_short or 'N/A'
         format_code = '%s-%s-%s' % (org_str, fiscalyear.name, str(running))
         vals.update({'poc_rev': rev_no,
                      'poc_code': format_code,
