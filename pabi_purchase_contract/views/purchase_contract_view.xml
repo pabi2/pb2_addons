@@ -71,7 +71,7 @@
 									<group string="Collateral Agreement">
 										<field name="collateral_no" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
 										<field name="collateral_type_id" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
-										<field name="postdating" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
+										<field name="collateral_date" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
 										<field name="account" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
 										<field name="bank" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>
 										<field name="branch" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','delete'])]}"/>

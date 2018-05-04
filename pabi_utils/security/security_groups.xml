@@ -21,5 +21,26 @@
             <field name="implied_ids" eval="[(4, ref('group_see_own_spool_report'))]"/>
         </record>
 
+        <!-- Spool Imports -->
+        <record model="ir.module.category" id="module_category_spool_import">
+            <field name="name">Spool Imports</field>
+            <field name="description"></field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="group_see_own_spool_import" model="res.groups">
+            <field name="name">See Own Imports</field>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="category_id" ref="module_category_spool_import"/>
+        </record>
+
+        <record id="group_see_all_spool_import" model="res.groups">
+            <field name="name">See All Imports</field>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="category_id" ref="module_category_spool_import"/>
+            <field name="implied_ids" eval="[(4, ref('group_see_own_spool_import'))]"/>
+        </record>
+
+
     </data>
 </openerp>

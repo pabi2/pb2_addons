@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from ast import literal_eval
 import base64
+import uuid
 import xlrd
 import xlwt
 import itertools
@@ -100,9 +101,11 @@ class ImportXlsxTemplate(models.TransientModel):
     @api.model
     def view_init(self, fields_list):
         """ This template only works on some context of active record """
-
+        res = super(ImportXlsxTemplate, self).view_init(fields_list)
         res_model = self._context.get('active_model', False)
         res_id = self._context.get('active_id', False)
+        if not res_model or not res_id:
+            return res
         record = self.env[res_model].browse(res_id)
         messages = []
         valid = True
@@ -132,6 +135,7 @@ class ImportXlsxTemplate(models.TransientModel):
                     break
         if not valid:
             raise ValidationError('\n'.join(messages))
+        return res
 
     @api.model
     def get_eval_context(self, model=False, value=False):
@@ -240,23 +244,22 @@ class ImportXlsxTemplate(models.TransientModel):
     @api.model
     def _import_record_data(self, import_file, record, data_dict):
         """ Create temp simple excel, and prepare to convert to CSV to load """
-        if not record or not data_dict:
+        if not data_dict:
             return
         try:
             XLS = self.env['pabi.utils.xls']
             decoded_data = base64.decodestring(import_file)
             wb = xlrd.open_workbook(file_contents=decoded_data)
-            model = record._name
-
             # Create output xls, begins with id column
             col_idx = 0  # Starting column
             out_wb = xlwt.Workbook()
             out_st = out_wb.add_sheet("Sheet 1")
-            xml_id = XLS.get_external_id(record)
+            xml_id = record and XLS.get_external_id(record) or \
+                '%s.%s' % ('xls', uuid.uuid4())
             out_st.write(0, 0, 'id')
             out_st.write(1, 0, xml_id)
             col_idx += 1
-
+            model = record._name
             for sheet_name in data_dict:  # For each Sheet
                 worksheet = data_dict[sheet_name]
                 st = False
@@ -304,9 +307,10 @@ class ImportXlsxTemplate(models.TransientModel):
             out_wb.save(content)
             content.seek(0)  # Set index to 0, and start reading
             xls_file = base64.encodestring(content.read())
-            XLS.import_xls(model, xls_file, header_map=False,
-                           extra_columns=False, auto_id=False,
-                           force_id=True)
+            xml_ids = XLS.import_xls(model, xls_file, header_map=False,
+                                     extra_columns=False, auto_id=True,
+                                     force_id=True)
+            return xml_ids
         except xlrd.XLRDError:
             raise ValidationError(
                 _('Invalid file format, only .xls or .xlsx file allowed!'))
@@ -330,8 +334,9 @@ class ImportXlsxTemplate(models.TransientModel):
             raise except_orm(_('Post import operation error!'), e)
 
     @api.model
-    def import_template(self, import_file, template, res_model, res_id):
+    def import_template(self, import_file, template, res_model, res_id=False):
         """
+        - If res_id = False, create one first
         - Delete fields' data according to data_dict['__IMPORT__']
         - Import data from excel according to data_dict['__IMPORT__']
         """
@@ -341,20 +346,31 @@ class ImportXlsxTemplate(models.TransientModel):
         if not data_dict.get('__IMPORT__'):
             raise ValidationError(
                 _("No data_dict['__IMPORT__'] in template %s") % template.name)
-        # Delete existing data first
-        self._delete_record_data(record, data_dict['__IMPORT__'])
+        if record:
+            # Delete existing data first
+            self._delete_record_data(record, data_dict['__IMPORT__'])
         # Fill up record with data from excel sheets
-        self._import_record_data(import_file, record, data_dict['__IMPORT__'])
+        xml_ids = self._import_record_data(import_file, record,
+                                           data_dict['__IMPORT__'])
         # Post Import Operation, i.e., cleanup some data
         if data_dict.get('__POST_IMPORT__', False):
             self._post_import_operation(record, data_dict['__POST_IMPORT__'])
-        return
+        return xml_ids
 
     @api.multi
     def action_import(self):
         self.ensure_one()
         if not self.import_file:
             raise ValidationError(_('Please choose excel file to import!'))
-        self.import_template(self.import_file, self.template_id,
-                             self.res_model, self.res_id)
+        xml_ids = self.import_template(self.import_file, self.template_id,
+                                       self.res_model, self.res_id)
+        if self._context.get('return_action', False):
+            action = self.env.ref(self._context['return_action'])
+            result = action.read()[0]
+            res_ids = []
+            for xml_id in xml_ids:
+                record = self.env.ref(xml_id)
+                res_ids.append(record.id)
+            result.update({'domain': [('id', 'in', res_ids)]})
+            return result
         return
