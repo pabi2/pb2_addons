@@ -19,8 +19,6 @@
             <field name="parent_id" eval="ref('dir_statement_reconcile_template')"/>
             <field name="description">
               {
-                '__EXPORT__': {
-                },
                 '__IMPORT__': {
                     1: {
                         'import_ids[100]': {

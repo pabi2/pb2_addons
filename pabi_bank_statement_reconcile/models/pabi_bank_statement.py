@@ -86,7 +86,7 @@ class PABIBankStatement(models.Model):
         string='Bank Account',
         domain=lambda self: [('partner_id', '=',
                               self.env.user.company_id.partner_id.id)],
-        required=True,
+        required=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
