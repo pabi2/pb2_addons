@@ -14,9 +14,9 @@ def get_import_job(session, ctx, model_name, res_id, att_id):
         wizard = session.env[model_name].browse(res_id)
         attachment = session.env['ir.attachment'].browse(att_id)
         Import = session.env['import.xlsx.template'].with_context(ctx)
-        xml_ids = Import.import_template(attachment.datas,
-                                         wizard.template_id,
-                                         wizard.res_model)
+        record = Import.import_template(attachment.datas,
+                                        wizard.template_id,
+                                        wizard.res_model)
         # Link attachment to job queue
         job_uuid = session.context.get('job_uuid')
         job = session.env['queue.job'].search([('uuid', '=', job_uuid)],
@@ -26,13 +26,9 @@ def get_import_job(session, ctx, model_name, res_id, att_id):
         ts = fields.Datetime.context_timestamp(job, date_created)
         init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
         # Description
-        names = []
-        for xml_id in xml_ids:
-            name = session.env.ref(xml_id).display_name
-            names.append(name)
         desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
         attachment.write({
-            'name': '%s__%s' % ('_'.join(names), attachment.name),
+            'name': '%s_%s' % (record.display_name, attachment.name),
             'parent_id': session.env.ref('pabi_utils.dir_spool_import').id,
             'description': desc, })
         return _('File imported successfully')
@@ -147,17 +143,16 @@ class XLSXImport(models.TransientModel):
             self.write({'state': 'get', 'uuids': ', '.join(uuids)})
         else:
             Import = self.env['import.xlsx.template']
-            xml_ids = []
+            records = []
             for import_file in self.attachment_ids.mapped('datas'):
-                xml_ids += Import.import_template(import_file,
-                                                  self.template_id,
-                                                  self.res_model)
+                records.append(Import.import_template(import_file,
+                                                      self.template_id,
+                                                      self.res_model))
             res_ids = []
             names = []
-            for xml_id in xml_ids:
-                record = self.env.ref(xml_id)
-                res_ids.append(record.id)
-                names.append(record.display_name)
+            for rec in records:
+                res_ids.append(rec.id)
+                names.append(rec.display_name)
             self.write({'state': 'get',
                         'res_ids': str(res_ids),
                         'res_names': ', '.join(names)})

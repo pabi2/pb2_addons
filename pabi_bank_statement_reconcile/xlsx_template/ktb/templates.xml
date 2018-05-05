@@ -20,7 +20,11 @@
             <field name="description">
               {
                 '__IMPORT__': {
-                    'DownLoadServiceFixCur': {
+                    1: {
+                        '_HEAD_': {
+                            'B1': 'journal_id',
+                            'A1${"payment_direct"}': 'report_type',
+                        },
                         'import_ids': {
                             # Datetime only, else ""
                             'A9': 'date_value${value and len(value) > 0 and "=" not in value and datetime.strptime(value, "%d-%m-%Y %H:%M:%S").strftime("%Y-%m-%d") or ""}',
@@ -33,6 +37,7 @@
                 '__POST_IMPORT__': [
                   '${object.import_ids.filtered(lambda l: not l.date_value).unlink()}',
                   '${object.import_ids.filtered(lambda l: not l.cheque_number).unlink()}',
+                  '${object.post_xlsx_import_statement()}',
                 ],
             }
           </field>

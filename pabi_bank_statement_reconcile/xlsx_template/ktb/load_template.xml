@@ -5,7 +5,7 @@
             to load the file content to relevant template_ids -->
         <function model="ir.attachment" name="load_xlsx_template">
             <value eval="[ref('ktb_statement_template'), ]"/>
-            <value>pabi_bank_statement_reconcile/xlsx_template</value>
+            <value>pabi_bank_statement_reconcile/xlsx_template/ktb</value>
         </function>
     </data>
 </openerp>

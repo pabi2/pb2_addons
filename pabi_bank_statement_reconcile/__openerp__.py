@@ -22,8 +22,13 @@ and result from bank statement
         'security/ir.model.access.csv',
         'data/ir_sequence.xml',
         'data/report_data.xml',
-        'xlsx_template/templates.xml',
-        'xlsx_template/load_template.xml',
+        # KTB
+        'xlsx_template/ktb/templates.xml',
+        'xlsx_template/ktb/load_template.xml',
+        # BBL
+        # 'xlsx_template/bbl/templates.xml',
+        # 'xlsx_template/bbl/load_template.xml',
+        # common views
         'xlsx_template/xlsx_import_wizard.xml',
         'views/pabi_bank_statement_view.xml',
     ],

@@ -309,10 +309,9 @@ class ImportXlsxTemplate(models.TransientModel):
             out_wb.save(content)
             content.seek(0)  # Set index to 0, and start reading
             xls_file = base64.encodestring(content.read())
-            xml_ids = XLS.import_xls(model, xls_file, header_map=False,
-                                     extra_columns=False, auto_id=True,
-                                     force_id=True)
-            return xml_ids
+            XLS.import_xls(model, xls_file, header_map=False,
+                           extra_columns=False, auto_id=True,  force_id=True)
+            return self.env.ref(xml_id)
         except xlrd.XLRDError:
             raise ValidationError(
                 _('Invalid file format, only .xls or .xlsx file allowed!'))
@@ -352,27 +351,23 @@ class ImportXlsxTemplate(models.TransientModel):
             # Delete existing data first
             self._delete_record_data(record, data_dict['__IMPORT__'])
         # Fill up record with data from excel sheets
-        xml_ids = self._import_record_data(import_file, record,
-                                           data_dict['__IMPORT__'])
+        record = self._import_record_data(import_file, record,
+                                          data_dict['__IMPORT__'])
         # Post Import Operation, i.e., cleanup some data
         if data_dict.get('__POST_IMPORT__', False):
             self._post_import_operation(record, data_dict['__POST_IMPORT__'])
-        return xml_ids
+        return record
 
     @api.multi
     def action_import(self):
         self.ensure_one()
         if not self.import_file:
             raise ValidationError(_('Please choose excel file to import!'))
-        xml_ids = self.import_template(self.import_file, self.template_id,
-                                       self.res_model, self.res_id)
+        record = self.import_template(self.import_file, self.template_id,
+                                      self.res_model, self.res_id)
         if self._context.get('return_action', False):
             action = self.env.ref(self._context['return_action'])
             result = action.read()[0]
-            res_ids = []
-            for xml_id in xml_ids:
-                record = self.env.ref(xml_id)
-                res_ids.append(record.id)
-            result.update({'domain': [('id', 'in', res_ids)]})
+            result.update({'domain': [('id', '=', record.id)]})
             return result
         return

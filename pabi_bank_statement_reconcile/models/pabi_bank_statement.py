@@ -63,7 +63,7 @@ class PABIBankStatement(models.Model):
          ('document', 'Document Number, Amount'),
          ('date_value', 'Date Value, Amount')],
         string='Matching Method',
-        required=True,
+        required=False,
     )
     match_method_readonly = fields.Selection(
         [('cheque', 'Cheque Number, Amount'),
@@ -281,7 +281,8 @@ class PABIBankStatement(models.Model):
         MoveLine = self.env['account.move.line']
         for rec in self:
             rec.item_ids.unlink()
-            rec.import_ids.unlink()
+            if not self._context.get('call_from_xlsx_import', False):
+                rec.import_ids.unlink()
             # Primary filter, only PV not previously matched.
             domain = [('match_import_id', '=', False),
                       ('journal_id', '=', rec.journal_id.id),
@@ -425,11 +426,18 @@ class PABIBankStatement(models.Model):
     def action_done(self):
         self.write({'state': 'done'})
 
-    # @api.multi
-    # def action_import_and_reconcile(self):
-    #     self.action_get_statement()
-    #     self.action_import_csv()
-    #     self.action_reconcile()
+    @api.multi
+    def post_xlsx_import_statement(self):
+        """ Called from xlsx_import to automate,
+        1) Complete header data 2) Get NSTDA statement 3) Reconcile """
+        for rec in self:
+            # 1) Header
+            rec._onchange_report_type()
+            rec._onchange_journal_id()
+            # 2) action_get_statement
+            rec.with_context(call_from_xlsx_import=True).action_get_statement()
+            # 3) action_reconcile
+            rec.action_reconcile()
 
 
 class PABIBankStatementItem(models.Model):

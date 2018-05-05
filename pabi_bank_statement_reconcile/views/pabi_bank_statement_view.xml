@@ -28,7 +28,7 @@
                     <group>
                         <group>
                             <field name="report_type"/>
-                            <field name="match_method" invisible="1"/>
+                            <field name="match_method" required="1" invisible="1"/>
                             <field name="match_method_readonly"/>
                         </group>
                         <group>
