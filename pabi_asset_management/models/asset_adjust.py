@@ -144,7 +144,7 @@ class AccountAssetAdjust(models.Model):
     def _default_journal(self):
         try:
             return self.env.ref('pabi_asset_management.journal_asset')
-        except:
+        except Exception:
             pass
 
     @api.multi

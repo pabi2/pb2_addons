@@ -304,7 +304,7 @@ class BudgetPlanInvestConstructionLine(BPLMonthCommon, ActivityCommon,
 #                                       'state', ]:
 #                     try:
 #                         val[field] = rec.invest_construction_id[field].id
-#                     except:
+#                     except Exception:
 #                         val[field] = rec.invest_construction_id[field]
 #
 #             # Next FY Commitment

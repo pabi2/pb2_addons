@@ -31,7 +31,7 @@ def get_field_aggregation(field):
         try:
             if len(cond) > 0:
                 return (field[:i], cond)
-        except:
+        except Exception:
             return (field.replace('@{%s}' % cond, ''), False)
     return (field, False)
 
@@ -45,7 +45,7 @@ def get_field_condition(field):
         try:
             if len(cond) > 0:
                 return (field.replace('${%s}' % cond, ''), cond)
-        except:
+        except Exception:
             return (field, False)
     return (field, False)
 
@@ -67,7 +67,7 @@ def get_field_format(field):
         try:
             if len(cond) > 0:
                 return (field.replace('#{%s}' % cond, ''), cond)
-        except:
+        except Exception:
             return (field, False)
     return (field, False)
 
@@ -116,7 +116,7 @@ def fill_cell_format(field, field_format):
 
 
 def get_line_max(line_field):
-    """ i.e., line_field = line_ids[100], mas = 100 else 0 """
+    """ i.e., line_field = line_ids[100], max = 100 else 0 """
     if line_field and '[' in line_field and ']' in line_field:
         i = line_field.index('[')
         j = line_field.index(']')
@@ -126,7 +126,7 @@ def get_line_max(line_field):
                 return (line_field[:i], int(max_str))
             else:
                 return (line_field, False)
-        except:
+        except Exception:
             return (line_field, False)
     return (line_field, False)
 

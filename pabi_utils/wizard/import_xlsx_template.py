@@ -23,7 +23,7 @@ def get_field_condition(field):
         try:
             if len(cond) > 0:
                 return (field.replace('${%s}' % cond, ''), cond)
-        except:
+        except Exception:
             return (field, False)
     return (field, False)
 
@@ -37,7 +37,7 @@ def get_line_max(line_field):
         try:
             if len(max_str) > 0:
                 return (line_field[:i], int(max_str))
-        except:
+        except Exception:
             return (line_field, False)
     return (line_field, False)
 
@@ -151,6 +151,8 @@ class ImportXlsxTemplate(models.TransientModel):
         if model:
             eval_context.update({'model': self.env[model]})
         if value:
+            if isinstance(value, basestring):  # Remove non Ord 128 character
+                value = ''.join([i if ord(i) < 128 else ' ' for i in value])
             eval_context.update({'value': value})
         return eval_context
 
@@ -195,7 +197,7 @@ class ImportXlsxTemplate(models.TransientModel):
                 #         record[field] = False  # Set to False
                 # --
                 # Line Items
-                line_fields = filter(lambda l: l != '_HEAD_', worksheet)
+                line_fields = filter(lambda x: x != '_HEAD_', worksheet)
                 for line_field in line_fields:
                     line_field, _ = get_line_max(line_field)
                     if line_field in record and record[line_field]:
@@ -290,7 +292,7 @@ class ImportXlsxTemplate(models.TransientModel):
                     out_st.write(1, col_idx, value)  # Next Value
                     col_idx += 1
                 # Line Items
-                line_fields = filter(lambda l: l != '_HEAD_', worksheet)
+                line_fields = filter(lambda x: x != '_HEAD_', worksheet)
                 for line_field in line_fields:
                     vals = self._get_line_vals(st, worksheet,
                                                model, line_field)

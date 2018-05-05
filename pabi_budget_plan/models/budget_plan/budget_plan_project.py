@@ -579,7 +579,7 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
 #                                       ]:
 #                     try:
 #                         val[field] = rec.project_id[field].id
-#                     except:
+#                     except Exception:
 #                         val[field] = rec.project_id[field]
 #             # Calc from PABI2 monitoring views
 #             # 3) Overall

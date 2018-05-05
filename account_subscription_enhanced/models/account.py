@@ -380,7 +380,7 @@ class AccountModel(models.Model):
                 'year': move_date.strftime('%Y'),
                 'month': move_date.strftime('%m'),
                 'date': move_date.strftime('%Y-%m')}
-        except:
+        except Exception:
             raise except_orm(
                 _('Wrong Model!'),
                 _('You have a wrong expression "%(...)s" in your model!'))

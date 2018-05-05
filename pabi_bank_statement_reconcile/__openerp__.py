@@ -23,7 +23,8 @@ and result from bank statement
         'data/ir_sequence.xml',
         'data/report_data.xml',
         'xlsx_template/templates.xml',
-        'xlsx_template/xlsx_template_wizard.xml',
+        'xlsx_template/load_template.xml',
+        'xlsx_template/xlsx_import_wizard.xml',
         'views/pabi_bank_statement_view.xml',
     ],
     'demo': [

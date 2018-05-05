@@ -79,7 +79,7 @@ class AccountInvoice(models.Model):
             raise ValidationError(
                 _('Multiple client accessing same resource!\n'
                   'Please try again!'))
-        except:
+        except Exception:
             raise
 
 

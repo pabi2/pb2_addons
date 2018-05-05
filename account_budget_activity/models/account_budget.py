@@ -235,7 +235,7 @@ class AccountBudget(models.Model):
         #         if trx[field]:
         #             return 1
         #     return 0
-        # except:
+        # except Exception:
         #     return -1
         return 1  # Latest decision is, always required
 
