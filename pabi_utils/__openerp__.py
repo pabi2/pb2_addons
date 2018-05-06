@@ -24,8 +24,8 @@
         "wizard/export_xlsx_template_wizard.xml",
         "wizard/import_xlsx_template_wizard.xml",
         "views/data_map_view.xml",
+        "views/my_job_view.xml",
         "views/my_report_view.xml",
-        "views/my_import_view.xml",
         "views/xlsx_import.xml",
     ],
 }

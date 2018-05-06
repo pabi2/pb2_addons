@@ -1,37 +1,55 @@
 # -*- coding: utf-8 -*-
 from ast import literal_eval
 from openerp import models, fields, api, _
-from openerp.exceptions import except_orm, ValidationError, RedirectWarning
+from openerp.exceptions import ValidationError, RedirectWarning
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import FailedJobError
 
 
+def related_imported_records(session, thejob):
+    """ Open up newly created imported records, based on res_model """
+    job = session.env['queue.job'].search([('uuid', '=', thejob._uuid)])
+    ctx = thejob.args[1]
+    res_ids = literal_eval(job.res_ids)
+    # Specified action
+    if ctx.get('return_action', False):
+        action_id = ctx['return_action']
+        result = session.env.ref(action_id).read()[0]
+        if result.get('res_model') != job.res_model:
+            raise ValidationError(_('Wrong action provided: %s!') % action_id)
+        result.update({'domain': [('id', 'in', res_ids)]})
+        return result
+    # Default action
+    return {
+        'type': 'ir.actions.act_window',
+        'res_model': job.res_model,
+        'view_mode': 'tree,form',
+        'view_type': 'form',
+        'domain': [('id', 'in', res_ids)],
+    }
+
+
 @job(default_channel='root.xlsx_import')
-def get_import_job(session, ctx, model_name, res_id, att_id):
+@related_action(action=related_imported_records)
+def get_import_job(session, model_name, ctx, res_id, att_id):
     try:
-        # Get attachment
+        # Process Import File
         wizard = session.env[model_name].browse(res_id)
         attachment = session.env['ir.attachment'].browse(att_id)
         Import = session.env['import.xlsx.template'].with_context(ctx)
         record = Import.import_template(attachment.datas,
                                         wizard.template_id,
                                         wizard.res_model)
-        # Link attachment to job queue
+        # Write result back to job
         job_uuid = session.context.get('job_uuid')
-        job = session.env['queue.job'].search([('uuid', '=', job_uuid)],
-                                              limit=1)
-        # Get init time
-        date_created = fields.Datetime.from_string(job.date_created)
-        ts = fields.Datetime.context_timestamp(job, date_created)
-        init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
-        # Description
-        desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
-        attachment.write({
-            'name': '%s_%s' % (record.display_name, attachment.name),
-            'parent_id': session.env.ref('pabi_utils.dir_spool_import').id,
-            'description': desc, })
-        return _('File imported successfully')
+        job = session.env['queue.job'].search([('uuid', '=', job_uuid)])
+        job.write({'res_model': record._name,
+                   'res_ids': [record.id]})
+        # Result Description
+        result = _('Successfully imported excel file : %s for %s') % \
+            (attachment.name, record.display_name)
+        return result
     except Exception, e:
         raise FailedJobError(e)
 
@@ -125,17 +143,18 @@ class XLSXImport(models.TransientModel):
         if self.async_process:
             Job = self.env['queue.job']
             session = ConnectorSession(self._cr, self._uid, self._context)
-            description = 'XLSX Import - %s' % self.res_model
+            description = 'Excel Import - %s' % self.res_model
             uuids = []
             ctx = self._context.copy()
             del ctx['params']  # If not removed, job is not readable by queue
             for attachment in self.attachment_ids:
-                uuid = get_import_job.delay(session, ctx,
-                                            self._name, self.id, attachment.id,
+                uuid = get_import_job.delay(session, self._name, ctx,
+                                            self.id, attachment.id,
                                             description=description)
+                job = Job.search([('uuid', '=', uuid)], limit=1)
+                job.process = 'Import Excel'  # Process Name
                 uuids.append(uuid)
                 # Move file to attach to queue.job
-                job = Job.search([('uuid', '=', uuid)], limit=1)
                 attachment.write({
                     'res_model': 'queue.job',
                     'res_id': job.id,

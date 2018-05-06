@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <menuitem id="my_jobs" name="My Jobs" parent="mail.mail_feeds_main" groups="base.group_user" sequence="20"/>
+
+        <!-- All my jobs -->
+        <record id="action_my_queue_job" model="ir.actions.act_window">
+            <field name="name">In-Progress Jobs</field>
+            <field name="res_model">queue.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('user_id', '=', uid)]</field>
+            <field name="context">{'search_default_pending': 1,
+                                   'search_default_enqueued': 1,
+                                   'search_default_started': 1,
+                                   'search_default_failed': 1}</field>
+            <field name="view_id" ref="connector.view_queue_job_tree"/>
+            <field name="search_view_id" ref="connector.view_queue_job_search"/>
+        </record>
+
+        <record id="my_queue_job" model="ir.ui.menu">
+            <field name="name">In-Progress Jobs</field>
+            <field name="sequence" eval="100"/>
+            <field name="action" ref="action_my_queue_job"/>
+            <field name="parent_id" ref="my_jobs"/>
+        </record>
+
+        <record id="view_queue_job_tree" model="ir.ui.view">
+            <field name="name">view.queue.job.tree</field>
+            <field name="model">queue.job</field>
+            <field name="inherit_id" ref="connector.view_queue_job_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='model_name']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Completed Processes -->
+        <record id="view_my_complete_job_search" model="ir.ui.view">
+            <field name="name">view.my.complete.job.search</field>
+            <field name="model">queue.job</field>
+            <field name="arch" type="xml">
+                <search string="Complete Jobs">
+                    <field name="name" string="Import" filter_domain="['|', '|', ('uuid', 'ilike', self), ('name','ilike',self),('result','ilike',self)]"/>
+                    <field name="user_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Process" domain="[]" context="{'group_by':'process'}"/>
+                        <filter string="Created Date" domain="[]" context="{'group_by':'date_created'}"/>
+                        <filter string="Done Date" domain="[]" context="{'group_by':'date_done'}"/>
+                        <filter string="Owner" domain="[]" context="{'group_by':'user_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_my_complete_job_calendar">
+            <field name="name">Completed Jobs</field>
+            <field name="model">queue.job</field>
+            <field name="arch" type="xml">
+                <calendar string="Jobs" date_start="date_created" color="user_id">
+                    <field name="name"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record id="view_my_complete_job_tree" model="ir.ui.view">
+            <field name="name">view.my.complete.job.tree</field>
+            <field name="model">queue.job</field>
+            <field name="arch" type="xml">
+                <tree string="Completed Jobs" edit="0" create="0">
+                    <field name="name"/>
+                    <field name="result"/>
+                    <field name="user_id" string="Owner"/>
+                    <field name="date_created"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_my_complete_job_form" model="ir.ui.view">
+            <field name="name">view.my.complete.job.form</field>
+            <field name="model">queue.job</field>
+            <field name="priority" eval="100"/>
+            <field name="arch" type="xml">
+                <form string="Completed Jobs" edit="0" create="0">
+                    <sheet>
+                        <div class="oe_right oe_button_box" name="buttons">
+                            <button name="open_related_action" string="Related" type="object"/>
+                        </div>
+                        <h1>
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                        <h3 attrs="{'invisible': [('result', '=', False)]}">
+                            <field nolabel="1" name="result"/>
+                        </h3>
+                        <hr/>
+                        <group>
+                            <group>
+                              <field name="process"/>
+                              <field name="uuid"/>
+                              <field name="res_model"/>
+                              <field name="res_ids"/>
+                            </group>
+                            <group>
+                                <field name="date_created"/>
+                                <field name="date_enqueued"/>
+                                <field name="date_started"/>
+                                <field name="date_done"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_my_complete_job" model="ir.actions.act_window">
+            <field name="name">Completed Jobs</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">queue.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">calendar,tree</field>
+            <field name="search_view_id" ref="view_my_complete_job_search"/>
+            <field name="domain">[('user_id', '=', uid), ('state', '=', 'done'), ('process', '!=', False)]</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_my_complete_job_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_my_complete_job_tree"/>
+            <field name="act_window_id" ref="action_my_complete_job"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_my_complete_job_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_my_complete_job_form"/>
+            <field name="act_window_id" ref="action_my_complete_job"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_my_complete_job_calendar">
+            <field name="sequence" eval="3"/>
+            <field name="view_mode">calendar</field>
+            <field name="view_id" ref="view_my_complete_job_calendar"/>
+            <field name="act_window_id" ref="action_my_complete_job"/>
+        </record>
+
+        <record id="menu_my_complete_job" model="ir.ui.menu">
+            <field name="name">Completed Jobs</field>
+            <field name="sequence" eval="10"/>
+            <field name="action" ref="action_my_complete_job"/>
+            <field name="parent_id" ref="my_jobs"/>
+        </record>
+
+    </data>
+</openerp>

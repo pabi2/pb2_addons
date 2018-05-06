@@ -110,9 +110,9 @@
 
         <record id="my_spool_report" model="ir.ui.menu">
             <field name="name">Spool Reports</field>
-            <field name="sequence" eval="200"/>
+            <field name="sequence" eval="50"/>
             <field name="action" ref="action_my_spool_report"/>
-            <field name="parent_id" ref="mail.mail_feeds"/>
+            <field name="parent_id" ref="my_jobs"/>
             <field name="groups_id" eval="[(4,ref('group_see_own_spool_report'))]"/>
         </record>
 

@@ -6,3 +6,4 @@ from . import ir_attachment
 from . import xlsx_report
 from . import xlsx_import
 from . import utils
+from . import job
