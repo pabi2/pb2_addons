@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="action_generate_entries" model="pabi.process">
+						<field name="name">Generate Account Entries</field>
+				</record>
+		</data>
+</openerp>

@@ -88,7 +88,8 @@ class XLSXReport(models.AbstractModel):
             uuid = get_report_job.delay(
                 session, self._name, self.id, description=description)
             job = Job.search([('uuid', '=', uuid)], limit=1)
-            job.process = 'Excel Report'  # Process Name
+            # Process Name
+            job.process_id = self.env.ref('pabi_utils.xlsx_report')
             self.write({'state': 'get', 'uuid': uuid})
         else:
             out_file, out_name = self.get_report()

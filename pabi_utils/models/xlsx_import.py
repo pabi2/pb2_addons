@@ -152,7 +152,8 @@ class XLSXImport(models.TransientModel):
                                             self.id, attachment.id,
                                             description=description)
                 job = Job.search([('uuid', '=', uuid)], limit=1)
-                job.process = 'Import Excel'  # Process Name
+                # Process Name
+                job.process_id = self.env.ref('pabi_utils.xlsx_import')
                 uuids.append(uuid)
                 # Move file to attach to queue.job
                 attachment.write({

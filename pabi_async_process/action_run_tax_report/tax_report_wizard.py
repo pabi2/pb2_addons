@@ -69,6 +69,10 @@ class AccountTaxReportWizard(PabiAsync, models.TransientModel):
             uuid = action_run_tax_report.delay(session, data,
                                                self.print_format,
                                                description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            job.process_id = self.env.ref('pabi_async_process.'
+                                          'tax_report')
             # Checking for running task, use the same signature as delay()
             task_name = "%s(%s, u'%s')" % \
                 ('action_run_tax_report', data, self.print_format)

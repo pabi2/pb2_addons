@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="xlsx_import" model="pabi.process">
+						<field name="name">Import Excel</field>
+				</record>
+				<record id="xlsx_report" model="pabi.process">
+						<field name="name">Excel Report</field>
+				</record>
+		</data>
+</openerp>

@@ -45,7 +45,7 @@
                     <field name="name" string="Import" filter_domain="['|', '|', ('uuid', 'ilike', self), ('name','ilike',self),('result','ilike',self)]"/>
                     <field name="user_id"/>
                     <group expand="0" string="Group By">
-                        <filter string="Process" domain="[]" context="{'group_by':'process'}"/>
+                        <filter string="Process" domain="[]" context="{'group_by':'process_id'}"/>
                         <filter string="Created Date" domain="[]" context="{'group_by':'date_created'}"/>
                         <filter string="Done Date" domain="[]" context="{'group_by':'date_done'}"/>
                         <filter string="Owner" domain="[]" context="{'group_by':'user_id'}"/>
@@ -96,7 +96,7 @@
                         <hr/>
                         <group>
                             <group>
-                              <field name="process"/>
+                              <field name="process_id"/>
                               <field name="uuid"/>
                               <field name="res_model"/>
                               <field name="res_ids"/>
@@ -120,7 +120,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">calendar,tree</field>
             <field name="search_view_id" ref="view_my_complete_job_search"/>
-            <field name="domain">[('user_id', '=', uid), ('state', '=', 'done'), ('process', '!=', False)]</field>
+            <field name="domain">[('user_id', '=', uid), ('state', '=', 'done'), ('process_id', '!=', False)]</field>
         </record>
 
         <record model="ir.actions.act_window.view" id="action_my_complete_job_tree">

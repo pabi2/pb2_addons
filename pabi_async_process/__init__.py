@@ -5,3 +5,5 @@ from . import action_run_tax_report
 from . import action_generate_entries
 from . import action_open_hr_salary
 from . import action_generate_budget_plans
+
+from . import pabi_action_generate_entries

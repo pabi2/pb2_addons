@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="hr_salary" model="pabi.process">
+						<field name="name">HR Salary</field>
+				</record>
+		</data>
+</openerp>

@@ -21,6 +21,7 @@
         "security/security_rule.xml",
         "security/ir.model.access.csv",
         "data/xls_config.xml",
+        "data/pabi_process.xml",
         "wizard/export_xlsx_template_wizard.xml",
         "wizard/import_xlsx_template_wizard.xml",
         "views/data_map_view.xml",

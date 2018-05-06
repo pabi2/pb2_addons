@@ -23,7 +23,7 @@
           <!-- xlsx.import common field -->
           <div name="xlsx.import">
             <field name="state" invisible="1"/>
-            <div states="choose" groups="pabi_utils.group_see_own_spool_import">
+            <div states="choose">
               <field name="async_process"/><label for="async_process"/>
             </div>
             <div states="get">
