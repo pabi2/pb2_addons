@@ -65,6 +65,10 @@ class XLSXReport(models.AbstractModel):
         readonly=True,
         help="Job queue unique identifier",
     )
+    to_csv = fields.Boolean(
+        string='Convert to CSV?',
+        default=False,
+    )
 
     @api.multi
     def get_report(self):
@@ -75,7 +79,9 @@ class XLSXReport(models.AbstractModel):
         if len(template) != 1:
             raise ValidationError(
                 _('The report template "%s" must be single') % self._name)
-        return Export._export_template(template, self._name, self.id)
+        return Export._export_template(template, self._name,
+                                       self.id,
+                                       to_csv=self.to_csv)
 
     @api.multi
     def action_get_report(self):

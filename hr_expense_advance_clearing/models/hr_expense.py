@@ -271,7 +271,7 @@ class HRExpenseClearing(models.Model):
     def _sql_select_1(self):
         return """
             create_date as date, advance_expense_id, id as expense_id,
-            null as invoice_id, amount as expense_amount,
+            null::int as invoice_id, amount as expense_amount,
             null as clearing_amount, null as invoiced_amount
         """
 

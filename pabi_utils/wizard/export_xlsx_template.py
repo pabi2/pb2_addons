@@ -3,6 +3,8 @@ import re
 import os
 import pandas as pd
 import numpy as np
+import xlrd
+import csv
 from openpyxl.styles import colors
 from openpyxl.styles import PatternFill, Alignment, Font
 from dateutil.parser import parse
@@ -230,6 +232,23 @@ def load_workbook_range(range_string, ws):
         data_rows.append([cell.value for cell in row])
     return pd.DataFrame(data_rows,
                         columns=get_column_interval(col_start, col_end))
+
+
+def csv_from_excel(excel_content):
+    decoded_data = base64.decodestring(excel_content)
+    wb = xlrd.open_workbook(file_contents=decoded_data)
+    sh = wb.sheet_by_index(0)
+    content = cStringIO.StringIO()
+    wr = csv.writer(content, quoting=csv.QUOTE_ALL)
+    for rownum in xrange(sh.nrows):
+        row_vals = map(lambda x: isinstance(x, basestring) and
+                       x.encode('utf-8') or x,
+                       sh.row_values(rownum))
+        wr.writerow(row_vals)
+    # content.close()  # Set index to 0, and start reading
+    content.seek(0)  # Set index to 0, and start reading
+    out_file = base64.encodestring(content.read())
+    return out_file
 
 
 class ExportXlsxTemplate(models.TransientModel):
@@ -568,7 +587,7 @@ class ExportXlsxTemplate(models.TransientModel):
                         st.cell(row=r_idx, column=c_idx, value=value)
 
     @api.model
-    def _export_template(self, template, res_model, res_id):
+    def _export_template(self, template, res_model, res_id, to_csv=False):
         data_dict = literal_eval(template.description.strip())
         export_dict = data_dict.get('__EXPORT__', False)
         out_name = template.name
@@ -606,7 +625,12 @@ class ExportXlsxTemplate(models.TransientModel):
             out_name = '%s_%s' % (fname, ts.strftime('%Y%m%d_%H%M%S'))
         if not out_name or len(out_name) == 0:
             out_name = 'noname'
-        return (out_file, '%s.xlsx' % out_name)
+        out_ext = '.xlsx'
+        # CSV (convert only 1st sheet)
+        if to_csv:
+            out_file = csv_from_excel(out_file)
+            out_ext = '.csv'
+        return (out_file, '%s.%s' % (out_name, out_ext))
 
     @api.multi
     def act_getfile(self):
