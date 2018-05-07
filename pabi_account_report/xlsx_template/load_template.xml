@@ -6,6 +6,7 @@
         <function model="ir.attachment" name="load_xlsx_template">
             <value eval="[
                 ref('xlsx_report_partner_list'),
+                ref('xlsx_report_partner_detail'),
                 ref('xlsx_report_advance_status'),
                 ref('xlsx_report_supplier_invoice_detail'),
                 ref('xlsx_report_cheque_register'),
