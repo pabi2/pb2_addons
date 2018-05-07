@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-from pytz import timezone
 from openerp import models, fields, api, _
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta as rdelta
