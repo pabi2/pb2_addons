@@ -49,6 +49,10 @@ class PurchaseOrder(PabiAsync, models.Model):
             description = '%s - Create Supplier Invoice(s)' % self.name
             uuid = action_purchase_create_invoice.delay(
                 session, self._name, self.id, description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            job.process_id = self.env.ref('pabi_async_process.'
+                                          'purchase_invoice_plan')
             # Checking for running task, use the same signature as delay()
             task_name = "%s('%s', %s)" % \
                 ('action_purchase_create_invoice', self._name, self.id)

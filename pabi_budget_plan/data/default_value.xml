@@ -8,7 +8,7 @@
             <field name="key">default</field>
             <field name="key2"></field>
             <field name="company_id" ref="base.main_company"/>
-            <field name="value_unpickle" eval="ref('base.AG0001')"/>
+            <field name="value_unpickle" eval="ref('base.AG0001', False)"/>
         </record>
         <!-- Default AG for Investment Construction Budget Plan -->
         <record id="base.value_invest_construction_activity_group" model="ir.values">
@@ -17,7 +17,7 @@
             <field name="key">default</field>
             <field name="key2"></field>
             <field name="company_id" ref="base.main_company"/>
-            <field name="value_unpickle" eval="ref('base.AG0026')"/>
+            <field name="value_unpickle" eval="ref('base.AG0026', False)"/>
         </record>
     </data>
 </openerp>

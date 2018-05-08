@@ -157,8 +157,8 @@ class BudgetPlanReport(models.Model):
         return """
             abl.activity_group_id,
             abl.activity_id,
-            null account_id,
-            null product_id,
+            null::int account_id,
+            null::int product_id,
             ablps.period_id as period_id,
             ablps.quarter as quarter
         """

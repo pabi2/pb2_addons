@@ -25,7 +25,6 @@ Purchase - Purchase Order Force Done
     ],
     "data": [
         "wizard/force_done_reason_view.xml",
-        "security/ir.model.access.csv",
         "views/purchase_view.xml",
     ],
 }

@@ -19,7 +19,7 @@ def get_report_job(session, model_name, res_id):
         date_created = fields.Datetime.from_string(job.date_created)
         ts = fields.Datetime.context_timestamp(job, date_created)
         init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
-        # Description
+        # Create output report place holder
         desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
         session.env['ir.attachment'].create({
             'name': out_name,
@@ -32,7 +32,9 @@ def get_report_job(session, model_name, res_id):
             'description': desc,
             'user_id': job.user_id.id,
         })
-        return _('Report created successfully')
+        # Result Description
+        result = _('Successfully created excel report : %s') % out_name
+        return result
     except Exception, e:
         raise FailedJobError(e)
 
@@ -63,6 +65,10 @@ class XLSXReport(models.AbstractModel):
         readonly=True,
         help="Job queue unique identifier",
     )
+    to_csv = fields.Boolean(
+        string='Convert to CSV?',
+        default=False,
+    )
 
     @api.multi
     def get_report(self):
@@ -73,17 +79,23 @@ class XLSXReport(models.AbstractModel):
         if len(template) != 1:
             raise ValidationError(
                 _('The report template "%s" must be single') % self._name)
-        return Export._export_template(template, self._name, self.id)
+        return Export._export_template(template, self._name,
+                                       self.id,
+                                       to_csv=self.to_csv)
 
     @api.multi
     def action_get_report(self):
         self.ensure_one()
         # Enqueue
         if self.async_process:
+            Job = self.env['queue.job']
             session = ConnectorSession(self._cr, self._uid, self._context)
-            description = 'XLSX Report - %s' % (self._name, )
+            description = 'Excel Report - %s' % (self._name, )
             uuid = get_report_job.delay(
                 session, self._name, self.id, description=description)
+            job = Job.search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            job.process_id = self.env.ref('pabi_utils.xlsx_report')
             self.write({'state': 'get', 'uuid': uuid})
         else:
             out_file, out_name = self.get_report()

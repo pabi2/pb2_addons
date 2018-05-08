@@ -702,6 +702,14 @@ class AccountAssetLine(models.Model):
                                'project_id': asset.owner_project_id.id})
         return move_line_data
 
+    @api.multi
+    def _setup_move_data(self, depreciation_date, period):
+        self.ensure_one()
+        move_data = super(AccountAssetLine, self).\
+            _setup_move_data(depreciation_date, period)
+        move_data.update({'name': '/'})
+        return move_data
+
 
 class AssetRepairNote(models.Model):
     _name = 'asset.repair.note'

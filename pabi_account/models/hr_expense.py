@@ -24,7 +24,7 @@ class HRExpenseClearing(models.Model):
 
     def _sql_select_1(self):
         sql_select = super(HRExpenseClearing, self)._sql_select_1()
-        return sql_select + ', null as validate_user_id'
+        return sql_select + ', null::int as validate_user_id'
 
     def _sql_select_2(self):
         sql_select = super(HRExpenseClearing, self)._sql_select_2()

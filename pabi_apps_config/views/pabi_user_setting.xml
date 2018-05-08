@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Attempt to reorganize security setting UI for users -->
+
+        <!-- Move Technical Settings to bottom -->
+        <record id="base.module_category_hidden" model="ir.module.category">
+            <field name="sequence" eval="100"/>
+        </record>
+
+    </data>
+</openerp>

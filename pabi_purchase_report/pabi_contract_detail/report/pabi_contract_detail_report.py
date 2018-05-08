@@ -25,7 +25,7 @@ class PabiContractDetailReport(models.Model):
             select
             po.id as po_id,
             pcon.name as contract_no,
-            pcon.postdating as post_contract_date,
+            pcon.collateral_date as post_contract_date,
             rp.name as supplier,
             pol.name as product_desc,
             po.amount_total as amount_total,
@@ -55,7 +55,7 @@ class PabiContractDetailReport(models.Model):
             and po.state in ('approved','done')
             group by
             po.id,
-            pcon.postdating,
+            pcon.collateral_date,
             rp.name,
             pol.name,
             po.amount_total,

@@ -190,18 +190,14 @@ class PurchaseOrder(models.Model):
     def _compute_dummy_quote_id(self):
         self.dummy_quote_id = self.id
 
-    @api.one
-    @api.depends('requisition_id.count_contract',
-                 'requisition_id.contract_ids.state')
+    @api.multi
+    @api.depends('requisition_id.contract_ids.state')
     def _compute_contract_id(self):
-        self.contract_id = False
-        if self.requisition_id:
-            Contract = self.env['purchase.contract']
-            contract = Contract.search(
-                [('id', 'in', self.requisition_id.contract_ids.ids),
-                 ('state', '=', 'S')], order='poc_rev desc', limit=1)
-            if contract:
-                self.contract_id = contract.id
+        # As discuss w/ Sunchai, let's use newest contract, regardless of state
+        for rec in self:
+            if rec.requisition_id and rec.requisition_id.contract_ids:
+                latest_contract_id = max(rec.requisition_id.contract_ids.ids)
+                rec.contract_id = latest_contract_id
 
     @api.model
     def check_over_requisition_limit(self):

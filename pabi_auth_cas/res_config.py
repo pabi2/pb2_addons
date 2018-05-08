@@ -144,7 +144,7 @@ class cas_base_config_settings(osv.TransientModel):
                 message = 'Good parameters\n'
                 message += 'The CAS server is well configured !'
 
-        except:
+        except Exception:
             pass
 
         raise osv.except_osv(_(title), _(message))

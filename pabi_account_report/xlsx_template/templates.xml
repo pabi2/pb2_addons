@@ -45,20 +45,72 @@
                             'P6': 'website${value or ""}',
                             'Q6': 'email${value or ""}',
                             'R6': 'comment${value or ""}',
-                            'S6': 'prtransformty_account_payable.code${value or ""}',
-                            'T6': 'prtransformty_account_payable.name${value or ""}',
-                            'U6': 'prtransformty_account_receivable.code${value or ""}',
-                            'V6': 'prtransformty_account_receivable.name${value or ""}',
-                            'W6': 'prtransformty_supplier_payment_term.name${value or ""}',
-                            'X6': 'prtransformty_payment_term.name${value or ""}',
+                            'S6': 'property_account_payable.code${value or ""}',
+                            'T6': 'property_account_payable.name${value or ""}',
+                            'U6': 'property_account_receivable.code${value or ""}',
+                            'V6': 'property_account_receivable.name${value or ""}',
+                            'W6': 'property_supplier_payment_term.name${value or ""}',
+                            'X6': 'property_payment_term.name${value or ""}',
                             'Y6': 'credit${value or ""}',
                             'Z6': 'debit${value or ""}',
-                            'AA6': 'bank_ids${value and "\\skiprow".join([x.acc_number for x in value]) or ""}',
-                            'AB6': 'bank_ids${value and "\\skiprow".join([x.bank.code for x in value]) or ""}',
-                            'AC6': 'bank_ids${value and "\\skiprow".join([x.partner_id.display_name for x in value]) or ""}',
+                            'AA6': 'bank_ids${value and "\\skiprow".join([x.acc_number or "" for x in value]) or ""}',
+                            'AB6': 'bank_ids${value and "\\skiprow".join([x.bank.code or "" for x in value]) or ""}',
+                            'AC6': 'bank_ids${value and "\\skiprow".join([x.partner_id.display_name or "" for x in value]) or ""}',
                             'AD6': 'bank_ids${value and "\\skiprow".join([x.active and "X" or "" for x in value]) or ""}',
                             'AE6': 'bank_ids${value and "\\skiprow".join([x.default and "X" or "" for x in value]) or ""}',
                             'AF6': 'income_tax_form${value and value.upper() or ""}',
+                            'AG6': 'create_date${value or ""}#{number_format=date}',
+                            'AH6': 'create_uid.name${value or ""}',
+                            'AI6': 'write_date${value or ""}#{number_format=date}',
+                            'AJ6': 'write_uid.name${value or ""}',
+                            'AK6': 'active${value and "X" or ""}',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+        # Partner Detail
+        <record id="xlsx_report_partner_detail" model="ir.attachment">
+            <field name="res_model">xlsx.report.partner.detail</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_partner_detail.xlsx</field>
+            <field name="name">Partner Detail</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Partner Detail Report': {
+                        '_HEAD_': {
+                            'B1': 'category_ids${value and ", ".join(value.mapped("name")) or ""}',
+                            'B2': 'customer${value and "X" or ""}',
+                            'B3': 'supplier${value and "X" or ""}',
+                        },
+                        'results': {
+                            'A6': 'partner_id.search_key${value or ""}',
+                            'B6': 'partner_id.display_name${value or ""}',
+                            'C6': 'partner_id.street${value or ""}',
+                            'D6': 'partner_id.street2${value or ""}',
+                            'E6': 'partner_id.township_id.name${value or ""}',
+                            'F6': 'partner_id.district_id.name${value or ""}',
+                            'G6': 'partner_id.province_id.name${value or ""}',
+                            'H6': 'partner_id.country_id.name${value or ""}',
+                            'I6': 'partner_id.zip${value or ""}',
+                            'J6': 'partner_id.vat${value or ""}',
+                            'K6': 'partner_id.taxbranch${value or ""}',
+                            'L6': 'partner_id.mobile${value or ""}',
+                            'M6': 'partner_id.fax${value or ""}',
+                            'N6': 'bank_id${value and value.acc_number or ""}',
+                            'O6': 'bank_id${value and value.bank.code or ""}',
+                            'P6': 'bank_id${value and value.partner_id.display_name or ""}',
+                            'Q6': 'bank_id${value and (value.active and "X" or "") or ""}',
+                            'R6': 'bank_id${value and (value.default and "X" or "") or ""}',
+                            'S6': 'partner_id.create_date${value or ""}#{number_format=date}',
+                            'T6': 'partner_id.create_uid.name${value or ""}',
+                            'U6': 'partner_id.write_date${value or ""}#{number_format=date}',
+                            'V6': 'partner_id.write_uid.name${value or ""}',
+                            'W6': 'partner_id.active${value and "X" or ""}',
                         }
                     }
                 }

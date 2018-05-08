@@ -5,16 +5,9 @@ from openerp import api, fields, models, _
 class PurchaseRequisition(models.Model):
     _inherit = "purchase.requisition"
 
-    @api.one
-    @api.depends('contract_ids')
-    def _count_contract(self):
-        PContract = self.env['purchase.contract']
-        contract = PContract.search([('pd_id', '=', self.id)])
-        self.count_contract = len(contract)
-
     contract_ids = fields.One2many(
         'purchase.contract',
-        'pd_id',
+        'requisition_id',
         string='Contract',
         readonly=False,
     )
@@ -23,6 +16,13 @@ class PurchaseRequisition(models.Model):
         compute='_count_contract',
         store=True,
     )
+
+    @api.one
+    @api.depends('contract_ids')
+    def _count_contract(self):
+        PContract = self.env['purchase.contract']
+        contract = PContract.search([('requisition_id', '=', self.id)])
+        self.count_contract = len(contract)
 
     @api.multi
     def contract_open(self):
@@ -33,5 +33,5 @@ class PurchaseRequisition(models.Model):
             'res_model': 'purchase.contract',
             'type': 'ir.actions.act_window',
             'target': 'current',
-            'domain': "[('pd_id', '=', "+str(self.id)+")]",
+            'domain': "[('requisition_id', '=', " + str(self.id) + ")]",
         }

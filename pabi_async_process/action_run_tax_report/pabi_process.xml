@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="tax_report" model="pabi.process">
+						<field name="name">Tax Report</field>
+				</record>
+		</data>
+</openerp>

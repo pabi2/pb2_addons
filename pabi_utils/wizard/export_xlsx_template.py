@@ -3,6 +3,8 @@ import re
 import os
 import pandas as pd
 import numpy as np
+import xlrd
+import csv
 from openpyxl.styles import colors
 from openpyxl.styles import PatternFill, Alignment, Font
 from dateutil.parser import parse
@@ -31,7 +33,7 @@ def get_field_aggregation(field):
         try:
             if len(cond) > 0:
                 return (field[:i], cond)
-        except:
+        except Exception:
             return (field.replace('@{%s}' % cond, ''), False)
     return (field, False)
 
@@ -45,7 +47,7 @@ def get_field_condition(field):
         try:
             if len(cond) > 0:
                 return (field.replace('${%s}' % cond, ''), cond)
-        except:
+        except Exception:
             return (field, False)
     return (field, False)
 
@@ -67,7 +69,7 @@ def get_field_format(field):
         try:
             if len(cond) > 0:
                 return (field.replace('#{%s}' % cond, ''), cond)
-        except:
+        except Exception:
             return (field, False)
     return (field, False)
 
@@ -116,7 +118,7 @@ def fill_cell_format(field, field_format):
 
 
 def get_line_max(line_field):
-    """ i.e., line_field = line_ids[100], mas = 100 else 0 """
+    """ i.e., line_field = line_ids[100], max = 100 else 0 """
     if line_field and '[' in line_field and ']' in line_field:
         i = line_field.index('[')
         j = line_field.index(']')
@@ -126,7 +128,7 @@ def get_line_max(line_field):
                 return (line_field[:i], int(max_str))
             else:
                 return (line_field, False)
-        except:
+        except Exception:
             return (line_field, False)
     return (line_field, False)
 
@@ -232,6 +234,23 @@ def load_workbook_range(range_string, ws):
                         columns=get_column_interval(col_start, col_end))
 
 
+def csv_from_excel(excel_content):
+    decoded_data = base64.decodestring(excel_content)
+    wb = xlrd.open_workbook(file_contents=decoded_data)
+    sh = wb.sheet_by_index(0)
+    content = cStringIO.StringIO()
+    wr = csv.writer(content, quoting=csv.QUOTE_ALL)
+    for rownum in xrange(sh.nrows):
+        row_vals = map(lambda x: isinstance(x, basestring) and
+                       x.encode('utf-8') or x,
+                       sh.row_values(rownum))
+        wr.writerow(row_vals)
+    # content.close()  # Set index to 0, and start reading
+    content.seek(0)  # Set index to 0, and start reading
+    out_file = base64.encodestring(content.read())
+    return out_file
+
+
 class ExportXlsxTemplate(models.TransientModel):
     """ This wizard is used with the template (ir.attachment) to export
     xlsx template filled with data form the active record """
@@ -290,31 +309,8 @@ class ExportXlsxTemplate(models.TransientModel):
         return defaults
 
     @api.model
-    def _get_val(self, record, field):
-        for f in field.split('.'):
-            record = record[f]
-        return record
-
-    @api.model
     def _get_line_vals(self, record, line_field, fields):
         """ Get values of this field from record set """
-
-        def _get_field_data(_field, _line):
-            """ Get field data, and convert data type if needed """
-            if not _field:
-                return None
-            line_copy = _line
-            for f in _field.split('.'):
-                data_type = line_copy._fields[f].type
-                line_copy = line_copy[f]
-                if data_type == 'date':
-                    if line_copy:
-                        line_copy = dt.strptime(line_copy, '%Y-%m-%d')
-                elif data_type == 'datetime':
-                    if line_copy:
-                        line_copy = dt.strptime(line_copy, '%Y-%m-%d %H:%M:%S')
-            return line_copy
-
         line_field, max_row = get_line_max(line_field)
         lines = record[line_field]
         if max_row > 0 and len(lines) > max_row:
@@ -339,9 +335,7 @@ class ExportXlsxTemplate(models.TransientModel):
         # --
         for line in lines:
             for field in pair_fields:  # (field, raw_field)
-                value = _get_field_data(field[1], line)
-                if isinstance(value, basestring):
-                    value = value.encode('utf-8')
+                value = self._get_field_data(field[1], line)
                 # Case Eval
                 eval_cond = field_cond_dict[field[0]]
                 if eval_cond:  # Get eval_cond of a raw field
@@ -407,13 +401,30 @@ class ExportXlsxTemplate(models.TransientModel):
             raise except_orm(_('Error filling data into excel sheets!'), e)
 
     @api.model
+    def _get_field_data(self, _field, _line):
+        """ Get field data, and convert data type if needed """
+        if not _field:
+            return None
+        line_copy = _line
+        for f in _field.split('.'):
+            data_type = line_copy._fields[f].type
+            line_copy = line_copy[f]
+            if data_type == 'date':
+                if line_copy:
+                    line_copy = dt.strptime(line_copy, '%Y-%m-%d')
+            elif data_type == 'datetime':
+                if line_copy:
+                    line_copy = dt.strptime(line_copy, '%Y-%m-%d %H:%M:%S')
+        if isinstance(line_copy, basestring):
+            line_copy = line_copy.encode('utf-8')
+        return line_copy
+
+    @api.model
     def _fill_head(self, ws, st, record):
         for rc, field in ws.get('_HEAD_', {}).iteritems():
             tmp_field, eval_cond = get_field_condition(field)
             tmp_field, field_format = get_field_format(tmp_field)
-            value = tmp_field and self._get_val(record, tmp_field)
-            if isinstance(value, basestring):
-                value = value.encode('utf-8')
+            value = tmp_field and self._get_field_data(tmp_field, record)
             # Case Eval
             if eval_cond:  # Get eval_cond of a raw field
                 eval_context = {'float_compare': float_compare,
@@ -480,6 +491,11 @@ class ExportXlsxTemplate(models.TransientModel):
 
     @api.model
     def _fill_tail(self, ws, st, record, tail_fields):
+        # Get the max last rc's row
+        last_row = 0
+        for to_rc in tail_fields.values():
+            _, row = split_row_col(to_rc)
+            last_row = row > last_row and row or last_row
         # Similar to header, except it will set cell after last row
         # Get all tails, i.e., _TAIL_0, _TAIL_1 order by number
         tails = filter(lambda l: l[0:6] == '_TAIL_', ws.keys())
@@ -488,16 +504,10 @@ class ExportXlsxTemplate(models.TransientModel):
             row_skip = tail_key[6:] != '' and int(tail_key[6:]) or 0
             # For each _TAIL_ and row skipper 0, 1, 2, ...
             for rc, field in tail_dict.iteritems():
-                if rc not in tail_fields.keys():
-                    raise ValidationError(
-                        _('%s is not in detail field and can '
-                          'not be used as tail field.') % rc)
                 tmp_field, eval_cond = get_field_condition(field)
                 tmp_field, field_format = get_field_format(tmp_field)
                 tmp_field, func = get_field_aggregation(tmp_field)
-                value = tmp_field and self._get_val(record, tmp_field)
-                if isinstance(value, basestring):
-                    value = value.encode('utf-8')
+                value = tmp_field and self._get_field_data(tmp_field, record)
                 # Case Eval
                 if eval_cond:  # Get eval_cond of a raw field
                     eval_context = {'float_compare': float_compare,
@@ -512,9 +522,17 @@ class ExportXlsxTemplate(models.TransientModel):
                     # str() throw cordinal not in range error
                     value = eval(eval_cond, eval_context)
                     # value = str(eval(eval_cond, eval_context))
-                last_rc = tail_fields[rc]  # Last row of rc column
-                col, row = split_row_col(last_rc)
-                tail_rc = '%s%s' % (col, row + row_skip + 1)
+                # If no rc in tail_fields, use the max last row
+                last_rc = False
+                tail_rc = False
+                if rc in tail_fields.keys():
+                    last_rc = tail_fields[rc]  # Last row of rc column
+                    col, row = split_row_col(last_rc)
+                    tail_rc = '%s%s' % (col, row + row_skip + 1)
+                else:
+                    col, _ = split_row_col(rc)
+                    last_rc = '%s%s' % (col, last_row)
+                    tail_rc = '%s%s' % (col, last_row + row_skip + 1)
                 if value and value is not None:
                     st[tail_rc] = value
                 if func:
@@ -568,7 +586,7 @@ class ExportXlsxTemplate(models.TransientModel):
                         st.cell(row=r_idx, column=c_idx, value=value)
 
     @api.model
-    def _export_template(self, template, res_model, res_id):
+    def _export_template(self, template, res_model, res_id, to_csv=False):
         data_dict = literal_eval(template.description.strip())
         export_dict = data_dict.get('__EXPORT__', False)
         out_name = template.name
@@ -604,7 +622,14 @@ class ExportXlsxTemplate(models.TransientModel):
             fname = out_name.replace(' ', '').replace('/', '')
             ts = fields.Datetime.context_timestamp(self, dt.now())
             out_name = '%s_%s' % (fname, ts.strftime('%Y%m%d_%H%M%S'))
-        return (out_file, '%s.xlsx' % out_name)
+        if not out_name or len(out_name) == 0:
+            out_name = 'noname'
+        out_ext = '.xlsx'
+        # CSV (convert only 1st sheet)
+        if to_csv:
+            out_file = csv_from_excel(out_file)
+            out_ext = '.csv'
+        return (out_file, '%s.%s' % (out_name, out_ext))
 
     @api.multi
     def act_getfile(self):

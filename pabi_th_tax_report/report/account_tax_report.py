@@ -100,7 +100,7 @@ class AccountTaxReport(models.Model):
                 else base_company end as base,
             case when cancel is true then 0.0
                 else amount_company end as amount,
-            taxbranch_id, number_preprint
+            atd.taxbranch_id, number_preprint
         """
         return res
 

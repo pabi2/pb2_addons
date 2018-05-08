@@ -4,14 +4,14 @@
 
       # Budget Plan
       <!-- Budget Plan Unit Based -->
-      <act_window id="action_budget_plan_unit_export_xlsx_tempalte"
+      <act_window id="action_budget_plan_unit_export_xlsx_template"
           name="Export Template (.xlsx)"
           res_model="export.xlsx.template"
           src_model="budget.plan.unit"
           view_mode="form"
           target="new"
           context="{'lang': 'th_TH'}"/>
-      <act_window id="action_budget_plan_unit_import_xlsx_tempalte"
+      <act_window id="action_budget_plan_unit_import_xlsx_template"
           name="Import Template (.xlsx)"
           res_model="import.xlsx.template"
           src_model="budget.plan.unit"
@@ -19,14 +19,14 @@
           target="new"/>
 
       <!-- Budget Plan Invest Construction -->
-      <act_window id="action_budget_plan_invest_construction_export_xlsx_tempalte"
+      <act_window id="action_budget_plan_invest_construction_export_xlsx_template"
           name="Export Template (.xlsx)"
           res_model="export.xlsx.template"
           src_model="budget.plan.invest.construction"
           view_mode="form"
           target="new"
           context="{'lang': 'th_TH'}"/>
-      <act_window id="action_budget_plan_invest_construction_import_xlsx_tempalte"
+      <act_window id="action_budget_plan_invest_construction_import_xlsx_template"
           name="Import Template (.xlsx)"
           res_model="import.xlsx.template"
           src_model="budget.plan.invest.construction"
@@ -35,15 +35,28 @@
 
       # Budget Breakdown
       <!-- Optional: To be specific to some template and context -->
-  		<record id="action_budget_breakdown_unit_export_xlsx_tempalte" model="ir.actions.act_window">
+  		<record id="action_budget_breakdown_unit_export_xlsx_template" model="ir.actions.act_window">
+          <field name="name">Export Breakdown</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">export.xlsx.template</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+          <field name="target">new</field>
     			<field name="context"
             eval="{'template_fname': 'budget_breakdown_unit_base.xlsx',
                    'template_context': {},
-                   'template_import_states': []}"/>
+                   'template_import_states': [],
+                   'lang': 'th_TH'}"/>
       </record>
 
       <!-- Optional: To be specific to some template and context -->
-   		<record id="action_budget_breakdown_unit_import_xlsx_tempalte" model="ir.actions.act_window">
+   		<record id="action_budget_breakdown_unit_import_xlsx_template" model="ir.actions.act_window">
+          <field name="name">Import Breakdown</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">import.xlsx.template</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+          <field name="target">new</field>
      			<field name="context"
             eval="{'template_fname': 'budget_breakdown_unit_base.xlsx',
                    'template_context': {},
@@ -51,21 +64,21 @@
       </record>
 
       # Asset Item Plan
-      <act_window id="action_invest_asset_plan_export_xlsx_tempalte"
+      <act_window id="action_invest_asset_plan_export_xlsx_template"
           name="Export Template (.xlsx)"
           res_model="export.xlsx.template"
           src_model="invest.asset.plan"
           view_mode="form"
           target="new"
           context="{'lang': 'th_TH'}"/>
-      <act_window id="action_invest_asset_plan_import_xlsx_tempalte"
+      <act_window id="action_invest_asset_plan_import_xlsx_template"
           name="Import Template (.xlsx)"
           res_model="import.xlsx.template"
           src_model="invest.asset.plan"
           view_mode="form"
           target="new"/>
       <!-- Optional: To be specific to some template and context -->
-  		<record id="action_invest_asset_plan_import_xlsx_tempalte" model="ir.actions.act_window">
+  		<record id="action_invest_asset_plan_import_xlsx_template" model="ir.actions.act_window">
     			<field name="context"
             eval="{'template_import_states': ['draft', 'submit']}"/>
       </record>
@@ -73,14 +86,14 @@
 
       # Project Based
       <!-- Budget Plan Project Based -->
-      <act_window id="action_budget_plan_project_export_xlsx_tempalte"
+      <act_window id="action_budget_plan_project_export_xlsx_template"
           name="Export Template (.xlsx)"
           res_model="export.xlsx.template"
           src_model="budget.plan.project"
           view_mode="form"
           target="new"
           context="{'lang': 'th_TH'}"/>
-      <act_window id="action_budget_plan_project_import_xlsx_tempalte"
+      <act_window id="action_budget_plan_project_import_xlsx_template"
           name="Import Template (.xlsx)"
           res_model="import.xlsx.template"
           src_model="budget.plan.project"

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data noupdate="0">
+
+		<!-- Contract User by Org -->
+		<record id="group_pabi_purchase_contract_user" model="res.groups">
+			<field name="name">Purchase Contract User (Org)</field>
+			<field name="category_id" ref="module_category_pabi_purchase_contract"/>
+		</record>
+
+		<!-- Lawyer see all, click only verify button -->
+		<record id="group_pabi_purchase_contract_verify" model="res.groups">
+			<field name="name">Verify Only (All)</field>
+			<field name="category_id" ref="module_category_pabi_purchase_contract"/>
+		</record>
+
+		<!-- Accountant see all, edit some field (to be vreified) + click only close button -->
+		<record id="group_pabi_purchase_contract_close" model="res.groups">
+			<field name="name">Close Contract (All)</field>
+			<field name="category_id" ref="module_category_pabi_purchase_contract"/>
+		</record>
+
+	</data>
+</openerp>

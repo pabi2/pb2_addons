@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <record id="xlsx_import_view" model="ir.ui.view">
+      <field name="name">xlsx.import.view</field>
+      <field name="model">xlsx.import</field>
+      <field name="arch" type="xml">
+        <form string="Import XLSX">
+
+          <!-- import criteria -->
+          <group states="choose">
+            <group>
+              <field name="template_id"/>
+            </group>
+            <group>
+              <field name="res_model" invisible="1"/>
+            </group>
+            <group colspan="4">
+              <field name="attachment_ids" widget="many2many_binary" nolabel="1"/>
+            </group>
+          </group>
+
+          <!-- xlsx.import common field -->
+          <div name="xlsx.import">
+            <field name="state" invisible="1"/>
+            <div states="choose">
+              <field name="async_process"/><label for="async_process"/>
+            </div>
+            <div states="get">
+              <h2 attrs="{'invisible': [('async_process', '=', True)]}">
+                Complete Import Files
+              </h2>
+              <h2 attrs="{'invisible': [('async_process', '=', False)]}">
+                Import Enqueued (.xlsx)
+              </h2>
+              <p attrs="{'invisible': [('async_process', '=', True)]}" colspan="4">
+                New Records:
+                <field name="res_ids" class="oe_inline" invisible="1"/>
+                <field name="res_names" class="oe_inline"/>
+              </p>
+              <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
+                Import UUIDs:
+                <field name="uuids" class="oe_inline"/>
+              </p>
+            </div>
+            <footer states="choose">
+              <button name="action_import_xlsx" string="Import Files (.xlsx)" type="object" class="oe_highlight"/>
+              or
+              <button special="cancel" string="Cancel" type="object" class="oe_link"/>
+            </footer>
+            <footer attrs="{'invisible': ['|', ('state', '!=', 'get'), ('async_process', '=', True)]}">
+              <button name="action_open_result" string="Open New Records" type="object" class="oe_highlight"/>
+              or
+              <button special="cancel" string="Close" type="object" class="oe_link"/>
+            </footer>
+            <footer attrs="{'invisible': ['|', ('state', '!=', 'get'), ('async_process', '=', False)]}">
+              <button special="cancel" string="Close" type="object" class="oe_link"/>
+            </footer>
+          </div>
+
+        </form>
+      </field>
+    </record>
+
+  </data>
+</openerp>

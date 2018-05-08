@@ -10,6 +10,7 @@
                 <xpath expr="//field[@name='active']" position="after">
                     <field name="special_workflow_emotion" />
                     <field name="wf_emotion_section_ids" widget="many2many_tags" attrs="{'invisible': [('special_workflow_emotion', '=', False)]}"/>
+                    <field name="no_display" />
                 </xpath>
                 <xpath expr="/form/notebook/page/field/tree/field[@name='name']" position="after">
                     <!-- <field name="has_expense_rule"/> -->
