@@ -267,7 +267,7 @@ class PABIAdvanceDunningLetter(models.Model):
             template = False
             try:
                 template = self.env.ref(template_name)
-            except:
+            except Exception:
                 pass
 
             if not self.group_email:

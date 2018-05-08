@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <act_window id="action_hr_salary_expense_import_xlsx_tempalte"
+        <act_window id="action_hr_salary_expense_import_xlsx_template"
             name="Import Salary Data (.xlsx)"
             res_model="import.xlsx.template"
             src_model="hr.salary.expense"

@@ -54,6 +54,10 @@ class AccountSubscriptionGenerate(PabiAsync, models.Model):
             description = 'Generate Entries - %s - %s' % (period, model_types)
             uuid = action_generate_recurring_entries.delay(
                 session, self._name, self.id, description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            job.process_id = self.env.ref('pabi_async_process.'
+                                          'action_generate_entries')
             # Checking for running task, use the same signature as delay()
             task_name = "%s('%s', %s)" % ('action_generate_recurring_entries',
                                           self._name, self.id)

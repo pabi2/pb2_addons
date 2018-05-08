@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory Bank Statement Reconcile Temlates -->
+        <record model="document.directory" id="dir_statement_reconcile_template_bbl">
+            <field name="name">BBL - Statement Reconcile Template</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <record id="bbl_direct_statement_template" model="ir.attachment">
+            <field name="res_model">pabi.bank.statement</field>
+            <field name="datas"></field>
+            <field name="datas_fname">.1_Input BBL Direct.xlsx</field>
+            <field name="name">BBL Direct</field>
+            <field name="parent_id" eval="ref('dir_statement_reconcile_template_bbl')"/>
+            <field name="description">
+              {
+                '__IMPORT__': {
+                    1: {
+                        'import_ids': {
+                            'A9': 'date_value',
+                            'B9': 'document',
+                            'E9': 'cheque_number',
+                            'F9': ['debit${value &lt; 0 and -value or False}', 'credit${value &gt; 0 and value or False}'],
+                        }
+                    }
+                },
+                '__POST_IMPORT__': [
+                  '${object.import_ids.filtered(lambda l: not l.date_value).unlink()}',
+                  '${object.import_ids.filtered(lambda l: not l.cheque_number).unlink()}',
+                ],
+            }
+          </field>
+        </record>
+    </data>
+</openerp>

@@ -24,6 +24,34 @@ class InvestAssetCommon(object):
         'res.invest.asset.category',
         string='Investment Asset Category'
     )
+    # 5 dimension
+    invest_asset_dimension1_id = fields.Many2one(
+        'res.invest.asset.dimension',
+        string='Dimension 1',
+        help="Extra not-required dimension",
+    )
+    invest_asset_dimension2_id = fields.Many2one(
+        'res.invest.asset.dimension',
+        string='Dimension 2',
+        help="Extra not-required dimension",
+    )
+    invest_asset_dimension3_id = fields.Many2one(
+        'res.invest.asset.dimension',
+        string='Dimension 3',
+        help="Extra not-required dimension",
+    )
+
+    invest_asset_dimension4_id = fields.Many2one(
+        'res.invest.asset.dimension',
+        string='Dimension 4',
+        help="Extra not-required dimension",
+    )
+    invest_asset_dimension5_id = fields.Many2one(
+        'res.invest.asset.dimension',
+        string='Dimension 5',
+        help="Extra not-required dimension",
+    )
+    # --
     name_common = fields.Char(
         string='Common Name',
     )
@@ -157,6 +185,11 @@ class ResInvestAsset(ResCommon, InvestAssetCommon, models.Model):
 class ResInvestAssetCategory(ResCommon, models.Model):
     _name = 'res.invest.asset.category'
     _description = 'Investment Asset Category'
+
+
+class ResInvestAssetDimension(ResCommon, models.Model):
+    _name = 'res.invest.asset.dimension'
+    _description = 'Investment Asset Dimension'
 
 
 # Investment - Construction

@@ -18,6 +18,6 @@
     "data": [
         # 'test_fund_rule_data/res.project.csv',
         # 'test_fund_rule_data/res.project.budget.plan.csv',
-        'test_fund_rule_data/res.project.member.csv',
+        # 'test_fund_rule_data/res.project.member.csv',
     ],
 }

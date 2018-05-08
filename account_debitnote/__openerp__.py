@@ -24,7 +24,6 @@ Make sure the new Journal has been created for them (manually).
     'demo': [],
     'data': [
         'wizard/account_debitnote_view.xml',
-        'security/ir.model.access.csv',
         'views/account_invoice_view.xml',
         'data/account_data.xml',
     ],

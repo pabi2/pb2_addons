@@ -17,7 +17,7 @@
                             context="{'is_clear_prepaid': True}"
                             attrs="{'invisible': ['|', '|', ('state', 'not in', ['paid']), ('is_prepaid', '=', False), ('clear_prepaid_move_id', '!=', False)]}"/>
                     </button> <!-- If  -->
-                    <xpath expr="//hr[@name='extra_line']" position="after">
+                    <xpath expr="/form/sheet/group//field[@name='currency_id']" position="after">
                         <field name="is_prepaid" attrs="{'invisible': [('is_prepaid', '=', False)]}"/>
                     </xpath>
                     <xpath expr="/form/sheet/notebook//group//field[@name='move_id']" position="after">

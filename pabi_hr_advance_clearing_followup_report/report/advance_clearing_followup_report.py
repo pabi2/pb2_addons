@@ -154,10 +154,10 @@ class AdvanceClearingFollowupReport(models.Model):
             adv.amount_advanced, adv.date_due,
             exc.invoice_id as invoice_id,
             case when exc.expense_id is null then exc.invoice_id
-                  else null end as customer_invoice_id,
+                  else null::int end as customer_invoice_id,
             exc.expense_id expense_id,
             case when exc.expense_id is not null then exc.invoice_id
-                else null end as supplier_invoice_id,
+                else null::int end as supplier_invoice_id,
             coalesce(exc.invoiced_amount, 0.0) as amount_credit_advance,
             adv.amount_advanced - coalesce((select sum(invoiced_amount)
                     from hr_expense_clearing

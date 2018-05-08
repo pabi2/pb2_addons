@@ -10,7 +10,7 @@
         </record>
 
         <!-- Adjust Budget -->
-        <record id="journal_adj_budget_tempalte" model="ir.attachment">
+        <record id="journal_adj_budget_template" model="ir.attachment">
             <field name="res_model">account.move</field>
             <field name="datas"></field>
             <field name="datas_fname">journal_adj_budget.xlsx</field>
@@ -41,7 +41,7 @@
         </record>
 
         <!-- Adjust No-Budget -->
-        <record id="journal_adj_no_budget_tempalte" model="ir.attachment">
+        <record id="journal_adj_no_budget_template" model="ir.attachment">
             <field name="res_model">account.move</field>
             <field name="datas"></field>
             <field name="datas_fname">journal_adj_no_budget.xlsx</field>

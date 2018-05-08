@@ -30,7 +30,7 @@ class PABIUnreconciledReport(models.Model):
                 (select statement_id, 'bank' as source, document,
                     batch_code,
                     cheque_number, date_value, debit-credit as amount,
-                    null as validate_user_id, null as days_outstanding,
+                    null::int as validate_user_id, null as days_outstanding,
                     partner_code, partner_name
                 from pabi_bank_statement_import
                 where match_item_id is null and prev_match_statement_id is null

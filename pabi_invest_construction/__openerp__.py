@@ -15,6 +15,7 @@
         "pabi_budget_plan_monitor",  # Get prev fy from monitor report
         "l10n_th_account",  # use account.period.calendar
         "document_status_history",
+        "pabi_utils",
     ],
     "data": [
         "security/ir.model.access.csv",

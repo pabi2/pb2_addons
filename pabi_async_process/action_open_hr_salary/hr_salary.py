@@ -52,6 +52,10 @@ class HRSalaryExpense(PabiAsync, models.Model):
             description = 'Generate Entries - Salary Expense %s' % self.number
             uuid = action_open_hr_salary.delay(session, self._name, self.id,
                                                description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            job.process_id = self.env.ref('pabi_async_process.'
+                                          'hr_salary')
             # Checking for running task, use the same signature as delay()
             task_name = "%s('%s', %s)" % \
                 ('action_open_hr_salary', self._name, self.id)

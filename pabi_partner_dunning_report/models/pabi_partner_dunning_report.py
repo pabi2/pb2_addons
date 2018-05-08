@@ -119,6 +119,7 @@ class PABIPartnerDunningReport(models.Model):
                 cr.execute("CREATE EXTENSION tablefunc")
         except psycopg2.Error:
             pass
+        cr.commit()
         # View
         tools.drop_view_if_exists(cr, self._table)
         _sql = """

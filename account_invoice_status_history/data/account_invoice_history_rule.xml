@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="1">
+    <data>
         <record id="account_invoice_history_rule" model="auditlog.rule">
             <field name="name">Account Invoice Rule</field>
             <field name="model_id" ref="account.model_account_invoice"/>

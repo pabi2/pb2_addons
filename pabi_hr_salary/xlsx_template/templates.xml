@@ -9,7 +9,7 @@
             <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
         </record>
 
-        <record id="hr_salary_xlsx_tempalte" model="ir.attachment">
+        <record id="hr_salary_xlsx_template" model="ir.attachment">
             <field name="res_model">hr.salary.expense</field>
             <field name="datas"></field>
             <field name="datas_fname">hr_salary.xls</field>

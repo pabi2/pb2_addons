@@ -413,7 +413,7 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     )
     proposal_program_id = fields.Many2one(
         'res.program',
-        string='Proposal Program',
+        string='Current Program',
     )
     external_fund_type = fields.Selection(
         [('government', '1. ภาครัฐ'),
@@ -579,7 +579,7 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
 #                                       ]:
 #                     try:
 #                         val[field] = rec.project_id[field].id
-#                     except:
+#                     except Exception:
 #                         val[field] = rec.project_id[field]
 #             # Calc from PABI2 monitoring views
 #             # 3) Overall

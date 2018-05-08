@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="generate_budget_plan" model="pabi.process">
+						<field name="name">Generate Budget Plan</field>
+				</record>
+		</data>
+</openerp>

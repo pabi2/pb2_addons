@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- This function is called after all ir.attachment is loaded
+            to load the file content to relevant template_ids -->
+        <function model="ir.attachment" name="load_xlsx_template">
+            <value eval="[ref('ktb_statement_template'), ]"/>
+            <value>pabi_bank_statement_reconcile/xlsx_template/bbl</value>
+        </function>
+    </data>
+</openerp>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- 1 Files -->
+        <record id="action_xlsx_import_sale_order" model="ir.actions.act_window">
+            <field name="name">Import Sales Order</field>
+            <field name="res_model">import.xlsx.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'active_model': 'sale.order',
+                                   'return_action': 'sale.action_orders',
+                                   'order_type': 'sale_order'}</field>
+        </record>
+
+        <menuitem id="menu_xlsx_import_sale_order"
+          name="Import Sales Order"
+          parent="base.menu_sales"
+          action="action_xlsx_import_sale_order"
+          sequence="300"/>
+
+        <!-- Multiple Files -->
+        <record id="action_xlsx_import_sale_order_multi" model="ir.actions.act_window">
+            <field name="name">Import Sales Order(s)</field>
+            <field name="res_model">xlsx.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'active_model': 'sale.order',
+                                   'return_action': 'sale.action_orders',
+                                   'order_type': 'sale_order', }</field>
+        </record>
+
+        <menuitem id="menu_xlsx_import_sale_order_multi"
+          name="Import Sales Order(s)"
+          parent="base.menu_sales"
+          action="action_xlsx_import_sale_order_multi"
+          sequence="310"/>
+
+    </data>
+</openerp>

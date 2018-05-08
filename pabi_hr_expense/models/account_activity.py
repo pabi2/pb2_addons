@@ -23,6 +23,12 @@ class AccountActivityGroup(models.Model):
         string='Usable by Sections',
         help="Only these sections can use activity group with emotion workflow"
     )
+    no_display = fields.Boolean(
+        string='No Display',
+        default=False,
+        help="If checked,do not show this item on some apps, "
+        "not to confuse user.",
+    )
 
     @api.multi
     def write(self, vals):

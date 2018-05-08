@@ -62,7 +62,7 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
                                       'state', 'name']:
                     try:
                         val[field] = const[field].id
-                    except:
+                    except Exception:
                         val[field] = const[field]
 
             # Next FY Commitment

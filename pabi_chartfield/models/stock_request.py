@@ -79,26 +79,6 @@ class StockRequest(models.Model):
         return data
 
 
-class ResProject(models.Model):
-    _inherit = 'res.project'
-
-    @api.model
-    def name_search(self, name='', args=None, operator='ilike', limit=100):
-        # Find matched project manager's projects
-        project_manager_emp_id = self._context.get('project_manager_emp_id',
-                                                   False)
-        if project_manager_emp_id:
-            PM = self.env['res.project.member']
-            projects = PM.search([('project_position', '=', 'manager'),
-                                  ('employee_id', '=', project_manager_emp_id)
-                                  ])
-            args += [('id', 'in', projects._ids)]
-        return super(ResProject, self).name_search(name=name,
-                                                   args=args,
-                                                   operator=operator,
-                                                   limit=limit)
-
-
 class ResSection(models.Model):
     _inherit = 'res.section'
 

@@ -86,7 +86,7 @@ class PabiLongTermInvestmentReport(report_sxw.rml_parse):
         try:
             self.cr.execute(sql, (tuple(move_line_ids),))
             res = self.cr.dictfetchall()
-        except:
+        except Exception:
             self.cr.rollback()
             raise
         return res or []

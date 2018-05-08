@@ -40,6 +40,10 @@ class GenerateBudgetPlan(PabiAsync, models.TransientModel):
                 % (chart_view, fiscalyear)
             uuid = action_generate_budget_plan.delay(
                 session, self._name, self.id, description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            job.process_id = self.env.ref('pabi_async_process.'
+                                          'generate_budget_plan')
             # Checking for running task, use the same signature as delay()
             task_name = "%s('%s', %s)" % ('action_generate_budget_plan',
                                           self._name, self.id)

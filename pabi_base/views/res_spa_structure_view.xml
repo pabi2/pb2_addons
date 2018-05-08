@@ -132,8 +132,8 @@
             <field name="arch" type="xml">
                 <tree string="Program">
                     <field name="name"/>
-                    <field name="name_short"/>
-                    <field name="spa_ids"/>
+                    <field name="code"/>
+                    <field name="name_short" invisible="1"/>
                     <field name="program_group_id"/>
                 </tree>
             </field>

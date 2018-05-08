@@ -3,7 +3,7 @@
     <data>
 
         <!-- Top menu item -->
-          <menuitem name="Project (C)" id="menu_main_construction" sequence="40"
+          <menuitem name="Project-C" id="menu_main_construction" sequence="55"
             groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
 
         <menuitem name="Construction Projects" id="menu_construction" parent="menu_main_construction" sequence="1"
@@ -101,7 +101,8 @@
                                 <field name="amount_budget"/>
                             </group>
                             <group>
-                                <field name="fund_ids" widget="many2many_tags" required="1"/>
+                                <field name="fund_ids" widget="many2many_tags" required="1"
+                                  string="Source of Fund" readonly="1"/>
                                 <field name="mission_id"/>
                             </group>
                         </group>
@@ -315,7 +316,8 @@
                             </group>
                             <group>
                                 <field name="fund_type_id" required="1"/>
-                                <field name="fund_ids" required="1" widget="many2many_tags"/>
+                                <field name="fund_ids" required="1" widget="many2many_tags"
+                                    string="Source of Fund" invisible="1"/>
                                 <field name="amount_phase_plan"/>
                             </group>
                         </group>
@@ -418,6 +420,10 @@
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -430,6 +436,7 @@
                     <field name="code"/>
                     <field name="phase"/>
                     <field name="invest_construction_id"/>
+                    <field name="amount_phase_plan" sum="Total Approved Phases Plan"/>
                     <field name="amount_phase_approve" sum="Total Approved Phases Budget"/>
                     <field name="to_sync"/>
                     <field name="state"/>
@@ -533,6 +540,13 @@
             <field name="search_view_id" ref="view_invest_construction_phase_plan_search"/>
             <field name="context">{'search_default_project': 1, 'search_default_fiscal': 1, 'search_default_period': 1}</field>
         </record>
+
+        <!-- Project Plan / Phase Report -->
+        <menuitem action="action_invest_construction_project_plan_report" id="menu_invest_construction_budget_plan" name="Project Plan Report" parent="menu_construction_report" sequence="1"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
+
+        <menuitem action="action_invest_construction_phase_plan_report" id="menu_invest_construction_phase_plan" name="Project Phase Report" parent="menu_construction_report" sequence="2"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget" />
 
     </data>
 </openerp>

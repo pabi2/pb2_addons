@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Multiple Files -->
+        <record id="action_xlsx_import_bank_statement_reconcile" model="ir.actions.act_window">
+            <field name="name">Import Bank Statement(s)</field>
+            <field name="res_model">xlsx.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">
+                {'active_model': 'pabi.bank.statement',
+                 'return_action': 'pabi_bank_statement_reconcile.action_pabi_bank_statement'}
+            </field>
+        </record>
+
+        <menuitem id="menu_xlsx_import_bank_statement_reconcile"
+          name="Import Bank Statement(s)"
+          parent="menu_pabi_bank_statement_main"
+          action="action_xlsx_import_bank_statement_reconcile"
+          sequence="20"/>
+
+    </data>
+</openerp>

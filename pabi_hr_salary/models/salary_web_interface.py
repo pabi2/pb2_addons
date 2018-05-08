@@ -141,7 +141,7 @@ class HRSalaryExpense(models.Model):
             mapper = mapper and ast.literal_eval(mapper.strip()) or {}
             negate = self.env.user.company_id.pabiehr_negate_code
             negate = negate and ast.literal_eval(negate.strip()) or {}
-        except:
+        except Exception:
             raise ValidationError(
                 _('Odoo & e-HR Mapper Dict is not well formed!'))
         # Special data adjustment. If column 'J' is 31, 50, negate amount

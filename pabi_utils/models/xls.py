@@ -305,7 +305,9 @@ class PABIUtilsXLS(models.AbstractModel):
                     for x in header_fields]
         id_index = head_row.index('id')
         if id_index >= 0:
-            for row in rows:
+            for idx, row in enumerate(rows):
+                if csv_header and idx == 0:
+                    continue
                 if isinstance(row[id_index], basestring) and \
                         len(row[id_index].strip()) > 0:
                     xml_ids.append(row[id_index])

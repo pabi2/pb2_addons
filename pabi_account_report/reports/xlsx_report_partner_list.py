@@ -32,6 +32,13 @@ class XLSXReporPartnerList(models.TransientModel):
         string='Partners',
         domain=[('supplier', '=', True)],
     )
+    active = fields.Selection(
+        selection=[
+            ('true', 'True'),
+            ('false', 'False'),
+        ],
+        string='Active',
+    )
     # Report Result
     results = fields.Many2many(
         'res.partner',
@@ -44,21 +51,33 @@ class XLSXReporPartnerList(models.TransientModel):
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['res.partner']
-        dom = []
+        dom = ['|', ('active', '=', True), ('active', '=', False)]
         if self.category_ids:
-            dom += [('category_id', 'in',
-                    self.category_ids.ids)]
-        partner_ids = []
-        partner_ids += self.customer_partner_ids.ids
-        partner_ids += self.supplier_partner_ids.ids
-        if partner_ids:
-            dom += [('id', 'in', partner_ids)]
+            dom += [('category_id', 'in', self.category_ids.ids)]
+        if self.active:
+            dom += [('active', '=', self.active == 'true' and True or False)]
+        customer_partner_ids = self.customer_partner_ids.ids
+        supplier_partner_ids = self.supplier_partner_ids.ids
         if not self.customer and not self.supplier:
-            dom += [('id', '=', 0)]  # show no result
-        elif self.customer and self.supplier:  # show both
-            dom += ['|', ('customer', '=', True), ('supplier', '=', True)]
+            dom += [('id', '=', 0)]  # Show no result
+        elif self.customer and self.supplier:
+            if not self.customer_partner_ids and not self.supplier_partner_ids:
+                dom += ['|', ('customer', '=', True), ('supplier', '=', True)]
+            elif self.customer_partner_ids and self.supplier_partner_ids:
+                dom += ['|', ('id', 'in', customer_partner_ids),
+                        ('id', 'in', supplier_partner_ids)]
+            elif self.customer_partner_ids:
+                dom += ['|', ('id', 'in', customer_partner_ids),
+                        ('supplier', '=', True)]
+            else:
+                dom += ['|', ('id', 'in', supplier_partner_ids),
+                        ('customer', '=', True)]
         elif self.customer:
             dom += [('customer', '=', True)]
+            if self.customer_partner_ids:
+                dom += [('id', 'in', customer_partner_ids)]
         elif self.supplier:
             dom += [('supplier', '=', True)]
+            if self.supplier_partner_ids:
+                dom += [('id', 'in', supplier_partner_ids)]
         self.results = Result.search(dom)

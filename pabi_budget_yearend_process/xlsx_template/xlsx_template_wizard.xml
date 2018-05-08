@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-      <act_window id="action_budget_plan_unit_export_xlsx_tempalte"
+      <act_window id="action_budget_plan_unit_export_xlsx_template"
           name="Export (.xlsx)"
           res_model="export.xlsx.template"
           src_model="budget.carry.over"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="1">
+    <data>
 
         <!-- NSTDA Level -->
         <record id="rule_job_order_public_level_budget_user" model="ir.rule">

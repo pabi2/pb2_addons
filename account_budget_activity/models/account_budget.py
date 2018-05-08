@@ -235,7 +235,7 @@ class AccountBudget(models.Model):
         #         if trx[field]:
         #             return 1
         #     return 0
-        # except:
+        # except Exception:
         #     return -1
         return 1  # Latest decision is, always required
 
@@ -703,6 +703,15 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     _name = "account.budget.line"
     _description = "Budget Line"
 
+    charge_type = fields.Selection(  # Prepare for pabi_internal_charge
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        required=True,
+        default='external',
+        help="Specify whether the move line is for Internal Charge or "
+        "External Charge. Only expense internal charge to be set as internal",
+    )
     budget_method = fields.Selection(
         [('revenue', 'Revenue'),
          ('expense', 'Expense')],

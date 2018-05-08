@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="purchase_invoice_plan" model="pabi.process">
+						<field name="name">Purchase Create Invoice Plan</field>
+				</record>
+		</data>
+</openerp>

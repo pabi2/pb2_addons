@@ -15,6 +15,7 @@
         'pabi_utils',
     ],
     'data': [
+        'security/ir.model.access.csv',
         # 'archive/wizards/budget_plan_unit_analysis_report_wizard.xml',
         # 'archive/wizards/budget_plan_project_analysis_report_wizard.xml',
         'wizards/budget_summary_report_wizard.xml',

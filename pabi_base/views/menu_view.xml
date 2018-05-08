@@ -2,7 +2,7 @@
 <openerp>
     <data>
 		# Temp Menu
-		<menuitem name="PABI2 Structure" id="menu_pabi2_top" />
+		<menuitem name="PABI2 Structure" id="menu_pabi2_top" groups="pabi_base.group_nstda_admin_business"/>
 			<menuitem name="Project Budget Structure" id="menu_spa_structure" parent="menu_pabi2_top" sequence="2"/>
 			<menuitem name="Section Budget Structure" id="menu_org_structure" parent="menu_pabi2_top" sequence="3"/>
 			<menuitem name="Personnel Budget Structure" id="menu_personnel_structure" parent="menu_pabi2_top" sequence="4"/>
