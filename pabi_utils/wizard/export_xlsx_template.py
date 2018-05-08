@@ -309,31 +309,8 @@ class ExportXlsxTemplate(models.TransientModel):
         return defaults
 
     @api.model
-    def _get_val(self, record, field):
-        for f in field.split('.'):
-            record = record[f]
-        return record
-
-    @api.model
     def _get_line_vals(self, record, line_field, fields):
         """ Get values of this field from record set """
-
-        def _get_field_data(_field, _line):
-            """ Get field data, and convert data type if needed """
-            if not _field:
-                return None
-            line_copy = _line
-            for f in _field.split('.'):
-                data_type = line_copy._fields[f].type
-                line_copy = line_copy[f]
-                if data_type == 'date':
-                    if line_copy:
-                        line_copy = dt.strptime(line_copy, '%Y-%m-%d')
-                elif data_type == 'datetime':
-                    if line_copy:
-                        line_copy = dt.strptime(line_copy, '%Y-%m-%d %H:%M:%S')
-            return line_copy
-
         line_field, max_row = get_line_max(line_field)
         lines = record[line_field]
         if max_row > 0 and len(lines) > max_row:
@@ -358,9 +335,7 @@ class ExportXlsxTemplate(models.TransientModel):
         # --
         for line in lines:
             for field in pair_fields:  # (field, raw_field)
-                value = _get_field_data(field[1], line)
-                if isinstance(value, basestring):
-                    value = value.encode('utf-8')
+                value = self._get_field_data(field[1], line)
                 # Case Eval
                 eval_cond = field_cond_dict[field[0]]
                 if eval_cond:  # Get eval_cond of a raw field
@@ -426,13 +401,30 @@ class ExportXlsxTemplate(models.TransientModel):
             raise except_orm(_('Error filling data into excel sheets!'), e)
 
     @api.model
+    def _get_field_data(self, _field, _line):
+        """ Get field data, and convert data type if needed """
+        if not _field:
+            return None
+        line_copy = _line
+        for f in _field.split('.'):
+            data_type = line_copy._fields[f].type
+            line_copy = line_copy[f]
+            if data_type == 'date':
+                if line_copy:
+                    line_copy = dt.strptime(line_copy, '%Y-%m-%d')
+            elif data_type == 'datetime':
+                if line_copy:
+                    line_copy = dt.strptime(line_copy, '%Y-%m-%d %H:%M:%S')
+        if isinstance(line_copy, basestring):
+            line_copy = line_copy.encode('utf-8')
+        return line_copy
+
+    @api.model
     def _fill_head(self, ws, st, record):
         for rc, field in ws.get('_HEAD_', {}).iteritems():
             tmp_field, eval_cond = get_field_condition(field)
             tmp_field, field_format = get_field_format(tmp_field)
-            value = tmp_field and self._get_val(record, tmp_field)
-            if isinstance(value, basestring):
-                value = value.encode('utf-8')
+            value = tmp_field and self._get_field_data(tmp_field, record)
             # Case Eval
             if eval_cond:  # Get eval_cond of a raw field
                 eval_context = {'float_compare': float_compare,
@@ -514,9 +506,7 @@ class ExportXlsxTemplate(models.TransientModel):
                 tmp_field, eval_cond = get_field_condition(field)
                 tmp_field, field_format = get_field_format(tmp_field)
                 tmp_field, func = get_field_aggregation(tmp_field)
-                value = tmp_field and self._get_val(record, tmp_field)
-                if isinstance(value, basestring):
-                    value = value.encode('utf-8')
+                value = tmp_field and self._get_field_data(tmp_field, record)
                 # Case Eval
                 if eval_cond:  # Get eval_cond of a raw field
                     eval_context = {'float_compare': float_compare,
