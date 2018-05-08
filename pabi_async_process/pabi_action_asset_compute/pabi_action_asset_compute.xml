@@ -19,6 +19,9 @@
                                     <field name="name" string="Profile"/>
                                 </tree>
                             </field>
+                            <button name="check_affected_asset" class="oe_link oe_right" type="object" string="(Check number of affected assets)" colspan="2"/>
+
+
                         </group>
                     </group>
 
