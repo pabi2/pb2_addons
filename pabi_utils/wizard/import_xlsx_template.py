@@ -310,7 +310,7 @@ class ImportXlsxTemplate(models.TransientModel):
             content.seek(0)  # Set index to 0, and start reading
             xls_file = base64.encodestring(content.read())
             XLS.import_xls(model, xls_file, header_map=False,
-                           extra_columns=False, auto_id=True,  force_id=True)
+                           extra_columns=False, auto_id=True, force_id=True)
             return self.env.ref(xml_id)
         except xlrd.XLRDError:
             raise ValidationError(
