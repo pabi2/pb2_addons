@@ -491,6 +491,11 @@ class ExportXlsxTemplate(models.TransientModel):
 
     @api.model
     def _fill_tail(self, ws, st, record, tail_fields):
+        # Get the max last rc's row
+        last_row = 0
+        for to_rc in tail_fields.values():
+            _, row = split_row_col(to_rc)
+            last_row = row > last_row and row or last_row
         # Similar to header, except it will set cell after last row
         # Get all tails, i.e., _TAIL_0, _TAIL_1 order by number
         tails = filter(lambda l: l[0:6] == '_TAIL_', ws.keys())
@@ -499,10 +504,6 @@ class ExportXlsxTemplate(models.TransientModel):
             row_skip = tail_key[6:] != '' and int(tail_key[6:]) or 0
             # For each _TAIL_ and row skipper 0, 1, 2, ...
             for rc, field in tail_dict.iteritems():
-                if rc not in tail_fields.keys():
-                    raise ValidationError(
-                        _('%s is not in detail field and can '
-                          'not be used as tail field.') % rc)
                 tmp_field, eval_cond = get_field_condition(field)
                 tmp_field, field_format = get_field_format(tmp_field)
                 tmp_field, func = get_field_aggregation(tmp_field)
@@ -521,9 +522,17 @@ class ExportXlsxTemplate(models.TransientModel):
                     # str() throw cordinal not in range error
                     value = eval(eval_cond, eval_context)
                     # value = str(eval(eval_cond, eval_context))
-                last_rc = tail_fields[rc]  # Last row of rc column
-                col, row = split_row_col(last_rc)
-                tail_rc = '%s%s' % (col, row + row_skip + 1)
+                # If no rc in tail_fields, use the max last row
+                last_rc = False
+                tail_rc = False
+                if rc in tail_fields.keys():
+                    last_rc = tail_fields[rc]  # Last row of rc column
+                    col, row = split_row_col(last_rc)
+                    tail_rc = '%s%s' % (col, row + row_skip + 1)
+                else:
+                    col, _ = split_row_col(rc)
+                    last_rc = '%s%s' % (col, last_row)
+                    tail_rc = '%s%s' % (col, last_row + row_skip + 1)
                 if value and value is not None:
                     st[tail_rc] = value
                 if func:
