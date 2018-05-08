@@ -477,8 +477,7 @@
                           'E3': 'program_id.name',
                           'E4': 'program_group_id.name',
                           'E5': 'functional_area_id.name',
-                          # 'E6': '${time.strftime("%d-%m-%Y")}',
-                          'E6': 'date#{number_format=date}',
+                          'E6': '${time.strftime("%d-%m-%Y")}',
                           'E7': 'user_id.name${value or ""}'
                       },
                       'plan_line_ids[500]': {
