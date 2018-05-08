@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="asset_compute" model="pabi.process">
+						<field name="name">Compute Asset Depreciation</field>
+				</record>
+		</data>
+</openerp>

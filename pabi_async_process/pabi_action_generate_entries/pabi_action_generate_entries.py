@@ -52,15 +52,17 @@ class PabiActionGenerateEntries(models.TransientModel):
                'model_type_ids': model_type_ids}
         move_ids = lines.with_context(ctx).move_create()
         records = self.env['account.move'].browse(move_ids)
-        return records
+        result_msg = _('Generated %s account entries!') % len(records)
+        return (records, result_msg)
 
     @api.multi
     def pabi_action(self):
         self.ensure_one()
         # Prepare job information
         process_xml_id = 'pabi_async_process.generate_entries'
-        job_desc = 'Generate Entries for %s by %s' % \
-            (self.calendar_period_id.display_name, self.env.user.display_name)
+        job_desc = _('Generate Entries for %s by %s' %
+                     (self.calendar_period_id.display_name,
+                      self.env.user.display_name))
         func_name = 'action_generate'
         # Prepare kwargs, the params for method action_generate
         model_type_ids = self.model_type_ids.ids

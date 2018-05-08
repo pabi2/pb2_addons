@@ -37,14 +37,14 @@ def related_result(session, thejob):
 def pabi_action_job(session, model_name, func_name, kwargs, return_action):
     try:
         PabiAction = session.env[model_name]
-        records = getattr(PabiAction, func_name)(**kwargs)
+        (records, result_msg) = getattr(PabiAction, func_name)(**kwargs)
         # Write result back to job
         job_uuid = session.context.get('job_uuid')
         job = session.env['queue.job'].search([('uuid', '=', job_uuid)])
         job.write({'res_model': records._name,
                    'res_ids': str(records.ids)})
         # Result Description
-        result = _('Successfully execute process')
+        result = result_msg or _('Successfully execute process')
         return result
     except Exception, e:
         raise FailedJobError(e)
@@ -78,6 +78,11 @@ class PabiAction(models.AbstractModel):
         readonly=True,
         help="Job queue unique identifiers",
     )
+    result_msg = fields.Text(
+        string='Result',
+        readonly=True,
+        help="Resulting message from the execution (if any)",
+    )
 
     @api.multi
     def pabi_action(self, process_xml_id, job_desc, func_name, **kwargs):
@@ -96,10 +101,11 @@ class PabiAction(models.AbstractModel):
             self.write({'state': 'get', 'uuid': uuid})
         else:
             # Call prepared function form the extended class
-            records = getattr(self, func_name)(**kwargs)
+            (records, result_msg) = getattr(self, func_name)(**kwargs)
             self.write({'state': 'get',
                         'res_model': records._name,
-                        'res_ids': str(records.ids), })
+                        'res_ids': str(records.ids),
+                        'result_msg': result_msg})
         return {
             'type': 'ir.actions.act_window',
             'res_model': self._name,
