@@ -26,7 +26,7 @@
                             'D2': 'fiscalyear_id.name',
                             'D3': 'org_id.name_short',
                             'D4': 'section_id.display_name',
-                            'D5': '${datetime.now()}#{number_format=date}',
+                            'D5': '${datetime.now()}',
                             'D6': 'user_id.name${value or ""}'
                         },
                         'plan_expense_line_ids[100]': {
@@ -60,7 +60,7 @@
                             'D2': 'fiscalyear_id.name',
                             'D3': 'org_id.name_short${value or ""}',
                             'D4': 'section_id.code',
-                            'D5': '${datetime.now()}#{number_format=date}',
+                            'D5': '${datetime.now()}',
                             'D6': 'user_id.name${value or ""}'
                         },
                         'plan_revenue_line_ids[50]': {
@@ -260,7 +260,7 @@
                         '_HEAD_': {
                             'E2': 'fiscalyear_id.name',
                             'E3': 'org_id.name_short',
-                            'E4': '${datetime.now()}#{number_format=date}',
+                            'E4': '${datetime.now()}',
                             'E5': '${env.user.name or ""}',
                         },
                         'plan_line_ids[20]': {
@@ -380,7 +380,7 @@
                         '_HEAD_': {
                             'C2': 'fiscalyear_id.name',
                             'C3': 'org_id.name_short',
-                            'C4': '${datetime.now()}#{number_format=date}',
+                            'C4': '${datetime.now()}',
                             'C5': 'user_id.name${value or ""}'
                         },
                         'plan_expense_line_ids[20]': {
@@ -473,7 +473,7 @@
                           'E3': 'program_id.name',
                           'E4': 'program_group_id.name',
                           'E5': 'functional_area_id.name',
-                          'E6': '${datetime.now()}#{number_format=date}',
+                          'E6': '${datetime.now()}',
                           'E7': 'user_id.name${value or ""}'
                       },
                       'plan_line_ids[500]': {
