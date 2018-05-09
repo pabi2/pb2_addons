@@ -9,7 +9,11 @@
 
                     <!-- search criteria -->
                     <group states="choose">
-                        <field name="date_report"/>
+                        <group>
+                            <field name="date_report"/>
+                        </group>
+                        <group>
+                        </group>
                     </group>
 
                     <!-- xlsx.report common field -->
@@ -18,6 +22,7 @@
                         <field name="name" invisible="1"/>
                         <div states="choose" groups="pabi_utils.group_see_own_spool_report">
                             <field name="async_process"/><label for="async_process"/>
+                            <field name="to_csv"/><label for="to_csv"/>
                         </div>
                         <div states="get">
                             <h2 attrs="{'invisible': [('async_process', '=', True)]}">
@@ -44,9 +49,11 @@
                             <button special="cancel" string="Close" type="object"/>
                         </footer>
                     </div>
+
                 </form>
             </field>
         </record>
+
         <record id="action_report_purchase_contract" model="ir.actions.act_window">
             <field name="name">Purchase Contract Report</field>
             <field name="res_model">xlsx.report.purchase.contract</field>
@@ -55,6 +62,10 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_report_purchase_contract" name="Purchase Contract" parent="menu_pabi_purchase_contract_report" action="action_report_purchase_contract" sequence="1"/>
-  </data>
+        <menuitem id="menu_report_purchase_contract"
+            name="Purchase Contract"
+            parent="menu_pabi_account_report"
+            action="action_report_purchase_contract"
+            sequence="70"/>
+    </data>
 </openerp>

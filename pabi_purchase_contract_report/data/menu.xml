@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
-        <menuitem id="menu_pabi_purchase_contract_report"
-            name="Reports"
-            parent="pabi_purchase_contract.main_purchase_contract_menu"
-            sequence="10"/>
-    </data>
-</openerp>
