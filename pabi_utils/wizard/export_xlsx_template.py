@@ -627,11 +627,11 @@ class ExportXlsxTemplate(models.TransientModel):
             out_name = '%s_%s' % (fname, ts.strftime('%Y%m%d_%H%M%S'))
         if not out_name or len(out_name) == 0:
             out_name = 'noname'
-        out_ext = '.xlsx'
+        out_ext = 'xlsx'
         # CSV (convert only 1st sheet)
         if to_csv:
             out_file = csv_from_excel(out_file)
-            out_ext = '.csv'
+            out_ext = 'csv'
         return (out_file, '%s.%s' % (out_name, out_ext))
 
     @api.multi
