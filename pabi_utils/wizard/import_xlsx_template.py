@@ -276,10 +276,14 @@ class ImportXlsxTemplate(models.TransientModel):
                 for rc, field in worksheet.get('_HEAD_', {}).iteritems():
                     rc, key_eval_cond = get_field_condition(rc)
                     field, val_eval_cond = get_field_condition(field)
-                    row, col = XLS.pos2idx(rc)
                     field_type = XLS._get_field_type(model, field)
-                    value = XLS._get_cell_value(st.cell(row, col),
-                                                field_type=field_type)
+                    value = False
+                    try:
+                        row, col = XLS.pos2idx(rc)
+                        value = XLS._get_cell_value(st.cell(row, col),
+                                                    field_type=field_type)
+                    except Exception:
+                        pass
                     eval_context = self.get_eval_context(model=model,
                                                          value=value)
                     if key_eval_cond:
@@ -316,6 +320,8 @@ class ImportXlsxTemplate(models.TransientModel):
             raise ValidationError(
                 _('Invalid file format, only .xls or .xlsx file allowed!'))
         except Exception, e:
+            if e[0] == 'ValidateError':  # Make message a little better
+                raise
             raise except_orm(_('Error importing data!'), e)
 
     @api.model
