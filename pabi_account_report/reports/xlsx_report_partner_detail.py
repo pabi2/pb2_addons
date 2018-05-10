@@ -1,7 +1,7 @@
 from openerp import models, fields, api
 
 
-class XLSXReporPartnerDetail(models.TransientModel):
+class XLSXReportPartnerDetail(models.TransientModel):
     _name = 'xlsx.report.partner.detail'
     _inherit = 'xlsx.report'
 

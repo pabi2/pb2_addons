@@ -283,49 +283,98 @@ result = pd.pivot_table(df, index=groupby,
             <field name="name">Purchase Contract</field>
             <field name="parent_id" eval="ref('dir_account_reports')"/>
             <field name="description">
-              {
-                '__EXPORT__': {
-                    'Purchase Contract Report': {
-                        '_HEAD_': {
-                            'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.purchase.contract")).display_name}',
-                            'B3': 'date_report${value or ""}#{number_format=date;align=left}',
-                            'B4': '${env.user.display_name}',
-                            'B5': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
-                        },
-                        'results': {
-                            'A8': 'operating_unit_id${value and (value.org_id and value.org_id.name_short or "") or ""}',
-                            'B8': 'supplier_id.search_key${value or ""}',
-                            'C8': 'supplier_id.name${value or ""}',
-                            'D8': 'name${value or ""}',
-                            'E8': 'requisition_id.purchase_ids${value and (value.filtered(lambda l: l.state == "done") and value.filtered(lambda l: l.state == "done")[0].name or "") or ""}',
-                            'F8': 'display_code${value or ""}',
-                            'G8': 'start_date${value or ""}#{number_format=date}',
-                            'H8': 'end_date${value or ""}#{number_format=date}',
-                            'I8': 'collateral_type_id.name${value or ""}',
-                            'J8': 'collateral_no${value or ""}',
-                            'K8': 'collateral_date${value or ""}#{number_format=date}',
-                            'L8': 'bank${value or ""}',
-                            'M8': 'branch${value or ""}',
-                            'N8': 'currency_id.name${value or ""}',
-                            'O8': 'contract_amt${value or ""}#{number_format=number}',
-                            'P8': 'collateral_agreement_amt${value or ""}#{number_format=number}',
-                            'Q8': 'collateral_due_date${value or ""}#{number_format=date}',
-                        },
-                        '_TAIL_0': {
-                            'P8': '@{sum}#{font=bold;number_format=number}',
-                            'S8': '@{sum}#{font=bold;number_format=number}',
-                            'T8': '@{sum}#{font=bold;number_format=number}',
-                            'U8': '@{sum}#{font=bold;number_format=number}',
-                            'V8': '@{sum}#{font=bold;number_format=number}',
-                            'W8': '@{sum}#{font=bold;number_format=number}',
-                            'X8': '@{sum}#{font=bold;number_format=number}',
-                            'Y8': '@{sum}#{font=bold;number_format=number}',
-                            'Z8': '@{sum}#{font=bold;number_format=number}',
+                {
+                    '__EXPORT__': {
+                        'Purchase Contract Report': {
+                            '_HEAD_': {
+                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.purchase.contract")).display_name}',
+                                'B3': 'date_report${value or ""}#{number_format=date;align=left}',
+                                'B4': '${env.user.display_name}',
+                                'B5': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                            },
+                            'results': {
+                                'A8': 'operating_unit_id${value and (value.org_id and value.org_id.name_short or "") or ""}',
+                                'B8': 'supplier_id.search_key${value or ""}',
+                                'C8': 'supplier_id.name${value or ""}',
+                                'D8': 'name${value or ""}',
+                                'E8': 'requisition_id.purchase_ids${value and (value.filtered(lambda l: l.state == "done") and value.filtered(lambda l: l.state == "done")[0].name or "") or ""}',
+                                'F8': 'display_code${value or ""}',
+                                'G8': 'start_date${value or ""}#{number_format=date}',
+                                'H8': 'end_date${value or ""}#{number_format=date}',
+                                'I8': 'collateral_type_id.name${value or ""}',
+                                'J8': 'collateral_no${value or ""}',
+                                'K8': 'collateral_date${value or ""}#{number_format=date}',
+                                'L8': 'bank${value or ""}',
+                                'M8': 'branch${value or ""}',
+                                'N8': 'currency_id.name${value or ""}',
+                                'O8': 'contract_amt${value or ""}#{number_format=number}',
+                                'P8': 'collateral_agreement_amt${value or ""}#{number_format=number}',
+                                'Q8': 'collateral_due_date${value or ""}#{number_format=date}',
+                            },
+                            '_TAIL_0': {
+                                'P8': '@{sum}#{font=bold;number_format=number}',
+                                'S8': '@{sum}#{font=bold;number_format=number}',
+                                'T8': '@{sum}#{font=bold;number_format=number}',
+                                'U8': '@{sum}#{font=bold;number_format=number}',
+                                'V8': '@{sum}#{font=bold;number_format=number}',
+                                'W8': '@{sum}#{font=bold;number_format=number}',
+                                'X8': '@{sum}#{font=bold;number_format=number}',
+                                'Y8': '@{sum}#{font=bold;number_format=number}',
+                                'Z8': '@{sum}#{font=bold;number_format=number}',
+                            }
                         }
                     }
                 }
-            }
-          </field>
+            </field>
+        </record>
+
+        # Advance Payment
+        <record id="xlsx_report_advance_payment" model="ir.attachment">
+            <field name="res_model">xlsx.report.advance.payment</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_advance_payment.xlsx</field>
+            <field name="name">Advance Payment</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Advance Payment Report': {
+                            '_HEAD_': {
+                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.advance.payment")).display_name}',
+                                'B3': 'account_id.code${value or ""}',
+                                'B4': 'date_report${value or ""}#{number_format=date;align=left}',
+                                'B5': '${env.user.display_name}',
+                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                            },
+                            'results': {
+                                'A9': 'org_id.name_short${value or ""}',
+                                'B9': 'partner_id.search_key${value or ""}',
+                                'C9': 'partner_id.name${value or ""}',
+                                'D9': 'invoice.purchase_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'E9': 'invoice.purchase_ids${value and ", ".join(list(filter(lambda x: x != "", [x.contract_id.display_code or "" for x in value]))) or ""}',
+                                'F9': 'partner_id.category_id${value and value.name or ""}',
+                                'G9': 'invoice.number${value or ""}',
+                                'H9': 'invoice.date_document${value or ""}#{number_format=date}',
+                                'I9': 'invoice.date_invoice${value or ""}#{number_format=date}',
+                                'J9': 'name${value or ""}',
+                                'K9': 'id${value and (env["account.move.line"].browse(value).debit != 0 and env["account.move.line"].browse(value).debit or (-1) * env["account.move.line"].browse(value).credit) or 0}#{number_format=number}',
+                                'L9': 'invoice.payment_ids${value and ", ".join(list(filter(lambda x: x != "", [x.number or "" for x in env["account.voucher"].search([("move_id", "in", value.mapped("move_id").ids)])]))) or ""}',
+                                'M9': 'invoice.payment_ids${value and ", ".join(list(filter(lambda x: x != "", [x.date_document or "" for x in env["account.voucher"].search([("move_id", "in", value.mapped("move_id").ids)])]))) or ""}#{number_format=date}',
+                            },
+                            '_TAIL_0': {
+                                'K9': '@{sum}#{font=bold;number_format=number}',
+                                'P9': '@{sum}#{font=bold;number_format=number}',
+                                'Q9': '@{sum}#{font=bold;number_format=number}',
+                                'R9': '@{sum}#{font=bold;number_format=number}',
+                                'S9': '@{sum}#{font=bold;number_format=number}',
+                                'T9': '@{sum}#{font=bold;number_format=number}',
+                                'U9': '@{sum}#{font=bold;number_format=number}',
+                                'V9': '@{sum}#{font=bold;number_format=number}',
+                            }
+                        }
+                    }
+                }
+            </field>
         </record>
     </data>
 </openerp>

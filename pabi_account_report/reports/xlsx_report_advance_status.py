@@ -2,7 +2,7 @@ from datetime import datetime
 from openerp import models, fields, api
 
 
-class XLSXReporAdvanceStatus(models.TransientModel):
+class XLSXReportAdvanceStatus(models.TransientModel):
     _name = 'xlsx.report.advance.status'
     _inherit = 'xlsx.report'
 
