@@ -2,58 +2,56 @@
 <openerp>
     <data>
 
-        <!-- KTB Cheque -->
-        <record id="ktb_cheque" model="ir.attachment">
+        <!-- scb Cheque -->
+        <record id="scb_cheque" model="ir.attachment">
             <field name="res_model">pabi.bank.statement</field>
             <field name="datas"></field>
-            <field name="datas_fname">ktb_cheque.xls</field>
-            <field name="name">KTB Cheque</field>
+            <field name="datas_fname">scb_cheque.xls</field>
+            <field name="name">SCB Cheque</field>
             <field name="parent_id" eval="ref('dir_statement_reconcile_template')"/>
             <field name="description">
               {
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'B1': 'journal_id',
+                            'A2': 'journal_id${value and value.strip()}',
                             '${"payment_cheque"}': 'report_type',
                         },
                         'import_ids': {
-                            # Datetime only, else ""
-                            'A9': 'date_value${value and len(value) > 0 and "=" not in value and datetime.strptime(value, "%d-%m-%Y %H:%M:%S").strftime("%Y-%m-%d") or ""}',
-                            'A9${"Cheque"}': 'description',
-                            'E9': 'cheque_number',
-                            'F9': 'debit${value and -float(value) or 0.0}',
+                            'A2${"Cheque"}': 'description',
+                            'B2': 'date_value',
+                            'F2': 'cheque_number${value and value.strip()}',
+                            'G2': 'debit${value and float(value) or 0.0}',
                         }
                     }
                 },
                 '__POST_IMPORT__': [
-                  '${object.import_ids.filtered(lambda l: not l.cheque_number).unlink()}',
+                  '${object.import_ids.filtered(lambda l: l.debit &lt;= 0.0).unlink()}',
                   '${object.post_xlsx_import_statement()}',
                 ],
             }
           </field>
         </record>
 
-        <!-- KTB Saving -->
-        <record id="ktb_saving" model="ir.attachment">
+        <!-- scb Saving -->
+        <record id="scb_saving" model="ir.attachment">
             <field name="res_model">pabi.bank.statement</field>
             <field name="datas"></field>
-            <field name="datas_fname">ktb_saving.xls</field>
-            <field name="name">KTB Saving</field>
+            <field name="datas_fname">scb_saving.xls</field>
+            <field name="name">SCB Saving</field>
             <field name="parent_id" eval="ref('dir_statement_reconcile_template')"/>
             <field name="description">
               {
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'B1': 'journal_id',
+                            'A2': 'journal_id${value and value.strip()}',
                             '${"bank_receipt"}': 'report_type',
                         },
                         'import_ids': {
-                            # Datetime only, else ""
-                            'A9': 'date_value${value and len(value) > 0 and "=" not in value and datetime.strptime(value, "%d-%m-%Y %H:%M:%S").strftime("%Y-%m-%d") or ""}',
-                            'A9${"Receipt"}': 'description',
-                            'F9': 'credit${value and float(value) or 0.0}',
+                            'A2${"Receipt"}': 'description',
+                            'B2': 'date_value',
+                            'H8': 'credit${value and float(value) or 0.0}',
                         }
                     }
                 },
@@ -62,7 +60,7 @@
                   '${object.post_xlsx_import_statement()}',
                 ],
             }
-            </field>
+          </field>
         </record>
 
     </data>

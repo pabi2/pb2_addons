@@ -225,6 +225,7 @@ class ImportXlsxTemplate(models.TransientModel):
                 for idx in range(row, st.nrows):
                     if max_row and (idx - row) > (max_row - 1):
                         break
+                    print "%s : %s" % (idx, col)
                     value = XLS._get_cell_value(st.cell(idx, col),
                                                 field_type=field_type)
                     eval_context = self.get_eval_context(model=model,
@@ -248,81 +249,81 @@ class ImportXlsxTemplate(models.TransientModel):
         """ Create temp simple excel, and prepare to convert to CSV to load """
         if not data_dict:
             return
-        try:
-            XLS = self.env['pabi.utils.xls']
-            decoded_data = base64.decodestring(import_file)
-            wb = xlrd.open_workbook(file_contents=decoded_data)
-            # Create output xls, begins with id column
-            col_idx = 0  # Starting column
-            out_wb = xlwt.Workbook()
-            out_st = out_wb.add_sheet("Sheet 1")
-            xml_id = record and XLS.get_external_id(record) or \
-                '%s.%s' % ('xls', uuid.uuid4())
-            out_st.write(0, 0, 'id')
-            out_st.write(1, 0, xml_id)
-            col_idx += 1
-            model = record._name
-            for sheet_name in data_dict:  # For each Sheet
-                worksheet = data_dict[sheet_name]
-                st = False
-                if isinstance(sheet_name, str):
-                    st = get_sheet_by_name(wb, sheet_name)
-                elif isinstance(sheet_name, int):
-                    st = wb.sheet_by_index(sheet_name - 1)
-                if not st:
-                    raise ValidationError(
-                        _('Sheet %s not found!') % sheet_name)
-                # HEAD(s)
-                for rc, field in worksheet.get('_HEAD_', {}).iteritems():
-                    rc, key_eval_cond = get_field_condition(rc)
-                    field, val_eval_cond = get_field_condition(field)
-                    field_type = XLS._get_field_type(model, field)
-                    value = False
-                    try:
-                        row, col = XLS.pos2idx(rc)
-                        value = XLS._get_cell_value(st.cell(row, col),
-                                                    field_type=field_type)
-                    except Exception:
-                        pass
-                    eval_context = self.get_eval_context(model=model,
-                                                         value=value)
-                    if key_eval_cond:
-                        value = str(eval(key_eval_cond, eval_context))
-                    # Case Eval
-                    if val_eval_cond:
-                        value = str(eval(val_eval_cond, eval_context))
-                    # --
-                    out_st.write(0, col_idx, field)  # Next Column
-                    out_st.write(1, col_idx, value)  # Next Value
+        # try:
+        XLS = self.env['pabi.utils.xls']
+        decoded_data = base64.decodestring(import_file)
+        wb = xlrd.open_workbook(file_contents=decoded_data)
+        # Create output xls, begins with id column
+        col_idx = 0  # Starting column
+        out_wb = xlwt.Workbook()
+        out_st = out_wb.add_sheet("Sheet 1")
+        xml_id = record and XLS.get_external_id(record) or \
+            '%s.%s' % ('xls', uuid.uuid4())
+        out_st.write(0, 0, 'id')
+        out_st.write(1, 0, xml_id)
+        col_idx += 1
+        model = record._name
+        for sheet_name in data_dict:  # For each Sheet
+            worksheet = data_dict[sheet_name]
+            st = False
+            if isinstance(sheet_name, str):
+                st = get_sheet_by_name(wb, sheet_name)
+            elif isinstance(sheet_name, int):
+                st = wb.sheet_by_index(sheet_name - 1)
+            if not st:
+                raise ValidationError(
+                    _('Sheet %s not found!') % sheet_name)
+            # HEAD(s)
+            for rc, field in worksheet.get('_HEAD_', {}).iteritems():
+                rc, key_eval_cond = get_field_condition(rc)
+                field, val_eval_cond = get_field_condition(field)
+                field_type = XLS._get_field_type(model, field)
+                value = False
+                try:
+                    row, col = XLS.pos2idx(rc)
+                    value = XLS._get_cell_value(st.cell(row, col),
+                                                field_type=field_type)
+                except Exception:
+                    pass
+                eval_context = self.get_eval_context(model=model,
+                                                     value=value)
+                if key_eval_cond:
+                    value = str(eval(key_eval_cond, eval_context))
+                # Case Eval
+                if val_eval_cond:
+                    value = str(eval(val_eval_cond, eval_context))
+                # --
+                out_st.write(0, col_idx, field)  # Next Column
+                out_st.write(1, col_idx, value)  # Next Value
+                col_idx += 1
+            # Line Items
+            line_fields = filter(lambda x: x != '_HEAD_', worksheet)
+            for line_field in line_fields:
+                vals = self._get_line_vals(st, worksheet,
+                                           model, line_field)
+                for field in vals:
+                    # Columns, i.e., line_ids/field_id
+                    out_st.write(0, col_idx, field)
+                    # Data
+                    i = 1
+                    for value in vals[field]:
+                        out_st.write(i, col_idx, value)
+                        i += 1
                     col_idx += 1
-                # Line Items
-                line_fields = filter(lambda x: x != '_HEAD_', worksheet)
-                for line_field in line_fields:
-                    vals = self._get_line_vals(st, worksheet,
-                                               model, line_field)
-                    for field in vals:
-                        # Columns, i.e., line_ids/field_id
-                        out_st.write(0, col_idx, field)
-                        # Data
-                        i = 1
-                        for value in vals[field]:
-                            out_st.write(i, col_idx, value)
-                            i += 1
-                        col_idx += 1
-            content = cStringIO.StringIO()
-            out_wb.save(content)
-            content.seek(0)  # Set index to 0, and start reading
-            xls_file = base64.encodestring(content.read())
-            XLS.import_xls(model, xls_file, header_map=False,
-                           extra_columns=False, auto_id=True, force_id=True)
-            return self.env.ref(xml_id)
-        except xlrd.XLRDError:
-            raise ValidationError(
-                _('Invalid file format, only .xls or .xlsx file allowed!'))
-        except Exception, e:
-            if e[0] == 'ValidateError':  # Make message a little better
-                raise
-            raise except_orm(_('Error importing data!'), e)
+        content = cStringIO.StringIO()
+        out_wb.save(content)
+        content.seek(0)  # Set index to 0, and start reading
+        xls_file = base64.encodestring(content.read())
+        XLS.import_xls(model, xls_file, header_map=False,
+                       extra_columns=False, auto_id=True, force_id=True)
+        return self.env.ref(xml_id)
+        # except xlrd.XLRDError:
+        #     raise ValidationError(
+        #         _('Invalid file format, only .xls or .xlsx file allowed!'))
+        # except Exception, e:
+        #     if e[0] == 'ValidateError':  # Make message a little better
+        #         raise
+        #     raise except_orm(_('Error importing data!'), e)
 
     @api.model
     def _post_import_operation(self, record, operations):
