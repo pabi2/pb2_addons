@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="xlsx_report_supplier_invoice_detail_view" model="ir.ui.view">
-            <field name="name">xlsx.report.supplier.invoice.detail.view</field>
-            <field name="model">xlsx.report.supplier.invoice.detail</field>
+        <record id="xlsx_report_advance_payment_view" model="ir.ui.view">
+            <field name="name">xlsx.report.advance.payment.view</field>
+            <field name="model">xlsx.report.advance.payment</field>
             <field name="arch" type="xml">
-                <form string="Supplier Invoice Detail Report">
+                <form string="Advance Payment Report">
 
                     <!-- search criteria -->
                     <group states="choose">
                         <group>
-                            <field name="operating_unit_ids" widget="many2many_tags"/>
-                            <field name="partner_ids" widget="many2many_tags"/>
-                            <field name="invoice_ids" widget="many2many_tags"/>
+                            <field name="account_id"/>
+                            <field name="date_report"/>
                         </group>
                         <group>
-                            <field name="open"/>
-                            <field name="paid"/>
                         </group>
                     </group>
 
@@ -58,15 +55,18 @@
             </field>
         </record>
 
-        <record id="action_report_supplier_invoice_detail" model="ir.actions.act_window">
-            <field name="name">Supplier Invoice Detail Report</field>
-            <field name="res_model">xlsx.report.supplier.invoice.detail</field>
+        <record id="action_report_advance_payment" model="ir.actions.act_window">
+            <field name="name">Advance Payment Report</field>
+            <field name="res_model">xlsx.report.advance.payment</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_report_supplier_invoice_detail" name="Supplier Invoice Detail" parent="menu_pabi_account_report" action="action_report_supplier_invoice_detail" sequence="40"/>
-
+        <menuitem id="menu_report_advance_payment"
+            name="Advance Payment"
+            parent="menu_pabi_account_report"
+            action="action_report_advance_payment"
+            sequence="80"/>
     </data>
 </openerp>

@@ -1,7 +1,7 @@
 from openerp import models, fields, api
 
 
-class XLSXReporPurchaseContract(models.TransientModel):
+class XLSXReportPurchaseContract(models.TransientModel):
     _name = 'xlsx.report.purchase.contract'
     _inherit = 'xlsx.report'
 
