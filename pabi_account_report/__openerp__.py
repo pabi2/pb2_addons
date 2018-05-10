@@ -23,6 +23,7 @@
         'reports/xlsx_report_supplier_invoice_detail.xml',
         'reports/xlsx_report_cheque_register.xml',
         'reports/xlsx_report_purchase_contract.xml',
+        'reports/xlsx_report_advance_payment.xml',
     ],
     'demo': [
     ],
