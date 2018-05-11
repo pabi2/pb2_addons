@@ -30,3 +30,6 @@ access_project_master_plan_user,access_project_master_plan_user,model_project_ma
 access_project_nstda_strategy_user,access_project_nstda_strategy_user,model_project_nstda_strategy,,1,0,0,0
 access_project_nstda_strategy_group_user,access_project_nstda_strategy_group_user,model_project_nstda_strategy_group,,1,0,0,0
 access_project_subprogram_user,access_project_subprogram_user,model_project_subprogram,,1,0,0,0
+access_res_building_user,access_res_building_user,model_res_building,,1,0,0,0
+access_res_floor_user,access_res_floor_user,model_res_floor,,1,0,0,0
+access_res_room_user,access_res_room_user,model_res_room,,1,0,0,0

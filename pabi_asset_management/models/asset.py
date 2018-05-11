@@ -217,13 +217,22 @@ class AccountAsset(ChartFieldAction, models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    location_id = fields.Many2one(
-        'account.asset.location',
+    building_id = fields.Many2one(
+        'res.building',
         string='Building',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        ondelete='restrict',
     )
-    room = fields.Char(
+    floor_id = fields.Many2one(
+        'res.floor',
+        string='Floor',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        ondelete='restrict',
+    )
+    room_id = fields.Many2one(
+        'res.room',
         string='Room',
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -324,6 +333,24 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
+
+    # Building / Floor / Room
+    @api.multi
+    @api.constrains('building_id', 'floor_id', 'room_id')
+    def _check_building(self):
+        for rec in self:
+            self.env['res.building']._check_room_location(rec.building_id,
+                                                          rec.floor_id,
+                                                          rec.room_id)
+
+    @api.onchange('building_id')
+    def _onchange_building_id(self):
+        self.floor_id = False
+        self.room_id = False
+
+    @api.onchange('floor_id')
+    def _onchange_floor_id(self):
+        self.room_id = False
 
     @api.multi
     def _compute_total_child_value(self):

@@ -76,28 +76,62 @@ class AccountAssetRequest(models.Model):
         track_visibility='onchange',
     )
     # Default
-    location_id = fields.Many2one(
-        'account.asset.location',
-        string='Default Building',
+    building_id = fields.Many2one(
+        'res.building',
+        string='Building',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        ondelete='restrict',
     )
-    room = fields.Char(
-        string='Default Room',
+    floor_id = fields.Many2one(
+        'res.floor',
+        string='Floor',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        ondelete='restrict',
     )
+    room_id = fields.Many2one(
+        'res.room',
+        string='Room',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        ondelete='restrict',
+    )
+
+    # Building / Floor / Room
+    @api.multi
+    @api.constrains('building_id', 'floor_id', 'room_id')
+    def _check_building(self):
+        for rec in self:
+            self.env['res.building']._check_room_location(rec.building_id,
+                                                          rec.floor_id,
+                                                          rec.room_id)
+
+    @api.onchange('building_id')
+    def _onchange_building_id(self):
+        self.floor_id = False
+        self.room_id = False
+
+    @api.onchange('floor_id')
+    def _onchange_floor_id(self):
+        self.room_id = False
 
     @api.model
     def default_get(self, field_list):
         res = super(AccountAssetRequest, self).default_get(field_list)
         asset_ids = self._context.get('selected_asset_ids', [])
-        location_id = self._context.get('default_location_id', False)
-        room = self._context.get('default_room', False)
+        building_id = self._context.get('default_building_id', False)
+        floor_id = self._context.get('default_floor_id', False)
+        room_id = self._context.get('default_room_id', False)
         responsible_user_id = \
             self._context.get('default_responsible_user_id', False)
         asset_request_lines = []
         for asset_id in asset_ids:
             asset_request_lines.append({
                 'asset_id': asset_id,
-                'location_id': location_id,
-                'room': room,
+                'building_id': building_id,
+                'floor_id': floor_id,
+                'room_id': room_id,
                 'responsible_user_id': responsible_user_id})
         res['request_asset_ids'] = asset_request_lines
         return res
@@ -147,8 +181,9 @@ class AccountAssetRequest(models.Model):
                     'doc_request_id': rec.id,
                     'date_request': rec.date_request,
                     'responsible_user_id': rec.responsible_user_id.id,
-                    'location_id': line.location_id.id,
-                    'room': line.room,
+                    'building_id': line.building_id.id,
+                    'floor_id': line.floor_id.id,
+                    'room_id': line.room_id.id,
                 })
         self.write({'state': 'done'})
 
@@ -160,7 +195,8 @@ class AccountAssetRequest(models.Model):
                     'doc_request_id': False,
                     'date_request': False,
                     'responsible_user_id': False,
-                    'location_id': False,
+                    'building_id': False,
+                    'floor_id': False,
                     'room': False,
                 })
         self.write({'state': 'cancel'})
@@ -190,17 +226,42 @@ class AccountAssetRequestLine(models.Model):
         related='asset_id.purchase_value',
         readonly=True,
     )
-    location_id = fields.Many2one(
-        'account.asset.location',
+    building_id = fields.Many2one(
+        'res.building',
         string='Building',
-        required=True,
+        ondelete='restrict',
     )
-    room = fields.Char(
+    floor_id = fields.Many2one(
+        'res.floor',
+        string='Floor',
+        ondelete='restrict',
+    )
+    room_id = fields.Many2one(
+        'res.room',
         string='Room',
-        required=True,
+        ondelete='restrict',
     )
     _sql_constraints = [
         ('asset_id_unique',
          'unique(asset_id, request_id)',
          'Duplicate assets selected!')
     ]
+
+    # Building / Floor / Room
+    @api.multi
+    @api.constrains('building_id', 'floor_id', 'room_id')
+    def _check_building(self):
+        for rec in self:
+            self.env['res.building']._check_room_location(rec.building_id,
+                                                          rec.floor_id,
+                                                          rec.room_id)
+
+    # @api.onchange('building_id')
+    # def _onchange_building_id(self):
+    #     print self._context
+    #     self.floor_id = False
+    #     self.room_id = False
+    #
+    # @api.onchange('floor_id')
+    # def _onchange_floor_id(self):
+    #     self.room_id = False

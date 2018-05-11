@@ -78,8 +78,9 @@
                     <field name="date_start"/>
                     <field name="partner_id"/>
                     <field name="picking_id"/>
-                    <field name="location_id"/>
-                    <field name="room"/>
+                    <field name="building_id"/>
+                    <field name="floor_id" context="{'building_id': building_id}"/>
+                    <field name="room_id" context="{'building_id': building_id, 'floor_id': floor_id}"/>
                     <field name="status"/>
                     <field name="date_remove" string="Remove Date"/>
                     <field name="state" invisible="1"/>
@@ -221,8 +222,9 @@
                                 <separator colspan="2"/>
                                 <field name="doc_request_id"/>
                                 <field name="responsible_user_id"/>
-                                <field name="location_id"/>
-                                <field name="room"/>
+                                <field name="building_id"/>
+                                <field name="floor_id" context="{'building_id': building_id}"/>
+                                <field name="room_id" context="{'building_id': building_id, 'floor_id': floor_id}"/>
                             </group>
                         </group>
                     </page>

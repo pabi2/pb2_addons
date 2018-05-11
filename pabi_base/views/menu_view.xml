@@ -12,5 +12,6 @@
 				<menuitem name="Structured" id="menu_structured_dimension" parent="menu_pabi_dimension" sequence="1"/>
 				<menuitem name="Open" id="menu_open_dimension" parent="menu_pabi_dimension" sequence="2"/>
 			<menuitem name="Source of Funds" id="menu_source_of_fund" parent="menu_pabi2_top" sequence="11"/>
+      <menuitem name="Buildings" id="menu_building" parent="menu_pabi2_top" sequence="30"/>
     </data>
 </openerp>
