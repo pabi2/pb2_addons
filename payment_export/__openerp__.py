@@ -23,6 +23,7 @@
         "security/ir.model.access.csv",
         "views/account_view.xml",
         "wizard/cancel_reason_view.xml",
+        "wizard/update_date_cheque_received.xml",
         "views/payment_export_view.xml",
         "views/cheque_lot_view.xml",
         "views/voucher_payment_receipt_view.xml",

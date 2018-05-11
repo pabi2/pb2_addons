@@ -41,6 +41,9 @@
                 <xpath expr="//field[@name='date']" position="before">
                     <field name="date_document"/>
                 </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="followup_receipt"/>
+                </xpath>
                 <xpath expr="//field[@name='date']" position="after">
                     <field name="validate_user_id"/>
                     <field name="validate_date"/>
@@ -57,18 +60,7 @@
                 <xpath expr="/form/sheet/notebook/page[@string='Journal Items']/field[@name='move_ids']/tree/field[@name='ref']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
-                <!-- <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='reconcile']" position="attributes">
-                    <attribute name="invisible">True</attribute>
-                </xpath>
-                <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='move_line_id']" position="before">
-                    <field name="select" groups="account.group_account_user"/>
-                </xpath>
-                <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='reconcile']" position="attributes">
-                    <attribute name="invisible">True</attribute>
-                </xpath>
-                <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='move_line_id']" position="before">
-                    <field name="select" groups="account.group_account_user"/>
-                </xpath> -->
+
             </field>
         </record>
 
