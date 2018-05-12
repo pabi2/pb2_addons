@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="xlsx_report_payable_balance_view" model="ir.ui.view">
+            <field name="name">xlsx.report.payable.balance.view</field>
+            <field name="model">xlsx.report.payable.balance</field>
+            <field name="arch" type="xml">
+                <form string="Payable Balance Report">
+
+                    <!-- search criteria -->
+                    <group states="choose">
+                        <group>
+                            <field name="partner_ids" widget="many2many_tags"/>
+                            <field name="account_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+
+                    <!-- xlsx.report common field -->
+                    <div name="xlsx.report">
+                        <field name="state" invisible="1"/>
+                        <field name="name" invisible="1"/>
+                        <div states="choose" groups="pabi_utils.group_see_own_spool_report">
+                            <field name="async_process"/><label for="async_process"/>
+                            <field name="to_csv"/><label for="to_csv"/>
+                        </div>
+                        <div states="get">
+                            <h2 attrs="{'invisible': [('async_process', '=', True)]}">
+                                Complete Prepare Report (.xlsx)
+                            </h2>
+                            <h2 attrs="{'invisible': [('async_process', '=', False)]}">
+                                Report Enqueued (.xlsx)
+                            </h2>
+                            <p attrs="{'invisible': [('async_process', '=', True)]}" colspan="4">
+                                Here is the report file:
+                                <field name="data" filename="name" class="oe_inline"/>
+                            </p>
+                            <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
+                                Report UUID:
+                                <field name="uuid" class="oe_inline"/>
+                            </p>
+                        </div>
+                        <footer states="choose">
+                            <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
+                            or
+                            <button special="cancel" string="Cancel" type="object" class="oe_link"/>
+                        </footer>
+                        <footer states="get">
+                            <button special="cancel" string="Close" type="object"/>
+                        </footer>
+                    </div>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="action_report_payable_balance" model="ir.actions.act_window">
+            <field name="name">Payable Balance Report</field>
+            <field name="res_model">xlsx.report.payable.balance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_report_payable_balance"
+            name="Payable Balance"
+            parent="menu_pabi_account_report"
+            action="action_report_payable_balance"
+            sequence="100"/>
+    </data>
+</openerp>
