@@ -7,3 +7,4 @@ from . import xlsx_report_advance_status
 from . import xlsx_report_supplier_invoice_detail
 from . import xlsx_report_purchase_contract
 from . import xlsx_report_advance_payment
+from . import xlsx_report_payable_balance

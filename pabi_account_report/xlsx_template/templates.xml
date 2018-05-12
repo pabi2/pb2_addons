@@ -376,5 +376,45 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
+
+        # Payable Balance
+        <record id="xlsx_report_payable_balance" model="ir.attachment">
+            <field name="res_model">xlsx.report.payable.balance</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_payable_balance.xlsx</field>
+            <field name="name">Payable Balance</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Payable Balance Report': {
+                            '_HEAD_': {
+                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.payable.balance")).display_name}',
+                                'B3': 'partner_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B4': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                                'B5': '${env.user.display_name}',
+                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                            },
+                            'results': {
+                                'A9': 'account_id.code${value or ""}',
+                                'B9': 'partner_id.search_key${value or ""}',
+                                'C9': 'partner_id.name${value or ""}',
+                                'D9': 'partner_id${value and " ".join(list(filter(lambda x: x != False, [value.street, value.street2, value.township_id.name, value.district_id.name, value.province_id.name, value.zip]))) or ""}',
+                                'E9': 'move_id.name${value or ""}',
+                                'F9': 'invoice.supplier_invoice_number${value or ""}',
+                                'G9': 'move_id.date${value or ""}#{number_format=date}',
+                                'H9': 'move_id.narration${value or ""}',
+                                'I9': 'id${value and (env["account.move.line"].browse(value).debit != 0 and env["account.move.line"].browse(value).debit or (-1) * env["account.move.line"].browse(value).credit) or 0}#{number_format=number}',
+                                'J9': 'reconcile_partial_id${value and sum(list(value.line_partial_ids.mapped("debit"))) - sum(list(value.line_partial_ids.mapped("credit"))) or ""}',
+                            },
+                            '_TAIL_0': {
+                                'I9': '@{sum}#{font=bold;number_format=number}',
+                                'J9': '@{sum}#{font=bold;number_format=number}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
     </data>
 </openerp>
