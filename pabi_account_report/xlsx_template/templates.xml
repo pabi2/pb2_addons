@@ -377,6 +377,75 @@ result = pd.pivot_table(df, index=groupby,
             </field>
         </record>
 
+        # Payable Detail
+        <record id="xlsx_report_payable_detail" model="ir.attachment">
+            <field name="res_model">xlsx.report.payable.detail</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_payable_detail.xlsx</field>
+            <field name="name">Payable Detail</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Payable Detail Report': {
+                            '_HEAD_': {
+                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.payable.detail")).display_name}',
+                                'B3': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                                'B4': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.title.name, x.name]))) for x in value]) or ""}',
+                                'B5': 'start_fiscalyear_id${value and value.name or ""}',
+                                'D5': 'end_fiscalyear_id${value and value.name or ""}',
+                                'B6': 'start_period_id${value and value.name or ""}',
+                                'D6': 'end_period_id${value and value.name or ""}',
+                                'B7': 'start_doc_posting_date${value or ""}#{number_format=date;align=left}',
+                                'D7': 'end_doc_posting_date${value or ""}#{number_format=date;align=left}',
+                                'B8': 'start_doc_date${value or ""}#{number_format=date;align=left}',
+                                'D8': 'end_doc_date${value or ""}#{number_format=date;align=left}',
+                                'B9': 'move_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B10': '${env.user.display_name}',
+                                'B11': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                            },
+                            'results': {
+                                'A14': 'account_invoice_move_line_id.partner_id.search_key${value or ""}',
+                                'B14': 'account_invoice_move_line_id.partner_id.name${value or ""}',
+                                'C14': 'invoice_id.supplier_invoice_number${value or ""}',
+                                'D14': 'invoice_id.purchase_billing_id.name${value or ""}',
+                                'E14': 'account_invoice_move_id.name${value or ""}',
+                                'F14': 'account_invoice_move_id.date_document${value or ""}#{number_format=date}',
+                                'G14': 'account_invoice_move_line_id.period_id.fiscalyear_id.name${value or ""}',
+                                'H14': 'account_invoice_move_line_id.period_id.name${value or ""}',
+                                'I14': 'account_invoice_move_id.date${value or ""}#{number_format=date}',
+                                'J14': 'invoice_id.date_due${value or ""}#{number_format=date}',
+                                'K14': 'invoice_id.source_document_id${value and (value._table in ("purchase_order", "sale_order") and value.name or value.number) or ""}',
+                                'L14': 'purchase_id.contract_id.display_code${value or ""}',
+                                'M14': 'invoice_id.amount_untaxed${value or 0}#{number_format=number}',
+                                'N14': 'invoice_id.amount_tax${value or 0}#{number_format=number}',
+                                'O14': 'invoice_id.amount_total${value or 0}#{number_format=number}',
+                                'P14': 'account_invoice_move_line_id.currency_id.name${value or ""}',
+                                'Q14': 'invoice_id.tax_line${value and (value[0].tax_code_id.code or "") or ""}',
+                                'R14': 'account_invoice_move_id.narration${value or ""}',
+                                'S14': 'voucher_id.number${value or ""}',
+                                'T14': 'voucher_id.amount${value or 0}#{number_format=number}',
+                                'U14': 'voucher_id.transfer_type${value or ""}',
+                                'V14': 'export_id.name${value or ""}',
+                                'W14': 'voucher_id.number_cheque${value or ""}',
+                                'X14': 'voucher_id.income_tax_form${value or ""}',
+                                'Y14': 'tax_id.amount${value or 0}',
+                                'Z14': 'account_invoice_move_id.create_uid.display_name${value or ""}',
+                                'AA14': 'invoice_id.state${value or ""}',
+                            },
+                            '_TAIL_0': {
+                                'M14': '@{sum}#{font=bold;number_format=number}',
+                                'N14': '@{sum}#{font=bold;number_format=number}',
+                                'O14': '@{sum}#{font=bold;number_format=number}',
+                                'T14': '@{sum}#{font=bold;number_format=number}',
+                                'Y14': '@{sum}#{font=bold;number_format=number}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
+
         # Payable Balance
         <record id="xlsx_report_payable_balance" model="ir.attachment">
             <field name="res_model">xlsx.report.payable.balance</field>
