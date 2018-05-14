@@ -13,6 +13,7 @@
                 <xpath expr="//field[@name='partner_bank_id']" position="replace"/>
                 <xpath expr="//field[@name='bank_account_id']" position="after">
                     <field name="partner_bank_id"/>
+                    <field name="date_accept" required="1"/>
                 </xpath>
                 <xpath expr="//field[@name='bank_account_id']" position="attributes">
                     <attribute name="context">{'company_bank_account_only': False}</attribute>
