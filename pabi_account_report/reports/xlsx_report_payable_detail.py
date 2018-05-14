@@ -32,7 +32,7 @@ class XLSXReportPayableDetail(models.TransientModel):
     start_period_id = fields.Many2one(
         'account.period',
         string='Period From',
-        domain=[('special', '=', False)],
+        domain=[('special', '=', False), ('state', '=', 'draft')],
     )
     end_period_id = fields.Many2one(
         'account.period',
