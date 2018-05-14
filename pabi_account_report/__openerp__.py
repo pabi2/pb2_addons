@@ -24,6 +24,7 @@
         'reports/xlsx_report_cheque_register.xml',
         'reports/xlsx_report_purchase_contract.xml',
         'reports/xlsx_report_advance_payment.xml',
+        'reports/xlsx_report_payable_balance.xml',
     ],
     'demo': [
     ],

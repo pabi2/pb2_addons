@@ -12,6 +12,7 @@
                 ref('xlsx_report_cheque_register'),
                 ref('xlsx_report_purchase_contract'),
                 ref('xlsx_report_advance_payment'),
+                ref('xlsx_report_payable_balance'),
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>
