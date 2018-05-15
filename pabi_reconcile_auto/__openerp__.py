@@ -10,6 +10,7 @@ By Odoo standard, only receivable/payable is reconciled when invoice->payment
 This module make sure that other reconcilable account is also reconciled,
   * Invoice -> Payment, for Undue -> Due Taxes
   * HR Expense Advance -> Clearing
+  * Account Interface, fro Undue -> Due Taxes
 
     """,
     "website": "https://nstda.or.th/",
@@ -18,6 +19,7 @@ This module make sure that other reconcilable account is also reconciled,
     "depends": [
         'l10n_th_account',
         'hr_expense_advance_clearing',
+        'pabi_interface',
     ],
     "data": [
     ],

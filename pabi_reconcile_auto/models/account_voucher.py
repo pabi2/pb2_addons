@@ -15,6 +15,6 @@ class AccountVoucher(models.Model):
                 mapped('move_id').mapped('line_id')
             tt_mlines = \
                 voucher.mapped('recognize_vat_move_id').mapped('line_id')
-            mlines = v_mlines + i_mlines + tt_mlines
+            mlines = v_mlines | i_mlines | tt_mlines
             mlines.reconcile_special_account()
         return res

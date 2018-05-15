@@ -17,6 +17,6 @@ class AccountInvoice(models.Model):
                 adv_invoices = Invoice.search([('expense_id', '=', exp_id)])
                 cl_mlines = invoice.mapped('move_id').mapped('line_id')
                 av_mlines = adv_invoices.mapped('move_id').mapped('line_id')
-                mlines = cl_mlines + av_mlines
+                mlines = cl_mlines | av_mlines
                 mlines.reconcile_special_account()
         return res
