@@ -33,7 +33,7 @@
                     <field name="is_employee_advance" invisible="1"/>
                     <field name="is_advance_clearing" invisible="1"/>
                     <field name="advance_expense_id"
-                           domain="[('is_employee_advance', '=', True), ('state', 'in', ('open','paid')),
+                           domain="[('is_employee_advance', '=', True), ('state', 'in', ('done','paid')),
                                     ('employee_id', '=', employee_id), ('amount_to_clearing', '&gt;', 0.0)]"
                            attrs="{'invisible': [('is_advance_clearing', '=', False)],
                                    'required': [('is_advance_clearing', '=', True)]}"/>
