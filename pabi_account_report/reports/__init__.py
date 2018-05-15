@@ -10,3 +10,4 @@ from . import xlsx_report_purchase_contract
 from . import xlsx_report_advance_payment
 from . import xlsx_report_payable_detail
 from . import xlsx_report_payable_balance
+from . import xlsx_report_purchase_billing
