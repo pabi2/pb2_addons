@@ -10,14 +10,14 @@ class XLSXReportPayableBalance(models.TransientModel):
         'res.partner',
         'xlsx_report_payable_balance_partner_rel',
         'report_id', 'partner_id',
-        string='Supplier',
+        string='Supplier(s)',
         domain=[('supplier', '=', True)],
     )
     account_ids = fields.Many2many(
         'account.account',
         'xlsx_report_payable_balance_account_rel',
         'report_id', 'account_id',
-        string='Account',
+        string='Account(s)',
         domain=[('type', '=', 'payable')],
         required=True,
     )
@@ -35,6 +35,9 @@ class XLSXReportPayableBalance(models.TransientModel):
         Result = self.env['account.move.line']
         dom = [('move_id.state', '=', 'posted'),
                ('reconcile_id', '=', False),
+               ('doctype', 'in',
+                ['in_invoice', 'in_refund', 'in_invoice_debitnote',
+                 'adjustment']),
                ('account_id', 'in', self.account_ids.ids), ]
         if self.partner_ids:
             dom += [('partner_id', 'in', self.partner_ids.ids)]
