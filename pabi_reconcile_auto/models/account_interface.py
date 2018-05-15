@@ -10,8 +10,8 @@ class InterfaceAccountEntry(models.Model):
     def execute(self):
         res = super(InterfaceAccountEntry, self).execute()
         for interface in self:
-            ml = interface.mapped('line_ids').mapped('reconcile_move_line_id')
-            ml1 = ml.mapped('move_id').mapped('line_id')
+            ml = interface.mapped('line_ids.reconcile_move_line_id')
+            ml1 = ml.mapped('move_id.line_id')
             if ml1:
                 ml2 = interface.move_id.line_id
                 mlines = ml1 | ml2
