@@ -533,5 +533,46 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
+
+        # SLA Purchase
+        <record id="xlsx_report_sla_purchase" model="ir.attachment">
+            <field name="res_model">xlsx.report.sla.purchase</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_sla_purchase.xlsx</field>
+            <field name="name">SLA Purchase</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'SLA Purchase Report': {
+                            '_HEAD_': {
+                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.sla.purchase")).display_name}',
+                                'B3': 'start_period_id.name${value or ""}',
+                                'D3': 'end_period_id.name${value or ""}',
+                                'B4': 'user_ids${value and ", ".join([x.display_name for x in value]) or ""}',
+                                'B5': '${env.user.display_name}',
+                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                            },
+                            'results': {
+                                'A9': 'voucher_id.period_id.fiscalyear_id.name${value or ""}',
+                                'B9': 'voucher_id.number${value or ""}',
+                                'C9': 'export_name${value or ""}',
+                                'D9': 'count_invoice${value or 0}',
+                                'E9': 'voucher_id.create_uid.display_name${value or ""}',
+                                'F9': 'voucher_id${value and (value.payment_type == "transfer" and value.transfer_type or "cheque") or ""}',
+                                'G9': 'voucher_id.date_value${value or ""}#{number_format=date}',
+                                'H9': 'voucher_id.amount${value or 0}#{number_format=number}',
+                                'I9': 'date_due${value or ""}#{number_format=date}',
+                                'J9': 'voucher_id.date${value or ""}#{number_format=date}',
+                            },
+                            '_TAIL_0': {
+                                'D9': '@{sum}#{font=bold;number_format=number}',
+                                'H9': '@{sum}#{font=bold;number_format=number}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
     </data>
 </openerp>
