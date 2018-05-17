@@ -574,5 +574,51 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
+
+        # SLA Employee
+        <record id="xlsx_report_sla_employee" model="ir.attachment">
+            <field name="res_model">xlsx.report.sla.employee</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_sla_employee.xlsx</field>
+            <field name="name">SLA Employee</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'SLA Employee Report': {
+                            '_HEAD_': {
+                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.sla.employee")).display_name}',
+                                'B3': 'start_period_id.name${value or ""}',
+                                'D3': 'end_period_id.name${value or ""}',
+                                'B4': 'user_ids${value and ", ".join([x.display_name for x in value]) or ""}',
+                                'B5': 'category_id.name${value or ""}',
+                                'B6': '${env.user.display_name}',
+                                'B7': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                            },
+                            'results': {
+                                'A10': 'invoice_id.date_invoice${value or ""}#{number_format=date}',
+                                'B10': 'invoice_id.number${value or ""}',
+                                'C10': 'voucher_id.number${value or ""}',
+                                'D10': 'voucher_id.date${value or ""}#{number_format=date}',
+                                'E10': 'invoice_id.comment${value or ""}',
+                                'F10': 'voucher_id.amount${value or 0}#{number_format=number}',
+                                'G10': 'invoice_id.source_document_id.number${value or ""}',
+                                'H10': 'invoice_id.partner_id.category_id.name${value or ""}',
+                                'I10': 'invoice_id.partner_id.search_key${value or ""}',
+                                'J10': 'invoice_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
+                                'K10': 'invoice_id.source_document_id.date_valid${value or ""}#{number_format=date}',
+                                'L10': 'export_id.date_value${value or ""}#{number_format=date}',
+                                'M10': '',
+                                'P10': 'voucher_id.create_uid.display_name${value or ""}',
+                            },
+                            '_TAIL_0': {
+                                'M10': '${"จำนวนวันทั้งหมด"}',
+                                'N9': '@{sum}#{font=bold;number_format=number}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
     </data>
 </openerp>
