@@ -32,8 +32,8 @@ class SLAPurchaseView(models.Model):
         sql_view = """
             SELECT ROW_NUMBER() OVER(ORDER BY av.id) AS id,
                    av.id AS voucher_id, COUNT(inv.id) AS count_invoice,
-                   STRING_AGG(exp.name, ', ' ORDER BY exp.name) AS export_name,
-                   MIN(inv.date_due) AS date_due
+                   STRING_AGG(exp_line.name, ', ' ORDER BY exp_line.name)
+                    AS export_name, MIN(inv.date_due) AS date_due
             FROM account_move_line l
             LEFT JOIN account_invoice inv ON l.move_id = inv.move_id
             LEFT JOIN account_move_reconcile r ON l.reconcile_id = r.id
@@ -42,9 +42,10 @@ class SLAPurchaseView(models.Model):
                        WHERE doctype = 'payment') l2 ON
                 r.id = l2.reconcile_id OR r.id = l2.reconcile_partial_id
             LEFT JOIN account_voucher av ON l2.move_id = av.move_id
-            LEFT JOIN payment_export_line exp_line ON
+            LEFT JOIN (SELECT * FROM payment_export_line l3
+                       LEFT JOIN payment_export exp ON l3.export_id = exp.id
+                       WHERE exp.state = 'done') exp_line ON
                 av.id = exp_line.voucher_id
-            LEFT JOIN payment_export exp ON exp_line.export_id = exp.id
             WHERE l.doctype IN ('in_invoice', 'in_refund') AND
                 l.account_id = inv.account_id AND
                     SPLIT_PART(inv.source_document_id, ',', 1)
