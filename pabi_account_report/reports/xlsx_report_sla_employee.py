@@ -40,14 +40,14 @@ class XLSXReportSLAEmployee(models.TransientModel):
         Result = self.env['sla.employee.view']
         dom = []
         if self.start_period_id:
-            dom += [('invoice_id.period_id.date_start', '>=',
+            dom += [('voucher_id.period_id.date_start', '>=',
                      self.start_period_id.date_start)]
         if self.end_period_id:
-            dom += [('invoice_id.period_id.date_start', '<=',
+            dom += [('voucher_id.period_id.date_start', '<=',
                      self.end_period_id.date_start)]
         if self.user_ids:
             dom += [('voucher_id.create_uid', 'in', self.user_ids.ids)]
         if self.category_id:
-            dom += [('invoice_id.partner_id.category_id', '=',
+            dom += [('voucher_id.partner_id.category_id', '=',
                      self.category_id.id)]
         self.results = Result.search(dom)

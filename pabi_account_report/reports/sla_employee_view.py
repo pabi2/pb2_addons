@@ -38,11 +38,12 @@ class SLAEmployeeView(models.Model):
             LEFT JOIN account_voucher av ON l2.move_id = av.move_id
             LEFT JOIN payment_export_line exp_line ON
                 av.id = exp_line.voucher_id
+            LEFT JOIN payment_export exp ON exp_line.export_id = exp.id
             WHERE l.doctype IN ('in_invoice', 'in_refund') AND
                 l.account_id = inv.account_id AND
                     SPLIT_PART(inv.source_document_id, ',', 1)
                         = 'hr.expense.expense' AND av.id IS NOT NULL AND
-                        av.state = 'posted'
+                        av.state = 'posted' AND exp.state = 'done'
         """
         return sql_view
 

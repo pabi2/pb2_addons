@@ -612,8 +612,8 @@ result = pd.pivot_table(df, index=groupby,
                                 'P10': 'voucher_id.create_uid.display_name${value or ""}',
                             },
                             '_TAIL_0': {
-                                'M10': '${"จำนวนวันทั้งหมด"}',
-                                'N9': '@{sum}#{font=bold;number_format=number}',
+                                'M10': '${"จำนวนวันทั้งหมด"}#{font=bold}',
+                                'N9': '@{sum}#{font=bold}',
                             }
                         }
                     }
