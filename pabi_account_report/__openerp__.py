@@ -26,6 +26,9 @@
         'reports/xlsx_report_advance_payment.xml',
         'reports/xlsx_report_payable_detail.xml',
         'reports/xlsx_report_payable_balance.xml',
+        'reports/xlsx_report_purchase_billing.xml',
+        'reports/xlsx_report_sla_purchase.xml',
+        'reports/xlsx_report_sla_employee.xml',
     ],
     'demo': [
     ],

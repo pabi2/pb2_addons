@@ -8,7 +8,7 @@ class XLSXReportPartnerList(models.TransientModel):
     # Search Criteria
     category_ids = fields.Many2many(
         'res.partner.category',
-        string='Category',
+        string='Category(s)',
     )
     customer = fields.Boolean(
         string='Customer',
