@@ -21,8 +21,11 @@
             <field name="inherit_id" ref="account_budget_activity.view_account_activity_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
-                    <field name="internal_charge"/>
-                    <field name="inrev_activity_id" attrs="{'invisible': ['|', ('internal_charge', '=', False), ('budget_method', '!=', 'expense')]}"/>
+                    <field name="internal_charge"
+                      attrs="{'invisible': [('budget_method', '!=', 'expense')]}"/>
+                    <field name="inrev_activity_ids" widget="many2many_tags"
+                      attrs="{'invisible': ['|', ('internal_charge', '=', False), ('budget_method', '!=', 'expense')], 'required': [('internal_charge', '=', True), ('budget_method', '=', 'expense')]}"
+                    />
                 </xpath>
             </field>
         </record>

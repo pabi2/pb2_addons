@@ -62,7 +62,77 @@
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="attributes">
                     <attribute name="domain">[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense'), ('internal_charge', '=', parent.internal_charge)]</attribute>
                 </xpath>
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="after">
+                    <field name="inrev_activity_id" invisible="1"/>
+                    <field name="inrev_activity_group_id" invisible="1"/>
+                </xpath>
             </field>
         </record>
+
+        <!-- Accept Internal Charge Line -->
+        <record id="view_internal_charge_line_filter" model="ir.ui.view">
+            <field name="name">view.internal.charge.line.filter</field>
+            <field name="model">hr.expense.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Internal Charge">
+                    <field name="expense_id"/>
+                    <field name="expense_name" string="Description" filter_domain="['|',('expense_name','ilike',self),('name','ilike',self)]"/>
+                    <field name="employee_id"/>
+                    <field name="employee_section_id"/>
+                    <field name="activity_group_id"/>
+                    <field name="activity_id"/>
+                    <field name="inrev_activity_group_id"/>
+                    <field name="inrev_activity_id"/>
+                    <separator/>
+                    <filter string="Draft" name="state_draft" domain="[('expense_state','=','draft')]"/>
+                    <filter string="Paid" name="state_paid" domain="[('expense_state','=','paid')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Expense" domain="[]" context="{'group_by':'expense_id'}"/>
+                        <filter string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
+                        <filter string="Employee Section" domain="[]" context="{'group_by':'employee_section_id'}"/>
+                        <filter string="Activity Group" domain="[]" context="{'group_by':'activity_group_id'}"/>
+                        <filter string="Activity" domain="[]" context="{'group_by':'activity_id'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+        <record id="view_internal_charge_line_tree" model="ir.ui.view">
+            <field name="name">view.internal.charge.line.tree</field>
+            <field name="model">hr.expense.line</field>
+            <field name="arch" type="xml">
+                <tree string="Internal Charge Lines" create="0" editable="top">
+                    <field name="sequence" invisible="1"/>
+                    <field name="expense_id" readonly="1"/>
+                    <field name="employee_id" readonly="1"/>
+                    <field name="employee_section_id" readonly="1"/>
+                    <field name="expense_name" readonly="1"/>
+                    <field name="name" readonly="1"/>
+                    <field name="activity_group_id" string="Exp. AG" readonly="1"/>
+                    <field name="activity_id" string="Exp. A" readonly="1"/>
+                    <field name="inrev_activity_group_id" string="Rev. AG" readonly="1"/>
+                    <field name="inrev_activity_id" string="Rev. A" attrs="{'readonly': [('expense_state', '!=', 'draft')]}"/>
+                    <field name="total_amount" sum="Total" readonly="1"/>
+                    <field name="expense_state" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_internal_charge_line" model="ir.actions.act_window">
+            <field name="name">Internal Charge</field>
+            <field name="res_model">hr.expense.line</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="view_internal_charge_line_filter"/>
+            <field name="view_id" ref="view_internal_charge_line_tree"/>
+            <field name="context">{'search_default_state_draft': 1}</field>
+            <field name="domain">[('expense_id.pay_to', '=', 'internal')]</field>
+        </record>
+
+        <menuitem action="action_internal_charge_line"
+                  id="menu_internal_charge_line"
+                  name="Internal Charge"
+                  parent="hr_expense.next_id_49"
+                  sequence="20"/>
+
     </data>
 </openerp>

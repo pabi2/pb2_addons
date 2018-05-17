@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- Select revenue activity -->
+        <record id="validate_internal_charge_view" model="ir.ui.view">
+            <field name="name">validate.internal.charge.view</field>
+            <field name="model">validate.internal.charge</field>
+            <field name="arch" type="xml">
+                <form string="Update Internal Charge Revenue Activity">
+                    <p class="oe_grey">
+                        This action will validate all selected internal charge.
+                    </p>
+                    <footer>
+                        <button string="Validate Internal Charge" name="validate_internal_charge" type="object" default_focus="1" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_validate_internal_charge"
+            multi="True" key2="client_action_multi" name="Validate Internal Charge"
+            res_model="validate.internal.charge" src_model="hr.expense.line"
+            view_mode="form" target="new" view_type="form" />
+
+    </data>
+</openerp>
