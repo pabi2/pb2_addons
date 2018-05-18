@@ -36,12 +36,12 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
-                <button name="confirm" position="attributes">
-                    <attribute name="states">False</attribute>
-                    <attribute name="attrs">{'invisible': ['|', ('state', '!=', 'draft'), ('pay_to', '=', 'internal')]}</attribute>
-                </button>
                 <button name="confirm" position="after">
-                    <button name="internal_charge" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('pay_to', '!=', 'internal')]}" string="Create Internal Charge" type="workflow" class="oe_highlight"/>
+                    <button name="internal_charge" attrs="{'invisible': ['|', ('state', '!=', 'confirm'), ('pay_to', '!=', 'internal')]}" string="Create Internal Charge" type="workflow" class="oe_highlight"/>
+                </button>
+                <button name="validate" position="attributes">
+                    <attribute name="states">False</attribute>
+                    <attribute name="attrs">{'invisible': ['|', ('state', '!=', 'confirm'), ('pay_to', '=', 'internal')]}</attribute>
                 </button>
                 <xpath expr="/form/sheet/notebook/page[@string='Accounting']/group/group/field[@name='journal_id']" position="after">
                     <field name="rev_ic_journal_id" invisible="1"/>
