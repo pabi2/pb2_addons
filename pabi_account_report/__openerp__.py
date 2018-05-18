@@ -32,6 +32,7 @@
         'reports/xlsx_report_purchase_billing.xml',
         'reports/xlsx_report_sla_purchase.xml',
         'reports/xlsx_report_sla_employee.xml',
+        'reports/xlsx_report_supplier_receipt_follow_up.xml',
     ],
     'demo': [
     ],
