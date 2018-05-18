@@ -12,6 +12,8 @@
         'pabi_purchase_contract',
         'pabi_utils',
         'pabi_purchase_billing',
+        'pabi_bank_statement_reconcile',
+        'pabi_account',
     ],
     'data': [
         'data/menu.xml',
