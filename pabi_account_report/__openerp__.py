@@ -11,6 +11,7 @@
         'payment_export',
         'pabi_purchase_contract',
         'pabi_utils',
+        'pabi_purchase_billing',
     ],
     'data': [
         'data/menu.xml',
