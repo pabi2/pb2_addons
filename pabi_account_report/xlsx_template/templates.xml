@@ -608,12 +608,54 @@ result = pd.pivot_table(df, index=groupby,
                                 'J10': 'invoice_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
                                 'K10': 'invoice_id.source_document_id.date_valid${value or ""}#{number_format=date}',
                                 'L10': 'export_id.date_value${value or ""}#{number_format=date}',
-                                'M10': '',
+                                'M10': 'import_id.date_value${value or ""}#{number_format=date}',
                                 'P10': 'voucher_id.create_uid.display_name${value or ""}',
                             },
                             '_TAIL_0': {
                                 'M10': '${"จำนวนวันทั้งหมด"}#{font=bold}',
                                 'N9': '@{sum}#{font=bold}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
+
+        # Supplier Receipt Follow Up
+        <record id="xlsx_report_supplier_receipt_follow_up" model="ir.attachment">
+            <field name="res_model">xlsx.report.supplier.receipt.follow.up</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_supplier_receipt_follow_up.xlsx</field>
+            <field name="name">Supplier Receipt Follow Up</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Supplier Receipt Follow Up Report': {
+                            '_HEAD_': {
+                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.supplier.receipt.follow.up")).display_name}',
+                                'B3': 'fiscalyear_id.name${value or ""}',
+                                'B4': 'account_id.code${value or ""}',
+                                'B5': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
+                                'B6': 'followup_receipt${value or ""}',
+                                'B7': '${env.user.display_name}',
+                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                            },
+                            'results': {
+                                'A11': 'partner_id.search_key${value or ""}',
+                                'B11': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
+                                'C11': 'number${value or ""}',
+                                'D11': 'create_uid.display_name${value or ""}',
+                                'E11': 'date_value${value or ""}#{number_format=date}',
+                                'F11': 'move_ids${value and (value.mapped("match_import_id") and value.mapped("match_import_id").date_value or "") or ""}',
+                                'G11': 'narration${value or ""}',
+                                'H11': 'amount${value or 0}#{number_format=number}',
+                                'I11': 'payment_type${value or ""}',
+                                'J11': 'number_cheque${value or ""}',
+                                'K11': 'supplier_bank_id${value and " ".join(list(filter(lambda l: l != False, [value.bank_name, value.bank_branch.name]))) or ""}',
+                            },
+                            '_TAIL_0': {
+                                'H11': '@{sum}#{font=bold;number_format=number}',
                             }
                         }
                     }
