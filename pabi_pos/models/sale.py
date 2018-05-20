@@ -18,9 +18,13 @@ class SaleOrder(models.Model):
     def onchange_workflow_process_id(self):
         if not self.workflow_process_id:
             return
-        workflow = self.workflow_process_id
-        if workflow.operating_unit_id:
-            self.operating_unit_id = workflow.operating_unit_id
+        wf = self.workflow_process_id
+        if wf.operating_unit_id:
+            self.operating_unit_id = wf.operating_unit_id
+        if wf.warehouse_id:
+            self.warehouse_id = wf.warehouse_id
+        if wf.taxbranch_id:
+            self.taxbranch_id = wf.taxbranch_id
         return super(SaleOrder, self).onchange_workflow_process_id()
 
     @api.model
@@ -109,6 +113,33 @@ class SaleOrder(models.Model):
             'bank_intransit_ids': [(6, 0, move_lines.ids)],
         })
         receipt.validate_bank_receipt()
+
+    @api.multi
+    def post_process_pos_order(self):
+        """ Use existing onchange to select configured fields """
+        for pos in self:
+            # As per WF configuration
+            pos.onchange_workflow_process_id()
+            # Partner
+            wf = pos.workflow_process_id
+            if not pos.partner_id:
+                pos.partner_id = wf.pos_partner_id
+            # onchange partner
+            res = self.onchange_partner_id(pos.partner_id.id)
+            values = res['value']
+            pos.partner_invoice_id = values['partner_invoice_id']
+            pos.pricelist_id = values['pricelist_id']
+            pos.payment_term = values['payment_term']
+            # order_line
+            section = wf.res_section_id
+            fund = wf.res_section_id.fund_ids and \
+                wf.res_section_id.fund_ids[0] or False
+            for line in pos.order_line:
+                line.section_id = section
+                line.fund_id = fund
+                product = line.product_id
+                line.activity_group_id = product.categ_id.activity_group_id
+                line.activity_rpt_id = product.categ_id.activity_id
 
 
 class SaleOrderLine(models.Model):

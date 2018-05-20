@@ -225,7 +225,6 @@ class ImportXlsxTemplate(models.TransientModel):
                 for idx in range(row, st.nrows):
                     if max_row and (idx - row) > (max_row - 1):
                         break
-                    print "%s : %s" % (idx, col)
                     value = XLS._get_cell_value(st.cell(idx, col),
                                                 field_type=field_type)
                     eval_context = self.get_eval_context(model=model,
