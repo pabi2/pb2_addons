@@ -658,6 +658,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'G11': 'narration${value or ""}',
                                 'H11': 'amount${value or 0}#{number_format=number}',
                                 'I11': 'payment_type${value or ""}',
+                                'J11': 'number_cheque${value or ""}',
                                 'K11': 'supplier_bank_id${value and " ".join(list(filter(lambda l: l != False, [value.bank_name, value.bank_branch.name]))) or ""}',
                             },
                             '_TAIL_0': {
