@@ -10,12 +10,13 @@
                     <!-- search criteria -->
                     <group states="choose">
                         <group>
-                            <field name="cheque_lot_ids" widget="many2many_tags"/>
-                            <field name="number_from"/>
-                            <field name="number_to"/>
-                            <field name="status"/>
+                            <field name="date_cheque_received"/>
+                            <field name="number_cheque_from"/>
+                            <field name="account_ids" widget="many2many_tags"/>
                         </group>
                         <group>
+                            <field name="cheque_lot_ids" widget="many2many_tags"/>
+                            <field name="number_cheque_to"/>
                         </group>
                     </group>
 
