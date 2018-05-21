@@ -20,6 +20,7 @@
                       'invisible': ['|', ('payment_type', '=', 'cheque'), ('transfer_type', '=', 'oversea')]}"/>
                     <field name="supplier_bank_branch" attrs="{'invisible': ['|', ('payment_type', '=', 'cheque'), ('transfer_type', '=', 'oversea')]}"/>
                     <field name="payment_export_id" attrs="{'invisible': [('payment_export_id', '=', False)]}"/>
+                    <field name="date_cheque_received" attrs="{'invisible': [('payment_type', '!=', 'cheque')]}"/>
                 </field>
                 <field name="number_cheque" position="attributes">
                     <attribute name="attrs">{'invisible': [('number_cheque', '=', False)]}</attribute>

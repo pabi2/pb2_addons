@@ -17,6 +17,7 @@ class AccountMoveLine(models.Model):
             # it use invoice's taxbranch
             if vals.get('taxinvoice_taxbranch_id', False):
                 vals['taxbranch_id'] = vals.get('taxinvoice_taxbranch_id')
+                vals.pop('taxinvoice_taxbranch_id')
         return vals
 
     @api.multi

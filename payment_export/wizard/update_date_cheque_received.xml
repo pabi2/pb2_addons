@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_update_cheque_received" model="ir.ui.view">
+            <field name="name">view.update.cheque.received</field>
+            <field name="model">update.date.cheque.received</field>
+            <field name="arch" type="xml">
+             <form string="Update Cheque Received Date">
+                <group>
+                    <group>
+                        <field name="date_cheque_received" required="1"/>
+                    </group>
+                    <group>
+                </group>
+                </group>
+                <footer>
+                    <button name="action_update_date_cheque_received"
+                        string="Update" type="object"
+                        class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link"
+                        special="cancel" />
+                </footer>
+            </form>
+            </field>
+        </record>
+
+        <act_window id="action_set_date_cheque_received"
+            multi="True"
+            key2="client_action_multi" name="Update Cheque Received Date"
+            res_model="update.date.cheque.received" src_model="account.voucher"
+            view_mode="form" target="new" view_type="form" />
+
+    </data>
+</openerp>

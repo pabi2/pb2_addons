@@ -552,5 +552,6 @@ class LoanCustomerAgreement(models.Model):
         order_vals.update({'loan_agreement_id': self.id,
                            'payment_term': False,
                            'order_line': [(0, 0, order_line_data)]})
-        order = self.env['sale.order'].create(order_vals)
+        order = self.env['sale.order'].\
+            with_context(order_type='sale_order').create(order_vals)
         return order

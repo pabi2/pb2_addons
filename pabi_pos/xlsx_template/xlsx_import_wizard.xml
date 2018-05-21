@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="action_xlsx_import_pos_order" model="ir.actions.act_window">
+            <field name="name">Import POS Order(s)</field>
+            <field name="res_model">xlsx.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'active_model': 'sale.order',
+                                   'template_fname': 'pos_order.xlsx',
+                                   'return_action': 'pabi_pos.action_pos_orders',
+                                   'order_type': 'sale_order', }</field>
+        </record>
+
+        <menuitem id="menu_xlsx_import_pos_order"
+          name="Import POS Order(s)"
+          parent="base.menu_sales"
+          action="action_xlsx_import_pos_order"
+          sequence="500"/>
+
+    </data>
+</openerp>

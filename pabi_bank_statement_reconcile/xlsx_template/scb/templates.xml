@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <!-- scb Cheque -->
+        <record id="scb_cheque" model="ir.attachment">
+            <field name="res_model">pabi.bank.statement</field>
+            <field name="datas"></field>
+            <field name="datas_fname">scb_cheque.xls</field>
+            <field name="name">SCB Cheque</field>
+            <field name="parent_id" eval="ref('dir_statement_reconcile_template')"/>
+            <field name="description">
+              {
+                '__IMPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'A2': 'journal_id${value and value.strip()}',
+                            '${"payment_cheque"}': 'report_type',
+                        },
+                        'import_ids': {
+                            'A2${"Cheque"}': 'description',
+                            'B2': 'date_value',
+                            'F2': 'cheque_number${value and value.strip()}',
+                            'G2': 'debit${value and float(value) or 0.0}',
+                        }
+                    }
+                },
+                '__POST_IMPORT__': [
+                  '${object.import_ids.filtered(lambda l: l.debit &lt;= 0.0).unlink()}',
+                  '${object.post_xlsx_import_statement()}',
+                ],
+            }
+          </field>
+        </record>
+
+        <!-- scb Saving -->
+        <record id="scb_saving" model="ir.attachment">
+            <field name="res_model">pabi.bank.statement</field>
+            <field name="datas"></field>
+            <field name="datas_fname">scb_saving.xls</field>
+            <field name="name">SCB Saving</field>
+            <field name="parent_id" eval="ref('dir_statement_reconcile_template')"/>
+            <field name="description">
+              {
+                '__IMPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'A2': 'journal_id${value and value.strip()}',
+                            '${"bank_receipt"}': 'report_type',
+                        },
+                        'import_ids': {
+                            'A2${"Receipt"}': 'description',
+                            'B2': 'date_value',
+                            'H8': 'credit${value and float(value) or 0.0}',
+                        }
+                    }
+                },
+                '__POST_IMPORT__': [
+                  '${object.import_ids.filtered(lambda l: l.credit &lt;= 0.0).unlink()}',
+                  '${object.post_xlsx_import_statement()}',
+                ],
+            }
+          </field>
+        </record>
+
+    </data>
+</openerp>

@@ -28,6 +28,9 @@ When set automatic workflow = POS, the order will automatically,
         "views/product_view.xml",
         "views/sale_view.xml",
         "views/sale_workflow_process_view.xml",
+        "xlsx_template/xlsx_import_wizard.xml",
+        "xlsx_template/templates.xml",
+        "xlsx_template/load_template.xml",
     ],
     # "pre_init_hook": "pre_init_hook",  # Keeps the job running for now.
 }

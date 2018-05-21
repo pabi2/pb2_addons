@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 
 
 class ChequeLot(models.Model):
     _name = 'cheque.lot'
+    _inherit = ['mail.thread']
     _description = 'Cheque Lot'
     _order = 'id desc'
 
@@ -12,29 +14,33 @@ class ChequeLot(models.Model):
         string='Lot',
         required=True,
         copy=False,
+        track_visibility='onchange',
     )
     journal_id = fields.Many2one(
         'account.journal',
         string='Payment Method',
         required=True,
         domain=[('type', '=', 'bank'), ('intransit', '=', False)],
+        track_visibility='onchange',
     )
     cheque_number_from = fields.Char(
         string='Cheque Number From',
         size=10,
         required=True,
+        track_visibility='onchange',
     )
     cheque_number_to = fields.Char(
         string='Cheque Number To',
         size=10,
         required=True,
+        track_visibility='onchange',
     )
     user_id = fields.Many2one(
         'res.users',
         string='Responsible',
         required=False,
-        readonly=True,
-        default=lambda self: self.env.user,
+        readonly=False,
+        track_visibility='onchange',
     )
     next_number = fields.Char(
         string='Next Cheque Number',
@@ -47,6 +53,11 @@ class ChequeLot(models.Model):
         readonly=True,
         store=True,
         help="This field show the remaining valid cheque to use",
+    )
+    voided = fields.Integer(
+        string='Voided',
+        compute='_compute_voided',
+        help="This field show the voided cheque",
     )
     dirty = fields.Boolean(
         string='Dirty',
@@ -61,8 +72,10 @@ class ChequeLot(models.Model):
         compute='_compute_state',
         store=True,
         readonly=True,
-        help="Active means this lot is in used. "
-        "Inactive means this lot has been used up",
+        help="Active means this lot is in used.\n"
+        "Inactive means this lot has been used up.\n"
+        "But if no Responsible selected, always Inactive",
+        track_visibility='onchange',
     )
     line_ids = fields.One2many(
         'cheque.register',
@@ -83,7 +96,7 @@ class ChequeLot(models.Model):
     #     self.journal_id = False
 
     @api.multi
-    @api.depends('line_ids.void', 'line_ids.voucher_id')
+    @api.depends('line_ids', 'line_ids.void', 'line_ids.voucher_id')
     def _compute_remaining(self):
         Cheque = self.env['cheque.register']
         for lot in self:
@@ -94,13 +107,31 @@ class ChequeLot(models.Model):
             lot.dirty = lot.remaining != len(lot.line_ids)
 
     @api.multi
-    @api.depends('line_ids', 'line_ids.void', 'line_ids.voucher_id')
+    def _compute_voided(self):
+        for lot in self:
+            lot.voided = len(lot.line_ids.filtered('void').ids)
+
+    @api.multi
+    @api.depends('user_id', 'line_ids', 'line_ids.void', 'line_ids.voucher_id')
     def _compute_state(self):
         for lot in self:
+            # No responsible, always inactive
+            if not lot.user_id:
+                lot.state = 'inactive'
+                continue
+            # With responsible, inactive if completed.
             if lot.remaining > 0:
                 lot.state = 'active'
             else:
                 lot.state = 'inactive'
+
+    @api.multi
+    @api.constrains('dirty', 'user_id')
+    def _check_user_id(self):
+        for rec in self:
+            if rec.dirty and not rec.user_id:
+                raise ValidationError(
+                    _('Responsible is required as this lot is dirty.'))
 
     @api.multi
     @api.constrains('cheque_number_from', 'cheque_number_to')
@@ -247,8 +278,22 @@ class ChequeRegister(models.Model):
         string='Payment Export',
         readonly=True,
     )
+    date_void = fields.Datetime(
+        string='Voided Date',
+        readonly=True,
+    )
     _sql_constraints = [
         ('number_unique',
          'unique(number, journal_id)',
          'Cheque number must be unique of the same payment method!')
     ]
+
+    @api.multi
+    def write(self, vals):
+        if 'void' in vals:
+            if vals['void']:
+                now = fields.Datetime.context_timestamp(self, datetime.now())
+                self.write({'date_void': now})
+            else:
+                self.write({'date_void': False})
+        return super(ChequeRegister, self).write(vals)

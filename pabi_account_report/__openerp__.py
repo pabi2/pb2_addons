@@ -9,7 +9,11 @@
     'website': 'http://ecosoft.co.th',
     'depends': [
         'payment_export',
+        'pabi_purchase_contract',
         'pabi_utils',
+        'pabi_purchase_billing',
+        'pabi_bank_statement_reconcile',
+        'pabi_account',
     ],
     'data': [
         'data/menu.xml',
@@ -21,6 +25,14 @@
         'reports/xlsx_report_advance_status.xml',
         'reports/xlsx_report_supplier_invoice_detail.xml',
         'reports/xlsx_report_cheque_register.xml',
+        'reports/xlsx_report_purchase_contract.xml',
+        'reports/xlsx_report_advance_payment.xml',
+        'reports/xlsx_report_payable_detail.xml',
+        'reports/xlsx_report_payable_balance.xml',
+        'reports/xlsx_report_purchase_billing.xml',
+        'reports/xlsx_report_sla_purchase.xml',
+        'reports/xlsx_report_sla_employee.xml',
+        'reports/xlsx_report_supplier_receipt_follow_up.xml',
     ],
     'demo': [
     ],

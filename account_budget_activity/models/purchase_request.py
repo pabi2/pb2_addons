@@ -117,8 +117,7 @@ class PurchaseRequestLine(CommitLineCommon, ActivityCommon, models.Model):
     def _compute_purchase_lines(self):
         for rec in self:
             rec.purchase_lines = \
-                rec.requisition_lines.mapped('purchase_line_ids').\
-                mapped('pur_line_id')
+                rec.requisition_lines.mapped('purchase_line_ids.pur_line_id')
 
     # @api.multi
     # def _compute_budget_commit_bal(self):

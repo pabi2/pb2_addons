@@ -10,7 +10,7 @@
         </record>
 
         <record id="t22" model="workflow.transition">
-            <field name="act_from" ref="hr_expense.act_draft"/>
+            <field name="act_from" ref="hr_expense.act_confirm"/>
             <field name="act_to" ref="act_internal_charge"/>
             <field name="signal">internal_charge</field>
             <field name="group_id" ref="base.group_hr_user"/>

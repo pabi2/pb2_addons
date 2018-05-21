@@ -1,39 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-        <!-- Directory Bank Statement Reconcile Temlates -->
-        <record model="document.directory" id="dir_statement_reconcile_template_bbl">
-            <field name="name">BBL - Statement Reconcile Template</field>
-            <field name="parent_id" ref="document.dir_root"/>
-            <field name="user_id" ref="base.user_root"/>
-            <field name="ressource_id">0</field>
-            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
-        </record>
-
-        <record id="bbl_direct_statement_template" model="ir.attachment">
+        <!-- BBL Direct -->
+        <record id="bbl_direct" model="ir.attachment">
             <field name="res_model">pabi.bank.statement</field>
             <field name="datas"></field>
-            <field name="datas_fname">.1_Input BBL Direct.xlsx</field>
+            <field name="datas_fname">bbl_direct.xlsx</field>
             <field name="name">BBL Direct</field>
-            <field name="parent_id" eval="ref('dir_statement_reconcile_template_bbl')"/>
+            <field name="parent_id" eval="ref('dir_statement_reconcile_template')"/>
             <field name="description">
               {
                 '__IMPORT__': {
                     1: {
+                        '_HEAD_': {
+                            'Z2': 'journal_id',
+                            '${"payment_cheque"}': 'report_type',
+                        },
                         'import_ids': {
-                            'A9': 'date_value',
-                            'B9': 'document',
-                            'E9': 'cheque_number',
-                            'F9': ['debit${value &lt; 0 and -value or False}', 'credit${value &gt; 0 and value or False}'],
+                            'A2${"Tranfer"}': 'description',
+                            'M2': 'date_value${value or False}',
+                            'Y2': 'batch_code',
+                            'N2': 'document${value and value.split("/")[1] or False}',
+                            'X2': 'debit${value and float(value) or 0.0}',
+                            'AA2': 'partner_code',
+                            'AB2': 'partner_name',
                         }
                     }
                 },
                 '__POST_IMPORT__': [
-                  '${object.import_ids.filtered(lambda l: not l.date_value).unlink()}',
-                  '${object.import_ids.filtered(lambda l: not l.cheque_number).unlink()}',
+                  '${object.post_xlsx_import_statement()}',
                 ],
             }
           </field>
         </record>
+
+        <!-- BBL Smart -->
+        <record id="bbl_smart" model="ir.attachment">
+            <field name="res_model">pabi.bank.statement</field>
+            <field name="datas"></field>
+            <field name="datas_fname">bbl_smart.xlsx</field>
+            <field name="name">BBL Smart</field>
+            <field name="parent_id" eval="ref('dir_statement_reconcile_template')"/>
+            <field name="description">
+              {
+                '__IMPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'Z2': 'journal_id',
+                            '${"payment_cheque"}': 'report_type',
+                        },
+                        'import_ids': {
+                            'A2${"Tranfer"}': 'description',
+                            'M2': 'date_value${value or False}',
+                            'Y2': 'batch_code',
+                            'N2': 'document${value and value.split("/")[1] or False}',
+                            'X2': 'debit${value and float(value) or 0.0}',
+                            'AA2': 'partner_code',
+                            'AB2': 'partner_name',
+                        }
+                    }
+                },
+                '__POST_IMPORT__': [
+                  '${object.post_xlsx_import_statement()}',
+                ],
+            }
+          </field>
+        </record>
+
+        <!-- BBL Cheque -->
+        <record id="bbl_cheque" model="ir.attachment">
+            <field name="res_model">pabi.bank.statement</field>
+            <field name="datas"></field>
+            <field name="datas_fname">bbl_cheque.xls</field>
+            <field name="name">BBL Cheque</field>
+            <field name="parent_id" eval="ref('dir_statement_reconcile_template')"/>
+            <field name="description">
+              {
+                '__IMPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'G4': 'journal_id${value and value.split(":")[1]}',
+                            '${"payment_cheque"}': 'report_type',
+                        },
+                        'import_ids': {
+                            'A8${"Cheque"}': 'description',
+                            'C8': 'date_value${value and len(value) > 0 and datetime.strptime(value, "%d/%m/%Y").strftime("%Y-%m-%d") or ""}',
+                            'J8': 'cheque_number',
+                            'L8': 'debit${value and float(value) or 0.0}',
+                        }
+                    }
+                },
+                '__POST_IMPORT__': [
+                  '${object.import_ids.filtered(lambda l: l.debit == 0.0).unlink()}',
+                  '${object.post_xlsx_import_statement()}',
+                ],
+            }
+          </field>
+        </record>
+
+        <!-- BBL Saving -->
+        <record id="bbl_saving" model="ir.attachment">
+            <field name="res_model">pabi.bank.statement</field>
+            <field name="datas"></field>
+            <field name="datas_fname">bbl_saving.xls</field>
+            <field name="name">BBL Saving</field>
+            <field name="parent_id" eval="ref('dir_statement_reconcile_template')"/>
+            <field name="description">
+              {
+                '__IMPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'G4': 'journal_id${value and value.split(":")[1]}',
+                            '${"bank_receipt"}': 'report_type',
+                        },
+                        'import_ids': {
+                            'A8${"Receipt"}': 'description',
+                            'C8': 'date_value${value and len(value) > 0 and datetime.strptime(value, "%d/%m/%Y").strftime("%Y-%m-%d") or ""}',
+                            'N8': 'credit${value and float(value) or 0.0}',
+                        }
+                    }
+                },
+                '__POST_IMPORT__': [
+                  '${object.import_ids.filtered(lambda l: l.debit == 0.0).unlink()}',
+                  '${object.post_xlsx_import_statement()}',
+                ],
+            }
+          </field>
+        </record>
+
     </data>
 </openerp>

@@ -4,7 +4,7 @@ from openerp.exceptions import ValidationError
 
 
 class HRExpense(models.Model):
-    _inherit = "hr.expense.expense"
+    _inherit = 'hr.expense.expense'
 
     pay_to = fields.Selection(
         selection_add=[('internal', 'Internal Charge')],
@@ -161,22 +161,6 @@ class HRExpense(models.Model):
             vals['charge_type'] = 'internal'
         return vals
 
-    @api.model
-    def _get_reference_revenue_activity(self, activity):
-        inrev_activity = activity.inrev_activity_id
-        if not inrev_activity or not inrev_activity.account_id:
-            raise ValidationError(
-                _("The selected activity '%s' do not have reference "
-                  "internal revenue activity or account is not valid") %
-                 (activity.name))
-        activity_groups = inrev_activity.activity_group_ids
-        if len(activity_groups) != 1:
-            raise ValidationError(
-                _('Invalid group setup for revenue activity %s.\n'
-                  'Revenue activity must belong to a group') %
-                (activity.name))
-        return inrev_activity, activity_groups[0]
-
     @api.multi
     def create_internal_charge_move(self):
         AccountMove = self.env['account.move']
@@ -200,8 +184,11 @@ class HRExpense(models.Model):
             rev_move_lines = []
             for line in expense.line_ids:
                 # Find the reference revenue activity for this activity
-                activity, activity_group = \
-                    self._get_reference_revenue_activity(line.activity_id)
+                activity = line.inrev_activity_id
+                activity_group = line.inrev_activity_group_id
+                if not activity or not activity_group:
+                    raise ValidationError(
+                        _('No revenue AG/A for line %s!') % line.display_name)
                 temp_exp_line_dict = {
                     'expense_id': expense.id,
                     'project_id': expense.internal_project_id.id,
@@ -254,7 +241,6 @@ class HRExpense(models.Model):
                                                       debit=line.total_amount,
                                                       credit=0.0)
                 exp_move_lines.append((0, 0, exp_dr_vals))
-#                 AccountMoveLine.with_context(ctx).create(exp_dr_vals)
 
             # Cr: Internal Charge (equel to Dr: Internal Charge)
             exp_cr_vals = rev_dr_vals.copy()
@@ -288,3 +274,81 @@ class HRExpense(models.Model):
             else:
                 raise ValidationError(_('> 1 type of pay_to'))
         return super(HRExpense, self).write(vals)
+
+
+class HRExpenseLine(models.Model):
+    _inherit = 'hr.expense.line'
+
+    inrev_activity_id = fields.Many2one(
+        'account.activity',
+        string='Activity (Rev)',
+        domain="[('budget_method', '=', 'revenue'),"
+        "('inexp_activity_ids', 'in', [activity_id])]",
+    )
+    inrev_activity_group_id = fields.Many2one(
+        'account.activity.group',
+        string='Activity Group (Rev)',
+        compute='_compute_inrev_activity_group_id',
+        store=True,
+        readonly=True,
+    )
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string='Employee',
+        related='expense_id.employee_id',
+        readonly=True,
+        store=True,
+    )
+    employee_section_id = fields.Many2one(
+        'res.section',
+        string='Section',
+        related='expense_id.section_id',
+        readonly=True,
+        store=True,
+    )
+    expense_name = fields.Char(
+        string='Description',
+        related='expense_id.name',
+        readonly=True,
+    )
+
+    @api.multi
+    @api.depends('inrev_activity_id')
+    def _compute_inrev_activity_group_id(self):
+        for rec in self:
+            if not rec.inrev_activity_id:
+                continue
+            activity_groups = rec.inrev_activity_id.activity_group_ids
+            if len(activity_groups) != 1:
+                raise ValidationError(
+                    _('Invalid group setup for revenue activity %s.\n'
+                      'Revenue activity must belong to one activity group') %
+                    (rec.inrev_activity_id.name))
+            rec.inrev_activity_group_id = activity_groups[0]
+
+    @api.model
+    def _get_inrev_activity(self, activity_id):
+        """ Only if 1-1, assign invrev_activity, else False """
+        inrev_activity = False
+        activity = self.env['account.activity'].browse(activity_id)
+        if activity and activity.internal_charge:
+            inrev_activities = activity.inrev_activity_ids
+            if len(inrev_activities) == 1:
+                inrev_activity = inrev_activities[0]
+        return inrev_activity and inrev_activity.id or False
+
+    @api.model
+    def create(self, vals):
+        if vals.get('activity_id', False) and \
+                not vals.get('inrev_activity_id', False):
+            inrev_activity_id = self._get_inrev_activity(vals['activity_id'])
+            vals.update({'inrev_activity_id': inrev_activity_id})
+        return super(HRExpenseLine, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if vals.get('activity_id', False) and \
+                not vals.get('inrev_activity_id', False):
+            inrev_activity_id = self._get_inrev_activity(vals['activity_id'])
+            vals.update({'inrev_activity_id': inrev_activity_id})
+        return super(HRExpenseLine, self).write(vals)
