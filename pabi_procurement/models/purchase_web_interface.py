@@ -184,7 +184,7 @@ class PurchaseRequisition(models.Model):
                     requisition.write({
                         'reject_reason_txt': af_info['comment'],
                     })
-                    requisition.signal_workflow('open_rejected')
+                    requisition.rejected()
                     res.update({
                         'is_success': True,
                         'result': True,
