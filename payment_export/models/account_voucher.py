@@ -34,7 +34,7 @@ class AccountVoucher(models.Model):
     cheque_lot_id = fields.Many2one(
         'cheque.lot',
         string='Cheque Lot',
-        domain="[('journal_id', '=', journal_id)]",
+        domain="[('journal_id', '=', journal_id), ('state', '=', 'active')]",
         ondelete="restrict",
         readonly=True,
         states={'draft': [('readonly', False)]},
