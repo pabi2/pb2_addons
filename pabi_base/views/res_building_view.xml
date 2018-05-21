@@ -1,0 +1,203 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        # Building
+        <record id="view_res_building_tree" model="ir.ui.view">
+            <field name="name">view.res.building.tree</field>
+            <field name="model">res.building</field>
+            <field name="arch" type="xml">
+                <tree string="Building">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_res_building_form" model="ir.ui.view">
+            <field name="name">view.res.building.form</field>
+            <field name="model">res.building</field>
+            <field name="arch" type="xml">
+                <form string="Building">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Floors">
+                            <field name="floor_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="active"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_res_building_search" model="ir.ui.view">
+            <field name="name">view.res.building.search</field>
+            <field name="model">res.building</field>
+            <field name="arch" type="xml">
+                <search string="Building">
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self)]" string="Name"/>
+                    <!-- <group expand="0" string="Group By">
+                        <filter name="type" string="Type" context="{'group_by':'type'}"/>
+                    </group> -->
+                </search>
+            </field>
+        </record>
+
+        <record id="action_res_building" model="ir.actions.act_window">
+            <field name="name">Building</field>
+            <field name="res_model">res.building</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_building_tree"/>
+        </record>
+
+        <menuitem name="Buildings" id="menu_res_building" action="action_res_building" parent="menu_building" sequence="10"/>
+
+        # Floor
+        <record id="view_res_floor_tree" model="ir.ui.view">
+            <field name="name">view.res.floor.tree</field>
+            <field name="model">res.floor</field>
+            <field name="arch" type="xml">
+                <tree string="Floor">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="building_id"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_res_floor_form" model="ir.ui.view">
+            <field name="name">view.res.floor.form</field>
+            <field name="model">res.floor</field>
+            <field name="arch" type="xml">
+                <form string="Floor">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="building_id"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Rooms">
+                            <field name="room_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="active"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_res_floor_search" model="ir.ui.view">
+            <field name="name">view.res.floor.search</field>
+            <field name="model">res.floor</field>
+            <field name="arch" type="xml">
+                <search string="Floor">
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self)]" string="Name"/>
+                    <!-- <group expand="0" string="Group By">
+                        <filter name="type" string="Type" context="{'group_by':'type'}"/>
+                    </group> -->
+                </search>
+            </field>
+        </record>
+
+        <record id="action_res_floor" model="ir.actions.act_window">
+            <field name="name">Floor</field>
+            <field name="res_model">res.floor</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_floor_tree"/>
+        </record>
+
+        <menuitem name="Floors" id="menu_res_floor" action="action_res_floor" parent="menu_building" sequence="20"/>
+
+        # Rooms
+        <record id="view_res_room_tree" model="ir.ui.view">
+            <field name="name">view.res.room.tree</field>
+            <field name="model">res.room</field>
+            <field name="arch" type="xml">
+                <tree string="Room">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="floor_id"/>
+                    <field name="building_id"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_res_room_form" model="ir.ui.view">
+            <field name="name">view.res.room.form</field>
+            <field name="model">res.room</field>
+            <field name="arch" type="xml">
+                <form string="Room">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name" class="oe_inline" placeholder="Name"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="floor_id"/>
+                            <field name="building_id"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_res_room_search" model="ir.ui.view">
+            <field name="name">view.res.room.search</field>
+            <field name="model">res.room</field>
+            <field name="arch" type="xml">
+                <search string="Room">
+                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self)]" string="Name"/>
+                    <!-- <group expand="0" string="Group By">
+                        <filter name="type" string="Type" context="{'group_by':'type'}"/>
+                    </group> -->
+                </search>
+            </field>
+        </record>
+
+        <record id="action_res_room" model="ir.actions.act_window">
+            <field name="name">Room</field>
+            <field name="res_model">res.room</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_res_room_tree"/>
+        </record>
+
+        <menuitem name="Rooms" id="menu_res_room" action="action_res_room" parent="menu_building" sequence="30"/>
+
+
+    </data>
+</openerp>

@@ -127,13 +127,14 @@ class BudgetPlanUnit(BPCommon, models.Model):
 
     @api.multi
     def _compute_master_ag_ids(self):
-        ActivityGroup = self.env['account.activity.group']
+        AG = self.env['account.activity.group']
         for rec in self:
-            ags = ActivityGroup.search([])
             rec.master_ag_exp_ids = \
-                ags.filtered(lambda l: l.budget_method == 'expense')
+                AG.search([('budget_method', '=', 'expense'),
+                           ('no_display', '=', False)])
             rec.master_ag_rev_ids = \
-                ags.filtered(lambda l: l.budget_method == 'revenue')
+                AG.search([('budget_method', '=', 'revenue'),
+                           ('no_display', '=', False)])
 
     @api.multi
     def _compute_master_cc_ids(self):
@@ -285,8 +286,12 @@ class BudgetPlanUnit(BPCommon, models.Model):
                 raise ValidationError(
                     _("Excel's total budget not equal planned amount"))
             # 2) If external line has income_section_id, remove it.
-            rec.plan_line_ids.filtered(lambda l: l.charge_type == 'external').\
-                write({'income_section_id': False})
+            if rec.plan_line_ids.\
+                    filtered(lambda l: l.charge_type == 'external').\
+                    mapped('income_section_id'):
+                raise ValidationError(
+                    _('For line with external charge type, '
+                      'income section is not allowed'))
 
 
 class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):

@@ -28,6 +28,11 @@ class AccountBankReceipt(models.Model):
         copy=False,
         default=lambda self: fields.Date.context_today(self),
     )
+    date_accept = fields.Date(
+        string='Accepted Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
 
     @api.multi
     def write(self, vals):

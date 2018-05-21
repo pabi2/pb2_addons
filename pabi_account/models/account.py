@@ -56,8 +56,8 @@ class AccountAccount(models.Model):
             banks = BankAcct.search([
                 ('state', '=', 'SA'),  # Only Saving Bank Account
                 ('partner_id', '=', self.env.user.company_id.partner_id.id)])
-            account_ids = banks.mapped('journal_id').\
-                mapped('default_debit_account_id').ids
+            account_ids = \
+                banks.mapped('journal_id.default_debit_account_id').ids
             args += [('id', 'in', account_ids)]
         return super(AccountAccount, self).name_search(name=name,
                                                        args=args,

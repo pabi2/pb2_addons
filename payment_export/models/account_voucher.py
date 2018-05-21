@@ -57,6 +57,9 @@ class AccountVoucher(models.Model):
         readonly=True,
         ondelete='restrict',
     )
+    date_cheque_received = fields.Date(
+        string='Cheque Received',
+    )
 
     @api.multi
     @api.depends('journal_id')

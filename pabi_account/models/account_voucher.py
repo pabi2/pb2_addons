@@ -99,7 +99,11 @@ class AccountVoucher(models.Model):
         copy=False,
         default=lambda self: fields.Date.context_today(self),
     )
-
+    followup_receipt = fields.Selection(
+        [('following', 'Following'),
+         ('received', 'Received')],
+        string='Receipt Followup',
+    )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
 

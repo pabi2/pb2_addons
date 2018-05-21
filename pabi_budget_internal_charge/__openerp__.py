@@ -14,6 +14,8 @@
     ],
     'data': [
         'data/account_data.xml',
+        'wizard/update_inrev_activity.xml',
+        'wizard/validate_internal_charge.xml',
         'views/account_view.xml',
         'views/budget_plan_unit_view.xml',
         'views/hr_expense_view.xml',

@@ -12,6 +12,7 @@
         'pabi_procurement',
         'pabi_purchase_work_acceptance',
         'pabi_asset_management',
+        'pabi_purchase_contract',
     ],
     'data': [
         'views/pabi_purchase_report_view.xml',

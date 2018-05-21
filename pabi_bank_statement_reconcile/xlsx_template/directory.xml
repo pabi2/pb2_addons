@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory Bank Statement Reconcile Temlates -->
+        <record model="document.directory" id="dir_statement_reconcile_template">
+            <field name="name">Statement Reconcile Template</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+    </data>
+</openerp>

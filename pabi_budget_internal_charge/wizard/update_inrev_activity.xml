@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- Select revenue activity -->
+        <record id="update_inrev_activity_view" model="ir.ui.view">
+            <field name="name">update.inrev.activity.view</field>
+            <field name="model">update.inrev.activity</field>
+            <field name="arch" type="xml">
+                <form string="Update Internal Charge Revenue Activity">
+                    <p class="oe_grey">
+                        Based on expense internal charge selected,
+                        please select the appropriate relevant revenue activity.
+                    </p>
+                    <group>
+                        <group>
+                            <field name="inrev_activity_id"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Set Revenue Activity" name="update_inrev_activity" type="object" default_focus="1" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_update_inrev_activity"
+            multi="True" key2="client_action_multi" name="Update IC Revenue Activity"
+            res_model="update.inrev.activity" src_model="hr.expense.line"
+            view_mode="form" target="new" view_type="form" />
+
+    </data>
+</openerp>

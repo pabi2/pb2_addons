@@ -1,14 +1,14 @@
 from openerp import models, fields, api
 
 
-class XLSXReporPartnerDetail(models.TransientModel):
+class XLSXReportPartnerDetail(models.TransientModel):
     _name = 'xlsx.report.partner.detail'
     _inherit = 'xlsx.report'
 
     # Search Criteria
     category_ids = fields.Many2many(
         'res.partner.category',
-        string='Category',
+        string='Category(s)',
     )
     customer = fields.Boolean(
         string='Customer',

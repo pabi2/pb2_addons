@@ -1,14 +1,31 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
+      <record id="view_account_activity_search" model="ir.ui.view">
+          <field name="name">view.account.activity.form</field>
+          <field name="model">account.activity</field>
+          <field name="inherit_id" ref="account_budget_activity.view_account_activity_search"/>
+          <field name="arch" type="xml">
+              <xpath expr="//search" position="inside">
+                  <separator/>
+                  <filter string="Internal Charge" name="internal_charge" domain="[('internal_charge','=',True)]"/>
+                  <filter string="External Charge" name="internal_charge" domain="[('internal_charge','=',False)]"/>
+              </xpath>
+          </field>
+      </record>
+
+
         <record id="view_account_activity_form" model="ir.ui.view">
             <field name="name">view.account.activity.form</field>
             <field name="model">account.activity</field>
             <field name="inherit_id" ref="account_budget_activity.view_account_activity_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
-                    <field name="internal_charge"/>
-                    <field name="inrev_activity_id" attrs="{'invisible': ['|', ('internal_charge', '=', False), ('budget_method', '!=', 'expense')]}"/>
+                    <field name="internal_charge"
+                      attrs="{'invisible': [('budget_method', '!=', 'expense')]}"/>
+                    <field name="inrev_activity_ids" widget="many2many_tags"
+                      attrs="{'invisible': ['|', ('internal_charge', '=', False), ('budget_method', '!=', 'expense')], 'required': [('internal_charge', '=', True), ('budget_method', '=', 'expense')]}"
+                    />
                 </xpath>
             </field>
         </record>

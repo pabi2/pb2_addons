@@ -60,6 +60,8 @@
                             <field name="date_order"/>
                             <field domain="[('type','=','sale')]" name="pricelist_id" groups="product.group_sale_pricelist" on_change="onchange_pricelist_id(pricelist_id,order_line)"/>
                             <field name="currency_id" invisible="1"/>
+                            <field name="warehouse_id"/>
+                            <field name="taxbranch_id"/>
                         </group>
                     </group>
                     <notebook>
@@ -183,7 +185,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="sale.view_sales_order_filter"/>
-            <field name="context" eval="{'default_order_type': 'sale_order'}"/>
+            <field name="context" eval="{'default_order_type': 'sale_order', 'order_type': 'sale_order'}"/>
             <field name="domain">[('workflow_process_id', '!=', False)]</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">

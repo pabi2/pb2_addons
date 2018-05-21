@@ -24,7 +24,7 @@ class AccountActivityGroup(models.Model):
         help="Only these sections can use activity group with emotion workflow"
     )
     no_display = fields.Boolean(
-        string='No Display',
+        string='Not for general use',
         default=False,
         help="If checked,do not show this item on some apps, "
         "not to confuse user.",

@@ -143,10 +143,12 @@ class AccountAssetChangeowner(models.Model):
             # Asset Owner Info update
             if line.responsible_user_id:
                 new_owner['responsible_user_id'] = line.responsible_user_id.id
-            if line.location_id:
-                new_owner['location_id'] = line.location_id.id
-            if line.room:
-                new_owner['room'] = line.room
+            if line.building_id:
+                new_owner['building_id'] = line.building_id.id
+            if line.floor_id:
+                new_owner['floor_id'] = line.floor_id.id
+            if line.room_id:
+                new_owner['room_id'] = line.room_id.id
             asset.write(new_owner)
 
     @api.multi
@@ -187,13 +189,39 @@ class AccountAssetChangeownerLine(models.Model):
         'res.users',
         string='Responsible By',
     )
-    location_id = fields.Many2one(
-        'account.asset.location',
+    building_id = fields.Many2one(
+        'res.building',
         string='Building',
+        ondelete='restrict',
     )
-    room = fields.Char(
+    floor_id = fields.Many2one(
+        'res.floor',
+        string='Floor',
+        ondelete='restrict',
+    )
+    room_id = fields.Many2one(
+        'res.room',
         string='Room',
+        ondelete='restrict',
     )
+
+    # Building / Floor / Room
+    @api.multi
+    @api.constrains('building_id', 'floor_id', 'room_id')
+    def _check_building(self):
+        for rec in self:
+            self.env['res.building']._check_room_location(rec.building_id,
+                                                          rec.floor_id,
+                                                          rec.room_id)
+
+    @api.onchange('building_id')
+    def _onchange_building_id(self):
+        self.floor_id = False
+        self.room_id = False
+
+    @api.onchange('floor_id')
+    def _onchange_floor_id(self):
+        self.room_id = False
 
     @api.onchange('section_id')
     def _onchange_section_id(self):

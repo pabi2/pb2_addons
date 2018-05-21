@@ -102,7 +102,7 @@ class ResPartnerInvestment(models.Model):
         for rec in self:
             # get only long term investment account
             account = self.env.user.company_id.longterm_invest_account_id
-            move_lines = rec.invoice_ids.mapped('move_id').mapped('line_id').\
+            move_lines = rec.invoice_ids.mapped('move_id.line_id').\
                 filtered(lambda l: l.account_id == account)
             rec.move_line_ids = move_lines
 

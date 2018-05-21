@@ -1,68 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-  <data>
-    <record id="xlsx_report_advance_status_view" model="ir.ui.view">
-      <field name="name">xlsx.report.advance.status.view</field>
-      <field name="model">xlsx.report.advance.status</field>
-      <field name="arch" type="xml">
-        <form string="Advance Status Report">
+    <data>
+        <record id="xlsx_report_advance_status_view" model="ir.ui.view">
+            <field name="name">xlsx.report.advance.status.view</field>
+            <field name="model">xlsx.report.advance.status</field>
+            <field name="arch" type="xml">
+                <form string="Advance Status Report">
 
-          <!-- search criteria -->
-          <group states="choose">
-            <group>
-              <field name="run_date" />
-            </group>
-            <group>
-            </group>
-          </group>
+                    <!-- search criteria -->
+                    <group states="choose">
+                        <group>
+                            <field name="run_date" />
+                        </group>
+                        <group>
+                        </group>
+                    </group>
 
-          <!-- xlsx.report common field -->
-          <div name="xlsx.report">
-            <field name="state" invisible="1"/>
-            <field name="name" invisible="1"/>
-            <div states="choose" groups="pabi_utils.group_see_own_spool_report">
-                <field name="async_process"/><label for="async_process"/>
-                <field name="to_csv"/><label for="to_csv"/>
-            </div>
-            <div states="get">
-              <h2 attrs="{'invisible': [('async_process', '=', True)]}">
-                Complete Prepare Report (.xlsx)
-              </h2>
-              <h2 attrs="{'invisible': [('async_process', '=', False)]}">
-                Report Enqueued (.xlsx)
-              </h2>
-              <p attrs="{'invisible': [('async_process', '=', True)]}" colspan="4">
-                Here is the report file:
-                <field name="data" filename="name" class="oe_inline"/>
-              </p>
-              <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
-                Report UUID:
-                <field name="uuid" class="oe_inline"/>
-              </p>
-            </div>
-            <footer states="choose">
-              <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
-              or
-              <button special="cancel" string="Cancel" type="object" class="oe_link"/>
-            </footer>
-            <footer states="get">
-              <button special="cancel" string="Close" type="object"/>
-            </footer>
-          </div>
+                    <!-- xlsx.report common field -->
+                    <div name="xlsx.report">
+                        <field name="state" invisible="1"/>
+                        <field name="name" invisible="1"/>
+                        <div states="choose" groups="pabi_utils.group_see_own_spool_report">
+                            <field name="async_process"/><label for="async_process"/>
+                            <field name="to_csv"/><label for="to_csv"/>
+                        </div>
+                        <div states="get">
+                            <h2 attrs="{'invisible': [('async_process', '=', True)]}">
+                                Complete Prepare Report (.xlsx)
+                            </h2>
+                            <h2 attrs="{'invisible': [('async_process', '=', False)]}">
+                                Report Enqueued (.xlsx)
+                            </h2>
+                            <p attrs="{'invisible': [('async_process', '=', True)]}" colspan="4">
+                                Here is the report file:
+                                <field name="data" filename="name" class="oe_inline"/>
+                            </p>
+                            <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
+                                Report UUID:
+                                <field name="uuid" class="oe_inline"/>
+                            </p>
+                        </div>
+                        <footer states="choose">
+                            <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
+                            or
+                            <button special="cancel" string="Cancel" type="object" class="oe_link"/>
+                        </footer>
+                        <footer states="get">
+                            <button special="cancel" string="Close" type="object"/>
+                        </footer>
+                    </div>
 
-        </form>
-      </field>
-    </record>
+                </form>
+            </field>
+        </record>
 
-    <record id="action_report_advance_status" model="ir.actions.act_window">
-      <field name="name">Advance Status Report</field>
-      <field name="res_model">xlsx.report.advance.status</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">form</field>
-      <field name="target">new</field>
-    </record>
+        <record id="action_report_advance_status" model="ir.actions.act_window">
+            <field name="name">Advance Status Report</field>
+            <field name="res_model">xlsx.report.advance.status</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
 
-    <menuitem id="menu_report_advance_status" name="Advance Status Report" parent="menu_pabi_account_report" action="action_report_advance_status" sequence="50"/>
+        <menuitem id="menu_report_advance_status" name="Advance Status Report" parent="menu_pabi_account_report" action="action_report_advance_status" sequence="50"/>
 
-  </data>
+    </data>
 </openerp>

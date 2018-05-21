@@ -44,9 +44,12 @@ class AccountAsset(models.Model):
                                      track_visibility='onchange')
     responsible_user_id = fields.Many2one('res.users',
                                           track_visibility='onchange')
-    location_id = fields.Many2one('account.asset.location',
+    building_id = fields.Many2one('res.building',
                                   track_visibility='onchange')
-    room = fields.Char(track_visibility='onchange')
+    floor_id = fields.Many2one('res.floor',
+                               track_visibility='onchange')
+    room_id = fields.Many2one('res.room',
+                              track_visibility='onchange')
     serial_number = fields.Char(track_visibility='onchange')
     warranty_start_date = fields.Date(track_visibility='onchange')
     warranty_expire_date = fields.Date(track_visibility='onchange')

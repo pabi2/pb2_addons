@@ -98,8 +98,8 @@
                                         <field name="name" string="Description"/>
                                         <button name="%(action_edit_desc)d" string="Edit" type="action" icon="gtk-justify-fill"/>
                                         <field name="is_tax_line" invisible="1"/>
-                                        <field name="tax_code_id" attrs="{'required': [('is_tax_line', '=', True)]}" invisible="1"/>
                                         <field name="taxbranch_id" readonly="1"/>
+                                        <field name="tax_code_id" attrs="{'required': [('is_tax_line', '=', True)]}" invisible="0"/>
                                         <field name="debit" sum="Total Debit"/>
                                         <field name="credit" sum="Total Credit"/>
                                         <field name="costcenter_id" readonly="1"/>
@@ -235,6 +235,9 @@
                                         <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
                                         <field name="name" string="Description"/>
                                         <button name="%(action_edit_desc)d" string="Edit" type="action" icon="gtk-justify-fill"/>
+                                        <field name="is_tax_line" invisible="1"/>
+                                        <field name="taxbranch_id" readonly="1"/>
+                                        <field name="tax_code_id" attrs="{'required': [('is_tax_line', '=', True)]}" invisible="0"/>
                                         <field name="debit" sum="Total Debit"/>
                                         <field name="credit" sum="Total Credit"/>
                                         <field name="costcenter_id" readonly="1"/>

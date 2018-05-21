@@ -24,8 +24,9 @@
                             <field name="responsible_user_id"/>
                         </group>
                         <group name="default">
-                            <field name="location_id"/>
-                            <field name="room"/>
+                            <field name="building_id"/>
+                            <field name="floor_id" context="{'building_id': building_id}"/>
+                            <field name="room_id" context="{'building_id': building_id, 'floor_id': floor_id}"/>
                         </group>
                     </group>
                     <footer>

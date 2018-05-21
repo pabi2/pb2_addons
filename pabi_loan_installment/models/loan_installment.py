@@ -582,7 +582,7 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
                 l.account_id == rec.account_id).ids
             # Unreconciled move line from payment difference
             payments = rec.installment_ids.mapped('ref_voucher_ids')
-            move_lines = payments.mapped('move_id').mapped('line_id')
+            move_lines = payments.mapped('move_id.line_id')
             to_reconcile_ids += move_lines.filtered(
                 lambda l: not l.reconcile_id and
                 l.account_id == rec.account_id).ids

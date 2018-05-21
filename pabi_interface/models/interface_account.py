@@ -262,22 +262,25 @@ class InterfaceAccountEntry(models.Model):
         return True
 
     # ================== Sub Method by Action ==================
-    @api.model
+    @api.multi
     def _action_invoice_entry(self):
+        self.ensure_one()
         self._validate_invoice_entry()
         move = self._create_journal_entry()
         return move
 
-    @api.model
+    @api.multi
     def _action_payment_entry(self):
+        self.ensure_one()
         self._validate_payment_entry()
         move = self._create_journal_entry()
         self._reconcile_payment()
         return move
 
     # == Validate by Action ==
-    @api.model
+    @api.multi
     def _validate_invoice_entry(self):
+        self.ensure_one()
         Checker = self.env['interface.account.checker']
         Checker._check_balance_entry(self)
         Checker._check_journal(self)
@@ -290,8 +293,9 @@ class InterfaceAccountEntry(models.Model):
         Checker._check_amount_currency(self)
 
     # @api.model
-    @api.model
+    @api.multi
     def _validate_payment_entry(self):
+        self.ensure_one()
         Checker = self.env['interface.account.checker']
         Checker._check_balance_entry(self)
         Checker._check_journal(self)
@@ -426,8 +430,9 @@ class InterfaceAccountEntry(models.Model):
                 (journal.name,))
         return doc_type
 
-    @api.model
+    @api.multi
     def _reconcile_payment(self):
+        self.ensure_one()
         # To reconcile each reciable/payable line
         to_reconcile_lines = self.line_ids.filtered(
             lambda l: l.account_id.type in ('receivable', 'payable'))

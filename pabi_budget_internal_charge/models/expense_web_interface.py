@@ -8,6 +8,8 @@ class HRExpense(models.Model):
     @api.model
     def _post_process_hr_expense(self, expense):
         if expense.internal_charge:  # Case internal charge
-            expense.signal_workflow('internal_charge')
+            expense.signal_workflow('confirm')
+            if self._context.get('auto_confirm_internal_charge'):
+                expense.signal_workflow('internal_charge')
         else:
             super(HRExpense, self)._post_process_hr_expense(expense)
