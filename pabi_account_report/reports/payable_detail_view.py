@@ -60,6 +60,7 @@ class PayableDetailView(models.Model):
                 AND tax.voucher_id = av.id AND tax.tax_code_type = 'wht'
             WHERE l.doctype IN ('in_invoice', 'in_refund') AND
                 l.account_id = inv.account_id
+            ORDER BY l.partner_id
         """
         return sql_view
 
