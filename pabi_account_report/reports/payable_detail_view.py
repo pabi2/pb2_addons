@@ -58,7 +58,7 @@ class PayableDetailView(models.Model):
                 av.id = exp_line.voucher_id
             LEFT JOIN account_voucher_tax tax ON inv.id = tax.invoice_id
                 AND tax.voucher_id = av.id AND tax.tax_code_type = 'wht'
-            WHERE l.doctype IN ('in_invoice', 'in_refund') AND
+            WHERE l.doctype IN ('in_invoice', 'in_refund', 'adjustment') AND
                 l.account_id = inv.account_id
             ORDER BY l.partner_id
         """

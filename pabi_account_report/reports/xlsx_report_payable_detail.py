@@ -57,7 +57,7 @@ class XLSXReportPayableDetail(models.TransientModel):
         'report', 'move_id',
         string='Document Number(s)',
         domain=[('state', '=', 'posted'),
-                ('doctype', 'in', ['in_invoice', 'in_refund'])],
+                ('doctype', 'in', ['in_invoice', 'in_refund', 'adjustment'])],
     )
     # Report Result
     results = fields.Many2many(
