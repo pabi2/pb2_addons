@@ -259,7 +259,7 @@ result = pd.pivot_table(df, index=groupby,
                 '__EXPORT__': {
                     'Cheque Register Report': {
                         '_HEAD_': {
-                            'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.cheque.register")).display_name}',
+                            'A1': '${env.user.company_id.display_name}',
                             'B3': 'date_cheque_received${value or ""}#{number_format=date;align=left}',
                             'B4': 'cheque_lot_ids${value and ", ".join([x.name for x in value]) or ""}',
                             'B5': 'number_cheque_from${value or ""}',
@@ -303,7 +303,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Purchase Contract Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.purchase.contract")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'date_report${value or ""}#{number_format=date;align=left}',
                                 'B4': '${env.user.display_name}',
                                 'B5': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
@@ -356,7 +356,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Advance Payment Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.advance.payment")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'account_id.code${value or ""}',
                                 'B4': 'date_report${value or ""}#{number_format=date;align=left}',
                                 'B5': '${env.user.display_name}',
@@ -405,7 +405,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Payable Detail Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.payable.detail")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
                                 'B4': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.title.name, x.name]))) for x in value]) or ""}',
                                 'B5': 'start_fiscalyear_id${value and value.name or ""}',
@@ -474,7 +474,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Payable Balance Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.payable.balance")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'partner_ids${value and ", ".join([x.name for x in value]) or ""}',
                                 'B4': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
                                 'B5': '${env.user.display_name}',
@@ -514,7 +514,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Purchase Billing Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.purchase.billing")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'start_billing_date${value or ""}#{number_format=date;align=left}',
                                 'D3': 'end_billing_date${value or ""}#{number_format=date;align=left}',
                                 'B4': 'start_billing_due_date${value or ""}#{number_format=date;align=left}',
@@ -562,7 +562,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'SLA Purchase Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.sla.purchase")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'start_period_id.name${value or ""}',
                                 'D3': 'end_period_id.name${value or ""}',
                                 'B4': 'user_ids${value and ", ".join([x.display_name for x in value]) or ""}',
@@ -603,7 +603,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'SLA Employee Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.sla.employee")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'start_period_id.name${value or ""}',
                                 'D3': 'end_period_id.name${value or ""}',
                                 'B4': 'user_ids${value and ", ".join([x.display_name for x in value]) or ""}',
@@ -649,7 +649,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Supplier Receipt Follow Up Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.supplier.receipt.follow.up")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'fiscalyear_id.name${value or ""}',
                                 'B4': 'account_id.code${value or ""}',
                                 'B5': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
