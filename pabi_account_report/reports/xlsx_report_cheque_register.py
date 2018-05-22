@@ -1,13 +1,13 @@
 from openerp import models, fields, api
 
 
-class XLSXReportChequeReport(models.TransientModel):
+class XLSXReportChequeRegisterReport(models.TransientModel):
     _name = 'xlsx.report.cheque.register'
     _inherit = 'xlsx.report'
 
     # Search Criteria
     date_cheque_received = fields.Date(
-        string='Cheque Received',
+        string='Cheque Received Date',
     )
     cheque_lot_ids = fields.Many2many(
         'cheque.lot',
@@ -29,7 +29,7 @@ class XLSXReportChequeReport(models.TransientModel):
     )
     # Report Result
     results = fields.Many2many(
-        'account.voucher',
+        'cheque.register',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
@@ -38,17 +38,18 @@ class XLSXReportChequeReport(models.TransientModel):
     @api.multi
     def _compute_results(self):
         self.ensure_one()
-        Result = self.env['account.voucher']
-        dom = [('state', 'in', ['posted', 'cancel']),
-               ('payment_type', '=', 'cheque')]
+        Result = self.env['cheque.register']
+        dom = []
         if self.date_cheque_received:
-            dom += [('date_cheque_received', '=', self.date_cheque_received)]
+            dom += [('voucher_id.date_cheque_received', '=',
+                     self.date_cheque_received)]
         if self.cheque_lot_ids:
             dom += [('cheque_lot_id', 'in', self.cheque_lot_ids.ids)]
         if self.number_cheque_from:
-            dom += [('number_cheque', '>=', self.number_cheque_from)]
+            dom += [('number', '>=', self.number_cheque_from)]
         if self.number_cheque_to:
-            dom += [('number_cheque', '<=', self.number_cheque_to)]
+            dom += [('number', '<=', self.number_cheque_to)]
         if self.account_ids:
-            dom += [('account_id', 'in', self.account_ids.ids)]
+            dom += [('cheque_lot_id.journal_id.default_credit_account_id',
+                     'in', self.account_ids.ids)]
         self.results = Result.search(dom)
