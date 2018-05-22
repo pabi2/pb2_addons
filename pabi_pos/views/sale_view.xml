@@ -2,6 +2,17 @@
 <openerp>
     <data>
 
+        <record id="view_sales_order_filter" model="ir.ui.view">
+            <field name="name">sale.order.list.select</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@string='Customer']" position="after">
+                    <filter string="Workflow" domain="[]" context="{'group_by':'workflow_process_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
         <record id="view_pos_order_tree" model="ir.ui.view">
             <field name="name">sale.order.tree</field>
             <field name="model">sale.order</field>

@@ -4,3 +4,4 @@ from . import sale
 from . import pos_interface
 from . import product
 from . import product_interface
+from . import stock

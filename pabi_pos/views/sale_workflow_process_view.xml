@@ -12,6 +12,7 @@
                         <field name="operating_unit_id" required="1"/>
                         <field name="taxbranch_id" required="1"/>
                         <field name="warehouse_id" required="1"/>
+                        <field name="location_id" required="1"/>
                         <field name="res_section_id" required="1"/>
                     </group>
                 </xpath>
