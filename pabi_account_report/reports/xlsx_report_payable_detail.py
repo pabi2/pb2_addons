@@ -41,7 +41,9 @@ class PayableDetailView(models.Model):
                 l.id AS move_line_id, av.id AS voucher_id, exp_line.export_id,
                 po.id AS purchase_id, tax.id AS tax_id
             FROM account_move_line l
-            LEFT JOIN account_invoice inv ON l.move_id = inv.move_id
+            LEFT JOIN account_invoice inv ON l.move_id = inv.move_id OR
+                l.move_id = inv.cancel_move_id OR
+                l.move_id = inv.adjust_move_id
             LEFT JOIN purchase_invoice_rel rel ON inv.id = rel.invoice_id
             LEFT JOIN purchase_order po ON rel.purchase_id = po.id
             LEFT JOIN account_move_reconcile r ON l.reconcile_id = r.id

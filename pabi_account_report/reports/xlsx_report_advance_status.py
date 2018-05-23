@@ -10,6 +10,7 @@ class XLSXReportAdvanceStatus(models.TransientModel):
     run_date = fields.Date(
         string='Run Date',
         default=lambda self: fields.Date.context_today(self),
+        readonly=True,
     )
     # Report Result
     results = fields.Many2many(
@@ -32,6 +33,10 @@ class HRExpenseExpense(models.Model):
     """ Add compute field for reporting purposes """
     _inherit = 'hr.expense.expense'
 
+    days_diff = fields.Integer(
+        string='Number of Days',
+        compute='_compute_clearing_amount',
+    )
     amount_clearing_0 = fields.Float(
         string='Not Overdue',
         compute='_compute_clearing_amount',
@@ -57,6 +62,7 @@ class HRExpenseExpense(models.Model):
                 continue
             date_due = datetime.strptime(rec.date_due, '%Y-%m-%d')
             days_diff = (today - date_due).days
+            rec.days_diff = days_diff
             if days_diff < 1:
                 rec.amount_clearing_0 = rec.amount_to_clearing
             elif days_diff >= 1 and days_diff <= 15:
