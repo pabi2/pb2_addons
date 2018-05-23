@@ -54,8 +54,6 @@
                 </header>
                 <sheet>
                     <h1>
-                        <label string="Quotation " attrs="{'invisible': [('state','not in',('draft','sent'))]}"/>
-                        <label string="Sales Order " attrs="{'invisible': [('state','in',('draft','sent'))]}"/>
                         <field name="name" class="oe_inline" readonly="1"/>
                     </h1>
                     <group>
@@ -235,6 +233,11 @@
                                                'workflow_process_id': workflow_process_id}</attribute>
                 </xpath>
             </field>
+        </record>
+
+        # Sales Order action, shouldn't see POS order
+        <record id="sale.action_orders" model="ir.actions.act_window">
+            <field name="domain">[('order_type', '=', 'sale_order'), ('workflow_process_id', '=', False)]</field>
         </record>
 
     </data>
