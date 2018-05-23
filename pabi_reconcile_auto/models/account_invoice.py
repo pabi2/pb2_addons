@@ -24,9 +24,10 @@ class AccountInvoice(models.Model):
                 mlines.reconcile_special_account()
             # Case Invoice Plan's advance deposit
             if invoice.source_document_type in ('purchase', 'sale') and \
-                    not invoice.is_advance:
+                    not (invoice.is_advance or invoice.is_deposit):
                 order = invoice.source_document_id
-                adv_invoices = order.invoice_ids.filtered('is_advance')
+                adv_invoices = order.invoice_ids.\
+                    filtered(lambda l: l.is_advance or l.is_deposit)
                 invoices = invoice | adv_invoices
                 mlines = invoices.mapped('move_id.line_id')
                 mlines.reconcile_special_account()
