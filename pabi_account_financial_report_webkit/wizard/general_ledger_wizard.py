@@ -38,9 +38,9 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
             'of centralized accounts.'),
         # PABI2
         'reconcile_cond': fields.selection(
-            [('all', 'Both Open Items & Full Reconciled'),
+            [('all', 'All Items'),
              ('open_item', 'Open Items'),
-             ('reconciled', 'Fully Reconciled')],
+             ('reconciled', 'Full Reconciled')],
             'Reconcile Condition',
             required=True),
     }
