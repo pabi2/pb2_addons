@@ -11,10 +11,11 @@
                     <group states="choose">
                         <group>
                             <field name="consign_partner_id"/>
-                        </group>
-                        <group>
                             <field name="date_from"/>
                             <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="workflow_process_ids" widget="many2many_tags"/>
                         </group>
                     </group>
 

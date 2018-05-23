@@ -12,6 +12,12 @@ class XLSXReportSupplierConsignment(models.TransientModel):
         required=True,
         domain=lambda self: self._domain_consign_partner(),
     )
+    workflow_process_ids = fields.Many2many(
+        'sale.workflow.process',
+        'supplier_consign_rpt_workflow_process_rel',
+        'report_id', 'workflow_process_id',
+        string='Sales Location',
+    )
     date_from = fields.Date(
         string='From Date',
         required=True,
@@ -43,5 +49,8 @@ class XLSXReportSupplierConsignment(models.TransientModel):
             ('order_id.date_order', '<=', self.date_to),
             ('product_id.consign_partner_id', '=', self.consign_partner_id.id),
         ]
+        if self.workflow_process_ids:
+            domain += [('order_id.workflow_process_id', 'in',
+                        self.workflow_process_ids.ids)]
         self.results = self.env['sale.order.line'].\
-            search(domain, order='order_id.date_order')
+            search(domain, order='order_id')

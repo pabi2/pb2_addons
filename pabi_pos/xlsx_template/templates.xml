@@ -63,20 +63,25 @@
                         'Supplier Consignment Report': {
                             '_HEAD_': {
                                 'B3': 'consign_partner_id.display_name',
-                                'B4': 'date_from#{number_format=date;align=left}',
-                                'B5': 'date_to#{number_format=date;align=left}',
-                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
-                                'B7': '${env.user.display_name}',
+                                'B4': 'workflow_process_ids${value and ", ".join(value.mapped("location_id.name")) or ""}',
+                                'D4': 'date_from#{number_format=date;align=left}',
+                                'E4': 'date_to#{number_format=date;align=left}',
+                                'B5': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                                'B6': '${env.user.display_name}',
                             },
                             'results': {
-                                'A10': 'order_id.date_order#{number_format=date;align=left}',
-                                'B10': 'product_id.code${value or ""}',
-                                'C10': 'product_id.name${value or ""}',
-                                'D10': 'order_id.workflow_process_id.location_id.name${value or ""}',
-                                'E10': 'product_uom_qty',
+                                'A9': 'order_id.name${value or ""}',
+                                'B9': 'order_id.date_order#{number_format=date;align=left}',
+                                'C9': 'product_id.code${value or ""}',
+                                'D9': 'product_id.name${value or ""}',
+                                'E9': 'order_id.workflow_process_id.location_id.name${value or ""}',
+                                'F9': 'product_uom_qty',
+                                'G9': 'price_unit',
+                                'H9': 'price_subtotal',
                             },
                             '_TAIL_0': {
-                                'E7': '@{sum}#{font=bold;number_format=number}',
+                                'F9': '@{sum}#{font=bold;number_format=number}',
+                                'H9': '@{sum}#{font=bold;number_format=number}',
                             }
                         }
                     }
