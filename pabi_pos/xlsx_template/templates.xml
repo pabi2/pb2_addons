@@ -76,12 +76,15 @@
                                 'D9': 'product_id.name${value or ""}',
                                 'E9': 'order_id.workflow_process_id.location_id.name${value or ""}',
                                 'F9': 'product_uom_qty',
-                                'G9': 'price_unit',
-                                'H9': 'price_subtotal',
+                                'G9': 'product_id.standard_price',
+                                'H9': '${"=G9*F9"}',
+                                'I9': 'price_unit',
+                                'J9': 'price_subtotal',
                             },
                             '_TAIL_0': {
                                 'F9': '@{sum}#{font=bold;number_format=number}',
                                 'H9': '@{sum}#{font=bold;number_format=number}',
+                                'J9': '@{sum}#{font=bold;number_format=number}',
                             }
                         }
                     }
