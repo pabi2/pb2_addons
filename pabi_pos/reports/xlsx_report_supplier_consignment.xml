@@ -4,11 +4,12 @@
         <record id="xlsx_report_supplier_consignment_view" model="ir.ui.view">
             <field name="name">xlsx.report.supplier.consignment.view</field>
             <field name="model">xlsx.report.supplier.consignment</field>
+            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <form string="Supplier Consignment Report">
+                <data>
 
-                    <!-- search criteria -->
-                    <group states="choose">
+                    <xpath expr="//group[@name='criteria']" position="inside">
                         <group>
                             <field name="consign_partner_id"/>
                             <field name="date_from"/>
@@ -17,43 +18,9 @@
                         <group>
                             <field name="workflow_process_ids" widget="many2many_tags"/>
                         </group>
-                    </group>
+                    </xpath>
 
-                    <!-- xlsx.report common field -->
-                    <div name="xlsx.report">
-                        <field name="state" invisible="1"/>
-                        <field name="name" invisible="1"/>
-                        <div states="choose" groups="pabi_utils.group_see_own_spool_report">
-                            <field name="async_process"/><label for="async_process"/>
-                            <field name="to_csv"/><label for="to_csv"/>
-                        </div>
-                        <div states="get">
-                            <h2 attrs="{'invisible': [('async_process', '=', True)]}">
-                                Complete Prepare Report (.xlsx)
-                            </h2>
-                            <h2 attrs="{'invisible': [('async_process', '=', False)]}">
-                                Report Enqueued (.xlsx)
-                            </h2>
-                            <p attrs="{'invisible': [('async_process', '=', True)]}" colspan="4">
-                                Here is the report file:
-                                <field name="data" filename="name" class="oe_inline"/>
-                            </p>
-                            <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
-                                Report UUID:
-                                <field name="uuid" class="oe_inline"/>
-                            </p>
-                        </div>
-                        <footer states="choose">
-                            <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
-                            or
-                            <button special="cancel" string="Cancel" type="object" class="oe_link"/>
-                        </footer>
-                        <footer states="get">
-                            <button special="cancel" string="Close" type="object"/>
-                        </footer>
-                    </div>
-
-                </form>
+                </data>
             </field>
         </record>
 

@@ -28,5 +28,6 @@
         "views/my_job_view.xml",
         "views/my_report_view.xml",
         "views/xlsx_import.xml",
+        "views/xlsx_report.xml",
     ],
 }
