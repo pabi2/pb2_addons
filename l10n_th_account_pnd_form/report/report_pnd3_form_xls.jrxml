@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pnd3_form_xls" language="groovy" pageWidth="2100" pageHeight="595" orientation="Landscape" columnWidth="2100" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.7715610000000155"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="445"/>
 	<property name="ireport.y" value="0"/>
-	<property name="net.sf.jasperreports.export.csv.field.delimiter" value="&#009;"/>
+	<property name="net.sf.jasperreports.export.csv.field.delimiter" value="	"/>
 	<style name="style1">
 		<box>
 			<pen lineColor="#D5D5D5"/>
@@ -116,119 +116,49 @@ where a.wht_period_id = $P{wht_period_id} and a.income_tax_form = $P{income_tax_
 				<text><![CDATA[ชื่อบริษัท]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="482" y="0" width="35" height="15"/>
+				<reportElement style="style1" x="447" y="0" width="300" height="15"/>
 				<textElement markup="none">
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[ห้องที่]]></text>
+				<text><![CDATA[ที่อยู่]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="517" y="0" width="35" height="15"/>
-				<textElement markup="none">
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[บ้านเลขที่]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="style1" x="552" y="0" width="35" height="15"/>
-				<textElement markup="none">
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[ชั้น]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="style1" x="447" y="0" width="35" height="15"/>
-				<textElement markup="none">
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[ตึกอาคาร]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="style1" x="622" y="0" width="35" height="15"/>
-				<textElement markup="none">
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[ซอย]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="style1" x="727" y="0" width="35" height="15"/>
-				<textElement markup="none">
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[อำเภอ]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="style1" x="657" y="0" width="35" height="15"/>
-				<textElement markup="none">
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[ถนน]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="style1" x="797" y="0" width="45" height="15"/>
-				<textElement markup="none">
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[รหัสไปรษณีย์]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="style1" x="842" y="0" width="100" height="15"/>
+				<reportElement style="style1" x="747" y="0" width="100" height="15"/>
 				<textElement markup="none">
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[วันเดือนปีที่จ่าย (Posting date)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="692" y="0" width="35" height="15"/>
-				<textElement markup="none">
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[ตำบล]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="style1" x="587" y="0" width="35" height="15"/>
-				<textElement markup="none">
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[หมู่ที่]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="style1" x="762" y="0" width="35" height="15"/>
-				<textElement markup="none">
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[จังหวัด]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="style1" x="1072" y="0" width="100" height="15"/>
+				<reportElement style="style1" x="977" y="0" width="100" height="15"/>
 				<textElement markup="none">
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[อัตราภาษี]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="1372" y="0" width="100" height="15"/>
+				<reportElement style="style1" x="1277" y="0" width="100" height="15"/>
 				<textElement markup="none">
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[เงื่อนไขการชำระเงิน]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="1172" y="0" width="100" height="15"/>
+				<reportElement style="style1" x="1077" y="0" width="100" height="15"/>
 				<textElement markup="none">
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[จำนวนเงินทั้งสิ้น]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="1272" y="0" width="100" height="15"/>
+				<reportElement style="style1" x="1177" y="0" width="100" height="15"/>
 				<textElement markup="none">
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[จำนวนเงิน W/T]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="942" y="0" width="130" height="15"/>
+				<reportElement style="style1" x="847" y="0" width="130" height="15"/>
 				<textElement markup="none">
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -267,112 +197,59 @@ where a.wht_period_id = $P{wht_period_id} and a.income_tax_form = $P{income_tax_
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_name_th}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="447" y="0" width="35" height="15"/>
+				<reportElement style="style1" x="447" y="0" width="300" height="15"/>
 				<textElement>
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="482" y="0" width="35" height="15"/>
-				<textElement>
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="517" y="0" width="35" height="15"/>
-				<textElement>
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="552" y="0" width="35" height="15"/>
-				<textElement>
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="587" y="0" width="35" height="15"/>
-				<textElement>
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="727" y="0" width="35" height="15"/>
-				<textElement>
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="762" y="0" width="35" height="15"/>
-				<textElement>
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="622" y="0" width="35" height="15"/>
-				<textElement>
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="692" y="0" width="35" height="15"/>
-				<textElement>
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="657" y="0" width="35" height="15"/>
-				<textElement>
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[(new Scriptlet()).getAddress(
+    $F{supplier_street},
+    $F{supplier_street2},
+    $F{supplier_township},
+    $F{supplier_district},
+    $F{supplier_province},
+    $F{supplier_zip})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="style1" x="1272" y="0" width="100" height="15"/>
+				<reportElement style="style1" x="1177" y="0" width="100" height="15"/>
 				<textElement>
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{tax}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement style="style1" x="842" y="0" width="100" height="15"/>
+				<reportElement style="style1" x="747" y="0" width="100" height="15"/>
 				<textElement>
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_value}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0" isBlankWhenNull="true">
-				<reportElement style="style1" x="1072" y="0" width="100" height="15"/>
+				<reportElement style="style1" x="977" y="0" width="100" height="15"/>
 				<textElement>
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{tax_percent}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="1372" y="0" width="100" height="15"/>
+				<reportElement style="style1" x="1277" y="0" width="100" height="15"/>
 				<textElement>
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{tax_payer}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="style1" x="1172" y="0" width="100" height="15"/>
+				<reportElement style="style1" x="1077" y="0" width="100" height="15"/>
 				<textElement>
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{base}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="942" y="0" width="130" height="15"/>
+				<reportElement style="style1" x="847" y="0" width="130" height="15"/>
 				<textElement>
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{wht_cert_income_desc}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="style1" x="797" y="0" width="45" height="15"/>
-				<textElement>
-					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
 			</textField>
 		</band>
 	</detail>
