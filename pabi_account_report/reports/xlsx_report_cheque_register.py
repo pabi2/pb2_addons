@@ -52,4 +52,4 @@ class XLSXReportChequeRegisterReport(models.TransientModel):
         if self.account_ids:
             dom += [('cheque_lot_id.journal_id.default_credit_account_id',
                      'in', self.account_ids.ids)]
-        self.results = Result.search(dom)
+        self.results = Result.search(dom, order="journal_id,number")
