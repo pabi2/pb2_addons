@@ -420,7 +420,7 @@ class CommonReportHeaderWebkit(common_report_header):
     # Account move retrieval helper                #
     ################################################
     def _get_move_ids_from_periods(self, account_id, period_start, period_stop,
-                                   target_move):
+                                   target_move, reconcile_cond):
         move_line_obj = self.pool.get('account.move.line')
         period_obj = self.pool.get('account.period')
         periods = period_obj.build_ctx_periods(
@@ -431,10 +431,20 @@ class CommonReportHeaderWebkit(common_report_header):
             ('period_id', 'in', periods), ('account_id', '=', account_id)]
         if target_move == 'posted':
             search += [('move_id.state', '=', 'posted')]
+
+        # PABI2
+        if reconcile_cond != 'all':
+            if reconcile_cond == 'open_item':
+                search += [('reconcile_id', '=', False)]
+            elif reconcile_cond == 'reconciled':
+                search += [('reconcile_id', '!=', False)]
+        # --
+
         return move_line_obj.search(self.cursor, self.uid, search)
 
     def _get_move_ids_from_dates(self, account_id, date_start, date_stop,
-                                 target_move, mode='include_opening'):
+                                 target_move, reconcile_cond,
+                                 mode='include_opening'):
         # TODO imporve perfomance by setting opening period as a property
         move_line_obj = self.pool.get('account.move.line')
         search_period = [('date', '>=', date_start),
@@ -451,10 +461,20 @@ class CommonReportHeaderWebkit(common_report_header):
         if target_move == 'posted':
             search_period += [('move_id.state', '=', 'posted')]
 
+        # PABI2
+        if reconcile_cond != 'all':
+            if reconcile_cond == 'open_item':
+                search_period += [('reconcile_id', '=', False)]
+            elif reconcile_cond == 'reconciled':
+                search_period += [('reconcile_id', '!=', False)]
+        # --
+
         return move_line_obj.search(self.cursor, self.uid, search_period)
 
     def get_move_lines_ids(self, account_id, main_filter, start, stop,
-                           target_move, mode='include_opening'):
+                           target_move,
+                           reconcile_cond,  # PABI2
+                           mode='include_opening'):
         """Get account move lines base on form data"""
         if mode not in ('include_opening', 'exclude_opening'):
             raise osv.except_osv(
@@ -463,11 +483,11 @@ class CommonReportHeaderWebkit(common_report_header):
 
         if main_filter in ('filter_period', 'filter_no'):
             return self._get_move_ids_from_periods(account_id, start, stop,
-                                                   target_move)
+                                                   target_move, reconcile_cond)
 
         elif main_filter == 'filter_date':
             return self._get_move_ids_from_dates(account_id, start, stop,
-                                                 target_move)
+                                                 target_move, reconcile_cond)
         else:
             raise osv.except_osv(
                 _('No valid filter'), _('Please set a valid time filter'))
@@ -552,7 +572,8 @@ SELECT l.id AS id,
             AS taxbranch_name,
             SUBSTRING(m.name, 1, 2) AS doctype,
             aag.name AS activity_group_name,
-            aa.name AS activity_name
+            aa.name AS activity_name,
+            coalesce(partialrec.name, fullrec.name) as reconcile_ref
 FROM account_move_line l
     JOIN account_move m on (l.move_id=m.id)
     LEFT JOIN res_currency c on (l.currency_id=c.id)

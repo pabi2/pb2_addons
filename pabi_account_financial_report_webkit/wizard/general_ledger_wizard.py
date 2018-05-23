@@ -34,13 +34,22 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
                     print all accounts."""),
         'centralize': fields.boolean(
             'Activate Centralization',
-            help='Uncheck to display all the details of centralized accounts.')
+            help='Uncheck to display all the details '
+            'of centralized accounts.'),
+        # PABI2
+        'reconcile_cond': fields.selection(
+            [('all', 'Both Open Items & Full Reconciled'),
+             ('open_item', 'Open Items'),
+             ('reconciled', 'Fully Reconciled')],
+            'Reconcile Condition',
+            required=True),
     }
     _defaults = {
         'amount_currency': False,
         'display_account': 'bal_mix',
         'account_ids': _get_account_ids,
         'centralize': True,
+        'reconcile_cond': 'all',  # PABI2
     }
 
     def _check_fiscalyear(self, cr, uid, ids, context=None):
@@ -65,7 +74,9 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
                          ['amount_currency',
                           'display_account',
                           'account_ids',
-                          'centralize'],
+                          'centralize',
+                          'reconcile_cond',  # PABI2
+                          ],
                          context=context)[0]
         data['form'].update(vals)
         return data

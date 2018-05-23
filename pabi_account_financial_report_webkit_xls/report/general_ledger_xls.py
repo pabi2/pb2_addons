@@ -32,6 +32,7 @@ _column_sizes = [
     ('curr_bal', 15),
     ('curr_code', 7),
     ('created_by', 30),
+    ('reconcile_ref', 30),  # PABI2
 ]
 
 
@@ -188,6 +189,10 @@ class general_ledger_xls(report_xls):
         c_specs += [
             ('created_by', 1, 0, 'text', _('Created by'),
                 None, c_hdr_cell_style),
+            # PABI2
+            ('reconcile_ref', 1, 0, 'text', _('Rec.ID'),
+                None, c_hdr_cell_style),
+            # --
         ]
         c_hdr_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
 
@@ -335,6 +340,10 @@ class general_ledger_xls(report_xls):
                     c_specs += [
                         ('created_by', 1, 0, 'text',
                             line.get('created_name') or ''),
+                        # PABI2
+                        ('reconcile_ref', 1, 0, 'text',
+                            line.get('reconcile_ref') or ''),
+                        # --
                     ]
                     row_data = self.xls_row_template(
                         c_specs, [x[0] for x in c_specs])
@@ -373,6 +382,7 @@ class general_ledger_xls(report_xls):
                     c_specs += [('curr_code', 1, 0, 'text', None)]
                 c_specs += [
                     ('created_by', 1, 0, 'text', None),
+                    ('reconcile_ref', 1, 0, 'text', None),  # PABI2
                 ]
                 row_data = self.xls_row_template(
                     c_specs, [x[0] for x in c_specs])
