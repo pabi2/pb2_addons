@@ -32,6 +32,7 @@ _column_sizes = [
     ('curr_bal', 15),
     ('curr_code', 7),
     ('created_by', 30),
+    ('source_document', 30),
     ('reconcile_id', 15),
     ('partial_id', 15),
 ]
@@ -198,6 +199,8 @@ class general_ledger_xls(report_xls):
             ('created_by', 1, 0, 'text', _('Created by'),
                 None, c_hdr_cell_style),
             # PABI2
+            ('source_document', 1, 0, 'text', _('Source Doc.'),
+                None, c_hdr_cell_style),
             ('reconcile_id', 1, 0, 'text', _('Rec.ID'),
                 None, c_hdr_cell_style),
             ('partial_id', 1, 0, 'text', _('Part.ID'),
@@ -351,6 +354,8 @@ class general_ledger_xls(report_xls):
                         ('created_by', 1, 0, 'text',
                             line.get('created_name') or ''),
                         # PABI2
+                        ('source_document', 1, 0, 'text',
+                            line.get('source_document') or ''),
                         ('reconcile_id', 1, 0, 'text',
                             line.get('reconcile_id') or ''),
                         ('partial_id', 1, 0, 'text',
@@ -394,6 +399,7 @@ class general_ledger_xls(report_xls):
                     c_specs += [('curr_code', 1, 0, 'text', None)]
                 c_specs += [
                     ('created_by', 1, 0, 'text', None),
+                    ('source_document', 1, 0, 'text', None),
                     ('reconcile_id', 1, 0, 'text', None),
                     ('partial_id', 1, 0, 'text', None),
                 ]

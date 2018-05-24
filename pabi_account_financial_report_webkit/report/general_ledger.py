@@ -70,6 +70,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
         # PABI2
         reconcile_cond = self._get_form_param('reconcile_cond', data,
                                               default='all')
+        partner_ids = self._get_form_param('partner_ids', data)
         # --
         start_date = self._get_form_param('date_from', data)
         stop_date = self._get_form_param('date_to', data)
@@ -101,12 +102,14 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
             init_balance_memoizer = self._compute_initial_balances(
                 accounts, start, fiscalyear)
         elif initial_balance_mode == 'opening_balance':
-            init_balance_memoizer = self._read_opening_balance(accounts, start)
+            init_balance_memoizer = self._read_opening_balance(
+                accounts, start)
 
         ledger_lines_memoizer = self._compute_account_ledger_lines(
             accounts, init_balance_memoizer, main_filter, target_move,
             reconcile_cond,  # PABI2
-            start, stop)
+            start, stop,
+            partner_ids=partner_ids)
         objects = self.pool.get('account.account').browse(self.cursor,
                                                           self.uid,
                                                           accounts)
@@ -199,12 +202,14 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
                                       init_balance_memoizer, main_filter,
                                       target_move,
                                       reconcile_cond,  # PABI2
-                                      start, stop):
+                                      start, stop,
+                                      partner_ids=False):
         res = {}
         for acc_id in accounts_ids:
             move_line_ids = self.get_move_lines_ids(
                 acc_id, main_filter, start, stop, target_move,
                 reconcile_cond,  # PABI2
+                partner_ids=partner_ids
                 )
             if not move_line_ids:
                 res[acc_id] = []

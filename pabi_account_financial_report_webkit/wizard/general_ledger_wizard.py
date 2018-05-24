@@ -43,6 +43,10 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
              ('reconciled', 'Full Reconciled')],
             'Reconcile Condition',
             required=True),
+        'partner_ids': fields.many2many(
+            'res.partner', string='Filter on partner',
+            help="Only selected partners will be printed. \
+                  Leave empty to print all partners."),
     }
     _defaults = {
         'amount_currency': False,
@@ -76,6 +80,7 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
                           'account_ids',
                           'centralize',
                           'reconcile_cond',  # PABI2
+                          'partner_ids',
                           ],
                          context=context)[0]
         data['form'].update(vals)
