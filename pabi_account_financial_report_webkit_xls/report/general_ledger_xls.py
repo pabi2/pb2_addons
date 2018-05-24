@@ -32,12 +32,14 @@ _column_sizes = [
     ('curr_bal', 15),
     ('curr_code', 7),
     ('created_by', 30),
-    ('reconcile_ref', 30),  # PABI2
+    ('reconcile_id', 15),
+    ('partial_id', 15),
 ]
 
 
 class general_ledger_xls(report_xls):
-    column_sizes = [x[1] for x in _column_sizes]
+    # column_sizes = [x[1] for x in _column_sizes]
+    column_sizes = dict(_column_sizes)
 
     def generate_xls_report(self, _p, _xs, data, objects, wb):
 
@@ -70,7 +72,13 @@ class general_ledger_xls(report_xls):
             ws, row_pos, row_data, row_style=cell_style)
 
         # write empty row to define column sizes
-        c_sizes = self.column_sizes
+        c_sizes = []
+        if _p.amount_currency(data):
+            tmp = self.column_sizes.copy()
+            del(tmp['curr_bal'])
+            del(tmp['curr_code'])
+            c_sizes = [x[1] for x in tmp]
+        # --
         c_specs = [('empty%s' % i, 1, c_sizes[i], 'text', None)
                    for i in range(0, len(c_sizes))]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
@@ -190,7 +198,9 @@ class general_ledger_xls(report_xls):
             ('created_by', 1, 0, 'text', _('Created by'),
                 None, c_hdr_cell_style),
             # PABI2
-            ('reconcile_ref', 1, 0, 'text', _('Rec.ID'),
+            ('reconcile_id', 1, 0, 'text', _('Rec.ID'),
+                None, c_hdr_cell_style),
+            ('partial_id', 1, 0, 'text', _('Part.ID'),
                 None, c_hdr_cell_style),
             # --
         ]
@@ -341,8 +351,10 @@ class general_ledger_xls(report_xls):
                         ('created_by', 1, 0, 'text',
                             line.get('created_name') or ''),
                         # PABI2
-                        ('reconcile_ref', 1, 0, 'text',
-                            line.get('reconcile_ref') or ''),
+                        ('reconcile_id', 1, 0, 'text',
+                            line.get('reconcile_id') or ''),
+                        ('partial_id', 1, 0, 'text',
+                            line.get('partial_id') or ''),
                         # --
                     ]
                     row_data = self.xls_row_template(
@@ -382,7 +394,8 @@ class general_ledger_xls(report_xls):
                     c_specs += [('curr_code', 1, 0, 'text', None)]
                 c_specs += [
                     ('created_by', 1, 0, 'text', None),
-                    ('reconcile_ref', 1, 0, 'text', None),  # PABI2
+                    ('reconcile_id', 1, 0, 'text', None),
+                    ('partial_id', 1, 0, 'text', None),
                 ]
                 row_data = self.xls_row_template(
                     c_specs, [x[0] for x in c_specs])

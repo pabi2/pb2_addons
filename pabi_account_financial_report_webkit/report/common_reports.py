@@ -416,6 +416,22 @@ class CommonReportHeaderWebkit(common_report_header):
                 res[acc.id] = self._compute_init_balance(acc.id, bs_period_ids)
         return res
 
+    def _reconcile_cond_search(self, reconcile_cond, date_stop):
+        domain = []
+        if reconcile_cond and reconcile_cond != 'all':
+            if reconcile_cond == 'open_item':
+                if date_stop:
+                    domain = ['|', ('date_reconciled', '=', False),
+                              ('date_reconciled', '>', date_stop)]
+                else:
+                    domain = [('date_reconciled', '=', False)]
+            elif reconcile_cond == 'reconciled':
+                if date_stop:
+                    domain = [('date_reconciled', '<=', date_stop)]
+                else:
+                    domain = [('date_reconciled', '!=', False)]
+        return domain
+
     ################################################
     # Account move retrieval helper                #
     ################################################
@@ -433,11 +449,8 @@ class CommonReportHeaderWebkit(common_report_header):
             search += [('move_id.state', '=', 'posted')]
 
         # PABI2
-        if reconcile_cond != 'all':
-            if reconcile_cond == 'open_item':
-                search += [('reconcile_id', '=', False)]
-            elif reconcile_cond == 'reconciled':
-                search += [('reconcile_id', '!=', False)]
+        search += self._reconcile_cond_search(reconcile_cond,
+                                              period_stop.date_stop)
         # --
 
         return move_line_obj.search(self.cursor, self.uid, search)
@@ -462,11 +475,8 @@ class CommonReportHeaderWebkit(common_report_header):
             search_period += [('move_id.state', '=', 'posted')]
 
         # PABI2
-        if reconcile_cond != 'all':
-            if reconcile_cond == 'open_item':
-                search_period += [('reconcile_id', '=', False)]
-            elif reconcile_cond == 'reconciled':
-                search_period += [('reconcile_id', '!=', False)]
+        search_period += self._reconcile_cond_search(reconcile_cond,
+                                                     date_stop)
         # --
 
         return move_line_obj.search(self.cursor, self.uid, search_period)
@@ -573,7 +583,8 @@ SELECT l.id AS id,
             SUBSTRING(m.name, 1, 2) AS doctype,
             aag.name AS activity_group_name,
             aa.name AS activity_name,
-            coalesce(partialrec.name, fullrec.name) as reconcile_ref
+            coalesce(fullrec.name, '') as reconcile_id,
+            coalesce(partialrec.name, '') as partial_id
 FROM account_move_line l
     JOIN account_move m on (l.move_id=m.id)
     LEFT JOIN res_currency c on (l.currency_id=c.id)
