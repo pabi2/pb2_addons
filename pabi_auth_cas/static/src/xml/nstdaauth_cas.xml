@@ -5,7 +5,7 @@
 <t t-name="CrashManager.cas_check_success">
     <table cellspacing="0" cellpadding="0" border="0" class="oe_dialog_warning">
         <tr>
-            <td class="oe_dialog_icon"><img t-att-src='_s + "/nstdaauth_cas/static/src/img/success.png"'/></td>
+            <td class="oe_dialog_icon"><img t-att-src='_s + "/pabi_auth_cas/static/src/img/success.png"'/></td>
             <td>
                 <p>
                     <t t-js="d">
@@ -23,7 +23,7 @@
 <t t-name="CrashManager.cas_check_fail">
     <table cellspacing="0" cellpadding="0" border="0" class="oe_dialog_warning">
         <tr>
-            <td class="oe_dialog_icon"><img t-att-src='_s + "/nstdaauth_cas/static/src/img/fail.png"'/></td>
+            <td class="oe_dialog_icon"><img t-att-src='_s + "/pabi_auth_cas/static/src/img/fail.png"'/></td>
             <td>
                 <p>
                     <t t-js="d">
