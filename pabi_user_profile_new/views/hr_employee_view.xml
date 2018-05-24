@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+    <data>
+
+		<record id="view_employee_filter" model="ir.ui.view">
+            <field name="name">view.employee.filter</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr='/search/field[@name="name"]' position="replace">
+                      <field name="name" string="Employees"
+                      	filter_domain="['|','|','|','|','|','|',('last_name','ilike',self),('mid_name','ilike',self),('first_name','ilike',self),('employee_code','ilike',self),('first_name','ilike',self),('work_email','ilike',self),('name','ilike',self)]"/>
+                </xpath>
+                <xpath expr='/search/field[@name="department_id"]' position="after">
+                    <field name="org_id"/>
+                    <field name="section_id"/>
+                </xpath>
+                <field name="department_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="category_ids" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+	        </field>
+	    </record>
+
+		<record id="view_hr_employee_form_pabi" model="ir.ui.view">
+            <field name="name">hr.employee.form.pabi</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+	            <xpath expr='/form/sheet/notebook/page/group' position="before">
+					<group>
+						<group string="PABI2 Information" >
+							<field name="employee_code"/>
+							<field name="title_id"/>
+							<field name="first_name"/>
+							<field name="mid_name"/>
+							<field name="last_name"/>
+							<field name="position_id"/>
+							<field name="position_management_id"/>
+							<field name="is_management"/>
+						</group>
+						<group string="PABI2 Org." >
+							<field name="org_id"/>
+							<field name="section_id"/>
+                            <field name="section_assign_ids" widget="many2many_tags"/>
+							<field name="costcenter_id"/>
+							<field name="org_ids" string="Additional Orgs" widget="many2many_tags"/>
+						</group>
+					</group>
+				</xpath>
+			</field>
+        </record>
+    </data>
+</openerp>

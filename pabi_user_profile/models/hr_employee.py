@@ -77,6 +77,10 @@ class HREmployee(models.Model):
     is_management = fields.Boolean(
         string='Is Management',
     )
+    status_id = fields.Many2one(
+        'hr.status',
+        string='Status',
+    )
 
     @api.multi
     @api.depends('employee_code', 'title_id',
