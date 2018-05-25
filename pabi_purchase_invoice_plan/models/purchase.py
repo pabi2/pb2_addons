@@ -115,6 +115,8 @@ class PurchaseOrder(models.Model):
             _prepare_deposit_invoice_line(name, order, amount)
         # Use manual deposit account.
         res.update({'account_id': order.account_deposit_supplier.id})
+        if not res['account_id']:
+            raise ValidationError(_('No advance/deposit account seleted!'))
         # --
         AnayticAccount = self.env['account.analytic.account']
         dimensions = AnayticAccount._analytic_dimensions()
