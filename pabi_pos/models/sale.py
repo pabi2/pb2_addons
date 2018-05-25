@@ -55,9 +55,12 @@ class SaleOrder(models.Model):
                 invoice.signal_workflow('invoice_open')
                 # Validate payment too
                 journal = invoice.workflow_process_id.voucher_journal_id
-                bank = invoice.workflow_process_id.partner_bank_id
-                voucher = self._auto_validate_payment(invoice, journal)
-                self._auto_validate_bank_receipt(voucher, journal, bank)
+
+                # kittiu: May be we never through bank payment
+                # bank = invoice.workflow_process_id.partner_bank_id
+                # voucher = self._auto_validate_payment(invoice, journal)
+                self._auto_validate_payment(invoice, journal)
+                # self._auto_validate_bank_receipt(voucher, journal, bank)
         return res
 
     @api.model
@@ -69,6 +72,7 @@ class SaleOrder(models.Model):
             'account_id': journal.default_debit_account_id.id,
             'partner_id': invoice.partner_id.id,
             'type': 'receipt',
+            'receipt_type': 'cash',
             'date_value': fields.Date.context_today(self),
             'journal_id': journal.id,
             'operating_unit_id': invoice.operating_unit_id.id,

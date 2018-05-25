@@ -65,7 +65,8 @@
           name="Connectors" parent="menu_nstda_configurations" sequence="200"/>
 
         <!-- Do no show close fiscal year -->
-        <menuitem id="account.menu_wizard_fy_close_state" groups="base.group_system"/>
-
+        <menuitem  id="account.menu_wizard_fy_close_state"
+            name="Close a Fiscal Year" sequence="20" 
+            parent="account.menu_account_end_year_treatments" />
     </data>
 </openerp>

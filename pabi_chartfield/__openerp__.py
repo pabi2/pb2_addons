@@ -27,7 +27,7 @@
         'views/res_config_view.xml',
         'data/cost_control_data.xml',
         'data/job_order_history_rule.xml',
-        # 'wizard/cost_control_breakdown_wizard.xml',
+        'wizard/stock_change_product_qty_view.xml',
         'views/account_budget_view.xml',
         'views/account_invoice_view.xml',
         'views/analytic_view.xml',
@@ -43,6 +43,7 @@
         'views/stock_request_view.xml',
         'views/account_view.xml',
         'views/res_fund_view.xml',
+        'views/stock_view.xml',
     ],
     'demo': [
     ],
