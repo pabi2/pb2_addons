@@ -37,7 +37,8 @@ class PurchaseOrder(models.Model):
                 self.invoice_method == 'invoice_plan':
             adv_invoice = self.env['account.invoice'].\
                 search([('id', 'in', invoice_ids), ('is_advance', '=', True)])
-            adv_amount = adv_invoice[0].invoice_line[0].price_unit
+            adv_amount = adv_invoice and \
+                adv_invoice[0].invoice_line[0].price_unit or 0.0
             invoices = self.env['account.invoice'].\
                 search([('id', 'in', invoice_ids), ('is_advance', '=', False)],
                        order='date_invoice')
