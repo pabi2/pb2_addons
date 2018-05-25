@@ -18,6 +18,7 @@
     """,
     'data': [
         'views/purchase_view.xml',
+        'views/account_config.xml',
         'wizard/purchase_create_invoice_plan_view.xml',
     ],
     'installable': True,
