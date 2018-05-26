@@ -5,15 +5,11 @@ from openerp import models, api
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-    @api.model
-    def _reconcile_invoices(self, invoices):
-        mlines = invoices.mapped('move_id.line_id')
-        mlines.reconcile_special_account()
-
     @api.multi
     def action_move_create(self):
         res = super(AccountInvoice, self).action_move_create()
         Invoice = self.env['account.invoice']
+        AccountMove = self.env['account.move']
         for invoice in self:
             # Case HR Expense Advance Clearing, Advance Return
             if invoice.advance_expense_id:
@@ -31,4 +27,15 @@ class AccountInvoice(models.Model):
                 invoices = invoice | adv_invoices
                 mlines = invoices.mapped('move_id.line_id')
                 mlines.reconcile_special_account()
+            # Case GR/IR to SO/PO related Pickings moves
+            if invoice.sale_ids or invoice.purchase_ids:
+                pickings = invoice.sale_ids.mapped('picking_ids') | \
+                    invoice.purchase_ids.mapped('picking_ids')
+                moves = AccountMove.search([('document', 'in',
+                                             pickings.mapped('name'))])
+                if moves:
+                    pick_mlines = moves.mapped('line_id')
+                    inv_mlines = invoices.mapped('move_id.line_id')
+                    mlines = inv_mlines | pick_mlines
+                    mlines.reconcile_special_account()
         return res
