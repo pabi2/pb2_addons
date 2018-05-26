@@ -24,6 +24,20 @@ from openerp.exceptions import except_orm, ValidationError
 from openerp.tools.safe_eval import safe_eval
 
 
+def adjust_cell_formula(value, k):
+    """ Cell formula, i.e., if i=5, val=?(A11)+?(B12) -> val=A16+B17  """
+    if isinstance(value, basestring):
+        for i in range(value.count('?(')):
+            if value and '?(' in value and ')' in value:
+                i = value.index('?(')
+                j = value.index(')', i)
+                val = value[i + 2:j]
+                col, row = split_row_col(val)
+                new_val = '%s%s' % (col, row+k)
+                value = value.replace('?(%s)' % val, new_val)
+    return value
+
+
 def get_field_aggregation(field):
     """ i..e, 'field@{sum/average/max/min}' """
     if field and '@{' in field and '}' in field:
@@ -474,6 +488,7 @@ class ExportXlsxTemplate(models.TransientModel):
                     for row_val in row_vals:
                         new_row = row + i
                         new_rc = '%s%s' % (col, new_row)
+                        row_val = adjust_cell_formula(row_val, i)
                         if row_val not in ('None', None):
                             st[new_rc] = str_to_number(row_val)
                         if field_format.get(field, False):
