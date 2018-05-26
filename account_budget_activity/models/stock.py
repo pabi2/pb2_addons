@@ -39,7 +39,13 @@ class StockMove(ActivityCommon, models.Model):
         AnayticAccount = self.env['account.analytic.account']
         dimensions = AnayticAccount._analytic_dimensions()
         for d in dimensions:
-            invoice_line_vals.update({d: move.purchase_line_id[d].id})
+            if move.purchase_line_id:
+                invoice_line_vals.update({
+                    d: move.purchase_line_id[d].id})
+            elif move.procurement_id.sale_line_id:
+                invoice_line_vals.update({
+                    d: move.procurement_id.sale_line_id[d].id})
+
         return super(StockMove, self).\
             _create_invoice_line_from_vals(move, invoice_line_vals)
 

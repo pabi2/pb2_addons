@@ -8,6 +8,8 @@ class InterfaceAccountEntry(models.Model):
 
     @api.multi
     def execute(self):
+        """ Payment to reconcile invoice is a natural case,
+        auto_reconcile_id is not required """
         res = super(InterfaceAccountEntry, self).execute()
         for interface in self:
             ml = interface.mapped('line_ids.reconcile_move_line_id')

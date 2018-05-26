@@ -8,34 +8,33 @@ class AccountInvoice(models.Model):
     @api.multi
     def action_move_create(self):
         res = super(AccountInvoice, self).action_move_create()
-        Invoice = self.env['account.invoice']
-        AccountMove = self.env['account.move']
+        MoveLine = self.env['account.move.line']
+        Auto = self.env['account.auto.reconcile']
         for invoice in self:
-            # Case HR Expense Advance Clearing, Advance Return
-            if invoice.advance_expense_id:
-                exp_id = invoice.advance_expense_id.id
-                adv_invoices = Invoice.search([('expense_id', '=', exp_id)])
-                invoices = invoice | adv_invoices
-                mlines = invoices.mapped('move_id.line_id')
-                mlines.reconcile_special_account()
-            # Case Invoice Plan's advance deposit
-            if invoice.source_document_type in ('purchase', 'sale') and \
-                    not (invoice.is_advance or invoice.is_deposit):
-                order = invoice.source_document_id
-                adv_invoices = order.invoice_ids.\
-                    filtered(lambda l: l.is_advance or l.is_deposit)
-                invoices = invoice | adv_invoices
-                mlines = invoices.mapped('move_id.line_id')
-                mlines.reconcile_special_account()
-            # Case GR/IR to SO/PO related Pickings moves
-            if invoice.sale_ids or invoice.purchase_ids:
-                pickings = invoice.sale_ids.mapped('picking_ids') | \
-                    invoice.purchase_ids.mapped('picking_ids')
-                moves = AccountMove.search([('document', 'in',
-                                             pickings.mapped('name'))])
-                if moves:
-                    pick_mlines = moves.mapped('line_id')
-                    inv_mlines = invoices.mapped('move_id.line_id')
-                    mlines = inv_mlines | pick_mlines
+            # Case HR Expense: Advance, Clearing, Return
+            # Use Advance Numer as auto_reconcile_id
+            if invoice.source_document_type in ('expense', 'advance'):
+                adv_number = False
+                if invoice.supplier_invoice_type == 'expense_advance_invoice':
+                    adv_number = invoice.expense_id.number
+                elif invoice.advance_expense_id:  # Clearing / Return
+                    adv_number = invoice.advance_expense_id.number
+                if adv_number:
+                    auto_id = Auto.get_auto_reconcile_id(adv_number)
+                    invoice.move_id.auto_reconcile_id = auto_id
+                    mlines = MoveLine.search([('auto_reconcile_id',
+                                               '=', auto_id)])
+                    mlines.reconcile_special_account()
+            # All cases, invoice and/or picking is created from PO/So
+            # i.e., - Case Invoice Plan's advance deposit
+            #       - Case GR/IR, manual or on demand (see stock.py)
+            # Use order (po,so) as auto_reconcile_id
+            if invoice.source_document_type in ('purchase', 'sale'):
+                order_number = invoice.source_document_id.name
+                if order_number:
+                    auto_id = Auto.get_auto_reconcile_id(order_number)
+                    invoice.move_id.auto_reconcile_id = auto_id
+                    mlines = MoveLine.search([('auto_reconcile_id',
+                                               '=', auto_id)])
                     mlines.reconcile_special_account()
         return res

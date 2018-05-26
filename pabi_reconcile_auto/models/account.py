@@ -34,3 +34,15 @@ class AccountMove(models.Model):
         size=20,
         help="To group journal entry for auto reconcilation",
     )
+
+    @api.multi
+    def post(self):
+        """ For case crate JE manual, to reconcile with another JE """
+        res = super(AccountMove, self).post()
+        MoveLine = self.env['account.move.line']
+        for move in self:
+            if move.auto_reconcile_id:
+                mlines = MoveLine.search([('auto_reconcile_id', '=',
+                                           move.auto_reconcile_id.id)])
+                mlines.reconcile_special_account()
+        return res
