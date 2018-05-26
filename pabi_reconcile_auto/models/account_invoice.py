@@ -21,7 +21,7 @@ class AccountInvoice(models.Model):
                     adv_number = invoice.advance_expense_id.number
                 if adv_number:
                     auto_id = Auto.get_auto_reconcile_id(adv_number)
-                    invoice.move_id.auto_reconcile_id = auto_id
+                    invoice.move_id.write({'auto_reconcile_id': auto_id})
                     mlines = MoveLine.search([('auto_reconcile_id',
                                                '=', auto_id)])
                     mlines.reconcile_special_account()
@@ -33,8 +33,10 @@ class AccountInvoice(models.Model):
                 order_number = invoice.source_document_id.name
                 if order_number:
                     auto_id = Auto.get_auto_reconcile_id(order_number)
-                    invoice.move_id.auto_reconcile_id = auto_id
-                    mlines = MoveLine.search([('auto_reconcile_id',
-                                               '=', auto_id)])
+                    invoice.move_id.write({'auto_reconcile_id': auto_id})
+                    mlines = MoveLine.search([
+                        ('auto_reconcile_id', '=', auto_id)])
+                    print mlines.mapped('move_id')
                     mlines.reconcile_special_account()
+                    # x = 1/0
         return res
