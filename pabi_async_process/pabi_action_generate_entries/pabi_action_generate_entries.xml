@@ -65,7 +65,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-            <field name="context">{'return_action': 'account.view_move_tree'}</field>
+            <field name="context">{'return_action': 'account.action_move_journal_line'}</field>
         </record>
 
         <menuitem id="menu_pabi_action_generate_entries"

@@ -19,7 +19,6 @@ class AccountMoveLine(models.Model):
         move_lines = self.filtered(lambda l: l.account_id.reconcile and
                                    l.state == 'valid' and
                                    not l.reconcile_id)
-        print move_lines.mapped('move_id')
         if not move_lines:
             return
         accounts = move_lines.mapped('account_id')

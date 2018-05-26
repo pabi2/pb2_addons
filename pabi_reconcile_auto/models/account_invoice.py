@@ -14,13 +14,13 @@ class AccountInvoice(models.Model):
             # Case HR Expense: Advance, Clearing, Return
             # Use Advance Numer as auto_reconcile_id
             if invoice.source_document_type in ('expense', 'advance'):
-                adv_number = False
+                object = False
                 if invoice.supplier_invoice_type == 'expense_advance_invoice':
-                    adv_number = invoice.expense_id.number
+                    object = invoice.expense_id
                 elif invoice.advance_expense_id:  # Clearing / Return
-                    adv_number = invoice.advance_expense_id.number
-                if adv_number:
-                    auto_id = Auto.get_auto_reconcile_id(adv_number)
+                    object = invoice.advance_expense_id
+                if object:
+                    auto_id = Auto.get_auto_reconcile_id(object)
                     invoice.move_id.write({'auto_reconcile_id': auto_id})
                     mlines = MoveLine.search([('auto_reconcile_id',
                                                '=', auto_id)])
@@ -30,13 +30,11 @@ class AccountInvoice(models.Model):
             #       - Case GR/IR, manual or on demand (see stock.py)
             # Use order (po,so) as auto_reconcile_id
             if invoice.source_document_type in ('purchase', 'sale'):
-                order_number = invoice.source_document_id.name
-                if order_number:
-                    auto_id = Auto.get_auto_reconcile_id(order_number)
+                object = invoice.source_document_id.name
+                if object:
+                    auto_id = Auto.get_auto_reconcile_id(object)
                     invoice.move_id.write({'auto_reconcile_id': auto_id})
                     mlines = MoveLine.search([
                         ('auto_reconcile_id', '=', auto_id)])
-                    print mlines.mapped('move_id')
                     mlines.reconcile_special_account()
-                    # x = 1/0
         return res

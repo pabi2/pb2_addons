@@ -26,6 +26,7 @@ Currently we have dont for following events,
         'l10n_th_account',
         'hr_expense_advance_clearing',
         'pabi_interface',
+        'account_subscription_enhanced',
     ],
     "data": [
     ],
