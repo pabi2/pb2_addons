@@ -29,5 +29,6 @@
         "views/my_report_view.xml",
         "views/xlsx_import.xml",
         "views/xlsx_report.xml",
+        "views/pabi_action.xml",
     ],
 }
