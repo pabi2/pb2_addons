@@ -147,6 +147,7 @@ class PurchaseWorkAcceptance(models.Model):
         'acceptance_id',
         string='Evaluation',
         required=True,
+        copy=False,
     )
     state = fields.Selection(
         selection=_STATES,
@@ -593,8 +594,7 @@ class PurchaseWorkAcceptance(models.Model):
         self.validate_amount_total_with_order()
         self.state = 'evaluation'
 
-
-    @api.model
+    @api.multi
     def validate_evaluation(self):
         self.ensure_one()
         for eval_line in self.eval_line_ids:
@@ -756,9 +756,10 @@ class PurchaseWorkAcceptanceEvaluationLine(models.Model):
         string='Case',
         ondelete='cascade',
     )
-    case_name = fields.Char(
+    case_id_readonly = fields.Many2one(
+        'purchase.work.acceptance.case',
         string='Case',
-        related='case_id.name',
+        related='case_id',
     )
     score_id = fields.Many2one(
         'purchase.work.acceptance.score',
@@ -783,7 +784,6 @@ class PurchaseWorkAcceptanceScore(models.Model):
     case_id = fields.Many2one(
         'purchase.work.acceptance.case',
         string='Case Name',
-
     )
     name = fields.Char(
         string='Value',
