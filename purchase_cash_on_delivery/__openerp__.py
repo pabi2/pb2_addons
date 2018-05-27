@@ -13,8 +13,8 @@ all invoice has been paid.
 When invoice is validated, account will be posted to prepaid account instead
 of normal product account.
 
-When each shipment is transferred, additional dr/cr will be posted to clear
-prepaid account with normal project account.
+After shipment are transferred,
+user will go to invoice and click Clear Prepayment.
 
     """,
     'category': 'Purchase',
