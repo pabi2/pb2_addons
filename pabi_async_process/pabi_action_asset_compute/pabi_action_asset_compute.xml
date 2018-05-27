@@ -4,64 +4,23 @@
         <record id="pabi_action_asset_compute_view" model="ir.ui.view">
             <field name="name">pabi.action.asset.compute.view</field>
             <field name="model">pabi.action.asset.compute</field>
+            <field name="inherit_id" ref="pabi_utils.pabi_action_view"/>
+            <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <form string="Import XLSX">
-
-                    <!-- Criteria -->
-                    <group states="choose">
-                        <group string="Run Depreciation For">
-                            <field name="calendar_period_id"/>
-                        </group>
-                        <group string="By Asset's Category/Profile">
-                            <field name="categ_ids" widget="many2many_tags"/>
-                            <field name="profile_ids" nolabel="1" colspan="2" domain="[('product_categ_id', 'in', categ_ids and categ_ids and categ_ids[0] and categ_ids[0][2])]">
-                                <tree>
-                                    <field name="name" string="Profile"/>
-                                </tree>
-                            </field>
-                            <button name="check_affected_asset" class="oe_link oe_right" type="object" string="(Check number of affected assets)" colspan="2"/>
-
-
-                        </group>
-                    </group>
-
-                    <!-- pabi.action common field -->
-                    <div name="pabi.action">
-                        <field name="state" invisible="1"/>
-                        <div states="choose">
-                            <field name="async_process"/><label for="async_process"/>
-                        </div>
-                        <div states="get">
-                            <h2 attrs="{'invisible': [('async_process', '=', True)]}">
-                                Execution Completed
-                            </h2>
-                            <h2 attrs="{'invisible': [('async_process', '=', False)]}">
-                                Process Enqueued
-                            </h2>
-                            <p attrs="{'invisible': [('async_process', '=', True)]}">
-                                <field name="result_msg" nolabel="1"/>
-                            </p>
-                            <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
-                                UUID:
-                                <field name="uuid" class="oe_inline"/>
-                            </p>
-                        </div>
-                        <footer states="choose">
-                            <button name="pabi_action" string="Execute" type="object" class="oe_highlight"/>
-                            or
-                            <button special="cancel" string="Cancel" type="object" class="oe_link"/>
-                        </footer>
-                        <footer attrs="{'invisible': ['|', ('state', '!=', 'get'), ('async_process', '=', True)]}">
-                            <button name="action_open_result" string="Open Results" type="object" class="oe_highlight"/>
-                            or
-                            <button special="cancel" string="Close" type="object" class="oe_link"/>
-                        </footer>
-                        <footer attrs="{'invisible': ['|', ('state', '!=', 'get'), ('async_process', '=', False)]}">
-                            <button special="cancel" string="Close" type="object" class="oe_link"/>
-                        </footer>
-                    </div>
-
-                </form>
+                <xpath expr="//group[@name='criteria']" position="inside">
+                  <group string="Run Depreciation For">
+                      <field name="calendar_period_id"/>
+                  </group>
+                  <group string="By Asset's Category/Profile">
+                      <field name="categ_ids" widget="many2many_tags"/>
+                      <field name="profile_ids" nolabel="1" colspan="2" domain="[('product_categ_id', 'in', categ_ids and categ_ids and categ_ids[0] and categ_ids[0][2])]">
+                          <tree>
+                              <field name="name" string="Profile"/>
+                          </tree>
+                      </field>
+                      <button name="check_affected_asset" class="oe_link oe_right" type="object" string="(Check number of affected assets)" colspan="2"/>
+                  </group>
+                </xpath>
             </field>
         </record>
 

@@ -14,3 +14,4 @@ from . import asset_transfer
 from . import pabi_bank_statement
 from . import loan_installment
 from . import purchase_billing
+from . import sale

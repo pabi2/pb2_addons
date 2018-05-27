@@ -41,6 +41,7 @@
 							<field name="position_id"/>
 							<field name="position_management_id"/>
 							<field name="is_management"/>
+              <field name="status_id"/>
 						</group>
 						<group string="PABI2 Org." >
 							<field name="org_id"/>

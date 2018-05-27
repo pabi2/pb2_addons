@@ -15,15 +15,22 @@ class SaleWorkflowProcess(models.Model):
         string='Taxbranch',
         help="Default taxbranch used in the order line",
     )
-    warehouse_id = fields.Many2one(
-        'stock.warehouse',
-        string='Warehouse',
-        help="Default warehouse for this pos order",
-    )
     operating_unit_id = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
         help="Default operating unit for this pos order",
+    )
+    warehouse_id = fields.Many2one(
+        'stock.warehouse',
+        string='Warehouse',
+        domain="[('operating_unit_id', '=', operating_unit_id)]",
+        help="Default warehouse for this pos order",
+    )
+    location_id = fields.Many2one(
+        'stock.location',
+        string='Location',
+        domain="[('operating_unit_id', '=', operating_unit_id)]",
+        help="Default source location for this pos",
     )
     pos_partner_id = fields.Many2one(
         'res.partner',

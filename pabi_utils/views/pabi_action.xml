@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="pabi_action_view" model="ir.ui.view">
+            <field name="name">pabi.action.view</field>
+            <field name="model">pabi.action</field>
+            <field name="arch" type="xml">
+                <form string="PABI Action">
+
+                    <!-- search criteria -->
+                    <group name="criteria" states="choose">
+                    </group>
+
+                    <!-- pabi.action common field -->
+                    <div name="pabi.action">
+                        <field name="state" invisible="1"/>
+                        <div states="choose">
+                            <field name="async_process"/><label for="async_process"/>
+                        </div>
+                        <div states="get">
+                            <h2 attrs="{'invisible': [('async_process', '=', True)]}">
+                                Execution Completed
+                            </h2>
+                            <h2 attrs="{'invisible': [('async_process', '=', False)]}">
+                                Process Enqueued
+                            </h2>
+                            <p attrs="{'invisible': [('async_process', '=', True)]}">
+                                <field name="result_msg" nolabel="1"/>
+                            </p>
+                            <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
+                                UUID:
+                                <field name="uuid" class="oe_inline"/>
+                            </p>
+                        </div>
+                        <footer states="choose">
+                            <button name="pabi_action" string="Execute" type="object" class="oe_highlight"/>
+                            or
+                            <button special="cancel" string="Cancel" type="object" class="oe_link"/>
+                        </footer>
+                        <footer attrs="{'invisible': ['|', ('state', '!=', 'get'), ('async_process', '=', True)]}">
+                            <button name="action_open_result" string="Open Results" type="object" class="oe_highlight"/>
+                            or
+                            <button special="cancel" string="Close" type="object" class="oe_link"/>
+                        </footer>
+                        <footer attrs="{'invisible': ['|', ('state', '!=', 'get'), ('async_process', '=', False)]}">
+                            <button special="cancel" string="Close" type="object" class="oe_link"/>
+                        </footer>
+                    </div>
+
+                </form>
+            </field>
+        </record>
+
+  </data>
+</openerp>

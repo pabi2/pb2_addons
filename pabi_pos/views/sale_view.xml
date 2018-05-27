@@ -2,6 +2,17 @@
 <openerp>
     <data>
 
+        <record id="view_sales_order_filter" model="ir.ui.view">
+            <field name="name">sale.order.list.select</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@string='Customer']" position="after">
+                    <filter string="Workflow" domain="[]" context="{'group_by':'workflow_process_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
         <record id="view_pos_order_tree" model="ir.ui.view">
             <field name="name">sale.order.tree</field>
             <field name="model">sale.order</field>
@@ -43,8 +54,6 @@
                 </header>
                 <sheet>
                     <h1>
-                        <label string="Quotation " attrs="{'invisible': [('state','not in',('draft','sent'))]}"/>
-                        <label string="Sales Order " attrs="{'invisible': [('state','in',('draft','sent'))]}"/>
                         <field name="name" class="oe_inline" readonly="1"/>
                     </h1>
                     <group>
@@ -224,6 +233,11 @@
                                                'workflow_process_id': workflow_process_id}</attribute>
                 </xpath>
             </field>
+        </record>
+
+        # Sales Order action, shouldn't see POS order
+        <record id="sale.action_orders" model="ir.actions.act_window">
+            <field name="domain">[('order_type', '=', 'sale_order'), ('workflow_process_id', '=', False)]</field>
         </record>
 
     </data>

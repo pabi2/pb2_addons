@@ -10,6 +10,7 @@
           * Stock Borrow
           * Payment Export
           * Account Interface
+          * POS Order
         -->
         # Purchase Requisition
         <record id="doctype_purchase_requisition_seq" model="ir.sequence">
@@ -185,6 +186,16 @@
             <field name="name">DOCTYPE: Purchase Billing</field>
             <field name="code"></field>
             <field name="prefix">BL%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field name="special_type">doctype</field>
+        </record>
+        <record id="doctype_pos_order_seq" model="ir.sequence">
+            <field name="name">DOCTYPE: POS Order</field>
+            <field name="code"></field>
+            <field name="prefix">POS%(fy)s</field>
             <field eval="6" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>

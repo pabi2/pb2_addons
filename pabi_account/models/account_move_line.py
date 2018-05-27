@@ -7,6 +7,14 @@ class AccountMoveLine(models.Model):
     _order = 'sequence, date desc, id desc'
 
     sequence = fields.Integer('Sequence', default=0)
+    date_reconciled = fields.Date(
+        string='Full Reconciled Date',
+        related='reconcile_id.create_date',
+        readonly=True,
+        store=True,
+        help="Dated when reconcile_id is set. "
+        "Used in determine open items by date",
+    )
 
     @api.model
     def _update_analytic_dimension(self, vals):

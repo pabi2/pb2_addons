@@ -35,6 +35,13 @@ class PABIAppsConfigSettings(models.TransientModel):
         string='Employee Advance Account',
         related="company_id.employee_advance_account_id",
     )
+    # Other accounts for advance
+    other_deposit_account_ids = fields.Many2many(
+        'account.account',
+        string='Other Advance Accounts',
+        related="company_id.other_deposit_account_ids",
+        help="Lst other eligible for user to choose manually on document",
+    )
     # l10n_th_tax_detail
     account_tax_difference = fields.Many2one(
         'account.account',

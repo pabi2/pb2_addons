@@ -26,6 +26,7 @@ class ResDoctype(models.Model):
     #   * Loan Installment
     #   * Bank Statement Reconcile
     #   * Purchase Billing
+    #   * POS Order
 
     refer_type = fields.Selection(
         selection_add=[
@@ -47,5 +48,6 @@ class ResDoctype(models.Model):
             ('loan_installment', 'Loan Installment'),
             ('bank_reconcile', 'Bank Statement Reconcile'),
             ('purchase_billing', 'Purchase Billing'),
+            ('pos_order', 'POS Order'),
         ],
     )

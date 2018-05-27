@@ -130,38 +130,45 @@
                 '__EXPORT__': {
                     'Advance Status Report': {
                         '_HEAD_': {
-                            'B2': '${date.today()}#{number_format=date}',
+                            'A1': '${env.user.company_id.display_name}',
+                            'B3': '${date.today()}#{number_format=date}',
+                            'B4': '${env.user.display_name}',
+                            'B5': '${time.strftime("%d/%m/%Y")}',
                         },
                         'results': {
-                            'A4': 'operating_unit_id.name${value or ""}',
-                            'B4': 'number${value or ""}',
-                            'C4': 'invoice_id.number${value or ""}',
-                            'D4': 'remark${value or ""}',
-                            'E4': 'invoice_id.date_invoice#{number_format=date}',
-                            'F4': 'date_due#{number_format=date}',
-                            'G4': 'employee_id.employee_code${value or ""}',
-                            'H4': 'employee_id${value and value.first_name + " " + value.last_name or ""}',
-                            'I4': 'amount_advanced${value or 0.0}',
-                            'J4': 'amount_clearing_0${value or 0.0}',
-                            'K4': 'amount_clearing_1${value or 0.0}',
-                            'L4': 'amount_clearing_2${value or 0.0}',
-                            'M4': 'amount_clearing_3${value or 0.0}',
-                            'N4': 'amount_to_clearing${value or 0.0}',
+                            'A8': 'operating_unit_id.name${value or ""}',
+                            'B8': 'number${value or ""}',
+                            'C8': 'invoice_id.number${value or ""}',
+                            'D8': 'remark${value or ""}',
+                            'E8': 'invoice_id.date_invoice#{number_format=date}',
+                            'F8': 'date_due#{number_format=date}',
+                            'G8': 'employee_id.employee_code${value or ""}',
+                            'H8': 'employee_id${value and value.first_name + " " + value.last_name or ""}',
+                            'I8': 'amount_advanced${value or 0.0}',
+                            'J8': 'days_diff${value or 0}',
+                            'K8': 'amount_clearing_0${value or 0.0}',
+                            'L8': 'amount_clearing_1${value or 0.0}',
+                            'M8': 'amount_clearing_2${value or 0.0}',
+                            'N8': 'amount_clearing_3${value or 0.0}',
+                            'O8': 'amount_to_clearing${value or 0.0}',
                         }
                     },
                     'Summary': {
                         '_HEAD_': {
-                            'B2': '${date.today()}#{number_format=date}',
+                            'A1': '${env.user.company_id.display_name}',
+                            'B3': '${date.today()}#{number_format=date}',
+                            'B4': '${env.user.display_name}',
+                            'B5': '${time.strftime("%d/%m/%Y")}',
                         },
                         '_BI_': {
-                            'A4': {
+                            'A8': {
                                 'df': 'Advance Status Report',
                                 # Group by A and add Subtotal (so we use pivot)
                                 # By scripting, we need result = ...
                                 'oper_code': """
-df = df[["A", "J", "K", "L", "M", "N"]]
+df = df[["A", "K", "L", "M", "N", "O"]]
 groupby = ["A"]
-sum_cols = ["J", "K", "L", "M", "N"]
+sum_cols = ["K", "L", "M", "N", "O"]
 result = pd.pivot_table(df, index=groupby,
                       values=sum_cols,
                       aggfunc=np.sum,
@@ -174,13 +181,16 @@ result = pd.pivot_table(df, index=groupby,
                     },
                     'Detailed Summary': {
                         '_HEAD_': {
-                            'B2': '${date.today()}#{number_format=date}',
+                            'A1': '${env.user.company_id.display_name}',
+                            'B3': '${date.today()}#{number_format=date}',
+                            'B4': '${env.user.display_name}',
+                            'B5': '${time.strftime("%d/%m/%Y")}',
                         },
                         '_BI_': {
-                            'A4': {
+                            'A8': {
                                 'df': 'Advance Status Report',
                                 # Group by A, H. User will have to do subtotal themselves
-                                'oper_code': 'df[["A", "H", "J", "K", "L", "M", "N"]].groupby(["A", "H"]).sum()',
+                                'oper_code': 'df[["A", "H", "K", "L", "M", "N", "O"]].groupby(["A", "H"]).sum()',
                             },
                         },
                     },
@@ -249,25 +259,31 @@ result = pd.pivot_table(df, index=groupby,
                 '__EXPORT__': {
                     'Cheque Register Report': {
                         '_HEAD_': {
-                            'B1': 'cheque_lot_ids${value and ", ".join(value.mapped("name")) or ""}',
-                            'B2': 'number_from${value or ""}',
-                            'B3': 'number_to${value or ""}',
-                            'B4': 'status${value and value.title() or ""}',
+                            'A1': '${env.user.company_id.display_name}',
+                            'B3': 'date_cheque_received${value or ""}#{number_format=date;align=left}',
+                            'B4': 'cheque_lot_ids${value and ", ".join([x.name for x in value]) or ""}',
+                            'B5': 'number_cheque_from${value or ""}',
+                            'D5': 'number_cheque_to${value or ""}',
+                            'B6': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                            'B7': '${env.user.display_name}',
+                            'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
                         },
                         'results': {
-                            'A7': 'journal_id.display_name${value or ""}',
-                            'B7': 'cheque_lot_id.name${value or ""}',
-                            'C7': 'number${value or ""}',
-                            'D7': 'voucher_id.number${value or ""}',
-                            'E7': 'voucher_id.amount${value or ""}',
-                            'F7': 'void${value and "X" or ""}',
-                            'G7': 'note${value or ""}',
-                            'H7': 'payment_export_id.name${value or ""}',
-                            'I7': 'cheque_lot_id.state${value and value.title() or ""}',
+                            'A11': 'cheque_lot_id.journal_id.default_credit_account_id.code${value or ""}',
+                            'B11': 'cheque_lot_id.journal_id.default_credit_account_id.name${value or ""}',
+                            'C11': 'voucher_id.partner_id.search_key${value or ""}',
+                            'D11': 'voucher_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
+                            'E11': 'number${value or ""}',
+                            'F11': 'voucher_id.number${value or ""}',
+                            'G11': 'voucher_id.date${value or ""}#{number_format=date}',
+                            'H11': 'amount${value or 0}#{number_format=number}',
+                            'I11': 'voucher_id.date_cheque_received${value or ""}#{number_format=date}',
+                            'J11': 'voucher_id.move_ids${value and (value.mapped("match_import_id") and value.mapped("match_import_id").date_value or "") or ""}#{number_format=date}',
+                            'K11': 'date_void${value or ""}#{number_format=date}',
+                            'L11': 'payment_export_id.user_id.display_name${value or ""}',
                         },
                         '_TAIL_0': {
-                            'D7': '${"TOTAL"}#{font=bold;align=center;fill=blue}',
-                            'E7': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'H11': '@{sum}#{font=bold;number_format=number}',
                         }
                     }
                 }
@@ -287,7 +303,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Purchase Contract Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.purchase.contract")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'date_report${value or ""}#{number_format=date;align=left}',
                                 'B4': '${env.user.display_name}',
                                 'B5': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
@@ -340,7 +356,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Advance Payment Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.advance.payment")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'account_id.code${value or ""}',
                                 'B4': 'date_report${value or ""}#{number_format=date;align=left}',
                                 'B5': '${env.user.display_name}',
@@ -389,7 +405,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Payable Detail Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.payable.detail")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
                                 'B4': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.title.name, x.name]))) for x in value]) or ""}',
                                 'B5': 'start_fiscalyear_id${value and value.name or ""}',
@@ -405,33 +421,33 @@ result = pd.pivot_table(df, index=groupby,
                                 'B11': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
                             },
                             'results': {
-                                'A14': 'account_invoice_move_line_id.partner_id.search_key${value or ""}',
-                                'B14': 'account_invoice_move_line_id.partner_id.name${value or ""}',
-                                'C14': 'invoice_id.supplier_invoice_number${value or ""}',
-                                'D14': 'invoice_id.purchase_billing_id.name${value or ""}',
-                                'E14': 'account_invoice_move_id.name${value or ""}',
-                                'F14': 'account_invoice_move_id.date_document${value or ""}#{number_format=date}',
-                                'G14': 'account_invoice_move_line_id.period_id.fiscalyear_id.name${value or ""}',
-                                'H14': 'account_invoice_move_line_id.period_id.name${value or ""}',
-                                'I14': 'account_invoice_move_id.date${value or ""}#{number_format=date}',
-                                'J14': 'invoice_id.date_due${value or ""}#{number_format=date}',
-                                'K14': 'invoice_id.source_document_id${value and (value._table in ("purchase_order", "sale_order") and value.name or value.number) or ""}',
+                                'A14': 'move_line_id.partner_id.search_key${value or ""}',
+                                'B14': 'move_line_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
+                                'C14': 'move_line_id.invoice.supplier_invoice_number${value or ""}',
+                                'D14': 'move_line_id.invoice.purchase_billing_id.name${value or ""}',
+                                'E14': 'move_line_id.move_id.name${value or ""}',
+                                'F14': 'move_line_id.move_id.date_document${value or ""}#{number_format=date}',
+                                'G14': 'move_line_id.period_id.fiscalyear_id.name${value or ""}',
+                                'H14': 'move_line_id.period_id.name${value or ""}',
+                                'I14': 'move_line_id.move_id.date${value or ""}#{number_format=date}',
+                                'J14': 'move_line_id.invoice.date_due${value or ""}#{number_format=date}',
+                                'K14': 'move_line_id.invoice.source_document_id${value and (value._table in ("purchase_order", "sale_order") and value.name or value.number) or ""}',
                                 'L14': 'purchase_id.contract_id.display_code${value or ""}',
-                                'M14': 'invoice_id.amount_untaxed${value or 0}#{number_format=number}',
-                                'N14': 'invoice_id.amount_tax${value or 0}#{number_format=number}',
-                                'O14': 'invoice_id.amount_total${value or 0}#{number_format=number}',
-                                'P14': 'account_invoice_move_line_id.currency_id.name${value or ""}',
-                                'Q14': 'invoice_id.tax_line${value and (value[0].tax_code_id.code or "") or ""}',
-                                'R14': 'account_invoice_move_id.narration${value or ""}',
+                                'M14': 'move_line_id.invoice.amount_untaxed${value or 0}#{number_format=number}',
+                                'N14': 'move_line_id.invoice.amount_tax${value or 0}#{number_format=number}',
+                                'O14': 'move_line_id${value and (value.debit != 0 and (-1) * value.debit or value.credit) or 0}#{number_format=number}',
+                                'P14': 'move_line_id.currency_id.name${value or ""}',
+                                'Q14': 'move_line_id.invoice.tax_line${value and (value[0].tax_code_id.code or "") or ""}',
+                                'R14': 'move_line_id.move_id.narration${value or ""}',
                                 'S14': 'voucher_id.number${value or ""}',
                                 'T14': 'voucher_id.amount${value or 0}#{number_format=number}',
                                 'U14': 'voucher_id${value and (value.payment_type == "transfer" and value.transfer_type or "cheque") or ""}',
                                 'V14': 'export_id.name${value or ""}',
                                 'W14': 'voucher_id.number_cheque${value or ""}',
                                 'X14': 'voucher_id.income_tax_form${value or ""}',
-                                'Y14': 'tax_id.amount${value or 0}',
-                                'Z14': 'account_invoice_move_id.create_uid.display_name${value or ""}',
-                                'AA14': 'invoice_id.state${value or ""}',
+                                'Y14': 'tax_id.amount${(-1) * value or 0}',
+                                'Z14': 'move_line_id.move_id.create_uid.display_name${value or ""}',
+                                'AA14': 'move_line_id.invoice.state${value or ""}',
                             },
                             '_TAIL_0': {
                                 'M14': '@{sum}#{font=bold;number_format=number}',
@@ -458,7 +474,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Payable Balance Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.payable.balance")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'partner_ids${value and ", ".join([x.name for x in value]) or ""}',
                                 'B4': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
                                 'B5': '${env.user.display_name}',
@@ -474,7 +490,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'G9': 'move_id.date${value or ""}#{number_format=date}',
                                 'H9': 'move_id.narration${value or ""}',
                                 'I9': 'id${value and (env["account.move.line"].browse(value).debit != 0 and (-1) * env["account.move.line"].browse(value).debit or env["account.move.line"].browse(value).credit) or 0}#{number_format=number}',
-                                'J9': 'id${value and sum(list(env["account.move.line"].browse(value).reconcile_partial_id.line_partial_ids.mapped("credit"))) - sum(list(env["account.move.line"].browse(value).reconcile_partial_id.line_partial_ids.mapped("debit"))) or 0}#{number_format=number}',
+                                'J9': 'id${value and (env["account.move.line"].browse(value).reconcile_partial_id != "" and sum(list(env["account.move.line"].browse(value).reconcile_partial_id.line_partial_ids.mapped("credit"))) - sum(list(env["account.move.line"].browse(value).reconcile_partial_id.line_partial_ids.mapped("debit"))) or (env["account.move.line"].browse(value).credit - env["account.move.line"].browse(value).debit)) or 0}#{number_format=number}',
                             },
                             '_TAIL_0': {
                                 'I9': '@{sum}#{font=bold;number_format=number}',
@@ -498,7 +514,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Purchase Billing Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.purchase.billing")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'start_billing_date${value or ""}#{number_format=date;align=left}',
                                 'D3': 'end_billing_date${value or ""}#{number_format=date;align=left}',
                                 'B4': 'start_billing_due_date${value or ""}#{number_format=date;align=left}',
@@ -546,7 +562,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'SLA Purchase Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.sla.purchase")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'start_period_id.name${value or ""}',
                                 'D3': 'end_period_id.name${value or ""}',
                                 'B4': 'user_ids${value and ", ".join([x.display_name for x in value]) or ""}',
@@ -587,7 +603,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'SLA Employee Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.sla.employee")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'start_period_id.name${value or ""}',
                                 'D3': 'end_period_id.name${value or ""}',
                                 'B4': 'user_ids${value and ", ".join([x.display_name for x in value]) or ""}',
@@ -633,7 +649,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Supplier Receipt Follow Up Report': {
                             '_HEAD_': {
-                                'A1': '${env["res.company"].browse(env["res.company"]._company_default_get("xlsx.report.supplier.receipt.follow.up")).display_name}',
+                                'A1': '${env.user.company_id.display_name}',
                                 'B3': 'fiscalyear_id.name${value or ""}',
                                 'B4': 'account_id.code${value or ""}',
                                 'B5': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
@@ -647,12 +663,14 @@ result = pd.pivot_table(df, index=groupby,
                                 'C11': 'number${value or ""}',
                                 'D11': 'create_uid.display_name${value or ""}',
                                 'E11': 'date_value${value or ""}#{number_format=date}',
-                                'F11': 'move_ids${value and (value.mapped("match_import_id") and value.mapped("match_import_id").date_value or "") or ""}',
+                                'F11': 'move_ids${value and (value.mapped("match_import_id") and value.mapped("match_import_id").date_value or "") or ""}#{number_format=date}',
                                 'G11': 'narration${value or ""}',
                                 'H11': 'amount${value or 0}#{number_format=number}',
                                 'I11': 'payment_type${value or ""}',
                                 'J11': 'number_cheque${value or ""}',
                                 'K11': 'supplier_bank_id${value and " ".join(list(filter(lambda l: l != False, [value.bank_name, value.bank_branch.name]))) or ""}',
+                                'L11': 'supplier_bank_id.acc_number${value or ""}',
+                                'M11': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.street, value.street2, value.township_id.name, value.district_id.name, value.province_id.name, value.zip]))) or ""}'
                             },
                             '_TAIL_0': {
                                 'H11': '@{sum}#{font=bold;number_format=number}',

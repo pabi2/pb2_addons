@@ -206,7 +206,7 @@ class HRExpenseExpense(models.Model):
                                partner.user_ids[0].employee_ids[0].id or
                                False)
             domain = [('is_employee_advance', '=', True),
-                      ('state', 'in', ('done', 'paid')),
+                      ('state', '=', 'paid'),
                       ('employee_id', '=', ref_employee_id),
                       ('amount_to_clearing', '>', 0.0)]
             args += domain

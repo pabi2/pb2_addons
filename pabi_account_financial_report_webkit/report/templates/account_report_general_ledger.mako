@@ -139,6 +139,10 @@
                         %endif
                         ## created by
                         <div class="act_as_cell" style="width: 100px;">${_('Created by')}</div>
+                        ## Reconcile ID
+                        <div class="act_as_cell" style="width: 50px;">${_('Rec.ID')}</div>
+                        <div class="act_as_cell" style="width: 50px;">${_('Part.ID')}</div>
+
                     </div>
                 </div>
 
@@ -196,6 +200,9 @@
                               <div class="act_as_cell amount"></div>
                          %endif
                          ## created by
+                         <div class="act_as_cell"></div>
+                         ## Reconciled ID
+                         <div class="act_as_cell"></div>
                          <div class="act_as_cell"></div>
                         </div>
                       %endif
@@ -258,6 +265,9 @@
                           %endif
                           ## created by
                           <div class="act_as_cell">${line.get('created_name') or ''}</div>
+                          ## Reconciled ID
+                          <div class="act_as_cell">${line.get('reconcile_id') or ''}</div>
+                          <div class="act_as_cell">${line.get('partial_id') or ''}</div>
                       </div>
                       %endfor
                 </div>
@@ -284,6 +294,9 @@
                         %endif
                         ## created by
                         <div class="act_as_cell" style="width: 100px;"></div>
+                        ## Reconciled ID
+                        <div class="act_as_cell" style="width: 50px;"></div>
+                        <div class="act_as_cell" style="width: 50px;"></div>
                     </div>
                 </div>
             </div>

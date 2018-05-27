@@ -392,6 +392,11 @@ class PaymentExport(models.Model):
                 if void_cheque:
                     vals.update({'void': True,
                                  'note': rec.cancel_reason_txt})
+                # delete number_cheque
+                voucher = line.cheque_register_id.voucher_id
+                voucher.write({'number_cheque': False,
+                               'payment_export_id': False, })
+                # Delete infor in cheque.register
                 line.cheque_register_id.write(vals)
                 line.write({'exported': False})
 
