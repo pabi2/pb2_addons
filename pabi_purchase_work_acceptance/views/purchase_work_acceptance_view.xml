@@ -73,7 +73,7 @@
                     <h2>Supplier Evaluation</h2>
                     <group colspan="4">
                         <group>
-                            <field name="eval_line_ids" attrs="{'readonly': [('state','!=','evaluation')]}">
+                            <field name="eval_line_ids" attrs="{'readonly': [('state','!=','evaluation')]}" nolabel="1">
                                 <tree editable="bottom" edit="1" create="0" delete="0">
                                     <field name="case_id" invisible="1"/>
                                     <field name="case_id_readonly" readonly="1"/>
