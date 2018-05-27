@@ -1,0 +1,98 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+       <record id="view_purchase_work_acceptance_case_form" model="ir.ui.view">
+            <field name="name">purchase.work.acceptance.case.form</field>
+            <field name="model">purchase.work.acceptance.case</field>
+            <field name="arch" type="xml">
+                <form string="Case">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+       </record>
+       <record id="view_purchase_work_acceptance_case_tree" model="ir.ui.view">
+            <field name="name">purchase.work.acceptance.case.tree</field>
+            <field name="model">purchase.work.acceptance.case</field>
+            <field name="arch" type="xml">
+                <tree string="Case">
+                    <field name="name"/>
+                </tree>
+            </field>
+       </record>
+       <record id="view_purchase_work_acceptance_case_search" model="ir.ui.view">
+            <field name="name">purchase.work.acceptance.case.search</field>
+            <field name="model">purchase.work.acceptance.case</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="name"/>
+                </search>
+            </field>
+       </record>
+       <record id="action_purchase_work_acceptance_case_tree" model="ir.actions.act_window">
+            <field name="name">Work Acceptance Case</field>
+            <field name="res_model">purchase.work.acceptance.case</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Work Acceptance Case.
+              </p>
+            </field>
+       </record>
+
+       <menuitem action="action_purchase_work_acceptance_case_tree"
+                 id="menu_action_purchase_work_acceptance_case_tree"
+                 parent="pabi_procurement.menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
+
+       <record id="view_purchase_work_acceptance_score_form" model="ir.ui.view">
+            <field name="name">purchase.work.acceptance.score.form</field>
+            <field name="model">purchase.work.acceptance.score</field>
+            <field name="arch" type="xml">
+                <form string="Score">
+                    <group>
+                        <field name="case_id"/>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+       </record>
+       <record id="view_purchase_work_acceptance_score_tree" model="ir.ui.view">
+            <field name="name">purchase.work.acceptance.score.tree</field>
+            <field name="model">purchase.work.acceptance.score</field>
+            <field name="arch" type="xml">
+                <tree string="Score">
+                        <field name="case_id"/>
+                        <field name="name"/>
+                </tree>
+            </field>
+       </record>
+       <record id="view_purchase_work_acceptance_score_search" model="ir.ui.view">
+            <field name="name">purchase.work.acceptance.score.search</field>
+            <field name="model">purchase.work.acceptance.score</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="case_id"/>
+                    <field name="name"/>
+                </search>
+            </field>
+       </record>
+       <record id="action_purchase_work_acceptance_score_tree" model="ir.actions.act_window">
+            <field name="name">Work Acceptance Score</field>
+            <field name="res_model">purchase.work.acceptance.score</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Work Acceptance Score.
+              </p>
+            </field>
+       </record>
+       <menuitem action="action_purchase_work_acceptance_score_tree"
+                 id="menu_action_purchase_work_acceptance_score_tree"
+                 parent="pabi_procurement.menu_purchase_config_pabi_master"
+                 groups="purchase.group_purchase_manager"/>
+    </data>
+</openerp>

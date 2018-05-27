@@ -117,30 +117,36 @@ class PurchaseWorkAcceptance(models.Model):
         store=True,
         related='order_id.invoice_method',
     )
-    eval_receiving = fields.Selection(
-        selection=[
-            ('3', 'On time [3]'),
-            ('2', 'Late for 1-7 days [2]'),
-            ('1', 'Late for 8-14 days [1]'),
-            ('0', 'Late more than 15 days [0]'),
-        ],
-        string='Rate - Receiving',
-    )
-    eval_quality = fields.Selection(
-        selection=[
-            ('2', 'Better than expectation [2]'),
-            ('1', 'As expectation [1]'),
-        ],
-        string='Rate - Quality',
-    )
-    eval_service = fields.Selection(
-        selection=[
-            ('3', 'Excellent [3]'),
-            ('2', 'Good [2]'),
-            ('1', 'Satisfactory [1]'),
-            ('0', 'Needs Improvement [0]'),
-        ],
-        string='Rate - Service',
+    # eval_receiving = fields.Selection(
+    #     selection=[
+    #         ('3', 'On time [3]'),
+    #         ('2', 'Late for 1-7 days [2]'),
+    #         ('1', 'Late for 8-14 days [1]'),
+    #         ('0', 'Late more than 15 days [0]'),
+    #     ],
+    #     string='Rate - Receiving',
+    # )
+    # eval_quality = fields.Selection(
+    #     selection=[
+    #         ('2', 'Better than expectation [2]'),
+    #         ('1', 'As expectation [1]'),
+    #     ],
+    #     string='Rate - Quality',
+    # )
+    # eval_service = fields.Selection(
+    #     selection=[
+    #         ('3', 'Excellent [3]'),
+    #         ('2', 'Good [2]'),
+    #         ('1', 'Satisfactory [1]'),
+    #         ('0', 'Needs Improvement [0]'),
+    #     ],
+    #     string='Rate - Service',
+    # )
+    eval_line_ids = fields.One2many(
+        'purchase.work.acceptance.evaluation.line',
+        'acceptance_id',
+        string='Evaluation',
+        required=True,
     )
     state = fields.Selection(
         selection=_STATES,
@@ -510,6 +516,20 @@ class PurchaseWorkAcceptance(models.Model):
         return res
 
     @api.model
+    def default_get(self, field_list):
+        res = super(PurchaseWorkAcceptance, self).default_get(field_list)
+        Case = self.env['purchase.work.acceptance.case']
+        cases = Case.search([])
+        if cases:
+            eval_lines = []
+            for case_id in cases._ids:
+                eval_lines.append({
+                    'case_id': case_id,
+                })
+            res['eval_line_ids'] = eval_lines
+        return res
+
+    @api.model
     def change_invoice_detail(self):
         for wa in self:
             for wa_line in wa.acceptance_line_ids:
@@ -573,9 +593,18 @@ class PurchaseWorkAcceptance(models.Model):
         self.validate_amount_total_with_order()
         self.state = 'evaluation'
 
+
+    @api.model
+    def validate_evaluation(self):
+        self.ensure_one()
+        for eval_line in self.eval_line_ids:
+            if not eval_line.score_id:
+                raise ValidationError(
+                    _('All the scores must have been filled.'))
     @api.multi
     def action_done(self):
         self.ensure_one()
+        self.validate_evaluation()
         self.state = 'done'
 
     @api.multi
@@ -711,3 +740,54 @@ class PurchaseWorkAcceptanceLine(models.Model):
                 _("To Receive Quantity, %s, can't exceed balance quantity.") %
                 self.product_id.name
             )
+
+
+class PurchaseWorkAcceptanceEvaluationLine(models.Model):
+    _name = 'purchase.work.acceptance.evaluation.line'
+    _description = 'Purchase Work Acceptance Evaluation Line'
+
+    acceptance_id = fields.Many2one(
+        'purchase.work.acceptance',
+        string='Acceptance Reference',
+        ondelete='cascade',
+    )
+    case_id = fields.Many2one(
+        'purchase.work.acceptance.case',
+        string='Case',
+        ondelete='cascade',
+    )
+    case_name = fields.Char(
+        string='Case',
+        related='case_id.name',
+    )
+    score_id = fields.Many2one(
+        'purchase.work.acceptance.score',
+        string='Score',
+        ondelete='cascade',
+    )
+
+
+class PurchaseWorkAcceptanceCase(models.Model):
+    _name = 'purchase.work.acceptance.case'
+    _description = 'Purchase Work Acceptance Case'
+
+    name = fields.Char(
+        string='Case Name',
+    )
+
+
+class PurchaseWorkAcceptanceScore(models.Model):
+    _name = 'purchase.work.acceptance.score'
+    _description = 'Purchase Work Acceptance Score'
+
+    case_id = fields.Many2one(
+        'purchase.work.acceptance.case',
+        string='Case Name',
+
+    )
+    name = fields.Char(
+        string='Value',
+    )
+    score = fields.Integer(
+        string='Score',
+    )
