@@ -54,8 +54,9 @@ class XLSXReportPartnerDetail(models.TransientModel):
         help='Use compute fields, so there is nothing store in database',
     )
 
-    @api.one
+    @api.multi
     def _get_domain(self, partner_id):
+        self.ensure_one()
         domain = ['|', ('active', '=', True), ('active', '=', False)]
         if self.category_ids:
             domain += [('category_id', 'in', self.category_ids.ids)]
@@ -65,7 +66,7 @@ class XLSXReportPartnerDetail(models.TransientModel):
         customer_partner_ids = self.customer_partner_ids.ids
         supplier_partner_ids = self.supplier_partner_ids.ids
         if not self.customer and not self.supplier:
-            domain += [('customer', '=', False), ('supplier', '=', False)]
+            domain += [(partner_id, '=', 0)]
         elif self.customer and self.supplier:
             if not customer_partner_ids and not supplier_partner_ids:
                 domain += \
@@ -89,13 +90,14 @@ class XLSXReportPartnerDetail(models.TransientModel):
                 domain += [(partner_id, 'in', supplier_partner_ids)]
         return domain
 
-    @api.one
+    @api.multi
     def _compute_results(self):
+        self.ensure_one()
         self.partner_detail_results = \
             self.env['res.partner'].search(self._get_domain('id'), order="id")
         self.partner_bank_detail_results = \
             self.env['res.partner.view'] \
-                .search(self._get_domain('partner_id'), order="id")
+                .search(self._get_domain('partner_id'), order="partner_id")
 
 
 class ResPartnerView(models.Model):
