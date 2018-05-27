@@ -38,6 +38,10 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_report_partner_detail" name="Partner Detail" parent="menu_pabi_account_report" action="action_report_partner_detail" sequence="10"/>
+        <menuitem id="menu_report_partner_detail"
+            name="Partner Detail"
+            parent="menu_pabi_account_report"
+            action="action_report_partner_detail"
+            sequence="10"/>
     </data>
 </openerp>

@@ -4,11 +4,11 @@
         <record id="xlsx_report_supplier_receipt_follow_up_view" model="ir.ui.view">
             <field name="name">xlsx.report.supplier.receipt.follow.up.view</field>
             <field name="model">xlsx.report.supplier.receipt.follow.up</field>
+            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <form string="Supplier Receipt Follow Up Report">
-
-                    <!-- search criteria -->
-                    <group states="choose">
+                <data>
+                    <xpath expr="//group[@name='criteria']" position="inside">
                         <group>
                             <field name="fiscalyear_id"/>
                             <field name="partner_id"/>
@@ -17,43 +17,8 @@
                             <field name="account_id"/>
                             <field name="followup_receipt"/>
                         </group>
-                    </group>
-
-                    <!-- xlsx.report common field -->
-                    <div name="xlsx.report">
-                        <field name="state" invisible="1"/>
-                        <field name="name" invisible="1"/>
-                        <div states="choose" groups="pabi_utils.group_see_own_spool_report">
-                            <field name="async_process"/><label for="async_process"/>
-                            <field name="to_csv"/><label for="to_csv"/>
-                        </div>
-                        <div states="get">
-                            <h2 attrs="{'invisible': [('async_process', '=', True)]}">
-                                Complete Prepare Report (.xlsx)
-                            </h2>
-                            <h2 attrs="{'invisible': [('async_process', '=', False)]}">
-                                Report Enqueued (.xlsx)
-                            </h2>
-                            <p attrs="{'invisible': [('async_process', '=', True)]}" colspan="4">
-                                Here is the report file:
-                                <field name="data" filename="name" class="oe_inline"/>
-                            </p>
-                            <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
-                                Report UUID:
-                                <field name="uuid" class="oe_inline"/>
-                            </p>
-                        </div>
-                        <footer states="choose">
-                            <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
-                            or
-                            <button special="cancel" string="Cancel" type="object" class="oe_link"/>
-                        </footer>
-                        <footer states="get">
-                            <button special="cancel" string="Close" type="object"/>
-                        </footer>
-                    </div>
-
-                </form>
+                    </xpath>
+                </data>
             </field>
         </record>
 
@@ -65,7 +30,10 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_report_supplier_receipt_follow_up" name="Supplier Receipt Follow Up" parent="menu_pabi_account_report" action="action_report_supplier_receipt_follow_up" sequence="140"/>
-
+        <menuitem id="menu_report_supplier_receipt_follow_up"
+            name="Supplier Receipt Follow Up"
+            parent="menu_pabi_account_report"
+            action="action_report_supplier_receipt_follow_up"
+            sequence="110"/>
     </data>
 </openerp>
