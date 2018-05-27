@@ -7,6 +7,8 @@ class AccountVoucher(models.Model):
 
     @api.multi
     def proforma_voucher(self):
+        """ Payment to reconcile invoice is a natural case,
+        auto_reconcile_id is not required """
         res = super(AccountVoucher, self).proforma_voucher()
         for voucher in self:
             # auto reconcile special account, get all releated move_lines

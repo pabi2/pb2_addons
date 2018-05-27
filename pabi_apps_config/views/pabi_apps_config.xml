@@ -42,6 +42,10 @@
                                 <label for="employee_advance_account_id"/>
                                 <field name="employee_advance_account_id" class="oe_inline"/>
                             </div>
+                            <div>
+                                <label for="other_deposit_account_ids"/>
+                                <field name="other_deposit_account_ids" class="oe_inline" widget="many2many_tags"/>
+                            </div>
                         </div>
                     </group>
                     <group>

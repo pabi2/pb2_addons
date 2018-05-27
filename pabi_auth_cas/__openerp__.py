@@ -6,12 +6,12 @@
     'category': 'NSTDA-BASE',
     'depends': ['base', 'base_setup', 'web'],
     'data': [
-            'static/src/views/nstdaauth_cas.xml',
+            'static/src/views/auth_cas.xml',
             'res_config_view.xml',
             'ir_ui_menu_view.xml'
     ],
     'qweb': [
-        "static/src/xml/nstdaauth_cas.xml"
+        "static/src/xml/auth_cas.xml"
     ],
     'installable': True,
     'external_dependencies': {

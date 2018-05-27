@@ -12,6 +12,7 @@
           * Stock Borrow
           * Payment Export
           * Account Interface
+          * POS Order
         -->
         <record id="doctype_purchase_requisition" model="res.doctype" >
             <field name="name">Purchase Requisition</field>
@@ -107,6 +108,11 @@
             <field name="name">Purchase Billing</field>
             <field name="sequence_id" ref="doctype_purchase_billing_seq"/>
             <field name="refer_type">purchase_billing</field>
+        </record>
+        <record id="doctype_pos_order" model="res.doctype" >
+            <field name="name">POS Order</field>
+            <field name="sequence_id" ref="doctype_pos_order_seq"/>
+            <field name="refer_type">pos_order</field>
         </record>
 
     </data>

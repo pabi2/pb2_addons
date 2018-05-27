@@ -91,6 +91,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='company_id']" position="after">
 
+                    <field name="taxbranch_id"/>
+                    
                     <field name="spa_id"/>
                     <field name="mission_id"/>
                     <field name="tag_type_id"/>
@@ -108,7 +110,6 @@
                     <field name="division_id"/>
                     <field name="section_id"/>
                     <field name="costcenter_id"/>
-                    <field name="taxbranch_id"/>
 
                     <field name="invest_asset_id"/>
 

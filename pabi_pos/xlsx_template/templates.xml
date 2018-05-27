@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-        # POS Order
+        # Consigned Order
         <!-- Directory Templates -->
         <record model="document.directory" id="dir_pos_order_template">
             <field name="name">POS Template</field>
@@ -12,11 +12,11 @@
         </record>
 
         <!-- POS Template -->
-        <record id="pos_order_xlsx_template" model="ir.attachment">
+        <record id="consigned_order_xlsx_template" model="ir.attachment">
             <field name="res_model">sale.order</field>
             <field name="datas"></field>
-            <field name="datas_fname">pos_order.xlsx</field>
-            <field name="name">POS Order Template</field>
+            <field name="datas_fname">consigned_order.xlsx</field>
+            <field name="name">Consigned Order</field>
             <field name="parent_id" eval="ref('dir_pos_order_template')"/>
             <field name="description">
               {
@@ -47,6 +47,49 @@
 
             }
           </field>
+        </record>
+
+
+        # Supplier Consignment Report
+        <record id="xlsx_report_supplier_consignment" model="ir.attachment">
+            <field name="res_model">xlsx.report.supplier.consignment</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_supplier_consignment.xlsx</field>
+            <field name="name">Supplier Consignment</field>
+            <field name="parent_id" eval="ref('dir_pos_order_template')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Supplier Consignment Report': {
+                            '_HEAD_': {
+                                'B3': 'consign_partner_id.display_name',
+                                'B4': 'workflow_process_ids${value and ", ".join(value.mapped("location_id.name")) or ""}',
+                                'D4': 'date_from#{number_format=date;align=left}',
+                                'E4': 'date_to#{number_format=date;align=left}',
+                                'B5': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                                'B6': '${env.user.display_name}',
+                            },
+                            'results': {
+                                'A9': 'order_id.name${value or ""}',
+                                'B9': 'order_id.date_order#{number_format=date;align=left}',
+                                'C9': 'product_id.code${value or ""}',
+                                'D9': 'product_id.name${value or ""}',
+                                'E9': 'order_id.workflow_process_id.location_id.name${value or ""}',
+                                'F9': 'product_uom_qty',
+                                'G9': 'product_id.standard_price',
+                                'H9': '${"=G9*F9"}',
+                                'I9': 'price_unit',
+                                'J9': 'price_subtotal',
+                            },
+                            '_TAIL_0': {
+                                'F9': '@{sum}#{font=bold;number_format=number}',
+                                'H9': '@{sum}#{font=bold;number_format=number}',
+                                'J9': '@{sum}#{font=bold;number_format=number}',
+                            }
+                        }
+                    }
+                }
+            </field>
         </record>
 
     </data>

@@ -39,6 +39,8 @@ PABI2 Extension to l10n_th_doctype for,
         'pabi_loan_installment',
         'pabi_bank_statement_reconcile',
         'pabi_purchase_billing',
+        'l10n_th_doctype_order',
+        'pabi_pos',
     ],
     "data": [
         "data/ir_sequence_data.xml",

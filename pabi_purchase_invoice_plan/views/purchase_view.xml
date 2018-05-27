@@ -19,6 +19,11 @@
                 <xpath expr="//field[@name='use_advance']" position="after">
                     <field name="advance_rounding" attrs="{'invisible': [('use_advance', '=', False)]}"/>
                 </xpath>
+                <xpath expr="//field[@name='use_deposit']" position="after">
+                    <field name="account_deposit_supplier"
+                      attrs="{'invisible': [('use_deposit', '=', False), ('use_advance', '=', False)],
+                              'required': ['|', ('use_deposit', '=', True), ('use_advance', '=', True)]}"/>
+                </xpath>
                 <xpath expr="//button[@name='action_cancel_draft_invoices']" position="attributes">
                     <attribute name="attrs">{'invisible':['|',('state', 'not in', ('approved')),
                                                  '|',('invoice_method', '!=', 'invoice_plan'),

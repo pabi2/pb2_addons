@@ -12,9 +12,13 @@
                         <field name="operating_unit_id" required="1"/>
                         <field name="taxbranch_id" required="1"/>
                         <field name="warehouse_id" required="1"/>
+                        <field name="location_id" required="1"/>
                         <field name="res_section_id" required="1"/>
                     </group>
                 </xpath>
+                <field name="validate_invoice" position="attributes">
+                    <attribute name="string">Validate Invoice/Payment</attribute>
+                </field>
                 <field name="property_journal_id" position="after">
                     <field name="voucher_journal_id"/>
                     <field name="partner_bank_id"/>

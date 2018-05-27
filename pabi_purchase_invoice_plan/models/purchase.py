@@ -16,6 +16,17 @@ class PurchaseOrder(models.Model):
         string="Advance Rounding",
         readonly=True,
     )
+    account_deposit_supplier = fields.Many2one(
+        'account.account',
+        string='Advance/Deposit Account',
+        domain=lambda self:
+        [('id', 'in', self.env.user.company_id.other_deposit_account_ids.ids)],
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        default=lambda self: self.env.user.company_id.account_deposit_supplier,
+        help="This account will be used as default for invoices created by "
+        "invoice plan. You can change it."
+    )
 
     @api.model
     def _action_invoice_create_hook(self, invoice_ids):
@@ -26,7 +37,8 @@ class PurchaseOrder(models.Model):
                 self.invoice_method == 'invoice_plan':
             adv_invoice = self.env['account.invoice'].\
                 search([('id', 'in', invoice_ids), ('is_advance', '=', True)])
-            adv_amount = adv_invoice[0].invoice_line[0].price_unit
+            adv_amount = adv_invoice and \
+                adv_invoice[0].invoice_line[0].price_unit or 0.0
             invoices = self.env['account.invoice'].\
                 search([('id', 'in', invoice_ids), ('is_advance', '=', False)],
                        order='date_invoice')
@@ -101,6 +113,11 @@ class PurchaseOrder(models.Model):
     def _prepare_deposit_invoice_line(self, name, order, amount):
         res = super(PurchaseOrder, self).\
             _prepare_deposit_invoice_line(name, order, amount)
+        # Use manual deposit account.
+        res.update({'account_id': order.account_deposit_supplier.id})
+        if not res['account_id']:
+            raise ValidationError(_('No advance/deposit account seleted!'))
+        # --
         AnayticAccount = self.env['account.analytic.account']
         dimensions = AnayticAccount._analytic_dimensions()
         for d in dimensions:

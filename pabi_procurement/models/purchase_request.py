@@ -343,6 +343,8 @@ class PurchaseRequest(models.Model):
                  'purchase_price_range_id': 'Price Range',
                  'committee_ids': 'Commitee', }
         for pr in self:
+            if pr.is_small_amount:
+                continue
             for field in _dict.keys():
                 if field in pr and not pr[field]:
                     raise ValidationError(

@@ -9,6 +9,9 @@
             <field name="arch" type="xml">
                 <search string="Search Cheque Lot">
                     <field name="name"/>
+                    <field name="journal_id"/>
+                    <filter name="state" string="Active" domain="[('state','=','active')]"/>
+                    <filter name="state" string="Inactive" domain="[('state','=','inactive')]"/>
                     <group expand="0" string="Group By...">
                         <filter string="Payment Method" domain="[]" context="{'group_by':'journal_id'}"/>
                     </group>
