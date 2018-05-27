@@ -19,13 +19,13 @@ class StockMove(models.Model):
                 # Case picking from SO
                 if picking.sale_id:
                     account_moves = pick_mlines.mapped('move_id')
-                    object = picking.sale_id.name
+                    object = picking.sale_id
                 else:
                     purchase = picking.move_lines.\
                         mapped('purchase_line_id.order_id')
                     if purchase:
                         account_moves = pick_mlines.mapped('move_id')
-                        object = purchase.name
+                        object = purchase
                 # Got something to reconcile
                 if account_moves and object:
                     auto_id = Auto.get_auto_reconcile_id(object)

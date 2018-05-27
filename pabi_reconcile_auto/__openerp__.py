@@ -18,6 +18,9 @@ Currently we have dont for following events,
 * HR Expense Advance -> Clearing/Return (use Advance document as auto_id)
 * Inv Plan Adv/Deposit -> Cleared by following invoices (SO/PO as auto_id)
 * GR/IR -> clearing between Picking and Invoice (SO/PO as auto_id)
+* Cash On Delivery -> Clear when clear prepaid account (PO as auto_id)
+* Recurring -> Clear when Auto Reverse (Original JE as auto_ids)
+
     """,
     "website": "https://nstda.or.th/",
     "author": "Kitti U.",

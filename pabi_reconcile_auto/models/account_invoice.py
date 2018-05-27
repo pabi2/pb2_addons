@@ -30,10 +30,11 @@ class AccountInvoice(models.Model):
             #       - Case GR/IR, manual or on demand (see stock.py)
             # Use order (po,so) as auto_reconcile_id
             if invoice.source_document_type in ('purchase', 'sale'):
-                object = invoice.source_document_id.name
+                object = invoice.source_document_id
                 if object:
                     auto_id = Auto.get_auto_reconcile_id(object)
-                    invoice.move_id.write({'auto_reconcile_id': auto_id})
+                    moves = invoice.move_id | invoice.clear_prepaid_move_id
+                    moves.write({'auto_reconcile_id': auto_id})
                     mlines = MoveLine.search([
                         ('auto_reconcile_id', '=', auto_id)])
                     mlines.reconcile_special_account()

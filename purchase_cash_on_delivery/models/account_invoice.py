@@ -76,19 +76,19 @@ class AccountInvoice(models.Model):
                 'account_id': False  # Should be same
             }
             for l in ml:
-                l = l[2]  # get dict form
+                x = l[2]  # get dict form
                 merged_ml.update({
                     'name': account.name,
-                    'ref': l['ref'],
-                    'currency_id': l['currency_id'],
-                    'credit': merged_ml['credit'] + l['credit'],
-                    'date_maturity': l['date_maturity'],
-                    'debit': merged_ml['debit'] + l['debit'],
-                    'date': l['date'],
+                    'ref': x['ref'],
+                    'currency_id': x['currency_id'],
+                    'credit': merged_ml['credit'] + x['credit'],
+                    'date_maturity': x['date_maturity'],
+                    'debit': merged_ml['debit'] + x['debit'],
+                    'date': x['date'],
                     'amount_currency': (merged_ml['amount_currency'] +
-                                        l['amount_currency']),
-                    'partner_id': l['partner_id'],
-                    'account_id': l['account_id'],
+                                        x['amount_currency']),
+                    'partner_id': x['partner_id'],
+                    'account_id': x['account_id'],
                 })
             move_lines = [(0, 0, merged_ml)] + move_lines
         move_lines = super(AccountInvoice, self).\

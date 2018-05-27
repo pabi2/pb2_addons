@@ -39,16 +39,17 @@ class StockPicking(models.Model):
         move. But for in/out, product must be periodic to avoid account move
         """
         for rec in self:
-            if not (rec.force_location_id.usage == 'internal' and
-                    rec.force_location_dest_id.usage == 'internal'):
-                if 'real_time' in \
-                        rec.move_lines.mapped('product_id.valuation'):
+            if self._context.get('use_easy_internal_transfer', False):
+                if not (rec.force_location_id.usage == 'internal' and
+                        rec.force_location_dest_id.usage == 'internal'):
+                    if 'real_time' in \
+                            rec.move_lines.mapped('product_id.valuation'):
+                        raise ValidationError(
+                            _('For non-internal tranfer, only products with \n'
+                              'inventory valuation = periodic are allowed'))
+                if rec.force_location_id == rec.force_location_dest_id:
                     raise ValidationError(
-                        _('For non-internal tranfer, only products with \n'
-                          'inventory valuation = periodic are allowed'))
-            if rec.force_location_id == rec.force_location_dest_id:
-                raise ValidationError(
-                    _('Source and destination should not be the same'))
+                        _('Source and destination should not be the same'))
         return super(StockPicking, self).action_confirm()
 
 
