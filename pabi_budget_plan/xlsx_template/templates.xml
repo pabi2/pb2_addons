@@ -672,5 +672,73 @@
           </field>
         </record>
 
+        <!-- Personnel Costcenter Tempalte -->
+        <record id="budget_plan_personnel_xlsx_template" model="ir.attachment">
+            <field name="res_model">budget.plan.personnel</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_plan_personnel_20180522.xlsx</field>
+            <field name="name">Personnel Template</field>
+            <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'HR-Expense': {
+                        '_HEAD_': {
+                            'F2': 'fiscalyear_id.name',
+                            'F3': '${"?????"}',
+                            'F4': '${"?????"}',
+                            'F5': '${time.strftime("%d/%m/%Y")}',
+                            'F6': 'user_id.name${value or ""}'
+                        },
+                        'plan_line_ids[18]': {
+                            # 'C11': 'personnel_costcenter_id${value and value.org_id.name_short or ""}',
+                            # 'D11': 'personnel_costcenter_id${value and value.code or ""}',
+                            # 'E11': 'personnel_costcenter_id${value and value.name or ""}',
+                            # 'F11': 'activity_group_id.name${value or ""}',
+                            # 'G11': 'name${value or ""}',
+                            'H11': 'm0',
+                            'I11': 'm1',
+                            'J11': 'm2',
+                            'K11': 'm3',
+                            'L11': 'm4',
+                            'M11': 'm5',
+                            'N11': 'm6',
+                            'O11': 'm7',
+                            'P11': 'm8',
+                            'Q11': 'm9',
+                            'R11': 'm10',
+                            'S11': 'm11',
+                            'T11': 'm12',
+                        }
+                    },
+                },
+                '__IMPORT__': {
+                    'HR-Expense': {
+                        'plan_line_ids[18]': {
+                            'C11': 'org_id',
+                            'D11': 'personnel_costcenter_id',
+                            # 'E11': 'personnel_costcenter_id',
+                            'F11': 'activity_group_id',
+                            'G11': 'name',
+                            'H11': 'm0',
+                            'I11': 'm1',
+                            'J11': 'm2',
+                            'K11': 'm3',
+                            'L11': 'm4',
+                            'M11': 'm5',
+                            'N11': 'm6',
+                            'O11': 'm7',
+                            'P11': 'm8',
+                            'Q11': 'm9',
+                            'R11': 'm10',
+                            'S11': 'm11',
+                            'T11': 'm12',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
     </data>
 </openerp>
