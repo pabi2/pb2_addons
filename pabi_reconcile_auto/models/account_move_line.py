@@ -28,7 +28,7 @@ class AccountMoveLine(models.Model):
             debit = sum(to_rec.mapped('debit'))
             credit = sum(to_rec.mapped('credit'))
             if debit == 0.0 or credit == 0.0:
-                return
+                continue
             # --
             if len(to_rec) >= 2:
                 if debit != credit:

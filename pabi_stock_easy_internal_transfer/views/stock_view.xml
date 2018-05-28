@@ -149,6 +149,7 @@
             <field name="domain">[('picking_type_id.code', '=', 'internal')]</field>
             <field name="context">{
                 'contact_display': 'partner_address',
+                'use_easy_internal_transfer': True,
             }
             </field>
             <field name="search_view_id" ref="stock.view_picking_internal_search"/>
