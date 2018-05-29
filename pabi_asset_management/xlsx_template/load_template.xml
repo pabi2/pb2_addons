@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- This function is called after all ir.attachment is loaded
+            to load the file content to relevant template_ids -->
+        <function model="ir.attachment" name="load_xlsx_template">
+            <value eval="[ref('asset_changeowner_template'),
+                          ref('asset_transfer_template'),
+                          ref('asset_removal_template'),
+                          ref('asset_receive_template'),
+                          ref('adjust_asset_depre_template'),]"/>
+            <value>pabi_asset_management/xlsx_template</value>
+        </function>
+    </data>
+</openerp>

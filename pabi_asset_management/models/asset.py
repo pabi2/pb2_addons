@@ -331,6 +331,11 @@ class AccountAsset(ChartFieldAction, models.Model):
         help="Search POs from purchase_id and "
         "adjust_id.invoice_id.expense_id.ship_purchase_id",
     )
+    manual = fields.Boolean(
+        string='Excel Import',
+        compute='_compute_manual',
+        help="True, if any line imported manually by excel."
+    )
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
 
@@ -342,6 +347,12 @@ class AccountAsset(ChartFieldAction, models.Model):
             self.env['res.building']._check_room_location(rec.building_id,
                                                           rec.floor_id,
                                                           rec.room_id)
+
+    @api.multi
+    def _compute_manual(self):
+        for rec in self:
+            rec.manual = rec.depreciation_line_ids.mapped('manual') and \
+                True or False
 
     @api.onchange('building_id')
     def _onchange_building_id(self):
@@ -627,6 +638,24 @@ class AccountAsset(ChartFieldAction, models.Model):
             })
         return move_line_dict
 
+    @api.multi
+    def post_import_validation(self):
+        for rec in self:
+            # Delete some unused imported line
+            rec.depreciation_line_ids.filtered(
+                lambda x:  # 1. copied posted line, 2 copied init line
+                (not x.move_id and not x.manual) or
+                (x.type != "create" and not x.line_days)
+            ).unlink()
+            # Re-assign previous id all over again to ensure
+            # computed fields are valid
+            previous_line = False
+            for line in rec.depreciation_line_ids.\
+                    filtered(lambda x: x.type == 'depreciate').\
+                    sorted(key=lambda r: r.line_date):
+                line.previous_id = previous_line
+                previous_line = line
+
 
 class AccountAssetProfile(models.Model):
     _inherit = 'account.asset.profile'
@@ -703,6 +732,12 @@ class AccountAssetLine(models.Model):
         string='Accumulated Amount',
         compute='_compute_amount_accumulated',
         store=True,
+    )
+    manual = fields.Boolean(
+        string='Excel Import',
+        default=False,
+        readonly=True,
+        help="True, if imported manually by excel."
     )
 
     @api.multi
