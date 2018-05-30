@@ -685,8 +685,6 @@
                     'HR-Expense': {
                         '_HEAD_': {
                             'F2': 'fiscalyear_id.name',
-                            'F3': '${"?????"}',
-                            'F4': '${"?????"}',
                             'F5': '${time.strftime("%d/%m/%Y")}',
                             'F6': 'user_id.name${value or ""}'
                         },
