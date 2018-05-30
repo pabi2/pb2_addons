@@ -42,7 +42,7 @@
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
-                            <button string="Regenerate Policy XLines" name="generate_policy_line" type="object" attrs="{'invisible': ['|', ('id', '=', False), ('state', '!=', 'draft')]}"/>
+                            <button string="Regenerate Policy Lines" name="generate_policy_line" type="object" attrs="{'invisible': ['|', ('id', '=', False), ('state', '!=', 'draft')]}"/>
                             <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text" name="action_open_breakdown"
                                 attrs="{'invisible': ['|', ('state', '!=', 'done'), ('chart_view', 'in', ('project_base', 'invest_construction'))]}">
                                 <field string="Breakdowns" name="breakdown_count" widget="statinfo"/>
