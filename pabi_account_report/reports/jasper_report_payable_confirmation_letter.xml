@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="jasper_report_payable_confirmation_letter_view" model="ir.ui.view">
+            <field name="name">jasper.report.payable.confirmation.letter</field>
+            <field name="model">jasper.report.payable.confirmation.letter</field>
+            <field name="inherit_id" ref="pabi_account_report.jasper_report_account_common_view"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <field name="date_from" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_to" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_from" position="before">
+                    <field name="date_report"/>
+                </field>
+                <field name="fiscalyear_ids" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <xpath expr="//page[1]" position="after">
+                    <page string="Accounts Filters" name="accounts">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="account_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id), ('type', '=', 'payable')]">
+                            <tree>
+                                <field name="code"/>
+                                <field name="name"/>
+                                <field name="type"/>
+                                <field name="company_id"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Partners Filters" name="partners">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id), ('supplier', '=', True)]"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_report_payable_confirmation_letter" model="ir.actions.act_window">
+            <field name="name">Payable Confirmation Letter Report</field>
+            <field name="res_model">jasper.report.payable.confirmation.letter</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_report_payable_confirmation_letter"
+            name="Payable Confirmation Letter"
+            parent="menu_pabi_account_report"
+            action="action_report_payable_confirmation_letter"
+            sequence="120"/>
+    </data>
+</openerp>

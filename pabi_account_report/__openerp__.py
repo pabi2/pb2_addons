@@ -17,9 +17,11 @@
     ],
     'data': [
         'data/menu.xml',
+        'data/report_data.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/load_template.xml',
         # Reports
+        'reports/report_account_common.xml',
         'reports/xlsx_report_partner_detail.xml',
         'reports/xlsx_report_advance_status.xml',
         'reports/xlsx_report_supplier_invoice_detail.xml',
@@ -32,6 +34,7 @@
         'reports/xlsx_report_sla_purchase.xml',
         'reports/xlsx_report_sla_employee.xml',
         'reports/xlsx_report_supplier_receipt_follow_up.xml',
+        'reports/jasper_report_payable_confirmation_letter.xml',
     ],
     'demo': [
     ],

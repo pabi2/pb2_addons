@@ -24,8 +24,10 @@ class AccountInvoice(models.Model):
 
     @api.constrains('date_receipt_billing')
     def _validate_date_receipt_billing(self):
-        if self.date_receipt_billing < time.strftime('%Y-%m-%d'):
-            raise ValidationError(
-                _("You specified wrong billing receipt date "
-                  "It must be more than or equal %s"
-                    % (time.strftime('%d/%m/%Y'))))
+        date_receipt_billing = self.date_receipt_billing
+        if date_receipt_billing:
+            if date_receipt_billing < time.strftime('%Y-%m-%d'):
+                raise ValidationError(
+                    _("You specified wrong billing receipt date "
+                      "It must be more than or equal %s"
+                      % (time.strftime('%d/%m/%Y'))))

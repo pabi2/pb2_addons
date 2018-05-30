@@ -128,7 +128,8 @@ class PurchaseBilling(models.Model):
 
     @api.constrains('date_sent')
     def _validate_date_sent(self):
-        if self.date_sent < time.strftime('%Y-%m-%d'):
+        date_sent = self.date_sent
+        if date_sent and date_sent < time.strftime('%Y-%m-%d'):
             raise ValidationError(
                 _("You specified wrong billing sent date "
                   "It must be more than or equal %s"
