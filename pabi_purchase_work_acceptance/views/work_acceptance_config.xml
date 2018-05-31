@@ -55,6 +55,7 @@
                     <group>
                         <field name="case_id"/>
                         <field name="name"/>
+                        <field name="score"/>
                     </group>
                 </form>
             </field>
@@ -66,6 +67,7 @@
                 <tree string="Score">
                         <field name="case_id"/>
                         <field name="name"/>
+                        <field name="score"/>
                 </tree>
             </field>
        </record>

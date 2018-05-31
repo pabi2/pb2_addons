@@ -766,6 +766,15 @@ class PurchaseWorkAcceptanceEvaluationLine(models.Model):
         string='Score',
         ondelete='cascade',
     )
+    score = fields.Integer(
+        string='Score',
+    )
+
+    @api.onchange('score_id')
+    def onchange_score_id(self):
+        for eval_line in self:
+            if eval_line.score_id:
+                eval_line.score = eval_line.score_id.score
 
 
 class PurchaseWorkAcceptanceCase(models.Model):
