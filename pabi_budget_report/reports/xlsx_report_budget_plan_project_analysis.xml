@@ -35,6 +35,7 @@
         <menuitem id="menu_report_budget_plan_project_analysis"
           name="Budget Plan Analysis"
           parent="pabi_budget_plan.menu_action_budget_plan_project"
+          groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget"
           action="action_report_budget_plan_project_analysis"
           sequence="40"/>
 

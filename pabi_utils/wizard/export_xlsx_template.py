@@ -147,6 +147,16 @@ def get_line_max(line_field):
     return (line_field, False)
 
 
+def get_groupby(line_field):
+    """i.e., line_field = line_ids["a_id, b_id"], groupby = ["a_id", "b_id"]"""
+    if line_field and '[' in line_field and ']' in line_field:
+        i = line_field.index('[')
+        j = line_field.index(']')
+        groupby = literal_eval(line_field[i:j+1])
+        return groupby
+    return False
+
+
 def split_row_col(pos):
     match = re.match(r"([a-z]+)([0-9]+)", pos, re.I)
     if not match:
@@ -388,11 +398,14 @@ class ExportXlsxTemplate(models.TransientModel):
                 if not st:
                     raise ValidationError(
                         _('Sheet %s not found!') % sheet_name)
-
                 # ================ HEAD ================
                 self._fill_head(ws, st, record)
                 # ============= Line Items =============
-                all_rc, max_row, tail_fields = self._fill_lines(ws, st, record)
+                # Check for groupby directive
+                groupbys = {key: ws[key] for key in
+                            filter(lambda l: l[0:9] == '_GROUPBY_', ws.keys())}
+                all_rc, max_row, tail_fields = self._fill_lines(ws, st, record,
+                                                                groupbys)
                 # ================ TAIL ================
                 self._fill_tail(ws, st, record, tail_fields)
 
@@ -461,18 +474,68 @@ class ExportXlsxTemplate(models.TransientModel):
                 fill_cell_format(st[rc], field_format)
 
     @api.model
-    def _fill_lines(self, ws, st, record):
+    def _fill_lines(self, ws, st, record, groupbys):
         all_rc = []
         max_row = 0
-        line_fields = \
-            filter(lambda l: l[0:6] not in ('_HEAD_', '_TAIL_', '_BI_'), ws)
+
+        line_fields = ws.keys()
+        for x in ('_HEAD_', '_TAIL_', '_GROUPBY_', '_BI_'):
+            for line_field in line_fields:
+                if x in line_field:
+                    line_fields.remove(line_field)
         tail_fields = {}  # Keep tail cell, to be used in _TAIL_
         for line_field in line_fields:
+
+            subtotals = {'rows': [], 'totals': {}, 'formats': {}}
+            # ====== GROUP BY =========
+            groupby_keys = filter(lambda l: '_GROUPBY_%s' % line_field in l,
+                                  groupbys.keys())
+            if groupby_keys:
+                groupby = get_groupby(groupby_keys[0])
+                groupby_dict = groupbys[groupby_keys[0]]
+                # If value in groupby changes, mark the row index
+                i = 0
+                old_val = []
+                for line in record[line_field]:
+                    val = []
+                    for key in groupby:
+                        val.append(line[key])
+                    if i > 0 and val != old_val:
+                        subtotals['rows'].append(i)
+                    old_val = val
+                    i += 1
+                subtotals['rows'].append(i)
+                # For the aggregrate column
+                for cell in groupby_dict.keys():
+                    col, row = split_row_col(cell)
+                    first_row = row
+                    cell_format = groupby_dict[cell]
+                    _, grp_func = get_field_aggregation(cell_format)
+                    _, grp_format = get_field_format(cell_format)
+
+                    cell_field = ws[line_field][cell]
+                    subtotals['totals'].update({cell_field: []})
+                    subtotals['formats'].update({cell_field: []})
+                    for i in subtotals['rows']:
+                        from_cell = '%s%s' % (col, row)
+                        to_cell = '%s%s' % (col, first_row+i-1)
+                        subtotals['totals'][cell_field].append(
+                            grp_func and
+                            '=%s(%s:%s)' % (grp_func, from_cell, to_cell) or
+                            '')
+                        subtotals['formats'][cell_field].append(grp_format)
+                        first_row += 1
+                        row = first_row+i
+                # --
+
+            sb_rows = [i + v for i, v in enumerate(subtotals.get('rows', []))]
+            sb_totals = subtotals.get('totals', {})
+            sb_formats = subtotals.get('formats', {})
+
             fields = ws.get(line_field, {}).values()
             all_rc += ws.get(line_field, {}).keys()
             (vals, func, field_format) = \
                 self._get_line_vals(record, line_field, fields)
-
             # value with '\\skiprow' signify line skipping
             vals = add_row_skips(vals)
 
@@ -494,6 +557,24 @@ class ExportXlsxTemplate(models.TransientModel):
                         if field_format.get(field, False):
                             fill_cell_format(st[new_rc],
                                              field_format[field])
+                        # ====== GROUP BY =========
+                        for j in sb_rows:
+                            if i == j-1:
+                                new_row = row + i
+                                if sb_totals.get(field, False):
+                                    new_rc = '%s%s' % (col, new_row+1)
+                                    row_val = sb_totals[field][0]
+                                    st[new_rc] = str_to_number(row_val)
+                                    sb_totals[field].pop(0)
+                                if sb_formats.get(field, False):
+                                    new_rc = '%s%s' % (col, new_row+1)
+                                    grp_format = sb_formats[field][0]
+                                    if grp_format:
+                                        fill_cell_format(st[new_rc],
+                                                         grp_format)
+                                    sb_formats[field].pop(0)
+                                i += 1
+                        # --
                         if new_row > max_row:
                             max_row = new_row
                         i += 1
@@ -503,7 +584,9 @@ class ExportXlsxTemplate(models.TransientModel):
                     new_row += 1
                     f_rc = '%s%s' % (col, new_row)
                     st[f_rc] = '=%s(%s:%s)' % (f, rc, new_rc)
+
                 tail_fields[rc] = new_rc   # Last row field
+
         return all_rc, max_row, tail_fields
 
     @api.model

@@ -17,6 +17,7 @@
         'security/security_rule_budget_unit.xml',
         'security/security_rule_budget_project.xml',
         'security/security_rule_budget_construction.xml',
+        'security/security_rule_budget_personnel.xml',
         'security/security_rule_budget_asset.xml',
         'security/security_rule_plan_unit.xml',
         'security/security_rule_plan_project.xml',

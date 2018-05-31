@@ -32,6 +32,7 @@
         <menuitem id="menu_report_budget_plan_construction_analysis"
           name="Budget Plan Analysis"
           parent="pabi_budget_plan.menu_action_budget_plan_invest_construction"
+          groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget"
           action="action_report_budget_plan_construction_analysis"
           sequence="100"/>
 

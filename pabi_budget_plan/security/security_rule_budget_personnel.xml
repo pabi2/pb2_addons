@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- Construction / Cooperate see all and edit -->
+        <record id="property_rule_account_budget_personnel" model="ir.rule">
+            <field name="name">Budget Cooperate - Personnel Access</field>
+            <field name="model_id" ref="account_budget_activity.model_account_budget"/>
+            <field name="domain_force">[('chart_view', '=', 'personnel')]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget')),
+                                        (4,ref('pabi_base.group_budget_personnel'))]"/>
+            <field eval="1" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="1" name="perm_create"/>
+        </record>
+        <record id="property_rule_account_budget_line_personnel_cooperate" model="ir.rule">
+            <field name="name">Budget Cooperate - Budget Line Personnel Access</field>
+            <field name="model_id" ref="account_budget_activity.model_account_budget_line"/>
+            <field name="domain_force">[('chart_view', 'in', [False, 'invest_construction'])]</field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_cooperate_budget')),
+                                        (4,ref('pabi_base.group_budget_personnel'))]"/>
+            <field eval="1" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="1" name="perm_create"/>
+        </record>
+
+    </data>
+</openerp>

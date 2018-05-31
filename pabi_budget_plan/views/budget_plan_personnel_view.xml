@@ -119,7 +119,8 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_plan_personnel" id="menu_budget_plan_personnel_view" action="action_budget_plan_personnel_view" sequence="10"/>
+        <menuitem parent="menu_action_budget_plan_personnel" id="menu_budget_plan_personnel_view" action="action_budget_plan_personnel_view" sequence="10"
+          groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
 
         <!-- Budget Plan Line -->
 
@@ -191,7 +192,8 @@
             <field name="view_id" ref="view_budget_plan_personnel_line_tree"/>
         </record>
 
-        <menuitem parent="menu_action_budget_plan_personnel" id="menu_act_budget_plan_personnel_line_view" action="act_budget_plan_personnel_line_view" sequence="20"/>
+        <menuitem parent="menu_action_budget_plan_personnel" id="menu_act_budget_plan_personnel_line_view" action="act_budget_plan_personnel_line_view" sequence="20"
+          groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
 
     </data>
 </openerp>
