@@ -151,15 +151,13 @@
                           'D9': 'amount',
                           'E9': 'move_check${value and "X" or ""}',
                       },
-                      '_GROUPBY_depreciation_line_ids["fiscalyear_id", "line_date"]': {  # groupby
-                          'B9': '#{font=bold;number_format=number}',
-                          'C9': '@{sum}#{font=bold;number_format=number}',
-                          'D9': '@{sum}#{font=bold;number_format=number}',
-                      },
-                      '_TAIL_0': {
-                          'D9': '@{sum}#{font=bold;number_format=number}',
-                      }
-
+                      # '_GROUPBY_depreciation_line_ids["fiscalyear_id"]': {  # groupby
+                      #     'C9': '@{sum}#{font=bold;number_format=number}',
+                      #     'D9': '@{sum}#{font=bold;number_format=number}',
+                      # },
+                      # '_TAIL_0': {
+                      #     'D9': '@{sum}#{font=bold;number_format=number}',
+                      # }
                   },
               },
               '__IMPORT__': {

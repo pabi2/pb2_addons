@@ -486,7 +486,8 @@ class ExportXlsxTemplate(models.TransientModel):
         tail_fields = {}  # Keep tail cell, to be used in _TAIL_
         for line_field in line_fields:
 
-            subtotals = {'rows': [], 'totals': {}, 'formats': {}}
+            subtotals = {'rows': [], 'subtotals': {},
+                         'grandtotals': {}, 'formats': {}}
             # ====== GROUP BY =========
             groupby_keys = filter(lambda l: '_GROUPBY_%s' % line_field in l,
                                   groupbys.keys())
@@ -514,22 +515,30 @@ class ExportXlsxTemplate(models.TransientModel):
                     _, grp_format = get_field_format(cell_format)
 
                     cell_field = ws[line_field][cell]
-                    subtotals['totals'].update({cell_field: []})
+                    subtotals['subtotals'].update({cell_field: []})
                     subtotals['formats'].update({cell_field: []})
+                    grandtotals = []
+                    if subtotals['rows']:
+                        subtotals['formats'][cell_field] = grp_format
                     for i in subtotals['rows']:
                         from_cell = '%s%s' % (col, row)
                         to_cell = '%s%s' % (col, first_row+i-1)
-                        subtotals['totals'][cell_field].append(
+                        range_cell = '%s:%s' % (from_cell, to_cell)
+                        subtotals['subtotals'][cell_field].append(
                             grp_func and
-                            '=%s(%s:%s)' % (grp_func, from_cell, to_cell) or
+                            '=%s(%s)' % (grp_func, range_cell) or
                             '')
-                        subtotals['formats'][cell_field].append(grp_format)
+                        grandtotals.append(range_cell)
                         first_row += 1
-                        row = first_row+i
+                        row = first_row + i
+                    if grandtotals:
+                        subtotals['grandtotals'][cell_field] = \
+                            '=%s(%s)' % (grp_func, ','.join(grandtotals))
                 # --
 
             sb_rows = [i + v for i, v in enumerate(subtotals.get('rows', []))]
-            sb_totals = subtotals.get('totals', {})
+            sb_subtotals = subtotals.get('subtotals', {})
+            sb_grandtotals = subtotals.get('grandtotals', {})
             sb_formats = subtotals.get('formats', {})
 
             fields = ws.get(line_field, {}).values()
@@ -558,26 +567,40 @@ class ExportXlsxTemplate(models.TransientModel):
                             fill_cell_format(st[new_rc],
                                              field_format[field])
                         # ====== GROUP BY =========
+                        # Sub Total
                         for j in sb_rows:
                             if i == j-1:
                                 new_row = row + i
-                                if sb_totals.get(field, False):
-                                    new_rc = '%s%s' % (col, new_row+1)
-                                    row_val = sb_totals[field][0]
+                                if sb_subtotals.get(field, False):
+                                    new_rc = '%s%s' % (col, new_row + 1)
+                                    row_val = sb_subtotals[field][0]
                                     st[new_rc] = str_to_number(row_val)
-                                    sb_totals[field].pop(0)
+                                    sb_subtotals[field].pop(0)
                                 if sb_formats.get(field, False):
-                                    new_rc = '%s%s' % (col, new_row+1)
-                                    grp_format = sb_formats[field][0]
+                                    new_rc = '%s%s' % (col, new_row + 1)
+                                    grp_format = sb_formats[field]
                                     if grp_format:
                                         fill_cell_format(st[new_rc],
                                                          grp_format)
-                                    sb_formats[field].pop(0)
                                 i += 1
-                        # --
+
+                        # ---------------------------
                         if new_row > max_row:
                             max_row = new_row
                         i += 1
+
+                # Grand Total
+                if sb_grandtotals.get(field, False):
+                    new_rc = '%s%s' % (col, new_row + 2)
+                    row_val = sb_grandtotals[field]
+                    st[new_rc] = str_to_number(row_val)
+                if sb_formats.get(field, False):
+                    new_rc = '%s%s' % (col, new_row + 2)
+                    grp_format = sb_formats[field]
+                    if grp_format:
+                        fill_cell_format(st[new_rc],
+                                         grp_format)
+
                 # Add footer line if at least one field have func
                 f = func.get(field, False)
                 if f:
