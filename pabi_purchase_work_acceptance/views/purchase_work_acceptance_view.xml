@@ -78,6 +78,7 @@
                                     <field name="case_id" invisible="1"/>
                                     <field name="case_id_readonly" readonly="1"/>
                                     <field name="score_id" domain="[('case_id','=',case_id)]"/>
+                                    <field name="score" invisible="1"/>
                                 </tree>
                             </field>
                         </group>

@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='supplier_invoice_number']" position="after">
                     <field name="purchase_billing_id" attrs="{'invisible': [('purchase_billing_id', '=', False)]}" />
+                    <field name="date_receipt_billing" attrs="{'invisible': [('purchase_billing_id', '=', False)], 'required': [('purchase_billing_id', '!=', False)]}"/>
                 </xpath>
             </field>
         </record>

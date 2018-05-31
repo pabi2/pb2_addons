@@ -61,6 +61,7 @@
                             <field name="date" />
                             <field name="date_due"/>
                             <field name="email_sent"/>
+                            <field name="date_sent"/>
                         </group>
                     </group>
                     <p class="oe_grey">

@@ -1,74 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-        <!-- Directory for Budget XLSX Reports -->
+        <!-- Directory for Account XLSX Reports -->
         <record model="document.directory" id="dir_account_reports">
             <field name="name">Account Reports</field>
             <field name="parent_id" ref="document.dir_root"/>
             <field name="user_id" ref="base.user_root"/>
             <field name="ressource_id">0</field>
-            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
-        </record>
-
-        # Partner List
-        <record id="xlsx_report_partner_list" model="ir.attachment">
-            <field name="res_model">xlsx.report.partner.list</field>
-            <field name="datas"></field>
-            <field name="datas_fname">xlsx_report_partner_list.xlsx</field>
-            <field name="name">Partner List</field>
-            <field name="parent_id" eval="ref('dir_account_reports')"/>
-            <field name="description">
-              {
-                '__EXPORT__': {
-                    'Partner List Report': {
-                        '_HEAD_': {
-                            'B1': 'category_ids${value and ", ".join(value.mapped("name")) or ""}',
-                            'B2': 'customer${value and "X" or ""}',
-                            'B3': 'supplier${value and "X" or ""}',
-                        },
-                        'results': {
-                            'A6': 'search_key${value or ""}',
-                            'B6': 'id${value and " ".join(list(filter(lambda l: l != False, [env["res.partner"].browse(value).title.name, env["res.partner"].browse(value).name.encode("utf-8")]))) or ""}',
-                            'C6': 'category_id.name${value or ""}',
-                            'D6': 'tag_ids${value and ", ".join(value.mapped("name")) or ""}',
-                            'E6': 'street${value or ""}',
-                            'F6': 'street2${value or ""}',
-                            'G6': 'township_id.name${value or ""}',
-                            'H6': 'district_id.name${value or ""}',
-                            'I6': 'province_id.name${value or ""}',
-                            'J6': 'country_id.name${value or ""}',
-                            'K6': 'zip${value or ""}',
-                            'L6': 'vat${value or ""}',
-                            'M6': 'taxbranch${value or ""}',
-                            'N6': 'mobile${value or ""}',
-                            'O6': 'fax${value or ""}',
-                            'P6': 'website${value or ""}',
-                            'Q6': 'email${value or ""}',
-                            'R6': 'comment${value or ""}',
-                            'S6': 'property_account_payable.code${value or ""}',
-                            'T6': 'property_account_payable.name${value or ""}',
-                            'U6': 'property_account_receivable.code${value or ""}',
-                            'V6': 'property_account_receivable.name${value or ""}',
-                            'W6': 'property_supplier_payment_term.name${value or ""}',
-                            'X6': 'property_payment_term.name${value or ""}',
-                            'Y6': 'credit${value or ""}',
-                            'Z6': 'debit${value or ""}',
-                            'AA6': 'bank_ids${value and "\\skiprow".join([x.acc_number or "" for x in value]) or ""}',
-                            'AB6': 'bank_ids${value and "\\skiprow".join([" ".join(list(filter(lambda l: l != False, [x.bank_name, x.bank_branch.name]))) or "" for x in value]) or ""}',
-                            'AC6': 'bank_ids${value and "\\skiprow".join([" ".join(list(filter(lambda l: l != False, [x.partner_id.title.name, x.partner_id.name]))) or "" for x in value]) or ""}',
-                            'AD6': 'bank_ids${value and "\\skiprow".join([x.active and "X" or "" for x in value]) or ""}',
-                            'AE6': 'bank_ids${value and "\\skiprow".join([x.default and "X" or "" for x in value]) or ""}',
-                            'AF6': 'income_tax_form${value and value.upper() or ""}',
-                            'AG6': 'create_date${value or ""}#{number_format=date}',
-                            'AH6': 'create_uid.name${value or ""}',
-                            'AI6': 'write_date${value or ""}#{number_format=date}',
-                            'AJ6': 'write_uid.name${value or ""}',
-                            'AK6': 'active${value and "X" or ""}',
-                        }
-                    }
-                }
-            }
-          </field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
         # Partner Detail
@@ -79,43 +18,81 @@
             <field name="name">Partner Detail</field>
             <field name="parent_id" eval="ref('dir_account_reports')"/>
             <field name="description">
-              {
-                '__EXPORT__': {
-                    'Partner Detail Report': {
-                        '_HEAD_': {
-                            'B1': 'category_ids${value and ", ".join(value.mapped("name")) or ""}',
-                            'B2': 'customer${value and "X" or ""}',
-                            'B3': 'supplier${value and "X" or ""}',
+                {
+                    '__EXPORT__': {
+                        'Partner Detail Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'category_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B4': 'active${value and (value == "true" and "True" or "False") or ""}',
+                                'B5': 'customer${value and "X" or ""}',
+                                'B6': 'supplier${value and "X" or ""}',
+                                'B7': '${env.user.display_name}',
+                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'partner_detail_results': {
+                                'A11': 'search_key${value or ""}',
+                                'B11': 'id${value and " ".join(list(filter(lambda l: l != False, [env["res.partner"].browse(value).title_lang, env["res.partner"].browse(value).name]))) or ""}',
+                                'C11': 'customer${value and "X" or ""}',
+                                'D11': 'supplier${value and "X" or ""}',
+                                'E11': 'category_id.name${value or ""}',
+                                'F11': 'tag_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'G11': 'street${value or ""}',
+                                'H11': 'street2${value or ""}',
+                                'I11': 'township_id.name${value or ""}',
+                                'J11': 'district_id.name${value or ""}',
+                                'K11': 'province_id.name${value or ""}',
+                                'L11': 'country_id.name${value or ""}',
+                                'M11': 'zip${value or ""}',
+                                'N11': 'vat${value or ""}',
+                                'O11': 'taxbranch${value or ""}',
+                                'P11': 'mobile${value or ""}',
+                                'Q11': 'fax${value or ""}',
+                                'R11': 'website${value or ""}',
+                                'S11': 'email${value or ""}',
+                                'T11': 'comment${value or ""}',
+                                'U11': 'property_account_payable.code${value or ""}',
+                                'V11': 'property_account_payable.name${value or ""}',
+                                'W11': 'property_account_receivable.code${value or ""}',
+                                'X11': 'property_account_receivable.name${value or ""}',
+                                'Y11': 'property_supplier_payment_term.name${value or ""}',
+                                'Z11': 'property_payment_term.name${value or ""}',
+                                'AA11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and value.filtered(lambda l: l.default is True)[0].acc_number or "") or ""}',
+                                'AB11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and " ".join(filter(lambda x: x != False, [value.filtered(lambda l: l.default is True)[0].bank_name, value.filtered(lambda l: l.default is True)[0].bank_branch.name])) or "") or ""}',
+                                'AC11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and " ".join(filter(lambda x: x != False, [value.filtered(lambda l: l.default is True)[0].partner_id.title_lang, value.filtered(lambda l: l.default is True)[0].partner_id.name])) or "") or ""}',
+                                'AD11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and (value.filtered(lambda l: l.default is True)[0].active is True and "X" or "") or "") or ""}',
+                                'AE11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and (value.filtered(lambda l: l.default is True)[0].default is True and "X" or "")) or ""}',
+                                'AF11': 'income_tax_form${value and dict(pnd1="PND1", pnd3="PND3", pnd3a="PND3a", pnd53="PND53")[value] or ""}',
+                                'AG11': 'create_date${value or ""}#{number_format=date}',
+                                'AH11': 'create_uid.display_name${value or ""}',
+                                'AI11': 'write_date${value or ""}#{number_format=date}',
+                                'AJ11': 'write_uid.display_name${value or ""}',
+                                'AK11': 'active${value and "X" or ""}',
+                            },
                         },
-                        'results': {
-                            'A6': 'partner_id.search_key${value or ""}',
-                            'B6': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
-                            'C6': 'partner_id.street${value or ""}',
-                            'D6': 'partner_id.street2${value or ""}',
-                            'E6': 'partner_id.township_id.name${value or ""}',
-                            'F6': 'partner_id.district_id.name${value or ""}',
-                            'G6': 'partner_id.province_id.name${value or ""}',
-                            'H6': 'partner_id.country_id.name${value or ""}',
-                            'I6': 'partner_id.zip${value or ""}',
-                            'J6': 'partner_id.vat${value or ""}',
-                            'K6': 'partner_id.taxbranch${value or ""}',
-                            'L6': 'partner_id.mobile${value or ""}',
-                            'M6': 'partner_id.fax${value or ""}',
-                            'N6': 'bank_id${value and value.acc_number or ""}',
-                            'O6': 'bank_id${value and " ".join(list(filter(lambda l: l!= False, [value.bank_name, value.bank_branch.name]))) or ""}',
-                            'P6': 'bank_id${value and " ".join(list(filter(lambda l: l != False, [value.partner_id.title.name, value.partner_id.name]))) or ""}',
-                            'Q6': 'bank_id${value and (value.active and "X" or "") or ""}',
-                            'R6': 'bank_id${value and (value.default and "X" or "") or ""}',
-                            'S6': 'partner_id.create_date${value or ""}#{number_format=date}',
-                            'T6': 'partner_id.create_uid.name${value or ""}',
-                            'U6': 'partner_id.write_date${value or ""}#{number_format=date}',
-                            'V6': 'partner_id.write_uid.name${value or ""}',
-                            'W6': 'partner_id.active${value and "X" or ""}',
-                        }
+                        'Bank Account': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'category_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B4': 'active${value and (value == "true" and "True" or "False") or ""}',
+                                'B5': 'customer${value and "X" or ""}',
+                                'B6': 'supplier${value and "X" or ""}',
+                                'B7': '${env.user.display_name}',
+                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'partner_bank_detail_results': {
+                                'A11': 'partner_id.search_key${value or ""}',
+                                'B11': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.name]))) or ""}',
+                                'C11': 'bank_id.acc_number${value or ""}',
+                                'D11': 'bank_id${value and " ".join(list(filter(lambda l: l != False, [value.bank_name, value.bank_branch.name]))) or ""}',
+                                'E11': 'bank_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.name]))) or ""}',
+                                'F11': 'bank_id${value and (value.active is True and "X" or "") or ""}',
+                                'G11': 'bank_id${value and (value.default is True and "X" or "") or ""}',
+                            },
+                        },
                     }
                 }
-            }
-          </field>
+            </field>
         </record>
 
         # Advance Status
