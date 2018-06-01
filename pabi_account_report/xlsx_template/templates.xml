@@ -232,40 +232,42 @@ result = pd.pivot_table(df, index=groupby,
             <field name="name">Cheque Register</field>
             <field name="parent_id" eval="ref('dir_account_reports')"/>
             <field name="description">
-              {
-                '__EXPORT__': {
-                    'Cheque Register Report': {
-                        '_HEAD_': {
-                            'A1': '${env.user.company_id.display_name}',
-                            'B3': 'date_cheque_received${value or ""}#{number_format=date;align=left}',
-                            'B4': 'cheque_lot_ids${value and ", ".join([x.name for x in value]) or ""}',
-                            'B5': 'number_cheque_from${value or ""}',
-                            'D5': 'number_cheque_to${value or ""}',
-                            'B6': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
-                            'B7': '${env.user.display_name}',
-                            'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
-                        },
-                        'results': {
-                            'A11': 'cheque_lot_id.journal_id.default_credit_account_id.code${value or ""}',
-                            'B11': 'cheque_lot_id.journal_id.default_credit_account_id.name${value or ""}',
-                            'C11': 'voucher_id.partner_id.search_key${value or ""}',
-                            'D11': 'voucher_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
-                            'E11': 'number${value or ""}',
-                            'F11': 'voucher_id.number${value or ""}',
-                            'G11': 'voucher_id.date${value or ""}#{number_format=date}',
-                            'H11': 'amount${value or 0}#{number_format=number}',
-                            'I11': 'voucher_id.date_cheque_received${value or ""}#{number_format=date}',
-                            'J11': 'voucher_id.move_ids${value and (value.mapped("match_import_id") and value.mapped("match_import_id").date_value or "") or ""}#{number_format=date}',
-                            'K11': 'date_void${value or ""}#{number_format=date}',
-                            'L11': 'payment_export_id.user_id.display_name${value or ""}',
-                        },
-                        '_TAIL_0': {
-                            'H11': '@{sum}#{font=bold;number_format=number}',
+                {
+                    '__EXPORT__': {
+                        'Cheque Register Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'date_cheque_received${value or ""}#{number_format=date}',
+                                'B4': 'cheque_lot_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B5': 'number_cheque_from${value or ""}',
+                                'D5': 'number_cheque_to${value or ""}',
+                                'B6': 'journal_ids${value and ", ".join([x.default_credit_account_id.code for x in value]) or ""}',
+                                'B7': '${env.user.display_name}',
+                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'results': {
+                                'A11': 'cheque_lot_id.journal_id.default_credit_account_id.code${value or ""}',
+                                'B11': 'cheque_lot_id.journal_id.default_credit_account_id.name${value or ""}',
+                                'C11': 'voucher_id.partner_id.search_key${value or ""}',
+                                'D11': 'voucher_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
+                                'E11': 'cheque_lot_id.name${value or ""}',
+                                'F11': 'number${value or ""}',
+                                'G11': 'voucher_id.number${value or ""}',
+                                'H11': 'voucher_id.date${value or ""}#{number_format=date}',
+                                'I11': 'amount${value or ""}',
+                                'J11': 'voucher_id.date_cheque_received${value or ""}#{number_format=date}',
+                                'K11': 'voucher_id.move_ids${value and (value.mapped("match_import_id") and value.mapped("match_import_id").date_value or "") or ""}#{number_format=date}',
+                                'L11': 'date_void${value or ""}#{number_format=date}',
+                                'M11': 'payment_export_id.user_id.display_name${value or ""}',
+                            },
+                            '_TAIL_0': {
+                                'H11': '${"Total"}#{font=bold;align=right}',
+                                'I11': '@{sum}#{font=bold;number_format=number;align=right}',
+                            }
                         }
                     }
                 }
-            }
-          </field>
+            </field>
         </record>
 
         # Purchase Contract

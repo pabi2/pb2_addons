@@ -4,22 +4,40 @@
         <record id="xlsx_report_cheque_register_view" model="ir.ui.view">
             <field name="name">xlsx.report.cheque.register.view</field>
             <field name="model">xlsx.report.cheque.register</field>
-            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="inherit_id" ref="pabi_account_report.xlsx_report_account_common_view"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <data>
-                    <xpath expr="//group[@name='criteria']" position="inside">
+                <field name="date_from" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_to" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_from" position="before">
+                    <field name="date_cheque_received"/>
+                </field>
+                <field name="fiscalyear_ids" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <xpath expr="//page[1]" position="after">
+                    <page string="Accounts Filter" name="accounts">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="journal_ids"/>
+                    </page>
+                    <page string="Cheque Lot Filters" name="cheque lot">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="cheque_lot_ids"/>
+                    </page>
+                    <page string="Cheque Filters" name="cheque">
                         <group>
-                            <field name="date_cheque_received"/>
-                            <field name="number_cheque_from"/>
-                            <field name="account_ids" widget="many2many_tags"/>
+                            <group>
+                                <field name="number_cheque_from"/>
+                                <field name="number_cheque_to"/>
+                            </group>
+                            <group></group>
                         </group>
-                        <group>
-                            <field name="cheque_lot_ids" widget="many2many_tags"/>
-                            <field name="number_cheque_to"/>
-                        </group>
-                    </xpath>
-                </data>
+                    </page>
+                </xpath>
             </field>
         </record>
 
