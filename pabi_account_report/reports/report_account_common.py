@@ -23,8 +23,6 @@ class ReportAccountCommon(models.AbstractModel):
     )
     fiscalyear_ids = fields.Many2many(
         'account.fiscalyear',
-        'report_account_common_fiscalyear_rel',
-        'report_id', 'fiscalyear_id',
         string='Fiscal Year(s)',
         default=lambda self: self._get_fiscalyear(),
     )

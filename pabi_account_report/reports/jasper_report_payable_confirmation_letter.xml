@@ -3,7 +3,7 @@
     <data>
         <record id="jasper_report_payable_confirmation_letter_view" model="ir.ui.view">
             <field name="name">jasper.report.payable.confirmation.letter</field>
-            <field name="model">jasper.report.payable.confirmation.letter</field>
+            <field name="model">payable.confirmation.letter</field>
             <field name="inherit_id" ref="pabi_account_report.jasper_report_account_common_view"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
@@ -41,7 +41,7 @@
 
         <record id="action_report_payable_confirmation_letter" model="ir.actions.act_window">
             <field name="name">Payable Confirmation Letter Report</field>
-            <field name="res_model">jasper.report.payable.confirmation.letter</field>
+            <field name="res_model">payable.confirmation.letter</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>

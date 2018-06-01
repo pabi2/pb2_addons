@@ -5,7 +5,7 @@ from openerp import models, fields, api
 
 
 class JasperReportPayableConfirmationLetter(models.TransientModel):
-    _name = 'jasper.report.payable.confirmation.letter'
+    _name = 'payable.confirmation.letter'
     _inherit = 'report.account.common'
 
     fiscalyear_ids = fields.Many2many(
