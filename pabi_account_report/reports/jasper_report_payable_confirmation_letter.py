@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*
 import time
 from datetime import datetime
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class JasperReportPayableConfirmationLetter(models.TransientModel):
@@ -74,8 +75,10 @@ class JasperReportPayableConfirmationLetter(models.TransientModel):
             FROM account_move_line l
             LEFT JOIN account_account a ON l.account_id = a.id
             WHERE %s""" % (condition, ))
-        data['parameters']['ids'] = \
-            list(map(lambda l: l[0], self._cr.fetchall()))
+        move_line_ids = list(map(lambda l: l[0], self._cr.fetchall()))
+        if not move_line_ids:
+            raise ValidationError(_('No Data!'))
+        data['parameters']['ids'] = move_line_ids
         data['parameters']['date_run'] = time.strftime('%d/%m/%Y')
         data['parameters']['date_report'] = \
             datetime.strptime(self.date_report, '%Y-%m-%d') \
