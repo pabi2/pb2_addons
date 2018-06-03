@@ -25,6 +25,7 @@
         'security/security_rule_invest_asset.xml',
         'security/security_rule_plan_asset.xml',
         'security/security_rule_plan_construction.xml',
+        'security/security_rule_plan_personnel.xml',
         'security/ir.model.access.csv',
         'data/sequence.xml',
         'data/actions.xml',

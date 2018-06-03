@@ -9,9 +9,11 @@
         <menuitem name="Investment Asset" id="menu_action_budget_plan_invest_asset" parent="menu_action_budget_plan" sequence="40"/>
         <menuitem name="Investment Construction" id="menu_action_budget_plan_invest_construction" parent="menu_action_budget_plan" sequence="50"/>
 
-        <menuitem name="Budget Policy" id="menu_action_budget_policy" parent="account_budget_activity.menu_budgeting" sequence="12"/>
+        <menuitem name="Budget Policy" id="menu_action_budget_policy" parent="account_budget_activity.menu_budgeting" sequence="12"
+          groups="pabi_base.group_cooperate_budget"/>
 
-        <menuitem name="Budget Breakdown" id="menu_action_budget_breakdown" parent="account_budget_activity.menu_budgeting" sequence="13"/>
+        <menuitem name="Budget Breakdown" id="menu_action_budget_breakdown" parent="account_budget_activity.menu_budgeting" sequence="13"
+          groups="pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget"/>
 
         <menuitem name="Configuration" groups="base.group_system,pabi_base.group_nstda_admin_business" id="account_budget_activity.menu_action_account_budget_config" parent="account_budget_activity.menu_budgeting" sequence="120"/>
 

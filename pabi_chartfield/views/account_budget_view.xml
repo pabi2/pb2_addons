@@ -514,7 +514,8 @@
 
         <menuitem id="account_budget_activity.menu_act_account_budget_view"
             parent="account_budget_activity.menu_action_account_budget_control"
-            action="account_budget_activity.act_account_budget_view" sequence="1" />
+            action="account_budget_activity.act_account_budget_view" sequence="1"
+            groups="pabi_base.group_budget_user"/>
 
         <!-- 2) Project Base -->
         <record id="view_account_budget_project_base_search" model="ir.ui.view">
@@ -563,7 +564,8 @@
 
         <menuitem id="menu_act_account_budget_view_project_base"
             parent="account_budget_activity.menu_action_account_budget_control"
-            action="act_account_budget_view_project_base" sequence="2" />
+            action="act_account_budget_view_project_base" sequence="2"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_program_secretary_budget"/>
 
         <!-- 3) Personnel -->
 
@@ -587,7 +589,8 @@
 
         <menuitem id="menu_act_account_budget_view_personnel"
             parent="account_budget_activity.menu_action_account_budget_control"
-            action="act_account_budget_view_personnel" sequence="3" />
+            action="act_account_budget_view_personnel" sequence="3"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
 
         <!-- 4) Invest Asset -->
         <record id="view_account_budget_invest_asset__search" model="ir.ui.view">
@@ -635,7 +638,8 @@
 
         <menuitem id="menu_act_account_budget_view_invest_asset"
             parent="account_budget_activity.menu_action_account_budget_control"
-            action="act_account_budget_view_invest_asset" sequence="4" />
+            action="act_account_budget_view_invest_asset" sequence="4"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_asset_ou_budget"/>
 
         <!-- 5) Invest Construction -->
 
@@ -659,7 +663,8 @@
 
         <menuitem id="menu_act_account_budget_view_invest_construction"
             parent="account_budget_activity.menu_action_account_budget_control"
-            action="act_account_budget_view_invest_construction" sequence="5" />
+            action="act_account_budget_view_invest_construction" sequence="5"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget"/>
 
      </data>
 </openerp>

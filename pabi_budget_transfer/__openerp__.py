@@ -12,7 +12,7 @@
         'account_auto_fy_sequence',
     ],
     'data': [
-        # 'security/rule_section_budget_transfer.xml',
+        'security/rule_section_budget_transfer.xml',
         'security/ir.model.access.csv',
         'data/section_transfer_data.xml',
         'data/sequence.xml',
