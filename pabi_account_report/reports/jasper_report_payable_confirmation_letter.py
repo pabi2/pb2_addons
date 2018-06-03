@@ -32,13 +32,13 @@ class JasperReportPayableConfirmationLetter(models.TransientModel):
     )
     account_ids = fields.Many2many(
         'account.account',
-        string='Filter on accounts',
+        string='Account',
         help='''Only selected accounts will be printed.
                 Leave empty to print all accounts.''',
     )
     partner_ids = fields.Many2many(
         'res.partner',
-        string='Filter on partners',
+        string='Partner',
         help='''Only selected partners will be printed.
                 Leave empty to print all partners.''',
     )

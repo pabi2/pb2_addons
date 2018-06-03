@@ -8,11 +8,11 @@ class XLSXReportSupplierReceiptFollowUp(models.TransientModel):
 
     account_ids = fields.Many2many(
         'account.account',
-        string='Accounts',
+        string='Account',
     )
     partner_ids = fields.Many2many(
         'res.partner',
-        string='Partners',
+        string='Partner',
     )
     followup_receipt = fields.Selection(
         [('following', 'Following'), ('received', 'Received')],

@@ -8,7 +8,7 @@ class XLSXReportSLAPurchase(models.TransientModel):
 
     user_ids = fields.Many2many(
         'res.users',
-        string='Responsibles',
+        string='Responsible',
     )
     results = fields.Many2many(
         'sla.purchase.view',

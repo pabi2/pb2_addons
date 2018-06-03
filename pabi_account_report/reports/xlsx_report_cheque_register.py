@@ -28,12 +28,12 @@ class XLSXReportChequeRegisterReport(models.TransientModel):
     )
     journal_ids = fields.Many2many(
         'account.journal',
-        string='Payment Methods',
+        string='Payment Method',
         domain=[('type', '=', 'bank'), ('intransit', '=', False)],
     )
     cheque_lot_ids = fields.Many2many(
         'cheque.lot',
-        string='Cheque Lots',
+        string='Cheque Lot',
     )
     number_cheque_from = fields.Char(
         string='Cheque Number From',
