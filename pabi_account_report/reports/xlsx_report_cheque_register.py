@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*
 from openerp import models, fields, api
 
 
@@ -5,34 +6,34 @@ class XLSXReportChequeRegisterReport(models.TransientModel):
     _name = 'xlsx.report.cheque.register'
     _inherit = 'report.account.common'
 
-    fiscalyear_ids = fields.Many2many(
+    fiscalyear_start_id = fields.Many2one(
         default=False,
     )
-    date_from = fields.Date(
+    fiscalyear_end_id = fields.Many2one(
         default=False,
     )
-    date_to = fields.Date(
+    date_start = fields.Date(
+        default=False,
+    )
+    date_end = fields.Date(
         default=False,
     )
     filter = fields.Selection(
-        [('filter_date', 'Date')],
-        string='Filter by',
-        required=True,
-        default='filter_date',
+        [('filter_no', 'No Filters'),
+         ('filter_date', 'Dates')],
+        default='filter_no',
     )
     date_cheque_received = fields.Date(
         string='Cheque Received Date',
-        default=lambda self: fields.Date.context_today(self),
-        required=True,
     )
     journal_ids = fields.Many2many(
         'account.journal',
-        string='Payment Method(s)',
+        string='Payment Methods',
         domain=[('type', '=', 'bank'), ('intransit', '=', False)],
     )
     cheque_lot_ids = fields.Many2many(
         'cheque.lot',
-        string='Lot Number(s)',
+        string='Cheque Lots',
     )
     number_cheque_from = fields.Char(
         string='Cheque Number From',
@@ -40,7 +41,6 @@ class XLSXReportChequeRegisterReport(models.TransientModel):
     number_cheque_to = fields.Char(
         string='Cheque Number To',
     )
-    # Report Result
     results = fields.Many2many(
         'cheque.register',
         string='Results',

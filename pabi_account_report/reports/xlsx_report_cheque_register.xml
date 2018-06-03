@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="xlsx_report_cheque_register_view" model="ir.ui.view">
-            <field name="name">xlsx.report.cheque.register.view</field>
+        <record id="view_xlsx_report_cheque_register_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.cheque.register.form</field>
             <field name="model">xlsx.report.cheque.register</field>
-            <field name="inherit_id" ref="pabi_account_report.xlsx_report_account_common_view"/>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <field name="date_from" position="attributes">
+                <field name="fiscalyear_start_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <field name="date_to" position="attributes">
+                <field name="fiscalyear_end_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <field name="date_from" position="before">
+                <field name="date_start" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_end" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_start" position="before">
                     <field name="date_cheque_received"/>
                 </field>
-                <field name="fiscalyear_ids" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
                 <xpath expr="//page[1]" position="after">
-                    <page string="Accounts Filter" name="accounts">
+                    <page string="Account Filters">
                         <separator string="Print only" colspan="4"/>
                         <field name="journal_ids"/>
                     </page>
-                    <page string="Cheque Lot Filters" name="cheque lot">
+                    <page string="Cheque Lot Filters">
                         <separator string="Print only" colspan="4"/>
                         <field name="cheque_lot_ids"/>
                     </page>
-                    <page string="Cheque Filters" name="cheque">
+                    <page string="Cheque Filters">
                         <group>
                             <group>
                                 <field name="number_cheque_from"/>
@@ -41,18 +44,18 @@
             </field>
         </record>
 
-        <record id="action_report_cheque_register" model="ir.actions.act_window">
-            <field name="name">Cheque Register Report</field>
+        <record id="action_xlsx_report_cheque_register_form" model="ir.actions.act_window">
+            <field name="name">Cheque Register</field>
             <field name="res_model">xlsx.report.cheque.register</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_report_cheque_register"
+        <menuitem id="menu_xlsx_report_cheque_register"
             name="Cheque Register"
             parent="menu_pabi_account_report"
-            action="action_report_cheque_register"
+            action="action_xlsx_report_cheque_register_form"
             sequence="30"/>
     </data>
 </openerp>
