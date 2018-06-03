@@ -7,7 +7,7 @@
     'category': 'Account',
     'description': """
 
-To create recurrin entries from open invoice plan
+To create recurring entries from open invoice plan
 
     """,
     'version': '0.1.0',
