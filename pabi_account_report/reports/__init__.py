@@ -12,5 +12,7 @@ from . import xlsx_report_purchase_billing
 from . import xlsx_report_sla_purchase
 from . import xlsx_report_sla_employee
 from . import xlsx_report_supplier_receipt_follow_up
+from . import xlsx_report_input_tax
+from . import xlsx_report_output_tax
 from . import jasper_report_payable_confirmation_letter
 from . import jasper_report_payable_confirmation_letter_parser
