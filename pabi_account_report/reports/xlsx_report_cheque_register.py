@@ -28,7 +28,7 @@ class XLSXReportChequeRegisterReport(models.TransientModel):
     )
     journal_ids = fields.Many2many(
         'account.journal',
-        string='Payment Method',
+        string='Journal',
         domain=[('type', '=', 'bank'), ('intransit', '=', False)],
     )
     cheque_lot_ids = fields.Many2many(

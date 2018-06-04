@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_output_tax_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.output_tax.form</field>
+            <field name="model">xlsx.report.output.tax</field>
+            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//group[@name='criteria']" position="inside">
+                        <group>
+                            <field name="calendar_period_id"/>
+                        </group>
+                        <group>
+                            <field name="taxbranch_id"/>
+                        </group>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_output_tax_form" model="ir.actions.act_window">
+            <field name="name">Output Tax Report</field>
+            <field name="res_model">xlsx.report.output.tax</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_output_tax"
+            name="Output Tax Report"
+            parent="menu_pabi_account_report"
+            action="action_xlsx_report_output_tax_form"
+            sequence="2"/>
+    </data>
+</openerp>

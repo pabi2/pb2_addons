@@ -23,7 +23,7 @@
                     <field name="date_cheque_received"/>
                 </field>
                 <xpath expr="//page[1]" position="after">
-                    <page string="Account Filters">
+                    <page string="Journal Filters">
                         <separator string="Print only" colspan="4"/>
                         <field name="journal_ids"/>
                     </page>

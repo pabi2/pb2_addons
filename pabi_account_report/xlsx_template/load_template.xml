@@ -17,6 +17,8 @@
                 ref('xlsx_report_sla_purchase'),
                 ref('xlsx_report_sla_employee'),
                 ref('xlsx_report_supplier_receipt_follow_up'),
+                ref('xlsx_report_input_tax'),
+                ref('xlsx_report_output_tax'),                
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>
