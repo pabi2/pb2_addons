@@ -8,6 +8,7 @@ import time
 
 class PurchaseBilling(models.Model):
     _name = 'purchase.billing'
+    _description = 'Purchase Billing'
     _inherit = ['mail.thread']
 
     name = fields.Char(

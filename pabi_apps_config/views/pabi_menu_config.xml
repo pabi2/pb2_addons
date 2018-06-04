@@ -2,6 +2,18 @@
 <openerp>
     <data>
 
+      # Delete unused menu permanently
+      <delete model="ir.ui.menu" id="account_voucher.menu_action_sale_receipt"/>
+      <delete model="ir.ui.menu" id="account_voucher.menu_action_purchase_receipt"/>
+      <delete model="ir.ui.menu" id="account.menu_bank_statement_tree"/>
+      <delete model="ir.ui.menu" id="account.journal_cash_move_lines"/>
+      <delete model="ir.ui.menu" id="account.menu_bank_reconcile_bank_statements"/>
+      <delete model="ir.ui.menu" id="account.menu_wizard_fy_close_state"/>
+      <delete model="ir.ui.menu" id="stock.menu_stock_proc_schedulers"/>
+      <delete model="ir.ui.menu" id="stock.menu_stock_procurement_action"/>
+      <delete model="ir.ui.menu" id="base.menu_procurement_management_supplier_name"/>
+      <delete model="ir.ui.menu" id="base.menu_partner_form"/>
+
       <!-- HR -->
       <menuitem id="hr.menu_hr_root" name="HR"/>
       <menuitem id="hr.menu_hr_main" name="Directory" parent="hr.menu_hr_root" sequence="450"/>
@@ -9,7 +21,6 @@
 
       <!-- Purchase rearrange-->
       <menuitem id="base.menu_purchase_root" name="Purchases" sequence="40"/>
-
     	<menuitem id="purchase_request.menu_purchase_request_pro_mgt"
     		name="Purchase Requests" sequence="0" parent="purchase.menu_procurement_management"/>
     	<menuitem id="purchase_request.menu_purchase_request_line"
@@ -35,38 +46,54 @@
 
         <!-- PABI2 Org Structure -->
         <menuitem id="pabi_base.menu_pabi2_top" name="Organization"
-          parent="menu_nstda_configurations" sequence="1"/>
+          parent="menu_nstda_configurations" sequence="1"
+          groups="pabi_base.group_nstda_admin_business"/>
         <!-- Sales -->
         <menuitem id="base.menu_base_config" name="Sales"
-          parent="menu_nstda_configurations" sequence="10"/>
+          parent="menu_nstda_configurations" sequence="10"
+          groups="pabi_base.group_nstda_admin_business"/>
         <!-- Purchase -->
         <menuitem id="purchase.menu_purchase_config_purchase"
-          name="Purchase" parent="menu_nstda_configurations" sequence="20"/>
+          name="Purchase" parent="menu_nstda_configurations" sequence="20"
+          groups="pabi_base.group_nstda_admin_business"/>
         <!-- Accounting -->
         <menuitem id="account.menu_finance_configuration"
-          name="Accounting" parent="menu_nstda_configurations" sequence="30"/>
+          name="Accounting" parent="menu_nstda_configurations" sequence="30"
+          groups="pabi_base.group_nstda_admin_business"/>
         <!-- Budgeting -->
         <menuitem id="account_budget_activity.menu_action_account_budget_config"
-          name="Budgeting" parent="menu_nstda_configurations" sequence="40"/>
+          name="Budgeting" parent="menu_nstda_configurations" sequence="40"
+          groups="pabi_base.group_nstda_admin_business"/>
         <!-- Assets -->
         <menuitem id="account_asset_management.menu_finance_config_assets"
-          name="Assets" parent="menu_nstda_configurations" sequence="50"/>
+          name="Assets" parent="menu_nstda_configurations" sequence="50"
+          groups="pabi_base.group_nstda_admin_business"/>
         <!-- Warehouse -->
         <menuitem id="stock.menu_stock_configuration"
-          name="Warehouse" parent="menu_nstda_configurations" sequence="60"/>
+          name="Warehouse" parent="menu_nstda_configurations" sequence="60"
+          groups="pabi_base.group_nstda_admin_business"/>
         <!-- HR -->
         <menuitem id="hr.menu_hr_configuration"
-          name="Human Resources" parent="menu_nstda_configurations" sequence="70"/>
+          name="Human Resources" parent="menu_nstda_configurations" sequence="70"
+          groups="pabi_base.group_nstda_admin_business"/>
         <!-- Knowledge -->
         <menuitem id="knowledge.menu_document_configuration"
-          name="Knowledge" parent="menu_nstda_configurations" sequence="100"/>
+          name="Knowledge" parent="menu_nstda_configurations" sequence="100"
+          groups="pabi_base.group_nstda_admin_business"/>
         <!-- Connectors -->
         <menuitem id="connector.menu_connector_root"
-          name="Connectors" parent="menu_nstda_configurations" sequence="200"/>
+          name="Connectors" parent="menu_nstda_configurations" sequence="200"
+          groups="pabi_base.group_nstda_admin_business"/>
 
-        <!-- Do no show close fiscal year -->
-        <menuitem  id="account.menu_wizard_fy_close_state"
-            name="Close a Fiscal Year" sequence="20" 
-            parent="account.menu_account_end_year_treatments" />
+        <!-- Main Master -->
+        <menuitem id="account.menu_account_customer" name="Customers"
+            parent="base.menu_base_config"
+            action="base.action_partner_customer_form" sequence="0"/>
+
+        <menuitem id="account.menu_account_supplier" name="Suppliers"
+            parent="purchase.menu_purchase_config_purchase"
+            action="base.action_partner_supplier_form" sequence="0"/>
+
+
     </data>
 </openerp>
