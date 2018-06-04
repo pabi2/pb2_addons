@@ -1,46 +1,44 @@
 # -*- coding: utf-8 -*
-import time
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 from datetime import datetime
-from openerp import models, fields, api
+import time
 
 
 class JasperReportPayableConfirmationLetter(models.TransientModel):
-    _name = 'jasper.report.payable.confirmation.letter'
+    _name = 'payable.confirmation.letter'
     _inherit = 'report.account.common'
 
-    fiscalyear_ids = fields.Many2many(
+    fiscalyear_start_id = fields.Many2one(
         default=False,
     )
-    date_from = fields.Date(
+    fiscalyear_end_id = fields.Many2one(
         default=False,
     )
-    date_to = fields.Date(
+    date_start = fields.Date(
+        default=False,
+    )
+    date_end = fields.Date(
         default=False,
     )
     filter = fields.Selection(
-        [('filter_date', 'Date')],
-        string='Filter by',
-        required=True,
+        readonly=True,
         default='filter_date',
     )
     date_report = fields.Date(
         string='Report Date',
-        default=lambda self: fields.Date.context_today(self),
         required=True,
+        default=lambda self: fields.Date.context_today(self),
     )
     account_ids = fields.Many2many(
         'account.account',
-        'jasper_report_payable_confirmation_letter_account_rel',
-        'report_id', 'account_id',
-        string='Filter on accounts',
+        string='Account',
         help='''Only selected accounts will be printed.
                 Leave empty to print all accounts.''',
     )
     partner_ids = fields.Many2many(
         'res.partner',
-        'jasper_report_payable_confirmation_letter_partner_rel',
-        'report_id', 'partner_id',
-        string='Filter on partners',
+        string='Partner',
         help='''Only selected partners will be printed.
                 Leave empty to print all partners.''',
     )
@@ -74,8 +72,10 @@ class JasperReportPayableConfirmationLetter(models.TransientModel):
             FROM account_move_line l
             LEFT JOIN account_account a ON l.account_id = a.id
             WHERE %s""" % (condition, ))
-        data['parameters']['ids'] = \
-            list(map(lambda l: l[0], self._cr.fetchall()))
+        move_line_ids = list(map(lambda l: l[0], self._cr.fetchall()))
+        if not move_line_ids:
+            raise ValidationError(_('No Data!'))
+        data['parameters']['ids'] = move_line_ids
         data['parameters']['date_run'] = time.strftime('%d/%m/%Y')
         data['parameters']['date_report'] = \
             datetime.strptime(self.date_report, '%Y-%m-%d') \

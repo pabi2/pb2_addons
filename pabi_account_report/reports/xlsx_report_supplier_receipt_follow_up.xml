@@ -1,39 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="xlsx_report_supplier_receipt_follow_up_view" model="ir.ui.view">
-            <field name="name">xlsx.report.supplier.receipt.follow.up.view</field>
+        <record id="view_xlsx_report_supplier_receipt_follow_up_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.supplier.receipt.follow.up.form</field>
             <field name="model">xlsx.report.supplier.receipt.follow.up</field>
-            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <data>
-                    <xpath expr="//group[@name='criteria']" position="inside">
-                        <group>
-                            <field name="fiscalyear_id"/>
-                            <field name="partner_id"/>
-                        </group>
-                        <group>
-                            <field name="account_id"/>
-                            <field name="followup_receipt"/>
-                        </group>
-                    </xpath>
-                </data>
+                <field name="fiscalyear_end_id" position="after">
+                    <field name="followup_receipt"/>
+                </field>
+                <xpath expr="//page[1]" position="after">
+                    <page string="Account Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="account_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id), ('type', '=', 'other')]">
+                            <tree>
+                                <field name="code"/>
+                                <field name="name"/>
+                                <field name="type"/>
+                                <field name="company_id"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Partner Filters" name="partners">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id), ('supplier', '=', True)]"/>
+                    </page>
+                </xpath>
             </field>
         </record>
 
-        <record id="action_report_supplier_receipt_follow_up" model="ir.actions.act_window">
-            <field name="name">Supplier Receipt Follow Up Report</field>
+        <record id="action_xlsx_report_supplier_receipt_follow_up_form" model="ir.actions.act_window">
+            <field name="name">Supplier Receipt Follow Up</field>
             <field name="res_model">xlsx.report.supplier.receipt.follow.up</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_report_supplier_receipt_follow_up"
+        <menuitem id="menu_xlsx_report_supplier_receipt_follow_up"
             name="Supplier Receipt Follow Up"
             parent="menu_pabi_account_report"
-            action="action_report_supplier_receipt_follow_up"
+            action="action_xlsx_report_supplier_receipt_follow_up_form"
             sequence="110"/>
     </data>
 </openerp>
