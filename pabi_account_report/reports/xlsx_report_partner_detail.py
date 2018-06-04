@@ -6,7 +6,6 @@ class XLSXReportPartnerDetail(models.TransientModel):
     _name = 'xlsx.report.partner.detail'
     _inherit = 'xlsx.report'
 
-    # Search Criteria
     category_ids = fields.Many2many(
         'res.partner.category',
         string='Category(s)',
@@ -19,10 +18,9 @@ class XLSXReportPartnerDetail(models.TransientModel):
         'res.partner',
         'partner_detail_customer_rel',
         'report_id', 'partner_id',
-        string='Partners',
-        domain=[('customer', '=', True),
-                '|', ('active', '=', True),
-                ('active', '=', False)],
+        string='Customer(s)',
+        domain=[('customer', '=', True), '|',
+                ('active', '=', True), ('active', '=', False)],
     )
     supplier = fields.Boolean(
         string='Supplier',
@@ -32,16 +30,14 @@ class XLSXReportPartnerDetail(models.TransientModel):
         'res.partner',
         'partner_detail_supplier_rel',
         'report_id', 'partner_id',
-        string='Partners',
-        domain=[('supplier', '=', True),
-                '|', ('active', '=', True),
-                ('active', '=', False)],
+        string='Supplier(s)',
+        domain=[('supplier', '=', True), '|',
+                ('active', '=', True), ('active', '=', False)],
     )
     active = fields.Selection(
         selection=[('true', 'True'), ('false', 'False')],
         string='Active',
     )
-    # Report Result
     partner_detail_results = fields.Many2many(
         'res.partner',
         string='Partner Detail Results',

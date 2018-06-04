@@ -2,28 +2,31 @@
 <openerp>
     <data>
         # Jasper Reports
-        <record id="jasper_report_account_common_view" model="ir.ui.view">
-            <field name="nmae">jasper.report.account.common.view</field>
+        <record id="view_jasper_report_account_common_form" model="ir.ui.view">
+            <field name="nmae">view.jasper.report.account.common.form</field>
             <field name="model">report.account.common</field>
             <field name="arch" type="xml">
-                <form string="Jasper Report">
+                <form string="Jasper Reports">
                     <group col="4">
                         <field name="chart_account_id" widget="selection"/>
-                        <field name="company_id" invisible="1"/>
-                        <field name="fiscalyear_ids" widget="many2many_tags" domain="[('company_id', '=', company_id)]"/>
+                        <field name="company_id" invisible="True"/>
+                        <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
+                        <field name="fiscalyear_end_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
+                        <field name="fiscalyear_date_start" invisible="1"/>
+                        <field name="fiscalyear_date_end" invisible="1"/>
                     </group>
-                    <notebook tabpos="up" colspan="4">
-                        <page string="Time Filters" name="filters">
+                    <notebook>
+                        <page string="Time Filters">
                             <group>
-                                <field name="filter" context="{'fiscalyear_ids': fiscalyear_ids}"/>
+                                <field name="filter"/>
                             </group>
                             <group string="Dates" attrs="{'invisible': [('filter', '!=', 'filter_date')], 'required': [('filter', '=', 'filter_date')]}">
-                                <field name="date_from"/>
-                                <field name="date_to"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
                             </group>
                             <group string="Periods" attrs="{'invisible': [('filter', '!=', 'filter_period')], 'required': [('filter', '=', 'filter_period')]}">
-                                <field name="period_from" domain="[('company_id', '=', company_id), ('fiscalyear_id', 'in', fiscalyear_ids[0][2]), ('special', '=', False)]"/>
-                                <field name="period_to" domain="[('company_id', '=', company_id), ('fiscalyear_id', 'in', fiscalyear_ids[0][2]), ('special', '=', False)]"/>
+                                <field name="period_start_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end), ('special', '=', False)]"/>
+                                <field name="period_end_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end), ('special', '=', False)]"/>
                             </group>
                         </page>
                     </notebook>
@@ -37,36 +40,39 @@
         </record>
 
         # XLSX Reports
-        <record id="xlsx_report_account_common_view" model="ir.ui.view">
-            <field name="name">xlsx.report.account.common.view</field>
+        <record id="view_xlsx_report_account_common_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.account.common.form</field>
             <field name="model">report.account.common</field>
             <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <data>
-                    <xpath expr="//group[@name='criteria']" position="inside">
-                        <group col="4">
-                            <field name="chart_account_id" widget="selection"/>
-                            <field name="company_id" invisible="1"/>
-                            <field name="fiscalyear_ids" widget="many2many_tags" domain="[('company_id', '=', company_id)]"/>
-                        </group>
-                        <notebook tabpos="up" colspan="4">
-                            <page string="Time Filters" name="filters">
-                                <group>
-                                    <field name="filter" context="{'fiscalyear_ids': fiscalyear_ids}"/>
-                                </group>
-                                <group string="Dates" attrs="{'invisible': [('filter', '!=', 'filter_date')], 'required': [('filter', '=', 'filter_date')]}">
-                                    <field name="date_from"/>
-                                    <field name="date_to"/>
-                                </group>
-                                <group string="Periods" attrs="{'invisible': [('filter', '!=', 'filter_period')], 'required': [('filter', '=', 'filter_period')]}">
-                                    <field name="period_from" domain="[('company_id', '=', company_id), ('fiscalyear_id', 'in', fiscalyear_ids[0][2]), ('special', '=', False)]"/>
-                                    <field name="period_to" domain="[('company_id', '=', company_id), ('fiscalyear_id', 'in', fiscalyear_ids[0][2]), ('special', '=', False)]"/>
-                                </group>
-                            </page>
-                        </notebook>
-                    </xpath>
-                </data>
+                <xpath expr="//group[@name='criteria']" position="inside">
+                    <group col="4">
+                        <field name="chart_account_id" widget="selection"/>
+                        <field name="company_id" invisible="True"/>
+                        <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
+                        <field name="fiscalyear_end_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
+                        <field name="fiscalyear_date_start" invisible="1"/>
+                        <field name="fiscalyear_date_end" invisible="1"/>
+                    </group>
+                </xpath>
+                <xpath expr="group[@name='criteria']" position="after">
+                    <notebook name="other_criteria" states="choose">
+                        <page string="Time Filters">
+                            <group>
+                                <field name="filter"/>
+                            </group>
+                            <group string="Dates" attrs="{'invisible': [('filter', '!=', 'filter_date')], 'required': [('filter', '=', 'filter_date')]}">
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                            </group>
+                            <group string="Periods" attrs="{'invisible': [('filter', '!=', 'filter_period')], 'required': [('filter', '=', 'filter_period')]}">
+                                <field name="period_start_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end), ('special', '=', False)]"/>
+                                <field name="period_end_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end), ('special', '=', False)]"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </xpath>
             </field>
         </record>
     </data>

@@ -1,39 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="xlsx_report_sla_employee_view" model="ir.ui.view">
-            <field name="name">xlsx.report.sla.employee.view</field>
+        <record id="view_xlsx_report_sla_employee_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.sla.employee.form</field>
             <field name="model">xlsx.report.sla.employee</field>
-            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <data>
-                    <xpath expr="//group[@name='criteria']" position="inside">
-                        <group>
-                            <field name="start_period_id"/>
-                            <field name="user_ids" widget="many2many_tags"/>
-                        </group>
-                        <group>
-                            <field name="end_period_id"/>
-                            <field name="category_id"/>
-                        </group>
-                    </xpath>
-                </data>
+                <xpath expr="//page[1]" position="after">
+                    <page string="Responsible Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="user_ids" colspan="4" nolabel="1"/>
+                    </page>
+                    <page string="Supplier Category Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="category_ids" colspan="4" nolabel="1"/>
+                    </page>
+                </xpath>
             </field>
         </record>
 
-        <record id="action_report_sla_employee" model="ir.actions.act_window">
-            <field name="name">SLA Employee Report</field>
+        <record id="action_xlsx_report_sla_employee_form" model="ir.actions.act_window">
+            <field name="name">SLA Employee</field>
             <field name="res_model">xlsx.report.sla.employee</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_report_sla_employee"
+        <menuitem id="menu_xlsx_report_sla_employee"
             name="SLA Employee"
             parent="menu_pabi_account_report"
-            action="action_report_sla_employee"
+            action="action_xlsx_report_sla_employee_form"
             sequence="90"/>
     </data>
 </openerp>
