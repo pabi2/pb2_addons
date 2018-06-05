@@ -335,37 +335,39 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Advance Payment Report': {
                             '_HEAD_': {
-                                'A1': '${env.user.company_id.display_name}',
-                                'B3': 'account_id.code${value or ""}',
-                                'B4': 'date_report${value or ""}#{number_format=date;align=left}',
-                                'B5': '${env.user.display_name}',
-                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                                'B4': 'date_report${value or ""}#{number_format=date}',
+                                'B5': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
                             'results': {
                                 'A9': 'org_id.name_short${value or ""}',
-                                'B9': 'partner_id.search_key${value or ""}',
-                                'C9': 'partner_id.name${value or ""}',
-                                'D9': 'invoice.purchase_ids${value and ", ".join([x.name for x in value]) or ""}',
-                                'E9': 'invoice.purchase_ids${value and ", ".join(list(filter(lambda x: x != "", [x.contract_id.display_code or "" for x in value]))) or ""}',
-                                'F9': 'partner_id.category_id${value and value.name or ""}',
-                                'G9': 'invoice.number${value or ""}',
-                                'H9': 'invoice.date_document${value or ""}#{number_format=date}',
-                                'I9': 'invoice.date_invoice${value or ""}#{number_format=date}',
-                                'J9': 'name${value or ""}',
-                                'K9': 'id${value and (env["account.move.line"].browse(value).debit != 0 and env["account.move.line"].browse(value).debit or (-1) * env["account.move.line"].browse(value).credit) or 0}#{number_format=number}',
-                                'L9': 'invoice.payment_ids${value and ", ".join(list(filter(lambda x: x != "", [x.number or "" for x in env["account.voucher"].search([("move_id", "in", value.mapped("move_id").ids)])]))) or ""}',
-                                'M9': 'invoice.payment_ids${value and ", ".join(list(filter(lambda x: x != "", [x.date_document or "" for x in env["account.voucher"].search([("move_id", "in", value.mapped("move_id").ids)])]))) or ""}#{number_format=date}',
+                                'B9': 'invoice_id.partner_id.search_key${value or ""}',
+                                'C9': 'invoice_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
+                                'D9': 'invoice_id.source_document_id${value and value.name or ""}',
+                                'E9': 'invoice_id.source_document_id${value and value.contract_id.display_code or ""}',
+                                'F9': 'invoice_id.partner_id.category_id${value and value.name or ""}',
+                                'G9': 'invoice_id.number${value or ""}',
+                                'H9': 'invoice_id.date_document${value or ""}#{number_format=date}',
+                                'I9': 'invoice_id.date_invoice${value or ""}#{number_format=date}',
+                                'J9': 'invoice_id.move_ids${value and value.filtered(lambda l: l.account_id == 199).name or ""}',
+                                'K9': 'balance${value or ""}#{number_format=number}',
+                                'L9': 'invoice_id.payment_ids${value and ", ".join([x.move_id.name for x in value.filtered(lambda l: l.doctype == "payment")]) or ""}',
+                                'M9': 'invoice_id.payment_ids${value and ", ".join([x.move_id.date for x in value.filtered(lambda l: l.doctype == "payment")]) or ""}#{number_format=date}',
+                                'N9': "${'=?(M9)+IF(?(F9)=\"ต่างประเทศ\",60,18)'}",
+                                'O9': "${'=B4-?(N9)'}",
+                                'P9': "${'=IF(?(O9)&lt;=0,?(K9),\"\")'}#{number_format=number}",
+                                'Q9': "${'=IF(AND(?(O9)&gt;=1,?(O9)&lt;=30),?(K9),\"\")'}#{number_format=number}",
+                                'R9': "${'=IF(AND(?(O9)&gt;=31,?(O9)&lt;=60),?(K9),\"\")'}#{number_format=number}",
+                                'S9': "${'=IF(AND(?(O9)&gt;=61,?(O9)&lt;=90),?(K9),\"\")'}#{number_format=number}",
+                                'T9': "${'=IF(AND(?(O9)&gt;=91,?(O9)&lt;=180),?(K9),\"\")'}#{number_format=number}",
+                                'U9': "${'=IF(AND(?(O9)&gt;=181,?(O9)&lt;=365),?(K9),\"\")'}#{number_format=number}",
+                                'V9': "${'=IF(AND(?(O9)&gt;365),?(K9),\"\")'}#{number_format=number}",
                             },
-                            '_TAIL_0': {
+                            '_GROUPBY_results["org_id"]': {  # groupby
                                 'K9': '@{sum}#{font=bold;number_format=number}',
-                                'P9': '@{sum}#{font=bold;number_format=number}',
-                                'Q9': '@{sum}#{font=bold;number_format=number}',
-                                'R9': '@{sum}#{font=bold;number_format=number}',
-                                'S9': '@{sum}#{font=bold;number_format=number}',
-                                'T9': '@{sum}#{font=bold;number_format=number}',
-                                'U9': '@{sum}#{font=bold;number_format=number}',
-                                'V9': '@{sum}#{font=bold;number_format=number}',
-                            }
+                            },
                         }
                     }
                 }
@@ -518,7 +520,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'L11': 'invoice_id.number${value or ""}',
                                 'M11': 'invoice_id.date_invoice${value or ""}#{number_format=date}',
                                 'N11': 'invoice_id.date_due${value or ""}#{number_format=date}',
-                                'O11': 'invoice_id.date_receipt_billing${value or ""}',
+                                'O11': 'invoice_id.date_receipt_billing${value or ""}#{number_format=date}',
                                 'P11': 'invoice_id.purchase_billing_id.user_id${value and value.with_context(lang="th_TH").display_name or ""}',
                                 'Q11': 'invoice_id.state${value and dict(draft="Draft", proforma="Pro-forma", proforma2="Pro-forma", open="Open", paid="Paid", cancel="Cancelled")[value] or ""}',
                             },
@@ -680,13 +682,86 @@ result = pd.pivot_table(df, index=groupby,
                                 'R14': 'invoice_line_id.price_subtotal${value or ""}',
                                 'S14': 'invoice_line_id.chartfield_id.code${value or ""}',
                                 'T14': 'invoice_line_id.chartfield_id.name${value or ""}',
-                                'U14': '',
-                                'V14': '',
+                                'U14': 'invoice_line_id${value and ((value.chartfield_id.type == "pj:" and (value.project_id.pm_employee_id and " ".join(list(filter(lambda l: l != False, [value.project_id.pm_employee_id.with_context(lang="th_TH").title_id.name, value.project_id.pm_employee_id.with_context(lang="th_TH").first_name, value.project_id.pm_employee_id.with_context(lang="th_TH").mid_name, value.project_id.pm_employee_id.with_context(lang="th_TH").last_name]))) or "")) or (value.chartfield_id.type == "cp:" and (value.invest_construction_id.pm_employee_id and " ".join(list(filter(lambda l: l != False, [value.invest_construction_id.pm_employee_id.with_context(lang="th_TH").title_id.name, value.invest_construction_id.pm_employee_id.with_context(lang="th_TH").first_name, value.invest_construction_id.pm_employee_id.with_context(lang="th_TH").mid_name, value.invest_construction_id.pm_employee_id.with_context(lang="th_TH").last_name]))) or ""))) or ""}',
+                                'V14': 'invoice_line_id${value and (value.chartfield_id.type == "pj:" and value.project_id.external_pm or "") or ""}',
                             },
                             '_TAIL_0': {
                                 'G14': '${"Total"}#{font=bold;align=right}',
                                 'H14': '@{sum}#{font=bold;number_format=number;align=right}',
                                 'R14': '@{sum}#{font=bold;number_format=number;align=right}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
+
+        # Input Tax Report
+        <record id="xlsx_report_input_tax" model="ir.attachment">
+            <field name="res_model">xlsx.report.input.tax</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_input_tax.xlsx</field>
+            <field name="name">Input Tax Report</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Input Tax Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'calendar_period_id.calendar_name${value or ""}',
+                                'B4': 'taxbranch_id.name${value or ""}',
+                            },
+                            'results': {
+                                'A8': 'tax_sequence_display${value or ""}',
+                                'B8': 'invoice_date#{number_format=date}',
+                                'C8': 'invoice_number${value or ""}',
+                                'D8': 'partner_id.name${value or ""}',
+                                'E8': 'partner_id.vat${value or ""}',
+                                'F8': 'partner_id.taxbranch${value and (value == "00000" and "Head Office" or value) or ""}',
+                                'G8': 'base${value or 0}#{number_format=number}',
+                                'H8': 'amount${value or 0}#{number_format=number}',
+                                'I8': 'move_number${value or ""}',
+                            },
+                            '_TAIL_0': {
+                                'G8': '@{sum}#{font=bold;align=right;number_format=number}',
+                                'H8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
+
+        # Output Tax Report
+        <record id="xlsx_report_output_tax" model="ir.attachment">
+            <field name="res_model">xlsx.report.output.tax</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_output_tax.xlsx</field>
+            <field name="name">Output Tax Report</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Output Tax Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'calendar_period_id.calendar_name${value or ""}',
+                                'B4': 'taxbranch_id.name${value or ""}',
+                            },
+                            'results': {
+                                'A8': 'invoice_date#{number_format=date}',
+                                'B8': 'invoice_number${value or ""}',
+                                'C8': 'partner_id.name${value or ""}',
+                                'D8': 'partner_id.vat${value or ""}',
+                                'E8': 'partner_id.taxbranch${value and (value == "00000" and "Head Office" or value) or ""}',
+                                'F8': 'base${value or 0}#{number_format=number}',
+                                'G8': 'amount${value or 0}#{number_format=number}',
+                                'I8': 'move_number${value or ""}',
+                            },
+                            '_TAIL_0': {
+                                'F8': '@{sum}#{font=bold;align=right;number_format=number}',
+                                'G8': '@{sum}#{font=bold;align=right;number_format=number}',
                             }
                         }
                     }

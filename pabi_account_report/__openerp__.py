@@ -14,6 +14,8 @@
         'pabi_purchase_billing',
         'pabi_bank_statement_reconcile',
         'pabi_account',
+        'pabi_th_tax_report',
+        'pabi_reconcile_auto',
     ],
     'data': [
         'data/menu.xml',
@@ -34,6 +36,8 @@
         'reports/xlsx_report_sla_purchase.xml',
         'reports/xlsx_report_sla_employee.xml',
         'reports/xlsx_report_supplier_receipt_follow_up.xml',
+        'reports/xlsx_report_input_tax.xml',
+        'reports/xlsx_report_output_tax.xml',
         'reports/jasper_report_payable_confirmation_letter.xml',
     ],
     'demo': [
