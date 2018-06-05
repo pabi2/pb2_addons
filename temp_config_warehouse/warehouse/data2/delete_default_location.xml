@@ -23,10 +23,6 @@
             <value eval="{'active': False}" />
         </function>
         <function model="stock.location" name="write" >
-        	<function model="stock.location" name="search" eval="[[('name','=','ศจ.')]]" />
-            <value eval="{'active': False}" />
-        </function>
-        <function model="stock.location" name="write" >
         	<function model="stock.location" name="search" eval="[[('name','=','ศช.')]]" />
             <value eval="{'active': False}" />
         </function>

@@ -31,12 +31,6 @@ base.stock_picking_type_117,Delivery Orders,Customers,base.picking_out,,ศอ.,
 base.stock_picking_type_116,ค. วัสดุ Receipts,Suppliers,base.picking_in,base.stock_picking_type_117,ศอ.,stock.stock_location_suppliers,base.stock_location_210
 base.stock_picking_type_117,Delivery Orders,Customers,base.picking_out,base.stock_picking_type_116,ศอ.,base.stock_location_165,stock.stock_location_customers
 base.stock_picking_type_118,เบิกสินค้า ค. วัสดุ Internal Transfers,Internal,base.picking_int,,ศอ.,base.stock_location_210,base.stock_location_211
-base.stock_picking_type_122,Delivery Orders,Customers,base.picking_out,,ศจ.,base.stock_location_171,stock.stock_location_customers
-base.stock_picking_type_121,ค. วัสดุ Receipts,Suppliers,base.picking_in,base.stock_picking_type_122,ศจ.,stock.stock_location_suppliers,base.stock_location_198
-base.stock_picking_type_122,Delivery Orders,Customers,base.picking_out,base.stock_picking_type_121,ศจ.,base.stock_location_171,stock.stock_location_customers
-base.stock_picking_type_131,NN NSTDA Receipts,Suppliers,base.picking_in,base.stock_picking_type_122,ศจ.,stock.stock_location_suppliers,base.stock_location_203
-base.stock_picking_type_123,เบิกสินค้า ค. วัสดุ Internal Transfers,Internal,base.picking_int,,ศจ.,base.stock_location_198,base.stock_location_211
-base.stock_picking_type_141,เบิกสินค้า NN NSTDA Internal Transfers,Internal,base.picking_int,,ศจ.,base.stock_location_203,base.stock_location_211
 base.stock_picking_type_127,Delivery Orders,Customers,base.picking_out,,ศน.,base.stock_location_177,stock.stock_location_customers
 base.stock_picking_type_126,ค. วัสดุ Receipts,Suppliers,base.picking_in,base.stock_picking_type_127,ศน.,stock.stock_location_suppliers,base.stock_location_200
 base.stock_picking_type_127,Delivery Orders,Customers,base.picking_out,base.stock_picking_type_126,ศน.,base.stock_location_177,stock.stock_location_customers

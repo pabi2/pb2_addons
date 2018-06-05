@@ -1,8 +1,4 @@
 id,name,usage,location_id/id,operating_unit_id/id
-base.stock_location_170,ศจ.,View,stock.stock_location_locations,
-base.stock_location_171,Stock,Internal Location,base.stock_location_170,base.res_ou_5
-base.stock_location_198,ค. วัสดุ,Internal Location,base.stock_location_171,base.res_ou_5
-base.stock_location_203,ค. NN NSTDA,Internal Location,base.stock_location_171,base.res_ou_5
 base.stock_location_152,ศช.,View,stock.stock_location_locations,
 base.stock_location_153,Stock,Internal Location,base.stock_location_152,base.res_ou_2
 base.stock_location_199,ค. วัสดุ,Internal Location,base.stock_location_153,base.res_ou_2

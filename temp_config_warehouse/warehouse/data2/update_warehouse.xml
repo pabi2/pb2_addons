@@ -15,10 +15,6 @@
             <value eval="{'view_location_id': ref('base.stock_location_153')}" />
         </function>
         <function model="stock.warehouse" name="write" >
-        	<function model="stock.warehouse" name="search" eval="[[('name','=','ศน.')]]" />
-            <value eval="{'view_location_id': ref('base.stock_location_177')}" />
-        </function>
-        <function model="stock.warehouse" name="write" >
         	<function model="stock.warehouse" name="search" eval="[[('name','=','ศว.')]]" />
             <value eval="{'view_location_id': ref('base.stock_location_159')}" />
         </function>
@@ -27,7 +23,6 @@
             <value eval="{'view_location_id': ref('base.stock_location_165')}" />
         </function>
         <delete model="stock.location" search="[('name','=','สก.'),('active','=',False)]"/>
-        <delete model="stock.location" search="[('name','=','ศจ.'),('active','=',False)]"/>
         <delete model="stock.location" search="[('name','=','ศช.'),('active','=',False)]"/>
         <delete model="stock.location" search="[('name','=','ศน.'),('active','=',False)]"/>
         <delete model="stock.location" search="[('name','=','ศว.'),('active','=',False)]"/>

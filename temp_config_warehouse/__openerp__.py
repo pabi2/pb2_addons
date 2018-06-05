@@ -14,7 +14,6 @@
     "depends": [
         'account',
         'stock_account_operating_unit',
-        'pabi_pos',
     ],
     "data": [
 
