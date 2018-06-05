@@ -1,4 +1,5 @@
 id,name,code,sequence_id/id,return_picking_type_id/id,warehouse_id,default_location_src_id/id,default_location_dest_id/id
+stock.picking_type_in,ค. วัสดุ Receipts,Suppliers,base.picking_in,,สก.,stock.stock_location_suppliers,base.stock_location_197
 stock.picking_type_out,Delivery Orders,Customers,base.picking_out,stock.picking_type_in,สก.,stock.stock_location_stock,stock.stock_location_customers
 base.stock_picking_type_137,ค. กลาง PMM Receipts,Suppliers,base.picking_in,stock.picking_type_out,สก.,stock.stock_location_suppliers,base.stock_location_207
 base.stock_picking_type_138,ค. หนังสือ Scicamp Receipts,Suppliers,base.picking_in,stock.picking_type_out,สก.,stock.stock_location_suppliers,base.stock_location_205
