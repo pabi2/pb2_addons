@@ -15,6 +15,7 @@
         'pabi_bank_statement_reconcile',
         'pabi_account',
         'l10n_th_tax_report',
+        'pabi_reconcile_auto',
     ],
     'data': [
         'data/menu.xml',
