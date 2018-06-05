@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="base.picking_out" model="ir.sequence">
+            <field name="name">PABI Outgoing</field>
+            <field name="prefix">OUT-</field>
+        </record>
+        <record id="base.picking_in" model="ir.sequence">
+            <field name="name">PABI Incoming</field>
+            <field name="prefix">IN-</field>
+        </record>
+        <record id="base.picking_int" model="ir.sequence">
+            <field name="name">PABI Internal Transfer</field>
+            <field name="prefix">INT-</field>
+        </record>
+    </data>
+</openerp>
