@@ -17,7 +17,7 @@
     'data': [
         'security/ir.model.access.csv',
         'data/report_data.xml',
-        # 'data/journal_data.xml',
+        'data/journal_data.xml',
         'views/account_view.xml',
         'views/res_partner_view.xml',
         'views/account_invoice_view.xml',
