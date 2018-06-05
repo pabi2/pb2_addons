@@ -7,12 +7,12 @@
             <value eval="{'view_location_id': ref('stock.stock_location_stock')}" />
         </function>
         <function model="stock.warehouse" name="write" >
-        	<function model="stock.warehouse" name="search" eval="[[('name','=','ศจ.')]]" />
-            <value eval="{'view_location_id': ref('base.stock_location_171')}" />
-        </function>
-        <function model="stock.warehouse" name="write" >
         	<function model="stock.warehouse" name="search" eval="[[('name','=','ศช.')]]" />
             <value eval="{'view_location_id': ref('base.stock_location_153')}" />
+        </function>
+        <function model="stock.warehouse" name="write" >
+        	<function model="stock.warehouse" name="search" eval="[[('name','=','ศน.')]]" />
+            <value eval="{'view_location_id': ref('base.stock_location_177')}" />
         </function>
         <function model="stock.warehouse" name="write" >
         	<function model="stock.warehouse" name="search" eval="[[('name','=','ศว.')]]" />
