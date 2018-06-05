@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <openerp>
-    <data>
+    <data noupdate="1">
         # Journal for Asset Depre
         <record id="seq_journal_transfer_tax_journal" model="ir.sequence">
             <field name="name">Transfer Tax Journal</field>
