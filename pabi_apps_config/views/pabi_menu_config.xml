@@ -13,6 +13,8 @@
       <delete model="ir.ui.menu" id="stock.menu_stock_procurement_action"/>
       <delete model="ir.ui.menu" id="base.menu_procurement_management_supplier_name"/>
       <delete model="ir.ui.menu" id="base.menu_partner_form"/>
+      <delete model="ir.ui.menu" id="hr.menu_view_employee_category_form"/>
+      <delete model="ir.ui.menu" id="hr_expense.menu_hr_product"/>
 
       <!-- HR -->
       <menuitem id="hr.menu_hr_root" name="HR"/>
