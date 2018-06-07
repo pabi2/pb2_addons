@@ -476,7 +476,8 @@ class ResProject(LogCommon, models.Model):
                 budgets = self.find_active_project_budget(
                     proj.fiscalyear_ids.ids, [proj.program_id.id])
                 if budgets:
-                    budgets.sync_budget_my_project()
+                    for budget in budgets:
+                        budget.sync_budget_my_project()
 
     @api.model
     def _prepare_fiscal_plan_lines(self, project, budget_method):
