@@ -9,11 +9,56 @@ class ResProject(models.Model):
     def create_project(self, data_dict):
         """ Create project using friendly dict
         data_dict = {
-            'code': 'XXX', 'name': 'YYY', ...
-            'budget_plan_ids': [{'fiscalyear_id': '2018',
-                                 'activity_gorup_id': 'AG001', ...},
-                                {'fiscalyear_id': '2019',
-                                 'activity_gorup_id': 'AG002', ...}],
+            'code': 'K-00-00006',
+            'name': '[K-00-00006]',
+            'org_id': 'MTEC',
+            'project_group_id': 'TAIST-Tokyo Tech scholarship',
+            'date_start': '2018-01-01',
+            'date_approve': '2018-01-01',
+            'date_end': '2020-06-01',
+            'pm_employee_id': '004010',
+            'pm_section_id': '105015',
+            'analyst_employee_id': '004010',
+            'analyst_section_id': '105015',
+
+            'budget_plan_expense_ids': [
+                {
+                    'fiscalyear_id': '2018',
+                    'budget_method': 'expense',
+                    'charge_type': 'external',
+                    'activity_group_id': 'AG0001',
+                    'm1': 10000.00,
+                    'm2': 10000.00,
+                    'm3': 10000.00,
+                    'm4': 10000.00,
+                    'm5': 10000.00,
+                    'm6': 10000.00,
+                    'm7': 10000.00,
+                    'm8': 10000.00,
+                    'm9': 10000.00,
+                    'm10': 10000.00,
+                    'm11': 10000.00,
+                    'm12': 10000.00,
+                },
+                {
+                    'fiscalyear_id': '2019',
+                    'budget_method': 'expense',
+                    'charge_type': 'external',
+                    'activity_group_id': 'AG0002',
+                    'm1': 10000.00,
+                    'm2': 10000.00,
+                    'm3': 10000.00,
+                    'm4': 10000.00,
+                    'm5': 10000.00,
+                    'm6': 10000.00,
+                    'm7': 10000.00,
+                    'm8': 10000.00,
+                    'm9': 10000.00,
+                    'm10': 10000.00,
+                    'm11': 10000.00,
+                    'm12': 10000.00,
+                },
+            ],
         }
         """
         try:
