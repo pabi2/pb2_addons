@@ -51,9 +51,8 @@ class JasperReportPaymentHistory(models.TransientModel):
         return report_name
 
     @api.multi
-    def _get_datas(self):
+    def _get_domain(self):
         self.ensure_one()
-        data = {'parameters': {}}
         dom = [('payment_id.move_id.create_date', '<=', self.date_report)]
         if self.partner_ids:
             dom += [('loan_agreement_id.borrower_partner_id', 'in',
@@ -64,6 +63,13 @@ class JasperReportPaymentHistory(models.TransientModel):
         if self.bank_branch_id:
             dom += [('loan_agreement_id.bank_id.bank_branch', '=',
                      self.bank_branch_id.id)]
+        return dom
+
+    @api.multi
+    def _get_datas(self):
+        self.ensure_one()
+        data = {'parameters': {}}
+        dom = self._get_domain()
         data['ids'] = self.env['payment.history.view'].search(dom).ids
         date_report = datetime.strptime(self.date_report, '%Y-%m-%d')
         data['parameters']['date_report'] = date_report.strftime('%d/%m/%Y')
