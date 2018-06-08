@@ -2,8 +2,8 @@
 from openerp import models, api
 
 
-class ResUser(models.Model):
-    _inherit = 'res.user'
+class ResUsers(models.Model):
+    _inherit = 'res.users'
 
     @api.model
     def fix_user_ou(self):
