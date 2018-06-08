@@ -5,5 +5,15 @@
             name="Reports"
             parent="account.menu_finance"
             sequence="20"/>
+
+        <menuitem id="menu_pabi_payable_report"
+            name="Payable"
+            parent="menu_pabi_account_report"
+            sequence="10"/>
+
+        <menuitem id="menu_pabi_receivable_report"
+            name="Receivable"
+            parent="menu_pabi_account_report"
+            sequence="20"/>
     </data>
 </openerp>

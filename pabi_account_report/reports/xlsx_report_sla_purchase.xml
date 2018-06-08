@@ -26,7 +26,7 @@
 
         <menuitem id="menu_xlsx_report_sla_purchase"
             name="SLA Purchase"
-            parent="menu_pabi_account_report"
+            parent="menu_pabi_payable_report"
             action="action_xlsx_report_sla_purchase_form"
             sequence="100"/>
     </data>

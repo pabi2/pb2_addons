@@ -30,7 +30,7 @@
 
         <menuitem id="menu_xlsx_report_output_tax"
             name="Output Tax Report"
-            parent="menu_pabi_account_report"
+            parent="menu_pabi_payable_report"
             action="action_xlsx_report_output_tax_form"
             sequence="2"/>
     </data>
