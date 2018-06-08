@@ -28,7 +28,7 @@
 
         <menuitem id="menu_report_advance_status"
             name="Advance Status Report"
-            parent="menu_pabi_account_report"
+            parent="menu_pabi_payable_report"
             action="action_report_advance_status"
             sequence="20"/>
     </data>

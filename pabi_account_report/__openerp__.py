@@ -16,6 +16,9 @@
         'pabi_account',
         'pabi_th_tax_report',
         'pabi_reconcile_auto',
+        'pabi_bank',
+        'pabi_loan_receivable',
+        'sale_invoice_plan',
     ],
     'data': [
         'data/menu.xml',
@@ -39,6 +42,7 @@
         'reports/xlsx_report_input_tax.xml',
         'reports/xlsx_report_output_tax.xml',
         'reports/jasper_report_payable_confirmation_letter.xml',
+        'reports/jasper_report_payment_history.xml',
     ],
     'demo': [
     ],
