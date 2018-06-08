@@ -15,4 +15,5 @@ from . import xlsx_report_supplier_receipt_follow_up
 from . import xlsx_report_input_tax
 from . import xlsx_report_output_tax
 from . import jasper_report_payable_confirmation_letter
-from . import jasper_report_payable_confirmation_letter_parser
+from . import jasper_report_payment_history
+from . import jasper_report_parser

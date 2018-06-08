@@ -22,5 +22,49 @@
 			<field name="model">account.move.line</field>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(payable_confirmation_letter)"/>
 		</record>
+
+		# Customer Payment History
+		<record id="customer_payment_history" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">payment.history.view</field>
+			<field name="name">Customer Payment History</field>
+			<field name="report_name">customer_payment_history</field>
+			<field name="report_rml">pabi_account_report/reports/jasper_report_payment_history_customer.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename"></field>
+		</record>
+
+		<record id="customer_payment_history_values" model="ir.values">
+			<field name="name">Customer Payment History</field>
+			<field name="model">payment.history.view</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_payment_history)"/>
+		</record>
+
+		# Bank Payment History
+		<record id="bank_payment_history" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">payment.history.view</field>
+			<field name="name">Bank Payment History</field>
+			<field name="report_name">bank_payment_history</field>
+			<field name="report_rml">pabi_account_report/reports/jasper_report_payment_history_bank.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename"></field>
+		</record>
+
+		<record id="bank_payment_history_values" model="ir.values">
+			<field name="name">Bank Payment History</field>
+			<field name="model">payment.history.view</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(bank_payment_history)"/>
+		</record>
 	</data>
 </openerp>
