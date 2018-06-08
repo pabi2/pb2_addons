@@ -29,7 +29,7 @@
 
         <menuitem id="menu_report_payable_balance"
             name="Payable Balance"
-            parent="menu_pabi_account_report"
+            parent="menu_pabi_payable_report"
             action="action_report_payable_balance"
             sequence="70"/>
     </data>

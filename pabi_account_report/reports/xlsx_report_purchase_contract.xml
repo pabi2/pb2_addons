@@ -28,7 +28,7 @@
 
         <menuitem id="menu_report_purchase_contract"
             name="Purchase Contract"
-            parent="menu_pabi_account_report"
+            parent="menu_pabi_payable_report"
             action="action_report_purchase_contract"
             sequence="40"/>
     </data>

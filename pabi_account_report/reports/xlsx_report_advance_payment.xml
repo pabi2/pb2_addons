@@ -48,7 +48,7 @@
 
         <menuitem id="menu_xlsx_report_advance_payment"
             name="Advance Payment"
-            parent="menu_pabi_account_report"
+            parent="menu_pabi_payable_report"
             action="action_xlsx_report_advance_payment_form"
             sequence="50"/>
     </data>

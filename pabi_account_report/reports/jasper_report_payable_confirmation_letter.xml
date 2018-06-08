@@ -52,7 +52,7 @@
 
         <menuitem id="menu_jasper_report_payable_confirmation_letter"
             name="Payable Confirmation Letter"
-            parent="menu_pabi_account_report"
+            parent="menu_pabi_payable_report"
             action="action_jasper_report_payable_confirmation_letter_form"
             sequence="120"/>
     </data>

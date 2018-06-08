@@ -54,7 +54,7 @@
 
         <menuitem id="menu_xlsx_report_cheque_register"
             name="Cheque Register"
-            parent="menu_pabi_account_report"
+            parent="menu_pabi_payable_report"
             action="action_xlsx_report_cheque_register_form"
             sequence="30"/>
     </data>
