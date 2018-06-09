@@ -33,11 +33,11 @@ class ReportAccountCommon(models.AbstractModel):
     )
     fiscalyear_date_start = fields.Date(
         string='Start Fiscal Year Date',
-        related='fiscalyear_start_id.date_start',
+        compute='_compute_fiscalyear_date',
     )
     fiscalyear_date_end = fields.Date(
         string='End Fiscal Year Date',
-        related='fiscalyear_end_id.date_stop',
+        compute='_compute_fiscalyear_date',
     )
     filter = fields.Selection(
         [('filter_no', 'No Filters'),
@@ -77,6 +77,24 @@ class ReportAccountCommon(models.AbstractModel):
                   ('date_stop', '>=', now)]
         fiscalyear = self.env['account.fiscalyear'].search(domain, limit=1)
         return fiscalyear
+
+    @api.multi
+    @api.depends('fiscalyear_start_id', 'fiscalyear_end_id')
+    def _compute_fiscalyear_date(self):
+        self.ensure_one()
+        Fiscalyear = self.env['account.fiscalyear']
+        date_start = self.fiscalyear_start_id.date_start
+        date_stop = self.fiscalyear_end_id.date_stop
+        if date_start or date_stop:
+            if not date_start:
+                fiscalyear = Fiscalyear.search([], order="date_start", limit=1)
+                date_start = fiscalyear.date_start
+            if not date_stop:
+                fiscalyear = Fiscalyear.search(
+                    [], order="date_stop desc", limit=1)
+                date_stop = fiscalyear.date_stop
+        self.fiscalyear_date_start = date_start
+        self.fiscalyear_date_end = date_stop
 
     @api.onchange('chart_account_id')
     def _onchange_chart_account_id(self):

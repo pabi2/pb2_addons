@@ -43,6 +43,7 @@
         'reports/xlsx_report_output_tax.xml',
         'reports/jasper_report_payable_confirmation_letter.xml',
         'reports/jasper_report_payment_history.xml',
+        'reports/jasper_report_receivable_follow_up.xml',
     ],
     'demo': [
     ],
