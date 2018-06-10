@@ -82,7 +82,7 @@ class AccountBudget(models.Model):
         'budget_id',
         string='Budget Lines',
         states={'done': [('readonly', True)]},
-        # copy=True,
+        copy=True,
     )
     budget_revenue_line_ids = fields.One2many(
         'account.budget.line',
@@ -90,7 +90,7 @@ class AccountBudget(models.Model):
         string='Budget Lines',
         states={'done': [('readonly', True)]},
         domain=[('budget_method', '=', 'revenue')],
-        # copy=True,
+        copy=False,
     )
     budget_expense_line_ids = fields.One2many(
         'account.budget.line',
@@ -98,23 +98,8 @@ class AccountBudget(models.Model):
         string='Budget Lines',
         states={'done': [('readonly', True)]},
         domain=[('budget_method', '=', 'expense')],
-        # copy=True,
+        copy=False,
     )
-    # version = fields.Float(
-    #     string='Revision',
-    #     readonly=True,
-    #     default=0.0,
-    #     digits=(2, 1),
-    #     help="Indicate revision of the same budget plan. "
-    #     "Only latest one is used",
-    # )
-    # active = fields.Boolean(
-    #     string='Current',
-    #     readonly=True,
-    #     default=True,
-    #     # compute='_compute_latest_version',  TODO: determine version
-    #     help="Indicate latest revision of the same plan.",
-    # )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',

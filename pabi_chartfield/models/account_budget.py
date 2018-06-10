@@ -14,7 +14,7 @@ class AccountBudget(ChartField, models.Model):
         string='Budget Lines',
         domain=[('budget_method', '=', 'revenue')],
         states={'done': [('readonly', True)]},
-        copy=True,
+        copy=False,
     )
     budget_expense_line_unit_base = fields.One2many(
         'account.budget.line',
@@ -22,7 +22,7 @@ class AccountBudget(ChartField, models.Model):
         string='Budget Lines',
         domain=[('budget_method', '=', 'expense')],
         states={'done': [('readonly', True)]},
-        copy=True,
+        copy=False,
     )
     # --
     budget_revenue_line_project_base = fields.One2many(
@@ -31,7 +31,7 @@ class AccountBudget(ChartField, models.Model):
         string='Budget Lines',
         domain=[('budget_method', '=', 'revenue')],
         states={'done': [('readonly', True)]},
-        copy=True,
+        copy=False,
     )
     budget_expense_line_project_base = fields.One2many(
         'account.budget.line',
@@ -39,7 +39,7 @@ class AccountBudget(ChartField, models.Model):
         string='Budget Lines',
         domain=[('budget_method', '=', 'expense')],
         states={'done': [('readonly', True)]},
-        copy=True,
+        copy=False,
     )
     # --
     budget_revenue_line_personnel = fields.One2many(
@@ -48,7 +48,7 @@ class AccountBudget(ChartField, models.Model):
         string='Budget Lines',
         domain=[('budget_method', '=', 'revenue')],
         states={'done': [('readonly', True)]},
-        copy=True,
+        copy=False,
     )
     budget_expense_line_personnel = fields.One2many(
         'account.budget.line',
@@ -56,7 +56,7 @@ class AccountBudget(ChartField, models.Model):
         string='Budget Lines',
         domain=[('budget_method', '=', 'expense')],
         states={'done': [('readonly', True)]},
-        copy=True,
+        copy=False,
     )
     # --
     budget_revenue_line_invest_asset = fields.One2many(
@@ -65,7 +65,7 @@ class AccountBudget(ChartField, models.Model):
         string='Budget Lines',
         domain=[('budget_method', '=', 'revenue')],
         states={'done': [('readonly', True)]},
-        copy=True,
+        copy=False,
     )
     budget_expense_line_invest_asset = fields.One2many(
         'account.budget.line',
@@ -73,7 +73,7 @@ class AccountBudget(ChartField, models.Model):
         string='Budget Lines',
         domain=[('budget_method', '=', 'expense')],
         states={'done': [('readonly', True)]},
-        copy=True,
+        copy=False,
     )
     # --
     budget_revenue_line_invest_construction = fields.One2many(
@@ -82,7 +82,7 @@ class AccountBudget(ChartField, models.Model):
         string='Budget Lines',
         domain=[('budget_method', '=', 'revenue')],
         states={'done': [('readonly', True)]},
-        copy=True,
+        copy=False,
     )
     budget_expense_line_invest_construction = fields.One2many(
         'account.budget.line',
@@ -90,7 +90,7 @@ class AccountBudget(ChartField, models.Model):
         string='Budget Lines',
         domain=[('budget_method', '=', 'expense')],
         states={'done': [('readonly', True)]},
-        copy=True,
+        copy=False,
     )
 
     @api.model
