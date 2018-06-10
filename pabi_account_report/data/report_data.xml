@@ -66,5 +66,49 @@
 			<field name="model">payment.history.view</field>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(bank_payment_history)"/>
 		</record>
+
+		# Customer Receivable Follow Up
+		<record id="customer_receivable_follow_up" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">receivable.follow.up.view</field>
+			<field name="name">Customer Receivable Follow Up</field>
+			<field name="report_name">customer_receivable_follow_up</field>
+			<field name="report_rml">pabi_account_report/reports/jasper_report_receivable_follow_up_customer.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename"></field>
+		</record>
+
+		<record id="customer_receivable_follow_up_values" model="ir.values">
+			<field name="name">Customer Receivable Follow Up</field>
+			<field name="model">receivable.follow.up.view</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_receivable_follow_up)"/>
+		</record>
+
+		# Bank Receivable Follow Up
+		<record id="bank_receivable_follow_up" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">receivable.follow.up.view</field>
+			<field name="name">Bank Receivable Follow Up</field>
+			<field name="report_name">bank_receivable_follow_up</field>
+			<field name="report_rml">pabi_account_report/reports/jasper_report_receivable_follow_up_bank.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename"></field>
+		</record>
+
+		<record id="bank_receivable_follow_up_values" model="ir.values">
+			<field name="name">Bank Receivable Follow Up</field>
+			<field name="model">receivable.follow.up.view</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(bank_receivable_follow_up)"/>
+		</record>
 	</data>
 </openerp>
