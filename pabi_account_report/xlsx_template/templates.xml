@@ -270,17 +270,17 @@ result = pd.pivot_table(df, index=groupby,
             </field>
         </record>
 
-        # Purchase Contract
+        # PO Contract
         <record id="xlsx_report_purchase_contract" model="ir.attachment">
             <field name="res_model">xlsx.report.purchase.contract</field>
             <field name="datas"></field>
             <field name="datas_fname">xlsx_report_purchase_contract.xlsx</field>
-            <field name="name">Purchase Contract</field>
+            <field name="name">PO Contract</field>
             <field name="parent_id" eval="ref('dir_account_reports')"/>
             <field name="description">
                 {
                     '__EXPORT__': {
-                        'Purchase Contract Report': {
+                        'PO Contract Report': {
                             '_HEAD_': {
                                 'A1': '${env.user.company_id.display_name}',
                                 'B3': 'date_report${value or ""}#{number_format=date;align=left}',

@@ -47,6 +47,12 @@
             <field name="implied_ids" eval="[(4, ref('group_budget_user'))]"/>
         </record>
 
+        <record id="group_cooperate_budget_policy" model="res.groups">
+            <field name="name">Budget Policy</field>
+            <field name="category_id" ref="module_category_account_budget"/>
+            <field name="implied_ids" eval="[(4, ref('group_cooperate_budget'))]"/>
+        </record>
+
         <record id="group_program_secretary_budget" model="res.groups">
             <field name="name">Program Secretary</field>
             <field name="category_id" ref="module_category_account_budget"/>

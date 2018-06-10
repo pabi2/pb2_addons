@@ -10,7 +10,7 @@
         <menuitem name="Investment Construction" id="menu_action_budget_plan_invest_construction" parent="menu_action_budget_plan" sequence="50"/>
 
         <menuitem name="Budget Policy" id="menu_action_budget_policy" parent="account_budget_activity.menu_budgeting" sequence="12"
-          groups="pabi_base.group_cooperate_budget"/>
+          groups="pabi_base.group_cooperate_budget_policy"/>
 
         <menuitem name="Budget Breakdown" id="menu_action_budget_breakdown" parent="account_budget_activity.menu_budgeting" sequence="13"
           groups="pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget"/>

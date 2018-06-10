@@ -19,7 +19,7 @@
         </record>
 
         <record id="action_report_purchase_contract" model="ir.actions.act_window">
-            <field name="name">Purchase Contract Report</field>
+            <field name="name">PO Contract Report</field>
             <field name="res_model">xlsx.report.purchase.contract</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
@@ -27,7 +27,7 @@
         </record>
 
         <menuitem id="menu_report_purchase_contract"
-            name="Purchase Contract"
+            name="PO Contract"
             parent="menu_pabi_payable_report"
             action="action_report_purchase_contract"
             sequence="40"/>

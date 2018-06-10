@@ -2,7 +2,8 @@
 <openerp>
     <data>
 
-        <menuitem name="External Fund Rule" id="menu_budget_external_fund_rule" parent="pabi_my_project.menu_main_project" sequence="20"/>
+        <menuitem name="External Fund Rule" id="menu_budget_external_fund_rule" parent="pabi_my_project.menu_main_project" sequence="20"
+          groups="pabi_base.group_budget_user,pabi_base.group_nstda_admin_business"/>
 
         # Fund Rule
         <record id="view_budget_fund_rule_tree" model="ir.ui.view">
@@ -143,7 +144,8 @@
             <field name="act_window_id" ref="action_budget_fund_rule"/>
         </record>
 
-        <menuitem name="Fund Rule" id="menu_budget_fund_rule" action="action_budget_fund_rule" parent="menu_budget_external_fund_rule" sequence="10"/>
+        <menuitem name="Fund Rule" id="menu_budget_fund_rule" action="action_budget_fund_rule" parent="menu_budget_external_fund_rule" sequence="10"
+          groups="pabi_base.group_budget_user,pabi_base.group_nstda_admin_business"/>
 
         # Fund Rule Template
         <record id="view_budget_fund_rule_template_tree" model="ir.ui.view">
@@ -228,7 +230,8 @@
             <field name="act_window_id" ref="action_budget_fund_rule_template"/>
         </record>
 
-        <menuitem name="Fund Template" id="menu_budget_fund_rule_template" action="action_budget_fund_rule_template" parent="menu_budget_external_fund_rule" sequence="20"/>
+        <menuitem name="Fund Template" id="menu_budget_fund_rule_template" action="action_budget_fund_rule_template" parent="menu_budget_external_fund_rule" sequence="20"
+          groups="pabi_base.group_nstda_admin_business"/>
 
         # Expense Group
         <record id="view_budget_fund_expense_group_tree" model="ir.ui.view">
@@ -275,7 +278,8 @@
             <field name="view_id" ref="view_budget_fund_expense_group_tree"/>
         </record>
 
-        <menuitem name="Expense Group" id="menu_budget_fund_expense_group" action="action_budget_fund_expense_group" parent="menu_budget_external_fund_rule" sequence="30"/>
+        <menuitem name="Expense Group" id="menu_budget_fund_expense_group" action="action_budget_fund_expense_group" parent="menu_budget_external_fund_rule" sequence="30"
+          groups="pabi_base.group_nstda_admin_business"/>
 
     </data>
 </openerp>

@@ -2,6 +2,9 @@
 <openerp>
     <data>
 
+        <menuitem id="menu_pos_root" parent="base.menu_base_partner" name="POS" sequence="2" />
+
+
         <record id="view_sales_order_filter" model="ir.ui.view">
             <field name="name">sale.order.list.select</field>
             <field name="model">sale.order</field>
@@ -220,7 +223,7 @@
             <field name="act_window_id" ref="action_pos_orders"/>
         </record>
 
-        <menuitem action="action_pos_orders" id="menu_pos_order" parent="base.menu_sales" sequence="7" groups="base.group_sale_salesman,base.group_sale_manager"/>
+        <menuitem action="action_pos_orders" id="menu_pos_order" parent="menu_pos_root" sequence="7" groups="base.group_sale_salesman,base.group_sale_manager"/>
 
         <record id="view_order_form" model="ir.ui.view">
             <field name="name">view.order.form</field>

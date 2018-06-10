@@ -220,7 +220,7 @@ class ResCostcenter(ResCommon, models.Model):
     taxbranch_id = fields.Many2one(
         'res.taxbranch',
         string='Tax Branch',
-        required=False,
+        required=True,
     )
 
 

@@ -2,46 +2,48 @@
 <openerp>
     <data>
 
-      # Delete unused menu permanently
-      <delete model="ir.ui.menu" id="account_voucher.menu_action_sale_receipt"/>
-      <delete model="ir.ui.menu" id="account_voucher.menu_action_purchase_receipt"/>
-      <delete model="ir.ui.menu" id="account.menu_bank_statement_tree"/>
-      <delete model="ir.ui.menu" id="account.journal_cash_move_lines"/>
-      <delete model="ir.ui.menu" id="account.menu_bank_reconcile_bank_statements"/>
-      <delete model="ir.ui.menu" id="account.menu_wizard_fy_close_state"/>
-      <delete model="ir.ui.menu" id="stock.menu_stock_proc_schedulers"/>
-      <delete model="ir.ui.menu" id="stock.menu_stock_procurement_action"/>
-      <delete model="ir.ui.menu" id="base.menu_procurement_management_supplier_name"/>
-      <delete model="ir.ui.menu" id="base.menu_partner_form"/>
-      <delete model="ir.ui.menu" id="hr.menu_view_employee_category_form"/>
-      <delete model="ir.ui.menu" id="hr_expense.menu_hr_product"/>
+        # Hide unused menu by assign to a special grou that no one have
+        <record id="show_unuse_feature" model="res.groups">
+            <field name="name">Show unused features</field>
+        </record>
+        <record id="mail.mail_feeds_main" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('show_unuse_feature')]), ]"/>
+        </record>
+        <record id="base.menu_reporting" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('show_unuse_feature')]), ]"/>
+        </record>
 
-      <!-- HR -->
-      <menuitem id="hr.menu_hr_root" name="HR"/>
-      <menuitem id="hr.menu_hr_main" name="Directory" parent="hr.menu_hr_root" sequence="450"/>
-      <menuitem id="hr.menu_hr_report" name="Reporting" parent="hr.menu_hr_root" sequence="500"/>
+        # Delete unused menu permanently
+        <delete model="ir.ui.menu" id="account_voucher.menu_action_sale_receipt"/>
+        <delete model="ir.ui.menu" id="account_voucher.menu_action_purchase_receipt"/>
+        <delete model="ir.ui.menu" id="account.menu_bank_statement_tree"/>
+        <delete model="ir.ui.menu" id="account.journal_cash_move_lines"/>
+        <delete model="ir.ui.menu" id="account.menu_bank_reconcile_bank_statements"/>
+        <delete model="ir.ui.menu" id="account.menu_wizard_fy_close_state"/>
+        <delete model="ir.ui.menu" id="stock.menu_stock_proc_schedulers"/>
+        <delete model="ir.ui.menu" id="stock.menu_stock_procurement_action"/>
+        <delete model="ir.ui.menu" id="base.menu_procurement_management_supplier_name"/>
+        <delete model="ir.ui.menu" id="base.menu_partner_form"/>
+        <delete model="ir.ui.menu" id="hr.menu_view_employee_category_form"/>
+        <delete model="ir.ui.menu" id="hr_expense.menu_hr_product"/>
 
-      <!-- Purchase rearrange-->
-      <menuitem id="base.menu_purchase_root" name="Purchases" sequence="40"/>
-    	<menuitem id="purchase_request.menu_purchase_request_pro_mgt"
-    		name="Purchase Requests" sequence="0" parent="purchase.menu_procurement_management"/>
-    	<menuitem id="purchase_request.menu_purchase_request_line"
-    		name="Purchase Request Lines" sequence="1" parent="purchase.menu_procurement_management"/>
-    	<menuitem id="purchase_requisition.menu_purchase_requisition_pro_mgt"
-    		name="Calls for Bids" sequence="2" parent="purchase.menu_procurement_management"/>
-    	<menuitem id="purchase.menu_purchase_rfq"
-    		name="Quotation" sequence="3" parent="purchase.menu_procurement_management"/>
-    	<menuitem id="purchase.menu_purchase_form_action"
-    		name="Purchase Orders" sequence="4" parent="purchase.menu_procurement_management"/>
+        <!-- HR -->
+        <menuitem id="hr.menu_hr_root" name="Expenses"/>
+        <menuitem id="hr.menu_hr_main" name="Directory" parent="hr.menu_hr_configuration" sequence="450"/>
+        <menuitem id="hr.menu_hr_report" name="Reporting" parent="hr.menu_hr_root" sequence="500"/>
 
-    	<!-- Alfresco Menu -->
-    	<record model="ir.actions.act_url" id="action_pabi_web_url">
-    	    <field name="name">PABI Web</field>
-    	    <field name="url">http://10.226.202.134/share/</field>
-        	<field name="target">new</field>
-       	</record>
-    		<menuitem id="menu_pabi_web_url" parent="mail.mail_feeds_main" action="action_pabi_web_url" name="PABI Web" sequence="1000"/>
-
+        <!-- Purchase rearrange-->
+        <menuitem id="base.menu_purchase_root" name="Purchases" sequence="40"/>
+      	<menuitem id="purchase_request.menu_purchase_request_pro_mgt"
+      		name="Purchase Requests" sequence="0" parent="purchase.menu_procurement_management"/>
+      	<menuitem id="purchase_request.menu_purchase_request_line"
+      		name="Purchase Request Lines" sequence="1" parent="purchase.menu_procurement_management"/>
+      	<menuitem id="purchase_requisition.menu_purchase_requisition_pro_mgt"
+      		name="Calls for Bids" sequence="2" parent="purchase.menu_procurement_management"/>
+      	<menuitem id="purchase.menu_purchase_rfq"
+      		name="Quotation" sequence="3" parent="purchase.menu_procurement_management"/>
+      	<menuitem id="purchase.menu_purchase_form_action"
+      		name="Purchase Orders" sequence="4" parent="purchase.menu_procurement_management"/>
 
         <!-- New Configurations Menu, move configuration of every module here -->
         <menuitem id="menu_nstda_configurations" name="Configurations" sequence="450" groups="pabi_base.group_nstda_admin_business"/>

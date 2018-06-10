@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "NSTDA :: PABI2 - Purchase Contract",
-    "summary": "Pabi2 Purchase Contract",
+    "name": "NSTDA :: PABI2 - PO Contract",
+    "summary": "Pabi2 PO Contract",
     "version": "8.0.1.0.0",
     "category": "Purchase",
     "description": """
 
-PABI2 - Purchase Contract Module
+PABI2 - PO Contract Module
 ==================================
 
 1) Purchase User -> Creator of document, see own OU

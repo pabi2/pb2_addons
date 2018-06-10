@@ -6,11 +6,11 @@
 			<field name="name">purchase.contract.form</field>
 			<field name="model">purchase.contract</field>
 			<field name="arch" type="xml">
-				<form string="Purchase Contract">
+				<form string="PO Contract">
 					<header>
 
 						<button	name="action_button_reversion"	type="object" states="send,close" class="oe_highlight"
-							string="Add Reversion" confirm="Are you sure to create Purchase Contract Reversion?"
+							string="Add Reversion" confirm="Are you sure to create PO Contract Reversion?"
 							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
 
 						<button name="action_button_send_doc" type="object" states="generate" class="oe_highlight"
@@ -19,7 +19,7 @@
 
 						<button	name="action_button_delete_reversion" type="object"
 							attrs="{'invisible': ['|',('state','not in', ('generate')), ('poc_rev','=', 0)]}"
-							string="Delete Reversion" confirm="Are you sure to Delete Purchase Contract Reversion?"
+							string="Delete Reversion" confirm="Are you sure to Delete PO Contract Reversion?"
 							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
 
 						<button name="%(action_view_purchase_contract_termination)d"
@@ -33,7 +33,7 @@
 							context="{'poc_id': id, 'state':'cancel_generate'}"
 							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
 
-						<button name="action_button_reflow" string="Reflow" confirm="Are you sure to Reflow Purchase Contract?"
+						<button name="action_button_reflow" string="Reflow" confirm="Are you sure to Reflow PO Contract?"
 							type="object" states="send,close"
 							groups="pabi_purchase_contract.group_pabi_purchase_contract_user"/>
 
@@ -165,7 +165,7 @@
 			<field name="name">purchase.contract.seach</field>
 			<field name="model">purchase.contract</field>
 			<field name="arch" type="xml">
-				<search string="Purchase Contract">
+				<search string="PO Contract">
 					<field name="name" string="All" filter_domain="['|', ('poc_code','like',self), ('name','ilike',self)]"/>
 					<field name="contract_type_id"/>
 				</search>
@@ -177,7 +177,7 @@
 			<field name="name">purchase.contract.tree</field>
 			<field name="model">purchase.contract</field>
 			<field name="arch" type="xml">
-				<tree string="Purchase Contract" colors="red:state=='cancel_generate';red:state=='terminate' ">
+				<tree string="PO Contract" colors="red:state=='cancel_generate';red:state=='terminate' ">
 					<field name="display_code"/>
 					<field name="contract_type_id"/>
 					<field name="name"/>
@@ -190,7 +190,7 @@
 		<!-- window action -->
 		<!-- The following tag is an action definition for a "window action", that is an action opening a view or a set of views -->
 		<record model="ir.actions.act_window" id="purchase_contract_action">
-			<field name="name">Purchase Contract</field>
+			<field name="name">PO Contract</field>
 			<field name="res_model">purchase.contract</field>
 			<field name="domain"></field>
 			<field name="view_type">form</field>
@@ -210,11 +210,11 @@
 		</record>
 
 		<!-- top level menu: no parent -->
-		<menuitem id="main_purchase_contract_menu" name="PO Contract" sequence="62"
+		<menuitem id="main_purchase_contract_menu" name="PO Contract" sequence="42"
 			groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close"/>
 		<menuitem id="purchase_contract_sub_menu" name="Contract Management" parent="main_purchase_contract_menu" sequence="1"
 			groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close"/>
-		<menuitem id="purchase_contract_menu" name="Purchase Contract" parent="purchase_contract_sub_menu" action="purchase_contract_action" sequence="1"/>
+		<menuitem id="purchase_contract_menu" name="PO Contract" parent="purchase_contract_sub_menu" action="purchase_contract_action" sequence="1"/>
 		<menuitem id="purchase_contract_accept_menu" name="Waiting for Accept" parent="purchase_contract_sub_menu" action="purchase_contract_accept_action" sequence="1"/>
 
 		<!-- Collateral / Type -->

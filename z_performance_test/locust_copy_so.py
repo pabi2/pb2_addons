@@ -9,7 +9,7 @@ class SellerTaskSet(TaskSet):
         # cust_model = self.client.get_model('res.partner')
         # chart_model = self.client.get_model('chartfield.view')
         so_model = self.client.get_model('sale.order')
-        sale_ids = so_model.search([('name', '=', 'SO18000038')])
+        sale_ids = so_model.search([('name', '=', 'SO18000001')])
         order_id = so_model.copy(sale_ids[0], {},
                                  context={'order_type': 'sale_order'})
         so_model.action_button_confirm([order_id, ])

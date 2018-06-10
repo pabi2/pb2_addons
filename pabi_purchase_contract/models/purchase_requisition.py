@@ -27,7 +27,7 @@ class PurchaseRequisition(models.Model):
     @api.multi
     def contract_open(self):
         return {
-            'name': _('Purchase Contracts'),
+            'name': _('PO Contracts'),
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'purchase.contract',

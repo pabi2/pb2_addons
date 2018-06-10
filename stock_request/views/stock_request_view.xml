@@ -3,7 +3,7 @@
     <data>
 
         <!-- Top menu item -->
-        <menuitem name="Stock" id="menu_stock_request" groups="base.group_user" sequence="71"/>
+        <menuitem name="Stock" id="menu_stock_request" groups="base.group_user" sequence="69"/>
         <menuitem name="Stock Operation" id="menu_stock_operation" parent="menu_stock_request" groups="base.group_user" sequence="10"/>
 
         # Stock Request

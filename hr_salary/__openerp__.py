@@ -13,6 +13,7 @@
 
     """,
     "data": [
+        "security/groups.xml",
         "security/ir.model.access.csv",
         "data/hr_salary_sequence.xml",
         "views/hr_salary_view.xml",

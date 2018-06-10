@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <delete model="ir.translation" search="[
+            ('lang', '=', 'th_TH'),
+            '|', ('name', 'in', ['ir.actions.act_window,name',
+                                 'ir.ui.menu,name',
+                                 'ir.actions.client,name',
+                                 'ir.actions.client,help']),
+            ('type', '!=', 'model')]" />
+    </data>
+</openerp>

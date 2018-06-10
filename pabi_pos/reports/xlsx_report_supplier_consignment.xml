@@ -34,7 +34,7 @@
 
         <menuitem id="menu_report_supplier_consignment"
             name="Supplier Consign Report"
-            parent="base.menu_sales"
+            parent="menu_pos_root"
             action="action_report_supplier_consignment"
             sequence="10"/>
     </data>

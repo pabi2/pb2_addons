@@ -16,7 +16,7 @@
 
         <menuitem id="menu_xlsx_import_consigned_order"
           name="Import Consigned Order"
-          parent="base.menu_sales"
+          parent="menu_pos_root"
           action="action_xlsx_import_consigned_order"
           sequence="500"/>
 
