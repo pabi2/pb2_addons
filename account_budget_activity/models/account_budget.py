@@ -82,7 +82,7 @@ class AccountBudget(models.Model):
         'budget_id',
         string='Budget Lines',
         states={'done': [('readonly', True)]},
-        copy=True,
+        copy=False,
     )
     budget_revenue_line_ids = fields.One2many(
         'account.budget.line',
