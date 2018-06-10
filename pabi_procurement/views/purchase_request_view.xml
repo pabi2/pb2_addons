@@ -166,9 +166,9 @@
             <field name="inherit_id" ref="purchase_request.view_purchase_request_tree"/>
             <field name="arch" type="xml">
                 <!-- #  Note :: take out when this up to production -->
-                <!--<xpath expr="//tree" position="attributes">-->
-                <!--<attribute name="create">false</attribute>-->
-                <!--</xpath>-->
+                <xpath expr="//tree" position="attributes">
+                  <attribute name="create">false</attribute>
+                </xpath>
                 <xpath expr="//field[@name='requested_by']" position="after">
                     <field name="responsible_uid"/>
                     <field name="purchase_type_id"/>
