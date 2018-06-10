@@ -81,7 +81,7 @@
                             type="object"
                             class="oe_highlight"
                             attrs="{'invisible': ['|', ('state', '!=', 'to_approve'), ('is_small_amount', '=', True)]}"
-                            groups="purchase_request.group_purchase_request_manager"/>
+                            groups="purchase_request.group_purchase_request_manager,purchase_request.group_purchase_request_user"/>
                     <!-- For small amount case -->
                     <button
                         name="%(action_accept_with_reason)d"
@@ -89,7 +89,7 @@
                         class="oe_highlight"
                         attrs="{'invisible': ['|', ('state', '!=', 'to_approve'), ('is_small_amount', '=', False)]}"
                         string="Disagree and Accept"
-                        groups="purchase_request.group_purchase_request_user"
+                        groups="purchase_request.group_purchase_request_manager,purchase_request.group_purchase_request_user"
                         help="Disagree with small amount, but still accept as normal PR process."/>
                     <button
                         name="button_agree_and_done"
@@ -101,7 +101,7 @@
                 </xpath>
                 <xpath expr="//button[@name='button_rejected']" position="attributes">
                     <attribute name="string">Cancel</attribute>
-                    <attribute name="groups">purchase_request.group_purchase_request_user</attribute>
+                    <attribute name="groups">purchase_request.group_purchase_request_manager,purchase_request.group_purchase_request_user</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="after">
                     <!--<field name="price_unit"/>-->
@@ -232,7 +232,7 @@
             <field name="inherit_id" ref="purchase_request_reject_reason.view_purchase_request_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='%(purchase_request_reject_reason.action_order_reject)d']" position="attributes">
-                    <attribute name="groups">purchase_request.group_purchase_request_user</attribute>
+                    <attribute name="groups">purchase_request.group_purchase_request_manager,purchase_request.group_purchase_request_user</attribute>
                 </xpath>
             </field>
         </record>
