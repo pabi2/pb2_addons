@@ -75,13 +75,13 @@
                 <xpath expr="//field[@name='state']" position="attributes">
                     <attribute name="statusbar_visible">draft,approved,done</attribute>
                 </xpath>
-                <xpath expr="//button[@name='button_approved']" position="attributes">
-                    <attribute name="string">Accept</attribute>
-                    <attribute name="groups">purchase_request.group_purchase_request_user</attribute>
-                    <attribute name="states"></attribute>
-                    <attribute name="attrs">{'invisible': ['|', ('state', '!=', 'to_approve'), ('is_small_amount', '=', True)]}</attribute>
-                </xpath>
-                <xpath expr="//button[@name='button_approved']" position="after">
+                <xpath expr="//button[@name='button_approved']" position="replace">
+                    <button name="button_approved"
+                            string="Accept"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': ['|', ('state', '!=', 'to_approve'), ('is_small_amount', '=', True)]}"
+                            groups="purchase_request.group_purchase_request_manager"/>
                     <!-- For small amount case -->
                     <button
                         name="%(action_accept_with_reason)d"
