@@ -36,6 +36,9 @@ class AccountBudget(models.Model):
         prj_budget_lines = self.project_plan_ids.mapped('sync_budget_line_id')
         diff_lines = self.budget_line_ids - prj_budget_lines
         diff_lines.unlink()
+        if self._context.get('project_id', False):
+            projects = Project.search([('id', '=',
+                                        self._context['project_id'])])
         for project in projects:
             # If sync only 1 specific project, passed from res.project
             if 'project_id' in self._context and \

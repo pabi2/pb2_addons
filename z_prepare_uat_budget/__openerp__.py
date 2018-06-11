@@ -14,6 +14,7 @@
         'base',
         'pabi_procurement',
         'pabi_hr_expense',
+        'pabi_my_project',
     ],
     "data": [
         # 'test_fund_rule_data/res.project.csv',

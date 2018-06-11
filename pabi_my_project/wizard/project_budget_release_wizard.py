@@ -47,4 +47,4 @@ class ProjectBudgetReleaseWizard(models.TransientModel):
             raise ValidationError(
                 _('Release amount exceed planned amount!'))
         budget_line.write({'released_amount': self.amount_to_release})
-        budget_line.budget_id.sync_budget_my_project()
+        budget_line.project_id._trigger_auto_sync()
