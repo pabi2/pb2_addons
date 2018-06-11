@@ -448,8 +448,8 @@
                                 <t t-if="o.document_id.reference">
                                     <span t-field="o.document_id.reference"/>
                                 </t>
-                                <t t-if="not o.document_id.reference">
-                                    <span t-field="o.document_id.wht_sequence_display"/>
+                                <t t-if="not o.document_id.reference and o.document_id.wht_cert_ids">
+                                    <span t-field="o.document_id.wht_cert_ids[0].sequence_display"/>
                                 </t>
                             </t>
                             <t t-if="o.doctype in ['receipt']">
