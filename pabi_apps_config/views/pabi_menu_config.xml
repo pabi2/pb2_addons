@@ -31,6 +31,31 @@
         <menuitem id="hr.menu_hr_root" name="Expenses"/>
         <menuitem id="hr.menu_hr_main" name="Directory" parent="hr.menu_hr_configuration" sequence="450"/>
         <menuitem id="hr.menu_hr_report" name="Reporting" parent="hr.menu_hr_root" sequence="500"/>
+        <!-- Epxneses -->
+        <menuitem action="hr_expense.expense_all"
+                  id="hr_expense.menu_expense_all"
+                  name="Expenses"
+                  parent="hr_expense.next_id_49"
+                  sequence="10"
+                  groups="account.group_account_user,base.group_hr_manager"/>
+        <menuitem action="hr_expense_advance_clearing.action_expense_advance"
+                  id="hr_expense_advance_clearing.menu_expense_advance"
+                  name="Employee Advance"
+                  parent="hr_expense.next_id_49"
+                  sequence="20"
+                  groups="account.group_account_user,base.group_hr_manager"/>
+        <menuitem action="hr_expense_advance_clearing.action_expense_clearing"
+                  id="hr_expense_advance_clearing.menu_expense_clearing"
+                  name="Employee Clearing"
+                  parent="hr_expense.next_id_49"
+                  sequence="30"
+                  groups="account.group_account_user,base.group_hr_manager"/>
+        <menuitem action="account_pettycash.action_expense_pettycash"
+                  id="account_pettycash.menu_expense_pettycash"
+                  name="Petty Cash"
+                  parent="hr_expense.next_id_49"
+                  sequence="100"
+                  groups="account.group_account_user,base.group_hr_manager"/>
 
         <!-- Purchase rearrange-->
         <menuitem id="base.menu_purchase_root" name="Purchases" sequence="40"/>
@@ -90,14 +115,25 @@
           groups="pabi_base.group_nstda_admin_business"/>
 
         <!-- Main Master -->
+        # Customers
+        <!-- to be deleted -->
         <menuitem id="account.menu_account_customer" name="Customers"
+            parent="account.menu_finance_receivables"
+            action="base.action_partner_customer_form" sequence="0"/>
+
+        <menuitem id="menu_config_account_customer" name="Customers"
             parent="base.menu_base_config"
             action="base.action_partner_customer_form" sequence="0"/>
 
+        # Suppliers
+        <!-- to be deleted -->
         <menuitem id="account.menu_account_supplier" name="Suppliers"
-            parent="purchase.menu_purchase_config_purchase"
+            parent="account.menu_finance_payables"
             action="base.action_partner_supplier_form" sequence="0"/>
 
+        <menuitem id="menu_config_account_supplier" name="Suppliers"
+            parent="purchase.menu_purchase_config_purchase"
+            action="base.action_partner_supplier_form" sequence="0"/>
 
     </data>
 </openerp>
