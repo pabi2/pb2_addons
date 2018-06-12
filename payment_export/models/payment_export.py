@@ -32,6 +32,8 @@ class PaymentExport(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         track_visibility='onchange',
+        help="When Payment Method is selected, this field will default with "
+        "bank account of type CA (current account)",
     )
     payment_type = fields.Selection(
         [('cheque', 'Cheque'),
