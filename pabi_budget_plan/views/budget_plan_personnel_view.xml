@@ -47,9 +47,10 @@
                                         <field name="fund_id" required="1"/>
 
                                         <field name="activity_group_id"/>
-                                        <field name="activity_id"/>
+                                        <field name="activity_id" invisible="1"/>
 
-                                        <field name="m0" sum="m0"/>
+                                        <field name="name" readonly="1"/>
+                                        <field name="m0" sum="m0" invisible="1"/>
                                         <field name="m1" sum="m1"/>
                                         <field name="m2" sum="m2"/>
                                         <field name="m3" sum="m3"/>
@@ -118,7 +119,8 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_plan_personnel" id="menu_budget_plan_personnel_view" action="action_budget_plan_personnel_view" sequence="10"/>
+        <menuitem parent="menu_action_budget_plan_personnel" id="menu_budget_plan_personnel_view" action="action_budget_plan_personnel_view" sequence="10"
+          groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
 
         <!-- Budget Plan Line -->
 
@@ -148,9 +150,10 @@
                     <field name="fund_id" required="1"/>
 
                     <field name="activity_group_id"/>
-                    <field name="activity_id"/>
+                    <field name="activity_id" invisible="1"/>
 
-                    <field name="m0" sum="Period 0"/>
+                    <field name="name" readonly="1"/>
+                    <field name="m0" sum="Period 0" invisible="1"/>
                     <field name="m1" sum="Period 1"/>
                     <field name="m2" sum="Period 2"/>
                     <field name="m3" sum="Period 3"/>
@@ -189,7 +192,8 @@
             <field name="view_id" ref="view_budget_plan_personnel_line_tree"/>
         </record>
 
-        <menuitem parent="menu_action_budget_plan_personnel" id="menu_act_budget_plan_personnel_line_view" action="act_budget_plan_personnel_line_view" sequence="20"/>
+        <menuitem parent="menu_action_budget_plan_personnel" id="menu_act_budget_plan_personnel_line_view" action="act_budget_plan_personnel_line_view" sequence="20"
+          groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
 
     </data>
 </openerp>

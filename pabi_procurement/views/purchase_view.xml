@@ -187,9 +187,9 @@
             <field name="inherit_id" ref="purchase.purchase_order_tree"/>
                 <field name="arch" type="xml">
                 <!-- #  Note :: take out when this up to production -->
-                <!--<xpath expr="//tree" position="attributes">-->
-                    <!--<attribute name="create">false</attribute>-->
-                <!--</xpath>-->
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="create">false</attribute>
+                </xpath>
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="currency_id"/>
                 </xpath>

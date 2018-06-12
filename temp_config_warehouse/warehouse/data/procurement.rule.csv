@@ -1,0 +1,5 @@
+id,name,location_id/id,warehouse_id,route_id/id,action,picking_type_id/id,sequence,group_propagation_option,propagate
+base.procurement_rule_1,ศช.:  Buy,base.stock_location_153,ศช.,purchase.route_warehouse0_buy,buy,base.stock_picking_type_107,20,propagate,t
+base.procurement_rule_2,ศว.:  Buy,base.stock_location_159,ศว.,purchase.route_warehouse0_buy,buy,base.stock_picking_type_112,20,propagate,t
+base.procurement_rule_3,ศอ.:  Buy,base.stock_location_165,ศอ.,purchase.route_warehouse0_buy,buy,base.stock_picking_type_117,20,propagate,t
+base.procurement_rule_5,ศน.:  Buy,base.stock_location_177,ศน.,purchase.route_warehouse0_buy,buy,base.stock_picking_type_127,20,propagate,t

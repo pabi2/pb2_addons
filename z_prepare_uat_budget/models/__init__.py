@@ -4,3 +4,4 @@ from . import purchase_request
 from . import hr_expense
 from . import budget_plan_unit
 from . import project
+from . import project_budget_plan

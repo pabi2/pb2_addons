@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <menuitem name="Budgeting" id="menu_budgeting" sequence="51"/>
+        <menuitem name="Budgeting" id="menu_budgeting" sequence="2"/>
         <menuitem name="Budget Control" id="menu_action_account_budget_control" parent="menu_budgeting" sequence="100"/>
         <menuitem name="Budget Monitor" id="menu_action_budget_report" parent="menu_budgeting" sequence="110"/>
         <menuitem name="Configuration" id="menu_action_account_budget_config" parent="menu_budgeting" sequence="120"/>

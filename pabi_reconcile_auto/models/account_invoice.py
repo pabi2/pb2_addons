@@ -25,7 +25,7 @@ class AccountInvoice(models.Model):
                     mlines = MoveLine.search([('auto_reconcile_id',
                                                '=', auto_id)])
                     mlines.reconcile_special_account()
-            # All cases, invoice and/or picking is created from PO/So
+            # All cases, invoice and/or picking is created from PO/SO
             # i.e., - Case Invoice Plan's advance deposit
             #       - Case GR/IR, manual or on demand (see stock.py)
             # Use order (po,so) as auto_reconcile_id

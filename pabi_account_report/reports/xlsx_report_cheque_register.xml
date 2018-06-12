@@ -1,76 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="xlsx_report_cheque_register_view" model="ir.ui.view">
-            <field name="name">xlsx.report.cheque.register.view</field>
+        <record id="view_xlsx_report_cheque_register_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.cheque.register.form</field>
             <field name="model">xlsx.report.cheque.register</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <form string="Cheque Register Report">
-
-                    <!-- search criteria -->
-                    <group states="choose">
+                <field name="fiscalyear_start_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="fiscalyear_end_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_start" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_end" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_start" position="before">
+                    <field name="date_cheque_received"/>
+                </field>
+                <xpath expr="//page[1]" position="after">
+                    <page string="Journal Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="journal_ids"/>
+                    </page>
+                    <page string="Cheque Lot Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="cheque_lot_ids"/>
+                    </page>
+                    <page string="Cheque Filters">
                         <group>
-                            <field name="date_cheque_received"/>
-                            <field name="number_cheque_from"/>
-                            <field name="account_ids" widget="many2many_tags"/>
+                            <group>
+                                <field name="number_cheque_from"/>
+                                <field name="number_cheque_to"/>
+                            </group>
+                            <group></group>
                         </group>
-                        <group>
-                            <field name="cheque_lot_ids" widget="many2many_tags"/>
-                            <field name="number_cheque_to"/>
-                        </group>
-                    </group>
-
-                    <!-- xlsx.report common field -->
-                    <div name="xlsx.report">
-                        <field name="state" invisible="1"/>
-                        <field name="name" invisible="1"/>
-                        <div states="choose" groups="pabi_utils.group_see_own_spool_report">
-                            <field name="async_process"/><label for="async_process"/>
-                            <field name="to_csv"/><label for="to_csv"/>
-                        </div>
-                        <div states="get">
-                            <h2 attrs="{'invisible': [('async_process', '=', True)]}">
-                                Complete Prepare Report (.xlsx)
-                            </h2>
-                            <h2 attrs="{'invisible': [('async_process', '=', False)]}">
-                                Report Enqueued (.xlsx)
-                            </h2>
-                            <p attrs="{'invisible': [('async_process', '=', True)]}" colspan="4">
-                                Here is the report file:
-                                <field name="data" filename="name" class="oe_inline"/>
-                            </p>
-                            <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
-                                Report UUID:
-                                <field name="uuid" class="oe_inline"/>
-                            </p>
-                        </div>
-                        <footer states="choose">
-                            <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
-                            or
-                            <button special="cancel" string="Cancel" type="object" class="oe_link"/>
-                        </footer>
-                        <footer states="get">
-                            <button special="cancel" string="Close" type="object"/>
-                        </footer>
-                    </div>
-
-                </form>
+                    </page>
+                </xpath>
             </field>
         </record>
 
-        <record id="action_report_cheque_register" model="ir.actions.act_window">
-            <field name="name">Cheque Register Report</field>
+        <record id="action_xlsx_report_cheque_register_form" model="ir.actions.act_window">
+            <field name="name">Cheque Register</field>
             <field name="res_model">xlsx.report.cheque.register</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_report_cheque_register"
+        <menuitem id="menu_xlsx_report_cheque_register"
             name="Cheque Register"
-            parent="menu_pabi_account_report"
-            action="action_report_cheque_register"
-            sequence="60"/>
-
+            parent="menu_pabi_payable_report"
+            action="action_xlsx_report_cheque_register_form"
+            sequence="30"/>
     </data>
 </openerp>

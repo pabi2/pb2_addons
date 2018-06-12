@@ -16,7 +16,7 @@
 
         <!-- Normal Expense, will not show Petty Cash -->
         <record id="hr_expense.expense_all" model="ir.actions.act_window">
-            <field name="domain">[('is_employee_advance', '=', False),('is_advance_clearing', '=', False),('pay_to', '!=', 'pettycash')]</field>
+            <field name="domain">[('is_employee_advance', '=', False),('is_advance_clearing', '=', False),('pay_to', 'not in', ('pettycash', 'internal'))]</field>
         </record>
 
         <!-- Petty Cash menu -->

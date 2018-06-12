@@ -132,7 +132,8 @@
                   id="menu_internal_charge_line"
                   name="Internal Charge"
                   parent="hr_expense.next_id_49"
-                  sequence="20"/>
+                  sequence="100"
+                  groups="pabi_budget_internal_charge.group_approve_ic_activity"/>
 
     </data>
 </openerp>

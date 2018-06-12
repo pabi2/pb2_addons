@@ -11,5 +11,18 @@
                 </xpath>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="view_purchase_request_tree">
+            <field name="name">purchase.request.tree</field>
+            <field name="model">purchase.request</field>
+            <field name="priority">1000</field>
+            <field name="inherit_id" ref="pabi_procurement.view_purchase_request_tree"/>
+            <field name="arch" type="xml">
+                <!-- #  Note :: take out when this up to production -->
+                <xpath expr="//tree" position="attributes">
+                  <attribute name="create">true</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </openerp>

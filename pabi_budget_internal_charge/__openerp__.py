@@ -14,6 +14,7 @@
     ],
     'data': [
         'data/account_data.xml',
+        'data/groups.xml',
         'wizard/update_inrev_activity.xml',
         'wizard/validate_internal_charge.xml',
         'views/account_view.xml',

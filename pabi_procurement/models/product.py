@@ -20,4 +20,5 @@ class ProductCategory(models.Model):
     is_consumable = fields.Boolean(
         string="Is Consumable",
         default=False,
+        help="For service product, but want to calculate fine as consumable."
     )

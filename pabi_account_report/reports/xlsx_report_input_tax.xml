@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_input_tax_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.input_tax.form</field>
+            <field name="model">xlsx.report.input.tax</field>
+            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//group[@name='criteria']" position="inside">
+                        <group>
+                            <field name="calendar_period_id"/>
+                        </group>
+                        <group>
+                            <field name="taxbranch_id"/>
+                        </group>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_input_tax_form" model="ir.actions.act_window">
+            <field name="name">Input Tax Report</field>
+            <field name="res_model">xlsx.report.input.tax</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_input_tax"
+            name="Input Tax Report"
+            parent="menu_pabi_payable_report"
+            action="action_xlsx_report_input_tax_form" sequence="1"/>
+  </data>
+</openerp>

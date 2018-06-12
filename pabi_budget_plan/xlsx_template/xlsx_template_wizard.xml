@@ -100,6 +100,21 @@
           view_mode="form"
           target="new"/>
 
+      # Personnel
+      <!-- Budget Plan Project Based -->
+      <act_window id="action_budget_plan_personnel_export_xlsx_template"
+          name="Export Template (.xlsx)"
+          res_model="export.xlsx.template"
+          src_model="budget.plan.personnel"
+          view_mode="form"
+          target="new"
+          context="{'lang': 'th_TH'}"/>
+      <act_window id="action_budget_plan_personnel_import_xlsx_template"
+          name="Import Template (.xlsx)"
+          res_model="import.xlsx.template"
+          src_model="budget.plan.personnel"
+          view_mode="form"
+          target="new"/>
 
     </data>
 </openerp>

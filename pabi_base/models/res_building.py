@@ -52,27 +52,27 @@ class BCommon(object):
                                                 operator=operator,
                                                 limit=limit)
 
-    @api.model
-    def search_read(self, domain=None, fields=None, offset=0,
-                    limit=None, order=None):
-        if domain is None:
-            domain = []
-        domain += self._add_name_search_domain()
-        res = super(BCommon, self).search_read(domain=domain, fields=fields,
-                                               offset=offset, limit=limit,
-                                               order=order)
-        return res
-
-    @api.model
-    def read_group(self, domain, fields, groupby, offset=0, limit=None,
-                   orderby=False, lazy=True):
-        if domain is None:
-            domain = []
-        domain += self._add_name_search_domain()
-        res = super(BCommon, self).read_group(domain, fields, groupby,
-                                              offset=offset, limit=limit,
-                                              orderby=orderby, lazy=lazy)
-        return res
+    # @api.model
+    # def search_read(self, domain=None, fields=None, offset=0,
+    #                 limit=None, order=None):
+    #     if domain is None:
+    #         domain = []
+    #     domain += self._add_name_search_domain()
+    #     res = super(BCommon, self).search_read(domain=domain, fields=fields,
+    #                                            offset=offset, limit=limit,
+    #                                            order=order)
+    #     return res
+    #
+    # @api.model
+    # def read_group(self, domain, fields, groupby, offset=0, limit=None,
+    #                orderby=False, lazy=True):
+    #     if domain is None:
+    #         domain = []
+    #     domain += self._add_name_search_domain()
+    #     res = super(BCommon, self).read_group(domain, fields, groupby,
+    #                                           offset=offset, limit=limit,
+    #                                           orderby=orderby, lazy=lazy)
+    #     return res
 
 
 class ResBuilding(BCommon, models.Model):

@@ -4,7 +4,7 @@
 
 		<!-- Contract User by Org -->
 		<record id="group_pabi_purchase_contract_user" model="res.groups">
-			<field name="name">Purchase Contract User (Org)</field>
+			<field name="name">PO Contract User (Org)</field>
 			<field name="category_id" ref="module_category_pabi_purchase_contract"/>
 		</record>
 

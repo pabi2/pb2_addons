@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<!-- delete unused data -->
+    	<delete model="stock.picking.type" search="[('name','=','Receipts')]"/>
+    	<delete model="stock.picking.type" search="[('name','=','Internal Transfers')]"/>
+    	<delete model="stock.location" search="[('usage','=','internal'), ('operating_unit_id','=',False)]"/>
+    	<delete model="procurement.rule" search="[('action','=','buy'), ('picking_type_id','=',False)]"/>
+
+    </data>
+</openerp>

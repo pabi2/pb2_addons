@@ -3,10 +3,12 @@ from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 import datetime
 import re
+import time
 
 
 class PurchaseBilling(models.Model):
     _name = 'purchase.billing'
+    _description = 'Purchase Billing'
     _inherit = ['mail.thread']
 
     name = fields.Char(
@@ -83,6 +85,11 @@ class PurchaseBilling(models.Model):
         string='Email Sent',
         readonly=False,
     )
+    date_sent = fields.Date(
+        string='Billing Sent Date',
+        readonly=True,
+        states={'billed': [('readonly', False)]},
+    )
 
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Billing Number must be unique!'),
@@ -119,6 +126,15 @@ class PurchaseBilling(models.Model):
                      It has to be in %s
                 """ % (date_list,))
             )
+
+    @api.constrains('date_sent')
+    def _validate_date_sent(self):
+        date_sent = self.date_sent
+        if date_sent and date_sent < time.strftime('%Y-%m-%d'):
+            raise ValidationError(
+                _("You specified wrong billing sent date "
+                  "It must be more than or equal %s"
+                    % (time.strftime('%d/%m/%Y'))))
 
     @api.one
     @api.depends('supplier_invoice_ids')

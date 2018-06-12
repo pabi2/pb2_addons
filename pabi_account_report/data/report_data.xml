@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		# Payable Confirmation Letter
+		<record id="payable_confirmation_letter" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">account.move.line</field>
+			<field name="name">Payable Confirmation Letter</field>
+			<field name="report_name">payable_confirmation_letter</field>
+			<field name="report_rml">pabi_account_report/reports/jasper_report_payable_confirmation_letter.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename"></field>
+		</record>
+
+		<record id="payable_confirmation_letter_values" model="ir.values">
+			<field name="name">Payable Confirmation Letter</field>
+			<field name="model">account.move.line</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(payable_confirmation_letter)"/>
+		</record>
+
+		# Customer Payment History
+		<record id="customer_payment_history" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">payment.history.view</field>
+			<field name="name">Customer Payment History</field>
+			<field name="report_name">customer_payment_history</field>
+			<field name="report_rml">pabi_account_report/reports/jasper_report_payment_history_customer.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename"></field>
+		</record>
+
+		<record id="customer_payment_history_values" model="ir.values">
+			<field name="name">Customer Payment History</field>
+			<field name="model">payment.history.view</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_payment_history)"/>
+		</record>
+
+		# Bank Payment History
+		<record id="bank_payment_history" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">payment.history.view</field>
+			<field name="name">Bank Payment History</field>
+			<field name="report_name">bank_payment_history</field>
+			<field name="report_rml">pabi_account_report/reports/jasper_report_payment_history_bank.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename"></field>
+		</record>
+
+		<record id="bank_payment_history_values" model="ir.values">
+			<field name="name">Bank Payment History</field>
+			<field name="model">payment.history.view</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(bank_payment_history)"/>
+		</record>
+
+		# Customer Receivable Follow Up
+		<record id="customer_receivable_follow_up" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">receivable.follow.up.view</field>
+			<field name="name">Customer Receivable Follow Up</field>
+			<field name="report_name">customer_receivable_follow_up</field>
+			<field name="report_rml">pabi_account_report/reports/jasper_report_receivable_follow_up_customer.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename"></field>
+		</record>
+
+		<record id="customer_receivable_follow_up_values" model="ir.values">
+			<field name="name">Customer Receivable Follow Up</field>
+			<field name="model">receivable.follow.up.view</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_receivable_follow_up)"/>
+		</record>
+
+		# Bank Receivable Follow Up
+		<record id="bank_receivable_follow_up" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">receivable.follow.up.view</field>
+			<field name="name">Bank Receivable Follow Up</field>
+			<field name="report_name">bank_receivable_follow_up</field>
+			<field name="report_rml">pabi_account_report/reports/jasper_report_receivable_follow_up_bank.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename"></field>
+		</record>
+
+		<record id="bank_receivable_follow_up_values" model="ir.values">
+			<field name="name">Bank Receivable Follow Up</field>
+			<field name="model">receivable.follow.up.view</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(bank_receivable_follow_up)"/>
+		</record>
+	</data>
+</openerp>

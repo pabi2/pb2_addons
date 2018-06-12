@@ -42,7 +42,7 @@
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
-                            <button string="Regenerate Policy Lines" states="draft" name="generate_policy_line" type="object"/>
+                            <button string="Regenerate Policy Lines" name="generate_policy_line" type="object" attrs="{'invisible': ['|', ('id', '=', False), ('state', '!=', 'draft')]}"/>
                             <button class="oe_inline oe_stat_button" type="object" icon="fa-file-text" name="action_open_breakdown"
                                 attrs="{'invisible': ['|', ('state', '!=', 'done'), ('chart_view', 'in', ('project_base', 'invest_construction'))]}">
                                 <field string="Breakdowns" name="breakdown_count" widget="statinfo"/>
@@ -50,6 +50,7 @@
                         </div>
                         <group>
                             <group>
+                                <field name="id" invisible="0"/>
                                 <field name="user_id" required="1"/>
                                 <field name="fiscalyear_id" context="{'active_id': active_id}"/>
                                 <field name="revision" invisible="1"/>
@@ -186,7 +187,7 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_unit_view" groups="pabi_base.group_cooperate_budget" action="action_budget_policy_unit_view" sequence="10"/>
+        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_unit_view" groups="pabi_base.group_cooperate_budget_policy" action="action_budget_policy_unit_view" sequence="10"/>
 
         # Project Based Policy
         <record model="ir.actions.act_window" id="action_budget_policy_project_view">
@@ -204,7 +205,7 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_project_view" groups="pabi_base.group_cooperate_budget" action="action_budget_policy_project_view" sequence="20"/>
+        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_project_view" groups="pabi_base.group_cooperate_budget_policy" action="action_budget_policy_project_view" sequence="20"/>
 
         # Personnel Policy
         <record model="ir.actions.act_window" id="action_budget_policy_personnel_view">
@@ -222,7 +223,7 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_personnel_view" groups="pabi_base.group_cooperate_budget" action="action_budget_policy_personnel_view" sequence="30"/>
+        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_personnel_view" groups="pabi_base.group_cooperate_budget_policy" action="action_budget_policy_personnel_view" sequence="30"/>
 
         # Invest Asset
         <record model="ir.actions.act_window" id="action_budget_policy_invest_asset_view">
@@ -240,7 +241,7 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_invest_asset_view" groups="pabi_base.group_cooperate_budget" action="action_budget_policy_invest_asset_view" sequence="40"/>
+        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_invest_asset_view" groups="pabi_base.group_cooperate_budget_policy" action="action_budget_policy_invest_asset_view" sequence="40"/>
 
         # Invest Construction
         <record model="ir.actions.act_window" id="action_budget_policy_invest_construction_view">
@@ -258,7 +259,7 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_invest_construction_view" groups="pabi_base.group_cooperate_budget" action="action_budget_policy_invest_construction_view" sequence="50"/>
+        <menuitem parent="menu_action_budget_policy" id="menu_budget_policy_invest_construction_view" groups="pabi_base.group_cooperate_budget_policy" action="action_budget_policy_invest_construction_view" sequence="50"/>
 
     </data>
 </openerp>

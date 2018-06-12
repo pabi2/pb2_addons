@@ -1,0 +1,6 @@
+id,lot_stock_id/id,in_type_id/id,int_type_id/id
+stock.warehouse0,stock.stock_location_stock,stock.picking_type_in,stock.picking_type_internal
+base.stock_warehouse_22,base.stock_location_153,base.stock_picking_type_106,base.stock_picking_type_108
+base.stock_warehouse_23,base.stock_location_159,base.stock_picking_type_111,base.stock_picking_type_113
+base.stock_warehouse_24,base.stock_location_165,base.stock_picking_type_116,base.stock_picking_type_118
+base.stock_warehouse_26,base.stock_location_177,base.stock_picking_type_126,base.stock_picking_type_128

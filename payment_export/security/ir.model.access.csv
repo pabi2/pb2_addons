@@ -1,6 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_payment_export,access_payment_export,model_payment_export,,1,1,1,0
-access_payment_export_line,access_payment_export_line,model_payment_export_line,,1,1,1,1
-access_cheque_lot,access_cheque_lot,model_cheque_lot,,1,1,1,1
-access_cheque_register,access_cheque_register,model_cheque_register,,1,1,1,1
-access_journal_export_config,access_journal_export_config,model_journal_export_config,,1,1,1,1
+access_payment_export,access_payment_export,model_payment_export,account.group_account_user,1,1,1,0
+access_payment_export_line,access_payment_export_line,model_payment_export_line,account.group_account_user,1,1,1,1
+access_cheque_lot,access_cheque_lot,model_cheque_lot,account.group_account_user,1,1,1,1
+access_cheque_register,access_cheque_register,model_cheque_register,account.group_account_user,1,1,1,1
+access_journal_export_config,access_journal_export_config,model_journal_export_config,account.group_account_user,1,1,1,1

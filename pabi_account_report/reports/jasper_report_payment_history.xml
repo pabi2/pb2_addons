@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_jasper_report_payment_history_form" model="ir.ui.view">
+            <field name="name">view.jasper.report.payment.history.form</field>
+            <field name="model">jasper.report.payment.history</field>
+            <field name="inherit_id" ref="pabi_account_report.view_jasper_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <field name="fiscalyear_start_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="fiscalyear_end_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_start" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_end" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_start" position="before">
+                    <field name="date_report"/>
+                </field>
+                <xpath expr="//page[1]" position="after">
+                    <page string="Bank">
+                        <group>
+                            <field name="bank_id"/>
+                            <field name="bank_branch_id" domain="[('bank_id', '=', bank_id)]" attrs="{'invisible': [('bank_id', '=', False)]}"/>
+                        </group>
+                    </page>
+                    <page string="Customers" attrs="{'invisible': [('bank_id', '!=', False)]}">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_jasper_report_payment_history_form" model="ir.actions.act_window">
+            <field name="name">Payable History</field>
+            <field name="res_model">jasper.report.payment.history</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_jasper_report_payable_history"
+            name="Payable History"
+            parent="menu_pabi_receivable_report"
+            action="action_jasper_report_payment_history_form"
+            sequence="10"/>
+    </data>
+</openerp>

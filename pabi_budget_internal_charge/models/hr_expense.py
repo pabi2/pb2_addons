@@ -53,18 +53,12 @@ class HRExpense(models.Model):
     @api.one
     @api.constrains('pay_to', 'line_ids')
     def _check_internal_charge_activity(self):
-        ic = list(set(self.line_ids.mapped('activity_id.internal_charge')))
-        if ic:
-            if len(ic) > 1:
+        if self.internal_charge:
+            ic = list(set(self.line_ids.mapped('activity_id.internal_charge')))
+            if len(ic) > 1 or \
+                    (len(ic) == 1 and ic[0] != (self.internal_charge)):
                 raise ValidationError(
-                    _('Not all activity are in same type of charge!'))
-            if ic[0] != (self.internal_charge):
-                if self.internal_charge:
-                    raise ValidationError(
-                        _('Not all activities are internal charge!'))
-                else:
-                    raise ValidationError(
-                        _('Not all activities are external charge!'))
+                    _('Not all activities are internal charge!'))
 
     @api.multi
     @api.depends('pay_to')

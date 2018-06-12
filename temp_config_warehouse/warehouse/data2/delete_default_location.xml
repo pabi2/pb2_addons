@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Inactive created standard location -->
+        <function model="stock.location" name="write" >
+        	<function model="stock.location" name="search" eval="[[('name','=','Input')]]" />
+            <value eval="{'active': False}" />
+        </function>
+        <function model="stock.location" name="write" >
+        	<function model="stock.location" name="search" eval="[[('name','=','Output')]]" />
+            <value eval="{'active': False}" />
+        </function>
+        <function model="stock.location" name="write" >
+        	<function model="stock.location" name="search" eval="[[('name','=','Packing Zone')]]" />
+            <value eval="{'active': False}" />
+        </function>
+        <function model="stock.location" name="write" >
+        	<function model="stock.location" name="search" eval="[[('name','=','Quality Control')]]" />
+            <value eval="{'active': False}" />
+        </function>
+        <function model="stock.location" name="write" >
+        	<function model="stock.location" name="search" eval="[[('name','=','สก.')]]" />
+            <value eval="{'active': False}" />
+        </function>
+        <function model="stock.location" name="write" >
+        	<function model="stock.location" name="search" eval="[[('name','=','ศช.')]]" />
+            <value eval="{'active': False}" />
+        </function>
+        <function model="stock.location" name="write" >
+        	<function model="stock.location" name="search" eval="[[('name','=','ศน.')]]" />
+            <value eval="{'active': False}" />
+        </function>
+        <function model="stock.location" name="write" >
+        	<function model="stock.location" name="search" eval="[[('name','=','ศว.')]]" />
+            <value eval="{'active': False}" />
+        </function>
+        <function model="stock.location" name="write" >
+        	<function model="stock.location" name="search" eval="[[('name','=','ศอ.')]]" />
+            <value eval="{'active': False}" />
+        </function>
+    </data>
+</openerp>

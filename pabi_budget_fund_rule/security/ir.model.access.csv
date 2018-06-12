@@ -1,5 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_budget_fund_rule,access_budget_fund_rule,model_budget_fund_rule,,1,1,1,1
-access_budget_fund_expense_group,access_budget_fund_expense_group,model_budget_fund_expense_group,,1,1,1,1
-access_budget_fund_rule_line,access_budget_fund_rule_line,model_budget_fund_rule_line,,1,1,1,1
-access_budget_asset_rule_line,access_budget_asset_rule_line,model_budget_asset_rule_line,,1,1,1,1
+access_budget_fund_rule,access_budget_fund_rule,model_budget_fund_rule,pabi_base.group_budget_user,1,1,1,1
+access_budget_fund_expense_group,access_budget_fund_expense_group,model_budget_fund_expense_group,pabi_base.group_budget_user,1,1,1,1
+access_budget_fund_rule_line,access_budget_fund_rule_line,model_budget_fund_rule_line,pabi_base.group_budget_user,1,1,1,1
+access_budget_asset_rule_line,access_budget_asset_rule_line,model_budget_asset_rule_line,pabi_base.group_budget_user,1,1,1,1

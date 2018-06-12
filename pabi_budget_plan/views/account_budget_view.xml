@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <menuitem name="Budgeting" groups="pabi_base.group_budget_user" id="account_budget_activity.menu_budgeting" sequence="51"/>
+        <menuitem name="Budgeting" groups="pabi_base.group_budget_user" id="account_budget_activity.menu_budgeting" sequence="2"/>
 
         <record id="account_budget_view_form" model="ir.ui.view">
             <field name="name">account.budget.view.form</field>

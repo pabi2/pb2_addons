@@ -32,6 +32,7 @@ Currently we have dont for following events,
         'account_subscription_enhanced',
     ],
     "data": [
+        "security/ir.model.access.csv",
     ],
     "application": False,
     "installable": True,

@@ -16,6 +16,7 @@
         "pabi_utils",
         "pabi_account_move_adjustment",
         "hr_expense_auto_invoice",
+        "pabi_utils",
     ],
     "description": """
 This module allow creating asset during incoming shipment.
@@ -24,6 +25,7 @@ This module allow creating asset during incoming shipment.
         "security/ir.model.access.csv",
         # "data/import_templates.xml",
         "xlsx_template/templates.xml",
+        "xlsx_template/load_template.xml",
         "xlsx_template/xlsx_template_wizard.xml",
         "data/sequence_data.xml",
         "data/asset_purchase_method.xml",

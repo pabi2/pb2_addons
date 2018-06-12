@@ -1,0 +1,25 @@
+id,name,usage,location_id/id,operating_unit_id/id
+base.stock_location_152,ศช.,View,stock.stock_location_locations,
+base.stock_location_153,Stock,Internal Location,base.stock_location_152,base.res_ou_2
+base.stock_location_199,ค. วัสดุ,Internal Location,base.stock_location_153,base.res_ou_2
+base.stock_location_176,ศน.,View,stock.stock_location_locations,
+base.stock_location_177,Stock,Internal Location,base.stock_location_176,base.res_ou_6
+base.stock_location_200,ค. วัสดุ,Internal Location,base.stock_location_177,base.res_ou_6
+base.stock_location_158,ศว.,View,stock.stock_location_locations,
+base.stock_location_159,Stock,Internal Location,base.stock_location_158,base.res_ou_3
+base.stock_location_201,ค. วัสดุ,Internal Location,base.stock_location_159,base.res_ou_3
+base.stock_location_164,ศอ.,View,stock.stock_location_locations,
+base.stock_location_165,Stock,Internal Location,base.stock_location_164,base.res_ou_4
+base.stock_location_210,ค. วัสดุ,Internal Location,base.stock_location_165,base.res_ou_4
+base.stock_location_11,สก.,View,stock.stock_location_locations,
+stock.stock_location_stock,Stock,Internal Location,base.stock_location_11,base.res_ou_1
+base.stock_location_197,ค. วัสดุ,Internal Location,stock.stock_location_stock,base.res_ou_1
+base.stock_location_208,ค. หนังสือ-สก.,Internal Location,stock.stock_location_stock,base.res_ou_1
+base.stock_location_204,ค. หนังสือใต้ดิน,Internal Location,stock.stock_location_stock,base.res_ou_1
+base.stock_location_206,ค. หนังสือ CC,Internal Location,stock.stock_location_stock,base.res_ou_1
+base.stock_location_202,ค. งาน Event,Internal Location,stock.stock_location_stock,base.res_ou_1
+base.stock_location_196,ค. NN NTSDA,Internal Location,stock.stock_location_stock,base.res_ou_1
+base.stock_location_207,ค. กลาง PMM,Internal Location,stock.stock_location_stock,base.res_ou_1
+base.stock_location_205,ค. หนังสือ Scicamp,Internal Location,stock.stock_location_stock,base.res_ou_1
+base.stock_location_209,ค. Science Shop,Internal Location,stock.stock_location_stock,base.res_ou_1
+base.stock_location_211,เบิกจ่ายสินค้า,Inventory,stock.stock_location_locations_virtual,

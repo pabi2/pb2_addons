@@ -141,6 +141,7 @@
                         <group>
                             <field name="value_depreciated" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
                             <field name="value_residual" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
+                            <field name="manual" invisible="1"/>
                         </group>
                     </group>
                 </group>
@@ -164,6 +165,9 @@
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']" position="attributes">
                     <attribute name="attrs">{'invisible': [('no_depreciation', '=', True)]}</attribute>
                 </xpath>
+                <!-- <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//button[@name='compute_depreciation_board']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('manual', '=', True), ('state', 'in', ['close', 'removed'])]}</attribute>
+                </xpath> -->
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//button[@name='compute_depreciation_board']" position="after">
                     <button type="object" name="open_depreciation_lines" string="View Depreciation Lines"
                       icon="terp-check"
@@ -173,11 +177,17 @@
                     <field name="fiscalyear_id"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='depreciated_value']" position="attributes">
-                    <attribute name="invisible">0</attribute>
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='remaining_value']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='depreciation_line_ids']/tree/field[@name='amount']" position="after">
                     <field name="amount_accumulated"/>
-                    <field name="depreciation_base"/>
+                    <field name="depreciation_base" invisible="1"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='depreciation_line_ids']/tree/field[@name='move_check']" position="after">
+                    <field name="manual"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='depreciation_line_ids']" position="after">
                     <group>

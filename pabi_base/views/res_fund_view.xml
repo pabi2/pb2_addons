@@ -33,6 +33,7 @@
                         <group>
                             <field name="code"/>
                             <field name="active"/>
+                            <field name="with_condition"/>
                         </group>
                     </group>
                     <notebook>

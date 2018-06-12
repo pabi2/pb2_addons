@@ -5,7 +5,6 @@
             to load the file content to relevant template_ids -->
         <function model="ir.attachment" name="load_xlsx_template">
             <value eval="[
-                ref('xlsx_report_partner_list'),
                 ref('xlsx_report_partner_detail'),
                 ref('xlsx_report_advance_status'),
                 ref('xlsx_report_supplier_invoice_detail'),
@@ -18,6 +17,8 @@
                 ref('xlsx_report_sla_purchase'),
                 ref('xlsx_report_sla_employee'),
                 ref('xlsx_report_supplier_receipt_follow_up'),
+                ref('xlsx_report_input_tax'),
+                ref('xlsx_report_output_tax'),                
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>

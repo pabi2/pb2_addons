@@ -121,5 +121,70 @@
           }
         </field>
       </record>
+
+
+      # Adjust Depreciation Lines
+      <record id="adjust_asset_depre_template" model="ir.attachment">
+          <field name="res_model">account.asset</field>
+          <field name="datas"></field>
+          <field name="datas_fname">adjust_asset_depre.xlsx</field>
+          <field name="name">Adjust Asset Depreciation Lines</field>
+          <field name="parent_id" eval="ref('dir_asset_action_template')"/>
+          <field name="description">
+            {
+              '__EXPORT__': {
+                  'Depreciation Lines': {
+                      '_HEAD_': {
+                          'B3': 'name',
+                          'B4': 'code',
+                          'B5': 'date_start#{number_format=date}',
+                          'B6': 'purchase_value',
+                          'E3': 'depreciation_base',
+                          'E4': 'salvage_value',
+                          'E5': 'value_depreciated',
+                          'E6': 'value_residual',
+                      },
+                      'depreciation_line_ids': {
+                          'A9': 'fiscalyear_id.name${value or ""}',
+                          'B9': 'line_date#{number_format=date}',
+                          'C9': 'line_days',
+                          'D9': 'amount',
+                          'E9': 'move_check${value and "X" or ""}',
+                      },
+                      # '_GROUPBY_depreciation_line_ids["fiscalyear_id"]': {  # groupby
+                      #     'C9': '@{sum}#{font=bold;number_format=number}',
+                      #     'D9': '@{sum}#{font=bold;number_format=number}',
+                      # },
+                      # '_TAIL_0': {
+                      #     'D9': '@{sum}#{font=bold;number_format=number}',
+                      # }
+                  },
+              },
+              '__IMPORT__': {
+                  'Depreciation Lines': {
+                      '_HEAD_': {
+                          'B6': 'purchase_value',
+                      },
+                      '_LINE_DELETE_DOMAIN_': {  # If not specified, delete all
+                          'depreciation_line_ids': [('move_id', '=', False),
+                                                    ('type', '!=', 'create')],
+                      },
+                      'depreciation_line_ids': {
+                          'A9': 'fiscalyear_id',
+                          'B9': 'line_date',
+                          'C9': 'line_days',
+                          'D9': 'amount',
+                          'E9${not (value and len(value) > 0) and True or False}': 'manual',  # Posted to be marked as not manual, to be deleted by post import
+                      },
+                  },
+              },
+              '__POST_IMPORT__': [
+                  '${object.post_import_validation()}',
+              ],
+          }
+        </field>
+      </record>
+
+
     </data>
 </openerp>

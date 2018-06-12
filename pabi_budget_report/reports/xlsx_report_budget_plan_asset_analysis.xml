@@ -33,6 +33,7 @@
         <menuitem id="menu_report_budget_plan_asset_analysis"
           name="Budget Plan Analysis"
           parent="pabi_budget_plan.menu_action_budget_plan_invest_asset"
+          groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"
           action="action_report_budget_plan_asset_analysis"
           sequence="30"/>
 

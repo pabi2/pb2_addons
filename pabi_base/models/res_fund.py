@@ -43,3 +43,7 @@ class ResFund(ResCommon, models.Model):
         'fund_id', 'personnel_costcenter_id',
         string='Personnel Costcenters',
     )
+    with_condition = fields.Boolean(
+        string='With Condition',
+        default=False,
+    )

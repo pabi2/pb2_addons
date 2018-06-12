@@ -8,7 +8,7 @@ from openerp.exceptions import ValidationError, except_orm
 
 class PurchaseContract(models.Model):
     _name = 'purchase.contract'
-    _description = 'Purchase Contract'
+    _description = 'PO Contract'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _order = \
         'operating_unit_id, fiscalyear_id desc, running desc, poc_rev desc'
@@ -499,7 +499,7 @@ class PurchaseContract(models.Model):
 
 class PurchaseContractCollateral(models.Model):
     _name = 'purchase.contract.collateral'
-    _description = 'Purchase Contract Collateral'
+    _description = 'PO Contract Collateral'
 
     name = fields.Char(
         string='Name',
@@ -508,7 +508,7 @@ class PurchaseContractCollateral(models.Model):
 
 class PurchaseContractType(models.Model):
     _name = 'purchase.contract.type'
-    _description = 'Purchase Contract Type'
+    _description = 'PO Contract Type'
 
     name = fields.Char(
         string='Name',

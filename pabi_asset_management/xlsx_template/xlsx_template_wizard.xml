@@ -34,5 +34,28 @@
             view_mode="form"
             target="new"/>
 
+
+        # Asset Depreciation Adjustment
+        <act_window id="action_adjust_asset_depre_export_xlsx_template"
+            name="Export Depreciation Table (.xlsx)"
+            res_model="export.xlsx.template"
+            src_model="account.asset"
+            view_mode="form"
+            target="new"
+            context="{'lang': 'th_TH'}"/>
+        <act_window id="action_adjust_asset_depre_import_xlsx_template"
+            name="Import Depreciation Table (.xlsx)"
+            res_model="import.xlsx.template"
+            src_model="account.asset"
+            view_mode="form"
+            target="new"/>
+        <!-- Optional: To be specific to some template and context -->
+    		<record id="action_adjust_asset_depre_import_xlsx_template" model="ir.actions.act_window">
+      			<field name="context"
+              eval="{'template_import_states': ['draft', 'open'],
+                     'allow_asset_line_update': True}"/>
+        </record>
+
+
     </data>
 </openerp>

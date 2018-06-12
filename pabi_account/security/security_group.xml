@@ -7,5 +7,10 @@
             <field name="category_id" ref="base.module_category_hidden"/>
         </record>
 
+        <!-- Accountants to have access to all OU -->
+        <record id="account.group_account_user" model="res.groups">
+            <field name="access_all_operating_unit">True</field>
+        </record>
+
     </data>
 </openerp>

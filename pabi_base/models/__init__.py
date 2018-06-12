@@ -8,3 +8,4 @@ from . import res_investment_structure
 from . import project_info
 from . import product
 from . import res_building
+from . import fix

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <menuitem id="my_jobs" name="My Jobs" parent="mail.mail_feeds_main" groups="base.group_user" sequence="20"/>
+        <menuitem id="my_jobs_root" name="My Jobs"
+          groups="pabi_utils.group_see_own_spool_report" sequence="350"/>
+        <menuitem id="my_jobs" name="My Jobs" parent="my_jobs_root"
+          groups="base.group_user" sequence="10"/>
 
         <!-- All my jobs -->
         <record id="action_my_queue_job" model="ir.actions.act_window">

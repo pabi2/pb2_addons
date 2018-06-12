@@ -1,0 +1,38 @@
+id,name,code,sequence_id/id,return_picking_type_id/id,warehouse_id,default_location_src_id/id,default_location_dest_id/id
+stock.picking_type_in,ค. วัสดุ Receipts,Suppliers,base.picking_in,,สก.,stock.stock_location_suppliers,base.stock_location_197
+stock.picking_type_out,Delivery Orders,Customers,base.picking_out,stock.picking_type_in,สก.,stock.stock_location_stock,stock.stock_location_customers
+base.stock_picking_type_137,ค. กลาง PMM Receipts,Suppliers,base.picking_in,stock.picking_type_out,สก.,stock.stock_location_suppliers,base.stock_location_207
+base.stock_picking_type_138,ค. หนังสือ Scicamp Receipts,Suppliers,base.picking_in,stock.picking_type_out,สก.,stock.stock_location_suppliers,base.stock_location_205
+base.stock_picking_type_139,ค. Science Shop Receipts,Suppliers,base.picking_in,stock.picking_type_out,สก.,stock.stock_location_suppliers,base.stock_location_209
+stock.picking_type_in,ค. วัสดุ Receipts,Suppliers,base.picking_in,stock.picking_type_out,สก.,stock.stock_location_suppliers,base.stock_location_197
+base.stock_picking_type_132,ค. หนังสือ-สก. Receipts,Suppliers,base.picking_in,stock.picking_type_out,สก.,stock.stock_location_suppliers,base.stock_location_208
+base.stock_picking_type_133,ค. หนังสือใต้ดิน. Receipts,Suppliers,base.picking_in,stock.picking_type_out,สก.,stock.stock_location_suppliers,base.stock_location_204
+base.stock_picking_type_134,ค. หนังสือ CC Receipts,Suppliers,base.picking_in,stock.picking_type_out,สก.,stock.stock_location_suppliers,base.stock_location_206
+base.stock_picking_type_135,ค. งาน Event Receipts,Suppliers,base.picking_in,stock.picking_type_out,สก.,stock.stock_location_suppliers,base.stock_location_202
+base.stock_picking_type_136,ค. NN NTSDA Receipts,Suppliers,base.picking_in,stock.picking_type_out,สก.,stock.stock_location_suppliers,base.stock_location_196
+base.stock_picking_type_146,เบิกสินค้า ค. NN NTSDA Event Internal Transfers,Internal,base.picking_int,,สก.,base.stock_location_196,base.stock_location_211
+base.stock_picking_type_144,เบิกสินค้า ค. หนังสือ CC Internal Transfers,Internal,base.picking_int,,สก.,base.stock_location_206,base.stock_location_211
+base.stock_picking_type_147,เบิกสินค้า ค. กลาง PMM Event Internal Transfers,Internal,base.picking_int,,สก.,base.stock_location_207,base.stock_location_211
+base.stock_picking_type_142,เบิกสินค้า ค. หนังสือ-สก. Internal Transfers,Internal,base.picking_int,,สก.,base.stock_location_208,base.stock_location_211
+base.stock_picking_type_143,เบิกสินค้า ค. หนังสือใต้ดิน Internal Transfers,Internal,base.picking_int,,สก.,base.stock_location_204,base.stock_location_211
+stock.picking_type_internal,เบิกสินค้า ค. วัสดุ Internal Transfers,Internal,base.picking_int,,สก.,base.stock_location_197,base.stock_location_211
+base.stock_picking_type_149,เบิกสินค้า ค. Science Shop Event Internal Transfers,Internal,base.picking_int,,สก.,base.stock_location_209,base.stock_location_211
+base.stock_picking_type_148,เบิกสินค้า ค. หนังสือ Scicamp Event Internal Transfers,Internal,base.picking_int,,สก.,base.stock_location_205,base.stock_location_211
+base.stock_picking_type_145,เบิกสินค้า ค. งาน Event Internal Transfers,Internal,base.picking_int,,สก.,base.stock_location_202,base.stock_location_211
+base.stock_picking_type_107,Delivery Orders,Customers,base.picking_out,,ศช.,base.stock_location_153,stock.stock_location_customers
+base.stock_picking_type_106,ค. วัสดุ Receipts,Suppliers,base.picking_in,base.stock_picking_type_107,ศช.,stock.stock_location_suppliers,base.stock_location_199
+base.stock_picking_type_107,Delivery Orders,Customers,base.picking_out,base.stock_picking_type_106,ศช.,base.stock_location_153,stock.stock_location_customers
+base.stock_picking_type_108,เบิกสินค้า ค. วัสดุ Internal Transfers,Internal,base.picking_int,,ศช.,base.stock_location_199,base.stock_location_211
+base.stock_picking_type_112,Delivery Orders,Customers,base.picking_out,,ศว.,base.stock_location_159,stock.stock_location_customers
+base.stock_picking_type_111,ค. วัสดุ Receipts,Suppliers,base.picking_in,,ศว.,stock.stock_location_suppliers,base.stock_location_201
+base.stock_picking_type_112,Delivery Orders,Customers,base.picking_out,base.stock_picking_type_111,ศว.,base.stock_location_159,stock.stock_location_customers
+base.stock_picking_type_111,ค. วัสดุ Receipts,Suppliers,base.picking_in,base.stock_picking_type_112,ศว.,stock.stock_location_suppliers,base.stock_location_201
+base.stock_picking_type_113,เบิกสินค้า ค. วัสดุ Internal Transfers,Internal,base.picking_int,,ศว.,base.stock_location_201,base.stock_location_211
+base.stock_picking_type_117,Delivery Orders,Customers,base.picking_out,,ศอ.,base.stock_location_165,stock.stock_location_customers
+base.stock_picking_type_116,ค. วัสดุ Receipts,Suppliers,base.picking_in,base.stock_picking_type_117,ศอ.,stock.stock_location_suppliers,base.stock_location_210
+base.stock_picking_type_117,Delivery Orders,Customers,base.picking_out,base.stock_picking_type_116,ศอ.,base.stock_location_165,stock.stock_location_customers
+base.stock_picking_type_118,เบิกสินค้า ค. วัสดุ Internal Transfers,Internal,base.picking_int,,ศอ.,base.stock_location_210,base.stock_location_211
+base.stock_picking_type_127,Delivery Orders,Customers,base.picking_out,,ศน.,base.stock_location_177,stock.stock_location_customers
+base.stock_picking_type_126,ค. วัสดุ Receipts,Suppliers,base.picking_in,base.stock_picking_type_127,ศน.,stock.stock_location_suppliers,base.stock_location_200
+base.stock_picking_type_127,Delivery Orders,Customers,base.picking_out,base.stock_picking_type_126,ศน.,base.stock_location_177,stock.stock_location_customers
+base.stock_picking_type_128,เบิกสินค้า ค. วัสดุ Internal Transfers,Internal,base.picking_int,,ศน.,base.stock_location_200,base.stock_location_211

@@ -1,74 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-        <!-- Directory for Budget XLSX Reports -->
+        <!-- Directory for Account XLSX Reports -->
         <record model="document.directory" id="dir_account_reports">
             <field name="name">Account Reports</field>
             <field name="parent_id" ref="document.dir_root"/>
             <field name="user_id" ref="base.user_root"/>
             <field name="ressource_id">0</field>
-            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
-        </record>
-
-        # Partner List
-        <record id="xlsx_report_partner_list" model="ir.attachment">
-            <field name="res_model">xlsx.report.partner.list</field>
-            <field name="datas"></field>
-            <field name="datas_fname">xlsx_report_partner_list.xlsx</field>
-            <field name="name">Partner List</field>
-            <field name="parent_id" eval="ref('dir_account_reports')"/>
-            <field name="description">
-              {
-                '__EXPORT__': {
-                    'Partner List Report': {
-                        '_HEAD_': {
-                            'B1': 'category_ids${value and ", ".join(value.mapped("name")) or ""}',
-                            'B2': 'customer${value and "X" or ""}',
-                            'B3': 'supplier${value and "X" or ""}',
-                        },
-                        'results': {
-                            'A6': 'search_key${value or ""}',
-                            'B6': 'id${value and " ".join(list(filter(lambda l: l != False, [env["res.partner"].browse(value).title.name, env["res.partner"].browse(value).name.encode("utf-8")]))) or ""}',
-                            'C6': 'category_id.name${value or ""}',
-                            'D6': 'tag_ids${value and ", ".join(value.mapped("name")) or ""}',
-                            'E6': 'street${value or ""}',
-                            'F6': 'street2${value or ""}',
-                            'G6': 'township_id.name${value or ""}',
-                            'H6': 'district_id.name${value or ""}',
-                            'I6': 'province_id.name${value or ""}',
-                            'J6': 'country_id.name${value or ""}',
-                            'K6': 'zip${value or ""}',
-                            'L6': 'vat${value or ""}',
-                            'M6': 'taxbranch${value or ""}',
-                            'N6': 'mobile${value or ""}',
-                            'O6': 'fax${value or ""}',
-                            'P6': 'website${value or ""}',
-                            'Q6': 'email${value or ""}',
-                            'R6': 'comment${value or ""}',
-                            'S6': 'property_account_payable.code${value or ""}',
-                            'T6': 'property_account_payable.name${value or ""}',
-                            'U6': 'property_account_receivable.code${value or ""}',
-                            'V6': 'property_account_receivable.name${value or ""}',
-                            'W6': 'property_supplier_payment_term.name${value or ""}',
-                            'X6': 'property_payment_term.name${value or ""}',
-                            'Y6': 'credit${value or ""}',
-                            'Z6': 'debit${value or ""}',
-                            'AA6': 'bank_ids${value and "\\skiprow".join([x.acc_number or "" for x in value]) or ""}',
-                            'AB6': 'bank_ids${value and "\\skiprow".join([" ".join(list(filter(lambda l: l != False, [x.bank_name, x.bank_branch.name]))) or "" for x in value]) or ""}',
-                            'AC6': 'bank_ids${value and "\\skiprow".join([" ".join(list(filter(lambda l: l != False, [x.partner_id.title.name, x.partner_id.name]))) or "" for x in value]) or ""}',
-                            'AD6': 'bank_ids${value and "\\skiprow".join([x.active and "X" or "" for x in value]) or ""}',
-                            'AE6': 'bank_ids${value and "\\skiprow".join([x.default and "X" or "" for x in value]) or ""}',
-                            'AF6': 'income_tax_form${value and value.upper() or ""}',
-                            'AG6': 'create_date${value or ""}#{number_format=date}',
-                            'AH6': 'create_uid.name${value or ""}',
-                            'AI6': 'write_date${value or ""}#{number_format=date}',
-                            'AJ6': 'write_uid.name${value or ""}',
-                            'AK6': 'active${value and "X" or ""}',
-                        }
-                    }
-                }
-            }
-          </field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
         # Partner Detail
@@ -79,43 +18,81 @@
             <field name="name">Partner Detail</field>
             <field name="parent_id" eval="ref('dir_account_reports')"/>
             <field name="description">
-              {
-                '__EXPORT__': {
-                    'Partner Detail Report': {
-                        '_HEAD_': {
-                            'B1': 'category_ids${value and ", ".join(value.mapped("name")) or ""}',
-                            'B2': 'customer${value and "X" or ""}',
-                            'B3': 'supplier${value and "X" or ""}',
+                {
+                    '__EXPORT__': {
+                        'Partner Detail Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'category_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B4': 'active${value and (value == "true" and "True" or "False") or ""}',
+                                'B5': 'customer${value and "X" or ""}',
+                                'B6': 'supplier${value and "X" or ""}',
+                                'B7': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'partner_detail_results': {
+                                'A11': 'search_key${value or ""}',
+                                'B11': 'id${value and " ".join(list(filter(lambda l: l != False, [env["res.partner"].browse(value).title_lang, env["res.partner"].browse(value).with_context(lang="th_TH").name]))) or ""}',
+                                'C11': 'customer${value and "X" or ""}',
+                                'D11': 'supplier${value and "X" or ""}',
+                                'E11': 'category_id.name${value or ""}',
+                                'F11': 'tag_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'G11': 'street${value or ""}',
+                                'H11': 'street2${value or ""}',
+                                'I11': 'township_id.name${value or ""}',
+                                'J11': 'district_id.name${value or ""}',
+                                'K11': 'province_id.name${value or ""}',
+                                'L11': 'country_id.name${value or ""}',
+                                'M11': 'zip${value or ""}',
+                                'N11': 'vat${value or ""}',
+                                'O11': 'taxbranch${value or ""}',
+                                'P11': 'mobile${value or ""}',
+                                'Q11': 'fax${value or ""}',
+                                'R11': 'website${value or ""}',
+                                'S11': 'email${value or ""}',
+                                'T11': 'comment${value or ""}',
+                                'U11': 'property_account_payable.code${value or ""}',
+                                'V11': 'property_account_payable.name${value or ""}',
+                                'W11': 'property_account_receivable.code${value or ""}',
+                                'X11': 'property_account_receivable.name${value or ""}',
+                                'Y11': 'property_supplier_payment_term.name${value or ""}',
+                                'Z11': 'property_payment_term.name${value or ""}',
+                                'AA11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and value.filtered(lambda l: l.default is True)[0].acc_number or "") or ""}',
+                                'AB11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and " ".join(filter(lambda x: x != False, [value.filtered(lambda l: l.default is True)[0].bank_name, value.filtered(lambda l: l.default is True)[0].bank_branch.name])) or "") or ""}',
+                                'AC11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and " ".join(filter(lambda x: x != False, [value.filtered(lambda l: l.default is True)[0].partner_id.title_lang, value.filtered(lambda l: l.default is True)[0].partner_id.name])) or "") or ""}',
+                                'AD11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and (value.filtered(lambda l: l.default is True)[0].active is True and "X" or "") or "") or ""}',
+                                'AE11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and (value.filtered(lambda l: l.default is True)[0].default is True and "X" or "")) or ""}',
+                                'AF11': 'income_tax_form${value and dict(pnd1="PND1", pnd3="PND3", pnd3a="PND3a", pnd53="PND53")[value] or ""}',
+                                'AG11': 'create_date${value or ""}#{number_format=date}',
+                                'AH11': 'create_uid${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'AI11': 'write_date${value or ""}#{number_format=date}',
+                                'AJ11': 'write_uid${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'AK11': 'active${value and "X" or ""}',
+                            },
                         },
-                        'results': {
-                            'A6': 'partner_id.search_key${value or ""}',
-                            'B6': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
-                            'C6': 'partner_id.street${value or ""}',
-                            'D6': 'partner_id.street2${value or ""}',
-                            'E6': 'partner_id.township_id.name${value or ""}',
-                            'F6': 'partner_id.district_id.name${value or ""}',
-                            'G6': 'partner_id.province_id.name${value or ""}',
-                            'H6': 'partner_id.country_id.name${value or ""}',
-                            'I6': 'partner_id.zip${value or ""}',
-                            'J6': 'partner_id.vat${value or ""}',
-                            'K6': 'partner_id.taxbranch${value or ""}',
-                            'L6': 'partner_id.mobile${value or ""}',
-                            'M6': 'partner_id.fax${value or ""}',
-                            'N6': 'bank_id${value and value.acc_number or ""}',
-                            'O6': 'bank_id${value and " ".join(list(filter(lambda l: l!= False, [value.bank_name, value.bank_branch.name]))) or ""}',
-                            'P6': 'bank_id${value and " ".join(list(filter(lambda l: l != False, [value.partner_id.title.name, value.partner_id.name]))) or ""}',
-                            'Q6': 'bank_id${value and (value.active and "X" or "") or ""}',
-                            'R6': 'bank_id${value and (value.default and "X" or "") or ""}',
-                            'S6': 'partner_id.create_date${value or ""}#{number_format=date}',
-                            'T6': 'partner_id.create_uid.name${value or ""}',
-                            'U6': 'partner_id.write_date${value or ""}#{number_format=date}',
-                            'V6': 'partner_id.write_uid.name${value or ""}',
-                            'W6': 'partner_id.active${value and "X" or ""}',
-                        }
+                        'Bank Account': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'category_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B4': 'active${value and (value == "true" and "True" or "False") or ""}',
+                                'B5': 'customer${value and "X" or ""}',
+                                'B6': 'supplier${value and "X" or ""}',
+                                'B7': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'partner_bank_detail_results': {
+                                'A11': 'partner_id.search_key${value or ""}',
+                                'B11': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
+                                'C11': 'bank_id.acc_number${value or ""}',
+                                'D11': 'bank_id${value and " ".join(list(filter(lambda l: l != False, [value.bank_name, value.bank_branch.name]))) or ""}',
+                                'E11': 'bank_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
+                                'F11': 'bank_id${value and (value.active is True and "X" or "") or ""}',
+                                'G11': 'bank_id${value and (value.default is True and "X" or "") or ""}',
+                            },
+                        },
                     }
                 }
-            }
-          </field>
+            </field>
         </record>
 
         # Advance Status
@@ -255,53 +232,55 @@ result = pd.pivot_table(df, index=groupby,
             <field name="name">Cheque Register</field>
             <field name="parent_id" eval="ref('dir_account_reports')"/>
             <field name="description">
-              {
-                '__EXPORT__': {
-                    'Cheque Register Report': {
-                        '_HEAD_': {
-                            'A1': '${env.user.company_id.display_name}',
-                            'B3': 'date_cheque_received${value or ""}#{number_format=date;align=left}',
-                            'B4': 'cheque_lot_ids${value and ", ".join([x.name for x in value]) or ""}',
-                            'B5': 'number_cheque_from${value or ""}',
-                            'D5': 'number_cheque_to${value or ""}',
-                            'B6': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
-                            'B7': '${env.user.display_name}',
-                            'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
-                        },
-                        'results': {
-                            'A11': 'cheque_lot_id.journal_id.default_credit_account_id.code${value or ""}',
-                            'B11': 'cheque_lot_id.journal_id.default_credit_account_id.name${value or ""}',
-                            'C11': 'voucher_id.partner_id.search_key${value or ""}',
-                            'D11': 'voucher_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
-                            'E11': 'number${value or ""}',
-                            'F11': 'voucher_id.number${value or ""}',
-                            'G11': 'voucher_id.date${value or ""}#{number_format=date}',
-                            'H11': 'amount${value or 0}#{number_format=number}',
-                            'I11': 'voucher_id.date_cheque_received${value or ""}#{number_format=date}',
-                            'J11': 'voucher_id.move_ids${value and (value.mapped("match_import_id") and value.mapped("match_import_id").date_value or "") or ""}#{number_format=date}',
-                            'K11': 'date_void${value or ""}#{number_format=date}',
-                            'L11': 'payment_export_id.user_id.display_name${value or ""}',
-                        },
-                        '_TAIL_0': {
-                            'H11': '@{sum}#{font=bold;number_format=number}',
+                {
+                    '__EXPORT__': {
+                        'Cheque Register Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'date_cheque_received${value or ""}#{number_format=date}',
+                                'B4': 'cheque_lot_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B5': 'number_cheque_from${value or ""}',
+                                'D5': 'number_cheque_to${value or ""}',
+                                'B6': 'journal_ids${value and ", ".join([x.default_credit_account_id.code for x in value]) or ""}',
+                                'B7': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'results': {
+                                'A11': 'cheque_lot_id.journal_id.default_credit_account_id.code${value or ""}',
+                                'B11': 'cheque_lot_id.journal_id.default_credit_account_id.name${value or ""}',
+                                'C11': 'voucher_id.partner_id.search_key${value or ""}',
+                                'D11': 'voucher_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
+                                'E11': 'cheque_lot_id.name${value or ""}',
+                                'F11': 'number${value or ""}',
+                                'G11': 'voucher_id.number${value or ""}',
+                                'H11': 'voucher_id.date${value or ""}#{number_format=date}',
+                                'I11': 'amount${value or ""}',
+                                'J11': 'voucher_id.date_cheque_received${value or ""}#{number_format=date}',
+                                'K11': 'voucher_id.move_ids${value and (value.mapped("match_import_id") and value.mapped("match_import_id").date_value or "") or ""}#{number_format=date}',
+                                'L11': 'date_void${value or ""}#{number_format=date}',
+                                'M11': 'payment_export_id.user_id${value and value.with_context(lang="th_TH").display_name or ""}',
+                            },
+                            '_TAIL_0': {
+                                'H11': '${"Total"}#{font=bold;align=right}',
+                                'I11': '@{sum}#{font=bold;number_format=number;align=right}',
+                            }
                         }
                     }
                 }
-            }
-          </field>
+            </field>
         </record>
 
-        # Purchase Contract
+        # PO Contract
         <record id="xlsx_report_purchase_contract" model="ir.attachment">
             <field name="res_model">xlsx.report.purchase.contract</field>
             <field name="datas"></field>
             <field name="datas_fname">xlsx_report_purchase_contract.xlsx</field>
-            <field name="name">Purchase Contract</field>
+            <field name="name">PO Contract</field>
             <field name="parent_id" eval="ref('dir_account_reports')"/>
             <field name="description">
                 {
                     '__EXPORT__': {
-                        'Purchase Contract Report': {
+                        'PO Contract Report': {
                             '_HEAD_': {
                                 'A1': '${env.user.company_id.display_name}',
                                 'B3': 'date_report${value or ""}#{number_format=date;align=left}',
@@ -356,37 +335,39 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Advance Payment Report': {
                             '_HEAD_': {
-                                'A1': '${env.user.company_id.display_name}',
-                                'B3': 'account_id.code${value or ""}',
-                                'B4': 'date_report${value or ""}#{number_format=date;align=left}',
-                                'B5': '${env.user.display_name}',
-                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                                'B4': 'date_report${value or ""}#{number_format=date}',
+                                'B5': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
                             'results': {
                                 'A9': 'org_id.name_short${value or ""}',
-                                'B9': 'partner_id.search_key${value or ""}',
-                                'C9': 'partner_id.name${value or ""}',
-                                'D9': 'invoice.purchase_ids${value and ", ".join([x.name for x in value]) or ""}',
-                                'E9': 'invoice.purchase_ids${value and ", ".join(list(filter(lambda x: x != "", [x.contract_id.display_code or "" for x in value]))) or ""}',
-                                'F9': 'partner_id.category_id${value and value.name or ""}',
-                                'G9': 'invoice.number${value or ""}',
-                                'H9': 'invoice.date_document${value or ""}#{number_format=date}',
-                                'I9': 'invoice.date_invoice${value or ""}#{number_format=date}',
-                                'J9': 'name${value or ""}',
-                                'K9': 'id${value and (env["account.move.line"].browse(value).debit != 0 and env["account.move.line"].browse(value).debit or (-1) * env["account.move.line"].browse(value).credit) or 0}#{number_format=number}',
-                                'L9': 'invoice.payment_ids${value and ", ".join(list(filter(lambda x: x != "", [x.number or "" for x in env["account.voucher"].search([("move_id", "in", value.mapped("move_id").ids)])]))) or ""}',
-                                'M9': 'invoice.payment_ids${value and ", ".join(list(filter(lambda x: x != "", [x.date_document or "" for x in env["account.voucher"].search([("move_id", "in", value.mapped("move_id").ids)])]))) or ""}#{number_format=date}',
+                                'B9': 'invoice_id.partner_id.search_key${value or ""}',
+                                'C9': 'invoice_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
+                                'D9': 'invoice_id.source_document_id${value and value.name or ""}',
+                                'E9': 'invoice_id.source_document_id${value and value.contract_id.display_code or ""}',
+                                'F9': 'invoice_id.partner_id.category_id${value and value.name or ""}',
+                                'G9': 'invoice_id.number${value or ""}',
+                                'H9': 'invoice_id.date_document${value or ""}#{number_format=date}',
+                                'I9': 'invoice_id.date_invoice${value or ""}#{number_format=date}',
+                                'J9': 'invoice_id.move_ids${value and value.filtered(lambda l: l.account_id == 199).name or ""}',
+                                'K9': 'balance${value or ""}#{number_format=number}',
+                                'L9': 'invoice_id.payment_ids${value and ", ".join([x.move_id.name for x in value.filtered(lambda l: l.doctype == "payment")]) or ""}',
+                                'M9': 'invoice_id.payment_ids${value and ", ".join([x.move_id.date for x in value.filtered(lambda l: l.doctype == "payment")]) or ""}#{number_format=date}',
+                                'N9': "${'=?(M9)+IF(?(F9)=\"ต่างประเทศ\",60,18)'}",
+                                'O9': "${'=B4-?(N9)'}",
+                                'P9': "${'=IF(?(O9)&lt;=0,?(K9),\"\")'}#{number_format=number}",
+                                'Q9': "${'=IF(AND(?(O9)&gt;=1,?(O9)&lt;=30),?(K9),\"\")'}#{number_format=number}",
+                                'R9': "${'=IF(AND(?(O9)&gt;=31,?(O9)&lt;=60),?(K9),\"\")'}#{number_format=number}",
+                                'S9': "${'=IF(AND(?(O9)&gt;=61,?(O9)&lt;=90),?(K9),\"\")'}#{number_format=number}",
+                                'T9': "${'=IF(AND(?(O9)&gt;=91,?(O9)&lt;=180),?(K9),\"\")'}#{number_format=number}",
+                                'U9': "${'=IF(AND(?(O9)&gt;=181,?(O9)&lt;=365),?(K9),\"\")'}#{number_format=number}",
+                                'V9': "${'=IF(AND(?(O9)&gt;365),?(K9),\"\")'}#{number_format=number}",
                             },
-                            '_TAIL_0': {
+                            '_GROUPBY_results["org_id"]': {  # groupby
                                 'K9': '@{sum}#{font=bold;number_format=number}',
-                                'P9': '@{sum}#{font=bold;number_format=number}',
-                                'Q9': '@{sum}#{font=bold;number_format=number}',
-                                'R9': '@{sum}#{font=bold;number_format=number}',
-                                'S9': '@{sum}#{font=bold;number_format=number}',
-                                'T9': '@{sum}#{font=bold;number_format=number}',
-                                'U9': '@{sum}#{font=bold;number_format=number}',
-                                'V9': '@{sum}#{font=bold;number_format=number}',
-                            }
+                            },
                         }
                     }
                 }
@@ -514,35 +495,38 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Purchase Billing Report': {
                             '_HEAD_': {
-                                'A1': '${env.user.company_id.display_name}',
-                                'B3': 'start_billing_date${value or ""}#{number_format=date;align=left}',
-                                'D3': 'end_billing_date${value or ""}#{number_format=date;align=left}',
-                                'B4': 'start_billing_due_date${value or ""}#{number_format=date;align=left}',
-                                'D4': 'end_billing_due_date${value or ""}#{number_format=date;align=left}',
-                                'B5': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.title.name, x.name]))) for x in value]) or ""}',
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'billing_date_start${value or ""}#{number_format=date}',
+                                'D3': 'billing_date_end${value or ""}#{number_format=date}',
+                                'B4': 'billing_due_date_start${value or ""}#{number_format=date}',
+                                'D4': 'billing_due_date_end${value or ""}#{number_format=date}',
+                                'B5': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.title_lang, x.with_context(lang="th_TH").name]))) for x in value]) or ""}',
                                 'B6': 'billing_ids${value and ", ".join([x.name for x in value]) or ""}',
-                                'B7': '${env.user.display_name}',
-                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                                'B7': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
                             'results': {
-                                'A11': 'purchase_billing_id.name${value or ""}',
-                                'B11': 'purchase_billing_id.date${value or ""}#{number_format=date}',
-                                'C11': 'purchase_billing_id.date_due${value or ""}#{number_format=date}',
-                                'D11': 'partner_id.search_key${value or ""}',
-                                'E11': 'id${value and " ".join(list(filter(lambda l: l != False, [env["account.invoice"].browse(value).partner_id.title.name, env["account.invoice"].browse(value).partner_id.name]))) or ""}',
-                                'F11': 'source_document_id${value and (value._table in ("purchase_order", "sale_order") and value.name or value.number or "")  or ""}',
-                                'G11': 'source_document_id${value and ((value._table == "purchase_order" and value.contract_id) and value.contract_id.display_code or "") or ""}',
-                                'H11': 'source_document_id${value and (value._table == "purchase_order" and value.notes or "") or ""}',
-                                'I11': 'supplier_invoice_number${value or ""}',
-                                'J11': 'amount_total${value or 0}#{number_format=number}',
-                                'K11': 'number${value or ""}',
-                                'L11': 'date_invoice${value or ""}#{number_format=date}',
-                                'M11': 'date_due${value or ""}#{number_format=date}',
-                                'N11': 'purchase_billing_id.user_id.display_name${value or ""}',
-                                'O11': 'state${value or ""}',
+                                'A11': 'invoice_id.purchase_billing_id.name${value or ""}',
+                                'B11': 'invoice_id.purchase_billing_id.date${value or ""}#{number_format=date}',
+                                'C11': 'invoice_id.purchase_billing_id.date_due${value or ""}#{number_format=date}',
+                                'D11': 'invoice_id.purchase_billing_id.date_sent${value or ""}#{number_format=date}',
+                                'E11': 'invoice_id.partner_id.search_key${value or ""}',
+                                'F11': 'invoice_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
+                                'G11': 'invoice_id.source_document_id${value and (value._table in ("purchase_order", "sale_order") and value.name or value.number or "")  or ""}',
+                                'H11': 'invoice_id.source_document_id${value and ((value._table == "purchase_order" and value.contract_id) and value.contract_id.display_code or "") or ""}',
+                                'I11': 'invoice_id.source_document_id${value and (value._table == "purchase_order" and value.notes or "") or ""}',
+                                'J11': 'invoice_id.supplier_invoice_number${value or ""}',
+                                'K11': 'invoice_id.amount_total${value or ""}',
+                                'L11': 'invoice_id.number${value or ""}',
+                                'M11': 'invoice_id.date_invoice${value or ""}#{number_format=date}',
+                                'N11': 'invoice_id.date_due${value or ""}#{number_format=date}',
+                                'O11': 'invoice_id.date_receipt_billing${value or ""}#{number_format=date}',
+                                'P11': 'invoice_id.purchase_billing_id.user_id${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'Q11': 'invoice_id.state${value and dict(draft="Draft", proforma="Pro-forma", proforma2="Pro-forma", open="Open", paid="Paid", cancel="Cancelled")[value] or ""}',
                             },
                             '_TAIL_0': {
-                                'J11': '@{sum}#{font=bold;number_format=number}',
+                                'J11': '${"Total"}#{font=bold;align=right}',
+                                'K11': '@{sum}#{font=bold;number_format=number;align=right}',
                             }
                         }
                     }
@@ -562,28 +546,35 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'SLA Purchase Report': {
                             '_HEAD_': {
-                                'A1': '${env.user.company_id.display_name}',
-                                'B3': 'start_period_id.name${value or ""}',
-                                'D3': 'end_period_id.name${value or ""}',
-                                'B4': 'user_ids${value and ", ".join([x.display_name for x in value]) or ""}',
-                                'B5': '${env.user.display_name}',
-                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'fiscalyear_start_id.name${value or ""}',
+                                'D3': 'fiscalyear_end_id.name${value or ""}',
+                                'B4': 'filter${value and dict(filter_no="No Filters", filter_date="Dates", filter_period="Periods")[value] or ""}',
+                                'B5': 'period_start_id.name${value or ""}',
+                                'D5': 'period_end_id.name${value or ""}',
+                                'B6': 'date_start${value or ""}#{number_format=date}',
+                                'D6': 'date_end${value or ""}#{number_format=date}',
+                                'B7': 'user_ids${value and ", ".join([x.with_context(lang="th_TH").display_name for x in value]) or ""}',
+                                'B8': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B9': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
                             'results': {
-                                'A9': 'voucher_id.period_id.fiscalyear_id.name${value or ""}',
-                                'B9': 'voucher_id.number${value or ""}',
-                                'C9': 'export_name${value or ""}',
-                                'D9': 'count_invoice${value or 0}',
-                                'E9': 'voucher_id.create_uid.display_name${value or ""}',
-                                'F9': 'voucher_id${value and (value.payment_type == "transfer" and value.transfer_type or "cheque") or ""}',
-                                'G9': 'voucher_id.date_value${value or ""}#{number_format=date}',
-                                'H9': 'voucher_id.amount${value or 0}#{number_format=number}',
-                                'I9': 'date_due${value or ""}#{number_format=date}',
-                                'J9': 'voucher_id.date${value or ""}#{number_format=date}',
+                                'A12': 'voucher_id.period_id.fiscalyear_id.name${value or ""}',
+                                'B12': 'voucher_id.number${value or ""}',
+                                'C12': 'export_id.name${value or ""}',
+                                'D12': 'count_invoice${value or ""}',
+                                'E12': 'voucher_id.create_uid${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'F12': 'voucher_id.payment_type${value and dict(cheque="Cheque", transfer="Transfer")[value] or ""}',
+                                'G12': 'voucher_id.date_value${value or ""}#{number_format=date}',
+                                'H12': 'voucher_id.amount${value or ""}',
+                                'I12': 'date_due${value or ""}#{number_format=date}',
+                                'J12': 'voucher_id.date${value or ""}#{number_format=date}',
+                                'K12': "${'=IF(?(I12)>=?(G12),\"Yes\",\"No\")'}",
                             },
                             '_TAIL_0': {
-                                'D9': '@{sum}#{font=bold;number_format=number}',
-                                'H9': '@{sum}#{font=bold;number_format=number}',
+                                'C12': '${"Total"}#{font=bold;align=right}',
+                                'D12': '@{sum}#{font=bold;number_format=number;align=right}',
+                                'H12': '@{sum}#{font=bold;number_format=number;align=right}',
                             }
                         }
                     }
@@ -603,33 +594,40 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'SLA Employee Report': {
                             '_HEAD_': {
-                                'A1': '${env.user.company_id.display_name}',
-                                'B3': 'start_period_id.name${value or ""}',
-                                'D3': 'end_period_id.name${value or ""}',
-                                'B4': 'user_ids${value and ", ".join([x.display_name for x in value]) or ""}',
-                                'B5': 'category_id.name${value or ""}',
-                                'B6': '${env.user.display_name}',
-                                'B7': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'fiscalyear_start_id.name${value or ""}',
+                                'D3': 'fiscalyear_end_id.name${value or ""}',
+                                'B4': 'filter${value and dict(filter_no="No Filters", filter_date="Dates", filter_period="Periods")[value] or ""}',
+                                'B5': 'period_start_id.name${value or ""}',
+                                'D5': 'period_end_id.name${value or ""}',
+                                'B6': 'date_start${value or ""}#{number_format=date}',
+                                'D6': 'date_end${value or ""}#{number_format=date}',
+                                'B7': 'user_ids${value and ", ".join([x.with_context(lang="th_TH").display_name for x in value]) or ""}',
+                                'B8': 'category_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B9': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B10': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
                             'results': {
-                                'A10': 'invoice_id.date_invoice${value or ""}#{number_format=date}',
-                                'B10': 'invoice_id.number${value or ""}',
-                                'C10': 'voucher_id.number${value or ""}',
-                                'D10': 'voucher_id.date${value or ""}#{number_format=date}',
-                                'E10': 'invoice_id.comment${value or ""}',
-                                'F10': 'voucher_id.amount${value or 0}#{number_format=number}',
-                                'G10': 'invoice_id.source_document_id.number${value or ""}',
-                                'H10': 'invoice_id.partner_id.category_id.name${value or ""}',
-                                'I10': 'invoice_id.partner_id.search_key${value or ""}',
-                                'J10': 'invoice_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
-                                'K10': 'invoice_id.source_document_id.date_valid${value or ""}#{number_format=date}',
-                                'L10': 'export_id.date_value${value or ""}#{number_format=date}',
-                                'M10': 'import_id.date_value${value or ""}#{number_format=date}',
-                                'P10': 'voucher_id.create_uid.display_name${value or ""}',
+                                'A13': 'invoice_id.date_invoice${value or ""}#{number_format=date}',
+                                'B13': 'invoice_id.number${value or ""}',
+                                'C13': 'voucher_id.number${value or ""}',
+                                'D13': 'voucher_id.date${value or ""}#{number_format=date}',
+                                'E13': 'invoice_id.comment${value or ""}',
+                                'F13': 'voucher_line_id.amount${value or ""}',
+                                'G13': 'invoice_id.source_document_id.number${value or ""}',
+                                'H13': 'invoice_id.partner_id.category_id.name${value or ""}',
+                                'I13': 'invoice_id.partner_id.search_key${value or ""}',
+                                'J13': 'invoice_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
+                                'K13': 'invoice_id.source_document_id.date_valid${value or ""}#{number_format=date}',
+                                'L13': 'export_id.date_value${value or ""}#{number_format=date}',
+                                'M13': 'voucher_id.move_ids${value and (value.mapped("match_import_id") and value.mapped("match_import_id").date_value or "") or ""}#{number_format=date}',
+                                'N13': '${"=NETWORKDAYS(?(K13),?(L13),Holliday.B:B)"}',
+                                'O13': "${'=IF(?(H13)=\"พนักงาน สวทช\",IF(?(N13)&lt;=5,\"YES\",\"NO\"),IF(?(N13)&lt;=10,\"YES\",\"NO\"))'}",
+                                'P13': 'voucher_id.create_uid${value and value.with_context(lang="th_TH").display_name or ""}',
                             },
                             '_TAIL_0': {
-                                'M10': '${"จำนวนวันทั้งหมด"}#{font=bold}',
-                                'N9': '@{sum}#{font=bold}',
+                                'M13': '${"Total"}#{font=bold;align=right}',
+                                'N13': '@{sum}#{font=bold;number_format=number;align=right}',
                             }
                         }
                     }
@@ -649,31 +647,121 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Supplier Receipt Follow Up Report': {
                             '_HEAD_': {
-                                'A1': '${env.user.company_id.display_name}',
-                                'B3': 'fiscalyear_id.name${value or ""}',
-                                'B4': 'account_id.code${value or ""}',
-                                'B5': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
-                                'B6': 'followup_receipt${value or ""}',
-                                'B7': '${env.user.display_name}',
-                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'fiscalyear_start_id.name${value or ""}',
+                                'D3': 'fiscalyear_end_id.name${value or ""}',
+                                'B4': 'filter${value and dict(filter_no="No Filters", filter_date="Dates", filter_period="Periods")[value] or ""}',
+                                'B5': 'period_start_id.name${value or ""}',
+                                'D5': 'period_end_id.name${value or ""}',
+                                'B6': 'date_start${value or ""}#{number_format=date}',
+                                'D6': 'date_end${value or ""}#{number_format=date}',
+                                'B7': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                                'B8': 'partner_ids${value and ", ".join([x.search_key for x in value]) or ""}',
+                                'B9': 'followup_receipt${value and dict(following="Following", received="Received")[value] or ""}',
+                                'B10': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B11': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
                             'results': {
-                                'A11': 'partner_id.search_key${value or ""}',
-                                'B11': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
-                                'C11': 'number${value or ""}',
-                                'D11': 'create_uid.display_name${value or ""}',
-                                'E11': 'date_value${value or ""}#{number_format=date}',
-                                'F11': 'move_ids${value and (value.mapped("match_import_id") and value.mapped("match_import_id").date_value or "") or ""}#{number_format=date}',
-                                'G11': 'narration${value or ""}',
-                                'H11': 'amount${value or 0}#{number_format=number}',
-                                'I11': 'payment_type${value or ""}',
-                                'J11': 'number_cheque${value or ""}',
-                                'K11': 'supplier_bank_id${value and " ".join(list(filter(lambda l: l != False, [value.bank_name, value.bank_branch.name]))) or ""}',
-                                'L11': 'supplier_bank_id.acc_number${value or ""}',
-                                'M11': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.street, value.street2, value.township_id.name, value.district_id.name, value.province_id.name, value.zip]))) or ""}'
+                                'A14': 'voucher_id.partner_id.search_key${value or ""}',
+                                'B14': 'voucher_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
+                                'C14': 'voucher_id.number${value or ""}',
+                                'D14': 'voucher_id.create_uid${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'E14': 'voucher_id.date_value${value or ""}#{number_format=date}',
+                                'F14': 'voucher_id.move_ids${value and (value.mapped("match_import_id") and value.mapped("match_import_id").date_value or "") or ""}#{number_format=date}',
+                                'G14': 'voucher_id.narration${value or ""}',
+                                'H14': 'voucher_id.amount${value or ""}',
+                                'I14': 'voucher_id.payment_type${value and dict(cheque="Cheque", transfer="Transfer")[value] or ""}',
+                                'J14': 'voucher_id.number_cheque${value or ""}',
+                                'K14': 'voucher_id.supplier_bank_id${value and " ".join(list(filter(lambda l: l != False, [value.bank_name, value.bank_branch.name]))) or ""}',
+                                'L14': 'voucher_id.supplier_bank_id.acc_number${value or ""}',
+                                'M14': 'voucher_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.street, value.street2, value.township_id.name, value.district_id.name, value.province_id.name, value.zip]))) or ""}',
+                                'N14': 'invoice_id.number${value or ""}',
+                                'O14': 'invoice_line_id.account_id.code${value or ""}',
+                                'P14': 'invoice_line_id.activity_group_id.name${value or ""}',
+                                'Q14': 'invoice_line_id.activity_id.name${value or ""}',
+                                'R14': 'invoice_line_id.price_subtotal${value or ""}',
+                                'S14': 'invoice_line_id.chartfield_id.code${value or ""}',
+                                'T14': 'invoice_line_id.chartfield_id.name${value or ""}',
+                                'U14': 'invoice_line_id${value and ((value.chartfield_id.type == "pj:" and (value.project_id.pm_employee_id and " ".join(list(filter(lambda l: l != False, [value.project_id.pm_employee_id.with_context(lang="th_TH").title_id.name, value.project_id.pm_employee_id.with_context(lang="th_TH").first_name, value.project_id.pm_employee_id.with_context(lang="th_TH").mid_name, value.project_id.pm_employee_id.with_context(lang="th_TH").last_name]))) or "")) or (value.chartfield_id.type == "cp:" and (value.invest_construction_id.pm_employee_id and " ".join(list(filter(lambda l: l != False, [value.invest_construction_id.pm_employee_id.with_context(lang="th_TH").title_id.name, value.invest_construction_id.pm_employee_id.with_context(lang="th_TH").first_name, value.invest_construction_id.pm_employee_id.with_context(lang="th_TH").mid_name, value.invest_construction_id.pm_employee_id.with_context(lang="th_TH").last_name]))) or ""))) or ""}',
+                                'V14': 'invoice_line_id${value and (value.chartfield_id.type == "pj:" and value.project_id.external_pm or "") or ""}',
                             },
                             '_TAIL_0': {
-                                'H11': '@{sum}#{font=bold;number_format=number}',
+                                'G14': '${"Total"}#{font=bold;align=right}',
+                                'H14': '@{sum}#{font=bold;number_format=number;align=right}',
+                                'R14': '@{sum}#{font=bold;number_format=number;align=right}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
+
+        # Input Tax Report
+        <record id="xlsx_report_input_tax" model="ir.attachment">
+            <field name="res_model">xlsx.report.input.tax</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_input_tax.xlsx</field>
+            <field name="name">Input Tax Report</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Input Tax Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'calendar_period_id.calendar_name${value or ""}',
+                                'B4': 'taxbranch_id.name${value or ""}',
+                            },
+                            'results': {
+                                'A8': 'tax_sequence_display${value or ""}',
+                                'B8': 'invoice_date#{number_format=date}',
+                                'C8': 'invoice_number${value or ""}',
+                                'D8': 'partner_id.name${value or ""}',
+                                'E8': 'partner_id.vat${value or ""}',
+                                'F8': 'partner_id.taxbranch${value and (value == "00000" and "Head Office" or value) or ""}',
+                                'G8': 'base${value or 0}#{number_format=number}',
+                                'H8': 'amount${value or 0}#{number_format=number}',
+                                'I8': 'move_number${value or ""}',
+                            },
+                            '_TAIL_0': {
+                                'G8': '@{sum}#{font=bold;align=right;number_format=number}',
+                                'H8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
+
+        # Output Tax Report
+        <record id="xlsx_report_output_tax" model="ir.attachment">
+            <field name="res_model">xlsx.report.output.tax</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_output_tax.xlsx</field>
+            <field name="name">Output Tax Report</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Output Tax Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'calendar_period_id.calendar_name${value or ""}',
+                                'B4': 'taxbranch_id.name${value or ""}',
+                            },
+                            'results': {
+                                'A8': 'invoice_date#{number_format=date}',
+                                'B8': 'invoice_number${value or ""}',
+                                'C8': 'partner_id.name${value or ""}',
+                                'D8': 'partner_id.vat${value or ""}',
+                                'E8': 'partner_id.taxbranch${value and (value == "00000" and "Head Office" or value) or ""}',
+                                'F8': 'base${value or 0}#{number_format=number}',
+                                'G8': 'amount${value or 0}#{number_format=number}',
+                                'I8': 'move_number${value or ""}',
+                            },
+                            '_TAIL_0': {
+                                'F8': '@{sum}#{font=bold;align=right;number_format=number}',
+                                'G8': '@{sum}#{font=bold;align=right;number_format=number}',
                             }
                         }
                     }

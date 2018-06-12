@@ -1,0 +1,6 @@
+id,name,code,operating_unit_id/id,partner_id/id
+stock.warehouse0,สก.,สก.,base.res_ou_1,base.main_partner
+base.stock_warehouse_22,ศช.,ศช.,base.res_ou_2,base.main_partner
+base.stock_warehouse_23,ศว.,ศว.,base.res_ou_3,base.main_partner
+base.stock_warehouse_24,ศอ.,ศอ.,base.res_ou_4,base.main_partner
+base.stock_warehouse_26,ศน.,ศน.,base.res_ou_6,base.main_partner

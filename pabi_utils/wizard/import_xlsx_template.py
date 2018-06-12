@@ -190,18 +190,19 @@ class ImportXlsxTemplate(models.TransientModel):
         try:
             for sheet_name in data_dict:
                 worksheet = data_dict[sheet_name]
-                # kittiu: Don't del header value, it make requried field error
-                # # HEAD
-                # for rc, field in worksheet.get('_HEAD_', {}).iteritems():
-                #     if field in record and record[field]:
-                #         record[field] = False  # Set to False
-                # --
-                # Line Items
-                line_fields = filter(lambda x: x != '_HEAD_', worksheet)
+                # Get delete condition, if not specified, delete all
+                line_del_dom = worksheet.get('_LINE_DELETE_DOMAIN_', {})
+                line_fields = filter(lambda x: x not in
+                                     ('_HEAD_', '_LINE_DELETE_DOMAIN_'),
+                                     worksheet)
                 for line_field in line_fields:
                     line_field, _ = get_line_max(line_field)
                     if line_field in record and record[line_field]:
-                        record[line_field].unlink()  # Delete all lines
+                        model = self.env[record[line_field]._name]
+                        lines = model.search(
+                            [('id', 'in', record[line_field].ids)] +
+                            line_del_dom.get(line_field, []))
+                        lines.unlink()
         except Exception, e:
             raise except_orm(_('Error deleting data!'), e)
 
@@ -296,7 +297,8 @@ class ImportXlsxTemplate(models.TransientModel):
                 out_st.write(1, col_idx, value)  # Next Value
                 col_idx += 1
             # Line Items
-            line_fields = filter(lambda x: x != '_HEAD_', worksheet)
+            line_fields = filter(lambda x: x not in
+                                 ('_HEAD_', '_LINE_DELETE_DOMAIN_'), worksheet)
             for line_field in line_fields:
                 vals = self._get_line_vals(st, worksheet,
                                            model, line_field)

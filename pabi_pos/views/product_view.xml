@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <menuitem id="base.menu_sale_config_sales" name="Sales"
+          parent="base.menu_base_config" sequence="5" groups="base.group_sale_manager"/>
+
         <record id="view_product_category_tree" model="ir.ui.view">
             <field name="name">view.product.category.tree</field>
             <field name="model">product.category</field>
