@@ -768,5 +768,57 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
+
+        # CD Receivable Confirmation
+        <record id="xlsx_report_cd_receivable_confirmation" model="ir.attachment">
+            <field name="res_model">xlsx.report.cd.receivable.confirmation</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_cd_receivable_confirmation.xlsx</field>
+            <field name="name">CD Receivable Confirmation</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Receivable CD Confirmation Detail Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'date_report${value or ""}#{number_format=date}',
+                                'B4': 'partner_ids${value and ", ".join([x.search_key for x in value]) or ""}',
+                                'B5': 'bank_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B6': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B7': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'results': {
+                                'A10': 'loan_agreement_id.borrower_partner_id.search_key${value or ""}',
+                                'B10': 'loan_agreement_id.borrower_partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
+                                'C10': 'loan_agreement_id.sale_id.name${value or ""}',
+                                'D10': 'loan_agreement_id.bank_id.bank_name${value or ""}',
+                                'E10': 'loan_agreement_id.bank_id.bank_branch.name${value or ""}',
+                                'F10': 'loan_agreement_id.name${value or ""}',
+                                'G10': 'invoice_id.number${value or ""}',
+                                'H10': 'invoice_id.amount_total${value or ""}',
+                            },
+                        },
+                        'Receivable CD Confirmation Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'date_report${value or ""}#{number_format=date}',
+                                'B4': 'partner_ids${value and ", ".join([x.search_key for x in value]) or ""}',
+                                'B5': 'bank_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B6': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B7': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            '_BI_': {
+                                'A10': {
+                                    'df': 'Receivable CD Confirmation Detail Report',
+                                    # Group by A, B, C, D, E, F. User will have to do subtotal themselves
+                                    'oper_code': 'df[["A", "B", "C", "D", "E", "F", "H"]].groupby(["A", "B", "C", "D", "E", "F"]).sum()',
+                                },
+                            },
+                        },
+                    }
+                }
+            </field>
+        </record>
     </data>
 </openerp>
