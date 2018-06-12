@@ -4,8 +4,8 @@ from datetime import datetime
 import time
 
 
-class JasperReportReceivableFollowUp(models.TransientModel):
-    _name = 'jasper.report.receivable.follow.up'
+class JasperReportCDReceivableFollowUp(models.TransientModel):
+    _name = 'jasper.report.cd.receivable.follow.up'
     _inherit = 'report.account.common'
 
     fiscalyear_start_id = fields.Many2one(
@@ -45,9 +45,9 @@ class JasperReportReceivableFollowUp(models.TransientModel):
     @api.multi
     def _get_report_name(self):
         self.ensure_one()
-        report_name = "customer_receivable_follow_up"
+        report_name = "cd_receivable_follow_up_group_by_customer"
         if len(self.bank_id):
-            report_name = "bank_receivable_follow_up"
+            report_name = "cd_receivable_follow_up_group_by_bank"
         return report_name
 
     @api.multi
@@ -64,6 +64,18 @@ class JasperReportReceivableFollowUp(models.TransientModel):
         if self.bank_branch_id:
             dom += [('loan_agreement_id.bank_id.bank_branch', '=',
                      self.bank_branch_id.id)]
+        # Check for history view
+        dom += [('loan_agreement_id.supplier_invoice_id.date_paid', '=',
+                 False),
+                ('loan_agreement_id.supplier_invoice_id.date_paid', '<=',
+                 self.date_report),
+                '|', ('invoice_plan_id.ref_invoice_id.date_paid', '=', False),
+                ('invoice_plan_id.ref_invoice_id.date_paid', '>',
+                 self.date_report),
+                '|', ('invoice_plan_id.ref_invoice_id.cancel_move_id', '=',
+                      False),
+                ('invoice_plan_id.ref_invoice_id.cancel_move_id.create_date',
+                 '>', self.date_report)]
         return dom
 
     @api.multi
@@ -71,7 +83,7 @@ class JasperReportReceivableFollowUp(models.TransientModel):
         self.ensure_one()
         data = {'parameters': {}}
         dom = self._get_domain()
-        data['ids'] = self.env['receivable.follow.up.view'].search(dom).ids
+        data['ids'] = self.env['cd.receivable.follow.up.view'].search(dom).ids
         date_report = datetime.strptime(self.date_report, '%Y-%m-%d')
         data['parameters']['date_report'] = date_report.strftime('%d/%m/%Y')
         user = self.env.user.with_context(lang="th_TH").display_name
@@ -89,8 +101,8 @@ class JasperReportReceivableFollowUp(models.TransientModel):
         }
 
 
-class ReceivableFollowUpView(models.Model):
-    _name = 'receivable.follow.up.view'
+class CDReceivableFollowUpView(models.Model):
+    _name = 'cd.receivable.follow.up.view'
     _auto = False
 
     id = fields.Integer(
@@ -116,8 +128,6 @@ class ReceivableFollowUpView(models.Model):
             FROM loan_customer_agreement lca
             LEFT JOIN sale_order so ON lca.sale_id = so.id
             LEFT JOIN sale_invoice_plan sip ON so.id = sip.order_id
-            LEFT JOIN account_invoice inv ON sip.ref_invoice_id = inv.id
-            WHERE inv.state IN ('draft', 'open')
         """
         return sql_view
 

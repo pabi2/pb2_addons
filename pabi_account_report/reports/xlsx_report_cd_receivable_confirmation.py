@@ -43,15 +43,15 @@ class XLSXReportCDReceivableConfirmation(models.TransientModel):
             dom += [('loan_agreement_id.bank_id.bank', 'in',
                      self.bank_ids.ids)]
         # Check for history view
-        dom += [('loan_agreement_id.state', '=', 'bank_paid'),
+        dom += [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
+                 False),
                 ('loan_agreement_id.supplier_invoice_id.date_paid', '<=',
                  self.date_report),
                 '|', ('invoice_id.date_paid', '=', False),
                 ('invoice_id.date_paid', '>', self.date_report),
                 '|', ('invoice_id.cancel_move_id', '=', False),
                 ('invoice_id.cancel_move_id.create_date', '>',
-                 self.date_report)
-                ]
+                 self.date_report)]
         self.results = Result.search(dom)
 
 

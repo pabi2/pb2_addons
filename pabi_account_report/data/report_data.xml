@@ -67,13 +67,13 @@
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(bank_payment_history)"/>
 		</record>
 
-		# Customer Receivable Follow Up
-		<record id="customer_receivable_follow_up" model="ir.actions.report.xml">
+		# CD Receivable Follow Up Group By Customer
+		<record id="cd_receivable_follow_up_group_by_customer" model="ir.actions.report.xml">
 			<field name="auto">True</field>
-			<field name="model">receivable.follow.up.view</field>
-			<field name="name">Customer Receivable Follow Up</field>
-			<field name="report_name">customer_receivable_follow_up</field>
-			<field name="report_rml">pabi_account_report/reports/jasper_report_receivable_follow_up_customer.jrxml</field>
+			<field name="model">cd.receivable.follow.up.view</field>
+			<field name="name">CD Receivable Follow Up</field>
+			<field name="report_name">cd_receivable_follow_up_group_by_customer</field>
+			<field name="report_rml">pabi_account_report/reports/jasper_report_cd_receivable_follow_up_group_by_customer.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -83,19 +83,19 @@
 			<field name="download_filename"></field>
 		</record>
 
-		<record id="customer_receivable_follow_up_values" model="ir.values">
-			<field name="name">Customer Receivable Follow Up</field>
-			<field name="model">receivable.follow.up.view</field>
-			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_receivable_follow_up)"/>
+		<record id="cd_receivable_follow_up_group_by_customer_values" model="ir.values">
+			<field name="name">CD Receivable Follow Up</field>
+			<field name="model">cd.receivable.follow.up.view</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cd_receivable_follow_up_group_by_customer)"/>
 		</record>
 
-		# Bank Receivable Follow Up
-		<record id="bank_receivable_follow_up" model="ir.actions.report.xml">
+		# CD Receivable Follow Up Group By Bank
+		<record id="cd_receivable_follow_up_group_by_bank" model="ir.actions.report.xml">
 			<field name="auto">True</field>
-			<field name="model">receivable.follow.up.view</field>
-			<field name="name">Bank Receivable Follow Up</field>
-			<field name="report_name">bank_receivable_follow_up</field>
-			<field name="report_rml">pabi_account_report/reports/jasper_report_receivable_follow_up_bank.jrxml</field>
+			<field name="model">cd.receivable.follow.up.view</field>
+			<field name="name">CD Receivable Follow Up</field>
+			<field name="report_name">cd_receivable_follow_up_group_by_bank</field>
+			<field name="report_rml">pabi_account_report/reports/jasper_report_cd_receivable_follow_up_group_by_bank.jrxml</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -105,10 +105,10 @@
 			<field name="download_filename"></field>
 		</record>
 
-		<record id="bank_receivable_follow_up_values" model="ir.values">
-			<field name="name">Bank Receivable Follow Up</field>
-			<field name="model">receivable.follow.up.view</field>
-			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(bank_receivable_follow_up)"/>
+		<record id="cd_receivable_follow_up_group_by_bank_values" model="ir.values">
+			<field name="name">CD Receivable Follow Up</field>
+			<field name="model">cd.receivable.follow.up.view</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cd_receivable_follow_up_group_by_bank)"/>
 		</record>
 	</data>
 </openerp>
