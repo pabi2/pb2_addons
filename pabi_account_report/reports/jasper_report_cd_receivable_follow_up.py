@@ -65,7 +65,7 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
             dom += [('loan_agreement_id.bank_id.bank_branch', '=',
                      self.bank_branch_id.id)]
         # Check for history view
-        dom += [('loan_agreement_id.supplier_invoice_id.date_paid', '=',
+        dom += [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
                  False),
                 ('loan_agreement_id.supplier_invoice_id.date_paid', '<=',
                  self.date_report),

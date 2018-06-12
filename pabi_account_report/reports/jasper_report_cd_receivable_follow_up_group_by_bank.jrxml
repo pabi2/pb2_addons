@@ -18,8 +18,14 @@
 	<field name="customer_title" class="java.lang.String">
 		<fieldDescription><![CDATA[loan_agreement_id/borrower_partner_id/title/name]]></fieldDescription>
 	</field>
+	<field name="loan_agreement_id" class="java.lang.Number">
+		<fieldDescription><![CDATA[loan_agreement_id/id]]></fieldDescription>
+	</field>
 	<field name="loan_agreement_name" class="java.lang.String">
 		<fieldDescription><![CDATA[loan_agreement_id/name]]></fieldDescription>
+	</field>
+	<field name="supplier_bank_id" class="java.lang.Number">
+		<fieldDescription><![CDATA[loan_agreement_id/bank_id/bank/id]]></fieldDescription>
 	</field>
 	<field name="supplier_bank_name" class="java.lang.String">
 		<fieldDescription><![CDATA[loan_agreement_id/bank_id/bank_name]]></fieldDescription>
@@ -68,7 +74,7 @@
 		<variableExpression><![CDATA[$F{amount_total}]]></variableExpression>
 	</variable>
 	<group name="bank">
-		<groupExpression><![CDATA[$F{supplier_bank_name}]]></groupExpression>
+		<groupExpression><![CDATA[$F{supplier_bank_id}]]></groupExpression>
 		<groupHeader>
 			<band height="20">
 				<textField pattern="" isBlankWhenNull="true">
@@ -100,7 +106,7 @@
 		</groupFooter>
 	</group>
 	<group name="Loan Agreement">
-		<groupExpression><![CDATA[$F{loan_agreement_name}]]></groupExpression>
+		<groupExpression><![CDATA[$F{loan_agreement_id}]]></groupExpression>
 		<groupHeader>
 			<band height="177">
 				<staticText>
