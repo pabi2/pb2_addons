@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!--<record id="pabi_purchase_summarize_report_wizard" model="ir.ui.view">-->
+            <!--<field name="name">PABI Purchase Summarize Report</field>-->
+            <!--<field name="model">pabi.purchase.summarize.report.wizard</field>-->
+            <!--<field name="type">form</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<form string="Selection Criteria">-->
+                    <!--<group>-->
+                        <!--<group>-->
+                            <!--<field name="date_from"/>-->
+                            <!--<field name="date_to"/>-->
+                        <!--</group>-->
+                        <!--<group />-->
+                    <!--</group>-->
+                    <!--<footer>-->
+                        <!--<button icon="gtk-execute" string="Export" name="xls_export" type="object" class="oe_highlight" context="{'xls_export':1}"/>-->
+                        <!--or-->
+                        <!--<button string="Cancel" class="oe_link" special="cancel"/>-->
+                    <!--</footer>-->
+                <!--</form>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <!--<record id="action_pabi_purchase_summarize_report_wizard" model="ir.actions.act_window">-->
+            <!--<field name="name">PABI Purchase Summarize Report</field>-->
+            <!--<field name="res_model">pabi.purchase.summarize.report.wizard</field>-->
+            <!--<field name="view_type">form</field>-->
+            <!--<field name="view_mode">tree,form</field>-->
+            <!--<field name="view_id" ref="pabi_purchase_summarize_report_wizard"/>-->
+            <!--<field name="target">new</field>-->
+            <!--<field name="help">Print PABI Purchase Summarize Report</field>-->
+        <!--</record>-->
+
+        <menuitem id="menu_procurement_report" name="Purchase Report"
+            parent="base.menu_purchase_root" sequence="67"/>
+
+        <!--<menuitem id="menu_pabi_purchase_summarize_report_wizard" action="action_pabi_purchase_summarize_report_wizard" parent="menu_procurement_report" sequence="110"/>-->
+
+    </data>
+</openerp>

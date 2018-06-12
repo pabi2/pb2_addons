@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory for Budget XLSX Reports -->
+        <record model="document.directory" id="dir_procurement_reports">
+            <field name="name">Procurement Reports</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="resource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <!-- PABI Purchase Summarize -->
+        <record id="xlsx_report_pabi_purchase_summarize" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.purchase.summarize</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_purchase_summarize.xlsx</field>
+            <field name="name">PABI Purchase Summarize</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'results': {
+                            'B7': 'pd_number${value or ""}',
+                            'C7': 'objective${value or ""}',
+                            'D7': 'rfq_supplier${value or ""}',
+                            'E7': 'amount_total#{number_format=number}',
+                            'F7': 'method${value or ""}',
+                            'G7': 'rfq_amount_total#{number_format=number}',
+                            'H7': 'reason${value or ""}',
+                            'I7': 'po_date${value or ""}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+    </data>
+</openerp>

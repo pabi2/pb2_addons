@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pabi_purchase_summarize_report,access_pabi_purchase_summarize_report,model_pabi_purchase_summarize_report,,1,0,0,0
+access_xlsx_report_pabi_purchase_summarize_results,access_xlsx_report_pabi_purchase_summarize_results,model_xlsx_report_pabi_purchase_summarize_results,,1,0,0,0
