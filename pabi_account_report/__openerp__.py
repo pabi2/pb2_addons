@@ -46,6 +46,7 @@
         'reports/xlsx_report_cd_receivable_confirmation.xml',
         'reports/jasper_report_cd_receivable_payment_history.xml',
         'reports/jasper_report_cd_receivable_follow_up.xml',
+        'reports/jasper_report_receivable_confirmation_letter.xml'
 
     ],
     'demo': [

@@ -35,3 +35,9 @@ jasper_reports.report_jasper(
     'cd.receivable.follow.up.view',
     parser=jasper_report_parser,
 )
+
+jasper_reports.report_jasper(
+    'report.receivable_confirmation_letter',
+    'account.move.line',
+    parser=jasper_report_parser,
+)
