@@ -20,6 +20,7 @@
                 ref('xlsx_report_input_tax'),
                 ref('xlsx_report_output_tax'),
                 ref('xlsx_report_cd_receivable_confirmation'),
+                ref('xlsx_report_cd_receivable_planning'),
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>

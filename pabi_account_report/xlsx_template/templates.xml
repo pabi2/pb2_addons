@@ -820,5 +820,82 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
+
+        # CD Receivable Planning
+        <record id="xlsx_report_cd_receivable_planning" model="ir.attachment">
+            <field name="res_model">xlsx.report.cd.receivable.planning</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_cd_receivable_planning.xlsx</field>
+            <field name="name">CD Receivable Planning</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Receivable CD Planning Detail Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'fiscalyear_start_id.name${value or ""}',
+                                'D3': 'fiscalyear_end_id.name${value or ""}',
+                                'B4': 'filter${value and dict(filter_no="No Filters", filter_date="Dates", filter_period="Periods")[value] or ""}',
+                                'B5': 'period_start_id.name${value or ""}',
+                                'D5': 'period_end_id.name${value or ""}',
+                                'B6': 'date_start${value or ""}#{number_format=date}',
+                                'D6': 'date_end${value or ""}#{number_format=date}',
+                                'B7': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.with_context(lang="th_TH").title.name, x.with_context(lang="th_TH").name]))) for x in value]) or ""}',
+                                'B8': 'bank_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B9': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B10': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'results': {
+                                'A13': 'loan_agreement_id.name${value or ""}',
+                                'B13': 'loan_agreement_id.sale_id.name${value or ""}',
+                                'C13': 'invoice_plan_id.installment${value or ""}',
+                                'D13': 'invoice_plan_id.date_invoice${value or ""}#{number_format=date}',
+                                'E13': 'fiscalyear_name${value or ""}',
+                                'F13': 'q1${value or 0}',
+                                'G13': 'q2${value or 0}',
+                                'H13': 'q3${value or 0}',
+                                'I13': 'q4${value or 0}',
+                                'J13': 'amount_total${value or 0}',
+                            },
+                        },
+                        'Receivable CD Planning Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'fiscalyear_start_id.name${value or ""}',
+                                'D3': 'fiscalyear_end_id.name${value or ""}',
+                                'B4': 'filter${value and dict(filter_no="No Filters", filter_date="Dates", filter_period="Periods")[value] or ""}',
+                                'B5': 'period_start_id.name${value or ""}',
+                                'D5': 'period_end_id.name${value or ""}',
+                                'B6': 'date_start${value or ""}#{number_format=date}',
+                                'D6': 'date_end${value or ""}#{number_format=date}',
+                                'B7': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.with_context(lang="th_TH").title.name, x.with_context(lang="th_TH").name]))) for x in value]) or ""}',
+                                'B8': 'bank_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B9': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B10': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            '_BI_': {
+                                'A13': {
+                                    'df': 'Receivable CD Planning Detail Report',
+                                    # Group by E and add Subtotal (so we use pivot)
+                                    # By scripting, we need result = ...
+                                    'oper_code': """
+df = df[["E", "F", "G", "H", "I", "J"]]
+groupby = ["E"]
+sum_cols = ["F", "G", "H", "I", "J"]
+result = pd.pivot_table(df, index=groupby,
+                        values=sum_cols,
+                        aggfunc=np.sum,
+                        fill_value=0,
+                        margins=True,
+                        margins_name="Total")
+                                    """,
+                                },
+                            },
+                        },
+                    }
+                }
+            </field>
+        </record>
     </data>
 </openerp>

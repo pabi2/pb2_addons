@@ -18,6 +18,7 @@ from . import xlsx_report_output_tax
 from . import jasper_report_payable_confirmation_letter
 # Receivable Reports
 from . import xlsx_report_cd_receivable_confirmation
+from . import xlsx_report_cd_receivable_planning
 from . import jasper_report_cd_receivable_payment_history
 from . import jasper_report_cd_receivable_follow_up
 from . import jasper_report_receivable_confirmation_letter
