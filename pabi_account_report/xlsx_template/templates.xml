@@ -811,8 +811,19 @@ result = pd.pivot_table(df, index=groupby,
                             '_BI_': {
                                 'A10': {
                                     'df': 'Receivable CD Confirmation Detail Report',
-                                    # Group by A, B, C, D, E, F. User will have to do subtotal themselves
-                                    'oper_code': 'df[["A", "B", "C", "D", "E", "F", "H"]].groupby(["A", "B", "C", "D", "E", "F"]).sum()',
+                                    # Group by A, B, C, D, E, F and add Subtotal (so we use pivot)
+                                    # By scripting, we need result = ...
+                                    'oper_code': """
+df = df[["A", "B", "C", "D", "E", "F", "H"]]
+groupby = ["A", "B", "C", "D", "E", "F"]
+sum_cols = ["H"]
+result = pd.pivot_table(df, index=groupby,
+                        values=sum_cols,
+                        aggfunc=np.sum,
+                        fill_value=0,
+                        margins=True,
+                        margins_name="Total")
+                                    """,
                                 },
                             },
                         },
