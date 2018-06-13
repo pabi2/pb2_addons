@@ -4,8 +4,8 @@ from datetime import datetime
 import time
 
 
-class JasperReportPaymentHistory(models.TransientModel):
-    _name = 'jasper.report.payment.history'
+class JasperReportCDReceivablePaymentHistory(models.TransientModel):
+    _name = 'jasper.report.cd.receivable.payment.history'
     _inherit = 'report.account.common'
 
     fiscalyear_start_id = fields.Many2one(
@@ -45,15 +45,15 @@ class JasperReportPaymentHistory(models.TransientModel):
     @api.multi
     def _get_report_name(self):
         self.ensure_one()
-        report_name = "customer_payment_history"
+        report_name = "cd_receivable_payment_history_group_by_customer"
         if len(self.bank_id):
-            report_name = "bank_payment_history"
+            report_name = "cd_receivable_payment_history_group_by_bank"
         return report_name
 
     @api.multi
     def _get_domain(self):
         self.ensure_one()
-        dom = [('payment_id.move_id.create_date', '<=', self.date_report)]
+        dom = []
         if self.partner_ids:
             dom += [('loan_agreement_id.borrower_partner_id', 'in',
                      self.partner_ids.ids)]
@@ -63,6 +63,11 @@ class JasperReportPaymentHistory(models.TransientModel):
         if self.bank_branch_id:
             dom += [('loan_agreement_id.bank_id.bank_branch', '=',
                      self.bank_branch_id.id)]
+        # Check for history view
+        dom += [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
+                 False),
+                ('loan_agreement_id.supplier_invoice_id.date_paid', '<=',
+                 self.date_report)]
         return dom
 
     @api.multi
@@ -70,7 +75,8 @@ class JasperReportPaymentHistory(models.TransientModel):
         self.ensure_one()
         data = {'parameters': {}}
         dom = self._get_domain()
-        data['ids'] = self.env['payment.history.view'].search(dom).ids
+        data['ids'] = \
+            self.env['cd.receivable.payment.history.view'].search(dom).ids
         date_report = datetime.strptime(self.date_report, '%Y-%m-%d')
         data['parameters']['date_report'] = date_report.strftime('%d/%m/%Y')
         user = self.env.user.with_context(lang="th_TH").display_name
@@ -88,8 +94,8 @@ class JasperReportPaymentHistory(models.TransientModel):
         }
 
 
-class PaymentHistoryView(models.Model):
-    _name = 'payment.history.view'
+class CDReceivablePaymentHistoryView(models.Model):
+    _name = 'cd.receivable.payment.history.view'
     _auto = False
 
     id = fields.Integer(
@@ -118,19 +124,12 @@ class PaymentHistoryView(models.Model):
                    lca.id AS loan_agreement_id,
                    sip.id AS invoice_plan_id,
                    av.id AS payment_id
-            FROM account_voucher av
-            LEFT JOIN account_voucher_line av_line ON
-                av.id = av_line.voucher_id
-            LEFT JOIN account_move_line am_line ON
-                av_line.move_line_id = am_line.id
-            LEFT JOIN account_invoice inv ON am_line.move_id = inv.move_id
-            LEFT JOIN loan_customer_agreement lca ON
-                inv.loan_agreement_id = lca.id
+            FROM loan_customer_agreement lca
             LEFT JOIN sale_order so ON lca.sale_id = so.id
-            LEFT JOIN sale_invoice_plan sip ON
-                so.id = sip.order_id AND inv.id = sip.ref_invoice_id
-            WHERE av.type = 'receipt' AND av.state = 'posted' AND
-                inv.loan_agreement_id IS NOT NULL
+            LEFT JOIN sale_invoice_plan sip ON so.id = sip.order_id
+            LEFT JOIN account_invoice inv ON sip.ref_invoice_id = inv.id
+            LEFT JOIN account_voucher_line avl ON inv.id = avl.invoice_id
+            LEFT JOIN account_voucher av ON avl.voucher_id = av.id
         """
         return sql_view
 

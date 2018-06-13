@@ -13,14 +13,14 @@ jasper_reports.report_jasper(
 )
 
 jasper_reports.report_jasper(
-    'report.customer_payment_history',
-    'payment.history.view',
+    'report.cd_receivable_payment_history_group_by_customer',
+    'cd.receivable.payment.history.view',
     parser=jasper_report_parser,
 )
 
 jasper_reports.report_jasper(
-    'report.bank_payment_history',
-    'payment.history.view',
+    'report.cd_receivable_payment_history_group_by_bank',
+    'cd.receivable.payment.history.view',
     parser=jasper_report_parser,
 )
 

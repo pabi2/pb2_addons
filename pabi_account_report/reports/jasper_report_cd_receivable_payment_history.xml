@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="view_jasper_report_payment_history_form" model="ir.ui.view">
-            <field name="name">view.jasper.report.payment.history.form</field>
-            <field name="model">jasper.report.payment.history</field>
+        <record id="view_jasper_report_cd_receivable_payment_history_form" model="ir.ui.view">
+            <field name="name">view.jasper.report.cd.receivable.payment.history.form</field>
+            <field name="model">jasper.report.cd.receivable.payment.history</field>
             <field name="inherit_id" ref="pabi_account_report.view_jasper_report_account_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
@@ -37,18 +37,18 @@
             </field>
         </record>
 
-        <record id="action_jasper_report_payment_history_form" model="ir.actions.act_window">
-            <field name="name">Payable History</field>
-            <field name="res_model">jasper.report.payment.history</field>
+        <record id="action_jasper_report_cd_receivable_payment_history_form" model="ir.actions.act_window">
+            <field name="name">CD Receivable Payable History</field>
+            <field name="res_model">jasper.report.cd.receivable.payment.history</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_jasper_report_payable_history"
-            name="Payable History"
+        <menuitem id="menu_jasper_report_cd_receivable_payment_history"
+            name="CD Receivable Payment History"
             parent="menu_pabi_receivable_report"
-            action="action_jasper_report_payment_history_form"
+            action="action_jasper_report_cd_receivable_payment_history_form"
             sequence="10"/>
     </data>
 </openerp>
