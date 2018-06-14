@@ -237,12 +237,12 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
                       % (item.request_id.name,))
                 )
             elif item.line_id.request_id.request_ref_id:
-                if not self.purchase_requisition_id:
-                    raise ValidationError(
-                        _("You can't create new CfBs from the PR line with"
-                          " PR reference : %s" % (item.request_id.name,))
-                    )
-                elif not item.product_id:
+                # if not self.purchase_requisition_id:
+                #     raise ValidationError(
+                #         _("You can't create new CfBs from the PR line with"
+                #           " PR reference : %s" % (item.request_id.name,))
+                #     )
+                if not item.product_id:
                     raise ValidationError(
                         _("You have to select the product if the request has a"
                           " PR reference : %s" % (item.request_id.name,))
