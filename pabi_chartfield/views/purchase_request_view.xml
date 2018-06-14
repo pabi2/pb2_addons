@@ -190,9 +190,9 @@
                         ('invest_construction_phase_id','=',False),('project_id','=',False),
                         ('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
 
-                    <field name="fund_id" invisible="0"/>
+                    <field name="fund_id" invisible="0" readonly="1"/>
                     <!-- <field name="cost_control_type_id" invisible="1"/> -->
-                    <field name="cost_control_id" invisible="0"/>
+                    <field name="cost_control_id" invisible="0" readonly="1"/>
 
                 </xpath>
             </field>

@@ -54,7 +54,7 @@
             <field name="inherit_id" ref="pabi_chartfield.pabi_purchase_request_line_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//form/sheet/group/group/field[@name='analytic_account_id']" position="after">
-                    <field name="chartfield_id" attrs="{'required': [('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
+                    <field name="chartfield_id" readonly="1" attrs="{'required': [('require_chartfield', '=', True)]}"/>
                 </xpath>
                 <xpath expr="//form/sheet/group/group//field[@name='section_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
