@@ -63,7 +63,9 @@
 	<field name="supplier_invoice_posting_date" class="java.util.Date">
 		<fieldDescription><![CDATA[loan_agreement_id/supplier_invoice_id/date_invoice]]></fieldDescription>
 	</field>
-	<sortField name="supplier_bank_name"/>
+	<sortField name="supplier_bank_id"/>
+	<sortField name="loan_agreement_id"/>
+	<sortField name="installment"/>
 	<variable name="amount_total_group_by_loan_agreement" class="java.lang.Number" resetType="Group" resetGroup="Loan Agreement" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount_total}]]></variableExpression>
 	</variable>
@@ -91,14 +93,14 @@
 				<staticText>
 					<reportElement mode="Transparent" x="70" y="0" width="91" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<text><![CDATA[ยอดรวมธนาคาร]]></text>
 				</staticText>
 				<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
 					<reportElement mode="Transparent" x="161" y="0" width="116" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_total_group_by_bank}]]></textFieldExpression>
 				</textField>
@@ -308,14 +310,14 @@
 				<staticText>
 					<reportElement mode="Transparent" x="70" y="0" width="89" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<text><![CDATA[ยอดรวมรายสัญญา]]></text>
 				</staticText>
 				<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
 					<reportElement mode="Transparent" x="161" y="0" width="116" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_total_group_by_loan_agreement}]]></textFieldExpression>
 				</textField>
@@ -422,14 +424,14 @@
 			<staticText>
 				<reportElement mode="Transparent" x="70" y="0" width="91" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[ยอดรวมทั้งหมด]]></text>
 			</staticText>
 			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="161" y="0" width="116" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_total}]]></textFieldExpression>
 			</textField>

@@ -45,6 +45,7 @@
         # Receivable Reports
         'reports/xlsx_report_cd_receivable_confirmation.xml',
         'reports/xlsx_report_cd_receivable_planning.xml',
+        'reports/xlsx_report_sla_receipt.xml',
         'reports/jasper_report_cd_receivable_payment_history.xml',
         'reports/jasper_report_cd_receivable_follow_up.xml',
         'reports/jasper_report_receivable_confirmation_letter.xml'
