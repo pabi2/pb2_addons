@@ -13,25 +13,31 @@ jasper_reports.report_jasper(
 )
 
 jasper_reports.report_jasper(
-    'report.customer_payment_history',
-    'payment.history.view',
+    'report.cd_receivable_payment_history_group_by_customer',
+    'cd.receivable.payment.history.view',
     parser=jasper_report_parser,
 )
 
 jasper_reports.report_jasper(
-    'report.bank_payment_history',
-    'payment.history.view',
+    'report.cd_receivable_payment_history_group_by_bank',
+    'cd.receivable.payment.history.view',
     parser=jasper_report_parser,
 )
 
 jasper_reports.report_jasper(
-    'report.customer_receivable_follow_up',
-    'receivable.follow.up.view',
+    'report.cd_receivable_follow_up_group_by_customer',
+    'cd.receivable.follow.up.view',
     parser=jasper_report_parser,
 )
 
 jasper_reports.report_jasper(
-    'report.bank_receivable_follow_up',
-    'receivable.follow.up.view',
+    'report.cd_receivable_follow_up_group_by_bank',
+    'cd.receivable.follow.up.view',
+    parser=jasper_report_parser,
+)
+
+jasper_reports.report_jasper(
+    'report.receivable_confirmation_letter',
+    'account.move.line',
     parser=jasper_report_parser,
 )
