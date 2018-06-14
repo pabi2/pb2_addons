@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_cd_receivable_planning_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.cd.receivable.planning.form</field>
+            <field name="model">xlsx.report.cd.receivable.planning</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//page[1]" position="after">
+                    <page string="Customers">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids"/>
+                    </page>
+                    <page string="Banks">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="bank_ids"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_cd_receivable_planning_form" model="ir.actions.act_window">
+            <field name="name">CD Receivable Planning</field>
+            <field name="res_model">xlsx.report.cd.receivable.planning</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_cd_receivable_planning"
+            name="CD Receivable Planning"
+            parent="menu_pabi_receivable_report"
+            action="action_xlsx_report_cd_receivable_planning_form"
+            sequence="40"/>
+    </data>
+</openerp>

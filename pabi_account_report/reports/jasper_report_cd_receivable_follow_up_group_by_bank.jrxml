@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="jasper_report_payment_history" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CD Receivable Follow Up Report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="95"/>
+	<property name="ireport.y" value="162"/>
 	<parameter name="date_report" class="java.lang.String"/>
 	<parameter name="user" class="java.lang.String"/>
 	<parameter name="date_run" class="java.lang.String"/>
@@ -18,8 +18,14 @@
 	<field name="customer_title" class="java.lang.String">
 		<fieldDescription><![CDATA[loan_agreement_id/borrower_partner_id/title/name]]></fieldDescription>
 	</field>
+	<field name="loan_agreement_id" class="java.lang.Number">
+		<fieldDescription><![CDATA[loan_agreement_id/id]]></fieldDescription>
+	</field>
 	<field name="loan_agreement_name" class="java.lang.String">
 		<fieldDescription><![CDATA[loan_agreement_id/name]]></fieldDescription>
+	</field>
+	<field name="supplier_bank_id" class="java.lang.Number">
+		<fieldDescription><![CDATA[loan_agreement_id/bank_id/bank/id]]></fieldDescription>
 	</field>
 	<field name="supplier_bank_name" class="java.lang.String">
 		<fieldDescription><![CDATA[loan_agreement_id/bank_id/bank_name]]></fieldDescription>
@@ -51,17 +57,8 @@
 	<field name="amount_total" class="java.lang.Number">
 		<fieldDescription><![CDATA[invoice_plan_id/ref_invoice_id/amount_total]]></fieldDescription>
 	</field>
-	<field name="date_document" class="java.util.Date">
-		<fieldDescription><![CDATA[payment_id/date_document]]></fieldDescription>
-	</field>
-	<field name="date_posting" class="java.util.Date">
-		<fieldDescription><![CDATA[payment_id/date]]></fieldDescription>
-	</field>
 	<field name="paid_amount" class="java.lang.Number">
 		<fieldDescription><![CDATA[payment_id/amount]]></fieldDescription>
-	</field>
-	<field name="payment_number" class="java.lang.String">
-		<fieldDescription><![CDATA[payment_id/number]]></fieldDescription>
 	</field>
 	<field name="supplier_invoice_posting_date" class="java.util.Date">
 		<fieldDescription><![CDATA[loan_agreement_id/supplier_invoice_id/date_invoice]]></fieldDescription>
@@ -70,23 +67,14 @@
 	<variable name="amount_total_group_by_loan_agreement" class="java.lang.Number" resetType="Group" resetGroup="Loan Agreement" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount_total}]]></variableExpression>
 	</variable>
-	<variable name="paid_amount_group_by_loan_agreement" class="java.lang.Number" resetType="Group" resetGroup="Loan Agreement" calculation="Sum">
-		<variableExpression><![CDATA[$F{paid_amount}]]></variableExpression>
-	</variable>
-	<variable name="amount_total_group_by_partner" class="java.lang.Number" resetType="Group" resetGroup="bank" calculation="Sum">
+	<variable name="amount_total_group_by_bank" class="java.lang.Number" resetType="Group" resetGroup="bank" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount_total}]]></variableExpression>
-	</variable>
-	<variable name="paid_amount_group_by_partner" class="java.lang.Number" resetType="Group" resetGroup="bank" calculation="Sum">
-		<variableExpression><![CDATA[$F{paid_amount}]]></variableExpression>
 	</variable>
 	<variable name="amount_total" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount_total}]]></variableExpression>
 	</variable>
-	<variable name="paid_amount" class="java.lang.Number" calculation="Sum">
-		<variableExpression><![CDATA[$F{paid_amount}]]></variableExpression>
-	</variable>
 	<group name="bank">
-		<groupExpression><![CDATA[$F{supplier_bank_name}]]></groupExpression>
+		<groupExpression><![CDATA[$F{supplier_bank_id}]]></groupExpression>
 		<groupHeader>
 			<band height="20">
 				<textField pattern="" isBlankWhenNull="true">
@@ -105,27 +93,20 @@
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
-					<text><![CDATA[ยอดรวมลูกค้า]]></text>
+					<text><![CDATA[ยอดรวมธนาคาร]]></text>
 				</staticText>
 				<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
 					<reportElement mode="Transparent" x="161" y="0" width="116" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_total_group_by_partner}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="452" y="1" width="82" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					</textElement>
-					<textFieldExpression class="java.lang.Number"><![CDATA[$V{paid_amount_group_by_partner}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_total_group_by_bank}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
 	</group>
 	<group name="Loan Agreement">
-		<groupExpression><![CDATA[$F{loan_agreement_name}]]></groupExpression>
+		<groupExpression><![CDATA[$F{loan_agreement_id}]]></groupExpression>
 		<groupHeader>
 			<band height="177">
 				<staticText>
@@ -267,21 +248,7 @@
 					<text><![CDATA[Invoice Plan Amount]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Transparent" x="277" y="156" width="93" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-					<box>
-						<pen lineWidth="1.0"/>
-						<topPen lineWidth="1.0"/>
-						<leftPen lineWidth="1.0"/>
-						<bottomPen lineWidth="1.0"/>
-						<rightPen lineWidth="0.0"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-					</textElement>
-					<text><![CDATA[Document Date]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Transparent" x="370" y="156" width="82" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="277" y="156" width="126" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<box>
 						<pen lineWidth="1.0"/>
 						<topPen lineWidth="1.0"/>
@@ -295,7 +262,7 @@
 					<text><![CDATA[Posting Date]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Transparent" x="452" y="156" width="82" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="403" y="156" width="131" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<box>
 						<pen lineWidth="1.0"/>
 						<topPen lineWidth="1.0"/>
@@ -352,13 +319,6 @@
 					</textElement>
 					<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_total_group_by_loan_agreement}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="452" y="0" width="82" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					</textElement>
-					<textFieldExpression class="java.lang.Number"><![CDATA[$V{paid_amount_group_by_loan_agreement}]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupFooter>
 	</group>
@@ -372,7 +332,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<text><![CDATA[รายงานประวัติการชำระเงิน]]></text>
+				<text><![CDATA[รายงานหนี้ที่ต้องติดตาม ลูกหนี้ CD]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="0" y="20" width="616" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -430,31 +390,22 @@
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="277" y="0" width="93" height="20"/>
+				<reportElement x="277" y="0" width="126" height="20"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_document}]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="370" y="0" width="82" height="20"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_posting}]]></textFieldExpression>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["-"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
-				<reportElement x="452" y="0" width="82" height="20"/>
+				<reportElement x="403" y="0" width="131" height="20"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{paid_amount}]]></textFieldExpression>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["-"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="534" y="0" width="82" height="20"/>
@@ -463,7 +414,6 @@
 					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_number}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -482,13 +432,6 @@
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_total}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="452" y="0" width="82" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{paid_amount}]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>
