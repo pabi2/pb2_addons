@@ -87,7 +87,7 @@ class JasperReportReceivableConfirmationLetter(models.TransientModel):
         data['parameters']['date_report'] = date_report.strftime('%d/%m/%Y')
         data['parameters']['date_run'] = time.strftime('%d/%m/%Y')
         data['parameters']['company_name'] = \
-            self.company_id.with_context(lang="th_TH").display_name
+            self.company_id.partner_id.with_context(lang="th_TH").name
         return data
 
     @api.multi
