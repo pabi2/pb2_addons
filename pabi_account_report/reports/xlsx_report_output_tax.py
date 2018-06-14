@@ -4,10 +4,20 @@ from openerp import models, fields, api
 
 class XLSXReportOutputTax(models.TransientModel):
     _name = 'xlsx.report.output.tax'
-    _inherit = 'xlsx.report'
+    _inherit = 'report.account.common'
 
-    calendar_period_id = fields.Many2one(
-        'account.period.calendar',
+    fiscalyear_start_id = fields.Many2one(
+        default=False,
+    )
+    fiscalyear_end_id = fields.Many2one(
+        default=False,
+    )
+    filter = fields.Selection(
+        readonly=True,
+        default='filter_period',
+    )
+    period_id = fields.Many2one(
+        'account.period',
         string='Period',
         required=True,
     )
@@ -28,8 +38,8 @@ class XLSXReportOutputTax(models.TransientModel):
         self.ensure_one()
         Result = self.env['account.tax.report']
         dom = [('doc_type', '=', 'sale')]
-        if self.calendar_period_id:
-            dom += [('period_id', '=', self.calendar_period_id.id)]
+        if self.period_id:
+            dom += [('period_id', '=', self.period_id.id)]
         if self.taxbranch_id:
             dom += [('taxbranch_id', '=', self.taxbranch_id.id)]
-        self.results = Result.search(dom, order='invoice_number')
+        self.results = Result.search(dom, order='number_preprint')

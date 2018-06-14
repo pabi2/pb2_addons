@@ -17,6 +17,10 @@ class AccountTaxReport(models.Model):
         'account.period',
         string='Period',
     )
+    move_id = fields.Many2one(
+        'account.move',
+        string='Move ID',
+    )
     move_number = fields.Char(
         string='JE Number',
     )
@@ -44,12 +48,12 @@ class AccountTaxReport(models.Model):
     partner_title = fields.Char(
         string='Partner Title',
     )
-    partner_vat = fields.Char(
-        string='Partner VAT',
-    )
-    partner_taxbranch = fields.Char(
-        string='Partner Taxbranch',
-    )
+    # partner_vat = fields.Char(
+    #     string='Partner VAT',
+    # )
+    # partner_taxbranch = fields.Char(
+    #     string='Partner Taxbranch',
+    # )
     tax_id = fields.Many2one(
         'account.tax',
         string='Tax',
@@ -79,10 +83,15 @@ class AccountTaxReport(models.Model):
     number_preprint = fields.Char(
         string='Preprinted Number',
     )
+    write_uid = fields.Many2one(
+        'res.users',
+        string='Responsible',
+    )
 
     def _select(self):
         res = """
-            doc_type, atd.id, atd.period_id,
+            doc_type, atd.id, atd.period_id, am.id as move_id,
+            am.write_uid as write_uid,
             am.name as move_number, am.ref as move_ref,
             to_char(ap.date_start, 'YYYY') as "year",
             to_char(ap.date_start, 'MM') as "month",

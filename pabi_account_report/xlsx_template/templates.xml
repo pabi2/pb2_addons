@@ -709,7 +709,7 @@ result = pd.pivot_table(df, index=groupby,
                         'Input Tax Report': {
                             '_HEAD_': {
                                 'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                                'B3': 'calendar_period_id.calendar_name${value or ""}',
+                                'B3': 'period_id.name${value or ""}',
                                 'B4': 'taxbranch_id.name${value or ""}',
                             },
                             'results': {
@@ -746,18 +746,20 @@ result = pd.pivot_table(df, index=groupby,
                         'Output Tax Report': {
                             '_HEAD_': {
                                 'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                                'B3': 'calendar_period_id.calendar_name${value or ""}',
+                                'B3': 'period_id.name${value or ""}',
                                 'B4': 'taxbranch_id.name${value or ""}',
                             },
                             'results': {
                                 'A8': 'invoice_date#{number_format=date}',
-                                'B8': 'invoice_number${value or ""}',
+                                'B8': 'number_preprint${value or ""}',
                                 'C8': 'partner_id.name${value or ""}',
                                 'D8': 'partner_id.vat${value or ""}',
                                 'E8': 'partner_id.taxbranch${value and (value == "00000" and "Head Office" or value) or ""}',
                                 'F8': 'base${value or 0}#{number_format=number}',
                                 'G8': 'amount${value or 0}#{number_format=number}',
+                                'H8': 'move_id.document_id${value and value._name == "account.invoice" and value.source_document_id and value.source_document_id._name == "sale.order" and value.source_document_id.workflow_process_id and value.source_document_id.name or ""}',
                                 'I8': 'move_number${value or ""}',
+                                'J8': 'write_uid${value and value.with_context(lang="th_TH").display_name or ""}'
                             },
                             '_TAIL_0': {
                                 'F8': '@{sum}#{font=bold;align=right;number_format=number}',
@@ -768,7 +770,7 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
-
+        
         # CD Receivable Confirmation
         <record id="xlsx_report_cd_receivable_confirmation" model="ir.attachment">
             <field name="res_model">xlsx.report.cd.receivable.confirmation</field>
@@ -953,6 +955,6 @@ result = pd.pivot_table(df, index=groupby,
                     }
                 }
             </field>
-        </record>        
+        </record>
     </data>
 </openerp>
