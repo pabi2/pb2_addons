@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_stock_request,access_stock_request,model_stock_request,,1,1,1,1
-access_stock_request_line,access_stock_request_line,model_stock_request_line,,1,1,1,1
+access_stock_request,access_stock_request,model_stock_request,base.group_user,1,1,1,1
+access_stock_request_line,access_stock_request_line,model_stock_request_line,base.group_user,1,1,1,1
+access_stock_picking_employee,access_stock_picking_employee,stock.model_stock_picking,base.group_user,1,1,1,0
+access_stock_move_employee,access_stock_move_employee,stock.model_stock_move,base.group_user,1,1,1,0
