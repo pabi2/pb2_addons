@@ -201,6 +201,10 @@ class PurchaseRequest(models.Model):
         readonly=True,
         copy=False,
     )
+    _sql_constraints = [
+        ('name_uniq', 'unique(name)',
+         'PR Numbr must be unique!'),
+    ]
 
     @api.onchange('is_central_purchase')
     def _onchange_is_central_purchase(self):
