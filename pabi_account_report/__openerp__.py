@@ -21,6 +21,7 @@
         'sale_invoice_plan',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'data/menu.xml',
         'data/report_data.xml',
         'xlsx_template/templates.xml',
