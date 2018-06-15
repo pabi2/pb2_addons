@@ -318,8 +318,14 @@ class PurchaseContract(models.Model):
     @api.model
     def create(self, vals):
         # Get 2 Digits Org
+        self._context.get('active_model')
+        if self._context.get('active_model') == 'purchase.requisition':
+            requisition_id = self._context.get('active_id', False)
+            req = self.env['purchase.requisition'].browse(requisition_id)
+            if req.state != 'open':
+                raise ValidationError(
+                    _("Contract can be created only during 'Bid Selection'"))
         format_code = ''
-        create_emp = self.env.user.employee_id
         operating_unit = self.env.user.default_operating_unit_id
         if not operating_unit:
             raise ValidationError(
@@ -380,7 +386,7 @@ class PurchaseContract(models.Model):
                     'state': rec.verify_date and 'close' or 'send'
                 })
             else:
-                raise ValidationError(_('Please attachment(s) contract.'))
+                raise ValidationError(_("Please attach contract"))
         return True
 
     @api.multi
@@ -414,7 +420,9 @@ class PurchaseContract(models.Model):
                 [('poc_code', '=', self.poc_code)])
             next_rev = count_po_rev
             poc = self.copy({'poc_rev': next_rev,
-                             'state': 'generate'})
+                             'state': 'generate',
+                             'active': True,
+                             })
             docs = self.env['ir.attachment'].search(
                 [('res_model', '=', 'purchase.contract'),
                  ('res_id', '=', self.id)])
@@ -424,8 +432,9 @@ class PurchaseContract(models.Model):
                 filename, file_extension = os.path.splitext(tempname)
                 name = '%s_R%s%s' % (filename, next_rev, file_extension)
                 doc.copy({'res_id': poc.id, 'name': name})
-            self.reflow_uid = self.env.user.employee_id.id,
-            self.send_doc_date = fields.Date.context_today(self)
+            self.write({'reflow_uid': self.env.user.employee_id.id,
+                        'send_doc_date': fields.Date.context_today(self),
+                        'active': False})
             form = self.env.ref(
                 'pabi_purchase_contract.purchase_contract_form_view', False)
             return {'name': _('PO Contract'),

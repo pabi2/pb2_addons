@@ -20,6 +20,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='origin']" position="after">
                     <field name="purchase_billing_id" invisible="context.get('journal_type', 'sale') not in ('purchase', 'purchase_refund')"/>
+                    <field name="date_receipt_billing" invisible="context.get('journal_type', 'sale') not in ('purchase', 'purchase_refund')"/>
                 </xpath>
             </field>
         </record>

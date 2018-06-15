@@ -23,7 +23,6 @@ class PurchaseOrder(models.Model):
         [('id', 'in', self.env.user.company_id.other_deposit_account_ids.ids)],
         readonly=True,
         states={'draft': [('readonly', False)]},
-        default=lambda self: self.env.user.company_id.account_deposit_supplier,
         help="This account will be used as default for invoices created by "
         "invoice plan. You can change it."
     )

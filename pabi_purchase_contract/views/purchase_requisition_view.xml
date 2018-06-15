@@ -11,6 +11,7 @@
                     <button type="object"  name="contract_open"
                         class="oe_stat_button"
                         icon="fa-pencil-square-o"
+                        context="{'requisition_state': state}"
                         >
                         <field name="count_contract" widget="statinfo" string="Contracts"/>
                     </button>
