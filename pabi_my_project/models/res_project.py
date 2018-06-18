@@ -41,16 +41,16 @@ class ResProject(LogCommon, models.Model):
         help="If lock_budget is checked, release budget is not allowed",
     )
     date_start = fields.Date(
-        string='Start Date',
+        string='Start Date for Spending',
     )
     date_approve = fields.Date(
         string='Approved Date',
     )
     date_end = fields.Date(
-        string='End Date',
+        string='End Date for Spending',
     )
     grace_period_date_end = fields.Date(
-        string='Grace Period End Date',
+        string='Project End Date (by extension)',
     )
     project_duration = fields.Integer(
         string='Duration',

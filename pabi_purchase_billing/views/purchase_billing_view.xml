@@ -30,7 +30,6 @@
                     <field name="date"/>
                     <field name="date_due"/>
                     <field name="date_sent"/>
-                    <field name="date_receipt_billing"/>
                     <field name="amount_total" sum="Total Billing Amount"/>
                     <field name="state"/>
                 </tree>
@@ -64,7 +63,6 @@
                             <field name="date_due"/>
                             <field name="email_sent"/>
                             <field name="date_sent"/>
-                            <field name="date_receipt_billing"/>
                         </group>
                     </group>
                     <p class="oe_grey">

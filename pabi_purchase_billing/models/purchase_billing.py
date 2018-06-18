@@ -90,11 +90,6 @@ class PurchaseBilling(models.Model):
         readonly=True,
         states={'billed': [('readonly', False)]},
     )
-    date_receipt_billing = fields.Date(
-        string='Billing Receipt Date',
-        readonly=False,
-    )
-
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Billing Number must be unique!'),
     ]
