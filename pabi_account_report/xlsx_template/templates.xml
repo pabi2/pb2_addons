@@ -770,7 +770,7 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
-        
+
         # CD Receivable Confirmation
         <record id="xlsx_report_cd_receivable_confirmation" model="ir.attachment">
             <field name="res_model">xlsx.report.cd.receivable.confirmation</field>
@@ -952,6 +952,83 @@ result = pd.pivot_table(df, index=groupby,
                                 'H12': '@{sum}#{font=bold;number_format=number;align=right}',
                             }
                         }
+                    }
+                }
+            </field>
+        </record>
+
+        # CD Receivable Balance Sheet Summary
+        <record id="xlsx_report_cd_receivable_balance_sheet_summary" model="ir.attachment">
+            <field name="res_model">xlsx.report.cd.receivable.balance.sheet.summary</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_cd_receivable_balance_sheet_summary.xlsx</field>
+            <field name="name">CD Receivable Balance Sheet Summary</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Receivable CD Balance Sheet Summary Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'fiscalyear_start_id.name${value or ""}',
+                                'D3': 'fiscalyear_end_id.name${value or ""}',
+                                'B4': 'filter${value and dict(filter_no="No Filters", filter_date="Dates", filter_period="Periods")[value] or ""}',
+                                'B5': 'period_start_id.name${value or ""}',
+                                'D5': 'period_end_id.name${value or ""}',
+                                'B6': 'date_start${value or ""}#{number_format=date}',
+                                'D6': 'date_end${value or ""}#{number_format=date}',
+                                'B7': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.with_context(lang="th_TH").title.name, x.with_context(lang="th_TH").name]))) for x in value]) or ""}',
+                                'B8': 'mou_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B9': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                                'B10': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B11': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'balance_sheet_summary_results': {
+                                'A14': 'borrower_partner_id.search_key${value or ""}',
+                                'B14': 'borrower_partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
+                                'C14': 'mou_id.name${value or ""}',
+                                'D14': 'sale_id.name${value or ""}',
+                                'E14': 'bank_id.bank_name${value or ""}',
+                                'F14': 'bank_id.bank_branch.name${value or ""}',
+                                'G14': 'name${value or ""}',
+                                'H14': '${"=IFERROR(VLOOKUP(?(L14),brought_forward_report!A1:B5000,2,0),0)"}#{number_format=number}',
+                                'I14': '${"=IFERROR(VLOOKUP(?(L14),received_report!A1:C5000,2,0),0)"}#{number_format=number}',
+                                'J14': '${"=IFERROR(VLOOKUP(?(L14),received_report!A1:C5000,3,0),0)"}#{number_format=number}',
+                                'K14': '${"=?(H14)+?(I14)-?(J14)"}#{number_format=number}',
+                                'L14': 'id${value or ""}',
+                            },
+                        },
+                        'brought_forward_detail_report': {
+                            'brought_forward_results': {
+                                'A2': 'loan_agreement_id.id${value or ""}',
+                                'B2': 'invoice_id${value and (value.type == "in_invoice" and value.amount_total or (-1) * value.amount_total) or 0}#{number_format=number}',
+                            },
+                        },
+                        'brought_forward_report': {
+                            '_BI_': {
+                                'A2': {
+                                    'df': 'brought_forward_detail_report',
+                                    # Group by A. User will have to do subtotal themselves
+                                    'oper_code': 'df[["A", "B"]].groupby(["A"]).sum()',
+                                },
+                            },
+                        },
+                        'received_detail_report': {
+                            'receipt_results': {
+                                'A2': 'loan_agreement_id.id${value or ""}',
+                                'B2': 'invoice_id${value and (value.type == "in_invoice" and value.amount_total or 0) or 0}#{number_format=number}',
+                                'C2': 'invoice_id${value and (value.type == "out_invoice" and value.amount_total or 0) or 0}#{number_format=number}',
+                            },
+                        },
+                        'received_report': {
+                            '_BI_': {
+                                'A2': {
+                                    'df': 'received_detail_report',
+                                    # Group by A. User will have to do subtotal themselves
+                                    'oper_code': 'df[["A", "B", "C"]].groupby(["A"]).sum()',
+                                },
+                            },
+                        },
                     }
                 }
             </field>
