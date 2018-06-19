@@ -9,6 +9,7 @@ class ProductTemplate(models.Model):
     sequence_id = fields.Many2one(
         'ir.sequence',
         string='Asset Sequence',
+        domain=[('special_type', '=', 'asset')],
         help="Each product asset will have a unique running sequence"
     )
     asset = fields.Boolean(
