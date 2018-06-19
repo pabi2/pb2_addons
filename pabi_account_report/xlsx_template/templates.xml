@@ -997,6 +997,13 @@ result = pd.pivot_table(df, index=groupby,
                                 'K14': '${"=?(H14)+?(I14)-?(J14)"}#{number_format=number}',
                                 'L14': 'id${value or ""}',
                             },
+                            '_TAIL_0': {
+                                'G14': '${"Total"}#{font=bold;align=right}',
+                                'H14': '@{sum}#{font=bold;number_format=number;align=right}',
+                                'I14': '@{sum}#{font=bold;number_format=number;align=right}',
+                                'J14': '@{sum}#{font=bold;number_format=number;align=right}',
+                                'K14': '@{sum}#{font=bold;number_format=number;align=right}',
+                            }
                         },
                         'brought_forward_detail_report': {
                             'brought_forward_results': {
