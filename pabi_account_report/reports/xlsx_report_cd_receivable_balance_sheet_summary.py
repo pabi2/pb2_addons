@@ -39,10 +39,10 @@ class XLSXReportCDReceivableBalanceSheetSummary(models.TransientModel):
         compute='_compute_brought_forward_results',
         help='Use compute fields, so there is nothing store in database',
     )
-    receipt_results = fields.Many2many(
+    received_results = fields.Many2many(
         'loan.customer.agreement.view',
         string='Receipt Results',
-        compute='_compute_receipt_results',
+        compute='_compute_received_results',
         help='Use compute fields, so there is nothing store in database',
     )
 
@@ -89,7 +89,7 @@ class XLSXReportCDReceivableBalanceSheetSummary(models.TransientModel):
             dom, order="loan_agreement_id")
 
     @api.multi
-    def _compute_receipt_results(self):
+    def _compute_received_results(self):
         self.ensure_one()
         Result = self.env['loan.customer.agreement.view']
         Fiscalyear = self.env['account.fiscalyear']
@@ -122,7 +122,7 @@ class XLSXReportCDReceivableBalanceSheetSummary(models.TransientModel):
         if self.account_ids:
             dom += [('loan_agreement_id.account_receivable_id', 'in',
                      self.account_ids.ids)]
-        self.receipt_results = Result.search(dom, order="loan_agreement_id")
+        self.received_results = Result.search(dom, order="loan_agreement_id")
 
 
 class LoanCustomerAgreementView(models.Model):

@@ -1014,7 +1014,7 @@ result = pd.pivot_table(df, index=groupby,
                             },
                         },
                         'received_detail_report': {
-                            'receipt_results': {
+                            'received_results': {
                                 'A2': 'loan_agreement_id.id${value or ""}',
                                 'B2': 'invoice_id${value and (value.type == "in_invoice" and value.amount_total or 0) or 0}#{number_format=number}',
                                 'C2': 'invoice_id${value and (value.type == "out_invoice" and value.amount_total or 0) or 0}#{number_format=number}',
