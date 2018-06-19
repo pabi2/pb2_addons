@@ -6,6 +6,7 @@ from openerp import tools
 from openerp.exceptions import ValidationError
 from openerp.addons.document_status_history.models.document_history import \
     LogCommon
+from openerp.addons.pabi_base.models.res_common import ResCommon
 
 
 MY_PROJECT_STATES = [('draft', 'Draft'),
@@ -49,16 +50,18 @@ class ResProject(LogCommon, models.Model):
     date_end = fields.Date(
         string='End Date for Spending',
     )
-    grace_period_date_end = fields.Date(
-        string='Project End Date (by extension)',
-    )
     project_duration = fields.Integer(
-        string='Duration',
+        string='Project Duration',
     )
-    project_status = fields.Char(
+    project_status = fields.Many2one(
+        'myproject.status',
         string='Project Status',
     )
-    proposal_status = fields.Char(
+    contract_duration = fields.Integer(
+        string='Contract Duration',
+    )
+    proposal_status = fields.Many2one(
+        'proposal.status',
         string='Proposal Status',
     )
     project_date_end_proposal = fields.Date(
@@ -67,8 +70,20 @@ class ResProject(LogCommon, models.Model):
     project_date_end_extension = fields.Date(
         string='Project End Date (by extension)',
     )
+    project_date_start = fields.Date(
+        string='Project start Date',
+    )
+    project_date_end = fields.Date(
+        string='Project End Date',
+    )
     project_date_close = fields.Date(
         string='Project Close Date',
+    )
+    contract_date_start = fields.Date(
+        string='Contract start Date',
+    )
+    contract_date_end = fields.Date(
+        string='Contract End Date',
     )
     pm_employee_id = fields.Many2one(
         'hr.employee',
@@ -599,6 +614,11 @@ class ResProjectMember(models.Model):
         string='Position',
         required=True,
     )
+    percent_participate = fields.Float(
+        string='Percent (%)',
+        default=0.0,
+        required=True,
+    )
 
     @api.one
     @api.constrains('project_id', 'employee_id', 'project_position')
@@ -898,3 +918,13 @@ class ResProjectBudgetRelease(models.Model):
     def dummy(self):
         """ This will by default, trigger the write() to release budget """
         return True
+
+
+class MyProjectStatus(ResCommon, models.Model):
+    _name = 'myproject.status'
+    _description = 'myProject Status'
+
+
+class ProposalStatus(ResCommon, models.Model):
+    _name = 'proposal.status'
+    _description = 'Proposal Status'

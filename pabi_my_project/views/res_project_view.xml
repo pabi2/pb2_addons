@@ -77,7 +77,6 @@
                                 <field name="date_start" required="1"/>
                                 <field name="date_approve" required="1"/>
                                 <field name="date_end" required="1"/>
-                                <field name="grace_period_date_end" />
                                 <field name="fiscalyear_ids" widget="many2many_tags"/>
                             </group>
                             <group>
@@ -203,7 +202,7 @@
                                         <field name="project_kind"/>
                                         <field name="operation_id"/>
                                         <field name="fund_type_id"/>
-                                        <field name="project_duration"/>
+                                        <field name="master_plan_id"/>
                                     </group>
                                     <group>
                                         <field name="project_status"/>
@@ -215,13 +214,19 @@
                                         <field name="priority"/>
                                     </group>
                                 </group>
-                                <group string="Budget Planning">
-                                    <group>
+                                <group>
+                                    <group string="Budget Planning">
                                         <field name="revenue_budget"/>
                                         <field name="overall_revenue_plan"/>
                                         <field name="overall_expense_budget"/>
                                     </group>
-                                    <group>
+                                    <group string="Dates">
+                                        <field name="project_date_start"/>
+                                        <field name="project_date_end"/>
+                                        <field name="project_duration"/>
+                                        <field name="contract_date_start"/>
+                                        <field name="contract_date_end"/>
+                                        <field name="contract_duration"/>
                                     </group>
                                 </group>
                                 <group string="Project Performance">
