@@ -2,6 +2,22 @@
 <openerp>
     <data>
 
+        <!-- More Master Data -->
+        <record id="action_myproject_status" model="ir.actions.act_window">
+            <field name="name">myProject Status</field>
+            <field name="res_model">myproject.status</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem name="myProject Status" id="menu_myproject_status" action="action_myproject_status" parent="pabi_base.menu_res_project" sequence="100"/>
+
+        <record id="action_proposal_status" model="ir.actions.act_window">
+            <field name="name">Proposal Status</field>
+            <field name="res_model">proposal.status</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem name="Proposal Status" id="menu_proposal_status" action="action_proposal_status" parent="pabi_base.menu_res_project" sequence="110"/>
+
+
         <!-- Top menu item -->
         <menuitem name="myProjects" id="menu_main_project" sequence="4"
           groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business" />
@@ -23,6 +39,7 @@
                             <tree string="Project Member" editable="bottom">
                                 <field name="employee_id"/>
                                 <field name="project_position"/>
+                                <field name="percent_participate"/>
                             </tree>
                         </field>
                     </page>
@@ -190,6 +207,7 @@
                                     <tree string="Project Member" editable="bottom">
                                         <field name="employee_id"/>
                                         <field name="project_position"/>
+                                        <field name="percent_participate"/>
                                     </tree>
                                 </field>
                             </page>
