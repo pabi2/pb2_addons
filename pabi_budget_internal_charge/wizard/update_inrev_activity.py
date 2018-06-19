@@ -25,9 +25,9 @@ class UpdateInrevActivity(models.TransientModel):
         self.ensure_one()
         active_ids = self._context.get('active_ids')
         exp_lines = self.env['hr.expense.line'].browse(active_ids)
-        non_drafts = \
-            exp_lines.filtered(lambda l: l.expense_state != 'draft').ids
-        if non_drafts:
+        non_confirm = \
+            exp_lines.filtered(lambda l: l.expense_state != 'confirm').ids
+        if non_confirm:
             raise ValidationError(
-                _('Only draft internal charge can be set!'))
+                _('Only internal charge waiting for accept can be set!'))
         exp_lines.write({'inrev_activity_id': self.inrev_activity_id.id})

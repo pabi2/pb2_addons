@@ -13,13 +13,13 @@ class ValidateInternalCharge(models.TransientModel):
         active_ids = self._context.get('active_ids')
         exp_lines = ExLine.browse(active_ids)
         expenses = exp_lines.mapped('expense_id')
-        # Only draft expenses can be validated
-        non_drafts = \
-            expenses.filtered(lambda l: l.state != 'draft').mapped('number')
-        if non_drafts:
+        # Only confirm expenses can be validated
+        non_confirm = \
+            expenses.filtered(lambda l: l.state != 'confirm').mapped('number')
+        if non_confirm:
             raise ValidationError(
                 _('Following expenses can not be validated '
-                  '(non-draft).\n%s') % ', '.join(non_drafts))
+                  '(not waiting for accept).\n%s') % ', '.join(non_confirm))
         # All line of expense must have inrev_activity
         invalid_lines = ExLine.search([('expense_id', 'in', expenses.ids),
                                        ('inrev_activity_id', '=', False)])
