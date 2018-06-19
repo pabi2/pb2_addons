@@ -11,7 +11,8 @@ class HRExpense(models.Model):
     @api.multi
     def action_accept_to_paid(self):
         # Start with confirm status
-        expenses = self.filtered(lambda l: l.is_employee_advance)
+        # expenses = self.filtered(lambda l: l.is_employee_advance)
+        expenses = self
         # for expense in expenses:
         for expense in expenses:
             try:
@@ -34,6 +35,7 @@ class HRExpense(models.Model):
             except Exception:
                 _logger.exception("Failed Action for %s" % (expense.number,))
                 self._cr.rollback()
+        return {'result': True}
 
     @api.model
     def _auto_validate_invoice(self, expense):
