@@ -310,6 +310,13 @@ class ResProject(LogCommon, models.Model):
         'project.subprogram',
         string='Subprogram',
     )
+    current_fy_release_only = fields.Boolean(
+        string='Allow Current FY Release Only',
+        default=True,
+        help="By default only current FY is allowed to release.\n"
+        "We are doing this as temp solution, in the future it might "
+        "be configurable somewhere else."
+    )
 
     @api.onchange('pm_employee_id')
     def _onchange_user_id(self):
@@ -834,6 +841,22 @@ class ResProjectBudgetSummary(models.Model):
         string='Released Amount',
         readonly=True,
     )
+    allow_release = fields.Boolean(
+        string='Allow Release',
+        compute='_compute_allow_release',
+    )
+
+    @api.multi
+    def _compute_allow_release(self):
+        this_fy_id = self.env['account.fiscalyear'].find()
+        for rec in self:
+            if not rec.project_id.current_fy_release_only:
+                rec.allow_release = True
+            else:
+                if rec.fiscalyear_id.id == this_fy_id:
+                    rec.allow_release = True
+                else:
+                    rec.allow_release = False
 
     def init(self, cr):
 
