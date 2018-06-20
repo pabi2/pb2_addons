@@ -8,7 +8,7 @@ class XLSXReportSLAReceipt(models.TransientModel):
 
     user_ids = fields.Many2many(
         'res.users',
-        string='Responsible',
+        string='Validated By',
     )
     results = fields.Many2many(
         'account.bank.receipt',

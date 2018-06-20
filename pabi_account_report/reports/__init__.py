@@ -12,6 +12,7 @@ from . import xlsx_report_payable_balance
 from . import xlsx_report_purchase_billing
 from . import xlsx_report_sla_purchase
 from . import xlsx_report_sla_employee
+from . import xlsx_report_sla_procurement
 from . import xlsx_report_supplier_receipt_follow_up
 from . import xlsx_report_input_tax
 from . import xlsx_report_output_tax
