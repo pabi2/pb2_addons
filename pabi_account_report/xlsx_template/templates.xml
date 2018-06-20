@@ -32,7 +32,7 @@
                             },
                             'partner_detail_results': {
                                 'A11': 'search_key${value or ""}',
-                                'B11': 'id${value and " ".join(list(filter(lambda l: l != False, [env["res.partner"].browse(value).title_lang, env["res.partner"].browse(value).with_context(lang="th_TH").name]))) or ""}',
+                                'B11': 'id${value and " ".join(list(filter(lambda l: l != False, [env["res.partner"].browse(value).with_context(lang="th_TH").title.name, env["res.partner"].browse(value).with_context(lang="th_TH").name]))) or ""}',
                                 'C11': 'customer${value and "X" or ""}',
                                 'D11': 'supplier${value and "X" or ""}',
                                 'E11': 'category_id.name${value or ""}',
@@ -82,10 +82,10 @@
                             },
                             'partner_bank_detail_results': {
                                 'A11': 'partner_id.search_key${value or ""}',
-                                'B11': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
+                                'B11': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
                                 'C11': 'bank_id.acc_number${value or ""}',
                                 'D11': 'bank_id${value and " ".join(list(filter(lambda l: l != False, [value.bank_name, value.bank_branch.name]))) or ""}',
-                                'E11': 'bank_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
+                                'E11': 'bank_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
                                 'F11': 'bank_id${value and (value.active is True and "X" or "") or ""}',
                                 'G11': 'bank_id${value and (value.default is True and "X" or "") or ""}',
                             },
