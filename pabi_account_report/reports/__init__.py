@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*
 # Payable Reports
 from . import report_account_common
+from . import xlsx_report_input_tax
 from . import xlsx_report_partner_detail
 from . import xlsx_report_cheque_register
 from . import xlsx_report_advance_status
@@ -14,7 +15,6 @@ from . import xlsx_report_sla_purchase
 from . import xlsx_report_sla_employee
 from . import xlsx_report_sla_procurement
 from . import xlsx_report_supplier_receipt_follow_up
-from . import xlsx_report_input_tax
 from . import xlsx_report_output_tax
 from . import jasper_report_payable_confirmation_letter
 # Receivable Reports
