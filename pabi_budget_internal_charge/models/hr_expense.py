@@ -305,44 +305,6 @@ class HRExpenseLine(models.Model):
         related='expense_id.name',
         readonly=True,
     )
-    user_ic_allowed = fields.Boolean(
-        string='Current user allowed',
-        compute='_compute_user_ic_allowed',
-        search='_search_user_ic_allowed',
-        store=False,  # Must be virtual field
-        help="- For Secion IC, all user in same section is allowed to accept."
-        "\n- For Project IC, only project manager is allowed to accept.",
-    )
-
-    @api.model
-    def _search_user_ic_allowed(self, operator, value):
-        # Find expense with same same internal_section_id as login user
-        # or login user is PM of the internal_project_id
-        internal_charge = ('expense_id.pay_to', '=', 'internal')
-        section_domain = ('expense_id.internal_section_id', '=',
-                          self.env.user.employee_id.section_id.id)
-        project_domain = ('expense_id.internal_project_id.pm_employee_id', '=',
-                          self.env.user.employee_id.id)
-        domain = [internal_charge, '|', section_domain, project_domain]
-        return [('id', 'in', self.search(domain).ids)]
-
-    @api.multi
-    def _compute_user_ic_allowed(self):
-        for line in self:
-            expense = line.expense_id
-            user_ic_allowed = False
-            if expense.pay_to == 'internal':
-                if expense.internal_section_id:
-                    # Only user in the same Section
-                    if self.env.user.employee_id.section_id == \
-                            expense.internal_section_id:
-                        user_ic_allowed = True
-                elif expense.internal_project_id:
-                    # Only PM
-                    if self.env.user.employee_id == \
-                            expense.internal_project_id.pm_employee_id:
-                        user_ic_allowed = True
-            line.user_ic_allowed = user_ic_allowed
 
     @api.multi
     @api.depends('inrev_activity_id')

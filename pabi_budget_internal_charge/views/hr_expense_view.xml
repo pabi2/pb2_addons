@@ -115,7 +115,6 @@
                     <field name="inrev_activity_id" string="Rev. A" attrs="{'readonly': [('expense_state', '!=', 'confirm')]}"/>
                     <field name="total_amount" sum="Total" readonly="1"/>
                     <field name="expense_state" readonly="1"/>
-                    <field name="user_ic_allowed" readonly="1"/>
                 </tree>
             </field>
         </record>
@@ -127,7 +126,8 @@
             <field name="search_view_id" ref="view_internal_charge_line_filter"/>
             <field name="view_id" ref="view_internal_charge_line_tree"/>
             <field name="context">{'search_default_state_confirm': 1}</field>
-            <field name="domain">[('user_ic_allowed', '=', False)]</field>
+            <!-- <field name="domain">[('user_ic_allowed', '=', False)]</field> -->
+            <field name="domain">[]</field>
         </record>
 
         <menuitem action="action_internal_charge_line"

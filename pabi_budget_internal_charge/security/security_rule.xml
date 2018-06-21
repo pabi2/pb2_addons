@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- For Secion IC, all user in same section is allowed to accept." -->
+
+        <record id="rule_expense_allow_section_internal_charge" model="ir.rule">
+              <field name="name">Expense allowed section internal charge</field>
+            <field name="model_id" ref="model_hr_expense_expense"/>
+            <field name="domain_force">[('pay_to', '=', 'internal'), ('internal_section_id', '=', user.employee_id.section_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_approve_ic_activity'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+
+        <record id="rule_expense_line_allow_section_internal_charge" model="ir.rule">
+              <field name="name">Expense Lines allowed section internal charge</field>
+            <field name="model_id" ref="model_hr_expense_line"/>
+            <field name="domain_force">[('expense_id.pay_to', '=', 'internal'), ('expense_id.internal_section_id', '=', user.employee_id.section_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_approve_ic_activity'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+
+
+        <!-- For Project IC, only project manager is allowed to accept, -->
+
+        <record id="rule_expense_allow_project_internal_charge" model="ir.rule">
+              <field name="name">Expense allowed project internal charge</field>
+            <field name="model_id" ref="model_hr_expense_expense"/>
+            <field name="domain_force">[('pay_to', '=', 'internal'), ('internal_project_id.pm_employee_id', '=', user.employee_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_approve_ic_activity'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+
+        <record id="rule_expense_line_allow_project_internal_charge" model="ir.rule">
+              <field name="name">Expense Lines allowed project internal charge</field>
+            <field name="model_id" ref="model_hr_expense_line"/>
+            <field name="domain_force">[('expense_id.pay_to', '=', 'internal'), ('expense_id.internal_project_id.pm_employee_id', '=', user.employee_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_approve_ic_activity'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+
+    </data>
+</openerp>
