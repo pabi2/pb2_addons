@@ -13,7 +13,7 @@ class StockRequestURL(http.Controller):
                                   [('module', '=', 'stock_request'),
                                    ('name', '=', 'action_my_stock_request')])
         action = Action.browse(request.cr, SUPERUSER_ID, action_id)
-        ext_url = "/web?toolbar=hide&#page=0&limit=80" + \
+        ext_url = "/web?&#page=0&limit=80" + \
             "&view_type=list&model=stock.request&action="
         url = ext_url + str(action.res_id)
         return werkzeug.utils.redirect(url)
