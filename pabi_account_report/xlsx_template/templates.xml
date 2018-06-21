@@ -10,6 +10,46 @@
             <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
+        # Input Tax Report
+        <record id="xlsx_report_input_tax" model="ir.attachment">
+            <field name="res_model">xlsx.report.input.tax</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_input_tax.xlsx</field>
+            <field name="name">Input Tax Report</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Input Tax Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'calendar_period_id.calendar_name${value or ""}',
+                                'B4': 'taxbranch_id${value and value.with_context(lang="th_TH").name or ""}',
+                                'B5': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'results': {
+                                'A10': 'tax_sequence_display${value or ""}',
+                                'B10': 'invoice_date${value or ""}#{number_format=date}',
+                                'C10': 'invoice_number${value or ""}',
+                                'D10': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
+                                'E10': 'partner_id.vat${value or ""}',
+                                'F10': 'partner_id.taxbranch${value and (value == "00000" and "Head Office" or value) or ""}',
+                                'G10': 'base${value or ""}#{number_format=number}',
+                                'H10': 'amount${value or ""}#{number_format=number}',
+                                'I10': 'move_number${value or ""}',
+                            },
+                            '_TAIL_0': {
+                                'A10': '${"Total"}#{font=bold}',
+                                'G10': '@{sum}#{font=bold;align=right;number_format=number}',
+                                'H10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
+
         # Partner Detail
         <record id="xlsx_report_partner_detail" model="ir.attachment">
             <field name="res_model">xlsx.report.partner.detail</field>
@@ -742,43 +782,6 @@ result = pd.pivot_table(df, index=groupby,
             </field>
         </record>
 
-        # Input Tax Report
-        <record id="xlsx_report_input_tax" model="ir.attachment">
-            <field name="res_model">xlsx.report.input.tax</field>
-            <field name="datas"></field>
-            <field name="datas_fname">xlsx_report_input_tax.xlsx</field>
-            <field name="name">Input Tax Report</field>
-            <field name="parent_id" eval="ref('dir_account_reports')"/>
-            <field name="description">
-                {
-                    '__EXPORT__': {
-                        'Input Tax Report': {
-                            '_HEAD_': {
-                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                                'B3': 'calendar_period_id.calendar_name${value or ""}',
-                                'B4': 'taxbranch_id.name${value or ""}',
-                            },
-                            'results': {
-                                'A8': 'tax_sequence_display${value or ""}',
-                                'B8': 'invoice_date#{number_format=date}',
-                                'C8': 'invoice_number${value or ""}',
-                                'D8': 'partner_id.name${value or ""}',
-                                'E8': 'partner_id.vat${value or ""}',
-                                'F8': 'partner_id.taxbranch${value and (value == "00000" and "Head Office" or value) or ""}',
-                                'G8': 'base${value or 0}#{number_format=number}',
-                                'H8': 'amount${value or 0}#{number_format=number}',
-                                'I8': 'move_number${value or ""}',
-                            },
-                            '_TAIL_0': {
-                                'G8': '@{sum}#{font=bold;align=right;number_format=number}',
-                                'H8': '@{sum}#{font=bold;align=right;number_format=number}',
-                            }
-                        }
-                    }
-                }
-            </field>
-        </record>
-
         # Output Tax Report
         <record id="xlsx_report_output_tax" model="ir.attachment">
             <field name="res_model">xlsx.report.output.tax</field>
@@ -793,25 +796,28 @@ result = pd.pivot_table(df, index=groupby,
                             '_HEAD_': {
                                 'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
                                 'B3': 'calendar_period_id.calendar_name${value or ""}',
-                                'B4': 'taxbranch_id.name${value or ""}',
+                                'B4': 'taxbranch_id${value and value.with_context(lang="th_TH").name or ""}',
+                                'B5': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
                             'results': {
-                                'A8': 'invoice_date#{number_format=date}',
-                                'B8': 'number_preprint${value or ""}',
-                                'C8': 'partner_id.name${value or ""}',
-                                'D8': 'partner_id.vat${value or ""}',
-                                'E8': 'partner_id.taxbranch${value and (value == "00000" and "Head Office" or value) or ""}',
-                                'F8': 'base${value or 0}#{number_format=number}',
-                                'G8': 'amount${value or 0}#{number_format=number}',
-                                'H8': 'move_id.document_id${value and value._name == "account.invoice" and value.source_document_id and value.source_document_id._name == "sale.order" and value.source_document_id.workflow_process_id.name or ""}',
-                                'I8': 'move_id.document_id${value and value._name == "account.invoice" and value.source_document_id and value.source_document_id._name == "sale.order" and value.source_document_id.workflow_process_id and value.source_document_id.name or ""}',
-                                'J8': 'move_number${value or ""}',
-                                'K8': 'move_id.document_id${value and value._name == "interface.account.entry" and value.name or ""}',
-                                'L8': 'write_uid${value and value.with_context(lang="th_TH").display_name or ""}'
+                                'A10': 'invoice_date${value or ""}#{number_format=date}',
+                                'B10': 'number_preprint${value or ""}',
+                                'C10': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
+                                'D10': 'partner_id.vat${value or ""}',
+                                'E10': 'partner_id.taxbranch${value and (value == "00000" and "Head Office" or value) or ""}',
+                                'F10': 'base${value or ""}#{number_format=number}',
+                                'G10': 'amount${value or ""}#{number_format=number}',
+                                'H10': 'move_id.document_id${value and value._name == "account.invoice" and value.source_document_id and value.source_document_id._name == "sale.order" and value.source_document_id.workflow_process_id.name or ""}',
+                                'I10': 'move_id.document_id${value and value._name == "account.invoice" and value.source_document_id and value.source_document_id._name == "sale.order" and value.source_document_id.workflow_process_id and value.source_document_id.name or ""}',
+                                'J10': 'move_number${value or ""}',
+                                'K10': 'move_id.document_id${value and value._name == "interface.account.entry" and value.name or ""}',
+                                'L10': 'write_uid${value and value.with_context(lang="th_TH").display_name or ""}'
                             },
                             '_TAIL_0': {
-                                'F8': '@{sum}#{font=bold;align=right;number_format=number}',
-                                'G8': '@{sum}#{font=bold;align=right;number_format=number}',
+                                'A10': '${"Total"}#{font=bold}',
+                                'F10': '@{sum}#{font=bold;align=right;number_format=number}',
+                                'G10': '@{sum}#{font=bold;align=right;number_format=number}',
                             }
                         }
                     }

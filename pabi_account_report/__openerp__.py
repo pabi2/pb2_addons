@@ -28,6 +28,7 @@
         'xlsx_template/load_template.xml',
         # Payable Reports
         'reports/report_account_common.xml',
+        'reports/xlsx_report_input_tax.xml',
         'reports/xlsx_report_partner_detail.xml',
         'reports/xlsx_report_advance_status.xml',
         'reports/xlsx_report_supplier_invoice_detail.xml',
@@ -41,10 +42,9 @@
         'reports/xlsx_report_sla_employee.xml',
         'reports/xlsx_report_sla_procurement.xml',
         'reports/xlsx_report_supplier_receipt_follow_up.xml',
-        'reports/xlsx_report_input_tax.xml',
-        'reports/xlsx_report_output_tax.xml',
         'reports/jasper_report_payable_confirmation_letter.xml',
         # Receivable Reports
+        'reports/xlsx_report_output_tax.xml',
         'reports/xlsx_report_cd_receivable_confirmation.xml',
         'reports/xlsx_report_cd_receivable_planning.xml',
         'reports/xlsx_report_sla_receipt.xml',
