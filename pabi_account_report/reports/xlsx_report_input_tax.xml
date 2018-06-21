@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-
         <record id="view_xlsx_report_input_tax_form" model="ir.ui.view">
             <field name="name">view.xlsx.report.input.tax.form</field>
             <field name="model">xlsx.report.input.tax</field>
@@ -21,7 +20,7 @@
                     <attribute name="invisible">1</attribute>
                 </field>
                 <field name="period_end_id" position="before">
-                    <field name="period_id"/>
+                    <field name="calendar_period_id"/>
                 </field>
                 <xpath expr="//page[1]" position="after">
                     <page string="Taxbranch">
@@ -34,7 +33,7 @@
         </record>
 
         <record id="action_xlsx_report_input_tax_form" model="ir.actions.act_window">
-            <field name="name">Input Tax Report</field>
+            <field name="name">Input Tax</field>
             <field name="res_model">xlsx.report.input.tax</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
@@ -42,8 +41,9 @@
         </record>
 
         <menuitem id="menu_xlsx_report_input_tax"
-            name="Input Tax Report"
+            name="Input Tax"
             parent="menu_pabi_payable_report"
-            action="action_xlsx_report_input_tax_form" sequence="1"/>
-  </data>
+            action="action_xlsx_report_input_tax_form"
+            sequence="10"/>
+    </data>
 </openerp>
