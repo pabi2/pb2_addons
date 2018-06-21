@@ -38,7 +38,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-        </record>/
+        </record>
 
         <menuitem id="menu_xlsx_report_input_tax"
             name="Input Tax"
