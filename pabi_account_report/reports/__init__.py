@@ -15,9 +15,9 @@ from . import xlsx_report_sla_purchase
 from . import xlsx_report_sla_employee
 from . import xlsx_report_sla_procurement
 from . import xlsx_report_supplier_receipt_follow_up
-from . import xlsx_report_output_tax
 from . import jasper_report_payable_confirmation_letter
 # Receivable Reports
+from . import xlsx_report_output_tax
 from . import xlsx_report_cd_receivable_confirmation
 from . import xlsx_report_cd_receivable_planning
 from . import xlsx_report_sla_receipt
