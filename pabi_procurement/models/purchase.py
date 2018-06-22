@@ -233,7 +233,7 @@ class PurchaseOrder(models.Model):
     @api.model
     def by_pass_approve(self, ids):
         quotation = self.browse(ids)
-        # quotation._check_request_for_quotation()
+        quotation._check_request_for_quotation()
         quotation.action_button_convert_to_order()
         if quotation.state != 'done':
             quotation.state = 'done'
