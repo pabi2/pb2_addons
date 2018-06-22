@@ -71,14 +71,6 @@ class AccountAsset(ChartFieldAction, models.Model):
         store=True,
         readonly=True,
     )
-    account_depreciation_id = fields.Many2one(
-        'account.account',
-        required=False,
-    )
-    account_expense_depreciation_id = fields.Many2one(
-        'account.account',
-        required=False,
-    )
     status = fields.Many2one(
         'account.asset.status',
         string='Asset Status',
@@ -668,6 +660,14 @@ class AccountAsset(ChartFieldAction, models.Model):
 class AccountAssetProfile(models.Model):
     _inherit = 'account.asset.profile'
 
+    account_depreciation_id = fields.Many2one(
+        'account.account',
+        required=False,
+    )
+    account_expense_depreciation_id = fields.Many2one(
+        'account.account',
+        required=False,
+    )
     product_categ_id = fields.Many2one(
         'product.category',
         string='Product Category',

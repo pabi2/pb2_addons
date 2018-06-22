@@ -292,10 +292,10 @@
                     <field name="salvage_value"/>
                 </field>
                 <field name="account_depreciation_id" position="attributes">
-                    <attribute name="attrs">{'required': [('profile_type', '!=', 'normal_nod')]}</attribute>
+                    <attribute name="attrs">{'required': [('profile_type', '=', 'normal')]}</attribute>
                 </field>
                 <field name="account_expense_depreciation_id" position="attributes">
-                    <attribute name="attrs">{'required': [('profile_type', '!=', 'normal_nod')]}</attribute>
+                    <attribute name="attrs">{'required': [('profile_type', '=', 'normal')]}</attribute>
                 </field>
             </field>
         </record>
