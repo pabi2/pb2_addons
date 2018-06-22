@@ -26,7 +26,6 @@ class XLSXReportOutputTax(models.TransientModel):
         string='Taxbranch',
         required=True,
     )
-
     results = fields.Many2many(
         'account.invoice',
         string='Results',
