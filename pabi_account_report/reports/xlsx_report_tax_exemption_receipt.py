@@ -16,9 +16,9 @@ class XLSXReportOutputTax(models.TransientModel):
         readonly=True,
         default='filter_period',
     )
-    period_id = fields.Many2one(
-        'account.period',
-        string='Period',
+    calendar_period_id = fields.Many2one(
+        'account.period.calendar',
+        string='Calendar Period',
         required=True,
     )
     taxbranch_id = fields.Many2one(
@@ -38,8 +38,8 @@ class XLSXReportOutputTax(models.TransientModel):
         self.ensure_one()
         Result = self.env['account.invoice']
         dom = [('type','in',['out_invoice', 'out_refund']), ('tax_line', '=', False), ('state','not in',['draff','cancel'])]
-        if self.period_id:
-            dom += [('period_id', '=', self.period_id.id)]
+        if self.calendar_period_id:
+            dom += [('period_id', '=', self.calendar_period_id.id)]
         if self.taxbranch_id:
             dom += [('taxbranch_id', '=', self.taxbranch_id.id)]
         self.results = Result.search(dom, order='number_preprint')
