@@ -245,6 +245,7 @@ class PurchaseOrder(models.Model):
             if order.requisition_id.is_central_purchase:
                 order.requisition_id.exclusive = 'multiple'
                 order.requisition_id.multiple_rfq_per_supplier = True
+            order.check_over_requisition_limit()
             res = super(PurchaseOrder, order).wkf_confirm_order()
             return res
 
