@@ -37,7 +37,7 @@ class XLSXReportOutputTax(models.TransientModel):
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['account.invoice']
-        dom = [('type','=','out_invoice'), ('tax_line', '=', False)]
+        dom = [('type','in',['out_invoice', 'out_refund']), ('tax_line', '=', False), ('state','not in',['draff','cancel'])]
         if self.period_id:
             dom += [('period_id', '=', self.period_id.id)]
         if self.taxbranch_id:
