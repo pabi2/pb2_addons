@@ -46,6 +46,7 @@ PABI2 - Procurement Module
         "purchase_operating_unit",
         "account_budget_activity",
         "pabi_attachment_helper",
+        "stock_request",
     ],
     "data": [
         "security/purchase_requisition.xml",
@@ -62,6 +63,7 @@ PABI2 - Procurement Module
         "views/product_view.xml",
         "views/partner_view.xml",
         "views/purchase_master_data_view.xml",
+        "views/stock_request_view.xml",
         "workflow/purchase_requisition_workflow.xml",
         "workflow/purchase_workflow.xml",
         "data/pabiweb_config_parameter.xml",

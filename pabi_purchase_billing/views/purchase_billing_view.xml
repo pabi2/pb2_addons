@@ -29,6 +29,7 @@
                     <field name="user_id"/>
                     <field name="date"/>
                     <field name="date_due"/>
+                    <field name="date_sent"/>
                     <field name="amount_total" sum="Total Billing Amount"/>
                     <field name="state"/>
                 </tree>

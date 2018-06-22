@@ -6,6 +6,7 @@ from openerp import tools
 from openerp.exceptions import ValidationError
 from openerp.addons.document_status_history.models.document_history import \
     LogCommon
+from openerp.addons.pabi_base.models.res_common import ResCommon
 
 
 MY_PROJECT_STATES = [('draft', 'Draft'),
@@ -41,24 +42,26 @@ class ResProject(LogCommon, models.Model):
         help="If lock_budget is checked, release budget is not allowed",
     )
     date_start = fields.Date(
-        string='Start Date',
+        string='Start Date for Spending',
     )
     date_approve = fields.Date(
         string='Approved Date',
     )
     date_end = fields.Date(
-        string='End Date',
-    )
-    grace_period_date_end = fields.Date(
-        string='Grace Period End Date',
+        string='End Date for Spending',
     )
     project_duration = fields.Integer(
-        string='Duration',
+        string='Project Duration',
     )
-    project_status = fields.Char(
+    project_status = fields.Many2one(
+        'myproject.status',
         string='Project Status',
     )
-    proposal_status = fields.Char(
+    contract_duration = fields.Integer(
+        string='Contract Duration',
+    )
+    proposal_status = fields.Many2one(
+        'proposal.status',
         string='Proposal Status',
     )
     project_date_end_proposal = fields.Date(
@@ -67,8 +70,20 @@ class ResProject(LogCommon, models.Model):
     project_date_end_extension = fields.Date(
         string='Project End Date (by extension)',
     )
+    project_date_start = fields.Date(
+        string='Project start Date',
+    )
+    project_date_end = fields.Date(
+        string='Project End Date',
+    )
     project_date_close = fields.Date(
         string='Project Close Date',
+    )
+    contract_date_start = fields.Date(
+        string='Contract start Date',
+    )
+    contract_date_end = fields.Date(
+        string='Contract End Date',
     )
     pm_employee_id = fields.Many2one(
         'hr.employee',
@@ -294,6 +309,13 @@ class ResProject(LogCommon, models.Model):
     subprogram_id = fields.Many2one(
         'project.subprogram',
         string='Subprogram',
+    )
+    current_fy_release_only = fields.Boolean(
+        string='Allow Current FY Release Only',
+        default=True,
+        help="By default only current FY is allowed to release.\n"
+        "We are doing this as temp solution, in the future it might "
+        "be configurable somewhere else."
     )
 
     @api.onchange('pm_employee_id')
@@ -599,6 +621,11 @@ class ResProjectMember(models.Model):
         string='Position',
         required=True,
     )
+    percent_participate = fields.Float(
+        string='Percent (%)',
+        default=0.0,
+        required=True,
+    )
 
     @api.one
     @api.constrains('project_id', 'employee_id', 'project_position')
@@ -814,6 +841,22 @@ class ResProjectBudgetSummary(models.Model):
         string='Released Amount',
         readonly=True,
     )
+    allow_release = fields.Boolean(
+        string='Allow Release',
+        compute='_compute_allow_release',
+    )
+
+    @api.multi
+    def _compute_allow_release(self):
+        this_fy_id = self.env['account.fiscalyear'].find()
+        for rec in self:
+            if not rec.project_id.current_fy_release_only:
+                rec.allow_release = True
+            else:
+                if rec.fiscalyear_id.id == this_fy_id:
+                    rec.allow_release = True
+                else:
+                    rec.allow_release = False
 
     def init(self, cr):
 
@@ -898,3 +941,13 @@ class ResProjectBudgetRelease(models.Model):
     def dummy(self):
         """ This will by default, trigger the write() to release budget """
         return True
+
+
+class MyProjectStatus(ResCommon, models.Model):
+    _name = 'myproject.status'
+    _description = 'myProject Status'
+
+
+class ProposalStatus(ResCommon, models.Model):
+    _name = 'proposal.status'
+    _description = 'Proposal Status'

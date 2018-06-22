@@ -17,5 +17,16 @@
                 </xpath>
             </field>
         </record>
+        <record id="view_expenses_form_advance" model="ir.ui.view">
+    			<field name="name">view.expenses.form.advance</field>
+    			<field name="model">hr.expense.expense</field>
+    			<field name="inherit_id" ref="pabi_hr_expense.view_expenses_form_advance"/>
+    			<field name="arch" type="xml">
+    				<xpath expr="//field[@name='advance_expense_id']" position="attributes">
+    					<attribute name="readonly">0</attribute>
+    				</xpath>
+    			</field>
+    		</record>
+
     </data>
 </openerp>

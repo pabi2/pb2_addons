@@ -311,5 +311,17 @@
 		<!-- Reports -->
 		<menuitem id="hr.menu_hr_report" name="Reporting" parent="hr.menu_hr_root" sequence="100"/>
 
+		<!-- As synced with PABI Web, should not be editable -->
+		<record id="view_expenses_form_advance" model="ir.ui.view">
+			<field name="name">view.expenses.form.advance</field>
+			<field name="model">hr.expense.expense</field>
+			<field name="inherit_id" ref="hr_expense_advance_clearing.view_expenses_form_advance"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='advance_expense_id']" position="attributes">
+					<attribute name="readonly">1</attribute>
+				</xpath>
+			</field>
+		</record>
+
 	</data>
 </openerp>

@@ -94,7 +94,7 @@
 										<field name="currency_id" string="Currency" readonly="1" options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}"/>
 										<field name="purchase_method_id" string="Purchase Method" options="{'create': false, 'create_edit': false, 'm2o_dialog': false,'no_open': true}" readonly="1"/>
 										<field name="num_of_period" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','send','delete'])]}"/>
-										<field name="contract_amt" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+										<field name="contract_amt" widget="monetary" options="{'currency_field': 'currency_id'}"/>
 									</group>
 									<group>
 										<field name="action_date" attrs="{'readonly':[('state','in',['close','cancel_generate','terminate','send','delete'])]}"/>
@@ -183,6 +183,7 @@
 					<field name="name"/>
 					<field name="create_emp_id"/>
 					<field name="state"/>
+					<field name="active"/>
 				</tree>
 			</field>
 		</record>
@@ -195,7 +196,7 @@
 			<field name="domain"></field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
-			<field name="context" eval="{}"/>
+			<field name="context" eval="{'active_test': False}"/>
 		</record>
 
 		<record model="ir.actions.act_window" id="purchase_contract_accept_action">

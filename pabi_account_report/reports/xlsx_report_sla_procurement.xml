@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_sla_procurement_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.sla.procurement.form</field>
+            <field name="model">xlsx.report.sla.procurement</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//page[1]" position="after">
+                    <page string="Validated By Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="user_ids" colspan="4" nolabel="1"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_sla_procurement_form" model="ir.actions.act_window">
+            <field name="name">SLA Procurement</field>
+            <field name="res_model">xlsx.report.sla.procurement</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_sla_procurement"
+            name="SLA Procurement"
+            parent="menu_pabi_payable_report"
+            action="action_xlsx_report_sla_procurement_form"
+            sequence="91"/>
+    </data>
+</openerp>

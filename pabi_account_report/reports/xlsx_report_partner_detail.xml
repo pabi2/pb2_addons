@@ -40,6 +40,6 @@
             name="Partner Detail"
             parent="menu_pabi_payable_report"
             action="action_xlsx_report_partner_detail_form"
-            sequence="10"/>
+            sequence="20"/>
     </data>
 </openerp>

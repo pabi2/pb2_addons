@@ -4,11 +4,21 @@ from openerp import models, fields, api
 
 class XLSXReportInputTax(models.TransientModel):
     _name = 'xlsx.report.input.tax'
-    _inherit = 'xlsx.report'
+    _inherit = 'report.account.common'
 
+    fiscalyear_start_id = fields.Many2one(
+        default=False,
+    )
+    fiscalyear_end_id = fields.Many2one(
+        default=False,
+    )
+    filter = fields.Selection(
+        readonly=True,
+        default='filter_period',
+    )
     calendar_period_id = fields.Many2one(
         'account.period.calendar',
-        string='Period',
+        string='Calendar Period',
         required=True,
     )
     taxbranch_id = fields.Many2one(

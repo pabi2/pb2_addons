@@ -76,6 +76,10 @@ class PurchaseRequest(models.Model):
         states={'draft': [('readonly', False)]},
         copy=False,
     )
+    amount_company = fields.Float(
+        string='Amount (THB)',
+        compute='_compute_amount_company',
+    )
     objective = fields.Text(
         string='Objective',
         readonly=True,
@@ -201,6 +205,15 @@ class PurchaseRequest(models.Model):
         readonly=True,
         copy=False,
     )
+    _sql_constraints = [
+        ('name_uniq', 'unique(name)',
+         'PR Numbr must be unique!'),
+    ]
+
+    @api.multi
+    def _compute_amount_company(self):
+        for rec in self:
+            rec.amount_company = rec.amount_total * rec.currency_rate
 
     @api.onchange('is_central_purchase')
     def _onchange_is_central_purchase(self):

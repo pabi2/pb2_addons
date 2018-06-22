@@ -320,3 +320,16 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             return result
         result.update({'fiscalyear_id': install.fiscalyear_id.id})
         return result
+
+    @api.model
+    def _check_deposit_account(self):
+        """ Overwrite, do not check anything """
+        pass
+        # company = self.env.user.company_id
+        # account_id = company.account_deposit_supplier.id
+        # if not account_id:
+        #     raise except_orm(
+        #         _('Configuration Error!'),
+        #         _('There is no deposit customer account '
+        #           'defined as global property.')
+        #     )

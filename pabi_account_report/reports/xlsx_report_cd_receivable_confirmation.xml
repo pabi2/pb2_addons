@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="view_jasper_report_payment_history_form" model="ir.ui.view">
-            <field name="name">view.jasper.report.payment.history.form</field>
-            <field name="model">jasper.report.payment.history</field>
-            <field name="inherit_id" ref="pabi_account_report.view_jasper_report_account_common_form"/>
+        <record id="view_xlsx_report_cd_receivable_confirmation_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.cd.receivable.confirmation.form</field>
+            <field name="model">xlsx.report.cd.receivable.confirmation</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
                 <field name="fiscalyear_start_id" position="attributes">
@@ -23,32 +23,30 @@
                     <field name="date_report"/>
                 </field>
                 <xpath expr="//page[1]" position="after">
-                    <page string="Bank">
-                        <group>
-                            <field name="bank_id"/>
-                            <field name="bank_branch_id" domain="[('bank_id', '=', bank_id)]" attrs="{'invisible': [('bank_id', '=', False)]}"/>
-                        </group>
-                    </page>
-                    <page string="Customers" attrs="{'invisible': [('bank_id', '!=', False)]}">
+                    <page string="Customers">
                         <separator string="Print only" colspan="4"/>
                         <field name="partner_ids"/>
+                    </page>
+                    <page string="Banks">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="bank_ids"/>
                     </page>
                 </xpath>
             </field>
         </record>
 
-        <record id="action_jasper_report_payment_history_form" model="ir.actions.act_window">
-            <field name="name">Payable History</field>
-            <field name="res_model">jasper.report.payment.history</field>
+        <record id="action_xlsx_report_cd_receivable_confirmation_form" model="ir.actions.act_window">
+            <field name="name">CD Receivable Confirmation</field>
+            <field name="res_model">xlsx.report.cd.receivable.confirmation</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_jasper_report_payable_history"
-            name="Payable History"
+        <menuitem id="menu_xlsx_report_cd_receivable_confirmation"
+            name="CD Receivable Confirmation"
             parent="menu_pabi_receivable_report"
-            action="action_jasper_report_payment_history_form"
-            sequence="10"/>
+            action="action_xlsx_report_cd_receivable_confirmation_form"
+            sequence="30"/>
     </data>
 </openerp>

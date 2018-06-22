@@ -90,7 +90,6 @@ class PurchaseBilling(models.Model):
         readonly=True,
         states={'billed': [('readonly', False)]},
     )
-
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Billing Number must be unique!'),
     ]

@@ -2,6 +2,22 @@
 <openerp>
     <data>
 
+        <!-- More Master Data -->
+        <record id="action_myproject_status" model="ir.actions.act_window">
+            <field name="name">myProject Status</field>
+            <field name="res_model">myproject.status</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem name="myProject Status" id="menu_myproject_status" action="action_myproject_status" parent="pabi_base.menu_res_project" sequence="100"/>
+
+        <record id="action_proposal_status" model="ir.actions.act_window">
+            <field name="name">Proposal Status</field>
+            <field name="res_model">proposal.status</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem name="Proposal Status" id="menu_proposal_status" action="action_proposal_status" parent="pabi_base.menu_res_project" sequence="110"/>
+
+
         <!-- Top menu item -->
         <menuitem name="myProjects" id="menu_main_project" sequence="4"
           groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business" />
@@ -23,6 +39,7 @@
                             <tree string="Project Member" editable="bottom">
                                 <field name="employee_id"/>
                                 <field name="project_position"/>
+                                <field name="percent_participate"/>
                             </tree>
                         </field>
                     </page>
@@ -77,7 +94,6 @@
                                 <field name="date_start" required="1"/>
                                 <field name="date_approve" required="1"/>
                                 <field name="date_end" required="1"/>
-                                <field name="grace_period_date_end" />
                                 <field name="fiscalyear_ids" widget="many2many_tags"/>
                             </group>
                             <group>
@@ -191,6 +207,7 @@
                                     <tree string="Project Member" editable="bottom">
                                         <field name="employee_id"/>
                                         <field name="project_position"/>
+                                        <field name="percent_participate"/>
                                     </tree>
                                 </field>
                             </page>
@@ -203,7 +220,7 @@
                                         <field name="project_kind"/>
                                         <field name="operation_id"/>
                                         <field name="fund_type_id"/>
-                                        <field name="project_duration"/>
+                                        <field name="master_plan_id"/>
                                     </group>
                                     <group>
                                         <field name="project_status"/>
@@ -215,13 +232,19 @@
                                         <field name="priority"/>
                                     </group>
                                 </group>
-                                <group string="Budget Planning">
-                                    <group>
+                                <group>
+                                    <group string="Budget Planning">
                                         <field name="revenue_budget"/>
                                         <field name="overall_revenue_plan"/>
                                         <field name="overall_expense_budget"/>
                                     </group>
-                                    <group>
+                                    <group string="Dates">
+                                        <field name="project_date_start"/>
+                                        <field name="project_date_end"/>
+                                        <field name="project_duration"/>
+                                        <field name="contract_date_start"/>
+                                        <field name="contract_date_end"/>
+                                        <field name="contract_duration"/>
                                     </group>
                                 </group>
                                 <group string="Project Performance">
@@ -434,71 +457,78 @@
             <field name="priority">10</field>
             <field name="arch" type="xml">
                 <form string="Project" edit="0" create="0" delete="0">
-                        <h1>
-                            <label string="Project: "/>
-                            <field name="code" required="1" class="oe_inline"/>
-                        </h1>
-                        <h2>
-                            <label string="Name: "/>
-                            <field name="name" required="1" class="oe_inline"/>
-                        </h2>
+                    <h1>
+                        <label string="Project: "/>
+                        <field name="code" required="1" class="oe_inline"/>
+                    </h1>
+                    <h2>
+                        <label string="Name: "/>
+                        <field name="name" required="1" class="oe_inline"/>
+                    </h2>
+                    <group>
                         <group>
-                          <field name="state2" readonly="1"/>
+                            <field name="state2" readonly="1"/>
                         </group>
-                        <notebook>
-                            <page string="Release Budget">
-                                <field name="summary_expense_ids" nolabel="1">
-                                    <tree editable="bottom" string="Summary" create="0" delete="0">
-                                        <field name="project_id" invisible="1"/>
-                                        <field name="fiscalyear_id"/>
-                                        <field name="planned_amount" sum="Total Plan"/>
-                                        <button name="%(action_release_project_budget_by_fiscal_wizard)d"
-                                          string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"
-                                          context="{'default_project_id': project_id,
-                                                    'default_fiscalyear_id': fiscalyear_id,}"/>
-                                        <field name="released_amount" sum="Total Release"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget">
-                                <separator string="Expense"/>
-                                <field name="monitor_expense_ids">
-                                    <tree string="Monitor" editable="bottom">
-                                        <field name="fiscalyear_id"/>
-                                        <field name="planned_amount"/>
-                                        <field name="released_amount"/>
-                                        <field name="amount_pr_commit"/>
-                                        <field name="amount_po_commit"/>
-                                        <field name="amount_exp_commit"/>
-                                        <field name="amount_actual"/>
-                                        <field name="amount_consumed"/>
-                                        <field name="amount_balance"/>
-                                    </tree>
-                                </field>
-                                <separator string="Revenue"/>
-                                <field name="monitor_revenue_ids">
-                                    <tree string="Monitor" editable="bottom">
-                                        <field name="fiscalyear_id"/>
-                                        <field name="planned_amount"/>
-                                        <field name="released_amount"/>
-                                        <field name="amount_so_commit"/>
-                                        <field name="amount_actual"/>
-                                        <field name="amount_consumed"/>
-                                        <field name="amount_balance"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Budget Release History">
-                                <field name="budget_release_ids" context="{'project_id': active_id}">
-                                    <tree editable="bottom">
-                                        <field name="fiscalyear_id" attrs="{'readonly': [('write_date', '!=', False)]}"/>
-                                        <field name="user_id"/>
-                                        <field name="released_amount" attrs="{'readonly': [('write_date', '!=', False)]}"/>
-                                        <field name="write_date"/>
-                                    </tree>
-                                </field>
-                            </page>
-                        </notebook>
+                        <group>
+                            <field name="current_fy_release_only" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Release Budget">
+                            <field name="summary_expense_ids" nolabel="1">
+                                <tree editable="bottom" string="Summary" create="0" delete="0">
+                                    <field name="project_id" invisible="1"/>
+                                    <field name="fiscalyear_id"/>
+                                    <field name="planned_amount" sum="Total Plan"/>
+                                    <button name="%(action_release_project_budget_by_fiscal_wizard)d"
+                                      string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"
+                                      context="{'default_project_id': project_id,
+                                                'default_fiscalyear_id': fiscalyear_id,}"
+                                      attrs="{'invisible': [('allow_release', '=', False)]}"/>
+                                    <field name="allow_release" invisible="1"/>
+                                    <field name="released_amount" sum="Total Release"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget">
+                            <separator string="Expense"/>
+                            <field name="monitor_expense_ids">
+                                <tree string="Monitor" editable="bottom">
+                                    <field name="fiscalyear_id"/>
+                                    <field name="planned_amount"/>
+                                    <field name="released_amount"/>
+                                    <field name="amount_pr_commit"/>
+                                    <field name="amount_po_commit"/>
+                                    <field name="amount_exp_commit"/>
+                                    <field name="amount_actual"/>
+                                    <field name="amount_consumed"/>
+                                    <field name="amount_balance"/>
+                                </tree>
+                            </field>
+                            <separator string="Revenue"/>
+                            <field name="monitor_revenue_ids">
+                                <tree string="Monitor" editable="bottom">
+                                    <field name="fiscalyear_id"/>
+                                    <field name="planned_amount"/>
+                                    <field name="released_amount"/>
+                                    <field name="amount_so_commit"/>
+                                    <field name="amount_actual"/>
+                                    <field name="amount_consumed"/>
+                                    <field name="amount_balance"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Budget Release History">
+                            <field name="budget_release_ids" context="{'project_id': active_id}">
+                                <tree editable="bottom">
+                                    <field name="fiscalyear_id" attrs="{'readonly': [('write_date', '!=', False)]}"/>
+                                    <field name="user_id"/>
+                                    <field name="released_amount" attrs="{'readonly': [('write_date', '!=', False)]}"/>
+                                    <field name="write_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </form>
             </field>
         </record>

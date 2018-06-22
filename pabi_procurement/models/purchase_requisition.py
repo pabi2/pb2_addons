@@ -104,6 +104,10 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    amount_company = fields.Float(
+        string='Amount (THB)',
+        compute='_compute_amount_company',
+    )
     committee_ids = fields.One2many(
         'purchase.requisition.committee',
         'requisition_id',
@@ -238,6 +242,11 @@ class PurchaseRequisition(models.Model):
         string='Require for RFQs',
         related='purchase_method_id.require_rfq',
     )
+
+    @api.multi
+    def _compute_amount_company(self):
+        for rec in self:
+            rec.amount_company = rec.amount_total * rec.currency_rate
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')

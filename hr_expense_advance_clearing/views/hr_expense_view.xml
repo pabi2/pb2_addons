@@ -114,6 +114,9 @@
                     <filter string="Advance Clearing"
                             name="is_advance_clearing"
                             domain="[('is_advance_clearing', '=', True)]"/>
+                    <filter string="Advance Balance > 0.0"
+                            name="uncleared_advance"
+                            domain="[('amount_to_clearing', '&gt;', 0.0)]"/>
                 </xpath>
             </field>
         </record>

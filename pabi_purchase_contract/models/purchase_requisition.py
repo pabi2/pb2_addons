@@ -34,4 +34,5 @@ class PurchaseRequisition(models.Model):
             'type': 'ir.actions.act_window',
             'target': 'current',
             'domain': "[('requisition_id', '=', " + str(self.id) + ")]",
+            'context': {'active_test': False},
         }

@@ -17,6 +17,8 @@
     ],
     "data": [
         "data/project_history_rule.xml",
+        "data/myproject.status.csv",
+        "data/proposal.status.csv",
         "security/ir.model.access.csv",
         "wizard/project_budget_release_wizard.xml",
         "views/account_budget_view.xml",

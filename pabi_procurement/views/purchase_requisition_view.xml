@@ -73,6 +73,7 @@
                     <field name="purchase_condition_detail" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
+                    <field name="amount_company"/>
                 </xpath>
                  <xpath expr="//form/sheet/group/group/field[@name='origin']"
                        position="attributes">

@@ -6,9 +6,9 @@
                 <field name="model">purchase.request.line.make.purchase.requisition</field>
             <field name="inherit_id" ref="pabi_chartfield.view_purchase_request_line_make_purchase_requisition"/>
             <field name="arch" type="xml">
-                <xpath expr="/form/group/field/tree/field[@name='product_qty']" position="after">
+                <!-- <xpath expr="/form/group/field/tree/field[@name='product_qty']" position="after">
                     <field name="chartfield_id" attrs="{'required': [('require_chartfield', '=', True)], 'readonly': [('require_chartfield', '=', False)]}"/>
-                </xpath>
+                </xpath> -->
                 <xpath expr="/form/group/field/tree//field[@name='section_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
