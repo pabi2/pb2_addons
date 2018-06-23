@@ -22,6 +22,9 @@
                     <group>
                         <group name="type">
                             <field name="adjust_type"/>
+                            <field name="source_document_type" invisible="1"/>
+                            <field name="ship_purchase_id" attrs="{'invisible': ['|', ('source_document_type', '!=', 'expense'),
+                                                                                 ('adjust_type', '!=', 'expense_to_asset')]}"/>
                         </group>
                         <group name="extra">
                         </group>
