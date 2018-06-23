@@ -1094,5 +1094,45 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
+
+        # Tax Exemption Report
+        <record id="xlsx_report_tax_exemption_receipt" model="ir.attachment">
+            <field name="res_model">xlsx.report.tax.exemption.receipt</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_tax_exemption_receipt.xlsx</field>
+            <field name="name">Tax Exemption Report</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Tax Exemption Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.rml_header1}',
+                                'B3': 'period_id.name${value or ""}',
+                                'B4': 'taxbranch_id.name${value or ""}',
+                            },
+                            'results': {
+                                'A8': 'date_invoice${value}#{number_format=date}',
+                                'B8': 'number_preprint${value or ""}',
+                                'C8': 'partner_id.name${value}',
+                                'D8': 'partner_id.vat${value or ""}',
+                                'E8': 'partner_id${value and (value.taxbranch == "00000" and "Head Office" or value.taxbranch) or ""}',
+                                'F8': 'amount_untaxed${value or "0"}#{number_format=number}',
+                                'G8': 'amount_tax${value or "0"}#{number_format=number}',
+                                'H8': 'source_document_id${value and (value._table == "sale_order" and value.workflow_process_id.name or "") or ""}',
+                                'I8': 'source_document_id${value and (value._table == "sale_order" and value.name or "") or ""}',
+                                'J8': 'number${value or ""}',
+                                'K8': 'origin${value or ""}',
+                                'L8': 'validate_user_id.name${value or ""}',
+                            },
+                            '_TAIL_0': {
+                                'F8': '@{sum}#{font=bold;align=right;number_format=number}',
+                                'G8': '@{sum}#{font=bold;align=right;number_format=number}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
     </data>
 </openerp>

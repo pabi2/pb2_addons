@@ -233,7 +233,7 @@ class PurchaseOrder(models.Model):
     @api.model
     def by_pass_approve(self, ids):
         quotation = self.browse(ids)
-        # quotation._check_request_for_quotation()
+        quotation._check_request_for_quotation()
         quotation.action_button_convert_to_order()
         if quotation.state != 'done':
             quotation.state = 'done'
@@ -245,6 +245,7 @@ class PurchaseOrder(models.Model):
             if order.requisition_id.is_central_purchase:
                 order.requisition_id.exclusive = 'multiple'
                 order.requisition_id.multiple_rfq_per_supplier = True
+            order.check_over_requisition_limit()
             res = super(PurchaseOrder, order).wkf_confirm_order()
             return res
 
