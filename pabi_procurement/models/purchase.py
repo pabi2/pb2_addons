@@ -199,14 +199,16 @@ class PurchaseOrder(models.Model):
                 latest_contract_id = max(rec.requisition_id.contract_ids.ids)
                 rec.contract_id = latest_contract_id
 
-    @api.model
+    @api.multi
     def check_over_requisition_limit(self):
+        self.ensure_one()
         if self.state not in ('done', 'cancel'):
             po_total_payment = 0
             confirmed_rfqs = self.search(
                 [
                     ('requisition_id', '=', self.requisition_id.id),
                     ('state', '=', 'done'),
+                    ('order_type', '=', 'purchase_order'),
                 ]
             )
             for rfq in confirmed_rfqs:
@@ -216,13 +218,14 @@ class PurchaseOrder(models.Model):
             if po_total_payment + self.amount_total > cfb_total_amount:
                 raise ValidationError(
                     _("""Can't evaluate this acceptance.
-                         This RfQ total amount is over than
+                         This RfQ total amount is over
                          call for bids total amount.""")
                 )
         return True
 
-    @api.model
+    @api.multi
     def _check_request_for_quotation(self):
+        self.ensure_one()
         if self.requisition_id.purchase_method_id.require_rfq:
             raise ValidationError(
                 _("Can't convert to order. Have to wait for PD approval.")
