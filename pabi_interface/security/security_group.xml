@@ -4,7 +4,7 @@
 
         <record id="group_interface_user" model="res.groups">
             <field name="name">System Interface</field>
-            <field name="category_id" ref="pabi_base.module_category_nstda_admin"/>
+            <field name="category_id" ref=""/>
         </record>
 
     </data>

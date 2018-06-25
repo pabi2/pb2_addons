@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        # Technical Admin will also have rights for system interface and connector
+        <record id="pabi_base.group_nstda_admin_technical" model="res.groups">
+            <field name="name">Technical Admin</field>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="implied_ids" eval="[(4, ref('connector.group_connector_manager')),
+                                             (4, ref('pabi_interface.group_interface_user'))]"/>
+        </record>
+
+        # Connector as top menu
+        <menuitem id="connector.menu_connector_root"
+          name="Connectors" parent="" sequence="451"
+          groups="connector.group_connector_manager"/>
+
+        # System Interface as top manu
+        <menuitem name="System Interface" id="pabi_interface.menu_system_interface"
+          parent="" groups="pabi_interface.group_interface_user" sequence="452"/>
+
+    </data>
+</openerp>

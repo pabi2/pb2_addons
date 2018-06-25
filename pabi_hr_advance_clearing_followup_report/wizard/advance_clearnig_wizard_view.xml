@@ -35,6 +35,7 @@
             <field name="view_id" ref="advance_clearing_followup_wizard_view"/>
         </record>
 
-        <menuitem action="action_advance_clearing_followup_wizard" id="menu_expense_clearing_followup_report" name="Advance Clearing Followup" parent="hr.menu_hr_report"/>
+        <menuitem action="action_advance_clearing_followup_wizard" id="menu_expense_clearing_followup_report" name="Advance Clearing Followup" parent="hr.menu_hr_report"
+          groups="account.group_account_user"/>
     </data>
 </openerp>

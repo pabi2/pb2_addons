@@ -15,18 +15,18 @@ class InterfaceSystem(models.Model):
     )
 
 
-class InterfaceAction(models.Model):
-    _name = 'interface.action'
-
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Char(
-        string='Decription',
-        required=True,
-    )
-    journal_id = fields.Many2one(
-        'account.journal',
-        string='Journal',
-    )
+# class InterfaceAction(models.Model):
+#     _name = 'interface.action'
+#
+#     name = fields.Char(
+#         string='Name',
+#         required=True,
+#     )
+#     description = fields.Char(
+#         string='Decription',
+#         required=True,
+#     )
+#     journal_id = fields.Many2one(
+#         'account.journal',
+#         string='Journal',
+#     )

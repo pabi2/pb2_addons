@@ -2,13 +2,15 @@
 <openerp>
     <data>
 
-        # Hide unused menu by assign to a special grou that no one have
+        # Hide unused menu by assign to a special group that no one have
         <record id="show_unuse_feature" model="res.groups">
             <field name="name">Show unused features</field>
         </record>
+        <!-- Messaging -->
         <record id="mail.mail_feeds_main" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('show_unuse_feature')]), ]"/>
         </record>
+        <!-- Reporting -->
         <record id="base.menu_reporting" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('show_unuse_feature')]), ]"/>
         </record>
@@ -27,11 +29,12 @@
         <delete model="ir.ui.menu" id="hr.menu_view_employee_category_form"/>
         <delete model="ir.ui.menu" id="hr_expense.menu_hr_product"/>
 
+        # New HR Menu
         <!-- HR -->
         <menuitem id="hr.menu_hr_root" name="Expenses"/>
         <menuitem id="hr.menu_hr_main" name="Directory" parent="hr.menu_hr_configuration" sequence="450"/>
         <menuitem id="hr.menu_hr_report" name="Reporting" parent="hr.menu_hr_root" sequence="500"/>
-        <!-- Epxneses -->
+        <!-- Expenses -->
         <menuitem action="hr_expense.expense_all"
                   id="hr_expense.menu_expense_all"
                   name="Expenses"
@@ -70,48 +73,112 @@
       	<menuitem id="purchase.menu_purchase_form_action"
       		name="Purchase Orders" sequence="4" parent="purchase.menu_procurement_management"/>
 
+        # All configurations moved here.
         <!-- New Configurations Menu, move configuration of every module here -->
         <menuitem id="menu_nstda_configurations" name="Configurations" sequence="450" groups="pabi_base.group_nstda_admin_business"/>
 
+        # Unused Menu
+        <menuitem id="menu_pabi2_config_unused_menu" name="Unused Menus"
+          parent="menu_nstda_configurations" sequence="1000"
+          groups="pabi_apps_config.show_unuse_feature"/>
+
+        # Org Structure
         <!-- PABI2 Org Structure -->
         <menuitem id="pabi_base.menu_pabi2_top" name="Organization"
           parent="menu_nstda_configurations" sequence="1"
           groups="pabi_base.group_nstda_admin_business"/>
+
+        # Products
+        <menuitem id="menu_pabi2_config_product" name="Products"
+          parent="menu_nstda_configurations" sequence="3"
+          groups="pabi_base.group_nstda_admin_business"/>
+        <!-- Categories, Products and Pricelists, UoM-->
+        <menuitem
+          action="product.product_category_action_form" id="stock.menu_product_category_config_stock"
+          parent="menu_pabi2_config_product" sequence="0" groups="pabi_base.group_nstda_admin_business"/>
+        <menuitem
+          action="product.product_template_action" id="stock.menu_product_template_config_stock"
+          parent="menu_pabi2_config_product" sequence="1" groups="pabi_base.group_nstda_admin_business"/>
+        <menuitem id="product.menu_product_pricelist_main" name="Pricelists"
+          parent="menu_pabi2_config_product" sequence="2" groups="pabi_base.group_nstda_admin_business"/>
+        <menuitem action="product.product_uom_categ_form_action" id="product.menu_product_uom_categ_form_action"
+          parent="menu_pabi2_config_product" sequence="3" groups="pabi_base.group_nstda_admin_business"/>
+        <menuitem action="product.product_uom_form_action" id="product.menu_product_uom_form_action"
+          parent="menu_pabi2_config_product" sequence="4" groups="pabi_base.group_nstda_admin_business"/>
+
+        # Partners
+        <menuitem id="menu_pabi2_config_partner" name="Partners"
+          parent="menu_nstda_configurations" sequence="4"
+          groups="pabi_base.group_nstda_admin_business"/>
+
+        <menuitem id="menu_config_account_customer" name="Customers"
+          parent="menu_pabi2_config_partner"
+          action="base.action_partner_customer_form" sequence="1"
+          groups="pabi_base.group_nstda_admin_business"/>
+        <menuitem id="menu_config_account_supplier" name="Suppliers"
+          parent="menu_pabi2_config_partner"
+          action="base.action_partner_supplier_form" sequence="2"
+          groups="pabi_base.group_nstda_admin_business"/>
+        <menuitem id="base.menu_config_address_book" name="Address Book"
+          parent="menu_pabi2_config_partner" sequence="3"
+          groups="pabi_base.group_nstda_admin_business"/>
+
+        # POS
+        <menuitem id="menu_pabi2_config_pos" name="POS"
+          parent="menu_nstda_configurations" sequence="5"
+          groups="pabi_base.group_nstda_admin_business"/>
+
+        <menuitem action="sale_automatic_workflow.act_sale_workflow_process_form"
+          id="sale_automatic_workflow.menu_act_sale_workflow_process_form"
+          parent="menu_pabi2_config_pos" sequence="1"
+          groups="pabi_base.group_nstda_admin_business"/>
+        <menuitem action="pabi_pos.action_pos_product_vs_activity"
+          id="pabi_pos.menu_pos_product_vs_activity"
+          parent="menu_pabi2_config_pos" sequence="1"
+          groups="pabi_base.group_nstda_admin_business"/>
+
+        # Purchase
+        <menuitem id="pabi_procurement.menu_purchase_config_pabi_master" name="Purchase"
+            parent="menu_nstda_configurations" sequence="6" groups="pabi_base.group_nstda_admin_business"/>
+
+        # Accounting
+        <menuitem id="account.menu_finance_configuration"
+          name="Accounting" parent="menu_nstda_configurations" sequence="7"
+          groups="pabi_base.group_nstda_admin_business"/>
+        # Budgeting
+        <menuitem id="account_budget_activity.menu_action_account_budget_config"
+          name="Budgeting" parent="menu_nstda_configurations" sequence="8"
+          groups="pabi_base.group_nstda_admin_business"/>
+        # Assets
+        <menuitem id="account_asset_management.menu_finance_config_assets"
+          name="Assets" parent="menu_nstda_configurations" sequence="9"
+          groups="pabi_base.group_nstda_admin_business"/>
+        # Warehouse
+        <menuitem id="stock.menu_stock_configuration"
+          name="Warehouse" parent="menu_nstda_configurations" sequence="10"
+          groups="pabi_base.group_nstda_admin_business"/>
+        # HR
+        <menuitem id="hr.menu_hr_configuration"
+          name="Human Resources" parent="menu_nstda_configurations" sequence="11"
+          groups="pabi_base.group_nstda_admin_business"/>
+        # Documents
+        <menuitem name="Document Management"
+          id="document.menu_document_management_configuration"
+          parent="menu_nstda_configurations" sequence="12"
+          groups="pabi_base.group_nstda_admin_business"/>
+
+        # Moved all other configs to unused menu
         <!-- Sales -->
         <menuitem id="base.menu_base_config" name="Sales"
-          parent="menu_nstda_configurations" sequence="10"
+          parent="menu_pabi2_config_unused_menu" sequence="10"
           groups="pabi_base.group_nstda_admin_business"/>
         <!-- Purchase -->
         <menuitem id="purchase.menu_purchase_config_purchase"
-          name="Purchase" parent="menu_nstda_configurations" sequence="20"
-          groups="pabi_base.group_nstda_admin_business"/>
-        <!-- Accounting -->
-        <menuitem id="account.menu_finance_configuration"
-          name="Accounting" parent="menu_nstda_configurations" sequence="30"
-          groups="pabi_base.group_nstda_admin_business"/>
-        <!-- Budgeting -->
-        <menuitem id="account_budget_activity.menu_action_account_budget_config"
-          name="Budgeting" parent="menu_nstda_configurations" sequence="40"
-          groups="pabi_base.group_nstda_admin_business"/>
-        <!-- Assets -->
-        <menuitem id="account_asset_management.menu_finance_config_assets"
-          name="Assets" parent="menu_nstda_configurations" sequence="50"
-          groups="pabi_base.group_nstda_admin_business"/>
-        <!-- Warehouse -->
-        <menuitem id="stock.menu_stock_configuration"
-          name="Warehouse" parent="menu_nstda_configurations" sequence="60"
-          groups="pabi_base.group_nstda_admin_business"/>
-        <!-- HR -->
-        <menuitem id="hr.menu_hr_configuration"
-          name="Human Resources" parent="menu_nstda_configurations" sequence="70"
+          name="Purchase" parent="menu_pabi2_config_unused_menu" sequence="20"
           groups="pabi_base.group_nstda_admin_business"/>
         <!-- Knowledge -->
         <menuitem id="knowledge.menu_document_configuration"
-          name="Knowledge" parent="menu_nstda_configurations" sequence="100"
-          groups="pabi_base.group_nstda_admin_business"/>
-        <!-- Connectors -->
-        <menuitem id="connector.menu_connector_root"
-          name="Connectors" parent="menu_nstda_configurations" sequence="200"
+          name="Knowledge" parent="menu_pabi2_config_unused_menu" sequence="100"
           groups="pabi_base.group_nstda_admin_business"/>
 
         <!-- Main Master -->
@@ -121,18 +188,10 @@
             parent="account.menu_finance_receivables"
             action="base.action_partner_customer_form" sequence="0"/>
 
-        <menuitem id="menu_config_account_customer" name="Customers"
-            parent="base.menu_base_config"
-            action="base.action_partner_customer_form" sequence="0"/>
-
         # Suppliers
         <!-- to be deleted -->
         <menuitem id="account.menu_account_supplier" name="Suppliers"
             parent="account.menu_finance_payables"
-            action="base.action_partner_supplier_form" sequence="0"/>
-
-        <menuitem id="menu_config_account_supplier" name="Suppliers"
-            parent="purchase.menu_purchase_config_purchase"
             action="base.action_partner_supplier_form" sequence="0"/>
 
     </data>
