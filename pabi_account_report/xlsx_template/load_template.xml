@@ -25,6 +25,7 @@
                 ref('xlsx_report_sla_receipt'),
                 ref('xlsx_report_cd_receivable_balance_sheet_summary'),
                 ref('xlsx_report_tax_exemption_receipt'),
+                ref('xlsx_report_receivable_before_due'),
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>

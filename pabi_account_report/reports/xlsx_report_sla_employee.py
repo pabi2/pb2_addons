@@ -8,12 +8,12 @@ class XLSXReportSLAEmployee(models.TransientModel):
 
     user_ids = fields.Many2many(
         'res.users',
-        string='Responsible',
+        string='Validated By',
     )
-    category_ids = fields.Many2many(
-        'res.partner.category',
-        string='Supplier Category',
-        domain=[('parent_id', '=', False)],
+    source_document_type = fields.Selection(
+        [('expense', 'Expense'),
+         ('advance', 'Advance')],
+        string='Source Document Ref.',
     )
     results = fields.Many2many(
         'sla.employee.view',
@@ -29,9 +29,10 @@ class XLSXReportSLAEmployee(models.TransientModel):
         dom = []
         if self.user_ids:
             dom += [('voucher_id.create_uid', 'in', self.user_ids.ids)]
-        if self.category_ids:
-            dom += [('voucher_id.partner_id.category_id', 'in',
-                     self.category_ids.ids)]
+        if self.source_document_type:
+            dom += [('invoice_id.source_document_type', '=',
+                     self.source_document_type != 'nothing' and
+                     self.source_document_type or False)]
         if self.fiscalyear_start_id:
             dom += [('voucher_id.period_id.fiscalyear_id.date_start', '>=',
                      self.fiscalyear_start_id.date_start)]
@@ -108,8 +109,8 @@ class SLAEmployeeView(models.Model):
             LEFT JOIN payment_export exp ON exp_line.export_id = exp.id
             WHERE av.type = 'payment' AND av.state = 'posted' AND
                 exp.state = 'done' AND
-                SPLIT_PART(inv.source_document_id, ',', 1)
-                = 'hr.expense.expense'
+                SPLIT_PART(inv.source_document_id, ',', 1) =
+                'hr.expense.expense'
         """
         return sql_view
 

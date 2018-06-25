@@ -8,9 +8,14 @@
             <field name="mode">primary</field>
             <field name="arch" type="xml">
                 <xpath expr="//page[1]" position="after">
-                    <page string="Responsible Filters">
+                    <page string="Validated By Filters">
                         <separator string="Print only" colspan="4"/>
                         <field name="user_ids" colspan="4" nolabel="1"/>
+                    </page>
+                    <page string="Source Document Ref. Filters">
+                      <group>
+                        <field name="source_document_type"/>
+                      </group>
                     </page>
                 </xpath>
             </field>
