@@ -257,8 +257,7 @@ class PurchaseRequisition(models.Model):
             taxes = line.tax_ids.compute_all(line.price_unit, line.product_qty,
                                              product=line.product_id)
             amount_tax += sum([tax['amount'] for tax in taxes['taxes']])
-            # amount_untaxed += taxes['total']
-            amount_untaxed += line.price_subtotal
+            amount_untaxed += taxes['total']
         self.amount_untaxed = amount_untaxed
         self.amount_tax = amount_tax
         self.amount_total = amount_untaxed + amount_tax
