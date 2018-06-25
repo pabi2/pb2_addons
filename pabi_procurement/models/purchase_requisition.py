@@ -675,23 +675,33 @@ class PurchaseRequisitionLine(models.Model):
                 del res['value']['product_uom_id']
         return res
 
+    # @api.multi
+    # @api.depends('product_qty', 'price_unit', 'tax_ids')
+    # def _compute_price_subtotal(self):
+    #     tax_amount = 0.0
+    #     for line in self:
+    #         amount_untaxed = line.product_qty * line.price_unit
+    #         for line_tax in line.tax_ids:
+    #             if line_tax.type == 'percent':
+    #                 tax_amount += line.product_qty * (
+    #                     line.price_unit * line_tax.amount
+    #                 )
+    #             elif line_tax.type == 'fixed':
+    #                 tax_amount += line.product_qty * (
+    #                     line.price_unit + line_tax.amount
+    #                 )
+    #         cur = line.requisition_id.currency_id
+    #         line.price_subtotal = cur.round(amount_untaxed + tax_amount)
+
     @api.multi
     @api.depends('product_qty', 'price_unit', 'tax_ids')
     def _compute_price_subtotal(self):
-        tax_amount = 0.0
         for line in self:
-            amount_untaxed = line.product_qty * line.price_unit
-            for line_tax in line.tax_ids:
-                if line_tax.type == 'percent':
-                    tax_amount += line.product_qty * (
-                        line.price_unit * line_tax.amount
-                    )
-                elif line_tax.type == 'fixed':
-                    tax_amount += line.product_qty * (
-                        line.price_unit + line_tax.amount
-                    )
+            price = line.price_unit
+            taxes = line.tax_ids.compute_all(price, line.product_qty)
+            line.price_subtotal = taxes['total']
             cur = line.requisition_id.currency_id
-            line.price_subtotal = cur.round(amount_untaxed + tax_amount)
+            line.price_subtotal = cur.round(line.price_subtotal)
 
 
 class PurchaseRequisitionCommittee(models.Model):
