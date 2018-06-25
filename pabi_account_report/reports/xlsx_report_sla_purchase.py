@@ -8,7 +8,13 @@ class XLSXReportSLAPurchase(models.TransientModel):
 
     user_ids = fields.Many2many(
         'res.users',
-        string='Responsible',
+        string='Validated By',
+    )
+    source_document_type = fields.Selection(
+        [('nothing', 'Nothing'),
+         ('expense', 'Expense'),
+         ('purchase', 'Purchase Order')],
+        string='Source Document Ref.',
     )
     results = fields.Many2many(
         'sla.purchase.view',
@@ -24,6 +30,10 @@ class XLSXReportSLAPurchase(models.TransientModel):
         dom = []
         if self.user_ids:
             dom += [('voucher_id.create_uid', 'in', self.user_ids.ids)]
+        if self.source_document_type:
+            dom += [('source_document_type', '=',
+                     self.source_document_type != 'nothing' and
+                     self.source_document_type or False)]
         if self.fiscalyear_start_id:
             dom += [('voucher_id.period_id.fiscalyear_id.date_start', '>=',
                      self.fiscalyear_start_id.date_start)]
@@ -40,7 +50,7 @@ class XLSXReportSLAPurchase(models.TransientModel):
             dom += [('voucher_id.date_value', '>=', self.date_start)]
         if self.date_end:
             dom += [('voucher_id.date_value', '<=', self.date_end)]
-        self.results = Result.search(dom, order="fiscalyear,voucher_number")
+        self.results = Result.search(dom, order="voucher_number")
 
 
 class SLAPurchaseView(models.Model):
@@ -75,6 +85,10 @@ class SLAPurchaseView(models.Model):
         string='Voucher Number',
         readonly=True,
     )
+    source_document_type = fields.Char(
+        string='Source Document Type',
+        readonly=True,
+    )
 
     def _get_sql_view(self):
         sql_view = """
@@ -84,7 +98,8 @@ class SLAPurchaseView(models.Model):
                    exp.id AS export_id,
                    MIN(inv.date_due) AS date_due,
                    af.name AS fiscalyear,
-                   av.number AS voucher_number
+                   av.number AS voucher_number,
+                   inv.source_document_type
             FROM account_voucher av
             LEFT JOIN account_voucher_line av_line ON
                 av.id = av_line.voucher_id
@@ -98,9 +113,12 @@ class SLAPurchaseView(models.Model):
                        WHERE pe.state = 'done') exp ON av.id = exp.voucher_id
             LEFT JOIN account_period ap ON av.period_id = ap.id
             LEFT JOIN account_fiscalyear af ON ap.fiscalyear_id = af.id
+            LEFT JOIN hr_expense_expense hr ON hr.id = inv.expense_id AND
+                pay_to ='supplier'
             WHERE av.type = 'payment' AND av.state = 'posted' AND
-                SPLIT_PART(inv.source_document_id, ',', 1) = 'purchase.order'
-            GROUP BY av.id, exp.id, af.id
+                (inv.source_document_type IN ('purchase','expense') OR
+                inv.source_document_type IS NULL)
+            GROUP BY av.id, exp.id, af.id, inv.source_document_type
         """
         return sql_view
 
