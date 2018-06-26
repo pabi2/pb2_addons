@@ -137,11 +137,17 @@ class AccountBudget(models.Model):
         return self.document_check_budget(doc_date, doc_lines)
 
     @api.model
-    def document_check_budget(self, doc_date, doc_lines, amount_field=False):
+    def document_check_budget(self, doc_date, doc_lines, amount_field=False,
+                              internal_charge=False):
         res = {'budget_ok': True,
                'budget_status': {},
                'message': False}
         fiscal_id, budget_levels = self.get_fiscal_and_budget_level(doc_date)
+        # Internal Charge, no budget check
+        if internal_charge:
+            fiscal = self.env['account.fiscalyear'].browse(fiscal_id)
+            if fiscal.control_ext_charge_only:
+                self = self.with_context(force_no_budget_check=True)
         # Validate Budget Level
         if not self._validate_budget_levels(budget_levels):
             return {'budget_ok': False,
@@ -172,7 +178,9 @@ class AccountBudget(models.Model):
 
     @api.model
     def simple_check_budget(self, doc_date, budget_type,
-                            amount, res_id):
+                            amount, res_id,
+                            internal_charge=False  # prepare for IC module
+                            ):
         """ This method is used to check budget of one type and one res_id
             :param date: doc_date, document date or date to check budget
             :param budget_type: 1 of the 5 budget types
@@ -184,6 +192,11 @@ class AccountBudget(models.Model):
                'budget_status': {},
                'message': False}
         fiscal_id, budget_levels = self.get_fiscal_and_budget_level(doc_date)
+        # Internal Charge, no budget check
+        if internal_charge:
+            fiscal = self.env['account.fiscalyear'].browse(fiscal_id)
+            if fiscal.control_ext_charge_only:
+                self = self.with_context(force_no_budget_check=True)
         # Validate Budget Level
         if not self._validate_budget_levels(budget_levels):
             return {'budget_ok': False,
