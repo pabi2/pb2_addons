@@ -127,7 +127,7 @@
             <field name="view_id" ref="view_internal_charge_line_tree"/>
             <field name="context">{'search_default_state_confirm': 1}</field>
             <!-- <field name="domain">[('user_ic_allowed', '=', False)]</field> -->
-            <field name="domain">[]</field>
+            <field name="domain">[('is_advance_product_line', '=', False)]</field>
         </record>
 
         <menuitem action="action_internal_charge_line"
