@@ -141,7 +141,8 @@
                                         <field name="onhand_qty" groups="stock.group_stock_user"/>
                                         <field name="future_qty" groups="stock.group_stock_user"/>
                                         <field name="request_uom_qty" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                        <field name="product_uom_qty" attrs="{'readonly': [('state', 'not in', ('draft', 'wait_confirm'))]}"/>
+                                        <field name="product_uom_qty" attrs="{'readonly': [('state', 'not in', ('draft', 'wait_confirm'))],
+                                                                              'invisible': [('state', 'in', ('draft'))]}"/>
                                         <field name="product_uom" invisible="1"/>
                                         <field name="product_uom_readonly"/>
                                         <field name="state"/>
@@ -174,7 +175,7 @@
             <field name="name">My Stock Request</field>
             <field name="res_model">stock.request</field>
             <field name="view_type">form</field>
-            <field name="view_mode">form,tree</field>
+            <field name="view_mode">tree,form</field>
             <field name="view_id" eval="False"/>
             <field name="target">current</field>
             <field name="domain">[('type', '=', 'request'), '|', '|', '|', ('employee_id.user_id', '=', uid), ('supervisor_emp_id.user_id', '=', uid), ('prepare_emp_id.user_id', '=', uid), ('receive_emp_id.user_id', '=', uid)]</field>
