@@ -114,8 +114,8 @@
             <field name="search_view_id" ref="view_budget_plan_personnel_search"/>
             <field name="context">{}</field>
             <field name="help" type="html">
-                <p class="oe_view_nocontent_create">
-                    Click to create a new budget preparation.
+                <p>
+                    This menu display budget plan for personnel budget.
                 </p>
             </field>
         </record>
