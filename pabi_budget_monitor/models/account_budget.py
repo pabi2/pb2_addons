@@ -193,15 +193,19 @@ class AccountBudget(models.Model):
                'message': False}
         fiscal_id, budget_levels = self.get_fiscal_and_budget_level(doc_date)
         # Internal Charge, no budget check
+        force_no_budget_check = False
         if internal_charge:
             fiscal = self.env['account.fiscalyear'].browse(fiscal_id)
             if fiscal.control_ext_charge_only:
+                force_no_budget_check = True
                 self = self.with_context(force_no_budget_check=True)
         # Validate Budget Level
         if not self._validate_budget_levels(budget_levels):
             return {'budget_ok': False,
                     'budget_status': {},
-                    'message': 'Budget level(s) is not set!'}
+                    'message': 'Budget level(s) is not set!',
+                    'force_no_budget_check': False,
+                    }
         # Check for single budget type
         budget_level = budget_levels[budget_type]
         # sel_fields = self._prepare_sel_budget_fields(budget_type,
@@ -228,6 +232,8 @@ class AccountBudget(models.Model):
                                 # ext_field=ext_field,
                                 # ext_res_id=ext_res_id
                                 )
+        # Extra parameter
+        res['force_no_budget_check'] = force_no_budget_check
         return res
 
     @api.model
