@@ -51,6 +51,7 @@
         'reports/xlsx_report_cd_receivable_balance_sheet_summary.xml',
         'reports/xlsx_report_tax_exemption_receipt.xml',
         'reports/xlsx_report_receivable_before_due.xml',
+        'reports/xlsx_report_receivable_detail.xml',
         'reports/jasper_report_cd_receivable_payment_history.xml',
         'reports/jasper_report_cd_receivable_follow_up.xml',
         'reports/jasper_report_receivable_confirmation_letter.xml',
