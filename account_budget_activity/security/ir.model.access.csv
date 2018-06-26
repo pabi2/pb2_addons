@@ -19,6 +19,6 @@ access_budget_plan_report,access_budget_plan_report,model_budget_plan_report,,1,
 access_budget_monitor_report,access_budget_monitor_report,model_budget_monitor_report,,1,0,0,0
 access_account_budget_line_period_split,access_account_budget_line_period_split,model_account_budget_line_period_split,,1,1,1,1
 access_product_activity,access_product_activity,model_product_activity,,1,0,0,0
-access_budget_transition,access_budget_transition,model_budget_transition,,1,0,0,0
+access_budget_transition,access_budget_transition,model_budget_transition,,1,1,1,0
 access_budget_summary,access_budget_summary,model_budget_summary,,1,0,0,0
 access_budget_commitment_summary,access_budget_commitment_summary,model_budget_commitment_summary,,1,0,0,0
