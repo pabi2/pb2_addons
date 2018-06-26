@@ -190,7 +190,8 @@ class AccountBudget(models.Model):
         """
         res = {'budget_ok': True,
                'budget_status': {},
-               'message': False}
+               'message': False,
+               'force_no_budget_check': False}
         fiscal_id, budget_levels = self.get_fiscal_and_budget_level(doc_date)
         # Internal Charge, no budget check
         force_no_budget_check = False
