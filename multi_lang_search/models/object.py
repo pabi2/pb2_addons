@@ -71,7 +71,7 @@ def _extend_name_results_translation(self, field_name, name, results, limit):
                     record_ids = list(set(tax_ids).intersection(record_ids))
         # -------------------------------------------------------------------
 
-        record_ids = self.browse(record_ids)
+        record_ids = self.search([('id', 'in', record_ids)])
         results.extend(record_ids.name_get())
         results = list(set(results))
     return results

@@ -24,6 +24,7 @@
                     <filter string="Cancelled" name="cancel" domain="[('state','in',('cancel',))]"/>
                     <group expand="0" string="Group By...">
                         <filter string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
+                        <filter string="State" domain="[]" context="{'group_by':'state'}"/>
                     </group>
                 </search>
             </field>
@@ -100,7 +101,7 @@
                                 <label string="Stock Request " attrs="{'invisible': [('type', '!=', 'request')]}"/>
                                 <label string="Stock Transfer " attrs="{'invisible': [('type', '!=', 'transfer')]}"/>
                                 <label string="Stock Borrow " attrs="{'invisible': [('type', '!=', 'borrow')]}"/>
-                                <field name="name" class="oe_inline"/>
+                                <field name="name" class="oe_inline" readonly="1"/>
                             </h1>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons"></div>
@@ -141,7 +142,7 @@
                                         <field name="onhand_qty" groups="stock.group_stock_user"/>
                                         <field name="future_qty" groups="stock.group_stock_user"/>
                                         <field name="request_uom_qty" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                        <field name="product_uom_qty" attrs="{'readonly': [('state', 'not in', ('draft', 'wait_confirm'))],
+                                        <field name="product_uom_qty" attrs="{'readonly': [('state', 'not in', ('draft', 'wait_confirm', 'confirmed', 'wait_approve'))],
                                                                               'invisible': [('state', 'in', ('draft'))]}"/>
                                         <field name="product_uom" invisible="1"/>
                                         <field name="product_uom_readonly"/>
