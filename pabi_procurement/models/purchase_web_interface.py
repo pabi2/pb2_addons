@@ -169,9 +169,18 @@ class PurchaseRequisition(models.Model):
                                     })
                     if requisition.state != 'done':
                         requisition.tender_done()
+                    attachment = []
+                    for pd_att in requisition.attachment_ids:
+                        if '_main_form.pdf' in pd_att.name:
+                            pd_attach = {
+                                'name': pd_att.name,
+                                'content': pd_att.datas or '',
+                            }
+                            attachment.append(pd_attach)
                     res.update({
                         'is_success': True,
                         'result': True,
+                        'attachments': attachment,
                     })
                 except Exception, e:
                     res.update({
