@@ -22,6 +22,7 @@ from . import xlsx_report_cd_receivable_confirmation
 from . import xlsx_report_cd_receivable_planning
 from . import xlsx_report_sla_receipt
 from . import xlsx_report_cd_receivable_balance_sheet_summary
+from . import xlsx_report_cd_receivable_balance_sheet_detail
 from . import xlsx_report_tax_exemption_receipt
 from . import xlsx_report_receivable_before_due
 from . import xlsx_report_receivable_detail
