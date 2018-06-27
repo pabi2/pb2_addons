@@ -12,13 +12,17 @@
                         <separator string="Print only" colspan="4"/>
                         <field name="partner_ids"/>
                     </page>
-                    <page string="MOU">
-                        <separator string="Print only" colspan="4"/>
-                        <field name="mou_ids"/>
-                    </page>
                     <page string="Accounts">
                         <separator string="Print only" colspan="4"/>
                         <field name="account_ids"/>
+                    </page>
+                    <page string="System Origin">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="system_ids"/>
+                    </page>
+                    <page string="Document">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="move_ids"/>
                     </page>
                 </xpath>
             </field>

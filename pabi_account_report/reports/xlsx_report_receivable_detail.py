@@ -92,6 +92,10 @@ class XLSXReportReceivableDetail(models.TransientModel):
     end_doc_date = fields.Date(
         string='Document Date To',
     )
+    system_ids = fields.Many2many(
+        'interface.system',
+        string='System Origin',
+    )
     move_ids = fields.Many2many(
         'account.move',
         'xlsx_report_receivable_detail_move_rel',
@@ -106,20 +110,12 @@ class XLSXReportReceivableDetail(models.TransientModel):
         'report_id', 'partner_id',
         string='Customers',
     )
-    mou_ids = fields.Many2many(
-        'loan.bank.mou',
-        'xlsx_report_receivable_detail_mou_rel',
-        'report_id', 'mou_id',
-        string='MOU',
-    )
     account_ids = fields.Many2many(
         'account.account',
         'xlsx_report_receivable_detail_account_rel',
         'report_id', 'account_id',
         string='Accounts',
-        default=lambda self: self.env['account.account'].search(
-            [('code', '=', '1102010006')]),
-        readonly=True,
+        domain=[('type', '=', 'receivable')],
     )
     # Report Result
     results = fields.Many2many(
@@ -153,7 +149,12 @@ class XLSXReportReceivableDetail(models.TransientModel):
         dom = [('move_line_id.move_id.state','=','posted'),
                ('move_line_id.invoice.date_due', '>=', date_start),
                ('move_line_id.invoice.date_due', '<=', date_end)]
-        # if self.account_ids:
-        #     dom += [('loan_agreement_id.account_receivable_id', 'in',
-        #              self.account_ids.ids)]
+        if self.partner_ids:
+            dom += [('move_line_id.partner_id', 'in', self.partner_ids.ids)]
+        if self.account_ids:
+            dom = [('move_line_id.account_id', 'in', self.account_ids.ids)]
+        if self.system_ids:
+            dom += [('move_line_id.system_id', 'in', self.system_ids.ids)]
+        if self.move_ids:
+            dom += [('move_line_id.move_id', 'in', self.move_ids.ids)]
         self.results = Result.search(dom)

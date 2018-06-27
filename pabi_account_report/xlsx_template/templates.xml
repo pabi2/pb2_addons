@@ -1204,7 +1204,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'B12': 'start_doc_date${value or ""}#{number_format=date;align=left}',
                                 'E12': 'end_doc_date${value or ""}#{number_format=date;align=left}',
                                 'B13': 'move_ids${value and ", ".join([x.name for x in value]) or ""}',
-
+                                'B14': 'system_ids.name${value or ""}',
                                 'B15': '${env.user.display_name}',
                                 'B16': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
 
@@ -1212,7 +1212,7 @@ result = pd.pivot_table(df, index=groupby,
                             'results': {
                                 'A21': 'move_line_id.partner_id.search_key${value or ""}',
                                 'B21': 'move_line_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
-                                'C21': 'move_line_id.invoice.number${value or ""}',
+                                'C21': 'move_line_id.move_id.name${value or ""}',
                                 'D21': 'move_line_id.move_id.document_id${value and (value._table == "interface.account.entry" and value.system_id or "") or ""}',
                                 'E21': 'move_line_id.move_id.document_id${value and (value._table == "interface.account.entry" and value.name or "") or ""}',
                                 'F21': 'move_line_id.move_id.date_document${value or ""}#{number_format=date}',
