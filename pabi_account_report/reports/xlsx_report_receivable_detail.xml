@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="xlsx_report_receivable_detail_view" model="ir.ui.view">
+            <field name="name">xlsx.report.receivable.detail.view</field>
+            <field name="model">xlsx.report.receivable.detail</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//page[1]" position="after">
+                    <page string="Customers">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids"/>
+                    </page>
+                    <page string="Accounts">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="account_ids"/>
+                    </page>
+                    <page string="System Origin">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="system_ids"/>
+                    </page>
+                    <page string="Document">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="move_ids"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_report_receivable_detail" model="ir.actions.act_window">
+            <field name="name">Receivable Detail Report</field>
+            <field name="res_model">xlsx.report.receivable.detail</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_report_receivable_detail"
+            name="Receivable Detail"
+            parent="menu_pabi_receivable_report"
+            action="action_report_receivable_detail"
+            sequence="60"/>
+    </data>
+</openerp>
