@@ -1278,10 +1278,10 @@ result = pd.pivot_table(df, index=groupby,
                                 'U17': "${'=IF(?(S17)=\"\",\"Open\",\"Paid\")'}",
                             },
                             '_TAIL_0': {
-                                'I21': '@{sum}#{font=bold;number_format=number}',
-                                'J21': '@{sum}#{font=bold;number_format=number}',
-                                'K21': '@{sum}#{font=bold;number_format=number}',
-                                'R21': '@{sum}#{font=bold;number_format=number}',
+                                'I17': '@{sum}#{font=bold;number_format=number}',
+                                'J17': '@{sum}#{font=bold;number_format=number}',
+                                'K17': '@{sum}#{font=bold;number_format=number}',
+                                'R17': '@{sum}#{font=bold;number_format=number}',
                             }
                         }
                     }
