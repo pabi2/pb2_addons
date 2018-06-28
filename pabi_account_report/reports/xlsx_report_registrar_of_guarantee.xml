@@ -12,8 +12,9 @@
               </field>
               <xpath expr="//page[1]" position="after">
                   <page string="Accounts">
-                      <separator string="Print only" colspan="4"/>
-                      <field name="account_ids" colspan="4" nolabel="1"/>
+                      <group>
+                          <field name="account_code"/>
+                      </group>
                   </page>
               </xpath>
           </field>
