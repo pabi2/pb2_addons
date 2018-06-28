@@ -1288,5 +1288,58 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
+
+        # Registrar of Guarantee Report
+        <record id="xlsx_report_registrar_of_guarantee" model="ir.attachment">
+            <field name="res_model">xlsx.report.registrar.of.guarantee</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_registrar_of_guarantee.xlsx</field>
+            <field name="name">Registrar of Guarantee Report</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Registrar of Guarantee Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'fiscalyear_start_id.name${value or ""}',
+                                'D3': 'fiscalyear_end_id.name${value or ""}',
+                                'B4': 'filter${value and dict(filter_no="No Filters", filter_date="Dates", filter_period="Periods")[value] or ""}',
+                                'B5': 'period_start_id.name${value or ""}',
+                                'D5': 'period_end_id.name${value or ""}',
+                                'B6': 'date_start${value or ""}#{number_format=date}',
+                                'D6': 'date_end${value or ""}#{number_format=date}',
+                                'B7': 'reconcile_cond${value and dict(all="All", open_item="Open Items", reconciled="Reconciled")[value] or ""}',
+                                'B8': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                                'B9': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B10': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'results': {
+                                'A13': 'move_line_id.org_id.name_short${value or ""}',
+                                'B13': 'move_line_id.period_id.fiscalyear_id.name${value or ""}',
+                                'C13': 'move_line_id.move_id.name${value or ""}',
+                                'D13': 'move_line_id.move_id.date_document${value or ""}#{number_format=date}',
+                                'E13': 'move_line_id.move_id.date${value or ""}#{number_format=date}',
+                                'F13': 'move_line_id.move_id.document_id${value and value._name == "interface.account.entry" and value.system_id.name or ""}',
+                                'G13': 'move_line_id.move_id.document_id${value and value._name == "interface.account.entry" and value.name or ""}',
+                                'H13': 'move_line_id.partner_id.search_key${value or ""}',
+                                'I13': 'move_line_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
+                                'J13': 'payment_id.move_id.narration${value or ""}',
+                                'K13': '',
+                                'L13': '',
+                                'M13': '',
+                                'N13': '',
+                                'O13': 'move_line_id${value and (value.debit != 0 and (-1) * value.debit or value.credit) or 0}#{number_format=number}',
+                                'P13': 'payment_id.amount${value or ""}#{number_format=number}',
+                                'Q13': 'payment_id.number${value or ""}',
+                                'R13': 'move_line_id.reconcile_id${value and value.name or ""}',
+                                'S13': 'move_line_id.write_uid${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'T13': "${'=IF(?(R13)=\"\",\"Open\",\"Cleared\")'}",
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
     </data>
 </openerp>
