@@ -218,14 +218,14 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
                     'customer_invoice_amount':
                         invoice_plan.ref_invoice_id.amount_total,
                     'outstanding': first_rec and
-                        (rec[1] and rec[1] or 0 + supplier_payment.amount -
+                        ((rec[1] and rec[1] or 0) + supplier_payment.amount -
                          invoice_plan.ref_invoice_id.amount_total) or
                         not first_rec and
                         (old_outstanding -
                          invoice_plan.ref_invoice_id.amount_total) or False,
                 }))
                 first_rec = False
-                old_outstanding = rec[1] and rec[1] or 0 + \
+                old_outstanding = (rec[1] and rec[1] or 0) + \
                     supplier_payment.amount - \
                     invoice_plan.ref_invoice_id.amount_total
                 subtotal_invoice_amount += \
