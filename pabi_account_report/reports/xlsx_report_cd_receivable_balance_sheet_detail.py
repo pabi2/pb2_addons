@@ -126,6 +126,22 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
     @api.multi
     def get_execute_datas(self, loan_agreements, brought_forwards,
                           supplier_payments, customer_invoices):
+        # Set loan agreement ids
+        loan_agreement_ids = loan_agreements.ids
+        if len(loan_agreement_ids) in [0, 1]:
+            loan_agreement_ids.extend([0, 0])
+        # Set brought forward ids
+        brought_forward_ids = brought_forwards.ids
+        if len(brought_forward_ids) in [0, 1]:
+            brought_forward_ids.extend([0, 0])
+        # Set supplier payment ids
+        supplier_payment_ids = supplier_payments.ids
+        if len(supplier_payment_ids) in [0, 1]:
+            supplier_payment_ids.extend([0, 0])
+        # Set customer invoice ids
+        customer_invoice_ids = customer_invoices.ids
+        if len(customer_invoice_ids) in [0, 1]:
+            customer_invoice_ids.extend([0, 0])
         self._cr.execute("""
             SELECT lca.id AS loan_agreement_id, bf.brought_forward,
                    sp.voucher_id AS supplier_payment_id, ci.invoice_plan_id
@@ -154,10 +170,10 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
                        WHERE lcav.id IN %s) ci ON lca.id = ci.loan_agreement_id
             WHERE lca.id IN %s
             ORDER BY lca.borrower_partner_id, lca.mou_id, lca.sale_id, lca.name
-        """ % (str(tuple(map(int, brought_forwards.ids))),
-               str(tuple(map(int, supplier_payments.ids))),
-               str(tuple(map(int, customer_invoices.ids))),
-               str(tuple(loan_agreements.ids))))
+        """ % (str(tuple(map(int, brought_forward_ids))),
+               str(tuple(map(int, supplier_payment_ids))),
+               str(tuple(map(int, customer_invoice_ids))),
+               str(tuple(loan_agreement_ids))))
         return self._cr.fetchall()
 
     @api.multi
