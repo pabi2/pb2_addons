@@ -1,7 +1,7 @@
 id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
 access_prweb_purchase_method,access_prweb_purchase_method,model_prweb_purchase_method,base.group_user,1,0,0,0
 access_purchase_type,access_purchase_type,model_purchase_type,base.group_user,1,0,0,0
-access_purchase_method,access_purchase_method,model_purchase_method,base.group_user,1,0,0,0
+access_purchase_method,access_purchase_method,model_purchase_method,base.group_user,1,1,0,0
 access_purchase_price_range,access_purchase_price_range,model_purchase_price_range,base.group_user,1,0,0,0
 access_purchase_condition,access_purchase_condition,model_purchase_condition,base.group_user,1,0,0,0
 access_purchase_condition_detail,access_purchase_condition_detail,model_purchase_condition_detail,base.group_user,1,0,0,0
