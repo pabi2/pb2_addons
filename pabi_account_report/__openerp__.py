@@ -49,6 +49,7 @@
         'reports/xlsx_report_cd_receivable_planning.xml',
         'reports/xlsx_report_sla_receipt.xml',
         'reports/xlsx_report_cd_receivable_balance_sheet_summary.xml',
+        'reports/xlsx_report_cd_receivable_balance_sheet_detail.xml',
         'reports/xlsx_report_tax_exemption_receipt.xml',
         'reports/xlsx_report_receivable_before_due.xml',
         'reports/xlsx_report_receivable_detail.xml',

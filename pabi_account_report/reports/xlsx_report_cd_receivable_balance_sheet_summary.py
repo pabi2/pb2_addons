@@ -102,7 +102,7 @@ class XLSXReportCDReceivableBalanceSheetSummary(models.TransientModel):
         if self.fiscalyear_end_id:
             date_end = self.fiscalyear_end_id.date_stop
         if self.period_start_id:
-            date_start = self.period_id.date_start
+            date_start = self.period_start_id.date_start
         if self.period_end_id:
             date_end = self.period_end_id.date_stop
         if self.date_start:

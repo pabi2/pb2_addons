@@ -24,6 +24,7 @@
                 ref('xlsx_report_cd_receivable_planning'),
                 ref('xlsx_report_sla_receipt'),
                 ref('xlsx_report_cd_receivable_balance_sheet_summary'),
+                ref('xlsx_report_cd_receivable_balance_sheet_detail'),
                 ref('xlsx_report_tax_exemption_receipt'),
                 ref('xlsx_report_receivable_before_due'),
                 ref('xlsx_report_receivable_detail'),
