@@ -102,10 +102,12 @@ class ResPartner(models.Model):
         return res
 
     @api.multi
-    @api.constrains('vat', 'taxbranch', 'category_id')
+    @api.constrains('vat', 'taxbranch', 'category_id', 'name')
     def _check_vat_taxbranch_unique(self):
         for rec in self:
-            if rec.category_id.require_tax_branch_unique:
+            if not rec.category_id:
+                raise ValidationError(_('No partner category is provided.'))
+            elif rec.category_id.require_tax_branch_unique:
                 partners = self.search([('vat', '=', rec.vat),
                                         ('taxbranch', '=', rec.taxbranch)])
                 if len(partners) > 1:
