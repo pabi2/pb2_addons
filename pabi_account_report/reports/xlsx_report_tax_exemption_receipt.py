@@ -39,9 +39,9 @@ class XLSXReportOutputTax(models.TransientModel):
         Result = self.env['tax.exemption.view']
         dom = []
         if self.calendar_period_id:
-            dom += [('invoice_id.period_id', '=', self.calendar_period_id.id)]
+            dom += [('move_id.period_id', '=', self.calendar_period_id.id)]
         if self.taxbranch_id:
-            dom += [('invoice_id.taxbranch_id', '=', self.taxbranch_id.id)]
+            dom += [('taxbranch_id', '=', self.taxbranch_id.id)]
         self.results = Result.search(dom)
 
 class TaxExemptionlView(models.Model):
@@ -83,12 +83,21 @@ class TaxExemptionlView(models.Model):
         string='User ID',
         readonly=True,
     )
+    move_id = fields.Many2one(
+        'account.move',
+        string='Move ID',
+        readonly=True,
+    )
+    taxbranch_id = fields.Integer(
+        string='Tax Branch',
+        readonly=True
+    )
 
     def _get_sql_view(self):
         sql_view = """
             SELECT id, id AS invoice_id,
                 NULL AS interface_id, date_invoice, number_preprint, partner_id, amount_untaxed, source_document_id,
-                number, NULL AS document_origin, validate_user_id
+                number, NULL AS document_origin, validate_user_id, move_id, taxbranch_id
             FROM account_invoice
             WHERE type IN ('out_invoice', 'out_refund')
                 AND state NOT IN ('draft','cancel')
@@ -97,12 +106,12 @@ class TaxExemptionlView(models.Model):
             SELECT invf.id, NULL AS invoice_id, invf.id AS interface_id,
                 invf_line.date AS date_invoice, invf.preprint_number AS number_perprint,
                 invf_line.partner_id, sum(debit) AS amount_untaxed, NULL AS source_document_id, invf.number,
-                invf.name AS document_origin, invf.validate_user_id
+                invf.name AS document_origin, invf.validate_user_id, invf.move_id, invf_line.taxbranch_id
             FROM interface_account_entry invf
             INNER JOIN interface_account_entry_line invf_line ON invf.id = invf_line.interface_id
             WHERE invf.type = 'invoice' AND invf.state = 'done'
                 AND invf.id NOT IN (SELECT DISTINCT invoice_id FROM account_invoice_tax)
-            GROUP BY invf.id, invf_line.date, invf.preprint_number, invf_line.partner_id
+            GROUP BY invf.id, invf_line.date, invf.preprint_number, invf_line.partner_id, invf.move_id, invf_line.taxbranch_id
         """
         return sql_view
 
