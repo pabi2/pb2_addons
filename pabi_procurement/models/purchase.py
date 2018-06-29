@@ -202,7 +202,7 @@ class PurchaseOrder(models.Model):
     @api.multi
     def check_over_requisition_limit(self):
         self.ensure_one()
-        if self.state not in ('done', 'cancel'):
+        if self.state not in ('done', 'cancel') and self.requisition_id:
             po_total_payment = 0
             confirmed_rfqs = self.search(
                 [
