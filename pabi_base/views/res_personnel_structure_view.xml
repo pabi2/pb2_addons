@@ -25,12 +25,20 @@
                     </h1>
                     <group>
                         <group>
-                            <field name="org_id"/>
-                            <field name="costcenter_id"/>
+                            <field name="division_id"/>
                         </group>
                         <group>
                             <field name="code"/>
                             <field name="active"/>
+                        </group>
+                        <group string="Based On">
+                            <field name="org_id"/>
+                            <field name="sector_id"/>
+                            <field name="subsector_id"/>
+                        </group>
+                        <group string="Tag">
+                            <field name="costcenter_id"/>
+                            <field name="mission_id"/>
                         </group>
                     </group>
                     <notebook>
@@ -54,8 +62,15 @@
             <field name="arch" type="xml">
                 <search string="Personnel Budget">
                     <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                    <field name="org_id"/>
+                    <field name="sector_id"/>
+                    <field name="subsector_id"/>
+                    <field name="division_id"/>
                     <group expand="0" string="Group By">
-                        <filter name="org_id" string="Section" context="{'group_by':'org_id'}"/>
+                        <filter name="org_id" string="Org" context="{'group_by':'org_id'}"/>
+                        <filter name="sector_id" string="Sector" context="{'group_by':'sector_id'}"/>
+                        <filter name="subsector_id" string="Subsector" context="{'group_by':'subsector_id'}"/>
+                        <filter name="division_id" string="Division" context="{'group_by':'division_id'}"/>
                     </group>
                 </search>
             </field>

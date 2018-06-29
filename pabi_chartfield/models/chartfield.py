@@ -86,8 +86,21 @@ CHART_STRUCTURE = \
                 'taxbranch_id': {}
             },
         },
+        # 'personnel_costcenter_id': {
+        #     'org_id': {},
+        #     'costcenter_id': {
+        #         'taxbranch_id': {}
+        #     },
+        # },
         'personnel_costcenter_id': {
-            'org_id': {},
+            'division_id': {
+                'subsector_id': {
+                    'sector_id': {
+                        'org_id': {}
+                    },
+                },
+            },
+            'mission_id': {},
             'costcenter_id': {
                 'taxbranch_id': {}
             },
@@ -141,6 +154,12 @@ CHART_VIEW_FIELD = dict([(x[0], x[1][1]) for x in CHART_VIEW.items()])
 
 # For verification, to ensure that no field is valid outside of its view
 CHART_FIELDS = [
+    ('company_id', ['unit_base',
+                    'project_base',
+                    'personnel',
+                    'invest_asset',
+                    'invest_construction',
+                    ]),
     ('spa_id', ['project_base']),
     ('mission_id', ['project_base',
                     'unit_base',
@@ -390,6 +409,13 @@ class HeaderTaxBranch(object):
 
 class ChartField(object):
 
+    # Topmost default
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        default=lambda self: self.env.user.company_id,
+        required=True,
+    )
     # Shared by Project and Unit
     mission_id = fields.Many2one(
         'res.mission',

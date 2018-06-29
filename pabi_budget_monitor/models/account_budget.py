@@ -12,6 +12,7 @@ class AccountBudget(models.Model):
         # 'activity_id': 'Activity',
         # Fund
         # 'fund_id': 'Fund (for all)',
+        'company_id': 'NSTDA',
         # Project Based
         'spa_id': 'SPA',
         'mission_id': 'Mission',
