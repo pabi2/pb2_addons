@@ -414,7 +414,7 @@ class ChartField(object):
         'res.company',
         string='Company',
         default=lambda self: self.env.user.company_id,
-        required=True,
+        required=False,
     )
     # Shared by Project and Unit
     mission_id = fields.Many2one(
