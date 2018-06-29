@@ -6,9 +6,10 @@ class XLSXReportRegistrarOfGuarantee(models.TransientModel):
     _name = 'xlsx.report.registrar.of.guarantee'
     _inherit = 'report.account.common'
 
-    account_ids = fields.Many2many(
-        'account.account',
-        string='Accounts',
+    account_code = fields.Char(
+        string='Account Code',
+        default='2203010001,2203010002,2203010003,2203010004,2203010005',
+        readonly=True,
     )
     reconcile_cond = fields.Selection(
         [('all', 'All Items'),
@@ -30,29 +31,31 @@ class XLSXReportRegistrarOfGuarantee(models.TransientModel):
         self.ensure_one()
         Result = self.env['registrar.of.guarantee.view']
         dom = []
-        if self.account_ids:
-            dom += [('move_line_id.account_id', 'in', self.account_ids.ids)]
+        if self.account_code:
+            dom += [('invoice_move_line_id.account_id', 'in',
+                     self.account_code.split(','))]
         if self.reconcile_cond != 'all':
             if self.reconcile_cond == 'open_item':
-                dom += [('move_line_id.reconcile_id', '=', False)]
+                dom += [('invoice_move_line_id.reconcile_id', '=', False)]
             else:
-                dom += [('move_line_id.reconcile_id', '!=', False)]
+                dom += [('invoice_move_line_id.reconcile_id', '!=', False)]
         if self.fiscalyear_start_id:
-            dom += [('move_line_id.move_id.date', '>=',
+            dom += [('invoice_move_line_id.move_id.date', '>=',
                      self.fiscalyear_start_id.date_start)]
         if self.fiscalyear_end_id:
-            dom += [('move_line_id.move_id.date', '<=',
+            dom += [('invoice_move_line_id.move_id.date', '<=',
                      self.fiscalyear_end_id.date_stop)]
         if self.period_start_id:
-            dom += [('move_line_id.move_id.date', '>=',
+            dom += [('invoice_move_line_id.move_id.date', '>=',
                      self.period_start_id.date_start)]
         if self.period_end_id:
-            dom += [('move_line_id.move_id.date', '<=',
+            dom += [('invoice_move_line_id.move_id.date', '<=',
                      self.period_end_id.date_stop)]
         if self.date_start:
-            dom += [('move_line_id.move_id.date', '>=', self.date_start)]
+            dom += [('invoice_move_line_id.move_id.date', '>=',
+                     self.date_start)]
         if self.date_end:
-            dom += [('move_line_id.move_id.date', '<=', self.date_end)]
+            dom += [('invoice_move_line_id.move_id.date', '<=', self.date_end)]
         self.results = Result.search(dom)
 
 
@@ -64,28 +67,43 @@ class RegistrarOfGuaranteeView(models.Model):
         string='ID',
         readonly=True,
     )
-    move_line_id = fields.Many2one(
+    invoice_move_line_id = fields.Many2one(
         'account.move.line',
-        string='Move Line',
+        string='Invoice Move Line',
         readonly=True,
     )
-    payment_id = fields.Many2one(
-        'account.voucher',
-        string='Payment',
+    voucher_move_line_id = fields.Many2one(
+        'account.move.line',
+        string='Voucher Move Line',
         readonly=True,
     )
 
     def _get_sql_view(self):
         sql_view = """
-            SELECT ROW_NUMBER() OVER(ORDER BY l.id, pv.payment_id) AS id,
-                   l.id AS move_line_id, pv.payment_id
-            FROM account_move_line l
-            LEFT JOIN account_invoice inv ON l.move_id = inv.move_id
-            LEFT JOIN (SELECT avl.invoice_id, av.id AS payment_id
-                       FROM account_voucher_line avl
-                       LEFT JOIN account_voucher av ON avl.voucher_id = av.id
-                       WHERE av.state = 'posted') pv ON inv.id = pv.invoice_id
-            WHERE l.doctype IN ('out_invoice', 'out_refund', 'adjustment')
+            SELECT ROW_NUMBER() OVER(
+                        ORDER BY invoice_line.move_line_id,
+                                 voucher_line.move_line_id) AS id,
+                   invoice_line.move_line_id AS invoice_move_line_id,
+                   voucher_line.move_line_id AS voucher_move_line_id
+            FROM (
+                (SELECT aml.id AS move_line_id,
+                        aml.reconcile_id, aml.reconcile_partial_id
+                 FROM account_move_line aml
+                 LEFT JOIN interface_account_entry iae
+                    ON aml.move_id = iae.move_id
+                 WHERE iae.type in ('invoice') OR aml.doctype IN ('adjustment')
+                ) invoice_line
+                LEFT JOIN
+                (SELECT aml.id AS move_line_id,
+                        aml.reconcile_id, aml.reconcile_partial_id
+                 FROM account_move_line aml
+                 LEFT JOIN interface_account_entry iae
+                    ON aml.move_id = iae.move_id
+                 WHERE iae.type in ('voucher')) voucher_line
+                 ON invoice_line.reconcile_id = voucher_line.reconcile_id
+                    OR invoice_line.reconcile_partial_id
+                        = voucher_line.reconcile_partial_id
+            )
         """
         return sql_view
 
