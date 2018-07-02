@@ -7,16 +7,18 @@
             <field name="model">report.account.common</field>
             <field name="arch" type="xml">
                 <form string="Jasper Reports">
-                    <group col="4">
-                        <field name="chart_account_id" widget="selection"/>
-                        <field name="company_id" invisible="True"/>
-                        <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
-                        <field name="fiscalyear_end_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
-                        <field name="fiscalyear_date_start" invisible="1"/>
-                        <field name="fiscalyear_date_end" invisible="1"/>
+                    <group name="criteria">
+                        <group col="4">
+                            <field name="chart_account_id" widget="selection"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
+                            <field name="fiscalyear_end_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
+                            <field name="fiscalyear_date_start" invisible="1"/>
+                            <field name="fiscalyear_date_end" invisible="1"/>
+                        </group>
                     </group>
-                    <notebook>
-                        <page string="Time Filters">
+                    <notebook name="additional_criteria">
+                        <page string="Time Filters" name="time_filters">
                             <group>
                                 <field name="filter"/>
                             </group>
@@ -49,7 +51,7 @@
                 <xpath expr="//group[@name='criteria']" position="inside">
                     <group col="4">
                         <field name="chart_account_id" widget="selection"/>
-                        <field name="company_id" invisible="True"/>
+                        <field name="company_id" invisible="1"/>
                         <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
                         <field name="fiscalyear_end_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
                         <field name="fiscalyear_date_start" invisible="1"/>
@@ -57,8 +59,8 @@
                     </group>
                 </xpath>
                 <xpath expr="group[@name='criteria']" position="after">
-                    <notebook name="other_criteria" states="choose">
-                        <page string="Time Filters">
+                    <notebook name="additional_criteria" states="choose">
+                        <page string="Time Filters" name="time_filters">
                             <group>
                                 <field name="filter"/>
                             </group>
