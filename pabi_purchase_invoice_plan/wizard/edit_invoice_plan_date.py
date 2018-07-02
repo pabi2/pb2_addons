@@ -28,7 +28,8 @@ class EditInvoicePlanDate(models.TransientModel):
         line = self.env[active_model].browse(active_id)
         if line.ref_invoice_id.state == 'draft':
             line.write({'date_invoice': self.date_invoice})
-            line.ref_invoice_id.write({'date_invoice': self.date_invoice})
+            # Use date document
+            line.ref_invoice_id.write({'date_document': self.date_invoice})
         else:
             raise ValidationError(
                 _('Only invoice in draft state is allowed to change date.'))
