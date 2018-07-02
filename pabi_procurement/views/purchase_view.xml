@@ -129,6 +129,8 @@
                 </xpath>
                 <xpath expr="//field[@name='picking_type_id']" position="after">
                     <field name="contract_id" />
+                    <field name="contract_type_id" attrs="{'invisible': [('contract_id', '=', False)]}"/>
+                    <field name="po_contract_type_id" attrs="{'invisible': [('contract_id', '!=', False)]}"/>
                     <field name="date_contract_start" />
                     <!--<field name="currency_id"/>-->
                     <field name="select_reason" attrs="{'invisible': [('order_type','!=','quotation')]}"/>

@@ -41,6 +41,17 @@ class PurchaseOrder(models.Model):
         compute='_compute_contract_id',
         store=True
     )
+    contract_type_id = fields.Many2one(
+        'purchase.contract.type',
+        string='Contract Type',
+        related='contract_id.contract_type_id',
+    )
+    po_contract_type_id = fields.Many2one(
+        'purchase.contract.type',
+        string='PO Contract Type',
+        track_visibility='onchange',
+        states={'draft': [('readonly', False)]},
+    )
     date_contract_start = fields.Date(
         string='Contract Start Date',
         default=lambda self: fields.Date.context_today(self),
