@@ -28,7 +28,8 @@ class XLSXReportReceivableDetail(models.TransientModel):
         'report', 'move_id',
         string='Document Number(s)',
         domain=[('state', '=', 'posted'),
-                ('doctype', 'in', ['out_invoice', 'out_refund', 'adjustment'])],
+                ('doctype', 'in',
+                ['out_invoice', 'out_refund', 'adjustment'])],
     )
     partner_ids = fields.Many2many(
         'res.partner',
@@ -72,18 +73,23 @@ class XLSXReportReceivableDetail(models.TransientModel):
             date_start = self.date_start
         if self.date_end:
             date_end = self.date_end
-        dom = [('invoice_move_line_id.move_id.state','=','posted'),
+        dom = [('invoice_move_line_id.move_id.state', '=', 'posted'),
                ('invoice_move_line_id.invoice.date_due', '>=', date_start),
                ('invoice_move_line_id.invoice.date_due', '<=', date_end)]
         if self.partner_ids:
-            dom += [('invoice_move_line_id.partner_id', 'in', self.partner_ids.ids)]
+            dom += [('invoice_move_line_id.partner_id', 'in',
+                    self.partner_ids.ids)]
         if self.account_ids:
-            dom = [('invoice_move_line_id.account_id', 'in', self.account_ids.ids)]
+            dom += [('invoice_move_line_id.account_id', 'in',
+                    self.account_ids.ids)]
         if self.system_ids:
-            dom += [('invoice_move_line_id.system_id', 'in', self.system_ids.ids)]
+            dom += [('invoice_move_line_id.system_id', 'in',
+                    self.system_ids.ids)]
         if self.move_ids:
-            dom += [('invoice_move_line_id.move_id', 'in', self.move_ids.ids)]
+            dom += [('invoice_move_line_id.move_id', 'in',
+                    self.move_ids.ids)]
         self.results = Result.search(dom)
+
 
 class ReceivableDetailView(models.Model):
     _name = 'receivable.detail.view'
@@ -102,8 +108,9 @@ class ReceivableDetailView(models.Model):
 
     def _get_sql_view(self):
         sql_view = """
-            SELECT ROW_NUMBER() OVER(ORDER BY invoice_move_line_id, voucher_move_line_id) AS id,
-                    invoice_move_line_id, voucher_move_line_id
+            SELECT ROW_NUMBER() OVER(ORDER BY invoice_move_line_id,
+                   voucher_move_line_id) AS id,
+                   invoice_move_line_id, voucher_move_line_id
             FROM
             (
                 (
@@ -112,21 +119,31 @@ class ReceivableDetailView(models.Model):
                     FROM
                     (
                         (
-                            SELECT aml.id AS move_line_id, aml.reconcile_id, aml.reconcile_partial_id
+                            SELECT aml.id AS move_line_id,
+                                   aml.reconcile_id, aml.reconcile_partial_id
                             FROM account_move_line aml
-                            JOIN account_account aa ON aa.id = aml.account_id AND aa.type = 'receivable'
-                            JOIN interface_account_entry iae ON aml.move_id = iae.move_id
-                            WHERE iae.type = 'invoice' OR aml.doctype = 'adjustment'
+                            JOIN account_account aa ON aa.id = aml.account_id
+                            AND aa.type = 'receivable'
+                            JOIN interface_account_entry iae
+                            ON aml.move_id = iae.move_id
+                            WHERE iae.type = 'invoice'
+                            OR aml.doctype = 'adjustment'
                         ) invoice_line
                         LEFT JOIN
                         (
-                            SELECT aml.id AS move_line_id, aml.reconcile_id, aml.reconcile_partial_id
+                            SELECT aml.id AS move_line_id,
+                                   aml.reconcile_id, aml.reconcile_partial_id
                             FROM account_move_line aml
-                            JOIN account_account aa ON aa.id = aml.account_id AND aa.type = 'receivable'
-                            JOIN interface_account_entry iae ON aml.move_id = iae.move_id
+                            JOIN account_account aa ON aa.id = aml.account_id
+                            AND aa.type = 'receivable'
+                            JOIN interface_account_entry iae
+                            ON aml.move_id = iae.move_id
                             WHERE iae.type = 'voucher'
                         ) voucher_line
-                        ON invoice_line.reconcile_id = voucher_line.reconcile_id OR invoice_line.reconcile_partial_id = voucher_line.reconcile_partial_id
+                        ON invoice_line.reconcile_id =
+                           voucher_line.reconcile_id
+                        OR invoice_line.reconcile_partial_id =
+                           voucher_line.reconcile_partial_id
                     )
                 )
                 UNION
@@ -136,20 +153,27 @@ class ReceivableDetailView(models.Model):
                     FROM
                     (
                         (
-                            SELECT aml.id as move_line_id, aml.reconcile_id, aml.reconcile_partial_id
+                            SELECT aml.id as move_line_id,
+                                   aml.reconcile_id, aml.reconcile_partial_id
                             FROM account_move_line aml
-                            JOIN account_account aa ON aa.id = aml.account_id AND aa.type = 'receivable'
-                            WHERE doctype in ('out_invoice', 'out_refund', 'adjustment')
+                            JOIN account_account aa ON aa.id = aml.account_id
+                            AND aa.type = 'receivable'
+                            WHERE doctype in ('out_invoice',
+                                'out_refund', 'adjustment')
                         ) invoice_line
                         LEFT JOIN
                         (
-                            SELECT aml.id as move_line_id, aml.reconcile_id, aml.reconcile_partial_id
+                            SELECT aml.id as move_line_id,
+                            aml.reconcile_id, aml.reconcile_partial_id
                             FROM account_move_line aml
-                            JOIN account_account aa ON aa.id = aml.account_id AND aa.type = 'receivable'
+                            JOIN account_account aa ON aa.id = aml.account_id
+                            AND aa.type = 'receivable'
                             WHERE doctype = 'receipt'
                         ) voucher_line
-                            ON invoice_line.reconcile_id = voucher_line.reconcile_id
-                            OR invoice_line.reconcile_partial_id = voucher_line.reconcile_partial_id
+                            ON invoice_line.reconcile_id =
+                                voucher_line.reconcile_id
+                            OR invoice_line.reconcile_partial_id =
+                                voucher_line.reconcile_partial_id
                     )
                 )
             ) invoice_interface
