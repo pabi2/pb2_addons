@@ -13,7 +13,7 @@
     "installable": True,
     "depends": [
         'account',
-        'stock_account_operating_unit',
+        # 'stock_account_operating_unit',
     ],
     "data": [
 

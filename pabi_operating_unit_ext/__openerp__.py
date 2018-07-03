@@ -26,7 +26,7 @@
         "purchase_request_to_requisition_operating_unit",
         "purchase_requisition_operating_unit",
         "purchase_work_acceptance_operating_unit",
-        "stock_account_operating_unit",
+        # "stock_account_operating_unit",
         "stock_operating_unit",
         "hr_expense_auto_invoice",  # passing OU from Expense to Invoice
         "sale_operating_unit",
