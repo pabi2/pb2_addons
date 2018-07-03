@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-
         <record id="view_xlsx_report_tax_exemption_receipt_form" model="ir.ui.view">
             <field name="name">view.xlsx.report.tax.exemption.receipt.form</field>
             <field name="model">xlsx.report.tax.exemption.receipt</field>
@@ -20,11 +19,11 @@
                 <field name="period_end_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <field name="period_end_id" position="before">
-                    <field name="calendar_period_id"/>
+                <field name="period_end_id" position="after">
+                    <field name="calendar_period_id" domain="[('company_id', '=', company_id)]"/>
                 </field>
-                <xpath expr="//page[1]" position="after">
-                    <page string="Taxbranch">
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Taxbranch Filters">
                         <group>
                             <field name="taxbranch_id"/>
                         </group>
