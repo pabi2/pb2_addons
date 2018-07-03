@@ -6,12 +6,6 @@ class XLSXReportInputTax(models.TransientModel):
     _name = 'xlsx.report.input.tax'
     _inherit = 'report.account.common'
 
-    fiscalyear_start_id = fields.Many2one(
-        default=False,
-    )
-    fiscalyear_end_id = fields.Many2one(
-        default=False,
-    )
     filter = fields.Selection(
         readonly=True,
         default='filter_period',
