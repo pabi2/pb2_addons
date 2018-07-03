@@ -56,8 +56,10 @@ class PurchaseRequest(models.Model):
             'draft': [('readonly', False)],
             'to_approve': [('readonly', False)],
         },
-        domain="[('operating_unit_ids', 'in', operating_unit_id)]",
         track_visibility='onchange',
+        domain=lambda self:
+        [('id', 'in', self.env.ref('purchase.'
+                                   'group_purchase_manager').users.ids)],
     )
     currency_id = fields.Many2one(
         'res.currency',
@@ -219,20 +221,6 @@ class PurchaseRequest(models.Model):
     def _compute_amount_company(self):
         for rec in self:
             rec.amount_company = rec.amount_total * rec.currency_rate
-
-    @api.onchange('is_central_purchase')
-    def _onchange_is_central_purchase(self):
-        if self.is_central_purchase:
-            domain = {
-                'responsible_uid': []
-            }
-        else:
-            domain = {
-                'responsible_uid': [
-                    ('operating_unit_ids', 'in', self.operating_unit_id.id)
-                ]
-            }
-        return {'domain': domain}
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')

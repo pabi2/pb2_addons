@@ -242,6 +242,12 @@ class PurchaseRequisition(models.Model):
         string='Require for RFQs',
         related='purchase_method_id.require_rfq',
     )
+    user_id = fields.Many2one(
+        'res.users',
+        domain=lambda self:
+        [('id', 'in', self.env.ref('purchase.'
+                                   'group_purchase_manager').users.ids)],
+    )
 
     @api.multi
     def _compute_amount_company(self):
