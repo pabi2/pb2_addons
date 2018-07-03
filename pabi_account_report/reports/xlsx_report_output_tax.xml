@@ -19,11 +19,11 @@
                 <field name="period_end_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <field name="period_end_id" position="before">
-                    <field name="calendar_period_id"/>
+                <field name="period_end_id" position="after">
+                    <field name="calendar_period_id" domain="[('company_id', '=', company_id)]"/>
                 </field>
-                <xpath expr="//page[1]" position="after">
-                    <page string="Taxbranch">
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Taxbranch Filters">
                         <group>
                             <field name="taxbranch_id"/>
                         </group>

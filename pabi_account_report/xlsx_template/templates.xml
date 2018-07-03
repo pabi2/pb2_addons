@@ -812,7 +812,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'I10': 'move_id.document_id${value and value._name == "account.invoice" and value.source_document_id and value.source_document_id._name == "sale.order" and value.source_document_id.workflow_process_id and value.source_document_id.name or ""}',
                                 'J10': 'move_number${value or ""}',
                                 'K10': 'move_id.document_id${value and value._name == "interface.account.entry" and value.name or ""}',
-                                'L10': 'write_uid${value and value.with_context(lang="th_TH").display_name or ""}'
+                                'L10': 'write_uid${value and value.with_context(lang="th_TH").display_name or ""}',
                             },
                             '_TAIL_0': {
                                 'A10': '${"Total"}#{font=bold}',

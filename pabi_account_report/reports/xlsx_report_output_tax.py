@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 from openerp import models, fields, api
 
 
@@ -6,12 +6,6 @@ class XLSXReportOutputTax(models.TransientModel):
     _name = 'xlsx.report.output.tax'
     _inherit = 'report.account.common'
 
-    fiscalyear_start_id = fields.Many2one(
-        default=False,
-    )
-    fiscalyear_end_id = fields.Many2one(
-        default=False,
-    )
     filter = fields.Selection(
         readonly=True,
         default='filter_period',
