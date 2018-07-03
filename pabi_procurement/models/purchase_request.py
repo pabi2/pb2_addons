@@ -200,6 +200,11 @@ class PurchaseRequest(models.Model):
         },
         default=False,
     )
+    small_amount_reason = fields.Char(
+        string='Small Amount Reason',
+        readonly=True,
+        copy=False,
+    )
     accept_reason_txt = fields.Char(
         string='Accept Reason',
         readonly=True,

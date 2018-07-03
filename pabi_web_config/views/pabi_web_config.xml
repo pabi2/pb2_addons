@@ -21,6 +21,10 @@
                                 <label for="pabiweb_active"/>
                                 <field name="pabiweb_active" class="oe_inline"/>
                             </div>
+                            <div>
+                                <label for="pabiweb_pd_inactive"/>
+                                <field name="pabiweb_pd_inactive" class="oe_inline"/>
+                            </div>
                             <div attrs="{'invisible': [('pabiweb_active', '=', False)]}" >
                                 <br/>
                                 <label for="pabiweb_hr_url"/>

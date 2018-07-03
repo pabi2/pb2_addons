@@ -274,6 +274,8 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def send_pbweb_requisition(self, requisition):
+        if self.env.user.company_id.pabiweb_pd_inactive:
+            return False
         User = self.env['res.users']
         Employee = self.env['hr.employee']
         assert len(requisition) == 1, \
@@ -371,6 +373,8 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def send_pbweb_requisition_cancel(self, requisition):
+        if self.env.user.company_id.pabiweb_pd_inactive:
+            return False
         alfresco = \
             self.env['pabi.web.config.settings']._get_alfresco_connect('pcm')
         if alfresco is False or not requisition.reject_reason_txt:

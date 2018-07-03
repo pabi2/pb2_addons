@@ -15,9 +15,10 @@
                     <div>
                         <div>
                             <field name="is_small_amount"/>
-                            <field name="accept_reason_txt" attrs="{'invisible': [('accept_reason_txt', '=', False)]}" class="oe_inline"/>
+                            <field name="small_amount_reason" attrs="{'invisible': [('small_amount_reason', '=', False)]}" class="oe_inline"/>
                         </div>
                     </div>
+                    <field name="accept_reason_txt" attrs="{'invisible': [('small_amount_reason', '=', False)]}"/>
                 </xpath>
 
                 <xpath expr="//form/sheet/group/group/field[@name='assigned_to']" position="after">
