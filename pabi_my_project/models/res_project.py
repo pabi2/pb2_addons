@@ -10,10 +10,7 @@ from openerp.addons.pabi_base.models.res_common import ResCommon
 
 
 MY_PROJECT_STATES = [('draft', 'Draft'),
-                     ('submit', 'Submitted'),
-                     ('unapprove', 'Un-Approved'),
                      ('approve', 'Approved'),
-                     ('reject', 'Rejected'),
                      ('delete', 'Deleted'),
                      ('cancel', 'Cancelled'),
                      ('close', 'Closed'),

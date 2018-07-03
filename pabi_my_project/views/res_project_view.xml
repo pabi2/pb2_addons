@@ -55,7 +55,7 @@
             <field name="arch" type="xml">
                 <form string="Project">
                     <header>
-                        <field name="state2" widget="statusbar" statusbar_visible="draft,submit,unapprove,approve,reject,delete,cancel,close" readonly="1"/>
+                        <field name="state2" widget="statusbar" statusbar_visible="draft,approve,delete,cancel,close" readonly="1"/>
                     </header>
                     <sheet string="Project">
                         <div class="oe_right oe_button_box" name="buttons" groups="base.group_user">
@@ -308,9 +308,7 @@
                     <field name="name" string="Project" filter_domain="['|',('name','ilike',self),('code','ilike',self)]"/>
                     <field name="program_id"/>
                     <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
-                    <filter name="submit" string="Submitted" domain="[('state','=','submit')]"/>
                     <filter name="approve" string="Approved" domain="[('state','=','approve')]"/>
-                    <filter name="reject" string="Rejected" domain="[('state','=','reject')]"/>
                     <filter name="cancel" string="Cancelled" domain="[('state','=','cancel')]"/>
                     <filter name="close" string="Closed" domain="[('state','=','close')]"/>
                     <group expand="0" string="Group By">
