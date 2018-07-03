@@ -33,7 +33,7 @@
         </record>
 
         <record id="action_xlsx_report_tax_exemption_receipt_form" model="ir.actions.act_window">
-            <field name="name">Output Tax Exemption Report</field>
+            <field name="name">Output Tax Exemption</field>
             <field name="res_model">xlsx.report.tax.exemption.receipt</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
