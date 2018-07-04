@@ -29,9 +29,8 @@ class AccountBudget(models.Model):
         PhaseSync = self.env['res.invest.construction.phase.sync']
         BudgetLine = self.env['account.budget.line']
         # Get default AG for construction
-        const_default_ag = self.env.ref(
-            'base.value_invest_construction_activity_group')
-        const_default_ag_id = int(const_default_ag.value_unpickle)
+        const_default_ag_id = \
+            self.env.user.company_id.default_ag_invest_construction_id.id
         # Phases to sync
         phases = Phase.search([
             ('org_id', '=', self.org_id.id),

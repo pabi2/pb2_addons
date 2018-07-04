@@ -120,6 +120,12 @@ class BudgetPlanInvestAssetLine(BPLMonthCommon, models.Model):
     _name = 'budget.plan.invest.asset.line'
     _description = "Invest Asset - Budget Plan Line"
 
+    # Default AG
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        default=lambda self:
+        self.env.user.company_id.default_ag_invest_asset_id,
+    )
     # COMMON
     chart_view = fields.Selection(
         default='invest_asset',  # Invest Asset

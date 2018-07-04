@@ -172,6 +172,17 @@ class PABIAppsConfigSettings(models.TransientModel):
         string='Long Term Investment Account',
         related="company_id.longterm_invest_account_id",
     )
+    # Default AG for invest asset / construction
+    default_ag_invest_asset_id = fields.Many2one(
+        'account.activity.group',
+        string='Default Invest Asset Activity Group',
+        related="company_id.default_ag_invest_asset_id",
+    )
+    default_ag_invest_construction_id = fields.Many2one(
+        'account.activity.group',
+        string='Default Invest Construction Activity Group',
+        related="company_id.default_ag_invest_construction_id",
+    )
 
     @api.onchange('loan_income_activity_id')
     def _onchange_loan_income_activity_id(self):
