@@ -2,101 +2,6 @@
 from openerp import models, fields, api, tools
 
 
-class XLSXReportPartnerDetail(models.TransientModel):
-    _name = 'xlsx.report.partner.detail'
-    _inherit = 'xlsx.report'
-
-    category_ids = fields.Many2many(
-        'res.partner.category',
-        string='Category(s)',
-    )
-    customer = fields.Boolean(
-        string='Customer',
-        default=True,
-    )
-    customer_partner_ids = fields.Many2many(
-        'res.partner',
-        'partner_detail_customer_rel',
-        'report_id', 'partner_id',
-        string='Customer(s)',
-        domain=[('customer', '=', True), '|',
-                ('active', '=', True), ('active', '=', False)],
-    )
-    supplier = fields.Boolean(
-        string='Supplier',
-        default=True,
-    )
-    supplier_partner_ids = fields.Many2many(
-        'res.partner',
-        'partner_detail_supplier_rel',
-        'report_id', 'partner_id',
-        string='Supplier(s)',
-        domain=[('supplier', '=', True), '|',
-                ('active', '=', True), ('active', '=', False)],
-    )
-    active = fields.Selection(
-        selection=[('true', 'True'), ('false', 'False')],
-        string='Active',
-    )
-    partner_detail_results = fields.Many2many(
-        'res.partner',
-        string='Partner Detail Results',
-        compute='_compute_results',
-        help='Use compute fields, so there is nothing store in database',
-    )
-    partner_bank_detail_results = fields.Many2many(
-        'res.partner.view',
-        string='Partner Bank Detail Results',
-        compute='_compute_results',
-        help='Use compute fields, so there is nothing store in database',
-    )
-
-    @api.multi
-    def _get_domain(self, partner_id):
-        self.ensure_one()
-        domain = ['|', ('active', '=', True), ('active', '=', False)]
-        if self.category_ids:
-            domain += [('category_id', 'in', self.category_ids.ids)]
-        if self.active:
-            domain += \
-                [('active', '=', self.active == 'true' and True or False)]
-        customer_partner_ids = self.customer_partner_ids.ids
-        supplier_partner_ids = self.supplier_partner_ids.ids
-        if not self.customer and not self.supplier:
-            domain += [(partner_id, '=', 0)]
-        elif self.customer and self.supplier:
-            if not customer_partner_ids and not supplier_partner_ids:
-                domain += \
-                    ['|', ('customer', '=', True), ('supplier', '=', True)]
-            elif customer_partner_ids and supplier_partner_ids:
-                domain += ['|', (partner_id, 'in', customer_partner_ids),
-                           (partner_id, 'in', supplier_partner_ids)]
-            elif customer_partner_ids:
-                domain += ['|', (partner_id, 'in', customer_partner_ids),
-                           ('supplier', '=', True)]
-            else:
-                domain += ['|', (partner_id, 'in', supplier_partner_ids),
-                           ('customer', '=', True)]
-        elif self.customer:
-            domain += [('customer', '=', True)]
-            if customer_partner_ids:
-                domain += [(partner_id, 'in', customer_partner_ids)]
-        elif self.supplier:
-            domain += [('supplier', '=', True)]
-            if supplier_partner_ids:
-                domain += [(partner_id, 'in', supplier_partner_ids)]
-        return domain
-
-    @api.multi
-    def _compute_results(self):
-        self.ensure_one()
-        self.partner_detail_results = \
-            self.env['res.partner'].search(self._get_domain('id'), order="id")
-        self.partner_bank_detail_results = \
-            self.env['res.partner.view'] \
-                .search(self._get_domain('partner_id'), order="partner_id")
-
-
 class ResPartnerView(models.Model):
     _name = 'res.partner.view'
     _auto = False
@@ -147,3 +52,96 @@ class ResPartnerView(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
                    % (self._table, self._get_sql_view()))
+
+
+class XLSXReportPartnerDetail(models.TransientModel):
+    _name = 'xlsx.report.partner.detail'
+    _inherit = 'report.account.common'
+
+    category_ids = fields.Many2many(
+        'res.partner.category',
+        string='Category(s)',
+    )
+    active = fields.Selection(
+        selection=[('true', 'True'), ('false', 'False')],
+        string='Active',
+        default='true',
+    )
+    partner_type = fields.Selection(
+        [('customer_type', 'Customer'),
+         ('supplier_type', 'Supplier'),
+         ('all', 'Customer and Supplier')],
+        string='Partner\'s',
+        default='all',
+    )
+    partner_ids = fields.Many2many(
+        'res.partner',
+        string='Partner(s)',
+    )
+    partner_detail_results = fields.Many2many(
+        'res.partner',
+        string='Partner Detail Results',
+        compute='_compute_results',
+        help='Use compute fields, so there is nothing store in database',
+    )
+    partner_bank_detail_results = fields.Many2many(
+        'res.partner.view',
+        string='Partner Bank Detail Results',
+        compute='_compute_results',
+        help='Use compute fields, so there is nothing store in database',
+    )
+
+    @api.multi
+    def _get_domain(self, partner_id):
+        self.ensure_one()
+        domain = ['|', ('active', '=', True), ('active', '=', False)]
+        if self.category_ids:
+            domain += [('category_id', 'in', self.category_ids.ids)]
+        if self.active:
+            domain += \
+                [('active', '=', self.active == 'true' and True or False)]
+        if self.partner_ids:
+            domain += [(partner_id, 'in', self.partner_ids.ids)]
+        return domain
+
+    @api.multi
+    def _compute_results(self):
+        self.ensure_one()
+        self.partner_detail_results = \
+            self.env['res.partner'].search(self._get_domain('id'), order="id")
+        self.partner_bank_detail_results = \
+            self.env['res.partner.view'] \
+                .search(self._get_domain('partner_id'), order="partner_id")
+
+    @api.onchange('partner_type', 'active')
+    def _onchange_partner_type(self):
+        res = {'partner_ids': []}
+        domain = []
+        if self.active == 'false':
+            if self.partner_type == 'customer_type':
+                domain = [('customer', '=', True), ('active', '=', False)]
+            if self.partner_type == 'supplier_type':
+                domain = [('supplier', '=', True), ('active', '=', False)]
+            if self.partner_type == 'all':
+                domain = [('customer', '=', True), ('supplier', '=', True),
+                          ('active', '=', False)]
+        elif self.active == 'true':
+            if self.partner_type == 'customer_type':
+                domain = [('customer', '=', True), ('active', '=', True)]
+            if self.partner_type == 'supplier_type':
+                domain = [('supplier', '=', True), ('active', '=', True)]
+            if self.partner_type == 'all':
+                domain = [('customer', '=', True), ('supplier', '=', True),
+                          ('active', '=', True)]
+        else:
+            if self.partner_type == 'customer_type':
+                domain = [('customer', '=', True), '|',
+                          ('active', '=', True), ('active', '=', False)]
+            if self.partner_type == 'supplier_type':
+                domain = [('supplier', '=', True), '|',
+                          ('active', '=', True), ('active', '=', False)]
+            if self.partner_type == 'all':
+                domain = [('customer', '=', True), ('supplier', '=', True),
+                          '|', ('active', '=', True), ('active', '=', False)]
+        res['partner_ids'] = domain
+        return {'domain': res}
