@@ -15,7 +15,7 @@
         <record id="budget_plan_unit_base_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.unit</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_unit_base_20180315.xlsx</field>
+            <field name="datas_fname">budget_plan_unit_base_20180510.xlsx</field>
             <field name="name">Unit Based Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
