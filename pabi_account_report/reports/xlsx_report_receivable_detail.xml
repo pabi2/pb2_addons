@@ -8,21 +8,21 @@
             <field name="mode">primary</field>
             <field name="arch" type="xml">
                 <xpath expr="//page[1]" position="after">
-                    <page string="Customers">
-                        <separator string="Print only" colspan="4"/>
-                        <field name="partner_ids"/>
-                    </page>
-                    <page string="Accounts">
+                    <page string="Account Filters">
                         <separator string="Print only" colspan="4"/>
                         <field name="account_ids"/>
                     </page>
-                    <page string="System Origin">
+                    <page string="Customer Filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="system_ids"/>
+                        <field name="partner_ids"/>
                     </page>
-                    <page string="Document">
+                    <page string="Document Filters">
                         <separator string="Print only" colspan="4"/>
                         <field name="move_ids"/>
+                    </page>
+                    <page string="System Origin Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="system_ids"/>
                     </page>
                 </xpath>
             </field>
