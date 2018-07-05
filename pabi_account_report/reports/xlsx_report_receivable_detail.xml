@@ -7,22 +7,32 @@
             <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <xpath expr="//page[1]" position="after">
-                    <page string="Account Filters">
+                <xpath expr="//group[@name='criteria']/group[1]" position="inside">
+                    <field name="period_length_days"/>
+                </xpath>
+                <xpath expr="//group[@name='criteria']/group[1]/field[@name='fiscalyear_start_id']" position="attributes">
+                    <attribute name="attrs">{'required': [('filter', '=', 'filter_period')], 'invisible': [('filter', '=', 'filter_as_of_date')]}</attribute>
+                </xpath>
+                <xpath expr="//group[@name='criteria']/group[1]/field[@name='fiscalyear_end_id']" position="attributes">
+                    <attribute name="attrs">{'required': [('filter', '=', 'filter_period')], 'invisible': [('filter', '=', 'filter_as_of_date')]}</attribute>
+                </xpath>
+                <xpath expr="//notebook[@name='additional_criteria']/page[@name='time_filters']" position="inside">
+                    <group string="Dates" attrs="{'invisible': [('filter', '!=', 'filter_as_of_date')], 'required':[('filter', '=', 'filter_as_of_date')]}">
+                        <field name="as_of_date"/>
+                    </group>
+                </xpath>
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Account Filters" name="account_filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="account_ids"/>
+                        <field name="account_ids" domain="[('company_id', '=', company_id), ('type', '=', 'receivable')]"/>
                     </page>
-                    <page string="Customer Filters">
+                    <page string="Customer Filters" name="customer_filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="partner_ids"/>
+                        <field name="partner_ids" domain="[('company_id', '=', company_id), ('customer', '=', True)]"/>
                     </page>
-                    <page string="Document Filters">
+                    <page string="Document Filters" name="document_filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="move_ids"/>
-                    </page>
-                    <page string="System Origin Filters">
-                        <separator string="Print only" colspan="4"/>
-                        <field name="system_ids"/>
+                        <field name="move_ids" domain="[('company_id', '=', company_id), ('state', '=', 'posted'), ('doctype', 'in', ['out_invoice', 'out_refund', 'adjustment'])]"/>
                     </page>
                 </xpath>
             </field>
