@@ -64,9 +64,11 @@ class PayableDetailView(models.Model):
                     aml.reconcile_id, aml.reconcile_partial_id
              FROM account_move_line aml
              LEFT JOIN account_move am ON aml.move_id = am.id
+             LEFT JOIN account_voucher av ON am.id = av.move_id
              LEFT JOIN account_account aa ON aml.account_id = aa.id
              WHERE am.state = 'posted' AND aa.type = 'payable' AND
-                   aml.doctype IN ('payment')) payment_line
+                   aml.doctype IN ('payment') AND av.state = 'posted')
+                    payment_line
                    ON invoice_line.reconcile_id = payment_line.reconcile_id
                    OR invoice_line.reconcile_partial_id =
                     payment_line.reconcile_partial_id
