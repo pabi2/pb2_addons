@@ -216,54 +216,6 @@ result = pd.pivot_table(df, index=groupby,
           </field>
         </record>
 
-        # Supplier Invoice Detail
-        <record id="xlsx_report_supplier_invoice_detail" model="ir.attachment">
-            <field name="res_model">xlsx.report.supplier.invoice.detail</field>
-            <field name="datas"></field>
-            <field name="datas_fname">xlsx_report_supplier_invoice_detail.xlsx</field>
-            <field name="name">Supplier Invoice Detail</field>
-            <field name="parent_id" eval="ref('dir_account_reports')"/>
-            <field name="description">
-              {
-                '__EXPORT__': {
-                    'Supplier Invoice Detail Report': {
-                        '_HEAD_': {
-                            'B1': 'operating_unit_ids${value and ", ".join(value.mapped("name")) or ""}',
-                            'B2': 'open${value and "X" or ""}',
-                            'B3': 'paid${value and "X" or ""}',
-                        },
-                        'results': {
-                            'A6': 'partner_id.search_key${value or ""}',
-                            'B6': 'partner_id.display_name${value or ""}',
-                            'C6': 'operating_unit_id.name${value or ""}',
-                            'D6': 'supplier_invoice_number${value or ""}',
-                            'E6': 'purchase_billing_id.name${value or ""}',
-                            'F6': 'number${value or ""}',
-                            'G6': 'date_invoice#{number_format=date}',
-                            'H6': 'date_due#{number_format=date}',
-                            'I6': 'source_document_id${value and value.display_name or ""}',
-                            'J6': 'residual#{number_format=number}',
-                            'K6': 'amount_untaxed#{number_format=number}',
-                            'L6': 'amount_tax#{number_format=number}',
-                            'M6': 'amount_total#{number_format=number}',
-                            'N6': 'currency_id.name${value or ""}',
-                            'O6': 'tax_line${value and value[0].name or ""}',
-                            'P6': 'payment_ids${value and "\\skiprow".join([x.document_id.narration or "" for x in value]) or ""}',
-                            'Q6': 'payment_ids${value and "\\skiprow".join([x.document_id.number or "" for x in value]) or ""}',
-                            'R6': 'payment_ids${value and "\\skiprow".join([x.document_id.payment_export_id.name or "" for x in value]) or ""}',
-                            'S6': 'payment_ids${value and "\\skiprow".join([x.document_id.payment_type and x.document_id.payment_type.title() or "" for x in value]) or ""}',
-                            'T6': 'payment_ids${value and "\\skiprow".join([x.document_id.number_cheque or "" for x in value]) or ""}',
-                            'U6': 'payment_ids${value and "\\skiprow".join([x.document_id.tax_line_wht.name or "" for x in value]) or ""}',
-                            'V6': 'payment_ids${value and "\\skiprow".join([str(sum(x.document_id.tax_line_wht.mapped("amount"))) or "" for x in value]) or ""}#{number_format=number}',
-                            'W6': 'user_id.display_name${value or ""}',
-                            'X6': 'state${value and value.title() or ""}',
-                        },
-                    },
-                }
-            }
-          </field>
-        </record>
-
         # Cheque Register
         <record id="xlsx_report_cheque_register" model="ir.attachment">
             <field name="res_model">xlsx.report.cheque.register</field>
