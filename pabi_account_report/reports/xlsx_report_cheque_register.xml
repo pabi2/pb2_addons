@@ -19,10 +19,10 @@
                 <field name="date_end" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <field name="date_start" position="before">
+                <field name="date_end" position="after">
                     <field name="date_cheque_received"/>
                 </field>
-                <xpath expr="//page[1]" position="after">
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
                     <page string="Journal Filters">
                         <separator string="Print only" colspan="4"/>
                         <field name="journal_ids"/>
