@@ -20,14 +20,13 @@
                     <field name="partner_type"/>
                     <field name="active"/>
                 </field>
-
                 <xpath expr="//page[1]" position="before">
                     <page string="Category Filters">
-                        <separator string="Category" colspan="4"/>
+                        <separator string="Print only" colspan="4"/>
                         <field name="category_ids"/>
                     </page>
                     <page string="Partner Filters">
-                        <separator string="Partner" colspan="4"/>
+                        <separator string="Print only" colspan="4"/>
                         <field name="partner_ids"/>
                     </page>
                 </xpath>
