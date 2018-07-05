@@ -480,6 +480,11 @@ class PRWebPurchaseMethod(models.Model):
     _name = 'prweb.purchase.method'
     _description = 'PRWeb Purchase Method'
 
+    name = fields.Char(
+        string='Name',
+        compute='_compute_name',
+        store=True,
+    )
     type_id = fields.Many2one(
         'purchase.type',
         string='Type',
@@ -501,23 +506,35 @@ class PRWebPurchaseMethod(models.Model):
         'purchase.condition',
         string='Condition',
     )
+    committee_type_ids = fields.One2many(
+        'purchase.committee.type.prweb.method',
+        'method_id',
+        string='Committee Types',
+    )
 
     @api.multi
-    def name_get(self):
-        res = []
+    @api.depends('type_id', 'method_id', 'price_range_id')
+    def _compute_name(self):
         for rec in self:
-            res.append((rec.id,
-                        '%s - %s' % (rec.type_id.name, rec.method_id.name)))
-        return res
+            names = [rec.type_id.name,
+                     rec.method_id.name,
+                     rec.price_range_id.name]
+            names = [x for x in names if x]
+            rec.name = ' - '.join(names)
 
 
 class PurchaseType(models.Model):
     _name = 'purchase.type'
+    _order = 'sequence'
     _description = 'PABI2 Purchase Type'
 
     name = fields.Char(
         string='Purchase Type',
         required=True,
+    )
+    sequence = fields.Integer(
+        string='Sequence',
+        default=10,
     )
 
 
@@ -543,6 +560,11 @@ class PurchaseMethod(models.Model):
         string='Require for RfQ',
         help='At least 1 RfQ must be created before verifying CfBs',
     )
+    doctype_id = fields.Many2one(
+        'wkf.config.doctype',
+        string='Doc Type',
+        domain=[('module', '=', 'purchase')],
+    )
 
 
 class PurchaseCommitteeType(models.Model):
@@ -556,6 +578,10 @@ class PurchaseCommitteeType(models.Model):
     code = fields.Char(
         string='Purchase Committee Type Code',
         required=False,
+    )
+    prweb_only = fields.Boolean(
+        string='PRWeb Only',
+        default=False,
     )
     web_method_ids = fields.One2many(
         'purchase.committee.type.prweb.method',
@@ -581,15 +607,21 @@ class PurchaseCommiteeTypePRWebMethod(models.Model):
         string='Commitee Type',
         index=True,
         ondelete='cascade',
-        readonly=True,
+        required=True,
     )
     sequence = fields.Integer(
         string='Sequence',
         default=10,
     )
+    number_committee = fields.Integer(
+        string='Number of Committee',
+        default=1,
+    )
     method_id = fields.Many2one(
         'prweb.purchase.method',
         string='PRWeb Method',
+        index=True,
+        ondelete='cascade',
         required=True,
     )
     doctype_id = fields.Many2one(
@@ -664,6 +696,7 @@ class PurchaseOrderCommittee(models.Model):
     sequence = fields.Integer(
         string='Sequence',
         default=1,
+        required=True,
     )
     name = fields.Char(
         string='Name',
