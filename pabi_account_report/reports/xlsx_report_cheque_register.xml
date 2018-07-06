@@ -23,11 +23,11 @@
                     <field name="date_cheque_received"/>
                 </field>
                 <xpath expr="//notebook[@name='additional_criteria']" position="inside">
-                    <page string="Journal Filters">
+                    <page string="Account Filters">
                         <separator string="Print only" colspan="4"/>
                         <field name="journal_ids"/>
                     </page>
-                    <page string="Cheque Lot Filters">
+                    <page string="Lot Filters">
                         <separator string="Print only" colspan="4"/>
                         <field name="cheque_lot_ids"/>
                     </page>
