@@ -9,12 +9,26 @@ class AccountMoveLine(models.Model):
     sequence = fields.Integer('Sequence', default=0)
     date_reconciled = fields.Date(
         string='Full Reconciled Date',
-        related='reconcile_id.create_date',
+        # related='reconcile_id.create_date',
+        compute='_compute_date_reconciled',
         readonly=True,
         store=True,
         help="Dated when reconcile_id is set. "
         "Used in determine open items by date",
     )
+
+    @api.multi
+    @api.depends('reconcile_id')
+    def _compute_date_reconciled(self):
+        # Find max date for each account.move.reconcile
+        reconciles = self.mapped('reconcile_id')
+        rec_dates = {}
+        for reconcile in reconciles:
+            dates = reconcile.line_id.mapped('date')
+            rec_dates.update({reconcile.id: max(dates)})
+        for rec in self:
+            if rec.reconcile_id:
+                rec.date_reconciled = rec_dates[rec.reconcile_id.id]
 
     @api.model
     def _update_analytic_dimension(self, vals):
