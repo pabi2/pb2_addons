@@ -653,8 +653,11 @@ class PurchaseWorkAcceptanceLine(models.Model):
                 acc_line.balance_qty = acc_line.line_id.product_qty
             else:
                 if acc_line.acceptance_id.order_id.is_prepaid:
-                    acc_line.balance_qty = (acc_line.line_id.product_qty -
-                                            acc_line.line_id.received_qty)
+                    if acc_line.line_id.product_id.type == 'service':
+                        acc_line.balance_qty = (acc_line.line_id.product_qty)
+                    else:
+                        acc_line.balance_qty = (acc_line.line_id.product_qty -
+                                                acc_line.line_id.received_qty)
                 else:
                     acc_line.balance_qty = (acc_line.line_id.product_qty -
                                             acc_line.line_id.invoiced_qty)

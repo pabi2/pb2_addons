@@ -15,7 +15,7 @@
         <record id="budget_plan_unit_base_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.unit</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_unit_base_20180510.xlsx</field>
+            <field name="datas_fname">budget_plan_unit_base_20180531.xlsx</field>
             <field name="name">Unit Based Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
@@ -23,7 +23,7 @@
                 '__EXPORT__': {
                     'Expense': {
                         '_HEAD_': {
-                            'D2': 'fiscalyear_id.name',
+                            'D2': 'fiscalyear_id.name${value and int(value) or ""}',
                             'D3': 'org_id.name_short',
                             'D4': 'section_id.display_name',
                             'D5': '${time.strftime("%d-%m-%Y")}',
