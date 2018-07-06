@@ -30,7 +30,7 @@
                     </page>
                     <page string="Billing Filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="billing_ids" colspan="4" gnolabel="1"/>
+                        <field name="billing_ids" colspan="4" nolabel="1"/>
                     </page>
                 </xpath>
             </field>
