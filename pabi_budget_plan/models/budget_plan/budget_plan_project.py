@@ -103,6 +103,21 @@ class BudgetPlanProject(BPCommon, models.Model):
         string='Fund Type',
         compute='_compute_master_fund_type_ids'
     )
+    master_employee_ids = fields.Many2many(
+        'hr.employee',
+        sring='Employee Master Data',
+        compute='_compute_master_employee_ids',
+    )
+    master_section_ids = fields.Many2many(
+        'res.section',
+        sring='Section Master Data',
+        compute='_compute_master_section_ids',
+    )
+    master_division_ids = fields.Many2many(
+        'res.division',
+        sring='Division Master Data',
+        compute='_compute_master_division_ids',
+    )
 
     _sql_constraints = [
         ('uniq_plan', 'unique(program_id, fiscalyear_id)',
@@ -157,6 +172,27 @@ class BudgetPlanProject(BPCommon, models.Model):
         FundType = self.env['project.fund.type']
         for rec in self:
             rec.master_fund_type_ids = FundType.search([]).ids
+
+    @api.multi
+    def _compute_master_employee_ids(self):
+        Employee = self.env['hr.employee']
+        for rec in self:
+            employees = Employee.search([('id', '!=', 1),
+                                         ('employee_code', '!=', False)],
+                                        order='employee_code')
+            rec.master_employee_ids = employees
+
+    @api.multi
+    def _compute_master_section_ids(self):
+        Section = self.env['res.section']
+        for rec in self:
+            rec.master_section_ids = Section.search([]).ids
+
+    @api.multi
+    def _compute_master_division_ids(self):
+        Division = self.env['res.division']
+        for rec in self:
+            rec.master_division_ids = Division.search([]).ids
 
     @api.model
     def create(self, vals):
