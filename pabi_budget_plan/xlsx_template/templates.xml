@@ -26,7 +26,7 @@
                             'D2': 'fiscalyear_id.name${value and int(value) or ""}',
                             'D3': 'org_id.name_short',
                             'D4': 'section_id.display_name',
-                            'D5': '${time.strftime("%d-%m-%Y")}',
+                            'D5': '${time.strftime("%d/%m/%Y")}',
                             'D6': 'user_id.name${value or ""}'
                         },
                         'plan_expense_line_ids[150]': {
@@ -61,7 +61,7 @@
                             'D2': 'fiscalyear_id.name',
                             'D3': 'org_id.name_short${value or ""}',
                             'D4': 'section_id.code',
-                            'D5': '${time.strftime("%d-%m-%Y")}',
+                            'D5': '${time.strftime("%d/%m/%Y")}',
                             'D6': 'user_id.name${value or ""}'
                         },
                         'plan_revenue_line_ids[150]': {
@@ -252,7 +252,7 @@
         <record id="invest_asset_plan_xlsx_template" model="ir.attachment">
             <field name="res_model">invest.asset.plan</field>
             <field name="datas"></field>
-            <field name="datas_fname">invest_asset_plan_20180202.xlsx</field>
+            <field name="datas_fname">invest_asset_plan_20180510.xlsx</field>
             <field name="name">Invest Asset Plan Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
@@ -260,12 +260,12 @@
                 '__EXPORT__': {
                     'Asset_Item_Plan': {
                         '_HEAD_': {
-                            'E2': 'fiscalyear_id.name',
+                            'E2': 'fiscalyear_id.name${value and int(value) or ""}',
                             'E3': 'org_id.name_short',
-                            'E4': '${time.strftime("%d-%m-%Y")}',
+                            'E4': '${time.strftime("%d/%m/%Y")}',
                             'E5': '${env.user.name or ""}',
                         },
-                        'plan_line_ids[20]': {
+                        'plan_line_ids[100]': {
                             'B10': 'priority',
                             'C10': 'select${value and "X" or ""}',
                             'D10': 'approved${value and "X" or ""}',
@@ -304,27 +304,27 @@
                     },
                     'TAB_List': {
                         'master_program_ids': {
-                            'B5': 'display_name_2'
+                            'C5': 'display_name_2'
                         },
                         'master_requester_ids': {
-                            'D5': 'name'
+                            'I5': 'name'
                         },
                         'master_section_ids': {
-                            'F5': 'display_name_2',
-                            'G5': 'division_id.name'
+                            'J5': 'display_name_2',
+                            'K5': 'division_id.name'
                         },
                         'master_asset_categ_ids': {
-                            'H5': 'name'
+                            'P5': 'name'
                         },
                         'master_strategy_ids': {
-                            'J5': 'name',
-                            'K5': 'group_id.name',
+                            'R5': 'name',
+                            'S5': 'group_id.name',
                         },
                     },
                 },
                 '__IMPORT__': {
                     'Asset_Item_Plan': {
-                        'plan_line_ids[20]': {
+                        'plan_line_ids[100]': {
                             'B10': 'priority',
                             'C10${value and True or False}': 'select',
                             'D10${value and True or False}': 'approved',
@@ -380,7 +380,7 @@
                 '__EXPORT__': {
                     'Construction Project': {
                         '_HEAD_': {
-                            'C2': 'fiscalyear_id.name',
+                            'C2': 'fiscalyear_id.name${value and int(value) or ""}',
                             'C3': 'org_id.name_short',
                             'C4': '${time.strftime("%d/%m/%Y")}',
                             'C5': 'user_id.name${value or ""}'
@@ -475,7 +475,7 @@
                           'E3': 'program_id.name',
                           'E4': 'program_group_id.name',
                           'E5': 'functional_area_id.name',
-                          'E6': '${time.strftime("%d-%m-%Y")}',
+                          'E6': '${time.strftime("%d/%m/%Y")}',
                           'E7': 'user_id.name${value or ""}'
                       },
                       'plan_line_ids[500]': {
