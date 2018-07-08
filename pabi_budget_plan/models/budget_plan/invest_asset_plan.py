@@ -124,7 +124,7 @@ class InvestAssetPlan(models.Model):
         compute='_compute_master_program_ids',
     )
     master_requester_ids = fields.Many2many(
-        'res.users',
+        'hr.employee',
         sring='Requester Master Data',
         compute='_compute_master_requester_ids',
     )
@@ -176,8 +176,8 @@ class InvestAssetPlan(models.Model):
         Employee = self.env['hr.employee']
         for rec in self:
             employees = Employee.search([('org_id', '=', rec.org_id.id)])
-            users = employees.mapped('user_id').sorted(key=lambda l: l.name)
-            rec.master_requester_ids = users
+            employees = employees.sorted(key=lambda l: l.employee_code)
+            rec.master_requester_ids = employees
 
     @api.multi
     def _compute_master_strategy_ids(self):
