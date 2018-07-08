@@ -27,20 +27,22 @@ for user_id in user_ids:
                 res3 = org_model.read(org_id, ['operating_unit_id'])
                 ou_id = res3.get('operating_unit_id', False) and \
                     res3['operating_unit_id'][0] or []
-                user_model.write([user_id], {'default_operating_unit_id': ou_id,
-                                             'operating_unit_ids': [(4, ou_id)]})
+                user_model.write([user_id],
+                                 {'default_operating_unit_id': ou_id,
+                                  'operating_unit_ids': [(4, ou_id)]})
                 # For ou_ids
-                user_model.write([user_id], {'operating_unit_ids': [(4, ou_id)]})
+                user_model.write([user_id],
+                                 {'operating_unit_ids': [(4, ou_id)]})
                 for org_id in res2.get('org_ids', []):
                     res3 = org_model.read(org_id, ['operating_unit_id'])
                     ou_id = res3['operating_unit_id'] and \
                         res3['operating_unit_id'][0] or []
-                    user_model.write([user_id], {'operating_unit_ids': [(4, ou_id)]})
+                    user_model.write([user_id],
+                                     {'operating_unit_ids': [(4, ou_id)]})
                 print 'Done for user_id = %s' % user_id
     except Exception:
         pass
-            # org_ids = [org_id]
-
+        # org_ids = [org_id]
 
     # org = rec.employee_ids and rec.employee_ids[0].org_id or False
     # orgs = rec.employee_ids and rec.employee_ids[0].org_ids or False

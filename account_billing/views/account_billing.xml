@@ -9,7 +9,7 @@
                     <filter string="Draft" domain="[('state','=','draft')]" help="Draft Billing"/>
                     <filter string="Billed" domain="[('state','=','billed')]" help="Billed Billing"/>
                     <field name="number" string="Billing"/>
-                    <field name="date"/>	
+                    <field name="date"/>
                     <field name="partner_id" string="Customer"/>
                     <field name="currency_id" string="Currency"/>
                     <field name="period_id"/>
@@ -22,7 +22,7 @@
                 </search>
             </field>
         </record>
-    
+
        	<record model="ir.ui.view" id="view_billing_tree">
             <field name="name">account.billing.tree</field>
             <field name="model">account.billing</field>
@@ -71,7 +71,7 @@
                         <page string="Payment Information" groups="base.group_user">
                             <field name="line_cr_ids" >
                                 <tree string="Invoices and outstanding transactions" editable="bottom" colors="gray:amount==0">
-                                    <field name="reconcile" string="Select" 
+                                    <field name="reconcile" string="Select"
                                     	on_change="onchange_reconcile(reconcile, amount, amount_unreconciled)"
                                     	groups="account.group_account_user"/>
                                     <field name="journal_id" invisible="1"/>
@@ -95,7 +95,7 @@
                                 </group>
                             </group>
                         </page>
-                       
+
                     </notebook>
                     </sheet>
                     <div class="oe_chatter">
@@ -105,8 +105,8 @@
                 </form>
             </field>
         </record>
-        
-    
+
+
 		<record id="action_billing_receipt" model="ir.actions.act_window">
             <field name="name">Customer Billing</field>
             <field name="res_model">account.billing</field>
@@ -117,7 +117,7 @@
               <p class="oe_view_nocontent_create">
                 Click to register a new billing.
               </p><p>
-                Enter the customer the invoices expect to be paid by the customer for this 
+                Enter the customer the invoices expect to be paid by the customer for this
                 bill period. By default the pending invoices will be listed, automatically.
               </p>
             </field>
@@ -136,6 +136,6 @@
 
 	    <menuitem action="action_billing_receipt" icon="STOCK_JUSTIFY_FILL" sequence="11"
 	    id="menu_action_billing_receipt"  parent="account.menu_finance_receivables"/>
-	    
+
     </data>
 </openerp>

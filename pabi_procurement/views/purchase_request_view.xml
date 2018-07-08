@@ -105,13 +105,16 @@
                     <attribute name="string">Cancel</attribute>
                     <attribute name="groups">purchase_request.group_purchase_request_manager,purchase_request.group_purchase_request_user</attribute>
                 </xpath>
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="after">
-                    <!--<field name="price_unit"/>-->
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='is_editable']" position="after">
                     <field name="fixed_asset" invisible="1"/>
                     <field name="tax_ids" widget="many2many_tags"/>
                     <field name="price_subtotal"/>
+                </xpath>
+                <xpath expr="//form/sheet/group/group/field[@name='analytic_account_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='analytic_account_id']" position="after">
                     <!--<field name="price_unit" />-->
