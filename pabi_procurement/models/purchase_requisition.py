@@ -31,7 +31,7 @@ class PurchaseRequisition(models.Model):
     )
     purchase_type_id = fields.Many2one(
         'purchase.type',
-        string='Type',
+        string='Procurement Type',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -65,7 +65,7 @@ class PurchaseRequisition(models.Model):
     )
     purchase_method_id = fields.Many2one(
         'purchase.method',
-        string='Method',
+        string='Procurement Method',
         readonly=True,
         states={'draft': [('readonly', False)]},
         track_visibility='onchange',
