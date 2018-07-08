@@ -65,8 +65,8 @@
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
                        position="after">
-                    <field name="purchase_method_id" requried="1"/>
-                    <field name="purchase_price_range_id" requried="1"/>
+                    <field name="purchase_method_id" required="1"/>
+                    <field name="purchase_price_range_id" required="1"/>
                     <field name="require_rfq" invisible='1'/>
                     <field name="purchase_condition_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
                     <field name="purchase_condition_detail_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
