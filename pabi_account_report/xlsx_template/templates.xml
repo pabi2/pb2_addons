@@ -262,52 +262,62 @@ result = pd.pivot_table(df, index=groupby,
             </field>
         </record>
 
-        # PO Contract
-        <record id="xlsx_report_purchase_contract" model="ir.attachment">
-            <field name="res_model">xlsx.report.purchase.contract</field>
+        # Contract Collateral
+        <record id="xlsx_report_contract_collateral" model="ir.attachment">
+            <field name="res_model">xlsx.report.contract.collateral</field>
             <field name="datas"></field>
-            <field name="datas_fname">xlsx_report_purchase_contract.xlsx</field>
-            <field name="name">PO Contract</field>
+            <field name="datas_fname">xlsx_report_contract_collateral.xlsx</field>
+            <field name="name">Contract Collateral</field>
             <field name="parent_id" eval="ref('dir_account_reports')"/>
             <field name="description">
                 {
                     '__EXPORT__': {
-                        'PO Contract Report': {
+                        'Contract Collateral Report': {
                             '_HEAD_': {
-                                'A1': '${env.user.company_id.display_name}',
-                                'B3': 'date_report${value or ""}#{number_format=date;align=left}',
-                                'B4': '${env.user.display_name}',
-                                'B5': '${time.strftime("%d/%m/%Y")}#{number_format=date;align=left}',
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'date_report${value or ""}#{number_format=date}',
+                                'B4': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.with_context(lang="th_TH").title.name, x.with_context(lang="th_TH").name]))) for x in value]) or ""}',
+                                'B5': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
                             'results': {
-                                'A8': 'operating_unit_id${value and (value.org_id and value.org_id.name_short or "") or ""}',
-                                'B8': 'supplier_id.search_key${value or ""}',
-                                'C8': 'supplier_id.name${value or ""}',
-                                'D8': 'name${value or ""}',
-                                'E8': 'requisition_id.purchase_ids${value and (value.mapped("order_id").filtered(lambda l: l.state == "done") and value.mapped("order_id").filtered(lambda l: l.state == "done")[0].name or "") or ""}',
-                                'F8': 'display_code${value or ""}',
-                                'G8': 'start_date${value or ""}#{number_format=date}',
-                                'H8': 'end_date${value or ""}#{number_format=date}',
-                                'I8': 'collateral_type_id.name${value or ""}',
-                                'J8': 'collateral_no${value or ""}',
-                                'K8': 'collateral_date${value or ""}#{number_format=date}',
-                                'L8': 'bank${value or ""}',
-                                'M8': 'branch${value or ""}',
-                                'N8': 'currency_id.name${value or ""}',
-                                'O8': 'contract_amt${value or ""}#{number_format=number}',
-                                'P8': 'collateral_agreement_amt${value or ""}#{number_format=number}',
-                                'Q8': 'collateral_due_date${value or ""}#{number_format=date}',
+                                'A9': 'operating_unit_id${value and (value.org_id and value.org_id.name_short or "") or ""}',
+                                'B9': 'supplier_id.search_key${value or ""}',
+                                'C9': 'supplier_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
+                                'D9': 'name${value or ""}',
+                                'E9': 'requisition_id.purchase_ids${value and (value.mapped("order_id").filtered(lambda l: l.state == "done") and value.mapped("order_id").filtered(lambda l: l.state == "done")[0].name or "") or ""}',
+                                'F9': 'poc_code${value or ""}',
+                                'G9': 'start_date${value or ""}#{number_format=date}',
+                                'H9': 'end_date${value or ""}#{number_format=date}',
+                                'I9': 'collateral_type_id.name${value or ""}',
+                                'J9': 'collateral_no${value or ""}',
+                                'K9': 'collateral_date${value or ""}#{number_format=date}',
+                                'L9': 'bank${value or ""}',
+                                'M9': 'branch${value or ""}',
+                                'N9': 'currency_id.name${value or ""}',
+                                'O9': 'collateral_agreement_amt${value or ""}#{number_format=number}',
+                                'P9': 'collateral_due_date${value or ""}#{number_format=date}',
+                                'Q9': "${'=B3-?(P9)'}",
+                                'R9': "${'=IF(?(Q9)&lt;=0,?(O9),\"\")'}",
+                                'S9': "${'=IF(AND(?(Q9)&gt;=1,?(Q9)&lt;=30),?(O9),\"\")'}",
+                                'T9': "${'=IF(AND(?(Q9)&gt;=31,?(Q9)&lt;=60),?(O9),\"\")'}",
+                                'U9': "${'=IF(AND(?(Q9)&gt;=61,?(Q9)&lt;=90),?(O9),\"\")'}",
+                                'V9': "${'=IF(AND(?(Q9)&gt;=91,?(Q9)&lt;=180),?(O9),\"\")'}",
+                                'W9': "${'=IF(AND(?(Q9)&gt;=181,?(Q9)&lt;=365),?(O9),\"\")'}",
+                                'X9': "${'=IF(AND(?(Q9)&gt;=366,?(Q9)&lt;=1095),?(O9),\"\")'}",
+                                'Y9': "${'=IF(?(Q9)&gt;1095,?(O9),\"\")'}",
                             },
                             '_TAIL_0': {
-                                'P8': '@{sum}#{font=bold;number_format=number}',
-                                'S8': '@{sum}#{font=bold;number_format=number}',
-                                'T8': '@{sum}#{font=bold;number_format=number}',
-                                'U8': '@{sum}#{font=bold;number_format=number}',
-                                'V8': '@{sum}#{font=bold;number_format=number}',
-                                'W8': '@{sum}#{font=bold;number_format=number}',
-                                'X8': '@{sum}#{font=bold;number_format=number}',
-                                'Y8': '@{sum}#{font=bold;number_format=number}',
-                                'Z8': '@{sum}#{font=bold;number_format=number}',
+                                'A9': '${"Total"}#{font=bold}',
+                                'O9': '@{sum}#{font=bold;number_format=number}',
+                                'R9': '@{sum}#{font=bold;number_format=number}',
+                                'S9': '@{sum}#{font=bold;number_format=number}',
+                                'T9': '@{sum}#{font=bold;number_format=number}',
+                                'U9': '@{sum}#{font=bold;number_format=number}',
+                                'V9': '@{sum}#{font=bold;number_format=number}',
+                                'W9': '@{sum}#{font=bold;number_format=number}',
+                                'X9': '@{sum}#{font=bold;number_format=number}',
+                                'Y9': '@{sum}#{font=bold;number_format=number}',
                             }
                         }
                     }
