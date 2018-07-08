@@ -21,7 +21,7 @@
                     <field name="active"/>
                 </field>
                 <xpath expr="//page[1]" position="before">
-                    <page string="Category Filters">
+                    <page string="Partner Category Filters">
                         <separator string="Print only" colspan="4"/>
                         <field name="category_ids"/>
                     </page>
