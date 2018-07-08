@@ -15,3 +15,4 @@ access_receivable_detail_view,access_receivable_detail_view,model_receivable_det
 access_receivable_before_due_view,access_receivable_before_due_view,model_receivable_before_due_view,,1,0,0,0
 access_loan_customer_agreement_view,access_loan_customer_agreement_view,model_loan_customer_agreement_view,,1,0,0,0
 access_tax_exemption_view,access_tax_exemption_view,model_tax_exemption_view,,1,0,0,0
+access_payable_balance_view,access_payable_balance_view,model_payable_balance_view,,1,0,0,0

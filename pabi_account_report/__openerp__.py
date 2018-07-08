@@ -32,7 +32,7 @@
         'reports/xlsx_report_partner_detail.xml',
         'reports/xlsx_report_advance_status.xml',
         'reports/xlsx_report_cheque_register.xml',
-        'reports/xlsx_report_purchase_contract.xml',
+        'reports/xlsx_report_contract_collateral.xml',
         'reports/xlsx_report_advance_payment.xml',
         'reports/xlsx_report_payable_detail.xml',
         'reports/xlsx_report_payable_balance.xml',
