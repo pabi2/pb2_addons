@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 from openerp import models, fields, api
 
 
@@ -22,25 +22,19 @@ class XLSXReportSLAReceipt(models.TransientModel):
         self.ensure_one()
         Result = self.env['account.bank.receipt']
         dom = [('state', '=', 'done')]
-
         if self.user_ids:
             dom += [('validate_user_id', 'in', self.user_ids.ids)]
         if self.fiscalyear_start_id:
-            dom += [('move_id.period_id.date_start', '>=',
-                    self.fiscalyear_start_id.date_start)]
+            dom += [('move_id.date', '>=',
+                     self.fiscalyear_start_id.date_start)]
         if self.fiscalyear_end_id:
-            dom += [('move_id.period_id.date_stop', '<=',
-                    self.fiscalyear_end_id.date_stop)]
+            dom += [('move_id.date', '<=', self.fiscalyear_end_id.date_stop)]
         if self.period_start_id:
-            dom += [('move_id.period_id.date_start', '>=',
-                    self.period_start_id.date_start)]
+            dom += [('move_id.date', '>=', self.period_start_id.date_start)]
         if self.period_end_id:
-            dom += [('move_id.period_id.date_stop', '<=',
-                    self.period_end_id.date_stop)]
+            dom += [('move_id.date', '<=', self.period_end_id.date_stop)]
         if self.date_start:
-            dom += [('move_id.period_id.date_start', '>=',
-                    self.date_start)]
+            dom += [('move_id.date', '>=', self.date_start)]
         if self.date_end:
-            dom += [('move_id.period_id.date_stop', '<=',
-                    self.date_end)]
+            dom += [('move_id.date', '<=', self.date_end)]
         self.results = Result.search(dom, order="name")
