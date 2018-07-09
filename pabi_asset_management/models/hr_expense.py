@@ -10,14 +10,16 @@ class HRExpense(models.Model):
         copy=False,
         default=False,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={'draft': [('readonly', False)],
+                'confirm': [('readonly', False)]},
     )
     ship_purchase_id = fields.Many2one(
         'purchase.order',
         string='For Purchase Order',
         copy=False,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={'draft': [('readonly', False)],
+                'confirm': [('readonly', False)]},
         help="This expense is shipping handling for things bought "
         "with this purchase order.",
     )
