@@ -178,6 +178,10 @@ class ResProgram(SpaStructureTag, ResCommon, models.Model):
         'res.section.program',
         string='Section Program',
     )
+    reference_code = fields.Char(
+        string='Reference Code',
+        required=False,
+    )
 
     @api.one
     def _compute_current_spa_id(self):

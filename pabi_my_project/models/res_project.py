@@ -64,8 +64,8 @@ class ResProject(LogCommon, models.Model):
     project_date_end_proposal = fields.Date(
         string='Project End Date (by proposal)',
     )
-    project_date_end_extension = fields.Date(
-        string='Project End Date (by extension)',
+    project_date_close_cond = fields.Date(
+        string='Project Close Date (Condition)',
     )
     project_date_start = fields.Date(
         string='Project start Date',
@@ -74,7 +74,10 @@ class ResProject(LogCommon, models.Model):
         string='Project End Date',
     )
     project_date_close = fields.Date(
-        string='Project Close Date',
+        string='Project Close Date (Complete)',
+    )
+    project_date_terminate = fields.Date(
+        string='Project Terminate Date',
     )
     contract_date_start = fields.Date(
         string='Contract start Date',
@@ -116,6 +119,10 @@ class ResProject(LogCommon, models.Model):
     ref_program_id = fields.Many2one(
         'res.program',
         string='Program Reference',
+    )
+    target_program_id = fields.Many2one(
+        'res.program',
+        string='Program Target',
     )
     proposal_program_id = fields.Many2one(
         'res.program',
@@ -286,8 +293,14 @@ class ResProject(LogCommon, models.Model):
     overall_revenue_plan = fields.Float(
         string='Overall Revenue Plan',
     )
+    proposal_overall_budget = fields.Float(
+        string='Proposal Overall Budget (External)',
+    )
     overall_expense_budget = fields.Float(
-        string='Overall Expense Budget',
+        string='Overall Expense Budget (External)',
+    )
+    overall_expense_budget_internal = fields.Float(
+        string='Overall Expense Budget (Internal)',
     )
     project_type_id = fields.Many2one(
         'project.type',

@@ -249,15 +249,15 @@ class PurchaseRequisition(models.Model):
                                    'group_purchase_manager').users.ids)],
     )
     egp_date1 = fields.Date(
-        string='รายงานขอซื้อ/จ้าง/เช่า',
+        string=u'รายงานขอซื้อ/จ้าง/เช่า',
         track_visibility='onchange',
     )
     egp_date2 = fields.Date(
-        string='รายงานผลการพิจารณาและขออนุมัติสั่งซื้อสั่งจ้าง',
+        string=u'รายงานผลการพิจารณาและขออนุมัติสั่งซื้อสั่งจ้าง',
         track_visibility='onchange',
     )
     egp_date3 = fields.Date(
-        string='ประกาศผลผู้ชนะ',
+        string=u'ประกาศผลผู้ชนะ',
         track_visibility='onchange',
     )
 

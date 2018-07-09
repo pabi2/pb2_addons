@@ -15,6 +15,7 @@ class WkfConfigDocType(models.Model):
     )
     module = fields.Selection([
         ('purchase', "Purchase & Inventory"),
+        ('purchase_pd', "Purchase PD"),
         ('account', "Accounting & Finance"), ],
         string='Module',
         required=True,

@@ -20,7 +20,7 @@ class WkfConfigPurchaseUnit(models.Model):
     )
     doctype_id = fields.Many2one(
         'wkf.config.doctype',
-        domain="[('module', '=', 'procure')]",
+        domain="[('module', 'in', ('purchase', 'purchase_pd'))]",
         string='Document Type',
         required=True,
     )
