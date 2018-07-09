@@ -20,6 +20,7 @@ class HRExpense(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)],
                 'confirm': [('readonly', False)]},
+        domain=[('order_type', '=', 'purchase_order')],
         help="This expense is shipping handling for things bought "
         "with this purchase order.",
     )
