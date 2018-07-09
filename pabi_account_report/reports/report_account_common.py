@@ -99,8 +99,25 @@ class ReportAccountCommon(models.AbstractModel):
         self.fiscalyear_date_start = date_start
         self.fiscalyear_date_end = date_end
 
+    @api.multi
+    def _reset_common_field(self):
+        self.ensure_one()
+        if not self._context.get('reset_common_field', False):
+            return False
+        self.fiscalyear_start_id = False
+        self.fiscalyear_end_id = False
+        self.period_start_id = False
+        self.period_end_id = False
+        self.date_start = False
+        self.date_end = False
+        return True
+
     @api.onchange('chart_account_id')
     def _onchange_chart_account_id(self):
+        # Reset common field
+        if self._reset_common_field():
+            return {}
+        # --
         company = self.chart_account_id.company_id
         now = time.strftime('%Y-%m-%d')
         domain = [('company_id', '=', company.id),
@@ -169,6 +186,10 @@ class ReportAccountCommon(models.AbstractModel):
 
     @api.onchange('filter')
     def _onchange_filter(self):
+        # Reset common field
+        if self._reset_common_field():
+            return {}
+        # --
         period_start, period_end, date_start, date_end = \
             self._get_common_period_and_date()
         self.period_start_id = self.period_end_id = False

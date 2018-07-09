@@ -11,10 +11,10 @@
                     <field name="period_length_days"/>
                 </xpath>
                 <xpath expr="//group[@name='criteria']/group[1]/field[@name='fiscalyear_start_id']" position="attributes">
-                    <attribute name="attrs">{'required': [('filter', '=', 'filter_period')], 'invisible': [('filter', '=', 'filter_as_of_date')]}</attribute>
+                    <attribute name="attrs">{'invisible': [('filter', '=', 'filter_as_of_date')]}</attribute>
                 </xpath>
                 <xpath expr="//group[@name='criteria']/group[1]/field[@name='fiscalyear_end_id']" position="attributes">
-                    <attribute name="attrs">{'required': [('filter', '=', 'filter_period')], 'invisible': [('filter', '=', 'filter_as_of_date')]}</attribute>
+                    <attribute name="attrs">{'invisible': [('filter', '=', 'filter_as_of_date')]}</attribute>
                 </xpath>
                 <xpath expr="//notebook[@name='additional_criteria']/page[@name='time_filters']" position="inside">
                     <group string="Dates" attrs="{'invisible': [('filter', '!=', 'filter_as_of_date')], 'required':[('filter', '=', 'filter_as_of_date')]}">
