@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="xlsx_report_gl_receivable_view" model="ir.ui.view">
+            <field name="name">xlsx.report.gl.receivable.view</field>
+            <field name="model">xlsx.report.gl.receivable</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//page[1]" position="after">
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_report_gl_receivable" model="ir.actions.act_window">
+            <field name="name">GL Receivable Report</field>
+            <field name="res_model">xlsx.report.gl.receivable</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_report_gl_receivable"
+            name="GL Receivable "
+            parent="menu_pabi_receivable_report"
+            action="action_report_gl_receivable"
+            sequence="60"/>
+    </data>
+</openerp>
