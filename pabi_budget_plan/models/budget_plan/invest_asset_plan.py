@@ -484,6 +484,13 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
         readonly=True,
         help="Commitment on future PR/PO after next fy and beyond",
     )
+    # Excel force this to be related field
+    owner_section_id = fields.Many2one(
+        'res.section',
+        related='request_user_id.section_id',
+        readonly=True,
+        store=True,
+    )
 
     @api.multi
     def edit_asset_item(self):
