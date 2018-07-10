@@ -333,7 +333,7 @@
                             'I10': 'name',
                             'J10': 'strategy_id',
                             'L10${value and value[value.find("[")+1:value.find("]")] or ""}': 'request_user_id',
-                            'M10${value and value[value.find("[")+1:value.find("]")] or ""}': 'owner_section_id',
+                            # 'M10${value and value[value.find("[")+1:value.find("]")] or ""}': 'owner_section_id',
                             'O10': 'location',
                             'P10': 'quantity',
                             'Q10': 'price_unit',
@@ -577,15 +577,15 @@
                       'master_fund_type_ids': {
                           'M5': 'display_name',
                       },
-                      # 'master_employee_ids': {
-                      #     'P5': 'display_name',
-                      # },
-                      # 'master_section_ids': {
-                      #     'V5': 'display_name_2',
-                      # },
-                      # 'master_division_ids': {
-                      #     'AB5': 'display_name_2',
-                      # },
+                      'master_employee_ids': {
+                          'P5': 'display_name',
+                      },
+                      'master_section_ids': {
+                          'V5': 'display_name_2',
+                      },
+                      'master_division_ids': {
+                          'AB5': 'name',
+                      },
                   },
               },
               '__IMPORT__': {
