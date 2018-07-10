@@ -107,6 +107,10 @@ class BudgetPlanPersonnelLine(BPLMonthCommon, ActivityCommon, models.Model):
         'res.fund',
         default=lambda self: self.env.ref('base.fund_nstda'),
     )
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        required=False,  # If not false, can't import
+    )
 
     # Required for updating dimension
     # FIND ONLY WHAT IS NEED AND USE related field.
