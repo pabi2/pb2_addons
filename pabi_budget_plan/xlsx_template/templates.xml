@@ -450,6 +450,7 @@
                             'AA11': 'overall_consumed',
                             'AB11': 'overall_balance',
                             'AC11': 'next_fy_commitment',
+                            'AD11${env.user.company_id.default_ag_invest_construction_id.code or ""}': 'activity_group_id',
                         }
                     }
                 }
