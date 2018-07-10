@@ -93,6 +93,7 @@
             <field name="arch" type="xml">
                 <tree string="Budget">
                     <field name="fiscalyear_id"/>
+                    <field name="org_id"/>
                     <field name="name"/>
                     <field name="user_id"/>
                     <field name="planned_expense" sum="Total"/>
