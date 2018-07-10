@@ -1415,8 +1415,13 @@ result = pd.pivot_table(df, index=groupby,
                                 'AH11': 'invoice_move_line_id.cost_control_id.name${value or ""}',
                                 'AI11': 'invoice_move_line_id.costcenter_id.code${value or ""}',
                                 'AJ11': 'invoice_move_line_id.costcenter_id.name${value or ""}',
+<<<<<<< HEAD
                                 'AK11': 'budget${value and value._name == "res.project" and value.master_plan_id.code or ""}',
                                 'AL11': 'budget${value and value._name == "res.project" and value.master_plan_id.name or ""}',
+=======
+                                'AK11': 'invoice_move_line_id.project_id.master_plan_id.code${value or ""}',
+                                'AL11': 'invoice_move_line_id.project_id.master_plan_id.name${value or ""}',
+>>>>>>> 86f13dc93f0986bfde0da3c0de38882d8775904d
                                 'AM11': 'invoice_move_line_id.mission_id.name${value or ""}',
                                 'AN11': 'invoice_move_line_id.write_uid${value and value.with_context(lang="th_TH").display_name or ""}',
                                 'AO11': 'invoice_move_line_id.date_maturity${value or ""}#{number_format=date}',
