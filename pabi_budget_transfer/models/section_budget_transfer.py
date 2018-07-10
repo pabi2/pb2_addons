@@ -156,7 +156,7 @@ class SectionBudgetTransfer(models.Model):
                         (trans.org_id.name_shart))
                 # Not same budget
                 if l.from_budget_id == l.to_budget_id:
-                    raise ValidationError(_('Please verify that soure and '
+                    raise ValidationError(_('Please verify that source and '
                                             'target budget are not same!'))
 
     @api.depends('transfer_line_ids',

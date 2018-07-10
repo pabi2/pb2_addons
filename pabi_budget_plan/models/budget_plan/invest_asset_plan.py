@@ -282,9 +282,11 @@ class InvestAssetPlan(models.Model):
     @api.model
     def _prepare_plan_line(self, item):
         invest_asset = item.invest_asset_id
+        ag_id = self.env.user.company_id.default_ag_invest_asset_id.id
         data = {
             'invest_asset_id': invest_asset.id,
             'fund_id': invest_asset.fund_ids and invest_asset.fund_ids[0].id,
+            'activity_group_id': ag_id,
             # Past Commitment Only
             'm0': item.total_commitment,
             # If first year of this asset, use amount_plan_total or amount_plan
