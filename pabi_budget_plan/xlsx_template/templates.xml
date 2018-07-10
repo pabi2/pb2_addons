@@ -461,7 +461,7 @@
         <record id="budget_plan_project_base_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.project</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_project_20180511.xlsx</field>
+            <field name="datas_fname">budget_plan_project_20180709.xlsx</field>
             <field name="name">Project Based Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
@@ -486,9 +486,9 @@
                           # 'H11': '',
                           'I11': 'subprogram_id.display_name_2${value or ""}',
                           'J11': 'mission_id.name${value or ""}',
-                          'K11': 'project_type_id.name${value or ""}',
+                          'K11': 'project_type_id.display_name${value or ""}',
                           # 'L11': '',
-                          'M11': 'operation_id.name${value or ""}',
+                          'M11': 'operation_id.display_name${value or ""}',
                           'N11': 'fund_type_id.name${value or ""}',
                           'O11': 'pm_employee${value or ""}',
                           'P11': 'section${value or ""}',
@@ -599,9 +599,9 @@
                           # 'H11': '',
                           'I11': 'subprogram_id${value and value[value.find("[")+1:value.find("]")] or ""}',
                           'J11': 'mission_id',
-                          'K11': 'project_type_id',
+                          'K11': 'project_type_id${value and value[value.find("[")+1:value.find("]")] or ""}',
                           # 'L11': '',
-                          'M11': 'operation_id',
+                          'M11': 'operation_id${value and value[value.find("[")+1:value.find("]")] or ""}',
                           'N11': 'fund_type_id',
                           'O11': 'pm_employee',
                           'P11': 'section',
