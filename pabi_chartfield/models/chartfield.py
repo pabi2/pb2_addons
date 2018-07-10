@@ -720,9 +720,9 @@ class ChartField(object):
             Model = self.env[self._fields[key].comodel_name]
             return data[key] and Model.browse(data[key]).name or 'None'
         else:
-            return (str(data[key]).isdigit() and
-                    '{:,.2f}'.format(data[key]) or
-                    data[key])
+            return (isinstance(data[key], basestring)
+                    and data[key].isdigit() and
+                    '{:,.2f}'.format(data[key]) or data[key])
 
     @api.model
     def _change_content(self, vals, todos):
