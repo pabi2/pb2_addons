@@ -95,7 +95,7 @@ class BudgetPlanPersonnelLine(BPLMonthCommon, ActivityCommon, models.Model):
     # Extra
     org_id = fields.Many2one(
         'res.org',
-        required=True,
+        required=False,
         domain=[('special', '=', False)],
     )
     personnel_costcenter_id = fields.Many2one(
