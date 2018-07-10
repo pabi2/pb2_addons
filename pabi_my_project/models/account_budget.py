@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+import logging
 from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountBudget(models.Model):
@@ -71,9 +74,14 @@ class AccountBudget(models.Model):
     def generate_project_base_controls(self, fiscalyear_id=None):
         control_ids = super(AccountBudget, self).\
             generate_project_base_controls(fiscalyear_id=fiscalyear_id)
+        _logger.info("Project budget control created - %s", control_ids)
+        self._cr.commit()
+
         # First sync with myProject
         for control in self.browse(control_ids):
             control.sync_budget_my_project()
+            _logger.info("Project budget control synced - %s", control.name)
+            self._cr.commit()
         return control_ids
 
 

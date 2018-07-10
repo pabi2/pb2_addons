@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from .budget_plan_common import BPCommon, BPLMonthCommon
@@ -7,6 +8,7 @@ from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 # from openerp.addons.document_status_history.models.document_history import \
 #     LogCommon
+_logger = logging.getLogger(__name__)
 
 
 class BudgetPlanProject(BPCommon, models.Model):
@@ -217,6 +219,8 @@ class BudgetPlanProject(BPCommon, models.Model):
                                 'program_id': program.id,
                                 'user_id': False})
             plan_ids.append(plan.id)
+        _logger.info("Project plan created - %s", plan_ids)
+        self._cr.commit()
 
         # Special for Project Based, also create budget control too
         budget_ids = self.env['account.budget'].\
