@@ -482,14 +482,14 @@
                           'D11': 'code${value or ""}',
                           'E11': 'name${value or ""}',
                           'F11': 'project_group_id.display_name_2${value or ""}',
-                          'G11': 'nstda_strategy_id.name${value or ""}',
+                          'G11': 'nstda_strategy_id.display_name_2${value or ""}',
                           # 'H11': '',
                           'I11': 'subprogram_id.display_name_2${value or ""}',
                           'J11': 'mission_id.name${value or ""}',
                           'K11': 'project_type_id.display_name${value or ""}',
                           # 'L11': '',
                           'M11': 'operation_id.display_name${value or ""}',
-                          'N11': 'fund_type_id.name${value or ""}',
+                          'N11': 'fund_type_id.display_name_2${value or ""}',
                           'O11': 'pm_employee${value or ""}',
                           'P11': 'section${value or ""}',
                           'Q11': 'division${value or ""}',
@@ -558,8 +558,8 @@
                           'B5': 'display_name_2'
                       },
                       'master_strategy_ids': {
-                          'D5': 'name',
-                          'E5': 'group_id.name',
+                          'D5': 'display_name_2',
+                          'E5': 'group_id.display_name_2',
                       },
                       'master_subprogram_ids': {
                           'G5': 'display_name_2',
@@ -571,17 +571,17 @@
                           'K5': 'display_name_2',
                       },
                       'master_fund_type_ids': {
-                          'M5': 'name',
+                          'M5': 'display_name',
                       },
-                      'master_employee_ids': {
-                          'R5': 'display_name',
-                      },
-                      'master_section_ids': {
-                          'X5': 'display_name_2',
-                      },
-                      'master_division_ids': {
-                          'AD5': 'display_name_2',
-                      },
+                      # 'master_employee_ids': {
+                      #     'P5': 'display_name',
+                      # },
+                      # 'master_section_ids': {
+                      #     'V5': 'display_name_2',
+                      # },
+                      # 'master_division_ids': {
+                      #     'AB5': 'display_name_2',
+                      # },
                   },
               },
               '__IMPORT__': {
@@ -595,14 +595,14 @@
                           'D11': 'code',
                           'E11': 'name',
                           'F11': 'project_group_id${value and value[value.find("[")+1:value.find("]")] or ""}',
-                          'G11': 'nstda_strategy_id',
+                          'G11': 'nstda_strategy_id${value and value[value.find("[")+1:value.find("]")] or ""}',
                           # 'H11': '',
                           'I11': 'subprogram_id${value and value[value.find("[")+1:value.find("]")] or ""}',
                           'J11': 'mission_id',
                           'K11': 'project_type_id${value and value[value.find("[")+1:value.find("]")] or ""}',
                           # 'L11': '',
                           'M11': 'operation_id${value and value[value.find("[")+1:value.find("]")] or ""}',
-                          'N11': 'fund_type_id',
+                          'N11': 'fund_type_id${value and value[value.find("[")+1:value.find("]")] or ""}',
                           'O11': 'pm_employee',
                           'P11': 'section',
                           'Q11': 'division',
