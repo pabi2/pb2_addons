@@ -557,9 +557,9 @@ class BudgetPolicyLine(ChartField, models.Model):
         for rec in self:
             chart_view = rec.policy_id.chart_view
             if chart_view == 'unit_base':
-                rec.name = rec.org_id.name_short
+                rec.name = rec.org_id.display_name
             elif chart_view == 'project_base':
-                rec.name = rec.program_id.name_short
+                rec.name = rec.program_id.display_name
             elif chart_view == 'personnel':
                 rec.name = 'NSTDA'
             elif chart_view == 'invest_asset':
