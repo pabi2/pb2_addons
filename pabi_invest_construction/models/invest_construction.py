@@ -1038,6 +1038,7 @@ class ResInvestConstructionPhaseSync(models.Model):
         string='Budget Line Ref',
         index=True,
         ondelete='cascade',
+        copy=False,
         help="This is of latest version of fiscalyear's budget control",
     )
     budget_id = fields.Many2one(
@@ -1054,6 +1055,7 @@ class ResInvestConstructionPhaseSync(models.Model):
     synced = fields.Boolean(
         string='Synced',
         default=False,
+        copy=False,
         help="Checked when it is synced. Unchecked when phase is updated"
         "then it will be synced again",
     )

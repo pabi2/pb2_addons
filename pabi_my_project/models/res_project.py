@@ -454,6 +454,7 @@ class ResProject(LogCommon, models.Model):
                 if budget.project_auto_sync:
                     budget.with_context(
                         project_id=project.id).sync_budget_my_project()
+        return True
 
     @api.multi
     def _release_fiscal_budget(self, fiscalyear, released_amount):
@@ -751,6 +752,7 @@ class ResProjectBudgetPlan(models.Model):
     released_amount = fields.Float(
         string='Released Amount',
         default=0.0,
+        copy=False,
     )
     # Sync information
     sync_budget_line_id = fields.Many2one(
@@ -758,6 +760,7 @@ class ResProjectBudgetPlan(models.Model):
         string='Budget Line Ref',
         index=True,
         ondelete='set null',
+        copy=False,
         help="This is of latest version of fiscalyear's budget control",
     )
     budget_id = fields.Many2one(
@@ -774,6 +777,7 @@ class ResProjectBudgetPlan(models.Model):
     synced = fields.Boolean(
         string='Synced',
         default=False,
+        copy=False,
         help="Checked when it is synced. Unchecked when plan is updated"
         "then it will be synced again",
     )
