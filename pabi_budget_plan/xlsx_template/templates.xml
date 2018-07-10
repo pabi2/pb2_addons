@@ -687,9 +687,9 @@
                 '__EXPORT__': {
                     'HR-Expense': {
                         '_HEAD_': {
-                            'F2': 'fiscalyear_id.name',
-                            'F5': '${time.strftime("%d/%m/%Y")}',
-                            'F6': 'user_id.name${value or ""}'
+                            'F2': 'fiscalyear_id.name${value and int(value) or ""}',
+                            'F3': '${time.strftime("%d/%m/%Y")}',
+                            'F4': 'user_id.name${value or ""}'
                         },
                         'plan_line_ids[18]': {
                             # 'C11': 'personnel_costcenter_id${value and value.org_id.name_short or ""}',
