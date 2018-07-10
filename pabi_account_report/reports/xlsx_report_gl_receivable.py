@@ -62,7 +62,7 @@ class GLReceivableView(models.Model):
              LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
              WHERE aml.doctype in ('out_invoice', 'out_refund')
              AND aat.name = 'Revenue' AND am.state = 'posted'
-             AND ai.state IN ('open', 'paid') OR iae.type = 'invoice'
+             AND ai.state IN ('open', 'paid', 'cancel') OR iae.type = 'invoice'
              ) revenue_table
             LEFT JOIN
             (SELECT aml.move_id, aml.reconcile_id, aml.reconcile_partial_id,
