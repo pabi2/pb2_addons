@@ -488,6 +488,7 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
     owner_section_id = fields.Many2one(
         'res.section',
         related='request_user_id.section_id',
+        required=False,
         readonly=True,
         store=True,
     )
