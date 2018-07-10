@@ -46,7 +46,7 @@
                                         <field name="personnel_costcenter_id"/>
                                         <field name="fund_id" required="1"/>
 
-                                        <field name="activity_group_id"/>
+                                        <field name="activity_group_id" required="1"/>
                                         <field name="activity_id" invisible="1"/>
 
                                         <field name="name" readonly="1"/>
@@ -149,7 +149,7 @@
                     <field name="personnel_costcenter_id"/>
                     <field name="fund_id" required="1"/>
 
-                    <field name="activity_group_id"/>
+                    <field name="activity_group_id" required="1"/>
                     <field name="activity_id" invisible="1"/>
 
                     <field name="name" readonly="1"/>
