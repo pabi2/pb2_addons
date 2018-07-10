@@ -22,19 +22,6 @@ class GLReceivableView(models.Model):
         string='Receipt Move Line',
         readonly=True,
     )
-    partner_id = fields.Many2one(
-        'res.partner',
-        string='Partner',
-        readonly=True,
-    )
-    date = fields.Date(
-        string='Posting Date',
-        readonly=True,
-    )
-    name = fields.Char(
-        string='Document Number',
-        readonly=True,
-    )
     budget = fields.Reference(
         REFERENCE_SELECT,
         string='budget',
@@ -43,68 +30,67 @@ class GLReceivableView(models.Model):
 
     def _get_sql_view(self):
         sql_view = """
-            SELECT ROW_NUMBER() OVER(ORDER BY invoice_line.move_line_id,
-                                              receipt_line.move_line_id,
-                                              invoice_line.partner_id,
-                                              invoice_line.date,
-                                              invoice_line.name) AS id,
-                   invoice_line.move_line_id AS invoice_move_line_id,
-                   receipt_line.move_line_id AS receipt_move_line_id,
-                   invoice_line.partner_id,
-                   invoice_line.date,
-                   invoice_line.name,
-                   CASE WHEN invoice_line.section_id IS NOT NULL THEN
-                            concat('res.section,', invoice_line.section_id)
-                        WHEN invoice_line.project_id IS NOT NULL THEN
-                            concat('res.project,', invoice_line.project_id)
-                        WHEN invoice_line.personnel_costcenter_id IS NOT NULL
-                        THEN concat('res.personnel.costcenter,',
-                            invoice_line.personnel_costcenter_id)
-                        WHEN invoice_line.invest_asset_id IS NOT NULL THEN
-                            concat('res.invest.asset,',
-                            invoice_line.invest_asset_id)
-                        WHEN invoice_line.invest_construction_id IS NOT NULL
-                        THEN concat('res.invest.construction,',
-                            invoice_line.invest_construction_id)
-                    ELSE NULL END AS budget
+            SELECT ROW_NUMBER() OVER(ORDER BY
+                    revenue_table.invoice_move_line_id,
+                    receipt_table.receipt_move_line_id) AS id,
+                    revenue_table.invoice_move_line_id AS invoice_move_line_id,
+                    receipt_table.receipt_move_line_id AS receipt_move_line_id,
+                CASE WHEN revenue_table.section_id IS NOT NULL THEN
+                    concat('res.section,', revenue_table.section_id)
+                    WHEN revenue_table.project_id IS NOT NULL THEN
+                    concat('res.project,', revenue_table.project_id)
+                    WHEN revenue_table.personnel_costcenter_id IS NOT NULL
+                    THEN concat('res.personnel.costcenter,',
+                    revenue_table.personnel_costcenter_id)
+                    WHEN revenue_table.invest_asset_id IS NOT NULL THEN
+                    concat('res.invest.asset,',
+                    revenue_table.invest_asset_id)
+                    WHEN revenue_table.invest_construction_id IS NOT NULL
+                    THEN concat('res.invest.construction,',
+                    revenue_table.invest_construction_id)
+                ELSE NULL END AS budget
             FROM
-            (SELECT aml.id AS move_line_id,
-                   aml.reconcile_id, aml.reconcile_partial_id,
-                   aml.partner_id, am.date, am.name,
-                   aml.section_id, aml.project_id, aml.personnel_costcenter_id,
-                   aml.invest_asset_id, aml.invest_construction_id
-            FROM account_move_line aml
-            LEFT JOIN account_move am ON aml.move_id = am.id
-            LEFT JOIN account_account aa ON aml.account_id = aa.id
-            LEFT JOIN account_account_type aat ON aa.user_type = aat.id
-            LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
-            LEFT JOIN account_invoice ai ON aml.move_id = ai.move_id
-            WHERE am.state = 'posted'
-            AND aml.doctype IN ('out_invoice', 'out_refund', 'adjustment')
-            AND aat.code = 'Revenue'
-            AND ai.state IN ('open', 'paid')
-            OR iae.type = 'invoice'
-            ) invoice_line
-
+            (SELECT aml.id AS invoice_move_line_id, aml.move_id,
+                    aml.section_id, aml.project_id,
+                    aml.personnel_costcenter_id, aml.invest_asset_id,
+                    aml.invest_construction_id
+             FROM account_move_line aml
+             LEFT JOIN account_account aa ON aml.account_id = aa.id
+             LEFT JOIN account_account_type aat ON aa.user_type = aat.id
+             LEFT JOIN account_move am ON aml.move_id = am.id
+             LEFT JOIN account_invoice ai ON aml.move_id = ai.move_id
+             LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
+             WHERE aml.doctype in ('out_invoice', 'out_refund')
+             AND aat.name = 'Revenue' AND am.state = 'posted'
+             AND ai.state IN ('open', 'paid', 'cancel') OR iae.type = 'invoice'
+             ) revenue_table
             LEFT JOIN
-
-            (SELECT aml.id AS move_line_id,
-                   aml.reconcile_id, aml.reconcile_partial_id,
-                   aml.section_id, aml.project_id, aml.personnel_costcenter_id,
-                   aml.invest_asset_id, aml.invest_construction_id
-            FROM account_move_line aml
-            LEFT JOIN account_move am ON aml.move_id = am.id
-            LEFT JOIN account_account aa ON aml.account_id = aa.id
-            LEFT JOIN account_account_type aat ON aa.user_type = aat.id
-            LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
-            WHERE am.state = 'posted'
-            AND aml.doctype IN ('receipt')
-            OR iae.type = 'payment'
-            AND aat.code = 'Revenue'
-            ) receipt_line
-             ON invoice_line.reconcile_id = receipt_line.reconcile_id
-             OR invoice_line.reconcile_partial_id =
-                receipt_line.reconcile_partial_id
+            (SELECT aml.move_id, aml.reconcile_id, aml.reconcile_partial_id,
+                    aml.section_id, aml.project_id,
+                    aml.personnel_costcenter_id, aml.invest_asset_id,
+                    aml.invest_construction_id
+             FROM account_move_line aml
+             LEFT JOIN account_account aa ON aml.account_id = aa.id
+             LEFT JOIN account_move am ON aml.move_id = am.id
+             LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
+             WHERE aa.type = 'receivable' AND am.state = 'posted'
+             OR iae.type = 'invoice'
+            ) receivable_table
+            ON revenue_table.move_id = receivable_table.move_id
+            LEFT JOIN
+            (SELECT aml.id AS receipt_move_line_id, aml.reconcile_id,
+                    aml.reconcile_partial_id, aml.section_id, aml.project_id,
+                    aml.personnel_costcenter_id, aml.invest_asset_id,
+                    aml.invest_construction_id
+             FROM account_move_line aml
+             LEFT JOIN account_move am ON aml.move_id = am.id
+             LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
+             WHERE aml.doctype = 'receipt' AND am.state = 'posted'
+             OR iae.type = 'invoice'
+             ) receipt_table
+             ON receivable_table.reconcile_id = receipt_table.reconcile_id
+             OR receivable_table.reconcile_partial_id =
+                receipt_table.reconcile_partial_id
         """
         return sql_view
 
