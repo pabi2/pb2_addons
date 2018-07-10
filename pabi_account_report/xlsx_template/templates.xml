@@ -1354,8 +1354,6 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
-<<<<<<< HEAD
-=======
 
         # GL Receivable Report
         <record id="xlsx_report_gl_receivable" model="ir.attachment">
@@ -1440,6 +1438,5 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
->>>>>>> 456cedcceea9f17b6ec6c259ddd658b71e650eda
     </data>
 </openerp>
