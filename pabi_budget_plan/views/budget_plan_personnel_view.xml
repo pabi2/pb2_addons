@@ -42,7 +42,7 @@
                                 <field name="plan_line_ids" colspan="4" nolabel="1">
                                     <tree string="Budget Lines" editable="bottom">
 
-                                        <field name="org_id"/>
+                                        <field name="org_id" required="1"/>
                                         <field name="personnel_costcenter_id" required="1"/>
                                         <field name="fund_id" required="1"/>
 
@@ -145,7 +145,7 @@
             <field name="arch" type="xml">
                 <tree string="Budget Plan Lines">
 
-                    <field name="org_id"/>
+                    <field name="org_id" required="1"/>
                     <field name="personnel_costcenter_id" required="1"/>
                     <field name="fund_id" required="1"/>
 
