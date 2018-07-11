@@ -679,7 +679,7 @@
         <record id="budget_plan_personnel_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.personnel</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_personnel_20180530.xlsx</field>
+            <field name="datas_fname">budget_plan_personnel_20180711.xlsx</field>
             <field name="name">Personnel Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
