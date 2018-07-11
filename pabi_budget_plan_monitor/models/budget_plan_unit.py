@@ -14,7 +14,7 @@ class BudgetPlanUnit(models.Model):
 
 
 class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
-    """ Prev FY Performance view, must named as [model]+perv.fy.view """
+    """ Prev FY Performance view, must named as [model]+prev.fy.view """
     _name = 'budget.plan.unit.prev.fy.view'
     _auto = False
     _description = 'Prev FY budget performance for project base'
@@ -42,7 +42,7 @@ class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
     )
     cost_control_id = fields.Many2one(
         'cost.control',
-        string='Joe Order',
+        string='Job Order',
         readonly=True,
     )
 
