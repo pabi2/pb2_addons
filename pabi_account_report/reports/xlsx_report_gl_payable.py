@@ -17,13 +17,11 @@ class GlPayableView(models.Model):
         string='Account Move Line',
         readonly=True,
     )
-
     payment_move_line_id = fields.Many2one(
         'account.move.line',
         string='Account Move Line',
         readonly=True,
     )
-
     budget = fields.Reference(
         REFERENCE_SELECT,
         string='budget',
@@ -32,10 +30,11 @@ class GlPayableView(models.Model):
 
     def _get_sql_view(self):
         sql_view = """
-            SELECT ROW_NUMBER() OVER(ORDER BY expense_table.invoice_move_line_id,
-                payment_table.payment_move_line_id) AS id,
-                expense_table.invoice_move_line_id AS invoice_move_line_id ,
-                payment_table.payment_move_line_id AS payment_move_line_id,
+            SELECT ROW_NUMBER() OVER(ORDER BY
+            expense_table.invoice_move_line_id,
+            payment_table.payment_move_line_id) AS id,
+            expense_table.invoice_move_line_id AS invoice_move_line_id ,
+            payment_table.payment_move_line_id AS payment_move_line_id,
             CASE WHEN expense_table.section_id IS NOT NULL THEN
              concat('res.section,', expense_table.section_id)
              WHEN expense_table.project_id IS NOT NULL THEN
@@ -51,32 +50,40 @@ class GlPayableView(models.Model):
               expense_table.invest_construction_id)
              ELSE NULL END AS budget
             FROM
-            (SELECT aml.id AS invoice_move_line_id, aml.move_id, aml.section_id,aml.project_id,
-             aml.personnel_costcenter_id, aml.invest_asset_id, aml.invest_construction_id
+            (SELECT aml.id AS invoice_move_line_id, aml.move_id,
+            aml.section_id,aml.project_id,aml.personnel_costcenter_id,
+            aml.invest_asset_id, aml.invest_construction_id
              FROM account_move_line aml
              LEFT JOIN account_account aa ON aml.account_id = aa.id
              LEFT JOIN account_account_type aat ON aa.user_type = aat.id
              LEFT JOIN account_move am ON aml.move_id = am.id
              LEFT JOIN account_invoice ai ON aml.move_id = ai.move_id
              LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
-             WHERE aml.doctype in ('in_invoice', 'in_refund') AND aat.name = 'Expense'
-             AND am.state = 'posted' AND ai.state IN ('open', 'paid', 'cancel') OR iae.type = 'invoice') expense_table
+             WHERE aml.doctype in ('in_invoice', 'in_refund', 'adjustment')
+             AND aat.name = 'Expense' AND am.state = 'posted'
+             AND ai.state IN ('open', 'paid', 'cancel')
+             OR iae.type = 'invoice') expense_table
             LEFT JOIN
-            (SELECT aml.move_id, aml.reconcile_id, aml.reconcile_partial_id, aml.section_id, aml.project_id, aml.personnel_costcenter_id,
+            (SELECT aml.move_id, aml.reconcile_id, aml.reconcile_partial_id,
+            aml.section_id, aml.project_id, aml.personnel_costcenter_id,
              aml.invest_asset_id, aml.invest_construction_id
              FROM account_move_line aml
              LEFT JOIN account_account aa ON aml.account_id = aa.id
              LEFT JOIN account_move am ON aml.move_id = am.id
              LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
-             WHERE aa.type = 'payable' AND am.state = 'posted' OR iae.type = 'invoice'
-            ) payable_table ON expense_table.move_id = payable_table.move_id
+             WHERE aa.type = 'payable' AND am.state = 'posted'
+             OR iae.type = 'invoice') payable_table
+             ON expense_table.move_id = payable_table.move_id
             LEFT JOIN
-            (SELECT aml.id AS payment_move_line_id, aml.reconcile_id, aml.reconcile_partial_id, aml.section_id, aml.project_id, aml.personnel_costcenter_id, aml.invest_asset_id, aml.invest_construction_id
+            (SELECT aml.id AS payment_move_line_id, aml.reconcile_id,
+            aml.reconcile_partial_id, aml.section_id, aml.project_id,
+            aml.personnel_costcenter_id, aml.invest_asset_id,
+            aml.invest_construction_id
              FROM account_move_line aml
              LEFT JOIN account_move am ON aml.move_id = am.id
              LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
-             WHERE aml.doctype = 'payment' AND am.state = 'posted' OR iae.type = 'invoice'
-             ) payment_table
+             WHERE aml.doctype = 'payment' AND am.state = 'posted'
+             OR iae.type = 'invoice') payment_table
              ON payable_table.reconcile_id = payment_table.reconcile_id
              OR payable_table.reconcile_partial_id = payment_table.reconcile_partial_id
         """
@@ -98,12 +105,10 @@ class XLSXReportGlPayable(models.TransientModel):
         string='Accounts',
         domain=[('type', '=', 'receivable')],
     )
-
     partner_ids = fields.Many2many(
         'res.partner',
         string='Partners',
     )
-
     results = fields.Many2many(
         'gl.payable.view',
         string='Results',
