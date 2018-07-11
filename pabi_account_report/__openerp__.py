@@ -42,6 +42,7 @@
         'reports/xlsx_report_sla_procurement.xml',
         'reports/xlsx_report_supplier_receipt_follow_up.xml',
         'reports/jasper_report_payable_confirmation_letter.xml',
+        'reports/xlsx_report_gl_payable.xml',
         # Receivable Reports
         'reports/xlsx_report_output_tax.xml',
         'reports/xlsx_report_cd_receivable_confirmation.xml',
