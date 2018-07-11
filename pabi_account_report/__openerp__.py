@@ -19,11 +19,15 @@
         'pabi_bank',
         'pabi_loan_receivable',
         'sale_invoice_plan',
+        'report',
+        'l10n_th_amount_text',
     ],
     'data': [
         'security/ir.model.access.csv',
         'data/menu.xml',
         'data/report_data.xml',
+        'data/default_value.xml',
+        'data/report_paperformat.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/load_template.xml',
         # Payable Reports
@@ -41,8 +45,9 @@
         'reports/xlsx_report_sla_employee.xml',
         'reports/xlsx_report_sla_procurement.xml',
         'reports/xlsx_report_supplier_receipt_follow_up.xml',
-        'reports/jasper_report_payable_confirmation_letter.xml',
         'reports/xlsx_report_gl_payable.xml',
+        'reports/qweb_report_payable_confirmation_letter_template.xml',
+        'reports/qweb_report_payable_confirmation_letter.xml',
         # Receivable Reports
         'reports/xlsx_report_output_tax.xml',
         'reports/xlsx_report_cd_receivable_confirmation.xml',
