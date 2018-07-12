@@ -1411,5 +1411,85 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
+
+        # GL Payable Report
+       <record id="xlsx_report_gl_payable" model="ir.attachment">
+           <field name="res_model">xlsx.report.gl.payable</field>
+           <field name="datas"></field>
+           <field name="datas_fname">xlsx_report_gl_payable.xlsx</field>
+           <field name="name">GL Payable</field>
+           <field name="description">
+               {
+                   '__EXPORT__': {
+                       'GL Payable Report': {
+                           '_HEAD_': {
+                               'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                               'B3': 'fiscalyear_start_id.name${value or ""}',
+                               'D3': 'fiscalyear_end_id.name${value or ""}',
+                               'B4': 'filter${value and dict(filter_no="No Filters", filter_date="Dates", filter_period="Periods")[value] or ""}',
+                               'B5': 'period_start_id.name${value or ""}',
+                               'D5': 'period_end_id.name${value or ""}',
+                               'B6': 'date_start${value or ""}#{number_format=date}',
+                               'D6': 'date_end${value or ""}#{number_format=date}',
+                               'B7': '${env.user.with_context(lang="th_TH").display_name}',
+                               'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                           },
+                           'results': {
+                               'A11': 'invoice_move_line_id.charge_type${value or ""}',
+                               'B11': 'invoice_move_line_id.account_id.code${value or ""}',
+                               'C11': 'invoice_move_line_id.account_id.name${value or ""}',
+                               'D11': 'invoice_move_line_id.activity_group_id.code${value or ""}',
+                               'E11': 'invoice_move_line_id.activity_group_id.name${value or ""}',
+                               'F11': 'invoice_move_line_id.activity_id.code${value or ""}',
+                               'G11': 'invoice_move_line_id.activity_id.name${value or ""}',
+                               'H11': 'invoice_move_line_id.period_id.fiscalyear_id.name${value or ""}',
+                               'I11': "${'=IF(AND(?(J7)&gt;=1,?(J7)&lt;=12),?(J7),12)'}",
+                               'J11': 'invoice_move_line_id.period_id.name${value and int(value.split("/")[0]) or ""}',
+                               'K11': 'invoice_move_line_id.invoice.tax_line${value and (value[0].tax_code_id.code or "") or ""}',
+                               'L11': 'invoice_move_line_id${value and value.debit != 0 and (value.credit - value.debit) * (-1) or value.debit == 0 and (value.credit - value.debit) or 0}',
+                               'M11': 'invoice_move_line_id.name${value or ""}',
+                               'N11': 'invoice_move_line_id.move_id.narration${value or ""}',
+                               'O11': 'invoice_move_line_id.doctype${value and dict(in_invoice="Supplier Invoice", in_refund="Supplier Refund")[value] or ""}',
+                               'P11': 'invoice_move_line_id.journal_id.name${value or ""}',
+                               'Q11': 'invoice_move_line_id.move_id.name${value or ""}',
+                               'R11': 'invoice_move_line_id.document_id${value and value._name == "account.invoice" and value.invoice_line[0].sequence or ""}',
+                               'S11': 'invoice_move_line_id.move_id.document_id.date_document${value or ""}#{number_format=date}',
+                               'T11': 'invoice_move_line_id.move_id.date${value or ""}#{number_format=date}',
+                               'U11': 'payment_move_line_id.document_id${value and value.number or ""}',
+                               'V11': 'payment_move_line_id.document_id${value and value.date or ""}#{number_format=date}',
+                               'W11': 'invoice_move_line_id.document_id${value and value.source_document_id and value.name or ""}',
+                               'X11': 'invoice_move_line_id.fund_id.name${value or ""}',
+                               'Y11': 'budget${value and value.code or ""}',
+                               'Z11': 'budget${value and value.name or ""}',
+                               'AA11': 'invoice_move_line_id.cost_control_type_id.code${value or ""}',
+                               'AB11': 'invoice_move_line_id.cost_control_type_id.name${value or ""}',
+                               'AC11': 'invoice_move_line_id.cost_control_id.code${value or ""}',
+                               'AD11': 'invoice_move_line_id.cost_control_id.name${value or ""}',
+                               'AE11': 'invoice_move_line_id.costcenter_id.code${value or ""}',
+                               'AF11': 'invoice_move_line_id.costcenter_id.name${value or ""}',
+                               'AG11': 'budget${value and value._name == "res.project" and value.master_plan_id.code or ""}',
+                               'AH11': 'budget${value and value._name == "res.project" and value.master_plan_id.name or ""}',
+                               'AI11': 'invoice_move_line_id.mission_id.name${value or ""}',
+                               'AJ11': 'invoice_move_line_id.write_uid${value and value.with_context(lang="th_TH").display_name or ""}',
+                               'AK11': 'invoice_move_line_id.date_maturity${value or ""}#{number_format=date}',
+                               'AL11': 'invoice_move_line_id.document_id${value and value.cancel_move_id and value.cancel_move_id.name or ""}',
+                               'AM11': 'invoice_move_line_id.document_id${value and value.cancel_move_id and value.cancel_move_id.date or ""}',
+                               'AN11': 'invoice_move_line_id.document_id${value and value.payment_term and value.payment_term.name or ""}',
+                               'AO11': 'invoice_move_line_id.document_id${value and value.purchase_billing_id and value.purchase_billing_id.name or ""}',
+                               'AP11': 'payment_move_line_id.document_id${value and value._name == "account.voucher" and value.journal_id and value.journal_id.name or ""}',
+                               'AQ11': 'payment_move_line_id.document_id${value and value.transfer_type or ""}',
+                               'AR11': 'payment_move_line_id.document_id${value and value.date_value or ""}#{number_format=date}',
+                               'AS11': 'payment_move_line_id.document_id${value and value.supplier_bank_id and value.supplier_bank_id.acc_number or ""}',
+                               'AT11': 'payment_move_line_id.document_id${value and value.supplier_bank_id and value.supplier_bank_id.bank_branch and value.supplier_bank_id.bank_branch.name or ""}',
+                               'AU11': 'payment_move_line_id.document_id${value and value.payment_export_id and value.payment_export_id.name or ""}',
+                               'AV11': '${"รอข้อมูลจากทีม ISIS"}',
+                               'AW11': 'invoice_move_line_id.partner_id.search_key${value or ""}',
+                               'AX11': 'invoice_move_line_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
+                           }
+                       }
+                   }
+               }
+           </field>
+       </record>
     </data>
 </openerp>
