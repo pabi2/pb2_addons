@@ -149,11 +149,11 @@ class SectionBudgetTransfer(models.Model):
                         _('Please verify that all budgets are on fiscal '
                           'year %s') % (trans.fiscalyear_id.name))
                 # Org
-                if l.from_budget_id.org_id != trans.org_id or \
-                        l.to_budget_id.org_id != trans.org_id:
-                    raise ValidationError(
-                        _('Please verify that all budgets belong to Org %s') %
-                        (trans.org_id.name_short))
+                # if l.from_budget_id.org_id != trans.org_id or \
+                #         l.to_budget_id.org_id != trans.org_id:
+                #     raise ValidationError(
+                #         _('Please verify that all budgets belong to Org %s') %
+                #         (trans.org_id.name_short))
                 # Not same budget
                 if l.from_budget_id == l.to_budget_id:
                     raise ValidationError(_('Please verify that source and '
