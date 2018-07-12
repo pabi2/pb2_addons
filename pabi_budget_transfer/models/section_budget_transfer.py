@@ -153,7 +153,7 @@ class SectionBudgetTransfer(models.Model):
                         l.to_budget_id.org_id != trans.org_id:
                     raise ValidationError(
                         _('Please verify that all budgets belong to Org %s') %
-                        (trans.org_id.name_shart))
+                        (trans.org_id.name_short))
                 # Not same budget
                 if l.from_budget_id == l.to_budget_id:
                     raise ValidationError(_('Please verify that source and '
