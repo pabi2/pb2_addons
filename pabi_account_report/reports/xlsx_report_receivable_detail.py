@@ -13,83 +13,43 @@ class ReceivableDetailView(models.Model):
         string='invoice move',
         readonly=True,
     )
-    voucher_move_line_id = fields.Many2one(
+    receipt_move_line_id = fields.Many2one(
         'account.move.line',
-        string='voucher move',
+        string='receipt move',
         readonly=True,
     )
 
     def _get_sql_view(self):
         sql_view = """
-            SELECT ROW_NUMBER() OVER(ORDER BY invoice_move_line_id,
-                   voucher_move_line_id) AS id,
-                   invoice_move_line_id, voucher_move_line_id
+            SELECT ROW_NUMBER() OVER(ORDER BY invoice_line.move_line_id,
+                                              receipt_line.move_line_id) AS id,
+                   invoice_line.move_line_id AS invoice_move_line_id,
+                   receipt_line.move_line_id AS receipt_move_line_id
             FROM
-            (
-                (
-                    SELECT invoice_line.move_line_id AS invoice_move_line_id,
-                           voucher_line.move_line_id AS voucher_move_line_id
-                    FROM
-                    (
-                        (
-                            SELECT aml.id AS move_line_id,
-                                   aml.reconcile_id, aml.reconcile_partial_id
-                            FROM account_move_line aml
-                            JOIN account_account aa ON aa.id = aml.account_id
-                            AND aa.type = 'receivable'
-                            JOIN interface_account_entry iae
-                            ON aml.move_id = iae.move_id
-                            WHERE iae.type = 'invoice'
-                            OR aml.doctype = 'adjustment'
-                        ) invoice_line
-                        LEFT JOIN
-                        (
-                            SELECT aml.id AS move_line_id,
-                                   aml.reconcile_id, aml.reconcile_partial_id
-                            FROM account_move_line aml
-                            JOIN account_account aa ON aa.id = aml.account_id
-                            AND aa.type = 'receivable'
-                            JOIN interface_account_entry iae
-                            ON aml.move_id = iae.move_id
-                            WHERE iae.type = 'voucher'
-                        ) voucher_line
-                        ON invoice_line.reconcile_id =
-                           voucher_line.reconcile_id
-                        OR invoice_line.reconcile_partial_id =
-                           voucher_line.reconcile_partial_id
-                    )
-                )
-                UNION
-                (
-                    SELECT invoice_line.move_line_id AS invoice_move_line_id,
-                           voucher_line.move_line_id AS voucher_move_line_id
-                    FROM
-                    (
-                        (
-                            SELECT aml.id as move_line_id,
-                                   aml.reconcile_id, aml.reconcile_partial_id
-                            FROM account_move_line aml
-                            JOIN account_account aa ON aa.id = aml.account_id
-                            AND aa.type = 'receivable'
-                            WHERE doctype in ('out_invoice',
-                                'out_refund', 'adjustment')
-                        ) invoice_line
-                        LEFT JOIN
-                        (
-                            SELECT aml.id as move_line_id,
-                            aml.reconcile_id, aml.reconcile_partial_id
-                            FROM account_move_line aml
-                            JOIN account_account aa ON aa.id = aml.account_id
-                            AND aa.type = 'receivable'
-                            WHERE doctype = 'receipt'
-                        ) voucher_line
-                            ON invoice_line.reconcile_id =
-                                voucher_line.reconcile_id
-                            OR invoice_line.reconcile_partial_id =
-                                voucher_line.reconcile_partial_id
-                    )
-                )
-            ) invoice_interface
+            (SELECT aml.id AS move_line_id,
+                    aml.reconcile_id, aml.reconcile_partial_id
+             FROM account_move_line aml
+             LEFT JOIN account_move am ON aml.move_id = am.id
+             LEFT JOIN account_account aa ON aml.account_id = aa.id
+             LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
+             WHERE am.state = 'posted' AND aa.type = 'receivable' AND
+                   aml.doctype IN ('out_invoice', 'out_refund', 'adjustment')
+                   OR iae.type = 'invoice'
+            )invoice_line
+            LEFT JOIN
+            (SELECT aml.id AS move_line_id,
+                    aml.reconcile_id, aml.reconcile_partial_id
+             FROM account_move_line aml
+             LEFT JOIN account_move am ON aml.move_id = am.id
+             LEFT JOIN account_voucher av ON am.id = av.move_id
+             LEFT JOIN account_account aa ON aml.account_id = aa.id
+             LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
+             WHERE am.state = 'posted' AND aa.type = 'receivable' AND
+                   aml.doctype IN ('receipt') AND av.state = 'posted' OR
+                   iae.type = 'voucher') receipt_line
+                   ON invoice_line.reconcile_id = receipt_line.reconcile_id
+                   OR invoice_line.reconcile_partial_id =
+                    receipt_line.reconcile_partial_id
         """
         return sql_view
 
