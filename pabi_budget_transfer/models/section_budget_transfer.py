@@ -149,6 +149,7 @@ class SectionBudgetTransfer(models.Model):
                         _('Please verify that all budgets are on fiscal '
                           'year %s') % (trans.fiscalyear_id.name))
                 # Org
+                # kittiu: this result in error during save
                 # if l.from_budget_id.org_id != trans.org_id or \
                 #         l.to_budget_id.org_id != trans.org_id:
                 #     raise ValidationError(
