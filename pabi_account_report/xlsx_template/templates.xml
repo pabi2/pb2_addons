@@ -30,6 +30,7 @@
                             },
                             'results': {
                                 'A10': 'tax_sequence_display${value or ""}',
+                                'B10': 'invoice_date${value or ""}#{number_format=date}',
                                 'C10': 'invoice_number${value or ""}',
                                 'D10': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
                                 'E10': 'partner_id.vat${value or ""}',
