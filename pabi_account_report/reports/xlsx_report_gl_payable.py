@@ -50,7 +50,7 @@ class GlPayableView(models.Model):
               expense_table.invest_construction_id)
              ELSE NULL END AS budget
             FROM
-            (SELECT am.name, aml.id AS invoice_move_line_id, aml.move_id,
+            (SELECT aml.id AS invoice_move_line_id, aml.move_id,
             aml.section_id,aml.project_id,aml.personnel_costcenter_id,
             aml.invest_asset_id, aml.invest_construction_id
              FROM account_move_line aml
