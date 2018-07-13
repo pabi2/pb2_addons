@@ -1497,5 +1497,39 @@ result = pd.pivot_table(df, index=groupby,
                }
            </field>
        </record>
+
+       # Allowance for Doubtful Accounts Report
+       <record id="xlsx_report_gl_allowance_doubtful_accounts" model="ir.attachment">
+           <field name="res_model">xlsx.report.gl.allowance.doubtful.accounts</field>
+           <field name="datas"></field>
+           <field name="datas_fname">xlsx_report_gl_allowance_doubtful_accounts.xlsx</field>
+           <field name="name">GL Allowance for Doubtful Accounts Report</field>
+           <field name="parent_id" eval="ref('dir_account_reports')"/>
+           <field name="description">
+               {
+                   '__EXPORT__': {
+                       'Allowance for Doubtful Accounts Report': {
+                           '_HEAD_': {
+                               'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                               'B3': 'allowance_for_doubful_account_code${value and value + " ค่าเผื่อหนี้สงสัยจะสูญ-ลูกหนี้การค้า" or ""}',
+                               'B4': 'as_of_date${value or ""}#{number_format=date}',
+                               'B5': '${env.user.with_context(lang="th_TH").display_name}',
+                               'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                           },
+                           'results': {
+                               'A9': 'move_id${value and value.name or ""}',
+                               'B9': 'move_id${value and value.date or ""}#{number_format=date}',
+                               'C9': 'name${value or ""}',
+                               'D9': 'move_id${value and value.ref or ""}',
+                               'E9': 'id${value and (env["account.move.line"].browse(value).debit - env["account.move.line"].browse(value).credit) or ""}#{number_format=number}',
+                           },
+                           '_TAIL_0': {
+                               'E9': '@{sum}#{font=bold;align=right;number_format=number}',
+                           }
+                       }
+                   }
+               }
+           </field>
+       </record>
     </data>
 </openerp>
