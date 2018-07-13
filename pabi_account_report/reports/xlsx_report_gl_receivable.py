@@ -60,9 +60,10 @@ class GLReceivableView(models.Model):
              LEFT JOIN account_move am ON aml.move_id = am.id
              LEFT JOIN account_invoice ai ON aml.move_id = ai.move_id
              LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
-             WHERE aml.doctype in ('out_invoice', 'out_refund', 'adjustment')
-             AND aat.name = 'Revenue' AND am.state = 'posted'
-             AND ai.state IN ('open', 'paid', 'cancel') OR iae.type = 'invoice'
+             WHERE aat.name = 'Revenue' AND am.state = 'posted'
+             AND ((aml.doctype IN ('out_invoice', 'out_refund')
+             AND ai.state IN ('open', 'paid', 'cancel'))
+             OR aml.doctype = 'adjustment' OR iae.type = 'invoice')
              ) revenue_table
             LEFT JOIN
             (SELECT aml.move_id, aml.reconcile_id, aml.reconcile_partial_id,
@@ -104,6 +105,15 @@ class XLSXReportGLReceivable(models.TransientModel):
     _name = 'xlsx.report.gl.receivable'
     _inherit = 'report.account.common'
 
+    # Search Criteria
+    account_ids = fields.Many2many(
+        'account.account',
+        string='Accounts',
+    )
+    partner_ids = fields.Many2many(
+        'res.partner',
+        string='Customers',
+    )
     # Report Result
     results = fields.Many2many(
         'gl.receivable.view',
@@ -117,6 +127,12 @@ class XLSXReportGLReceivable(models.TransientModel):
         self.ensure_one()
         Result = self.env['gl.receivable.view']
         dom = []
+        if self.account_ids:
+            dom += [('invoice_move_line_id.account_id', 'in',
+                     self.account_ids.ids)]
+        if self.partner_ids:
+            dom += [('invoice_move_line_id.partner_id', 'in',
+                     self.partner_ids.ids)]
         if self.fiscalyear_start_id:
             dom += [('invoice_move_line_id.period_id.fiscalyear_id.date_start',
                     '>=', self.fiscalyear_start_id.date_start)]

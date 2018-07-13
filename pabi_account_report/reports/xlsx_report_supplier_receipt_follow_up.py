@@ -94,20 +94,20 @@ class XLSXReportSupplierReceiptFollowUp(models.TransientModel):
             dom += [('voucher_id.followup_receipt', '=',
                      self.followup_receipt)]
         if self.fiscalyear_start_id:
-            dom += [('voucher_id.date_value', '>=',
+            dom += [('voucher_id.date', '>=',
                      self.fiscalyear_start_id.date_start)]
         if self.fiscalyear_end_id:
-            dom += [('voucher_id.date_value', '<=',
+            dom += [('voucher_id.date', '<=',
                      self.fiscalyear_end_id.date_stop)]
         if self.period_start_id:
-            dom += [('voucher_id.date_value', '>=',
+            dom += [('voucher_id.date', '>=',
                      self.period_start_id.date_start)]
         if self.period_end_id:
-            dom += [('voucher_id.date_value', '<=',
+            dom += [('voucher_id.date', '<=',
                      self.period_end_id.date_stop)]
         if self.date_start:
-            dom += [('voucher_id.date_value', '>=', self.date_start)]
+            dom += [('voucher_id.date', '>=', self.date_start)]
         if self.date_end:
-            dom += [('voucher_id.date_value', '<=', self.date_end)]
+            dom += [('voucher_id.date', '<=', self.date_end)]
         self.results = Result.search(
             dom, order="partner_id,voucher_number,invoice_number")
