@@ -60,6 +60,7 @@
         'reports/xlsx_report_receivable_detail.xml',
         'reports/xlsx_report_registrar_of_guarantee.xml',
         'reports/xlsx_report_gl_receivable.xml',
+        'reports/xlsx_report_gl_allowance_doubtful_accounts.xml',
         'reports/jasper_report_cd_receivable_payment_history.xml',
         'reports/jasper_report_cd_receivable_follow_up.xml',
         'reports/jasper_report_receivable_confirmation_letter.xml',

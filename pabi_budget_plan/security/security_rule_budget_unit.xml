@@ -34,7 +34,7 @@
         <record id="property_rule_account_budget_line_unit_org" model="ir.rule">
             <field name="name">Budget Org Manager - Budget Line Unit Based Access</field>
             <field name="model_id" ref="account_budget_activity.model_account_budget_line"/>
-            <field name="domain_force">[('chart_view', 'in', [False, 'unit_base']), ('org_id','=',user.partner_id.employee_id.section_id.org_id.id)]</field>
+            <field name="domain_force">[('chart_view', 'in', [False, 'unit_base']), ('org_id','in', (False, user.partner_id.employee_id.section_id.org_id.id))]</field>
             <field name="groups" eval="[(4,ref('pabi_base.group_operating_unit_budget'))]"/>
         </record>
 

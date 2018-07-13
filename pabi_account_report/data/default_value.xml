@@ -17,5 +17,13 @@
             <field name="company_id" ref="base.main_company"/>
             <field name="value_unpickle">2102010000</field>
         </record>
+        <record id="value_default_allowance_for_doubful_account_code" model="ir.values">
+            <field name="name">allowance_for_doubful_account_code</field>
+            <field name="model">xlsx.report.gl.allowance.doubtful.accounts</field>
+            <field name="key">default</field>
+            <field name="key2"></field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="value_unpickle">1103010001</field>
+        </record>
     </data>
 </openerp>

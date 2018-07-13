@@ -1,56 +1,5 @@
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 from openerp import models, fields, api, tools
-
-
-class XLSXReportCDReceivablePlanning(models.TransientModel):
-    _name = 'xlsx.report.cd.receivable.planning'
-    _inherit = 'report.account.common'
-
-    partner_ids = fields.Many2many(
-        'res.partner',
-        string='Customers',
-        domain=[('customer', '=', True)],
-    )
-    bank_ids = fields.Many2many(
-        'res.bank',
-        string='Banks',
-    )
-    results = fields.Many2many(
-        'cd.receivable.planning.view',
-        string='Results',
-        compute='_compute_results',
-        help='Use compute fields, so there is nothing store in database',
-    )
-
-    @api.multi
-    def _compute_results(self):
-        self.ensure_one()
-        Result = self.env['cd.receivable.planning.view']
-        dom = [('invoice_plan_id.order_id.state', 'not in',
-                ('draft', 'cancel'))]
-        if self.fiscalyear_start_id:
-            dom += [('invoice_plan_id.date_invoice', '>=',
-                     self.fiscalyear_start_id.date_start)]
-        if self.fiscalyear_end_id:
-            dom += [('invoice_plan_id.date_invoice', '<=',
-                     self.fiscalyear_end_id.date_stop)]
-        if self.period_start_id:
-            dom += [('invoice_plan_id.date_invoice', '>=',
-                     self.period_start_id.date_start)]
-        if self.period_end_id:
-            dom += [('invoice_plan_id.date_invoice', '<=',
-                     self.period_end_id.date_stop)]
-        if self.date_start:
-            dom += [('invoice_plan_id.date_invoice', '>=', self.date_start)]
-        if self.date_end:
-            dom += [('invoice_plan_id.date_invoice', '<=', self.date_end)]
-        if self.partner_ids:
-            dom += [('loan_agreement_id.borrower_partner_id', 'in',
-                     self.partner_ids.ids)]
-        if self.bank_ids:
-            dom += [('loan_agreement_id.bank_id.bank', 'in',
-                     self.bank_ids.ids)]
-        self.results = Result.search(dom, order="fiscalyear_name")
 
 
 class CDReceivablePlanningView(models.Model):
@@ -140,3 +89,53 @@ class CDReceivablePlanningView(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
                    % (self._table, self._get_sql_view()))
+
+
+class XLSXReportCDReceivablePlanning(models.TransientModel):
+    _name = 'xlsx.report.cd.receivable.planning'
+    _inherit = 'report.account.common'
+
+    partner_ids = fields.Many2many(
+        'res.partner',
+        string='Customers',
+    )
+    bank_ids = fields.Many2many(
+        'res.bank',
+        string='Banks',
+    )
+    results = fields.Many2many(
+        'cd.receivable.planning.view',
+        string='Results',
+        compute='_compute_results',
+        help='Use compute fields, so there is nothing store in database',
+    )
+
+    @api.multi
+    def _compute_results(self):
+        self.ensure_one()
+        Result = self.env['cd.receivable.planning.view']
+        dom = [('invoice_plan_id.order_id.state', 'not in',
+                ('draft', 'cancel'))]
+        if self.fiscalyear_start_id:
+            dom += [('invoice_plan_id.date_invoice', '>=',
+                     self.fiscalyear_start_id.date_start)]
+        if self.fiscalyear_end_id:
+            dom += [('invoice_plan_id.date_invoice', '<=',
+                     self.fiscalyear_end_id.date_stop)]
+        if self.period_start_id:
+            dom += [('invoice_plan_id.date_invoice', '>=',
+                     self.period_start_id.date_start)]
+        if self.period_end_id:
+            dom += [('invoice_plan_id.date_invoice', '<=',
+                     self.period_end_id.date_stop)]
+        if self.date_start:
+            dom += [('invoice_plan_id.date_invoice', '>=', self.date_start)]
+        if self.date_end:
+            dom += [('invoice_plan_id.date_invoice', '<=', self.date_end)]
+        if self.partner_ids:
+            dom += [('loan_agreement_id.borrower_partner_id', 'in',
+                     self.partner_ids.ids)]
+        if self.bank_ids:
+            dom += [('loan_agreement_id.bank_id.bank', 'in',
+                     self.bank_ids.ids)]
+        self.results = Result.search(dom, order="fiscalyear_name")
