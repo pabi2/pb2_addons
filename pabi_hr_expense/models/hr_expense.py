@@ -224,6 +224,11 @@ class HRExpense(models.Model):
             pr.release_all_committed_budget()
         return super(HRExpense, self).create(vals)
 
+    @api.model
+    def _post_process_hr_expense(self, expense):
+        # This method will be used by pabi_hr_expense_interface
+        expense.signal_workflow('confirm')
+
 
 class HRExpenseAdvanceDueHistory(models.Model):
     _name = 'hr.expense.advance.due.history'
