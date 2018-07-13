@@ -59,10 +59,11 @@ class GlPayableView(models.Model):
              LEFT JOIN account_move am ON aml.move_id = am.id
              LEFT JOIN account_invoice ai ON aml.move_id = ai.move_id
              LEFT JOIN interface_account_entry iae ON iae.move_id = aml.move_id
-             WHERE aml.doctype in ('in_invoice', 'in_refund', 'adjustment')
-             AND aat.name = 'Expense' AND am.state = 'posted'
-             AND ai.state IN ('open', 'paid', 'cancel')
-             OR iae.type = 'invoice') expense_table
+             WHERE aat.name = 'Expense' AND am.state = 'posted'
+             AND ((aml.doctype in ('in_invoice', 'in_refund') AND
+             ai.state IN ('open', 'paid', 'cancel'))
+             OR aml.doctype = 'adjustment' OR iae.type = 'invoice'))
+             expense_table
             LEFT JOIN
             (SELECT aml.move_id, aml.reconcile_id, aml.reconcile_partial_id,
             aml.section_id, aml.project_id, aml.personnel_costcenter_id,
@@ -85,7 +86,9 @@ class GlPayableView(models.Model):
              WHERE aml.doctype = 'payment' AND am.state = 'posted'
              OR iae.type = 'invoice') payment_table
              ON payable_table.reconcile_id = payment_table.reconcile_id
-             OR payable_table.reconcile_partial_id = payment_table.reconcile_partial_id
+             OR payable_table.reconcile_partial_id =
+             payment_table.reconcile_partial_id
+
         """
         return sql_view
 
@@ -103,7 +106,6 @@ class XLSXReportGlPayable(models.TransientModel):
         'account.account',
         'report_id', 'account_id',
         string='Accounts',
-        domain=[('type', '=', 'receivable')],
     )
     partner_ids = fields.Many2many(
         'res.partner',
@@ -121,6 +123,12 @@ class XLSXReportGlPayable(models.TransientModel):
         self.ensure_one()
         Result = self.env['gl.payable.view']
         dom = []
+        if self.account_ids:
+            dom += [('invoice_move_line_id.account_id', 'in',
+                     self.account_ids.ids)]
+        if self.partner_ids:
+            dom += [('invoice_move_line_id.partner_id', 'in',
+                     self.partner_ids.ids)]
         if self.fiscalyear_start_id:
             dom += [('invoice_move_line_id.move_id.date', '>=',
                      self.fiscalyear_start_id.date_start)]
