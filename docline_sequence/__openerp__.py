@@ -1,25 +1,30 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "NSTDA :: PABI2 - Docline Seq",
+    "name": "Document Line Sequence",
     "summary": "",
     "version": "1.0",
     "category": "Hidden",
     "description": """
-This module add new docline_seq to account.invoice.line
-The seq will be set only when document is confirmed.
+This module add new docline_seq to sale/purchase/invoice lines
+The seq will be set on line changes.
 
 In case you want to recalculate all document lines,
-* Set document_seq = 0
-* Upgrade this module
+
+  * Set document_seq = 0
+  * Upgrade this module
     """,
     "website": "https://nstda.or.th/",
     "author": "Kitti U.",
     "license": "AGPL-3",
     "depends": [
         'account',
+        'sale',
+        'purchase',
     ],
     "data": [
         'views/account_invoice_view.xml',
+        'views/sale_view.xml',
+        'views/purchase_view.xml',
     ],
     "application": False,
     "installable": True,

@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="view_order_form" model="ir.ui.view">
+            <field name="name">view.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='sequence']" position="after">
+                    <field name="docline_seq"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
