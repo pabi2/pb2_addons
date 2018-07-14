@@ -540,18 +540,28 @@ class PurchaseRequisition(models.Model):
                 request.message_post(body=message)
         return True
 
-    @api.model
+    # Move method to below function
+    # @api.model
+    # def get_doc_type(self):
+    #     res = False
+    #     WMethod = self.env['prweb.purchase.method']
+    #     web_method = WMethod.search([
+    #         ('type_id', '=', self.purchase_type_id.id),
+    #         ('method_id', '=', self.purchase_method_id.id),
+    #     ])
+    #     for method in web_method:
+    #         res = method.doctype_id
+    #         break
+    #     return res
+
+    @api.multi
     def get_doc_type(self):
-        res = False
-        WMethod = self.env['prweb.purchase.method']
-        web_method = WMethod.search([
-            ('type_id', '=', self.purchase_type_id.id),
-            ('method_id', '=', self.purchase_method_id.id),
-        ])
-        for method in web_method:
-            res = method.doctype_id
-            break
-        return res
+        self.ensure_one()
+        # Now, doctype is setup in purchase method
+        doctype = self.purchase_method_id.doctype_id
+        if not doctype:
+            raise ValidationError(_('No Purchase Method and/or No Doctype'))
+        return doctype
 
     @api.multi
     def tender_cancel(self):
