@@ -17,5 +17,4 @@ class HRExpense(models.Model):
         except Exception, e:
             self._cr.rollback()
             raise ValidationError(str(e))
-
         return res
