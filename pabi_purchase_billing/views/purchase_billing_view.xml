@@ -72,7 +72,7 @@
                     <notebook>
                         <page string="Supplier Invoices" >
                             <field name="supplier_invoice_ids"
-                                domain="[('state', '=', 'draft'), ('partner_id', '=', partner_id), ('currency_id', '=', currency_id), ('type', 'in', ('in_invoice', 'in_refund'))]" >
+                                domain="[('is_prepaid', '=', False), ('state', '=', 'draft'), ('partner_id', '=', partner_id), ('currency_id', '=', currency_id), ('type', 'in', ('in_invoice', 'in_refund'))]" >
                                 <tree>
                                     <field name="purchase_ids"/>
                                     <field name="supplier_invoice_number"/>
