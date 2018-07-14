@@ -218,6 +218,18 @@ class PurchaseRequest(models.Model):
     ]
 
     @api.multi
+    @api.constrains('state')
+    def _check_committee_type(self):
+        for rec in self:
+            if rec.state in ('approved'):  # Accepted
+                committee_types = rec.committee_ids.mapped('committee_type_id')
+                if committee_types.filtered('prweb_only'):
+                    raise ValidationError(
+                        _('Committees tab: please recheck committee '
+                          'types before accept!'))
+        return True
+
+    @api.multi
     def _compute_amount_company(self):
         for rec in self:
             rec.amount_company = rec.amount_total * rec.currency_rate
