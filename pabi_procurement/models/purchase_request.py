@@ -89,8 +89,11 @@ class PurchaseRequest(models.Model):
         'purchase.method',
         string='Procurement Method',
         readonly=True,
-        states={'draft': [('readonly', False)],
-                'to_approve': [('readonly', False)]},
+        required=True,
+        states={
+            'draft': [('readonly', False)],
+            'to_approve': [('readonly', False)]
+        },
     )
     purchase_price_range_id = fields.Many2one(
         'purchase.price.range',
@@ -153,6 +156,7 @@ class PurchaseRequest(models.Model):
         'purchase.type',
         string='Procurement Type',
         readonly=True,
+        required=True,
         states={'draft': [('readonly', False)],
                 'to_approve': [('readonly', False)]},
     )

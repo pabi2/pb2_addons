@@ -56,7 +56,7 @@
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
                     <field name="amount_company"/>
-                    <field name="purchase_method_id" attrs="{'required': [('is_small_amount', '=', False)]}"/>
+                    <field name="purchase_method_id"/>
                     <field name="purchase_price_range_id" attrs="{'required': [('is_small_amount', '=', False)]}"/>
                     <field name="purchase_condition_id"/>
                     <field name="purchase_condition_detail_id"/>

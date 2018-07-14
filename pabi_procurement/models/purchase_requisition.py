@@ -33,6 +33,7 @@ class PurchaseRequisition(models.Model):
         'purchase.type',
         string='Type',
         readonly=True,
+        required=True,
         states={'draft': [('readonly', False)]},
     )
     objective = fields.Text(
@@ -67,6 +68,7 @@ class PurchaseRequisition(models.Model):
         'purchase.method',
         string='Method',
         readonly=True,
+        required=True,
         states={'draft': [('readonly', False)]},
         track_visibility='onchange',
     )
