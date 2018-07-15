@@ -19,43 +19,43 @@ class PurchaseWorkAcceptance(models.Model):
     ]
 
     name = fields.Char(
-        string="Acceptance No.",
+        string='Acceptance No.',
         default=lambda self:
         self.env['ir.sequence'].get('purchase.work.acceptance'),
         readonly=True,
     )
     date_contract_start = fields.Date(
-        string="Contract Start Date",
+        string='Contract Start Date',
         default=lambda self: fields.Date.context_today(self),
     )
     date_scheduled_end = fields.Date(
-        string="Scheduled End Date",
+        string='Scheduled End Date',
         default=lambda self: fields.Date.context_today(self),
     )
     date_contract_end = fields.Date(
-        string="Contract End Date",
+        string='Contract End Date',
         default=lambda self: fields.Date.context_today(self),
     )
     date_receive = fields.Date(
-        string="Receive Date",
+        string='Receive Date',
         default=lambda self: fields.Date.context_today(self),
     )
     date_accept = fields.Date(
-        string="Acceptance Date",
+        string='Acceptance Date',
     )
     is_manual_fine = fields.Boolean(
-        string="Use Manual Fine",
+        string='Use Manual Fine',
     )
     manual_fine = fields.Float(
-        string="Manual Fine",
+        string='Manual Fine',
         default=0.0,
     )
     manual_days = fields.Integer(
-        string="No. of Days",
+        string='No. of Days',
         default=1,
     )
     fine_per_day = fields.Float(
-        string="Fine per Day",
+        string='Fine per Day',
         default=0.0,
     )
     amount_fine_per_day_text_th = fields.Char(
@@ -64,16 +64,16 @@ class PurchaseWorkAcceptance(models.Model):
         store=True,
     )
     overdue_day = fields.Integer(
-        string="Overdue Days",
+        string='Overdue Days',
         default=0,
     )
     total_fine_cal = fields.Float(
-        string="Total Fine Calculation",
-        compute="_compute_total_fine",
+        string='Total Fine Calculation',
+        compute='_compute_total_fine',
         store=True,
     )
     total_fine = fields.Float(
-        string="Total Fine",
+        string='Total Fine',
     )
     amount_total_fine_text_th = fields.Char(
         string='Total Fine TH Text',
@@ -81,18 +81,21 @@ class PurchaseWorkAcceptance(models.Model):
         store=True,
     )
     supplier_invoice = fields.Char(
-        string="Invoice No.",
+        string='Invoice No.',
         required=True,
     )
     date_invoice = fields.Date(
-        string="Invoice Date",
+        string='Invoice Date',
         required=True,
     )
     write_to_invoice = fields.Boolean(
-        string="Write to invoice date",
+        string='Write to invoice date',
     )
-    invoice_created = fields.Boolean(
-        string="Invoice created",
+    invoice_created = fields.Many2one(
+        'account.invoice',
+        string='Invoice created',
+        readonly=True,
+        help="Store invoice created by this WA",
     )
     acceptance_line_ids = fields.One2many(
         'purchase.work.acceptance.line',
@@ -649,18 +652,19 @@ class PurchaseWorkAcceptanceLine(models.Model):
     @api.depends('acceptance_id', 'line_id')
     def _compute_get_balance_qty(self):
         for acc_line in self:
-            if acc_line.line_id.order_id.invoice_method == 'invoice_plan':
+            purchase = acc_line.line_id.order_id
+            if purchase.invoice_method == 'invoice_plan':
                 acc_line.balance_qty = acc_line.line_id.product_qty
             else:
-                if acc_line.acceptance_id.order_id.is_prepaid:
-                    if acc_line.line_id.product_id.type == 'service':
-                        acc_line.balance_qty = (acc_line.line_id.product_qty)
+                if acc_line.line_id.product_id.type == 'service':
+                    if purchase.is_prepaid:
+                        acc_line.balance_qty = acc_line.line_id.product_qty
                     else:
                         acc_line.balance_qty = (acc_line.line_id.product_qty -
-                                                acc_line.line_id.received_qty)
+                                                acc_line.line_id.invoiced_qty)
                 else:
                     acc_line.balance_qty = (acc_line.line_id.product_qty -
-                                            acc_line.line_id.invoiced_qty)
+                                            acc_line.line_id.received_qty)
 
     acceptance_id = fields.Many2one(
         'purchase.work.acceptance',

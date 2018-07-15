@@ -81,6 +81,12 @@ class AccountInvoice(models.Model):
         copy=False,
         default=lambda self: fields.Date.context_today(self),
     )
+    recreated_invoice_id = fields.Many2one(
+        'account.invoice',
+        string='Recreated Invoice',
+        readonly=True,
+        help="New invoice created to replace this cancelled invoice."
+    )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
 
@@ -262,6 +268,81 @@ class AccountInvoice(models.Model):
             _prepare_pettycash_invoice_line(pettycash)
         inv_line.section_id = pettycash.partner_id.employee_id.section_id
         return inv_line
+
+    @api.multi
+    def recover_cancelled_invoice(self):
+        """ For accountant to rectify his/her mistake, for cases,
+        - Invoice from purchase.order (+ case invoice plan)
+        - Invoices from WA
+        - Invoice from stock.picking
+        """
+        self.ensure_one()
+        if self.state != 'cancel':
+            raise ValidationError(_('Only cancelled invoice is allowed!'))
+        if self.recreated_invoice_id:
+            raise ValidationError(_('Invoice already been recreated'))
+        Data = self.env['ir.model.data']
+        # Invoice created from PO
+        if self.purchase_ids:
+            purchase = self.purchase_ids[0]
+            if purchase.state == 'cancel':
+                raise ValidationError(
+                    _('Can not recreate invoice, PO already cancelled'))
+            # 1) Case invoices created from PO
+            if purchase.invoice_method in ['order', 'invoice_plan']:
+                # Create new invoice from PO and set manually correct
+                purchase.action_invoice_create()
+                purchase.signal_workflow('invoice_ok')
+                # --
+                self.recreated_invoice_id = max(purchase.invoice_ids.ids)
+            # 2) Case invoices created from IN
+            elif purchase.invoice_method == 'picking':
+                moves = self.invoice_line.mapped('move_id')
+                picking = moves.mapped('picking_id')
+                if len(picking) != 1:
+                    raise ValidationError(
+                        _('This invoice does not reference to 1 picking.'))
+                if picking.state != 'done' or \
+                        picking.invoice_state != '2binvoiced':
+                    raise ValidationError(
+                        _('Picking not in valid status to recreate invoice'))
+                # Mock create invoice wizard
+                StockInvoice = self.env['stock.invoice.onshipping']
+                ctx = {'active_ids': [picking.id], 'active_id': picking.id}
+                stock_invoice = StockInvoice.with_context(ctx).create({})
+                stock_invoice.open_invoice()
+                # --
+                self.recreated_invoice_id = max(picking.ref_invoice_ids.ids)
+            # 3) Case invoice created by WA
+            elif purchase.invoice_method == 'manual':
+                WA = self.env['purchase.work.acceptance']
+                acceptance = WA.search([('invoice_created', '=', self.id)])
+                if not acceptance:
+                    raise ValidationError(_('No WA specific for this invoice'))
+                LineInvoice = self.env['purchase.order.line_invoice']
+                res = WA.open_order_line([acceptance.id])
+                ctx = {'active_model': 'purchase.work.acceptance',
+                       'active_id': acceptance.id}
+                res['context'].update(ctx)
+                line_inv = LineInvoice.with_context(res['context']).create({})
+                res = line_inv.makeInvoices()
+                invoice_dom = ast.literal_eval(res.get('domain', 'False'))
+                invoice_ids = invoice_dom and invoice_dom[0][2] or []
+                self.recreated_invoice_id = \
+                    invoice_ids and invoice_ids[0] or False
+            else:
+                raise ValidationError(
+                    _('Current purchase invoice method is not supported'))
+            # Redirect to new invoice
+            if self.recreated_invoice_id:
+                action = self.env.ref('account.action_invoice_tree2')
+                result = action.read()[0]
+                res = Data.get_object_reference('account',
+                                                'invoice_supplier_form')
+                result['views'] = [(res and res[1] or False, 'form')]
+                result['res_id'] = self.recreated_invoice_id.id or False
+                return result
+        return True
 
 
 class AccountInvoiceLine(models.Model):

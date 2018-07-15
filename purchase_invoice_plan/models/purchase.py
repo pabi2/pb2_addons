@@ -67,7 +67,7 @@ class PurchaseOrder(models.Model):
     @api.one
     @api.depends('invoice_ids.state')
     def _compute_plan_invoice_created(self):
-        if not self.invoice_ids:
+        if not self.invoice_ids or not self.use_invoice_plan:
             self.plan_invoice_created = False
         else:
             total_invoice_amt = 0

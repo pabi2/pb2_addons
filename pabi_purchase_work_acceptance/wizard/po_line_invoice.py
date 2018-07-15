@@ -55,7 +55,8 @@ class PurchaseLineInvoice(models.TransientModel):
             active_id = self._context['active_id']
             WAcceptance = self.env['purchase.work.acceptance']
             acceptance = WAcceptance.browse(active_id)
-            acceptance.invoice_created = True
+            acceptance.invoice_created = \
+                invoice_ids and invoice_ids[0] or False
             if invoice_ids and acceptance.supplier_invoice:
                 invoices = self.env['account.invoice'].browse(invoice_ids)
                 invoices.write({'supplier_invoice_number':
