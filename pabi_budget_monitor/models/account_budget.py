@@ -195,11 +195,9 @@ class AccountBudget(models.Model):
                'force_no_budget_check': False}
         fiscal_id, budget_levels = self.get_fiscal_and_budget_level(doc_date)
         # Internal Charge, no budget check
-        force_no_budget_check = False
         if internal_charge:
             fiscal = self.env['account.fiscalyear'].browse(fiscal_id)
             if fiscal.control_ext_charge_only:
-                force_no_budget_check = True
                 self = self.with_context(force_no_budget_check=True)
         # Validate Budget Level
         if not self._validate_budget_levels(budget_levels):
@@ -210,21 +208,6 @@ class AccountBudget(models.Model):
                     }
         # Check for single budget type
         budget_level = budget_levels[budget_type]
-        # sel_fields = self._prepare_sel_budget_fields(budget_type,
-        #                                              budget_level)
-        # ext_res_id = False
-        # ext_field = False
-        # if len(sel_fields) > 1 and 'fund_id' in sel_fields:
-        #     if not fund_id:
-        #         return {'budget_ok': False,
-        #                 'budget_status': {},
-        #                 'message': 'Fund is not selected!'}
-        #     else:
-        #         ext_field = len(sel_fields) == 2 and sel_fields[1] or False
-        #         # Reassign
-        #         ext_res_id = res_id
-        #         res_id = fund_id
-
         amount = self._calc_amount_company_currency(amount)
         res = self.check_budget(fiscal_id,
                                 budget_type,  # eg, project_base
@@ -234,8 +217,6 @@ class AccountBudget(models.Model):
                                 # ext_field=ext_field,
                                 # ext_res_id=ext_res_id
                                 )
-        # Extra parameter
-        res['force_no_budget_check'] = force_no_budget_check
         return res
 
     @api.model
