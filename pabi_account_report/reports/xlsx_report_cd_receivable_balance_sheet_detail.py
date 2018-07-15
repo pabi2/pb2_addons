@@ -183,11 +183,13 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
         InvoicePlan = self.env['sale.invoice.plan']
         lines = []
         total_invoice_amount = 0
+        total_payment_amount = 0
         for loan_agreement_id in list(set(map(lambda x: x[0], datas))):
             loan_agreement = LoanAgreement.browse(loan_agreement_id)
-            first_rec = True
             subtotal_invoice_amount = 0
+            subtotal_payment_amount = 0
             old_outstanding = 0
+            first_rec = True
             for rec in filter(lambda x: x[0] == loan_agreement_id, datas):
                 supplier_payment = Voucher.browse(rec[2] or 0)
                 invoice_plan = InvoicePlan.browse(rec[3] or 0)
@@ -224,21 +226,26 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
                         (old_outstanding -
                          invoice_plan.ref_invoice_id.amount_total) or False,
                 }))
-                first_rec = False
                 old_outstanding = (rec[1] and rec[1] or 0) + \
                     supplier_payment.amount - \
                     invoice_plan.ref_invoice_id.amount_total
                 subtotal_invoice_amount += \
                     invoice_plan.ref_invoice_id.amount_total
+                subtotal_payment_amount += \
+                    first_rec and supplier_payment.amount or 0
+                first_rec = False
             total_invoice_amount += subtotal_invoice_amount
+            total_payment_amount += subtotal_payment_amount
             # Subtotal
             lines.append((0, 0, {
                 'partner_code': 'Subtotal',
+                'supplier_payment_amount': subtotal_payment_amount,
                 'customer_invoice_amount': subtotal_invoice_amount,
             }))
         # Grand Total
         lines.append((0, 0, {
-            'partner_code': 'Grand Total',
+            'partner_code': 'Total',
+            'supplier_payment_amount': total_payment_amount,
             'customer_invoice_amount': total_invoice_amount,
         }))
         return lines
