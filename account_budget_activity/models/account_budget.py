@@ -539,7 +539,8 @@ class AccountBudget(models.Model):
                 'amount_exp_commit': 0.0,
                 'amount_actual': 0.0,
                 'amount_balance': 0.0, },
-            'message': False, }
+            'message': False,
+            'force_no_budget_check': False}
         AccountFiscalyear = self.env['account.fiscalyear']
         BudgetLevel = self.env['account.fiscalyear.budget.level']
         fiscal = AccountFiscalyear.browse(fiscal_id)
@@ -561,6 +562,7 @@ class AccountBudget(models.Model):
         # No plan and no control, do nothing
         if not monitors and not blevel.is_budget_control:
             res['budget_ok'] = True
+            res['force_no_budget_check'] = True
             return res
 
         # Validation
@@ -601,6 +603,7 @@ class AccountBudget(models.Model):
         if self._context.get('force_no_budget_check', False) or \
                 not blevel.is_budget_control:
             res['budget_ok'] = True  # No control, just return information
+            res['force_no_budget_check'] = True
         return res
 
 
