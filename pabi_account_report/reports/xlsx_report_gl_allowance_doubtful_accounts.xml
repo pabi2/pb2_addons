@@ -49,6 +49,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
+            <field name="context">{'reset_common_field': True}</field>
         </record>
 
         <menuitem id="menu_report_gl_allowance_doubtful_accounts"

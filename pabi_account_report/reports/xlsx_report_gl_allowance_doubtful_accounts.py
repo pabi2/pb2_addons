@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# from openerp import models, fields, api, tools
 from openerp import models, fields, api
 
 
@@ -33,6 +32,6 @@ class XLSXReportGlAllowanceDoubtfulAccounts(models.TransientModel):
         Result = self.env['account.move.line']
         dom = [('move_id.state', '=', 'posted'),
                ('account_id.code', '=',
-               self.allowance_for_doubful_account_code),
+                self.allowance_for_doubful_account_code),
                ('move_id.date', '<=', self.date_report)]
         self.results = Result.search(dom)
