@@ -4,7 +4,9 @@
         <!-- This function is called after all ir.attachment is loaded
             to load the file content to relevant template_ids -->
         <function model="ir.attachment" name="load_xlsx_template">
-            <value eval="[ref('gfmis_template')]"/>
+            <value eval="[ref('gfmis_template'),
+                          ref('cfo_template'),
+                          ref('nstda_template')]"/>
             <value>pabi_trial_balance_extension/xlsx_template</value>
         </function>
     </data>
