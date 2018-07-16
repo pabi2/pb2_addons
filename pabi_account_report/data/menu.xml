@@ -15,5 +15,10 @@
             name="Receivable"
             parent="menu_pabi_account_report"
             sequence="20"/>
+
+        <menuitem id="menu_pabi_general_ledger_report"
+            name="General Ledger"
+            parent="menu_pabi_account_report"
+            sequence="30"/>
     </data>
 </openerp>
