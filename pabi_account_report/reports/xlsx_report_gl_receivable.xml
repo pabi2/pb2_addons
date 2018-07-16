@@ -30,8 +30,8 @@
 
         <menuitem id="menu_report_gl_receivable"
             name="GL Receivable "
-            parent="menu_pabi_receivable_report"
+            parent="menu_pabi_general_ledger_report"
             action="action_report_gl_receivable"
-            sequence="60"/>
+            sequence="20"/>
     </data>
 </openerp>
