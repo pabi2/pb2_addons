@@ -3,9 +3,10 @@
     <data>
         <template id="style_report_payable_confirmation_letter">
             .page_report_payable_confirmation_letter {
-                font-size: 20px !important;
+                font-size: 29px !important;
                 text-align: justify !important;
                 text-justify: inter-word !important;
+                line-height: 1 !important;
             }
             .center_report_payable_confirmation_letter {
                 text-align: center !important;
@@ -14,7 +15,7 @@
                 text-decoration: line-through !important;
             }
             .text_indent_report_payable_confirmation_letter {
-                text-indent: 50px !important;
+                text-indent: 45px !important;
             }
         </template>
 
@@ -85,7 +86,7 @@
                     <div>เรียน ผู้อำนวยการสำนักงานการตรวจสอบที่ 6</div>
                     <div class="text_indent_report_payable_confirmation_letter">สำนักงานการตรวจเงินแผ่นดิน</div>
                 </p>
-                <p style="margin_top: 10px;">
+                <p style="margin-top: 10px;">
                     ก. ขอรับรองว่า ข้าพเจ้า/เรา <t t-esc="partner"/> เป็น <span class="line_through_report_payable_confirmation_letter">ลูกหนี้</span>/เจ้าหนี้ ของ <t t-esc="company"/> ประเภท <t t-if="trading_account_payable">การค้า</t><t t-if="not trading_account_payable"><span class="line_through_report_payable_confirmation_letter">การค้า</span></t>/<t t-if="other_account_payable">อื่น</t><t t-if="not other_account_payable"><span class="line_through_report_payable_confirmation_letter">อื่น</span></t> ณ วันที <t t-esc="full_report_date"/> เป็นจำนวนทั้งสิ้น <t t-esc="'{:,.2f}'.format(o.balance)"/> บาท (<t t-esc="o.balance_text_th"/>) นั้นเป็นการถูกต้อง
                 </p>
                 <p>
