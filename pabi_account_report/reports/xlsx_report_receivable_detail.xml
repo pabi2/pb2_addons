@@ -39,7 +39,7 @@
         </record>
 
         <record id="action_report_receivable_detail" model="ir.actions.act_window">
-            <field name="name">Receivable Detail Report</field>
+            <field name="name">Receivable Detail</field>
             <field name="res_model">xlsx.report.receivable.detail</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
