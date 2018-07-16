@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# from openerp import models, fields, api, tools
 from openerp import models, fields, api
 
 
@@ -12,11 +11,11 @@ class XLSXReportGlAllowanceDoubtfulAccounts(models.TransientModel):
         default='filter_date',
     )
     allowance_for_doubful_account_code = fields.Char(
-        string='Allowance for Doubful Account',
+        string='Account Code',
         readonly=True,
     )
-    as_of_date = fields.Date(
-        string='As of Date',
+    date_report = fields.Date(
+        string='Report Date',
         required=True,
         default=lambda self: fields.Date.context_today(self),
     )
@@ -31,8 +30,8 @@ class XLSXReportGlAllowanceDoubtfulAccounts(models.TransientModel):
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['account.move.line']
-        dom = ['&', ('move_id.state', '=', 'posted'),
-               '&', ('account_id.code', '=',
-                     self.allowance_for_doubful_account_code),
-                    ('move_id.date', '<=', self.as_of_date)]
+        dom = [('move_id.state', '=', 'posted'),
+               ('account_id.code', '=',
+                self.allowance_for_doubful_account_code),
+               ('move_id.date', '<=', self.date_report)]
         self.results = Result.search(dom)
