@@ -15,6 +15,7 @@
     "depends": [
         "base",
         "connector",
+        "report",
     ],
     "data": [
         "security/security_groups.xml",
@@ -30,5 +31,6 @@
         "views/xlsx_import.xml",
         "views/xlsx_report.xml",
         "views/pabi_action.xml",
+        "views/qweb_report.xml",
     ],
 }
