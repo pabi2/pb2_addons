@@ -3,11 +3,15 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 import time
 
-dict = {'in_invoice': 'KV', 'in_refund': 'CN',
-        'out_invoice': 'DV', 'out_refund': 'SN',
-        'payment': 'PV', 'receipt': 'RC',
-        'adjustment': 'JN', 'incoming_shipment': 'IN',
-        'interface_account': 'IA'}
+PREFIX_DOCTYPE = {'in_invoice': 'KV',
+                  'in_refund': 'CN',
+                  'out_invoice': 'DV',
+                  'out_refund': 'SN',
+                  'payment': 'PV',
+                  'receipt': 'RC',
+                  'adjustment': 'JN',
+                  'incoming_shipment': 'IN',
+                  'interface_account': 'IA'}
 
 
 class ReportAccountCommon(models.AbstractModel):
@@ -212,29 +216,29 @@ class ReportAccountCommon(models.AbstractModel):
         raise ValidationError(_('Not implemented.'))
 
 
-class Prefix_aml(models.Model):
+class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
-    prefix_doc_move_line = fields.Char(
-        string='Prefix Document Type Move Line',
-        compute='_compute_prefix_doc_move_line',
+    prefix_doctype = fields.Char(
+        string='Prefix Document Type',
+        compute='_compute_prefix_doctype',
     )
 
     @api.multi
-    def _compute_prefix_doc_move_line(self):
+    def _compute_prefix_doctype(self):
         for rec in self:
-            rec.prefix_doc_move_line = dict.get(rec.doctype, False)
+            rec.prefix_doctype = PREFIX_DOCTYPE.get(rec.doctype, False)
 
 
-class Prefix_am(models.Model):
+class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    prefix_doc_move = fields.Char(
-        string='Prefix Document Type Move',
-        compute='_compute_prefix_doc_move',
+    prefix_doctype = fields.Char(
+        string='Prefix Document Type',
+        compute='_compute_prefix_doctype',
     )
 
     @api.multi
-    def _compute_prefix_doc_move(self):
+    def _compute_prefix_doctype(self):
         for rec in self:
-            rec.prefix_doc_move = dict.get(rec.doctype, False)
+            rec.prefix_doctype = PREFIX_DOCTYPE.get(rec.doctype, False)
