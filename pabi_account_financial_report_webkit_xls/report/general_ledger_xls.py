@@ -10,21 +10,25 @@ from openerp.tools.translate import _
 # _logger = logging.getLogger(__name__)
 
 _column_sizes = [
+    ('charge_type', 10),
     ('document_date', 14),
-    ('posting_date', 12),
+    ('posting_date', 7),
     ('period', 12),
+    ('fiscal_year', 7),
     ('budget', 20),
     ('fund', 20),
     ('costcenter', 20),
     ('taxbranch', 50),
     ('move', 20),
     ('doctype', 20),
+    ('doc_journel', 12),
     ('activity_group', 20),
     ('activity', 20),
     ('account_code', 12),
     ('partner', 30),
     ('reference', 30),
     ('description', 45),
+    ('header_description', 45),
     ('counterpart', 30),
     ('debit', 15),
     ('credit', 15),
@@ -35,6 +39,20 @@ _column_sizes = [
     ('source_document', 30),
     ('reconcile_id', 15),
     ('partial_id', 15),
+    ('program_code', 10),
+    ('program_name', 10),
+    ('section_program', 10),
+    ('job_g_code', 10),
+    ('job_g_name', 10),
+    ('job_code', 10),
+    ('job_name', 10),
+    ('m_plan_code', 10),
+    ('m_plan_name', 10),
+    ('mission', 20),
+    ('posted_by', 12),
+    ('due_date', 12),
+    ('value_date', 12),
+    ('preprint_number', 7),
 ]
 
 
@@ -156,11 +174,15 @@ class general_ledger_xls(report_xls):
             num_format_str=report_xls.decimal_format)
 
         c_specs = [
+            ('charge_type', 1, 0, 'text', _('Charge Type'), None,
+                c_hdr_cell_style),
             ('document_date', 1, 0, 'text', _('Document Date'), None,
                 c_hdr_cell_style),
             ('posting_date', 1, 0, 'text', _('Posting Date'), None,
                 c_hdr_cell_style),
             ('period', 1, 0, 'text', _('Period'), None, c_hdr_cell_style),
+            ('fiscal_year', 1, 0, 'text', _('Fiscal Year'), None,
+                c_hdr_cell_style),
             ('budget', 1, 0, 'text', _('Budget'), None, c_hdr_cell_style),
             ('fund', 1, 0, 'text', _('Fund'), None, c_hdr_cell_style),
             ('costcenter', 1, 0, 'text', _('Costcenter'), None,
@@ -169,6 +191,8 @@ class general_ledger_xls(report_xls):
                 c_hdr_cell_style),
             ('move', 1, 0, 'text', _('Entry'), None, c_hdr_cell_style),
             ('doctype', 1, 0, 'text', _('DocType'), None, c_hdr_cell_style),
+            ('doc_journel', 1, 0, 'text', _('Doc Journal'), None,
+                c_hdr_cell_style),
             ('activity_group', 1, 0, 'text', _('Activity Group'), None,
                 c_hdr_cell_style),
             ('activity', 1, 0, 'text', _('Activity'), None,
@@ -179,6 +203,8 @@ class general_ledger_xls(report_xls):
             ('reference', 1, 0, 'text', _('Reference'), None,
                 c_hdr_cell_style),
             ('description', 1, 0, 'text', _('Description'), None,
+                c_hdr_cell_style),
+            ('header_description', 1, 0, 'text', _('Header Description'), None,
                 c_hdr_cell_style),
             ('counterpart', 1, 0, 'text',
              _('Counterpart'), None, c_hdr_cell_style),
@@ -204,6 +230,34 @@ class general_ledger_xls(report_xls):
             ('reconcile_id', 1, 0, 'text', _('Rec.ID'),
                 None, c_hdr_cell_style),
             ('partial_id', 1, 0, 'text', _('Part.ID'),
+                None, c_hdr_cell_style),
+            ('program_code', 1, 0, 'text', _('Program Code'),
+                None, c_hdr_cell_style),
+            ('program_name', 1, 0, 'text', _('Program Name'),
+                None, c_hdr_cell_style),
+            ('section_program', 1, 0, 'text', _('Section Program'),
+                None, c_hdr_cell_style),
+            ('job_g_code', 1, 0, 'text', _('Job Order Group Code'),
+                None, c_hdr_cell_style),
+            ('job_g_name', 1, 0, 'text', _('Job Order Group Name'),
+                None, c_hdr_cell_style),
+            ('job_code', 1, 0, 'text', _('Job Order Code'),
+                None, c_hdr_cell_style),
+            ('job_name', 1, 0, 'text', _('Job Order Name'),
+                None, c_hdr_cell_style),
+            ('m_plan_code', 1, 0, 'text', _('Master Plan Code'),
+                None, c_hdr_cell_style),
+            ('m_plan_name', 1, 0, 'text', _('Master Plan Name'),
+                None, c_hdr_cell_style),
+            ('mission', 1, 0, 'text', _('Mission'),
+                None, c_hdr_cell_style),
+            ('posted_by', 1, 0, 'text', _('Posted By'),
+                None, c_hdr_cell_style),
+            ('due_date', 1, 0, 'text', _('Due Date'),
+                None, c_hdr_cell_style),
+            ('value_date', 1, 0, 'text', _('Value Date'),
+                None, c_hdr_cell_style),
+            ('preprint_number', 1, 0, 'text', _('Preprint Number'),
                 None, c_hdr_cell_style),
             # --
         ]
@@ -289,15 +343,17 @@ class general_ledger_xls(report_xls):
                         label_elements.append(
                             "(%s)" % (line['invoice_number'],))
                     label = ' '.join(label_elements)
+                    c_specs = [('charge_type', 1, 0, 'text',
+                                line.get('charge_type') or '')]
 
                     if line.get('document_date'):
-                        c_specs = [
+                        c_specs += [
                             ('document_date', 1, 0, 'date', datetime.strptime(
                                 line['document_date'], '%Y-%m-%d'), None,
                                 ll_cell_style_date),
                         ]
                     else:
-                        c_specs = [
+                        c_specs += [
                             ('document_date', 1, 0, 'text', None),
                         ]
 
@@ -314,6 +370,7 @@ class general_ledger_xls(report_xls):
                     c_specs += [
                         ('period', 1, 0, 'text',
                          line.get('period_code') or ''),
+                        ('fiscal_year', 1, 0, 'text', _p.fiscalyear.name),
                         ('budget', 1, 0, 'text',
                          line.get('budget_name') or ''),
                         ('fund', 1, 0, 'text', line.get('fund_name') or ''),
@@ -323,6 +380,8 @@ class general_ledger_xls(report_xls):
                          line.get('taxbranch_name') or ''),
                         ('move', 1, 0, 'text', line.get('move_name') or ''),
                         ('doctype', 1, 0, 'text', line.get('doctype') or ''),
+                        ('doc_journel', 1, 0, 'text',
+                         line.get('journal') or ''),
                         ('activity_group', 1, 0, 'text',
                          line.get('activity_group_name') or ''),
                         ('activity', 1, 0, 'text',
@@ -332,6 +391,8 @@ class general_ledger_xls(report_xls):
                          line.get('partner_name') or ''),
                         ('reference', 1, 0, 'text', line.get('lref') or ''),
                         ('description', 1, 0, 'text', label),
+                        ('header_description', 1, 0, 'text',
+                         line.get('hname') or ''),
                         ('counterpart', 1, 0, 'text',
                          line.get('counterparts') or ''),
                         ('debit', 1, 0, 'number', line.get('debit', 0.0),
@@ -360,6 +421,34 @@ class general_ledger_xls(report_xls):
                             line.get('reconcile_id') or ''),
                         ('partial_id', 1, 0, 'text',
                             line.get('partial_id') or ''),
+                        ('program_code', 1, 0, 'text',
+                            line.get('program_code') or ''),
+                        ('program_name', 1, 0, 'text',
+                            line.get('program_name') or ''),
+                        ('section_program', 1, 0, 'text',
+                            line.get('section_program') or ''),
+                        ('job_g_code', 1, 0, 'text',
+                            line.get('job_order_group_code') or ''),
+                        ('job_g_name', 1, 0, 'text',
+                            line.get('job_order_group_name') or ''),
+                        ('job_code', 1, 0, 'text',
+                            line.get('job_order_code') or ''),
+                        ('job_name', 1, 0, 'text',
+                            line.get('job_order_name') or ''),
+                        ('m_plan_code', 1, 0, 'text',
+                            line.get('master_code') or ''),
+                        ('m_plan_name', 1, 0, 'text',
+                            line.get('master_name') or ''),
+                        ('mission', 1, 0, 'text',
+                            line.get('mission') or ''),
+                        ('posted_by', 1, 0, 'text',
+                            line.get('posted_by') or ''),
+                        ('due_date', 1, 0, 'text',
+                            line.get('due_date') or ''),
+                        ('value_date', 1, 0, 'text',
+                            line.get('value_date') or ''),
+                        ('preprint_number', 1, 0, 'text',
+                            line.get('preprint') or ''),
                         # --
                     ]
                     row_data = self.xls_row_template(

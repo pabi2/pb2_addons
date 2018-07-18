@@ -528,6 +528,7 @@ class CommonReportHeaderWebkit(common_report_header):
             move_line_ids = [move_line_ids]
         monster = """
 SELECT l.id AS id,
+            l.charge_type AS charge_type,
             l.date AS ldate,
             j.code AS jcode ,
             j.type AS jtype,
@@ -536,6 +537,21 @@ SELECT l.id AS id,
             l.amount_currency,
             l.ref AS lref,
             l.name AS lname,
+            m.narration AS hname,
+            j.name AS journal,
+            cct.name AS job_order_group_name,
+            cct.code AS job_order_group_code,
+            cc.name AS job_order_name,
+            cc.code AS job_order_code,
+            l.date_maturity AS due_date,
+            rprogram.code AS program_code,
+            rprogram.code AS program_name,
+            rsp.name AS section_program,
+            rm.description AS mission,
+            av.date_value AS value_date,
+            av.number_preprint AS preprint,
+            pmp.code AS master_code,
+            pmp.name AS master_name,
             COALESCE(l.debit, 0.0) - COALESCE(l.credit, 0.0) AS balance,
             l.debit,
             l.credit,
@@ -548,6 +564,9 @@ SELECT l.id AS id,
             (SELECT rp.name FROM res_users ru LEFT JOIN res_partner rp
              ON rp.id = ru.partner_id WHERE ru.id = m.create_uid LIMIT 1)
              AS created_name,
+            (SELECT rp.name FROM res_users ru LEFT JOIN res_partner rp
+             ON rp.id = ru.partner_id WHERE ru.id = m.write_uid LIMIT 1)
+             AS posted_by,
             COALESCE(partialrec.name, fullrec.name, '') AS rec_name,
             COALESCE(partialrec.id, fullrec.id, NULL) AS rec_id,
             m.id AS move_id,
@@ -610,6 +629,14 @@ FROM account_move_line l
     LEFT JOIN res_taxbranch rt ON (l.taxbranch_id = rt.id)
     LEFT JOIN account_activity_group aag ON (l.activity_group_id = aag.id)
     LEFT JOIN account_activity aa ON (l.activity_id = aa.id)
+    LEFT JOIN account_voucher av ON l.id = av.move_id
+    LEFT JOIN cost_control_type cct ON (l.cost_control_type_id = cct.id)
+    LEFT JOIN cost_control cc ON (l.cost_control_id = cc.id)
+    LEFT JOIN res_program rprogram ON (l.program_id = rprogram.id)
+    LEFT JOIN res_section_program rsp ON (l.section_program_id = rsp.id)
+    LEFT JOIN res_project rproject ON (l.project_id = rproject.id)
+    LEFT JOIN project_master_plan pmp ON (rproject.master_plan_id = pmp.id)
+    LEFT JOIN res_mission rm ON (l.mission_id = rm.id)
     WHERE l.id in %s"""
         monster += (" ORDER BY %s" % (order,))
         try:

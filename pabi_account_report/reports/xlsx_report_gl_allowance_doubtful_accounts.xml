@@ -54,7 +54,7 @@
 
         <menuitem id="menu_report_gl_allowance_doubtful_accounts"
             name="Allowance for Doubtful Accounts"
-            parent="menu_pabi_receivable_report"
+            parent="menu_pabi_general_ledger_report"
             action="action_report_gl_allowance_doubtful_accounts"
             sequence="60"/>
     </data>
