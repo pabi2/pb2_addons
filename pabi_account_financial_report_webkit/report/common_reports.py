@@ -539,19 +539,39 @@ SELECT l.id AS id,
             l.name AS lname,
             m.narration AS hname,
             j.name AS journal,
-            cct.name AS job_order_group_name,
-            cct.code AS job_order_group_code,
-            cc.name AS job_order_name,
-            cc.code AS job_order_code,
+            (SELECT CONCAT(CASE WHEN cct.code IS NOT NULL THEN
+                CONCAT('[',cct.code,'] ') ELSE '' END, CASE WHEN cct.name_short
+                IS NOT NULL THEN cct.name_short WHEN cct.name
+                IS NOT NULL THEN cct.name ELSE '' END) AS job_group
+            FROM cost_control_type cct
+            WHERE cct.id = (CASE WHEN l.cost_control_type_id IS NOT NULL
+                THEN l.cost_control_type_id ELSE NULL END)) AS job_order_group,
+            (SELECT CONCAT(CASE WHEN cc.code IS NOT NULL THEN
+                CONCAT('[',cc.code,'] ') ELSE '' END, CASE WHEN cc.name_short
+                IS NOT NULL THEN cc.name_short WHEN cc.name
+                IS NOT NULL THEN cc.name ELSE '' END) AS job
+            FROM cost_control cc
+            WHERE cc.id = (CASE WHEN l.cost_control_id IS NOT NULL
+                THEN l.cost_control_id ELSE NULL END)) AS job_order,
+            (SELECT CONCAT(CASE WHEN pmp.code IS NOT NULL THEN
+                CONCAT('[',pmp.code,'] ') ELSE '' END, CASE WHEN pmp.name_short
+                IS NOT NULL THEN pmp.name_short WHEN pmp.name
+                IS NOT NULL THEN pmp.name ELSE '' END) AS master
+            FROM project_master_plan pmp
+            WHERE pmp.id = (CASE WHEN rproject.master_plan_id IS NOT NULL
+                THEN rproject.master_plan_id ELSE NULL END)) AS master_plan,
+            (SELECT CONCAT(CASE WHEN rp.code IS NOT NULL THEN
+                CONCAT('[',rp.code,'] ') ELSE '' END, CASE WHEN rp.name_short
+                IS NOT NULL THEN rp.name_short WHEN rp.name
+                IS NOT NULL THEN rp.name ELSE '' END)
+            FROM res_program rp
+            WHERE rp.id = (CASE WHEN l.program_id IS NOT NULL
+                THEN l.program_id ELSE NULL END)) AS program,
             l.date_maturity AS due_date,
-            rprogram.code AS program_code,
-            rprogram.code AS program_name,
             rsp.name AS section_program,
             rm.description AS mission,
             av.date_value AS value_date,
             av.number_preprint AS preprint,
-            pmp.code AS master_code,
-            pmp.name AS master_name,
             COALESCE(l.debit, 0.0) - COALESCE(l.credit, 0.0) AS balance,
             l.debit,
             l.credit,
@@ -627,12 +647,8 @@ FROM account_move_line l
     LEFT JOIN account_activity_group aag ON (l.activity_group_id = aag.id)
     LEFT JOIN account_activity aa ON (l.activity_id = aa.id)
     LEFT JOIN account_voucher av ON l.id = av.move_id
-    LEFT JOIN cost_control_type cct ON (l.cost_control_type_id = cct.id)
-    LEFT JOIN cost_control cc ON (l.cost_control_id = cc.id)
-    LEFT JOIN res_program rprogram ON (l.program_id = rprogram.id)
     LEFT JOIN res_section_program rsp ON (l.section_program_id = rsp.id)
     LEFT JOIN res_project rproject ON (l.project_id = rproject.id)
-    LEFT JOIN project_master_plan pmp ON (rproject.master_plan_id = pmp.id)
     LEFT JOIN res_mission rm ON (l.mission_id = rm.id)
     WHERE l.id in %s"""
         monster += (" ORDER BY %s" % (order,))
