@@ -35,7 +35,6 @@ _column_sizes = [
     ('cumul_bal', 15),
     ('curr_bal', 15),
     ('curr_code', 7),
-    ('created_by', 30),
     ('source_document', 30),
     ('reconcile_id', 15),
     ('partial_id', 15),
@@ -49,7 +48,7 @@ _column_sizes = [
     ('m_plan_code', 10),
     ('m_plan_name', 10),
     ('mission', 20),
-    ('posted_by', 12),
+    ('posted_by', 30),
     ('due_date', 12),
     ('value_date', 12),
     ('preprint_number', 7),
@@ -222,8 +221,6 @@ class general_ledger_xls(report_xls):
                  None, c_hdr_cell_style_center),
             ]
         c_specs += [
-            ('created_by', 1, 0, 'text', _('Created by'),
-                None, c_hdr_cell_style),
             # PABI2
             ('source_document', 1, 0, 'text', _('Source Doc.'),
                 None, c_hdr_cell_style),
@@ -412,8 +409,6 @@ class general_ledger_xls(report_xls):
                              ll_cell_style_center),
                         ]
                     c_specs += [
-                        ('created_by', 1, 0, 'text',
-                            line.get('created_name') or ''),
                         # PABI2
                         ('source_document', 1, 0, 'text',
                             line.get('source_document') or ''),

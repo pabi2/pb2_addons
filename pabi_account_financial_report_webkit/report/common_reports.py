@@ -562,9 +562,6 @@ SELECT l.id AS id,
             p.name AS partner_name,
             m.name AS move_name,
             (SELECT rp.name FROM res_users ru LEFT JOIN res_partner rp
-             ON rp.id = ru.partner_id WHERE ru.id = m.create_uid LIMIT 1)
-             AS created_name,
-            (SELECT rp.name FROM res_users ru LEFT JOIN res_partner rp
              ON rp.id = ru.partner_id WHERE ru.id = m.write_uid LIMIT 1)
              AS posted_by,
             COALESCE(partialrec.name, fullrec.name, '') AS rec_name,
