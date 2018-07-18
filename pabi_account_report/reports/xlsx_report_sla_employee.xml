@@ -7,15 +7,15 @@
             <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <xpath expr="//page[1]" position="after">
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
                     <page string="Validated By Filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="user_ids" colspan="4" nolabel="1"/>
+                        <field name="user_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id)]"/>
                     </page>
                     <page string="Source Document Ref. Filters">
-                      <group>
-                        <field name="source_document_type"/>
-                      </group>
+                        <group>
+                            <field name="source_document_type"/>
+                        </group>
                     </page>
                 </xpath>
             </field>
