@@ -3,6 +3,16 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 import time
 
+PREFIX_DOCTYPE = {'in_invoice': 'KV',
+                  'in_refund': 'CN',
+                  'out_invoice': 'DV',
+                  'out_refund': 'SN',
+                  'payment': 'PV',
+                  'receipt': 'RC',
+                  'adjustment': 'JN',
+                  'incoming_shipment': 'IN',
+                  'interface_account': 'IA'}
+
 
 class ReportAccountCommon(models.AbstractModel):
     _name = 'report.account.common'
@@ -204,3 +214,31 @@ class ReportAccountCommon(models.AbstractModel):
     @api.multi
     def run_report(self):
         raise ValidationError(_('Not implemented.'))
+
+
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+
+    prefix_doctype = fields.Char(
+        string='Prefix Document Type',
+        compute='_compute_prefix_doctype',
+    )
+
+    @api.multi
+    def _compute_prefix_doctype(self):
+        for rec in self:
+            rec.prefix_doctype = PREFIX_DOCTYPE.get(rec.doctype, False)
+
+
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    prefix_doctype = fields.Char(
+        string='Prefix Document Type',
+        compute='_compute_prefix_doctype',
+    )
+
+    @api.multi
+    def _compute_prefix_doctype(self):
+        for rec in self:
+            rec.prefix_doctype = PREFIX_DOCTYPE.get(rec.doctype, False)

@@ -528,6 +528,7 @@ class CommonReportHeaderWebkit(common_report_header):
             move_line_ids = [move_line_ids]
         monster = """
 SELECT l.id AS id,
+            l.charge_type AS charge_type,
             l.date AS ldate,
             j.code AS jcode ,
             j.type AS jtype,
@@ -536,6 +537,41 @@ SELECT l.id AS id,
             l.amount_currency,
             l.ref AS lref,
             l.name AS lname,
+            m.narration AS hname,
+            j.name AS journal,
+            (SELECT CONCAT(CASE WHEN cct.code IS NOT NULL THEN
+                CONCAT('[',cct.code,'] ') ELSE '' END, CASE WHEN cct.name_short
+                IS NOT NULL THEN cct.name_short WHEN cct.name
+                IS NOT NULL THEN cct.name ELSE '' END) AS job_group
+            FROM cost_control_type cct
+            WHERE cct.id = (CASE WHEN l.cost_control_type_id IS NOT NULL
+                THEN l.cost_control_type_id ELSE NULL END)) AS job_order_group,
+            (SELECT CONCAT(CASE WHEN cc.code IS NOT NULL THEN
+                CONCAT('[',cc.code,'] ') ELSE '' END, CASE WHEN cc.name_short
+                IS NOT NULL THEN cc.name_short WHEN cc.name
+                IS NOT NULL THEN cc.name ELSE '' END) AS job
+            FROM cost_control cc
+            WHERE cc.id = (CASE WHEN l.cost_control_id IS NOT NULL
+                THEN l.cost_control_id ELSE NULL END)) AS job_order,
+            (SELECT CONCAT(CASE WHEN pmp.code IS NOT NULL THEN
+                CONCAT('[',pmp.code,'] ') ELSE '' END, CASE WHEN pmp.name_short
+                IS NOT NULL THEN pmp.name_short WHEN pmp.name
+                IS NOT NULL THEN pmp.name ELSE '' END) AS master
+            FROM project_master_plan pmp
+            WHERE pmp.id = (CASE WHEN rproject.master_plan_id IS NOT NULL
+                THEN rproject.master_plan_id ELSE NULL END)) AS master_plan,
+            (SELECT CONCAT(CASE WHEN rp.code IS NOT NULL THEN
+                CONCAT('[',rp.code,'] ') ELSE '' END, CASE WHEN rp.name_short
+                IS NOT NULL THEN rp.name_short WHEN rp.name
+                IS NOT NULL THEN rp.name ELSE '' END)
+            FROM res_program rp
+            WHERE rp.id = (CASE WHEN l.program_id IS NOT NULL
+                THEN l.program_id ELSE NULL END)) AS program,
+            l.date_maturity AS due_date,
+            rsp.name AS section_program,
+            rm.description AS mission,
+            av.date_value AS value_date,
+            av.number_preprint AS preprint,
             COALESCE(l.debit, 0.0) - COALESCE(l.credit, 0.0) AS balance,
             l.debit,
             l.credit,
@@ -546,8 +582,8 @@ SELECT l.id AS id,
             p.name AS partner_name,
             m.name AS move_name,
             (SELECT rp.name FROM res_users ru LEFT JOIN res_partner rp
-             ON rp.id = ru.partner_id WHERE ru.id = m.create_uid LIMIT 1)
-             AS created_name,
+             ON rp.id = ru.partner_id WHERE ru.id = m.write_uid LIMIT 1)
+             AS posted_by,
             COALESCE(partialrec.name, fullrec.name, '') AS rec_name,
             COALESCE(partialrec.id, fullrec.id, NULL) AS rec_id,
             m.id AS move_id,
@@ -610,6 +646,10 @@ FROM account_move_line l
     LEFT JOIN res_taxbranch rt ON (l.taxbranch_id = rt.id)
     LEFT JOIN account_activity_group aag ON (l.activity_group_id = aag.id)
     LEFT JOIN account_activity aa ON (l.activity_id = aa.id)
+    LEFT JOIN account_voucher av ON l.id = av.move_id
+    LEFT JOIN res_section_program rsp ON (l.section_program_id = rsp.id)
+    LEFT JOIN res_project rproject ON (l.project_id = rproject.id)
+    LEFT JOIN res_mission rm ON (l.mission_id = rm.id)
     WHERE l.id in %s"""
         monster += (" ORDER BY %s" % (order,))
         try:

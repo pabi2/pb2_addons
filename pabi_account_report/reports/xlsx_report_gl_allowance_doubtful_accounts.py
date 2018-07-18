@@ -33,5 +33,6 @@ class XLSXReportGlAllowanceDoubtfulAccounts(models.TransientModel):
         dom = [('move_id.state', '=', 'posted'),
                ('account_id.code', '=',
                 self.allowance_for_doubful_account_code),
-               ('move_id.date', '<=', self.date_report)]
+               ('move_id.date', '<=', self.date_report),
+               ('reconcile_id', '=', False)]
         self.results = Result.search(dom)
