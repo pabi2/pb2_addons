@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_budget_drilldown_report,access_budget_drilldown_report,model_budget_drilldown_report,pabi_base.group_budget_user,1,1,1,1
+access_budget_drilldown_report_line,access_budget_drilldown_report_line,model_budget_drilldown_report_line,pabi_base.group_budget_user,1,1,1,1

@@ -7,6 +7,19 @@ class BudgetMonitorReport(models.Model):
     _name = 'budget.monitor.report'
     _auto = False
 
+    budget_commit_type = fields.Selection(
+        [('so_commit', 'SO Commitment'),
+         ('pr_commit', 'PR Commitment'),
+         ('po_commit', 'PO Commitment'),
+         ('exp_commit', 'Expense Commitment'),
+         ('actual', 'Actual'),
+         ],
+        string='Budget Commit Type',
+    )
+    analytic_line_id = fields.Many2one(
+        'account.analytic.line',
+        string='Analytic Line',
+    )
     charge_type = fields.Selection(
         [('internal', 'Internal'),
          ('external', 'External')],
@@ -102,6 +115,7 @@ class BudgetMonitorReport(models.Model):
     def _get_sql_view(self):
         sql_view = """
             select row_number() over (order by period_id) as id,
+            analytic_line_id, budget_commit_type,
             budget_method, user_id, charge_type, fiscalyear_id,
             -----> doc_ref, doc_id,
             planned_amount, released_amount, amount_so_commit,
@@ -110,7 +124,8 @@ class BudgetMonitorReport(models.Model):
             coalesce(pa1.id, pa2.id) as product_activity_id,
             %s
             from
-            (select budget_method, user_id, charge_type, fiscalyear_id,
+            (select null as analytic_line_id, null as budget_commit_type,
+            budget_method, user_id, charge_type, fiscalyear_id,
             ------> doc_ref, 'account.budget,' || budget_id as doc_id,
             planned_amount, released_amount,
             0.0 as amount_so_commit, 0.0 as amount_pr_commit,
@@ -122,7 +137,8 @@ class BudgetMonitorReport(models.Model):
             from budget_plan_report
             where state in ('done')
             UNION ALL
-            select budget_method, user_id, charge_type, fiscalyear_id,
+            select analytic_line_id, budget_commit_type, budget_method,
+            user_id, charge_type, fiscalyear_id,
             ------> doc_ref, doc_id,
             0.0 as planned_amount, 0.0 as released_amount,
             amount_so_commit, amount_pr_commit,

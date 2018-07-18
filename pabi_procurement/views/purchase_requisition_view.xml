@@ -4,19 +4,15 @@
         <record model="ir.ui.view" id="view_purchase_requisition_form">
             <field name="name">purchase.requisition.form</field>
             <field name="model">purchase.requisition</field>
-            <field name="inherit_id"
-                   ref="purchase_requisition.view_purchase_requisition_form"/>
+            <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//form[@string='Call for Bids']" position="attributes">
                     <attribute name="create">false</attribute>
                 </xpath>
-                <xpath expr="//field[@name='name']"
-                       position="attributes">
-                    <attribute name="attrs"/>
+                <xpath expr="//field[@name='name']" position="attributes">
                     <attribute name="readonly">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='date_end']"
-                       position="attributes">
+                <xpath expr="//field[@name='date_end']" position="attributes">
                     <attribute name="widget">date</attribute>
                 </xpath>
                 <xpath expr="//field[@name='origin']" position="replace">

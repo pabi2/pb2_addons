@@ -1,0 +1,360 @@
+# -*- coding: utf-8 -*-
+import datetime
+from openerp import models, api, fields, _
+from openerp.exceptions import ValidationError
+from openerp.addons.pabi_chartfield.models.chartfield import \
+    ChartField, CHART_VIEW, CHART_FIELDS
+from openerp.addons.pabi_account_move_document_ref.models.account_move import \
+    DOCTYPE_SELECT
+from .common import SearchCommon
+
+SEARCH_KEYS = dict(CHART_FIELDS).keys()
+ALL_SEARCH_KEYS = SEARCH_KEYS + ['chart_view', 'charge_type']
+CHART_VIEWS = CHART_VIEW.keys()
+
+
+def get_field_value(record, field):
+    """ For many2one, return id, otherwise raw value """
+    try:
+        value = record[field] and record[field].id or False
+        return value
+    except Exception:
+        return record[field]
+
+
+def prepare_where_dict(record, keys):
+    """ Based on ALL_SEARCH_KEYS, prepare where_dict """
+    where_dict = {}
+    for k in keys:
+        value = get_field_value(record, k)
+        if value:
+            where_dict.update({k: value})
+    return where_dict
+
+
+def prepare_where_str(where):
+    """
+    I.e., where = {'org_id': 1, 'chart_view': 'unit_base'}
+    where_clause = "org_id = 1, charg_view = 'unit_base'"
+    """
+    extra_where = []
+    for k in where.keys():
+        if where.get(k):
+            if isinstance(where[k], basestring):
+                extra_where.append("and %s = '%s'" % (k, where[k]))
+            else:
+                extra_where.append("and %s = %s" % (k, where[k]))
+    where_clause = ' '.join(extra_where)
+    return where_clause
+
+
+class BudgetDrilldownReport(SearchCommon, models.Model):
+    _name = 'budget.drilldown.report'
+
+    name = fields.Char(
+        string='Name',
+        readonly=True,
+    )
+    line_ids = fields.One2many(
+        'budget.drilldown.report.line',
+        'report_id',
+        domain=[('charge_type', '=', False)],
+        string='Details'
+    )
+    line_internal_ids = fields.One2many(
+        'budget.drilldown.report.line',
+        'report_id',
+        domain=[('charge_type', '=', 'internal')],
+        string='Details (Internal)',
+    )
+    line_external_ids = fields.One2many(
+        'budget.drilldown.report.line',
+        'report_id',
+        domain=[('charge_type', '=', 'external')],
+        string='Details (External)',
+    )
+
+    @api.multi
+    def _prepare_overview_report(self):
+        self.ensure_one()
+        where_data = []
+        # Combination of chart_view and chart_type
+        for chart_view in CHART_VIEWS:
+            for charge_type in ('internal', 'external'):
+                where = {'chart_view': chart_view,
+                         'charge_type': charge_type}
+                for s in SEARCH_KEYS:
+                    value = get_field_value(self, s)
+                    if value:
+                        where.update({s: value})
+                where_data.append(where)
+        report_lines = []
+        for where in where_data:
+            where_str = prepare_where_str(where)
+            fields_str = ', '.join(where.keys())
+            sql = """
+                select %s, sum(planned_amount) planned_amount,
+                    sum(released_amount) released_amount,
+                    sum(amount_so_commit) amount_so_commit,
+                    sum(amount_pr_commit) amount_pr_commit,
+                    sum(amount_po_commit) amount_po_commit,
+                    sum(amount_exp_commit) amount_exp_commit,
+                    sum(amount_actual) amount_actual,
+                    sum(amount_consumed) amount_consumed,
+                    sum(amount_balance) amount_balance
+                from budget_monitor_report
+                where budget_method = 'expense'
+                %s
+                group by %s
+            """ % (fields_str, where_str, fields_str)
+            self._cr.execute(sql)
+            res = self._cr.dictfetchall()
+            row = res and res[0] or where  # if res no row use where
+            report_lines.append((0, 0, row))
+        return report_lines
+
+    @api.model
+    def generate_report(self, wizard):
+        # Delete old reports run by the same user
+        self.search(
+            [('create_uid', '=', self.env.user.id),
+             ('create_date', '<', fields.Date.context_today(self))]).unlink()
+        # Create report
+        name = 'Budget Drilldown %s' % wizard.fiscalyear_id.code
+        report = self.create({
+            'name': name,
+            'report_type': wizard.report_type,
+            'fiscalyear_id': wizard.fiscalyear_id.id,
+            'org_id': wizard.org_id.id,
+            'sector_id': wizard.sector_id.id,
+            'subsector_id': wizard.subsector_id.id,
+            'division_id': wizard.division_id.id,
+            'section_id': wizard.section_id.id,
+            })
+        # Compute report lines
+        report_lines = []
+        if report.report_type == 'overview':
+            report_lines = report._prepare_overview_report()
+        else:
+            raise ValidationError(_('Selected report type is not valid!'))
+        report.write({'line_ids': report_lines})
+        return report.id
+
+    @api.model
+    def vacumm_old_reports(self):
+        """ Vacumm report older than 1 day """
+        old_date = datetime.datetime.now() - datetime.timedelta(days=1)
+        reports = self.search([('create_date', '<',
+                                old_date.strftime('%Y-%m-%d'))])
+        reports.unlink()
+
+
+class BudgetDrilldownReportLine(ChartField, models.Model):
+    _name = 'budget.drilldown.report.line'
+
+    budget_commit_type = fields.Selection(
+        [('so_commit', 'SO Commitment'),
+         ('pr_commit', 'PR Commitment'),
+         ('po_commit', 'PO Commitment'),
+         ('exp_commit', 'Expense Commitment'),
+         ('actual', 'Actual'),
+         ],
+        string='Budget Commit Type',
+    )
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        readonly=True,
+    )
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+        readonly=True,
+    )
+    report_id = fields.Many2one(
+        'budget.drilldown.report',
+        string='Report',
+        index=True,
+        ondelete='cascade',
+    )
+    name = fields.Char(
+        string='Name',
+        compute='_compute_name',
+        readonly=True,
+    )
+    user_id = fields.Many2one(
+        'res.users',
+        string='User',
+        readonly=True,
+    )
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscal Year',
+        readonly=True,
+    )
+    planned_amount = fields.Float(
+        string='Planned Amount',
+        readonly=True,
+    )
+    released_amount = fields.Float(
+        string='Released Amount',
+        readonly=True,
+    )
+    amount_so_commit = fields.Float(
+        string='SO Commitment',
+        readonly=True,
+    )
+    amount_pr_commit = fields.Float(
+        string='PR Commitment',
+        readonly=True,
+    )
+    amount_po_commit = fields.Float(
+        string='PO Commitment',
+        readonly=True,
+    )
+    amount_exp_commit = fields.Float(
+        string='Expense Commitment',
+        readonly=True,
+    )
+    amount_actual = fields.Float(
+        string='Actual',
+        readonly=True,
+    )
+    amount_consumed = fields.Float(
+        string='Consumed',
+        readonly=True,
+    )
+    amount_balance = fields.Float(
+        string='Balance',
+        readonly=True,
+    )
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        string='Activity Group',
+        readonly=True,
+    )
+    activity_id = fields.Many2one(
+        'account.activity',
+        string='Activity',
+        readonly=True,
+    )
+    account_id = fields.Many2one(
+        'account.account',
+        string='Account',
+        readonly=True,
+    )
+    product_id = fields.Many2one(
+        'product.product',
+        string='Product',
+        readonly=True,
+    )
+    product_activity_id = fields.Many2one(
+        'product.activity',
+        string='Product/Activity',
+        readonly=True,
+    )
+    period_id = fields.Many2one(
+        'account.period',
+        string='Period',
+        readonly=True,
+    )
+    quarter = fields.Selection(
+        [('Q1', 'Q1'),
+         ('Q2', 'Q2'),
+         ('Q3', 'Q3'),
+         ('Q4', 'Q4'),
+         ],
+        string='Quarter',
+        readonly=True,
+    )
+    doctype = fields.Selection(
+        DOCTYPE_SELECT,
+        string='Doctype',
+        readonly=True,
+    )
+    document = fields.Char(
+        string='Document',
+        readonly=True,
+        help="Reference to original document",
+    )
+    document_line = fields.Char(
+        string='Document Line',
+        readonly=True,
+        help="Reference to original document line",
+    )
+    activity_rpt_id = fields.Many2one(
+        'account.activity',
+        string='Activity Rpt',
+        readonly=True,
+    )
+
+    @api.multi
+    def _compute_name(self):
+        """ Concat dimension all dimension in a valid order """
+        fields_order = (  # This is the valid field/ordr
+            'org_id', 'division_id', 'section_id',
+            'project_id', 'invest_asset_id', 'invest_construction_id',
+            'activity_group_id', 'activity_id')
+        for rec in self:
+            names = []
+            for f in fields_order:
+                if f in rec:
+                    if len(rec[f]) == 0:
+                        continue
+                    if 'display_name' in rec[f]:
+                        names.append(str(rec[f].display_name))
+                    else:
+                        names.append(str(rec[f]))
+            rec.name = ' / '.join(names)
+
+    @api.multi
+    def open_so_commit_items(self):
+        return self.open_items('so_commit')
+
+    @api.multi
+    def open_pr_commit_items(self):
+        return self.open_items('pr_commit')
+
+    @api.multi
+    def open_po_commit_items(self):
+        return self.open_items('po_commit')
+
+    @api.multi
+    def open_exp_commit_items(self):
+        return self.open_items('exp_commit')
+
+    @api.multi
+    def open_actual_items(self):
+        return self.open_items('actual')
+
+    @api.multi
+    def open_consumed_items(self):
+        return self.open_items()
+
+    @api.multi
+    def open_items(self, ttype=False):
+        self.ensure_one()
+        where_dict = prepare_where_dict(self, ALL_SEARCH_KEYS)
+        if ttype:
+            where_dict.update({'budget_commit_type': ttype})
+        where_str = prepare_where_str(where_dict)
+        sql = """
+            select analytic_line_id from budget_monitor_report
+            where 1=1 %s
+        """ % where_str
+        self._cr.execute(sql)
+        res = self._cr.fetchall()
+        analytic_line_ids = [x[0] for x in res]
+        return {
+            'name': _("Analytic Lines"),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.analytic.line',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': self._context,
+            'nodestroy': True,
+            'domain': [('id', 'in', analytic_line_ids)],
+        }
