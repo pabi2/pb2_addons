@@ -10,31 +10,45 @@ from openerp.tools.translate import _
 # _logger = logging.getLogger(__name__)
 
 _column_sizes = [
+    ('charge_type', 10),
     ('document_date', 14),
-    ('posting_date', 12),
+    ('posting_date', 14),
     ('period', 12),
+    ('fiscal_year', 7),
     ('budget', 20),
     ('fund', 20),
     ('costcenter', 20),
     ('taxbranch', 50),
     ('move', 20),
+    ('item', 7),
     ('doctype', 20),
+    ('doc_journel', 12),
     ('activity_group', 20),
     ('activity', 20),
     ('account_code', 12),
     ('partner', 30),
     ('reference', 30),
     ('description', 45),
+    ('header_description', 45),
     ('counterpart', 30),
     ('debit', 15),
     ('credit', 15),
     ('cumul_bal', 15),
     ('curr_bal', 15),
     ('curr_code', 7),
-    ('created_by', 30),
     ('source_document', 30),
     ('reconcile_id', 15),
     ('partial_id', 15),
+    ('program', 10),
+    ('section_program', 10),
+    ('job_group', 10),
+    ('job', 10),
+    ('master_plan', 10),
+    ('mission', 20),
+    ('posted_by', 30),
+    ('due_date', 12),
+    ('value_date', 12),
+    ('preprint_number', 7),
 ]
 
 
@@ -156,11 +170,15 @@ class general_ledger_xls(report_xls):
             num_format_str=report_xls.decimal_format)
 
         c_specs = [
+            ('charge_type', 1, 0, 'text', _('Charge Type'), None,
+                c_hdr_cell_style),
             ('document_date', 1, 0, 'text', _('Document Date'), None,
                 c_hdr_cell_style),
             ('posting_date', 1, 0, 'text', _('Posting Date'), None,
                 c_hdr_cell_style),
             ('period', 1, 0, 'text', _('Period'), None, c_hdr_cell_style),
+            ('fiscal_year', 1, 0, 'text', _('Fiscal Year'), None,
+                c_hdr_cell_style),
             ('budget', 1, 0, 'text', _('Budget'), None, c_hdr_cell_style),
             ('fund', 1, 0, 'text', _('Fund'), None, c_hdr_cell_style),
             ('costcenter', 1, 0, 'text', _('Costcenter'), None,
@@ -168,7 +186,10 @@ class general_ledger_xls(report_xls):
             ('taxbranch', 1, 0, 'text', _('Tax Branch'), None,
                 c_hdr_cell_style),
             ('move', 1, 0, 'text', _('Entry'), None, c_hdr_cell_style),
+            ('item', 1, 0, 'text', _('Item'), None, c_hdr_cell_style),
             ('doctype', 1, 0, 'text', _('DocType'), None, c_hdr_cell_style),
+            ('doc_journel', 1, 0, 'text', _('Doc Journal'), None,
+                c_hdr_cell_style),
             ('activity_group', 1, 0, 'text', _('Activity Group'), None,
                 c_hdr_cell_style),
             ('activity', 1, 0, 'text', _('Activity'), None,
@@ -179,6 +200,8 @@ class general_ledger_xls(report_xls):
             ('reference', 1, 0, 'text', _('Reference'), None,
                 c_hdr_cell_style),
             ('description', 1, 0, 'text', _('Description'), None,
+                c_hdr_cell_style),
+            ('header_description', 1, 0, 'text', _('Header Description'), None,
                 c_hdr_cell_style),
             ('counterpart', 1, 0, 'text',
              _('Counterpart'), None, c_hdr_cell_style),
@@ -196,14 +219,32 @@ class general_ledger_xls(report_xls):
                  None, c_hdr_cell_style_center),
             ]
         c_specs += [
-            ('created_by', 1, 0, 'text', _('Created by'),
-                None, c_hdr_cell_style),
             # PABI2
             ('source_document', 1, 0, 'text', _('Source Doc.'),
                 None, c_hdr_cell_style),
             ('reconcile_id', 1, 0, 'text', _('Rec.ID'),
                 None, c_hdr_cell_style),
             ('partial_id', 1, 0, 'text', _('Part.ID'),
+                None, c_hdr_cell_style),
+            ('program', 1, 0, 'text', _('Program'),
+                None, c_hdr_cell_style),
+            ('section_program', 1, 0, 'text', _('Section Program'),
+                None, c_hdr_cell_style),
+            ('job_group', 1, 0, 'text', _('Job Order Group'),
+                None, c_hdr_cell_style),
+            ('job', 1, 0, 'text', _('Job Order'),
+                None, c_hdr_cell_style),
+            ('master_plan', 1, 0, 'text', _('Master Plan'),
+                None, c_hdr_cell_style),
+            ('mission', 1, 0, 'text', _('Mission'),
+                None, c_hdr_cell_style),
+            ('posted_by', 1, 0, 'text', _('Posted By'),
+                None, c_hdr_cell_style),
+            ('due_date', 1, 0, 'text', _('Due Date'),
+                None, c_hdr_cell_style),
+            ('value_date', 1, 0, 'text', _('Value Date'),
+                None, c_hdr_cell_style),
+            ('preprint_number', 1, 0, 'text', _('Preprint Number'),
                 None, c_hdr_cell_style),
             # --
         ]
@@ -289,15 +330,17 @@ class general_ledger_xls(report_xls):
                         label_elements.append(
                             "(%s)" % (line['invoice_number'],))
                     label = ' '.join(label_elements)
+                    c_specs = [('charge_type', 1, 0, 'text',
+                                line.get('charge_type') or '')]
 
                     if line.get('document_date'):
-                        c_specs = [
+                        c_specs += [
                             ('document_date', 1, 0, 'date', datetime.strptime(
                                 line['document_date'], '%Y-%m-%d'), None,
                                 ll_cell_style_date),
                         ]
                     else:
-                        c_specs = [
+                        c_specs += [
                             ('document_date', 1, 0, 'text', None),
                         ]
 
@@ -311,9 +354,15 @@ class general_ledger_xls(report_xls):
                         c_specs += [
                             ('posting_date', 1, 0, 'text', None),
                         ]
+                    doc = rowcol_to_cell(row_pos, 9)
+                    doc_above = rowcol_to_cell(row_pos - 1, 9)
+                    item_above = rowcol_to_cell(row_pos - 1, 10)
+                    item_formula = 'IF((' + doc + '<>' + doc_above + '),1,' + \
+                                   item_above + '+1)'
                     c_specs += [
                         ('period', 1, 0, 'text',
                          line.get('period_code') or ''),
+                        ('fiscal_year', 1, 0, 'text', _p.fiscalyear.name),
                         ('budget', 1, 0, 'text',
                          line.get('budget_name') or ''),
                         ('fund', 1, 0, 'text', line.get('fund_name') or ''),
@@ -322,7 +371,10 @@ class general_ledger_xls(report_xls):
                         ('taxbranch', 1, 0, 'text',
                          line.get('taxbranch_name') or ''),
                         ('move', 1, 0, 'text', line.get('move_name') or ''),
+                        ('item', 1, 0, 'number', None, item_formula),
                         ('doctype', 1, 0, 'text', line.get('doctype') or ''),
+                        ('doc_journel', 1, 0, 'text',
+                         line.get('journal') or ''),
                         ('activity_group', 1, 0, 'text',
                          line.get('activity_group_name') or ''),
                         ('activity', 1, 0, 'text',
@@ -332,6 +384,8 @@ class general_ledger_xls(report_xls):
                          line.get('partner_name') or ''),
                         ('reference', 1, 0, 'text', line.get('lref') or ''),
                         ('description', 1, 0, 'text', label),
+                        ('header_description', 1, 0, 'text',
+                         line.get('hname') or ''),
                         ('counterpart', 1, 0, 'text',
                          line.get('counterparts') or ''),
                         ('debit', 1, 0, 'number', line.get('debit', 0.0),
@@ -351,8 +405,6 @@ class general_ledger_xls(report_xls):
                              ll_cell_style_center),
                         ]
                     c_specs += [
-                        ('created_by', 1, 0, 'text',
-                            line.get('created_name') or ''),
                         # PABI2
                         ('source_document', 1, 0, 'text',
                             line.get('source_document') or ''),
@@ -360,6 +412,25 @@ class general_ledger_xls(report_xls):
                             line.get('reconcile_id') or ''),
                         ('partial_id', 1, 0, 'text',
                             line.get('partial_id') or ''),
+                        ('program', 1, 0, 'text',
+                            line.get('program') or ''),
+                        ('section_program', 1, 0, 'text',
+                            line.get('section_program') or ''),
+                        ('job_group', 1, 0, 'text',
+                            line.get('job_order_group') or ''),
+                        ('job', 1, 0, 'text', line.get('job_order') or ''),
+                        ('master_plan', 1, 0, 'text',
+                            line.get('master_plan') or ''),
+                        ('mission', 1, 0, 'text',
+                            line.get('mission') or ''),
+                        ('posted_by', 1, 0, 'text',
+                            line.get('posted_by') or ''),
+                        ('due_date', 1, 0, 'text',
+                            line.get('due_date') or ''),
+                        ('value_date', 1, 0, 'text',
+                            line.get('value_date') or ''),
+                        ('preprint_number', 1, 0, 'text',
+                            line.get('preprint') or ''),
                         # --
                     ]
                     row_data = self.xls_row_template(
@@ -367,17 +438,17 @@ class general_ledger_xls(report_xls):
                     row_pos = self.xls_write_row(
                         ws, row_pos, row_data, ll_cell_style)
 
-                debit_start = rowcol_to_cell(row_start, 16)
-                debit_end = rowcol_to_cell(row_pos - 1, 16)
+                debit_start = rowcol_to_cell(row_start, 21)
+                debit_end = rowcol_to_cell(row_pos - 1, 21)
                 debit_formula = 'SUM(' + debit_start + ':' + debit_end + ')'
-                credit_start = rowcol_to_cell(row_start, 17)
-                credit_end = rowcol_to_cell(row_pos - 1, 17)
+                credit_start = rowcol_to_cell(row_start, 22)
+                credit_end = rowcol_to_cell(row_pos - 1, 22)
                 credit_formula = 'SUM(' + credit_start + ':' + credit_end + ')'
-                balance_debit = rowcol_to_cell(row_pos, 16)
-                balance_credit = rowcol_to_cell(row_pos, 17)
+                balance_debit = rowcol_to_cell(row_pos, 21)
+                balance_credit = rowcol_to_cell(row_pos, 22)
                 balance_formula = balance_debit + '-' + balance_credit
                 c_specs = [
-                    ('acc_title', 15, 0, 'text',
+                    ('acc_title', 20, 0, 'text',
                      ' - '.join([account.code, account.name])),
                     ('cum_bal', 1, 0, 'text',
                      _('Cumulated Balance on Account'),
@@ -398,10 +469,19 @@ class general_ledger_xls(report_xls):
                         c_specs += [('curr_bal', 1, 0, 'text', None)]
                     c_specs += [('curr_code', 1, 0, 'text', None)]
                 c_specs += [
-                    ('created_by', 1, 0, 'text', None),
                     ('source_document', 1, 0, 'text', None),
                     ('reconcile_id', 1, 0, 'text', None),
                     ('partial_id', 1, 0, 'text', None),
+                    ('program', 1, 0, 'text', None),
+                    ('section_program', 1, 0, 'text', None),
+                    ('job_group', 1, 0, 'text', None),
+                    ('job', 1, 0, 'text', None),
+                    ('master_plan', 1, 0, 'text', None),
+                    ('mission', 1, 0, 'text', None),
+                    ('posted_by', 1, 0, 'text', None),
+                    ('due_date', 1, 0, 'text', None),
+                    ('value_date', 1, 0, 'text', None),
+                    ('preprint_number', 1, 0, 'text', None),
                 ]
                 row_data = self.xls_row_template(
                     c_specs, [x[0] for x in c_specs])
