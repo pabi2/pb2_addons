@@ -4,6 +4,14 @@ from openerp.addons.pabi_chartfield.models.chartfield import \
     ChartField, CHART_VIEW_LIST
 
 
+REPORT_TYPES = [('overall', 'Overall'),
+                ('unit_base', 'Section'),
+                ('project_base', 'Project'),
+                ('invest_asset', 'Asset'),
+                ('invest_construction', 'Construction'),
+                ('personnel', 'Personnel')]
+
+
 class SearchCommon(ChartField, object):
     """ This class add some common search options """
 
@@ -29,12 +37,7 @@ class SearchCommon(ChartField, object):
         readonly=True,
     )
     report_type = fields.Selection(
-        [('overview', 'Overview'),
-         ('unit_base', 'Section'),
-         ('project_base', 'Project'),
-         ('invest_asset', 'Asset'),
-         ('invest_construction', 'Construction'),
-         ('personnel', 'Personnel')],
+        REPORT_TYPES,
         string='Report Type',
         required=True,
     )

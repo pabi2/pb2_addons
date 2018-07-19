@@ -6,7 +6,7 @@
             <field name="name">view.budget.drilldown.report.form</field>
             <field name="model">budget.drilldown.report</field>
             <field name="arch" type="xml">
-                <form string="Budget Drilldown Report" edit="0" create="0" delete="0">
+                <form string="Budget Overview Report" edit="0" create="0" delete="0">
                     <h1>
                         <field name="name"/>
                     </h1>
@@ -80,7 +80,6 @@
                             <tree>
                                 <field name="fiscalyear_id" invisible="1"/>
                                 <field name="chart_view"/>
-                                <field name="charge_type"/>
                                 <field name="planned_amount" sum="Total"/>
                                 <field name="policy_amount" sum="Total"/>
                                 <field name="rolling_amount" sum="Total"/>
@@ -106,7 +105,7 @@
         </record>
 
         <record id="action_budget_drilldown_report" model="ir.actions.act_window">
-            <field name="name">Budget Drilldown Report</field>
+            <field name="name">Budget Overview Report</field>
             <field name="res_model">budget.drilldown.report</field>
             <field name="view_type">form</field>
             <field name="view_mode">form,tree</field>

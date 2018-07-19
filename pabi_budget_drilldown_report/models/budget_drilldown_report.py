@@ -6,7 +6,7 @@ from openerp.addons.pabi_chartfield.models.chartfield import \
     ChartField, CHART_VIEW, CHART_FIELDS
 from openerp.addons.pabi_account_move_document_ref.models.account_move import \
     DOCTYPE_SELECT
-from .common import SearchCommon
+from .common import SearchCommon, REPORT_TYPES
 
 SEARCH_KEYS = dict(CHART_FIELDS).keys() + ['fiscalyear_id']
 ALL_SEARCH_KEYS = SEARCH_KEYS + ['chart_view', 'charge_type']
@@ -75,7 +75,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
     )
 
     @api.multi
-    def _prepare_overview_report(self):
+    def _prepare_overall_report(self):
         self.ensure_one()
         where_data = []
         # Combination of chart_view and chart_type
@@ -153,7 +153,8 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             [('create_uid', '=', self.env.user.id),
              ('create_date', '<', fields.Date.context_today(self))]).unlink()
         # Create report
-        name = 'Budget Drilldown %s' % wizard.fiscalyear_id.code
+        RPT = dict(REPORT_TYPES)
+        name = _('Budget Overview Report - %s') % RPT[wizard.report_type]
         report = self.create({
             'name': name,
             'report_type': wizard.report_type,
@@ -166,8 +167,8 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             })
         # Compute report lines
         report_lines = []
-        if report.report_type == 'overview':
-            report_lines = report._prepare_overview_report()
+        if report.report_type == 'overall':
+            report_lines = report._prepare_overall_report()
         else:
             raise ValidationError(_('Selected report type is not valid!'))
         report.write({'line_ids': report_lines})

@@ -30,7 +30,7 @@
         </record>
 
         <record id="action_budget_drilldown_report_wizard" model="ir.actions.act_window">
-            <field name="name">Budget Drilldown Report</field>
+            <field name="name">Budget Overview Report</field>
             <field name="res_model">budget.drilldown.report.wizard</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
