@@ -40,7 +40,7 @@ class ProductProduct(models.Model):
         WorkflowProcess = self.env['sale.workflow.process']
         pos = WorkflowProcess.search([('name', '=', pos_name)], limit=1)
         warehouse = pos.warehouse_id
-        location_id = warehouse.lot_stock_id.id
+        location_id = pos.location_id.id
         if not location_id:
             res = {
                 'is_success': False,
