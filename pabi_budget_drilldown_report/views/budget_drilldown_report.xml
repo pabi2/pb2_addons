@@ -29,19 +29,22 @@
                                 <field name="fiscalyear_id" invisible="1"/>
                                 <field name="chart_view"/>
                                 <field name="charge_type"/>
+                                <field name="planned_amount" sum="Total"/>
+                                <field name="policy_amount" sum="Total"/>
+                                <field name="rolling_amount" sum="Total"/>
                                 <field name="released_amount" sum="Total"/>
-                                <field name="amount_so_commit" sum="Total"/>
-                                <button name="open_so_commit_items" string="SO Commit Items" icon="gtk-zoom-in" type="object"/>
                                 <field name="amount_pr_commit" sum="Total"/>
-                                <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_po_commit" sum="Total"/>
-                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_exp_commit" sum="Total"/>
-                                <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_total_commit" sum="Total"/>
+                                <button name="open_total_commit_items" string="Total Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_actual" sum="Total"/>
-                                <button name="open_actual_items" string="Actual Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_actual_items" string="Actual Items" icon="gtk-add" type="object"/>
                                 <field name="amount_consumed" sum="Total"/>
-                                <button name="open_consumed_items" string="Consumed Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_consumed_items" string="Consumed Items" icon="gtk-add" type="object"/>
                                 <field name="amount_balance" sum="Total"/>
                             </tree>
                         </field>
@@ -52,19 +55,22 @@
                                 <field name="fiscalyear_id" invisible="1"/>
                                 <field name="chart_view"/>
                                 <field name="charge_type"/>
+                                <field name="planned_amount" sum="Total"/>
+                                <field name="policy_amount" sum="Total"/>
+                                <field name="rolling_amount" sum="Total"/>
                                 <field name="released_amount" sum="Total"/>
-                                <field name="amount_so_commit" sum="Total"/>
-                                <button name="open_so_commit_items" string="SO Commit Items" icon="gtk-zoom-in" type="object"/>
                                 <field name="amount_pr_commit" sum="Total"/>
-                                <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_po_commit" sum="Total"/>
-                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_exp_commit" sum="Total"/>
-                                <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_total_commit" sum="Total"/>
+                                <button name="open_total_commit_items" string="Total Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_actual" sum="Total"/>
-                                <button name="open_actual_items" string="Actual Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_actual_items" string="Actual Items" icon="gtk-add" type="object"/>
                                 <field name="amount_consumed" sum="Total"/>
-                                <button name="open_consumed_items" string="Consumed Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_consumed_items" string="Consumed Items" icon="gtk-add" type="object"/>
                                 <field name="amount_balance" sum="Total"/>
                             </tree>
                         </field>
@@ -75,19 +81,22 @@
                                 <field name="fiscalyear_id" invisible="1"/>
                                 <field name="chart_view"/>
                                 <field name="charge_type"/>
+                                <field name="planned_amount" sum="Total"/>
+                                <field name="policy_amount" sum="Total"/>
+                                <field name="rolling_amount" sum="Total"/>
                                 <field name="released_amount" sum="Total"/>
-                                <field name="amount_so_commit" sum="Total"/>
-                                <button name="open_so_commit_items" string="SO Commit Items" icon="gtk-zoom-in" type="object"/>
                                 <field name="amount_pr_commit" sum="Total"/>
-                                <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_po_commit" sum="Total"/>
-                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_exp_commit" sum="Total"/>
-                                <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_total_commit" sum="Total"/>
+                                <button name="open_total_commit_items" string="Total Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_actual" sum="Total"/>
-                                <button name="open_actual_items" string="Actual Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_actual_items" string="Actual Items" icon="gtk-add" type="object"/>
                                 <field name="amount_consumed" sum="Total"/>
-                                <button name="open_consumed_items" string="Consumed Items" icon="gtk-zoom-in" type="object"/>
+                                <button name="open_consumed_items" string="Consumed Items" icon="gtk-add" type="object"/>
                                 <field name="amount_balance" sum="Total"/>
                             </tree>
                         </field>

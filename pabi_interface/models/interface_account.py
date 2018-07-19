@@ -443,7 +443,8 @@ class InterfaceAccountEntry(models.Model):
             # Validate Account
             if payment_ml.account_id != invoice_ml.account_id:
                 raise ValidationError(
-                    _("Wrong account to reconcile for line '%s'") %
+                    _("Wrong account to reconcile for line '%s'.\nInvoice "
+                      "move line account not equal to that of payment") %
                     (line.name,))
             # Validate Amount Sign
             # NOTE: remove this condition for case Undue Tax

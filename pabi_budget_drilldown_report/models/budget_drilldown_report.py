@@ -8,7 +8,7 @@ from openerp.addons.pabi_account_move_document_ref.models.account_move import \
     DOCTYPE_SELECT
 from .common import SearchCommon
 
-SEARCH_KEYS = dict(CHART_FIELDS).keys()
+SEARCH_KEYS = dict(CHART_FIELDS).keys() + ['fiscalyear_id']
 ALL_SEARCH_KEYS = SEARCH_KEYS + ['chart_view', 'charge_type']
 CHART_VIEWS = CHART_VIEW.keys()
 
@@ -80,14 +80,17 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         where_data = []
         # Combination of chart_view and chart_type
         for chart_view in CHART_VIEWS:
+            # For internal and external
             for charge_type in ('internal', 'external'):
                 where = {'chart_view': chart_view,
                          'charge_type': charge_type}
-                for s in SEARCH_KEYS:
-                    value = get_field_value(self, s)
-                    if value:
-                        where.update({s: value})
+                where.update(prepare_where_dict(self, SEARCH_KEYS))
                 where_data.append(where)
+            # For internal + external (no charge_type)
+            where = {'chart_view': chart_view}
+            where.update(prepare_where_dict(self, SEARCH_KEYS))
+            where_data.append(where)
+        # Preparing report_lines
         report_lines = []
         for where in where_data:
             where_str = prepare_where_str(where)
@@ -99,6 +102,9 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
                     sum(amount_pr_commit) amount_pr_commit,
                     sum(amount_po_commit) amount_po_commit,
                     sum(amount_exp_commit) amount_exp_commit,
+                    sum(amount_so_commit) + sum(amount_pr_commit) +
+                    sum(amount_po_commit) + sum(amount_exp_commit)
+                        as amount_total_commit,
                     sum(amount_actual) amount_actual,
                     sum(amount_consumed) amount_consumed,
                     sum(amount_balance) amount_balance
@@ -111,6 +117,33 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             res = self._cr.dictfetchall()
             row = res and res[0] or where  # if res no row use where
             report_lines.append((0, 0, row))
+        # For Overview Report, we need to get Rolling Amount
+        Budget = self.env['account.budget']
+        for report_line in report_lines:
+            line = report_line[2]
+            search_keys = []
+            for key in line.keys():
+                if key in Budget:
+                    search_keys.append(key)
+            domain = []
+            for key in search_keys:
+                domain.append((key, '=', line[key]))
+            budgets = Budget.search(domain)
+            rolling = 0.0
+            policy = 0.0
+            if line.get('charge_type', False):
+                if line['charge_type'] == 'internal':
+                    rolling = sum(budgets.mapped('rolling_internal'))
+                elif line['charge_type'] == 'external':
+                    rolling = sum(budgets.mapped('rolling'))
+                    policy = sum(budgets.mapped('policy_amount'))
+            else:
+                rolling = sum(budgets.mapped('rolling')) + \
+                    sum(budgets.mapped('rolling_internal'))
+                policy = sum(budgets.mapped('policy_amount'))
+            line.update({'rolling_amount': rolling,
+                         'policy_amount': policy,
+                         })
         return report_lines
 
     @api.model
@@ -195,11 +228,19 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         readonly=True,
     )
     planned_amount = fields.Float(
-        string='Planned Amount',
+        string='Budget Plan',
+        readonly=True,
+    )
+    policy_amount = fields.Float(
+        string='Budget Policy',
+        readonly=True,
+    )
+    rolling_amount = fields.Float(
+        string='Rolling Plan',
         readonly=True,
     )
     released_amount = fields.Float(
-        string='Released Amount',
+        string='Budget Release',
         readonly=True,
     )
     amount_so_commit = fields.Float(
@@ -207,15 +248,19 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         readonly=True,
     )
     amount_pr_commit = fields.Float(
-        string='PR Commitment',
+        string='PR Commit',
         readonly=True,
     )
     amount_po_commit = fields.Float(
-        string='PO Commitment',
+        string='PO Commit',
         readonly=True,
     )
     amount_exp_commit = fields.Float(
-        string='Expense Commitment',
+        string='Expense Commit',
+        readonly=True,
+    )
+    amount_total_commit = fields.Float(
+        string='Total Commit',
         readonly=True,
     )
     amount_actual = fields.Float(
@@ -223,7 +268,7 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         readonly=True,
     )
     amount_consumed = fields.Float(
-        string='Consumed',
+        string='Toal Spent',
         readonly=True,
     )
     amount_balance = fields.Float(
@@ -293,7 +338,7 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
     @api.multi
     def _compute_name(self):
         """ Concat dimension all dimension in a valid order """
-        fields_order = (  # This is the valid field/ordr
+        fields_order = (
             'org_id', 'division_id', 'section_id',
             'project_id', 'invest_asset_id', 'invest_construction_id',
             'activity_group_id', 'activity_id')
@@ -326,6 +371,10 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         return self.open_items('exp_commit')
 
     @api.multi
+    def open_total_commit_items(self):
+        return self.open_items('total_commit')
+
+    @api.multi
     def open_actual_items(self):
         return self.open_items('actual')
 
@@ -337,12 +386,19 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
     def open_items(self, ttype=False):
         self.ensure_one()
         where_dict = prepare_where_dict(self, ALL_SEARCH_KEYS)
-        if ttype:
+        if ttype and ttype not in ('total_commit'):
             where_dict.update({'budget_commit_type': ttype})
         where_str = prepare_where_str(where_dict)
+        # Special Where
+        if ttype == 'total_commit':
+            where_str += " and budget_commit_type in" \
+                         " ('so_commit', 'pr_commit'," \
+                         " 'po_commit', 'exp_commit')"
         sql = """
-            select analytic_line_id from budget_monitor_report
-            where 1=1 %s
+            select analytic_line_id
+            from budget_monitor_report
+            where budget_method = 'expense'
+            %s
         """ % where_str
         self._cr.execute(sql)
         res = self._cr.fetchall()
