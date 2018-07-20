@@ -6,18 +6,32 @@
             <field name="name">view.budget.drilldown.report.wizard</field>
             <field name="model">budget.drilldown.report.wizard</field>
             <field name="arch" type="xml">
-                  <form string="Report Options">
-                      <group>
+                <form string="Report Options">
+                    <group name="report_type">
                         <group>
                             <field name="report_type"/>
-                            <field name="fiscalyear_id"/>
                         </group>
                         <group>
-                            <field name="org_id" attrs="{'invisible': [('report_type', 'not in', ('overview'))]}"/>
+                            <field name="fiscalyear_id"/>
+                        </group>
+                    </group>
+                    <group name="filter" string="Filter / Group By">
+                        <group>
+                            <field name="charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                            <field name="org_id" attrs="{'invisible': [('report_type', 'not in', ('overall', 'unit_base'))]}"/>
                             <field name="sector_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="subsector_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="division_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="section_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                            <field name="activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                            <field name="activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                        </group>
+                        <group>
+                            <field name="group_by_section_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                            <field name="group_by_project_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
+                            <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                            <field name="group_by_charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                            <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                         </group>
                     </group>
                     <footer>

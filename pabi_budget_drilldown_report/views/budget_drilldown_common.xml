@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+      <record model="ir.ui.view" id="view_budget_drilldown_common_form">
+          <field name="name">view.budget.drilldown.common.form</field>
+          <field name="model">budget.drilldown.report</field>
+          <field name="arch" type="xml">
+              <form string="Budget Overview Report" edit="0" create="0" delete="0">
+                  <h1>
+                      <field name="name"/>
+                  </h1>
+                  <group name="report_type">
+                      <group>
+                          <field name="report_type"/>
+                      </group>
+                      <group>
+                          <field name="fiscalyear_id"/>
+                      </group>
+                  </group>
+                  <group name="filter" string="Filter / Group By">
+                      <group>
+                          <field name="charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                          <field name="org_id" attrs="{'invisible': [('report_type', 'not in', ('overall', 'unit_base'))]}"/>
+                          <field name="sector_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                          <field name="subsector_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                          <field name="division_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                          <field name="section_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                          <field name="activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                          <field name="activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                      </group>
+                      <group>
+                          <field name="group_by_section_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                          <field name="group_by_project_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
+                          <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                          <field name="group_by_charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                          <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                      </group>
+                  </group>
+              </form>
+          </field>
+      </record>
+
+
+        <record id="action_budget_drilldown_report" model="ir.actions.act_window">
+            <field name="name">Budget Overview Report</field>
+            <field name="res_model">budget.drilldown.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+        </record>
+
+    </data>
+</openerp>

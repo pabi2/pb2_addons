@@ -6,7 +6,7 @@ from openerp.addons.pabi_chartfield.models.chartfield import \
     ChartField, CHART_VIEW, CHART_FIELDS
 from openerp.addons.pabi_account_move_document_ref.models.account_move import \
     DOCTYPE_SELECT
-from .common import SearchCommon, REPORT_TYPES
+from .common import SearchCommon, REPORT_TYPES, REPORT_GROUPBY
 
 SEARCH_KEYS = dict(CHART_FIELDS).keys() + ['fiscalyear_id']
 ALL_SEARCH_KEYS = SEARCH_KEYS + ['chart_view', 'charge_type']
@@ -58,7 +58,6 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
     line_ids = fields.One2many(
         'budget.drilldown.report.line',
         'report_id',
-        domain=[('charge_type', '=', False)],
         string='Details'
     )
     line_internal_ids = fields.One2many(
@@ -73,10 +72,46 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         domain=[('charge_type', '=', 'external')],
         string='Details (External)',
     )
+    line_all_ids = fields.One2many(
+        'budget.drilldown.report.line',
+        'report_id',
+        domain=[('charge_type', '=', False)],
+        string='Details'
+    )
+
+    @api.model
+    def _get_report_sql(self, fields_str, where_str):
+        select = ''
+        group_by = ''
+        if len(fields_str) > 1:
+            select = '%s,' % fields_str
+            group_by = 'group by %s' % fields_str
+        return """
+            select %s
+                sum(planned_amount) planned_amount,
+                sum(released_amount) released_amount,
+                sum(amount_so_commit) amount_so_commit,
+                sum(amount_pr_commit) amount_pr_commit,
+                sum(amount_po_commit) amount_po_commit,
+                sum(amount_exp_commit) amount_exp_commit,
+                sum(amount_so_commit) + sum(amount_pr_commit) +
+                sum(amount_po_commit) + sum(amount_exp_commit)
+                    as amount_total_commit,
+                sum(amount_actual) amount_actual,
+                sum(amount_consumed) amount_consumed,
+                sum(amount_balance) amount_balance
+            from budget_monitor_report
+            where budget_method = 'expense'
+            %s -- more where clause
+            %s -- group by
+        """ % (select, where_str, group_by)
 
     @api.multi
-    def _prepare_overall_report(self):
+    def _run_overall_report(self):
         self.ensure_one()
+        # First, declare view for this report
+        view_xml_id = 'pabi_budget_drilldown_report.' \
+                      'view_budget_overall_report_form'
         where_data = []
         # Combination of chart_view and chart_type
         for chart_view in CHART_VIEWS:
@@ -95,29 +130,14 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         for where in where_data:
             where_str = prepare_where_str(where)
             fields_str = ', '.join(where.keys())
-            sql = """
-                select %s, sum(planned_amount) planned_amount,
-                    sum(released_amount) released_amount,
-                    sum(amount_so_commit) amount_so_commit,
-                    sum(amount_pr_commit) amount_pr_commit,
-                    sum(amount_po_commit) amount_po_commit,
-                    sum(amount_exp_commit) amount_exp_commit,
-                    sum(amount_so_commit) + sum(amount_pr_commit) +
-                    sum(amount_po_commit) + sum(amount_exp_commit)
-                        as amount_total_commit,
-                    sum(amount_actual) amount_actual,
-                    sum(amount_consumed) amount_consumed,
-                    sum(amount_balance) amount_balance
-                from budget_monitor_report
-                where budget_method = 'expense'
-                %s
-                group by %s
-            """ % (fields_str, where_str, fields_str)
+            sql = self._get_report_sql(fields_str, where_str)
             self._cr.execute(sql)
             res = self._cr.dictfetchall()
             row = res and res[0] or where  # if res no row use where
             report_lines.append((0, 0, row))
+        # --------------------------------------------------
         # For Overview Report, we need to get Rolling Amount
+        # --------------------------------------------------
         Budget = self.env['account.budget']
         for report_line in report_lines:
             line = report_line[2]
@@ -144,7 +164,43 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             line.update({'rolling_amount': rolling,
                          'policy_amount': policy,
                          })
-        return report_lines
+        view = self.env.ref(view_xml_id)
+        return (report_lines, view.id)
+
+    @api.multi
+    def _prepare_report_by_structure(self, chart_view, view_xml_id):
+        self.ensure_one()
+        report_lines = []
+        # Prepare where and group by clause
+        where = prepare_where_dict(self, ALL_SEARCH_KEYS)
+        where.update({'chart_view': chart_view})
+        group_by = []
+        for field in REPORT_GROUPBY.get(self.report_type, []):
+            groupby_field = 'group_by_%s' % field
+            if self[groupby_field]:
+                group_by.append(field)
+        # --
+        where_str = prepare_where_str(where)
+        fields_str = ', '.join(group_by)
+        sql = self._get_report_sql(fields_str, where_str)
+        self._cr.execute(sql)
+        rows = self._cr.dictfetchall()
+        for row in rows:
+            # Merge activity_id, activity_rpt_id => activity_id
+            if row.get('activity_rpt_id', False):
+                row['activity_id'] = row['activity_rpt_id']
+                del row['activity_rpt_id']
+            report_lines.append((0, 0, row))
+        view = self.env.ref(view_xml_id)
+        return (report_lines, view.id)
+
+    @api.multi
+    def _run_unit_base_report(self):
+        self.ensure_one()
+        chart_view = 'unit_base'
+        view_xml_id = 'pabi_budget_drilldown_report.' \
+                      'view_budget_unit_base_report_form'
+        return self._prepare_report_by_structure(chart_view, view_xml_id)
 
     @api.model
     def generate_report(self, wizard):
@@ -155,24 +211,34 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         # Create report
         RPT = dict(REPORT_TYPES)
         name = _('Budget Overview Report - %s') % RPT[wizard.report_type]
-        report = self.create({
-            'name': name,
-            'report_type': wizard.report_type,
-            'fiscalyear_id': wizard.fiscalyear_id.id,
-            'org_id': wizard.org_id.id,
-            'sector_id': wizard.sector_id.id,
-            'subsector_id': wizard.subsector_id.id,
-            'division_id': wizard.division_id.id,
-            'section_id': wizard.section_id.id,
-            })
-        # Compute report lines
+        # Fill provided search values to report head (used to execute report)
+        report_dict = {'name': name}
+        groupby_fields = []
+        for field_list in REPORT_GROUPBY.values():
+            for field in field_list:
+                groupby_fields.append('group_by_%s' % field)
+        groupby_fields = list(set(groupby_fields))  # remove duplicates
+        search_keys = ALL_SEARCH_KEYS + groupby_fields + ['report_type']
+        report_dict.update(prepare_where_dict(wizard, search_keys))
+        report = self.create(report_dict)
+        # Compute report lines, by report type
         report_lines = []
+        view_id = False
         if report.report_type == 'overall':
-            report_lines = report._prepare_overall_report()
+            report_lines, view_id = report._run_overall_report()
+        elif report.report_type == 'unit_base':
+            report_lines, view_id = report._run_unit_base_report()
+        # TODO
+        # elif report.report_type == 'project_base':
+        #     report_lines, view_id = report._run_project_base_report()
+        # elif report.report_type == 'invest_asset':
+        #     report_lines, view_id = report._run_invest_asset_base_report()
+        # elif report.report_type == 'invest_construction':
+        #     report_lines, view_id = report._run_invest_construction_report()
         else:
             raise ValidationError(_('Selected report type is not valid!'))
         report.write({'line_ids': report_lines})
-        return report.id
+        return (report.id, view_id)
 
     @api.model
     def vacumm_old_reports(self):
@@ -213,11 +279,12 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         index=True,
         ondelete='cascade',
     )
-    name = fields.Char(
-        string='Name',
-        compute='_compute_name',
-        readonly=True,
-    )
+    # name = fields.Char(
+    #     string='Name',
+    #     compute='_compute_name',
+    #     store=True,
+    #     readonly=True,
+    # )
     user_id = fields.Many2one(
         'res.users',
         string='User',
@@ -336,24 +403,24 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         readonly=True,
     )
 
-    @api.multi
-    def _compute_name(self):
-        """ Concat dimension all dimension in a valid order """
-        fields_order = (
-            'org_id', 'division_id', 'section_id',
-            'project_id', 'invest_asset_id', 'invest_construction_id',
-            'activity_group_id', 'activity_id')
-        for rec in self:
-            names = []
-            for f in fields_order:
-                if f in rec:
-                    if len(rec[f]) == 0:
-                        continue
-                    if 'display_name' in rec[f]:
-                        names.append(str(rec[f].display_name))
-                    else:
-                        names.append(str(rec[f]))
-            rec.name = ' / '.join(names)
+    # @api.multi
+    # def _compute_name(self):
+    #     """ Concat dimension all dimension in a valid order """
+    #     fields_order = (
+    #         'org_id', 'division_id', 'section_id',
+    #         'project_id', 'invest_asset_id', 'invest_construction_id',
+    #         'activity_group_id', 'activity_id')
+    #     for rec in self:
+    #         names = []
+    #         for f in fields_order:
+    #             if f in rec:
+    #                 if len(rec[f]) == 0:
+    #                     continue
+    #                 if 'display_name' in rec[f]:
+    #                     names.append(str(rec[f].display_name))
+    #                 else:
+    #                     names.append(str(rec[f]))
+    #         rec.name = ' / '.join(names)
 
     @api.multi
     def open_so_commit_items(self):

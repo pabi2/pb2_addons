@@ -19,6 +19,8 @@
         'security/ir.model.access.csv',
         'data/report_auto_vacumm.xml',
         'wizard/budget_drilldown_report_wizard.xml',
-        'views/budget_drilldown_report.xml',
+        'views/budget_drilldown_common.xml',
+        'views/budget_overall_report.xml',
+        'views/budget_unit_base_report.xml',
     ],
 }
