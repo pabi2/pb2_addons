@@ -10,7 +10,7 @@ class XLSXReportGlAllowanceDoubtfulAccounts(models.TransientModel):
         readonly=True,
         default='filter_date',
     )
-    allowance_for_doubful_account_code = fields.Char(
+    allowance_for_doubtful_account_code = fields.Char(
         string='Account Code',
         readonly=True,
     )
@@ -32,7 +32,7 @@ class XLSXReportGlAllowanceDoubtfulAccounts(models.TransientModel):
         Result = self.env['account.move.line']
         dom = [('move_id.state', '=', 'posted'),
                ('account_id.code', '=',
-                self.allowance_for_doubful_account_code),
+                self.allowance_for_doubtful_account_code),
                ('move_id.date', '<=', self.date_report),
                ('reconcile_id', '=', False)]
         self.results = Result.search(dom)
