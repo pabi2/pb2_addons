@@ -32,6 +32,6 @@
             name="GL Payable"
             parent="menu_pabi_general_ledger_report"
             action="action_xlsx_report_gl_payable_form"
-            sequence="10"/>
+            sequence="60"/>
     </data>
 </openerp>
