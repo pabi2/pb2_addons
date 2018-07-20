@@ -42,11 +42,11 @@ _column_sizes = [
     ('debit', 15),
     ('credit', 15),
     ('cumul_bal', 15),
-    ('curr_bal', 15),
-    ('curr_code', 7),
+    ('curr_bal', 10),
+    ('curr_code', 10),
     ('posted_by', 30),
-    ('reconcile_id', 15),
-    ('partial_id', 15),
+    ('reconcile_id', 10),
+    ('partial_id', 10),
 ]
 
 
@@ -86,11 +86,9 @@ class general_ledger_xls(report_xls):
 
         # write empty row to define column sizes
         c_sizes = [x[1] for x in _column_sizes]
-        # if _p.amount_currency(data):
-        #     tmp = self.column_sizes.copy()
-        #     del(tmp['curr_bal'])
-        #     del(tmp['curr_code'])
-        #     c_sizes = [x[1] for x in tmp]
+        if not _p.amount_currency(data):
+            c_sizes = [x[1] for x in list(filter(lambda l: l[0] not in
+                       ('curr_bal', 'curr_code'), _column_sizes))]
 
         # --
         c_specs = [('empty%s' % i, 1, c_sizes[i], 'text', None)
