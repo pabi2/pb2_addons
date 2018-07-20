@@ -159,9 +159,9 @@ class AccountBudget(models.Model):
     @api.multi
     def _compute_past_future_rolling_internal(self):
         """ For internal charge """
-        if not self.fiscalyear_id.control_ext_charge_only:
-            return
         for budget in self:
+            if not budget.fiscalyear_id.control_ext_charge_only:
+                continue
             budget.past_consumed_internal = \
                 budget._get_past_actual_amount_internal()
             budget.future_plan_internal = \

@@ -7,6 +7,20 @@ class BudgetConsumeReport(models.Model):
     _name = 'budget.consume.report'
     _auto = False
 
+    budget_commit_type = fields.Selection(
+        [('so_commit', 'SO Commitment'),
+         ('pr_commit', 'PR Commitment'),
+         ('po_commit', 'PO Commitment'),
+         ('exp_commit', 'Expense Commitment'),
+         ('actual', 'Actual'),
+         ],
+        string='Budget Commit Type',
+    )
+    analytic_line_id = fields.Many2one(
+        'account.analytic.line',
+        string='Analytic Line',
+        readonly=True,
+    )
     charge_type = fields.Selection(
         [('internal', 'Internal'),
          ('external', 'External')],
@@ -92,7 +106,9 @@ class BudgetConsumeReport(models.Model):
 
     def _get_select_clause(self):
         sql_select = """
-        select aal.id, aal.charge_type, aal.user_id, aal.date,
+        select aal.id, aal.id as analytic_line_id,
+            aaj.budget_commit_type,
+            aal.charge_type, aal.user_id, aal.date,
             aal.monitor_fy_id fiscalyear_id,
             -------------> aal.doc_ref, aal.doc_id,
             -- Amount
