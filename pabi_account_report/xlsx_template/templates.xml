@@ -1454,7 +1454,7 @@ result = pd.pivot_table(df, index=groupby,
                                'L13': 'invoice_move_line_id${value and value.debit - value.credit or 0}#{number_format=number}',
                                'M13': 'invoice_move_line_id.name${value or ""}',
                                'N13': 'invoice_move_line_id.move_id.narration${value or ""}',
-                               'O13': 'invoice_move_line_id.doctype${value and dict(in_invoice="Supplier Invoice", in_refund="Supplier Refund", adjustment="Adjustment")[value] or ""}',
+                               'O13': 'invoice_move_line_id.prefix_doctype${value or ""}',
                                'P13': 'invoice_move_line_id.journal_id.name${value or ""}',
                                'Q13': 'invoice_move_line_id.move_id.name${value or ""}',
                                'R13': "${'=IF((?(Q13)&lt;&gt;?(Q12)),1,?(R12)+1)'}",
@@ -1496,6 +1496,50 @@ result = pd.pivot_table(df, index=groupby,
                }
            </field>
        </record>
+
+       # Status Cheque Inventory Report
+      <record id="xlsx_report_status_cheque_inventory" model="ir.attachment">
+          <field name="res_model">xlsx.report.status.cheque.inventory</field>
+          <field name="datas"></field>
+          <field name="datas_fname">xlsx_report_status_cheque_inventory.xlsx</field>
+          <field name="name">Status Cheque Inventory</field>
+          <field name="description">
+              {
+                  '__EXPORT__': {
+                      'Status Cheque Inventory Report': {
+                          '_HEAD_': {
+                              'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                              'B3': 'as_of_date${value or ""}#{number_format=date}',
+                              'B4': 'cheque_lot_ids${value and ", ".join([x.name for x in value]) or ""}',
+                              'B5': 'number_cheque_from${value or ""}',
+                              'D5': 'number_cheque_to${value or ""}',
+                              'B6': 'journal_ids${value and ", ".join([x.default_credit_account_id.code for x in value]) or ""}',
+                              'B7': '${env.user.with_context(lang="th_TH").display_name}',
+                              'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                           },
+                          'results': {
+                              'A12': 'account_voucher.journal_id.name${value or ""}',
+                              'B12': 'account_voucher.journal_id.default_credit_account_id.name${value or ""}',
+                              'C12': 'account_voucher.partner_id.search_key${value or ""}',
+                              'D12': 'account_voucher.partner_id.name${value or ""}',
+                              'E12': 'account_voucher.cheque_lot_id.name${value or ""}',
+                              'F12': 'account_voucher.number_cheque${value or ""}',
+                              'G12': 'account_voucher.number${value or ""}',
+                              'H12': 'account_voucher.date${value or ""}#{number_format=date}',
+                              'I12': 'account_voucher.amount${value or ""}#{number_format=number}',
+                              'J12': 'account_voucher.date_cheque_received${value or ""}#{number_format=date}',
+                              'K12': 'account_voucher.move_ids${value and (value.mapped("match_import_id") and value.mapped("match_import_id").date_value or "") or ""}#{number_format=date}',
+                              'L12': 'date_void${value or ""}#{number_format=date}',
+                              'M12': 'account_voucher.payment_export_id.user_id${value and value.with_context(lang="th_TH").display_name or ""}',
+                          },
+                          '_TAIL_0': {
+                              'I12': '@{sum}#{font=bold;align=right;number_format=number}',
+                          }
+                      }
+                  }
+              }
+          </field>
+      </record>
 
        # Allowance for Doubtful Accounts Report
        <record id="xlsx_report_gl_allowance_doubtful_accounts" model="ir.attachment">
