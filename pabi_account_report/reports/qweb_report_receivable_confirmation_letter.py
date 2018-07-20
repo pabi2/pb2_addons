@@ -88,14 +88,6 @@ class QwebReportReceivableConfirmationLetter(models.TransientModel):
             LEFT JOIN account_account a ON l.account_id = a.id
             LEFT JOIN account_account pa ON a.parent_id = pa.id
             WHERE %s""" % (condition, ))
-        # sql = """
-        #     SELECT l.partner_id, pa.code, l.credit, l.debit
-        #     FROM account_move_line l
-        #     LEFT JOIN account_account a ON l.account_id = a.id
-        #     LEFT JOIN account_account pa ON a.parent_id = pa.id
-        #     WHERE %s""" % (condition, )
-        # print sql
-        # x = 1/0
         return self._cr.fetchall()
 
     @api.multi
