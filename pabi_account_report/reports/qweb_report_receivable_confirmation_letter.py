@@ -98,7 +98,7 @@ class QwebReportReceivableConfirmationLetter(models.TransientModel):
             pr_accounts = ",".join(list(set(map(lambda l: l[1], sub_data))))
             credit = sum(map(lambda l: l[2], sub_data))
             debit = sum(map(lambda l: l[3], sub_data))
-            balance = credit - debit
+            balance = debit - credit
             balance_text_th = \
                 (balance < 0 and 'ลบ' or '') + \
                 amount_to_text_th(abs(balance), 'THB')
