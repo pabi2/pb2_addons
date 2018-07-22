@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from lxml import etree
+import simplejson
 from openerp import models, api, fields
 
 
@@ -20,6 +22,30 @@ class PABISecurity(models.Model):
     )
 
     @api.model
+    def fields_view_get(self, view_id=None, view_type=False,
+                        toolbar=False, submenu=False):
+        res = super(PABISecurity, self).\
+            fields_view_get(view_id=view_id, view_type=view_type,
+                            toolbar=toolbar, submenu=submenu)
+        if view_type == 'form':
+            viewref = res['fields']['line_ids']['views']['tree']
+            doc = etree.XML(viewref['arch'])
+            # Find all used pabi_security
+            field_list = []
+            for m in ['access.access', 'res.groups']:
+                groups = self.env[m].search([('pabi_security', '!=', False)],
+                                            order='pabi_security')
+                field_list += [(x.pabi_security, x.name) for x in groups]
+            for k, v in field_list:
+                node = doc.xpath("//field[@name='%s']" % k)
+                if node:
+                    node[0].set('modifiers', '{"invisible": false}')
+                    node[0].set('invisible', '0')
+                    node[0].set('string', v)
+            viewref['arch'] = etree.tostring(doc)
+        return res
+
+    @api.model
     def _get_groups(self, group_model, line):
         """ There are 2 types of group, 1) meta, 2) normal """
         Group = self.env[group_model]
@@ -37,8 +63,7 @@ class PABISecurity(models.Model):
         for rec in self:
             for line in rec.line_ids:
                 user_rec = line.user_id
-                user_rec.write({'groups_id': []})  # Clear groups first
-                # Apply Meta Groups
+                user_rec.write({'groups_id': [(5,)]})
                 mg_groups = self._get_groups('access.access', line)
                 group_ids = [(4, x) for x in mg_groups.mapped('groups_id.id')]
                 # Apply Groups

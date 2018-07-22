@@ -27,46 +27,46 @@
                         <tree editable="bottom">
                             <!-- This section must be change to match SECURITY_DICT -->
                             <field name="user_id"/>
-                            <field name="mg1"/>
-                            <field name="mg2"/>
-                            <field name="mg3"/>
-                            <field name="mg4"/>
-                            <field name="mg5"/>
-                            <field name="mg6"/>
-                            <field name="mg7"/>
-                            <field name="mg8"/>
-                            <field name="mg9"/>
-                            <field name="mg10"/>
-                            <field name="g1"/>
-                            <field name="g2"/>
-                            <field name="g3"/>
-                            <field name="g4"/>
-                            <field name="g5"/>
-                            <field name="g6"/>
-                            <field name="g7"/>
-                            <field name="g8"/>
-                            <field name="g9"/>
-                            <field name="g10"/>
-                            <field name="g11"/>
-                            <field name="g12"/>
-                            <field name="g13"/>
-                            <field name="g14"/>
-                            <field name="g15"/>
-                            <field name="g16"/>
-                            <field name="g17"/>
-                            <field name="g18"/>
-                            <field name="g19"/>
-                            <field name="g20"/>
-                            <field name="g21"/>
-                            <field name="g22"/>
-                            <field name="g23"/>
-                            <field name="g24"/>
-                            <field name="g25"/>
-                            <field name="g26"/>
-                            <field name="g27"/>
-                            <field name="g28"/>
-                            <field name="g29"/>
-                            <field name="g30"/>
+                            <field name="mg1" invisible="1"/>
+                            <field name="mg2" invisible="1"/>
+                            <field name="mg3" invisible="1"/>
+                            <field name="mg4" invisible="1"/>
+                            <field name="mg5" invisible="1"/>
+                            <field name="mg6" invisible="1"/>
+                            <field name="mg7" invisible="1"/>
+                            <field name="mg8" invisible="1"/>
+                            <field name="mg9" invisible="1"/>
+                            <field name="mg10" invisible="1"/>
+                            <field name="g1" invisible="1"/>
+                            <field name="g2" invisible="1"/>
+                            <field name="g3" invisible="1"/>
+                            <field name="g4" invisible="1"/>
+                            <field name="g5" invisible="1"/>
+                            <field name="g6" invisible="1"/>
+                            <field name="g7" invisible="1"/>
+                            <field name="g8" invisible="1"/>
+                            <field name="g9" invisible="1"/>
+                            <field name="g10" invisible="1"/>
+                            <field name="g11" invisible="1"/>
+                            <field name="g12" invisible="1"/>
+                            <field name="g13" invisible="1"/>
+                            <field name="g14" invisible="1"/>
+                            <field name="g15" invisible="1"/>
+                            <field name="g16" invisible="1"/>
+                            <field name="g17" invisible="1"/>
+                            <field name="g18" invisible="1"/>
+                            <field name="g19" invisible="1"/>
+                            <field name="g20" invisible="1"/>
+                            <field name="g21" invisible="1"/>
+                            <field name="g22" invisible="1"/>
+                            <field name="g23" invisible="1"/>
+                            <field name="g24" invisible="1"/>
+                            <field name="g25" invisible="1"/>
+                            <field name="g26" invisible="1"/>
+                            <field name="g27" invisible="1"/>
+                            <field name="g28" invisible="1"/>
+                            <field name="g29" invisible="1"/>
+                            <field name="g30" invisible="1"/>
                         </tree>
                     </field>
                 </form>
@@ -74,12 +74,12 @@
         </record>
 
         <record model="ir.actions.act_window" id="action_pabi_security">
-            <field name="name">PABI Security</field>
+            <field name="name">Assign Security</field>
             <field name="res_model">pabi.security</field>
             <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem id="menu_pabi-security" name="PABI Security"
+        <menuitem id="menu_pabi-security" name="Assign Security"
           parent="base.menu_users" action="action_pabi_security" sequence="30"/>
 
 
