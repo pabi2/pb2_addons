@@ -28,7 +28,7 @@
                     <field name="tax_base_amount"/>
                     <field name="date"/>
                     <field name="date_maturity"/>
-                    <field name="reconcile_move_line_id" />
+                    <field name="reconcile_move_id" />
                 </tree>
             </field>
         </record>

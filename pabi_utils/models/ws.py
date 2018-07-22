@@ -10,6 +10,7 @@ class PABIUtilsWS(models.AbstractModel):
     @api.model
     def create_data(self, model, data_dict):
         """ Accept friendly data_dict in following format to create new rec
+        Note: this method is deprecated, use friendly_create_data() instead
             {'field1': value1,
              'line_ids': [{
                 'field2': value2,

@@ -673,17 +673,36 @@ class InterfaceAccountEntryLine(models.Model):
         readonly=True,
         copy=False,
     )
+    reconcile_move_id = fields.Many2one(
+        'account.move',
+        string='Reconcile with',
+        domain="[('state','=','posted'),"
+        "('partner_id', '=', partner_id)]",
+        copy=False,
+    )
     reconcile_move_line_id = fields.Many2one(
         'account.move.line',
         string='Reconcile with',
-        domain="""
-        [('state','=','valid'),
-         ('account_id.type', 'in', ['payable', 'receivable']),
-         ('partner_id', '=', partner_id),
-         ('reconcile_id', '=', False),]
-        """,
-        copy=False,
+        compute='_compute_reconcile_move_line_id',
+        store=True,
     )
+
+    @api.multi
+    @api.depends('reconcile_move_id')
+    def _compute_reconcile_move_line_id(self):
+        AccountMoveLine = self.env['account.move.line']
+        for rec in self:
+            move_lines = AccountMoveLine.search(
+                [('move_id', '=', rec.reconcile_move_id.id),
+                 ('state', '=', 'valid'),
+                 ('account_id.type', 'in', ['payable', 'receivable']),
+                 ('reconcile_id', '=', False)])
+            if len(move_lines) != 1:
+                raise ValidationError(
+                    _('No valid reconcilable move line for %s') %
+                    rec.reconcile_move_id.name)
+            rec.reconcile_move_line_id = move_lines[0]
+        return True
 
 
 class InterfaceAccountChecker(models.AbstractModel):
