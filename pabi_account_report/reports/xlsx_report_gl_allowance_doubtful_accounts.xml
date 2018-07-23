@@ -35,7 +35,7 @@
                     <page string="Account Filter">
                         <group>
                             <group>
-                                <field name="allowance_for_doubful_account_code"/>
+                                <field name="allowance_for_doubtful_account_code"/>
                             </group>
                         </group>
                     </page>

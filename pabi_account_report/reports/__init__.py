@@ -29,7 +29,7 @@ from . import xlsx_report_receivable_detail
 from . import xlsx_report_registrar_of_guarantee
 from . import xlsx_report_gl_receivable
 from . import xlsx_report_gl_allowance_doubtful_accounts
+from . import qweb_report_receivable_confirmation_letter
 from . import jasper_report_cd_receivable_payment_history
 from . import jasper_report_cd_receivable_follow_up
-from . import jasper_report_receivable_confirmation_letter
 from . import jasper_report_parser

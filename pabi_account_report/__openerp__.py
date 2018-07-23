@@ -63,7 +63,8 @@
         'reports/xlsx_report_gl_allowance_doubtful_accounts.xml',
         'reports/jasper_report_cd_receivable_payment_history.xml',
         'reports/jasper_report_cd_receivable_follow_up.xml',
-        'reports/jasper_report_receivable_confirmation_letter.xml',
+        'reports/qweb_report_receivable_confirmation_letter_template.xml',
+        'reports/qweb_report_receivable_confirmation_letter.xml',
     ],
     'demo': [
     ],
