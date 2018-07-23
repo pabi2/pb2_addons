@@ -1510,7 +1510,7 @@ result = pd.pivot_table(df, index=groupby,
                        'Allowance for Doubtful Accounts Report': {
                            '_HEAD_': {
                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                               'B3': 'allowance_for_doubful_account_code${value and value + " ค่าเผื่อหนี้สงสัยจะสูญ-ลูกหนี้การค้า" or ""}',
+                               'B3': 'allowance_for_doubtful_account_code${value and value + " ค่าเผื่อหนี้สงสัยจะสูญ-ลูกหนี้การค้า" or ""}',
                                'B4': 'date_report${value or ""}#{number_format=date}',
                                'B5': '${env.user.with_context(lang="th_TH").display_name}',
                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',

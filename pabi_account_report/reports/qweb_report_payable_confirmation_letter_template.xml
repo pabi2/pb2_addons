@@ -3,7 +3,7 @@
     <data>
         <template id="style_report_payable_confirmation_letter">
             .page_report_payable_confirmation_letter {
-                font-size: 29px !important;
+                font-size: 28px !important;
                 text-align: justify !important;
                 text-justify: inter-word !important;
                 line-height: 1 !important;
@@ -16,6 +16,9 @@
             }
             .text_indent_report_payable_confirmation_letter {
                 text-indent: 45px !important;
+            }
+            .newline_report_payable_confirmation_letter {
+                margin-top: 40px !important;
             }
         </template>
 
@@ -68,7 +71,7 @@
                 <p class="text_indent_report_payable_confirmation_letter">
                     อนึ่งโปรดสังเกตว่ายอดหนี้ที่ขอให้ยืนยันยอดนั้น เป็นยอด ณ วันที่ <t t-esc="full_report_date"/> รายการที่เกิดขึ้นหลังจากนั้นให้ถือว่าไม่เกี่ยวข้อง
                 </p>
-                <p class="center_report_payable_confirmation_letter">
+                <p class="center_report_payable_confirmation_letter newline_report_payable_confirmation_letter">
                     ขอแสดงความนับถือ<br/><br/><br/>
                     (นางลดาวัลย์ กระแสร์ชล)<br/>
                     รองผู้อำนวยการ<br/>
@@ -78,7 +81,7 @@
                     กรุณาฉีกตามรอยเส้นประแล้วส่งส่วนล่างซึ่งกรอกข้อความเรียบร้อยแล้วโดยใช้ซองที่แนบ
                 </p>
                 <hr style="border-top: 1px dashed black; border-bottom: 0px; border-left: 0px; border-right: 0px;"/>
-                <p style="text-align: right;">
+                <p class="newline_report_payable_confirmation_letter" style="text-align: right;">
                     (หนังสือที่ ..................................)
                 </p>
                 <p class="center_report_payable_confirmation_letter"><strong>การรับรองยอดบัญชี</strong></p>
@@ -89,10 +92,10 @@
                 <p style="margin-top: 10px;">
                     ก. ขอรับรองว่า ข้าพเจ้า/เรา <t t-esc="partner"/> เป็น <span class="line_through_report_payable_confirmation_letter">ลูกหนี้</span>/เจ้าหนี้ ของ <t t-esc="company"/> ประเภท <t t-if="trading_account_payable">การค้า</t><t t-if="not trading_account_payable"><span class="line_through_report_payable_confirmation_letter">การค้า</span></t>/<t t-if="other_account_payable">อื่น</t><t t-if="not other_account_payable"><span class="line_through_report_payable_confirmation_letter">อื่น</span></t> ณ วันที <t t-esc="full_report_date"/> เป็นจำนวนทั้งสิ้น <t t-esc="'{:,.2f}'.format(o.balance)"/> บาท (<t t-esc="o.balance_text_th"/>) นั้นเป็นการถูกต้อง
                 </p>
-                <p>
-                    ข. ยอดที่แจ้งมานั้นไม่ถูกต้องตามบัญชีของข้าพเจ้า/เรา แสดงยอดคงเหลือเป็น <span class="line_through_report_payable_confirmation_letter">ลูกหนี้</span>/เจ้าหนี้ ของ <t t-esc="company"/> ประเภท <t t-if="trading_account_payable">การค้า</t><t t-if="not trading_account_payable"><span class="line_through_report_payable_confirmation_letter">การค้า</span></t>/<t t-if="other_account_payable">อื่น</t><t t-if="not other_account_payable"><span class="line_through_report_payable_confirmation_letter">อื่น</span></t> ณ วันที่ <t t-esc="full_report_date"/> จำนวนเงิน ............................................................................ บาท
+                <p style="margin-bottom: 0px">ข. ยอดที่แจ้งมานั้นไม่ถูกต้องตามบัญชีของข้าพเจ้า/เรา</p>
+                <p style="margin-top: 0px">แสดงยอดคงเหลือเป็น <span class="line_through_report_payable_confirmation_letter">ลูกหนี้</span>/เจ้าหนี้ ของ <t t-esc="company"/> ประเภท <t t-if="trading_account_payable">การค้า</t><t t-if="not trading_account_payable"><span class="line_through_report_payable_confirmation_letter">การค้า</span></t>/<t t-if="other_account_payable">อื่น</t><t t-if="not other_account_payable"><span class="line_through_report_payable_confirmation_letter">อื่น</span></t> ณ วันที่ <t t-esc="full_report_date"/> จำนวนเงิน ............................................................................ บาท
                 </p>
-                <p class="center_report_payable_confirmation_letter">
+                <p class="center_report_payable_confirmation_letter newline_report_payable_confirmation_letter">
                     ขอแสดงความนับถือ<br/><br/>
                     .................................................<br/>
                     (.................................................)

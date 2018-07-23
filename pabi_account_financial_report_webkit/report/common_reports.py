@@ -567,11 +567,30 @@ SELECT l.id AS id,
             FROM res_program rp
             WHERE rp.id = (CASE WHEN l.program_id IS NOT NULL
                 THEN l.program_id ELSE NULL END)) AS program,
+            (SELECT CONCAT(CASE WHEN aag.code IS NOT NULL THEN
+                CONCAT('[',aag.code,'] ') ELSE '' END, CASE WHEN aag.name
+                IS NOT NULL THEN aag.name ELSE '' END)
+            FROM account_activity_group aag
+            WHERE aag.id = (CASE WHEN l.activity_group_id IS NOT NULL
+                THEN l.activity_group_id ELSE NULL END)) AS activity_group,
+            (SELECT CONCAT(CASE WHEN aa.code IS NOT NULL THEN
+                CONCAT('[',aa.code,'] ') ELSE '' END, CASE WHEN aa.name
+                IS NOT NULL THEN aa.name ELSE '' END)
+            FROM account_activity aa
+            WHERE aa.id = (CASE WHEN l.activity_id IS NOT NULL
+                THEN l.activity_id ELSE NULL END)) AS activity,
+            (SELECT rp.name FROM res_users ru LEFT JOIN res_partner rp
+             ON rp.id = ru.partner_id WHERE ru.id = m.write_uid LIMIT 1)
+             AS posted_by,
+            (SELECT CONCAT(CASE WHEN rsp.code IS NOT NULL THEN
+                CONCAT('[',rsp.code,'] ') ELSE '' END, CASE WHEN rsp.name_short
+                IS NOT NULL THEN rsp.name_short WHEN rsp.name
+                IS NOT NULL THEN rsp.name ELSE '' END) AS master
+            FROM res_section_program rsp
+            WHERE rsp.id = (CASE WHEN l.section_program_id IS NOT NULL
+                THEN l.section_program_id ELSE NULL END)) AS section_program,
             l.date_maturity AS due_date,
-            rsp.name AS section_program,
             rm.description AS mission,
-            av.date_value AS value_date,
-            av.number_preprint AS preprint,
             COALESCE(l.debit, 0.0) - COALESCE(l.credit, 0.0) AS balance,
             l.debit,
             l.credit,
@@ -581,9 +600,6 @@ SELECT l.id AS id,
             l.partner_id AS lpartner_id,
             p.name AS partner_name,
             m.name AS move_name,
-            (SELECT rp.name FROM res_users ru LEFT JOIN res_partner rp
-             ON rp.id = ru.partner_id WHERE ru.id = m.write_uid LIMIT 1)
-             AS posted_by,
             COALESCE(partialrec.name, fullrec.name, '') AS rec_name,
             COALESCE(partialrec.id, fullrec.id, NULL) AS rec_id,
             m.id AS move_id,
@@ -593,6 +609,7 @@ SELECT l.id AS id,
             i.number AS invoice_number,
             l.date_maturity,
             m.date_document AS document_date,
+            fisc.name AS fiscalyear,
             (SELECT CONCAT(CASE WHEN cv.code IS NOT NULL THEN
              CONCAT('[',cv.code,'] ') ELSE '' END, CASE WHEN cv.name_short
              IS NOT NULL THEN cv.name_short WHEN cv.name
@@ -626,8 +643,6 @@ SELECT l.id AS id,
             WHEN rt.name IS NOT NULL THEN rt.name ELSE '' END)
             AS taxbranch_name,
             SUBSTRING(m.name, 1, 2) AS doctype,
-            aag.name AS activity_group_name,
-            aa.name AS activity_name,
             coalesce(fullrec.name, '') as reconcile_id,
             coalesce(partialrec.name, '') as partial_id,
             i.source_document
@@ -641,13 +656,10 @@ FROM account_move_line l
     LEFT JOIN account_invoice i on (m.id =i.move_id)
     LEFT JOIN account_period per on (per.id=l.period_id)
     JOIN account_journal j on (l.journal_id=j.id)
+    LEFT JOIN account_fiscalyear fisc on (per.fiscalyear_id=fisc.id)
     LEFT JOIN res_fund rf ON (l.fund_id = rf.id)
     LEFT JOIN res_costcenter rc ON (l.costcenter_id = rc.id)
     LEFT JOIN res_taxbranch rt ON (l.taxbranch_id = rt.id)
-    LEFT JOIN account_activity_group aag ON (l.activity_group_id = aag.id)
-    LEFT JOIN account_activity aa ON (l.activity_id = aa.id)
-    LEFT JOIN account_voucher av ON l.id = av.move_id
-    LEFT JOIN res_section_program rsp ON (l.section_program_id = rsp.id)
     LEFT JOIN res_project rproject ON (l.project_id = rproject.id)
     LEFT JOIN res_mission rm ON (l.mission_id = rm.id)
     WHERE l.id in %s"""
