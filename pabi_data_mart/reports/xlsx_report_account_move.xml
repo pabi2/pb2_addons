@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <record id="view_xlsx_report_account_move_form" model="ir.ui.view">
+        <field name="name">view.xlsx.report.account.move</field>
+        <field name="model">xlsx.report.account.move</field>
+        <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+          <xpath expr="//group[@name='criteria']" position="inside">
+              <group col="4">
+                <field name="chart_account_id" widget='selection'/>
+                <field name="company_id" invisible="1"/>
+                <field name="fiscalyear_start_id"/>
+                <field name="fiscalyear_end_id"/>
+                <field name="fiscalyear_date_start" invisible="1"/>
+                <field name="fiscalyear_date_end" invisible="1"/>
+              </group>
+          </xpath>
+          <xpath expr="group[@name='criteria']" position="after">
+              <notebook name="additional_criteria" states="choose">
+                  <page string="Time Filters" name="time_filters">
+                      <group>
+                          <field name="filter"/>
+                      </group>
+                      <group string="Dates" attrs="{'invisible': [('filter', '!=', 'filter_date')], 'required': [('filter', '=', 'filter_date')]}">
+                          <field name="date_start"/>
+                          <field name="date_end"/>
+                      </group>
+                      <group string="Periods" attrs="{'invisible': [('filter', '!=', 'filter_period')], 'required': [('filter', '=', 'filter_period')]}">
+                          <field name="period_start_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end), ('special', '=', False)]"/>
+                          <field name="period_end_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end), ('special', '=', False)]"/>
+                      </group>
+                  </page>
+                  <page string="Account Filters" name="account_filters">
+                      <separator string="Print only" colspan="4"/>
+                      <field name="account_ids"/>
+                  </page>
+                  <page string="Partner Filters" name="partner_filters">
+                      <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids"/>
+                  </page>
+              </notebook>
+          </xpath>
+      </field>
+    </record>
+
+    <record id="account_move_action" model="ir.actions.act_window">
+        <field name="name">Account Move</field>
+        <field name="res_model">xlsx.report.account.move</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_data_mart" name="Data Mart" parent="base.menu_custom" sequence="60"/>
+    <menuitem id="account_move_menuitem" name="Account Move" parent="menu_data_mart" action="account_move_action" sequence="2"/>
+
+  </data>
+</openerp>
