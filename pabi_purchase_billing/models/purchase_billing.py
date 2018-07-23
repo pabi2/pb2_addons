@@ -90,6 +90,11 @@ class PurchaseBilling(models.Model):
         readonly=True,
         states={'billed': [('readonly', False)]},
     )
+    count_invoice = fields.Integer(
+        string='Count Invoice',
+        compute='_count_invoice',
+        store=False,
+    )
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Billing Number must be unique!'),
     ]
@@ -223,6 +228,14 @@ class PurchaseBilling(models.Model):
                 raise ValidationError(
                     _('Cannot delete billing(s) which are already billed.'))
         return super(PurchaseBilling, self).unlink()
+
+    @api.multi
+    def _count_invoice(self):
+        Invoice = self.env['account.invoice']
+        for rec in self:
+            dom = [('purchase_billing_id', '=', rec.id)]
+            rec.count_invoice = Invoice.search_count(dom)
+        return True
 
     @api.multi
     def action_open_invoice(self):

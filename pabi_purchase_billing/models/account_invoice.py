@@ -31,3 +31,20 @@ class AccountInvoice(models.Model):
                     _("You specified wrong billing receipt date "
                       "It must be more than or equal %s"
                       % (time.strftime('%d/%m/%Y'))))
+        return True
+
+    @api.multi
+    def recover_cancelled_invoice(self):
+        """ When recreated link billing from previous invoice """
+        self.ensure_one()
+        res = super(AccountInvoice, self).recover_cancelled_invoice()
+        # Stamp Billing to this invoice
+        self.recreated_invoice_id.write({
+            'purchase_billing_id': self.purchase_billing_id.id,
+            'date_receipt_billing': self.date_receipt_billing,
+        })
+        # Stamp Invoice to this billing
+        self.purchase_billing_id.write({
+            'supplier_invoice_ids': [(4, self.recreated_invoice_id.id)]
+        })
+        return res

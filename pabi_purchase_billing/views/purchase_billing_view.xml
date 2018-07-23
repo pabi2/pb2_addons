@@ -47,16 +47,26 @@
                     <button name="cancel_billing" string="Cancel" type="object" states="draft"/>
                     <button name="cancel_billing" string="Cancel" type="object" states="billed" confirm="Are you sure to cancel this record ?"/>
                     <button name="action_cancel_draft" type="object" states="cancel" string="Set to Draft"/>
-                    <button name="action_open_invoice" type="object" states="billed" string="View Invoice"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,billed" statusbar_colors='{"billed":"blue"}'/>
                 </header>
                 <sheet>
-                    <h1 attrs="{'invisible': [('name','=',False)]}"><field name="name"/></h1>
+                    <div class="oe_right oe_button_box" name="buttons">
+                        <button type="object"  name="action_open_invoice"
+                            class="oe_stat_button"
+                            icon="fa-pencil-square-o"
+                            attrs="{'invisible': [('count_invoice','=',False)]}"
+                            >
+                            <field name="count_invoice" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
+		                <div class="oe_title">
+                        <h1 attrs="{'invisible': [('name','=',False)]}"><field name="name"/></h1>
+                    </div>
                     <group>
                         <group>
                             <field name="partner_id" />
                             <field name="user_id" />
-                            <field name="currency_id"/>
+                            <field name="currency_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                         </group>
                         <group>
                             <field name="date" />

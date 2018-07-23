@@ -333,6 +333,12 @@ class AccountInvoice(models.Model):
             else:
                 raise ValidationError(
                     _('Current purchase invoice method is not supported'))
+            if self.recreated_invoice_id:
+                self.recreated_invoice_id.write({
+                    'supplier_invoice_number': self.supplier_invoice_number,
+                    'date_due': self.date_due,
+                    'payment_type': self.payment_type,
+                })
             # Redirect to new invoice
             if self.recreated_invoice_id:
                 action = self.env.ref('account.action_invoice_tree2')
