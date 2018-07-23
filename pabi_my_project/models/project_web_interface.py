@@ -175,3 +175,19 @@ class ResProject(models.Model):
             }
             self._cr.rollback()
         return res
+
+
+class ResProjectBudgetPlan(models.Model):
+    _inherit = 'res.project.budget.plan'
+
+    @api.model
+    def release_budget(self, plan_id, amount):
+        """ Helper function for webservice call """
+        self.ensure_one()
+        budget_line = self.search[('id', '=', plan_id)]
+        if amount > budget_line.planned_amount:
+            raise ValidationError(
+                _('Release amount exceed planned amount!'))
+        budget_line.write({'released_amount': amount})
+        budget_line.project_id._trigger_auto_sync()
+        return True
