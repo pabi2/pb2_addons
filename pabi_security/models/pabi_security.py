@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from lxml import etree
-import simplejson
 from openerp import models, api, fields
 
 
@@ -20,6 +19,60 @@ class PABISecurity(models.Model):
         'security_id',
         string='Security Line'
     )
+    # Meta Groups Label
+    mg1_label = fields.Char(string='MG1', compute='_compute_label')
+    mg2_label = fields.Char(string='MG2', compute='_compute_label')
+    mg3_label = fields.Char(string='MG3', compute='_compute_label')
+    mg4_label = fields.Char(string='MG4', compute='_compute_label')
+    mg5_label = fields.Char(string='MG5', compute='_compute_label')
+    mg6_label = fields.Char(string='MG6', compute='_compute_label')
+    mg7_label = fields.Char(string='MG7', compute='_compute_label')
+    mg8_label = fields.Char(string='MG8', compute='_compute_label')
+    mg9_label = fields.Char(string='MG9', compute='_compute_label')
+    mg10_label = fields.Char(string='MG10', compute='_compute_label')
+    # Groups
+    g1_label = fields.Char(string='G1', compute='_compute_label')
+    g2_label = fields.Char(string='G2', compute='_compute_label')
+    g3_label = fields.Char(string='G3', compute='_compute_label')
+    g4_label = fields.Char(string='G4', compute='_compute_label')
+    g5_label = fields.Char(string='G5', compute='_compute_label')
+    g6_label = fields.Char(string='G6', compute='_compute_label')
+    g7_label = fields.Char(string='G7', compute='_compute_label')
+    g8_label = fields.Char(string='G8', compute='_compute_label')
+    g9_label = fields.Char(string='G9', compute='_compute_label')
+    g10_label = fields.Char(string='G10', compute='_compute_label')
+    g11_label = fields.Char(string='G11', compute='_compute_label')
+    g12_label = fields.Char(string='G12', compute='_compute_label')
+    g13_label = fields.Char(string='G13', compute='_compute_label')
+    g14_label = fields.Char(string='G14', compute='_compute_label')
+    g15_label = fields.Char(string='G15', compute='_compute_label')
+    g16_label = fields.Char(string='G16', compute='_compute_label')
+    g17_label = fields.Char(string='G17', compute='_compute_label')
+    g18_label = fields.Char(string='G18', compute='_compute_label')
+    g19_label = fields.Char(string='G19', compute='_compute_label')
+    g20_label = fields.Char(string='G20', compute='_compute_label')
+    g21_label = fields.Char(string='G21', compute='_compute_label')
+    g22_label = fields.Char(string='G22', compute='_compute_label')
+    g23_label = fields.Char(string='G23', compute='_compute_label')
+    g24_label = fields.Char(string='G24', compute='_compute_label')
+    g25_label = fields.Char(string='G25', compute='_compute_label')
+    g26_label = fields.Char(string='G26', compute='_compute_label')
+    g27_label = fields.Char(string='G27', compute='_compute_label')
+    g28_label = fields.Char(string='G28', compute='_compute_label')
+    g29_label = fields.Char(string='G29', compute='_compute_label')
+    g30_label = fields.Char(string='G30', compute='_compute_label')
+
+    @api.model
+    def _get_used_field_list(self):
+        """ Return meta group, group and its label as,
+        [('mg1', 'MGroup 1'), ('mg2': 'MGroup 2'), ('g1', 'Group 1')]
+        """
+        field_list = []
+        for m in ['access.access', 'res.groups']:
+            groups = self.env[m].search([('pabi_security', '!=', False)],
+                                        order='pabi_security')
+            field_list += [(x.pabi_security, x.name) for x in groups]
+        return field_list
 
     @api.model
     def fields_view_get(self, view_id=None, view_type=False,
@@ -31,11 +84,7 @@ class PABISecurity(models.Model):
             viewref = res['fields']['line_ids']['views']['tree']
             doc = etree.XML(viewref['arch'])
             # Find all used pabi_security
-            field_list = []
-            for m in ['access.access', 'res.groups']:
-                groups = self.env[m].search([('pabi_security', '!=', False)],
-                                            order='pabi_security')
-                field_list += [(x.pabi_security, x.name) for x in groups]
+            field_list = self._get_used_field_list()
             for k, v in field_list:
                 node = doc.xpath("//field[@name='%s']" % k)
                 if node:
@@ -44,6 +93,21 @@ class PABISecurity(models.Model):
                     node[0].set('string', v)
             viewref['arch'] = etree.tostring(doc)
         return res
+
+    @api.multi
+    def _compute_label(self):
+        # Find all used pabi_security
+        field_list = self._get_used_field_list()
+        field_dict = dict(field_list)
+        for rec in self:
+            for i in ('mg', 'g'):  # mg and g
+                for j in range(1, 11):  # 1-10
+                    fn = '%s%s' % (i, j)
+                    if field_dict.get(fn, False):
+                        rec['%s_label' % fn] = field_dict[fn]
+                    else:
+                        rec['%s_label' % fn] = ''
+        return True
 
     @api.model
     def _get_groups(self, group_model, line):
