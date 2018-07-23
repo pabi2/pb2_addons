@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        # Budget Plan
+        <!-- Directory Budget Plan Templates -->
+        <record model="document.directory" id="dir_budget_drilldown_template">
+            <field name="name">Budget Drilldown Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <!-- Unit Based Template -->
+        <record id="budget_drilldown_unit_base_xlsx_template" model="ir.attachment">
+            <field name="res_model">budget.drilldown.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_drilldown_report.xlsx</field>
+            <field name="name">Budget Status of Structure Summary Report</field>
+            <field name="parent_id" eval="ref('dir_budget_drilldown_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Budget Status of Structure Summary Report': {
+                        '_HEAD_': {
+                            'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                            'B3': 'report_type${value or ""}',
+                            'B4': 'fiscalyear_id${value and value.name or ""}',
+                            'B5': 'org_id${value or ""}',
+                            'B6': '${env.user.with_context(lang="th_TH").display_name}',
+                            'B7': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                        },
+                        'line_external_ids': {
+                            'A10': 'chart_view${value and dict(env["budget.drilldown.report.line"]._columns["chart_view"].selection)[value] or ""}',
+                            'B10': 'charge_type${value and dict(env["budget.drilldown.report.line"]._columns["charge_type"].selection)[value] or "All"}',
+                            'C10': 'released_amount${value or 0}#{number_format=number}',
+                            'D10': 'amount_pr_commit${value or 0}#{number_format=number}',
+                            'E10': 'amount_po_commit${value or 0}#{number_format=number}',
+                            'F10': 'amount_exp_commit${value or 0}#{number_format=number}',
+                            'G10': 'amount_total_commit${value or 0}#{number_format=number}',
+                            'H10': 'amount_actual${value or 0}#{number_format=number}',
+                            'I10': 'amount_consumed${value or 0}#{number_format=number}',
+                            'J10': 'amount_balance${value or 0}#{number_format=number}',
+                            'K10': "${'=IF(OR(?(C10)=0,?(G10)=0),0,?(G10)/?(C10))'}#{number_format=percent}",
+                            'L10': "${'=IF(OR(?(C10)=0,?(H10)=0),0,?(H10)/?(C10))'}#{number_format=percent}",
+                            'M10': "${'=IF(OR(?(C10)=0,?(I10)=0),0,?(I10)/?(C10))'}#{number_format=percent}",
+                        },
+                        'line_internal_ids': {
+                            'A18': 'chart_view${value and dict(env["budget.drilldown.report.line"]._columns["chart_view"].selection)[value] or ""}',
+                            'B18': 'charge_type${value and dict(env["budget.drilldown.report.line"]._columns["charge_type"].selection)[value] or "All"}',
+                            'C18': 'released_amount${value or 0}#{number_format=number}',
+                            'D18': 'amount_pr_commit${value or 0}#{number_format=number}',
+                            'E18': 'amount_po_commit${value or 0}#{number_format=number}',
+                            'F18': 'amount_exp_commit${value or 0}#{number_format=number}',
+                            'G18': 'amount_total_commit${value or 0}#{number_format=number}',
+                            'H18': 'amount_actual${value or 0}#{number_format=number}',
+                            'I18': 'amount_consumed${value or 0}#{number_format=number}',
+                            'J18': 'amount_balance${value or 0}#{number_format=number}',
+                            'K18': "${'=IF(OR(?(C18)=0,?(G18)=0),0,?(G18)/?(C18))'}#{number_format=percent}",
+                            'L18': "${'=IF(OR(?(C18)=0,?(H18)=0),0,?(H18)/?(C18))'}#{number_format=percent}",
+                            'M18': "${'=IF(OR(?(C18)=0,?(I18)=0),0,?(I18)/?(C18))'}#{number_format=percent}",
+                        },
+                        'line_all_ids': {
+                            'A26': 'chart_view${value and dict(env["budget.drilldown.report.line"]._columns["chart_view"].selection)[value] or ""}',
+                            'B26': 'charge_type${value and dict(env["budget.drilldown.report.line"]._columns["charge_type"].selection)[value] or "All"}',
+                            'C26': 'released_amount${value or 0}#{number_format=number}',
+                            'D26': 'amount_pr_commit${value or 0}#{number_format=number}',
+                            'E26': 'amount_po_commit${value or 0}#{number_format=number}',
+                            'F26': 'amount_exp_commit${value or 0}#{number_format=number}',
+                            'G26': 'amount_total_commit${value or 0}#{number_format=number}',
+                            'H26': 'amount_actual${value or 0}#{number_format=number}',
+                            'I26': 'amount_consumed${value or 0}#{number_format=number}',
+                            'J26': 'amount_balance${value or 0}#{number_format=number}',
+                            'K26': "${'=IF(OR(?(C26)=0,?(G26)=0),0,?(G26)/?(C26))'}#{number_format=percent}",
+                            'L26': "${'=IF(OR(?(C26)=0,?(H26)=0),0,?(H26)/?(C26))'}#{number_format=percent}",
+                            'M26': "${'=IF(OR(?(C26)=0,?(I26)=0),0,?(I26)/?(C26))'}#{number_format=percent}",
+                        },
+                        '_TAIL_0': {
+                            'C10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'D10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'E10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'F10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'G10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'H10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'I10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'J10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'C18': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'D18': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'E18': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'F18': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'G18': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'H18': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'I18': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'J18': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'C26': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'D26': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'E26': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'F26': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'G26': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'H26': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'I26': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'J26': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
+                    }
+                }
+              }
+          </field>
+        </record>
+
+    </data>
+</openerp>

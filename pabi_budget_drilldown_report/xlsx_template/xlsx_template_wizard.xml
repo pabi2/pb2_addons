@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+      # Budget Drilldown
+      <!-- Budget Drilldown Unit Based -->
+      <act_window id="action_budget_drilldown_unit_export_xlsx_template"
+          name="Export Template (.xlsx)"
+          res_model="export.xlsx.template"
+          src_model="budget.drilldown.report"
+          view_mode="form"
+          target="new"
+          context="{'lang': 'th_TH'}"/>
+    </data>
+</openerp>
