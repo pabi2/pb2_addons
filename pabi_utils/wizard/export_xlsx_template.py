@@ -110,6 +110,7 @@ def fill_cell_format(field, field_format):
         'number_format': {
             'number': '#,##0.00',
             'date': 'dd/mm/yyyy',
+            'percent': '0.00%',
         },
     }
     formats = field_format.split(';')
