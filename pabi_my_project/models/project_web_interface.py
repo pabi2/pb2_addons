@@ -184,7 +184,6 @@ class ResProjectBudgetPlan(models.Model):
     def release_budget(self, plan_id, amount):
         """ Helper function for webservice call """
         budget_line = self.search([('id', '=', plan_id)])
-        print budget_line
         if amount > budget_line.planned_amount:
             raise ValidationError(
                 _('Release amount exceed planned amount!'))
