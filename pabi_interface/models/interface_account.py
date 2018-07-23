@@ -692,6 +692,8 @@ class InterfaceAccountEntryLine(models.Model):
     def _compute_reconcile_move_line_id(self):
         AccountMoveLine = self.env['account.move.line']
         for rec in self:
+            if not rec.reconcile_move_id:
+                continue
             move_lines = AccountMoveLine.search(
                 [('move_id', '=', rec.reconcile_move_id.id),
                  ('state', '=', 'valid'),
