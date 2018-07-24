@@ -195,7 +195,7 @@ class AccountBudget(models.Model):
                'force_no_budget_check': False}
         fiscal_id, budget_levels = self.get_fiscal_and_budget_level(doc_date)
         # Internal Charge, no budget check
-        if internal_charge:
+        if internal_charge == "True":  # Because java will send in Text
             fiscal = self.env['account.fiscalyear'].browse(fiscal_id)
             if fiscal.control_ext_charge_only:
                 self = self.with_context(force_no_budget_check=True)
