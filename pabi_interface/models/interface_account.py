@@ -69,6 +69,15 @@ class InterfaceAccountEntry(models.Model):
         required=True,
         help="Journal to be used in creating Journal Entry",
     )
+    contract_number = fields.Char(
+        string='Contract Number',
+    )
+    contract_date_start = fields.Date(
+        string='Contract Start Date',
+    )
+    contract_date_end = fields.Date(
+        string='Contract Start End',
+    )
     to_reconcile = fields.Boolean(
         string='To Reconcile',
         compute='_compute_to_reconcile',

@@ -8,21 +8,22 @@ class AccountBudget(models.Model):
     @api.model
     def test_pabiweb_check_budget(self):
         doc_date = '2018-01-01'
+        doc_type = 'ex'
         budget_type = 'project_base'
-        res_id = 110
-        fund_id = 11
+        res_id = 4
+        fund_id = 2
         doc_lines = [
-            {'activity_rpt_id': 1530,
-             'select_asset_id': 6,
-             'amount': 1.00},
-            {'activity_rpt_id': 1530,
-             'select_asset_id': 6,
-             'amount': 1.00},
-            {'activity_rpt_id': 1534,
-             'select_asset_id': 7,
-             'amount': 1.00},
+            {'activity_rpt_id': 4277,
+             'amount': 1000000.00},
+            # {'activity_rpt_id': 1530,
+            #  'select_asset_id': 6,
+            #  'amount': 1.00},
+            # {'activity_rpt_id': 1534,
+            #  'select_asset_id': 7,
+            #  'amount': 1.00},
         ]
-        res = self.pabiweb_check_budget(doc_date, budget_type, res_id,
+        res = self.pabiweb_check_budget(doc_type, doc_date,
+                                        budget_type, res_id,
                                         fund_id, doc_lines)
         return res
 
