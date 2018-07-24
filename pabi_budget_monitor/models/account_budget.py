@@ -180,7 +180,7 @@ class AccountBudget(models.Model):
     @api.model
     def simple_check_budget(self, doc_date, budget_type,
                             amount, res_id,
-                            internal_charge  # prepare for IC module
+                            internal_charge=False
                             ):
         """ This method is used to check budget of one type and one res_id
             :param date: doc_date, document date or date to check budget
@@ -195,7 +195,11 @@ class AccountBudget(models.Model):
                'force_no_budget_check': False}
         fiscal_id, budget_levels = self.get_fiscal_and_budget_level(doc_date)
         # Internal Charge, no budget check
-        if internal_charge == "True":  # Because java will send in Text
+        if isinstance(internal_charge, basestring):
+            # Because java may pass as string
+            internal_charge = \
+                internal_charge.lower() == "true" and True or False
+        if internal_charge:
             fiscal = self.env['account.fiscalyear'].browse(fiscal_id)
             if fiscal.control_ext_charge_only:
                 self = self.with_context(force_no_budget_check=True)
