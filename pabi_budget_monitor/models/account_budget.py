@@ -180,7 +180,7 @@ class AccountBudget(models.Model):
     @api.model
     def simple_check_budget(self, doc_date, budget_type,
                             amount, res_id,
-                            internal_charge=False  # prepare for IC module
+                            internal_charge  # prepare for IC module
                             ):
         """ This method is used to check budget of one type and one res_id
             :param date: doc_date, document date or date to check budget
