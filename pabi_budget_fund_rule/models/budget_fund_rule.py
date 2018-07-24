@@ -435,7 +435,7 @@ class BudgetFundRuleLine(models.Model):
         'account.account',
         'fund_rule_line_account_rel',
         'fund_rule_line_id', 'account_id',
-        string='GL Account',
+        string='Account',
         domain=[('type', '!=', 'view'),
                 '|',
                 ('user_type.code', 'ilike', 'fixed asset'),
