@@ -138,7 +138,7 @@
             <field name="act_window_id" ref="action_budget_fund_rule"/>
         </record>
         <record model="ir.actions.act_window.view" id="action_budget_fund_rule_form">
-            <field name="sequence" eval="1"/>
+            <field name="sequence" eval="2"/>
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_budget_fund_rule_form"/>
             <field name="act_window_id" ref="action_budget_fund_rule"/>
@@ -224,7 +224,7 @@
             <field name="act_window_id" ref="action_budget_fund_rule_template"/>
         </record>
         <record model="ir.actions.act_window.view" id="action_budget_fund_rule_template_form">
-            <field name="sequence" eval="1"/>
+            <field name="sequence" eval="2"/>
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_budget_fund_rule_template_form"/>
             <field name="act_window_id" ref="action_budget_fund_rule_template"/>
