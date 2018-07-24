@@ -9,7 +9,8 @@ from openerp.addons.pabi_account_move_document_ref.models.account_move import \
 from .common import SearchCommon, REPORT_TYPES, REPORT_GROUPBY
 
 SEARCH_KEYS = dict(CHART_FIELDS).keys() + ['fiscalyear_id']
-ALL_SEARCH_KEYS = SEARCH_KEYS + ['chart_view', 'charge_type']
+ALL_SEARCH_KEYS = SEARCH_KEYS + ['chart_view', 'charge_type',
+                                 'activity_group_id', 'activity_id']
 CHART_VIEWS = CHART_VIEW.keys()
 
 
