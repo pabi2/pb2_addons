@@ -85,7 +85,7 @@
             <field name="res_model">account.journal</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('type', 'in', ('bank'))]</field>
+            <field name="domain">[('type', '=', 'bank')]</field>
             <field name="context">{'default_type': 'bank'}</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
@@ -108,7 +108,7 @@
             <field name="res_model">account.journal</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('type', 'in', ('cash'))]</field>
+            <field name="domain">[('type', '=', 'cash')]</field>
             <field name="context">{'default_type': 'cash'}</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
