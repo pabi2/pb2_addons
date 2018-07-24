@@ -187,7 +187,7 @@
                                 <tree editable="bottom">
                                     <field name="fund_rule_id" invisible="1"/>
                                     <field name="expense_group_id"/>
-                                    <field name="account_ids" widget="many2many_tags"/>
+                                    <field name="account_ids" widget="many2many_tags" context="{'tree_view_ref': 'pabi_budget_fund_rule.view_account_tree'}"/>
                                     <field name="activity_ids" widget="many2many_tags"/>
                                     <field name="max_spending_percent" required="1"/>
                                 </tree>
