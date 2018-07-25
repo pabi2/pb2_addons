@@ -1,5 +1,13 @@
 from openerp import models, api
 
+EXCEL_NAME = {
+    'overall': 'budget_overall_report.xlsx',
+    'unit_base': 'budget_unit_base_report.xlsx',
+    'project_base': 'budget_project_base_report.xlsx',
+    'invest_asset': [],  # TODO
+    'invest_construction': [],  # TODO
+}
+
 
 class ExportXlsxTemplate(models.TransientModel):
     _inherit = 'export.xlsx.template'
@@ -11,11 +19,5 @@ class ExportXlsxTemplate(models.TransientModel):
             active_id = self._context.get('active_id', False)
             report = self.env['budget.drilldown.report'].browse(active_id)
             report_type = report.report_type
-            template_fname = dict(overall="budget_overall_report.xlsx",
-                                  unit_base="budget_unit_base_report.xlsx",
-                                  project_base="budget_overall_report.xlsx",
-                                  invest_asset="budget_overall_report.xlsx",
-                                  invest_construction=+
-                                  "budget_overall_report.xlsx")[report_type]
-
+            template_fname = EXCEL_NAME.get(report_type, False)
         return template_fname

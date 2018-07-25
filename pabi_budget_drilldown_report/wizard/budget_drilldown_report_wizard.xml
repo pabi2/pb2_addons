@@ -19,19 +19,26 @@
                         <group>
                             <field name="charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="org_id" attrs="{'invisible': [('report_type', 'not in', ('overall', 'unit_base'))]}"/>
+                            <!-- filter unit_base -->
                             <field name="sector_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="subsector_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="division_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="section_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                            <!-- filter project_base -->
+                            <field name="functional_area_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
+                            <field name="program_group_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
+                            <field name="program_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
+                            <field name="project_group_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
+                            <field name="project_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
                         </group>
                         <group>
                             <field name="group_by_section_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="group_by_project_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
-                            <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
-                            <field name="group_by_charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
-                            <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                            <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
+                            <field name="group_by_charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
+                            <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
                         </group>
                     </group>
                     <footer>

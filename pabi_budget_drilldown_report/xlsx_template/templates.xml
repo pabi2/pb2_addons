@@ -24,7 +24,7 @@
                     'Budget Overall Report': {
                         '_HEAD_': {
                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                            'B3': 'report_type${value or ""}',
+                            'B3': 'report_type${value and dict(env["budget.drilldown.report"]._columns["report_type"].selection)[value] or ""}',
                             'B4': 'fiscalyear_id${value and value.name or ""}',
                             'B5': 'org_id${value and value.name_short or ""}',
                             'B6': '${env.user.with_context(lang="th_TH").display_name}',
@@ -120,51 +120,111 @@
                     'Budget Section Report': {
                         '_HEAD_': {
                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                            'B3': 'fiscalyear_id${value and value.name or ""}',
-                            'B4': 'charge_type${value and dict(env["budget.drilldown.report.line"]._columns["charge_type"].selection)[value] or ""}',
-                            'B5': 'org_id${value and value.name_short or ""}',
-                            'B6': 'sector_id${value and value.name or ""}',
-                            'B7': 'subsector_id${value and value.name or ""}',
-                            'B8': 'division_id${value and value.name or ""}',
-                            'B9': 'section_id${value and value.name or ""}',
-                            'B10': 'activity_group_id${value and value.name or ""}',
-                            'B11': 'activity_id${value and value.name or ""}',
-                            'B12': 'group_by_section_id${value and "True" or "False"}',
-                            'B13': 'group_by_activity_group_id${value and "True" or "False"}',
-                            'B14': 'group_by_charge_type${value and "True" or "False"}',
-                            'B15': 'group_by_activity_id${value and "True" or "False"}',
-                            'B16': '${env.user.with_context(lang="th_TH").display_name}',
-                            'B17': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            'B3': 'report_type${value and dict(env["budget.drilldown.report"]._columns["report_type"].selection)[value] or ""}',
+                            'B4': 'fiscalyear_id${value and value.name or ""}',
+                            'B5': 'charge_type${value and dict(env["budget.drilldown.report.line"]._columns["charge_type"].selection)[value] or ""}',
+                            'B6': 'org_id${value and value.name_short or ""}',
+                            'B7': 'sector_id${value and value.name or ""}',
+                            'B8': 'subsector_id${value and value.name or ""}',
+                            'B9': 'division_id${value and value.name or ""}',
+                            'B10': 'section_id${value and value.name or ""}',
+                            'B11': 'activity_group_id${value and value.name or ""}',
+                            'B12': 'activity_id${value and value.name or ""}',
+                            'B13': 'group_by_section_id${value and "True" or "False"}',
+                            'B14': 'group_by_activity_group_id${value and "True" or "False"}',
+                            'B15': 'group_by_charge_type${value and "True" or "False"}',
+                            'B16': 'group_by_activity_id${value and "True" or "False"}',
+                            'B17': '${env.user.with_context(lang="th_TH").display_name}',
+                            'B18': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                         },
                         'line_ids': {
-                            'A20': 'section_id${value and value.code or ""}',
-                            'B20': 'section_id${value and value.name or ""}',
-                            'C20': 'activity_group_id${value and value.name or ""}',
-                            'D20': 'charge_type${value and dict(env["budget.drilldown.report.line"]._columns["charge_type"].selection)[value] or ""}',
-                            'E20': 'activity_id${value and value.name or ""}',
-                            'F20': 'planned_amount${value or 0}#{number_format=number}',
-                            'G20': 'released_amount${value or 0}#{number_format=number}',
-                            'H20': 'amount_pr_commit${value or 0}#{number_format=number}',
-                            'I20': 'amount_po_commit${value or 0}#{number_format=number}',
-                            'J20': 'amount_exp_commit${value or 0}#{number_format=number}',
-                            'K20': 'amount_total_commit${value or 0}#{number_format=number}',
-                            'L20': 'amount_actual${value or 0}#{number_format=number}',
-                            'M20': 'amount_consumed${value or 0}#{number_format=number}',
-                            'N20': 'amount_balance${value or 0}#{number_format=number}',
-                            'O20': "${'=IF(OR(?(G20)=0,?(K20)=0),0,?(K20)/?(G20))'}#{number_format=percent}",
-                            'P20': "${'=IF(OR(?(G20)=0,?(L20)=0),0,?(L20)/?(G20))'}#{number_format=percent}",
-                            'Q20': "${'=IF(OR(?(G20)=0,?(M20)=0),0,?(M20)/?(G20))'}#{number_format=percent}",
+                            'A21': 'section_id${value and value.code or ""}',
+                            'B21': 'section_id${value and value.name or ""}',
+                            'C21': 'activity_group_id${value and value.name or ""}',
+                            'D21': 'charge_type${value and dict(env["budget.drilldown.report.line"]._columns["charge_type"].selection)[value] or ""}',
+                            'E21': 'activity_id${value and value.name or ""}',
+                            'F21': 'planned_amount${value or 0}#{number_format=number}',
+                            'G21': 'released_amount${value or 0}#{number_format=number}',
+                            'H21': 'amount_pr_commit${value or 0}#{number_format=number}',
+                            'I21': 'amount_po_commit${value or 0}#{number_format=number}',
+                            'J21': 'amount_exp_commit${value or 0}#{number_format=number}',
+                            'K21': 'amount_total_commit${value or 0}#{number_format=number}',
+                            'L21': 'amount_actual${value or 0}#{number_format=number}',
+                            'M21': 'amount_consumed${value or 0}#{number_format=number}',
+                            'N21': 'amount_balance${value or 0}#{number_format=number}',
+                            'O21': "${'=IF(OR(?(G21)=0,?(K21)=0),0,?(K21)/?(G21))'}#{number_format=percent}",
+                            'P21': "${'=IF(OR(?(G21)=0,?(L21)=0),0,?(L21)/?(G21))'}#{number_format=percent}",
+                            'Q21': "${'=IF(OR(?(G21)=0,?(M21)=0),0,?(M21)/?(G21))'}#{number_format=percent}",
                         },
                         '_TAIL_0': {
-                            'F20': '@{sum}#{font=bold;align=right;number_format=number}',
-                            'G20': '@{sum}#{font=bold;align=right;number_format=number}',
-                            'H20': '@{sum}#{font=bold;align=right;number_format=number}',
-                            'I20': '@{sum}#{font=bold;align=right;number_format=number}',
-                            'J20': '@{sum}#{font=bold;align=right;number_format=number}',
-                            'K20': '@{sum}#{font=bold;align=right;number_format=number}',
-                            'L20': '@{sum}#{font=bold;align=right;number_format=number}',
-                            'M20': '@{sum}#{font=bold;align=right;number_format=number}',
-                            'N20': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'F21': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'G21': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'H21': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'I21': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'J21': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'K21': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'L21': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'M21': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'N21': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
+                    }
+                }
+              }
+          </field>
+        </record>
+
+        # Budget Project Base Report
+        <record id="budget_project_base_report_xlsx_template" model="ir.attachment">
+            <field name="res_model">budget.drilldown.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_project_base_report.xlsx</field>
+            <field name="name">Budget Project Report</field>
+            <field name="parent_id" eval="ref('dir_budget_drilldown_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Budget Project Report': {
+                        '_HEAD_': {
+                            'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                            'B3': 'report_type${value and dict(env["budget.drilldown.report"]._columns["report_type"].selection)[value] or ""}',
+                            'B4': 'fiscalyear_id${value and value.name or ""}',
+                            'B5': 'functional_area_id${value and value.name or ""}',
+                            'B6': 'program_group_id${value and value.name or ""}',
+                            'B7': 'program_id${value and value.name or ""}',
+                            'B8': 'project_group_id${value and value.name or ""}',
+                            'B9': 'project_id${value and value.name or ""}',
+                            'B10': '${env.user.with_context(lang="th_TH").display_name}',
+                            'B11': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                        },
+                        'line_ids': {
+                            'A14': 'project_id${value and value.code or ""}',
+                            'B14': 'project_id${value and value.name or ""}',
+                            'C14': 'activity_group_id${value and value.name or ""}',
+                            'D14': 'charge_type${value and dict(env["budget.drilldown.report.line"]._columns["charge_type"].selection)[value] or ""}',
+                            'E14': 'activity_id${value and value.name or ""}',
+                            'F14': 'planned_amount${value or 0}#{number_format=number}',
+                            'G14': 'released_amount${value or 0}#{number_format=number}',
+                            'H14': 'amount_pr_commit${value or 0}#{number_format=number}',
+                            'I14': 'amount_po_commit${value or 0}#{number_format=number}',
+                            'J14': 'amount_exp_commit${value or 0}#{number_format=number}',
+                            'K14': 'amount_total_commit${value or 0}#{number_format=number}',
+                            'L14': 'amount_actual${value or 0}#{number_format=number}',
+                            'M14': 'amount_consumed${value or 0}#{number_format=number}',
+                            'N14': 'amount_balance${value or 0}#{number_format=number}',
+                            'O14': "${'=IF(OR(?(G14)=0,?(K14)=0),0,?(K14)/?(G14))'}#{number_format=percent}",
+                            'P14': "${'=IF(OR(?(G14)=0,?(L14)=0),0,?(L14)/?(G14))'}#{number_format=percent}",
+                            'Q14': "${'=IF(OR(?(G14)=0,?(M14)=0),0,?(M14)/?(G14))'}#{number_format=percent}",
+                        },
+                        '_TAIL_0': {
+                            'F14': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'G14': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'H14': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'I14': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'J14': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'K14': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'L14': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'M14': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'N14': '@{sum}#{font=bold;align=right;number_format=number}',
                         }
                     }
                 }

@@ -202,6 +202,14 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
                       'view_budget_unit_base_report_form'
         return self._prepare_report_by_structure(chart_view, view_xml_id)
 
+    @api.multi
+    def _run_project_base_report(self):
+        self.ensure_one()
+        chart_view = 'project_base'
+        view_xml_id = 'pabi_budget_drilldown_report.' \
+                      'view_budget_project_base_report_form'
+        return self._prepare_report_by_structure(chart_view, view_xml_id)
+
     @api.model
     def generate_report(self, wizard):
         # Delete old reports run by the same user
@@ -229,8 +237,8 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         elif report.report_type == 'unit_base':
             report_lines, view_id = report._run_unit_base_report()
         # TODO
-        # elif report.report_type == 'project_base':
-        #     report_lines, view_id = report._run_project_base_report()
+        elif report.report_type == 'project_base':
+            report_lines, view_id = report._run_project_base_report()
         # elif report.report_type == 'invest_asset':
         #     report_lines, view_id = report._run_invest_asset_base_report()
         # elif report.report_type == 'invest_construction':

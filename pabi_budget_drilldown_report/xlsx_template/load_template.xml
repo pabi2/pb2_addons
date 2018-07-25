@@ -5,7 +5,8 @@
             to load the file content to relevant template_ids -->
         <function model="ir.attachment" name="load_xlsx_template">
           <value eval="[ref('budget_overall_report_xlsx_template'),
-                        ref('budget_unit_base_report_xlsx_template')]"/>
+                        ref('budget_unit_base_report_xlsx_template'),
+                        ref('budget_project_base_report_xlsx_template')]"/>
             <value>pabi_budget_drilldown_report/xlsx_template</value>
         </function>
     </data>

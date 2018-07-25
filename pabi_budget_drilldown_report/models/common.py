@@ -11,10 +11,21 @@ REPORT_TYPES = [('overall', 'Overall'),
 REPORT_GROUPBY = {
     'unit_base': ['section_id', 'activity_group_id',
                   'charge_type', 'activity_id'],
-    'project_base': ['project_id'],  # TODO
+    'project_base': ['project_id', 'activity_group_id',
+                     'charge_type', 'activity_id'],
     'invest_asset': [],  # TODO
     'invest_construction': [],  # TODO
 }
+# REPORT_FILTERS = {
+#     'overall': ['org_id'],
+#     'unit_base': ['org_id', 'charge_type', 'sector_id',
+#                   'subsector_id', 'division_id', 'section_id',
+#                   'activity_group_id', 'activity_id'],
+#     'project_base': ['functional_area_id', 'program_group_id',
+#                      'program_id', 'project_group_id', 'project_id'],
+#     'invest_asset': [],  # TODO
+#     'invest_construction': [],  # TODO
+# }
 
 
 class SearchCommon(ChartField, object):
@@ -80,6 +91,27 @@ class SearchCommon(ChartField, object):
         'account.activity',
         string='Activity',
     )
+    # For project_base
+    functional_area_id = fields.Many2one(
+        'res.functional.area',
+        string='Functional Area'
+    )
+    program_group_id = fields.Many2one(
+        'res.program.group',
+        string='Program Group'
+    )
+    program_id = fields.Many2one(
+        'res.program',
+        string='Program'
+    )
+    project_group_id = fields.Many2one(
+        'res.project.group',
+        string='Project Group'
+    )
+    project_id = fields.Many2one(
+        'res.project',
+        string='Project'
+    )
     # Group By
     group_by_section_id = fields.Boolean(
         string='Group By - Section',
@@ -104,6 +136,7 @@ class SearchCommon(ChartField, object):
 
     @api.onchange('report_type')
     def _onchange_report_type(self):
+        self.charge_type = False
         self.org_id = False
         self.sector_id = False
         self.subsector_id = False
@@ -111,6 +144,11 @@ class SearchCommon(ChartField, object):
         self.section_id = False
         self.activity_group_id = False
         self.activity_id = False
+        self.functional_area_id = False
+        self.program_group_id = False
+        self.program_id = False
+        self.project_group_id = False
+        self.project_id = False
 
     @api.onchange('org_id')
     def _onchange_org_id(self):
@@ -146,3 +184,38 @@ class SearchCommon(ChartField, object):
         self.sector_id = False
         self.subsector_id = False
         self.division_id = False
+
+    @api.onchange('functional_area_id')
+    def _onchange_functional_area_id(self):
+        self.program_group_id = False
+        self.program_id = False
+        self.project_group_id = False
+        self.project_id = False
+
+    @api.onchange('program_group_id')
+    def _onchange_program_group_id(self):
+        self.functional_area_id = False
+        self.program_id = False
+        self.project_group_id = False
+        self.project_id = False
+
+    @api.onchange('program_id')
+    def _onchange_program_id(self):
+        self.functional_area_id = False
+        self.program_group_id = False
+        self.project_group_id = False
+        self.project_id = False
+
+    @api.onchange('project_group_id')
+    def _onchange_project_group_id(self):
+        self.functional_area_id = False
+        self.program_group_id = False
+        self.program_id = False
+        self.project_id = False
+
+    @api.onchange('project_id')
+    def _onchange_project_id(self):
+        self.functional_area_id = False
+        self.program_group_id = False
+        self.program_id = False
+        self.project_group_id = False

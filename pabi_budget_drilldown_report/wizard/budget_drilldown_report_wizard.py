@@ -36,6 +36,12 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
 
     @api.onchange('report_type')
     def _onchange_report_type(self):
+        super(BudgetDrilldownReportWizard, self)._onchange_report_type()
+        # Clear Data
+        for field in ['section_id', 'project_id', 'activity_group_id',
+                      'charge_type', 'activity_id']:
+            self['group_by_%s' % (field)] = False
+
         """ Default Group By to True - by Report Type """
         if self.report_type in REPORT_GROUPBY.keys():
             for field in REPORT_GROUPBY[self.report_type]:
