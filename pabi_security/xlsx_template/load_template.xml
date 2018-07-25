@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <function model="ir.attachment" name="load_xlsx_template">
+            <value eval="[
+                ref('xlsx_report_assign_security'),
+            ]"/>
+            <value>pabi_security/xlsx_template</value>
+        </function>
+    </data>
+</openerp>
