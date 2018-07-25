@@ -8,8 +8,8 @@ REFERENCE_SELECT = [('res.section', 'Section ID'),
                     ('res.invest.construction', 'Invest Construction ID'), ]
 
 
-class GLReceivableView(models.Model):
-    _name = 'gl.receivable.view'
+class RevenueLedgerView(models.Model):
+    _name = 'revenue.ledger.view'
     _auto = False
 
     invoice_move_line_id = fields.Many2one(
@@ -101,8 +101,8 @@ class GLReceivableView(models.Model):
                    % (self._table, self._get_sql_view()))
 
 
-class XLSXReportGLReceivable(models.TransientModel):
-    _name = 'xlsx.report.gl.receivable'
+class XLSXReportRevenueLedger(models.TransientModel):
+    _name = 'xlsx.report.revenue.ledger'
     _inherit = 'report.account.common'
 
     # Search Criteria
@@ -116,7 +116,7 @@ class XLSXReportGLReceivable(models.TransientModel):
     )
     # Report Result
     results = fields.Many2many(
-        'gl.receivable.view',
+        'revenue.ledger.view',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
@@ -125,7 +125,7 @@ class XLSXReportGLReceivable(models.TransientModel):
     @api.multi
     def _compute_results(self):
         self.ensure_one()
-        Result = self.env['gl.receivable.view']
+        Result = self.env['revenue.ledger.view']
         dom = []
         if self.account_ids:
             dom += [('invoice_move_line_id.account_id', 'in',
