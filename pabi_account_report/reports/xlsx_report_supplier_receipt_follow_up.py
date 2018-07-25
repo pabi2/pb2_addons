@@ -83,6 +83,10 @@ class XLSXReportSupplierReceiptFollowUp(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get from supplier payment as state posted
+        """
         self.ensure_one()
         Result = self.env['supplier.receipt.followup.view']
         dom = []

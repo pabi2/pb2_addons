@@ -28,6 +28,10 @@ class XLSXReportContractCollateral(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Snap short
+        1. Collateral Remand Date >= Report Date
+        """
         self.ensure_one()
         Result = self.env['purchase.contract']
         dom = []

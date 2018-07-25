@@ -1,84 +1,7 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api, tools
+from openerp import models, fields, api
 import time
 import pandas as pd
-
-
-class PayableDetailView(models.Model):
-    _name = 'payable.detail.view'
-    _auto = False
-
-    id = fields.Integer(
-        string='ID',
-        readonly=True,
-    )
-    invoice_move_line_id = fields.Many2one(
-        'account.move.line',
-        string='Invoice Move Line',
-        readonly=True,
-    )
-    payment_move_line_id = fields.Many2one(
-        'account.move.line',
-        string='Payment Move Line',
-        readonly=True,
-    )
-    partner_id = fields.Many2one(
-        'res.partner',
-        string='Partner',
-        readonly=True,
-    )
-    date = fields.Date(
-        string='Posting Date',
-        readonly=True,
-    )
-    name = fields.Char(
-        string='Document Number',
-        readonly=True,
-    )
-
-    def _get_sql_view(self):
-        sql_view = """
-            SELECT ROW_NUMBER() OVER(ORDER BY invoice_line.move_line_id,
-                                              payment_line.move_line_id,
-                                              invoice_line.partner_id,
-                                              invoice_line.date,
-                                              invoice_line.name) AS id,
-                   invoice_line.move_line_id AS invoice_move_line_id,
-                   payment_line.move_line_id AS payment_move_line_id,
-                   invoice_line.partner_id,
-                   invoice_line.date,
-                   invoice_line.name
-            FROM
-            (SELECT aml.id AS move_line_id,
-                    aml.reconcile_id, aml.reconcile_partial_id,
-                    aml.partner_id, am.date, am.name
-             FROM account_move_line aml
-             LEFT JOIN account_move am ON aml.move_id = am.id
-             LEFT JOIN account_account aa ON aml.account_id = aa.id
-             WHERE am.state = 'posted' AND aa.type = 'payable' AND
-                   aml.doctype IN ('in_invoice', 'in_refund',
-                                   'in_invoice_debitnote', 'adjustment'))
-                invoice_line
-            LEFT JOIN
-            (SELECT aml.id AS move_line_id,
-                    aml.reconcile_id, aml.reconcile_partial_id
-             FROM account_move_line aml
-             LEFT JOIN account_move am ON aml.move_id = am.id
-             LEFT JOIN account_voucher av ON am.id = av.move_id
-             LEFT JOIN account_account aa ON aml.account_id = aa.id
-             WHERE am.state = 'posted' AND aa.type = 'payable' AND
-                   aml.doctype IN ('payment') AND av.state = 'posted')
-                    payment_line
-                   ON invoice_line.reconcile_id = payment_line.reconcile_id
-                   OR invoice_line.reconcile_partial_id =
-                    payment_line.reconcile_partial_id
-        """
-        return sql_view
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
-                   % (self._table, self._get_sql_view()))
 
 
 class XLSXReportPayableDetail(models.TransientModel):
@@ -117,7 +40,7 @@ class XLSXReportPayableDetail(models.TransientModel):
         compute='_compute_date_real',
     )
     results = fields.Many2many(
-        'payable.detail.view',
+        'pabi.account.data.mart.view',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
@@ -182,36 +105,37 @@ class XLSXReportPayableDetail(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get from pabi.account.data.mart.view
+        2. Check account type is payable
+        """
         self.ensure_one()
-        Result = self.env['payable.detail.view']
-        dom = []
+        Result = self.env['pabi.account.data.mart.view']
+        dom = [('account_id.type', '=', 'payable')]
         if self.account_ids:
-            dom += [('invoice_move_line_id.account_id', 'in',
-                     self.account_ids.ids)]
+            dom += [('account_id', 'in', self.account_ids.ids)]
         if self.partner_ids:
-            dom += [('invoice_move_line_id.partner_id', 'in',
-                     self.partner_ids.ids)]
+            dom += [('partner_id', 'in', self.partner_ids.ids)]
         if self.move_ids:
-            dom += [('invoice_move_line_id.move_id', 'in', self.move_ids.ids)]
+            dom += [('invoice_move_id', 'in', self.move_ids.ids)]
         if self.fiscalyear_start_id:
-            dom += [('invoice_move_line_id.move_id.date', '>=',
+            dom += [('invoice_posting_date', '>=',
                      self.fiscalyear_start_id.date_start)]
         if self.fiscalyear_end_id:
-            dom += [('invoice_move_line_id.move_id.date', '<=',
+            dom += [('invoice_posting_date', '<=',
                      self.fiscalyear_end_id.date_stop)]
         if self.period_start_id:
-            dom += [('invoice_move_line_id.move_id.date', '>=',
+            dom += [('invoice_posting_date', '>=',
                      self.period_start_id.date_start)]
         if self.period_end_id:
-            dom += [('invoice_move_line_id.move_id.date', '<=',
+            dom += [('invoice_posting_date', '<=',
                      self.period_end_id.date_stop)]
         if self.date_start:
-            dom += [('invoice_move_line_id.move_id.date', '>=',
-                     self.date_start)]
+            dom += [('invoice_posting_date', '>=', self.date_start)]
         if self.date_end:
-            dom += [('invoice_move_line_id.move_id.date', '<=',
-                     self.date_end)]
+            dom += [('invoice_posting_date', '<=', self.date_end)]
         if self.as_of_date:
-            dom += [('invoice_move_line_id.move_id.date', '<=',
-                     self.as_of_date)]
-        self.results = Result.search(dom, order="partner_id,date,name")
+            dom += [('invoice_posting_date', '<=', self.as_of_date)]
+        self.results = Result.search(
+            dom, order="partner_id,invoice_posting_date,document_number")

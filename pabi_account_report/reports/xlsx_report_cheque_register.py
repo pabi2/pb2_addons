@@ -37,6 +37,11 @@ class XLSXReportChequeRegisterReport(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get data from cheque register
+        2. Filter follow by criteria as we selected
+        """
         self.ensure_one()
         Result = self.env['cheque.register']
         dom = []

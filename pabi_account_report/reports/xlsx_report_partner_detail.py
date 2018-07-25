@@ -92,6 +92,12 @@ class XLSXReportPartnerDetail(models.TransientModel):
 
     @api.multi
     def _get_domain(self):
+        """
+        Solution
+        1. Get all partners (active = true or active = false) by
+           default active = true only
+        2. Add domain follow criteria as we selected
+        """
         self.ensure_one()
         domain = ['|', ('active', '=', True), ('active', '=', False)]
         # Check active
