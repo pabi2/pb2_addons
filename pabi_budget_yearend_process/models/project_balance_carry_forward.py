@@ -47,7 +47,7 @@ class ProjectBalanceCarryForward(models.Model):
     @api.multi
     def _compute_amount_total(self):
         for rec in self:
-            rec.amount_total = rec.line_ids.mapped('balance_amount')
+            rec.amount_total = sum(rec.line_ids.mapped('balance_amount'))
 
     @api.model
     def default_get(self, fields):
