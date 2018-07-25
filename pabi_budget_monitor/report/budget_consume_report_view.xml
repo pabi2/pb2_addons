@@ -10,7 +10,6 @@
 				<xpath expr="//graph" position="replace">
 					<graph string="Budget Consume" type="pivot">
 						<field name="org_id" type="row"/>
-						<field name="date" type="col"/>
 						<field name="amount_pr_commit" type="measure"/>
 						<field name="amount_po_commit" type="measure"/>
 						<field name="amount_exp_commit" type="measure"/>
