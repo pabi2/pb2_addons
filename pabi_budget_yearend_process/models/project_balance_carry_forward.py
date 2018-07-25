@@ -83,7 +83,7 @@ class ProjectBalanceCarryForward(models.Model):
         """ This method, list all projects with, budget balance > 0 """
         where_ext = ''
         if self.from_fiscalyear_id.control_ext_charge_only:
-            where_ext = "charge_type = 'external'"
+            where_ext = "and charge_type = 'external'"
         sql = """
             select project_id, program_id, balance_amount
             from (
