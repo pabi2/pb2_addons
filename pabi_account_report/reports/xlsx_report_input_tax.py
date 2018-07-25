@@ -29,6 +29,11 @@ class XLSXReportInputTax(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get from account.tax.report
+        2. Check document type is purchase (doc_type = purchase)
+        """
         self.ensure_one()
         Result = self.env['account.tax.report']
         dom = [('doc_type', '=', 'purchase')]

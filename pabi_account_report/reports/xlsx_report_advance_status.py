@@ -1,18 +1,24 @@
-from datetime import datetime
+# -*- coding: utf-8 -*-
 from openerp import models, fields, api
 
 
 class XLSXReportAdvanceStatus(models.TransientModel):
     _name = 'xlsx.report.advance.status'
-    _inherit = 'xlsx.report'
+    _inherit = 'report.account.common'
 
-    # Search Criteria
-    run_date = fields.Date(
-        string='Run Date',
-        default=lambda self: fields.Date.context_today(self),
+    filter = fields.Selection(
+        default='filter_date',
         readonly=True,
     )
-    # Report Result
+    date_report = fields.Date(
+        string='Report Date',
+        default=lambda self: fields.Date.context_today(self),
+        required=True,
+    )
+    employee_ids = fields.Many2many(
+        'hr.employee',
+        string='Employee',
+    )
     results = fields.Many2many(
         'hr.expense.expense',
         string='Results',
@@ -20,54 +26,42 @@ class XLSXReportAdvanceStatus(models.TransientModel):
         help='Use compute fields, so there is nothing store in database',
     )
 
+    @api.model
+    def _get_expense_id(self, date_report):
+        self._cr.execute("""
+            SELECT expense.id
+            FROM hr_expense_expense expense
+            LEFT JOIN hr_expense_clearing clearing
+                ON expense.id = clearing.advance_expense_id
+            WHERE expense.is_employee_advance = TRUE AND
+                expense.amount_advanced IS NOT NULL
+            GROUP BY expense.id
+            HAVING expense.amount_advanced >
+                SUM(CASE WHEN clearing.id IS NULL THEN 0
+                         WHEN clearing.date <= '%s' THEN
+                            clearing.clearing_amount ELSE 0 END)
+        """ % (date_report, ))
+        return map(lambda l: l[0], self._cr.fetchall())
+
     @api.multi
     def _compute_results(self):
+        """
+        Snap Short
+        Filter domain
+        1. Check for employee advance (is_employee_advance = True)
+        2. Check paid date of employee advance
+           2.1 Must be only paid (date_paid != False)
+           2.2 Must paid already at report date (date_paid <= date_report)
+        3. Not clear advance at report date (Check from _get_expense_id)
+        """
         self.ensure_one()
+        date_report = self.date_report
         Result = self.env['hr.expense.expense']
-        dom = [('state', '=', 'paid'), ('amount_to_clearing', '>', 0.0)]
+        dom = [('is_employee_advance', '=', True),
+               ('invoice_id.date_paid', '!=', False),
+               ('invoice_id.date_paid', '<=', date_report),
+               ('id', 'in', self._get_expense_id(date_report))]
+        if self.employee_ids:
+            dom += [('employee_id', 'in', self.employee_ids.ids)]
         self.results = Result.search(
-            dom, order='operating_unit_id, employee_id, invoice_id')
-
-
-class HRExpenseExpense(models.Model):
-    """ Add compute field for reporting purposes """
-    _inherit = 'hr.expense.expense'
-
-    days_diff = fields.Integer(
-        string='Number of Days',
-        compute='_compute_clearing_amount',
-    )
-    amount_clearing_0 = fields.Float(
-        string='Not Overdue',
-        compute='_compute_clearing_amount',
-    )
-    amount_clearing_1 = fields.Float(
-        string='Overdue 1-15 Days',
-        compute='_compute_clearing_amount',
-    )
-    amount_clearing_2 = fields.Float(
-        string='Overdue 16-30 Days',
-        compute='_compute_clearing_amount',
-    )
-    amount_clearing_3 = fields.Float(
-        string='Overdue >30 Days',
-        compute='_compute_clearing_amount',
-    )
-
-    @api.multi
-    def _compute_clearing_amount(self):
-        today = datetime.strptime(fields.Date.context_today(self), '%Y-%m-%d')
-        for rec in self:
-            if not rec.date_due:
-                continue
-            date_due = datetime.strptime(rec.date_due, '%Y-%m-%d')
-            days_diff = (today - date_due).days
-            rec.days_diff = days_diff
-            if days_diff < 1:
-                rec.amount_clearing_0 = rec.amount_to_clearing
-            elif days_diff >= 1 and days_diff <= 15:
-                rec.amount_clearing_1 = rec.amount_to_clearing
-            elif days_diff >= 16 and days_diff <= 30:
-                rec.amount_clearing_2 = rec.amount_to_clearing
-            elif days_diff >= 1 and days_diff > 30:
-                rec.amount_clearing_3 = rec.amount_to_clearing
+            dom, order="operating_unit_id,employee_id,invoice_id")
