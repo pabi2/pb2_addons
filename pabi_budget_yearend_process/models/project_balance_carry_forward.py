@@ -81,6 +81,9 @@ class ProjectBalanceCarryForward(models.Model):
         self.ensure_one()
         self.line_ids.unlink()
         """ This method, list all projects with, budget balance > 0 """
+        where_ext = ''
+        if self.from_fiscalyear_id.control_ext_charge_only:
+            where_ext = "charge_type = 'external'"
         self._cr.execute("""
             select project_id, program_id, balance_amount
             from (
@@ -90,12 +93,13 @@ class ProjectBalanceCarryForward(models.Model):
                 where budget_method = 'expense'
                 and project_id is not null
                 and fiscalyear_id = %s
+                %s
                 and (coalesce(released_amount, 0.0) != 0.0
                      or coalesce(amount_actual, 0.0) != 0.0)
                 group by project_id,  program_id
             ) a
             where balance_amount > 0.0
-        """, (self.from_fiscalyear_id.id, ))
+        """, (self.from_fiscalyear_id.id, where_ext))
         projects = [(0, 0, project) for project in self._cr.dictfetchall()]
         self.write({'line_ids': projects})
 
