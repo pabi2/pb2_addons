@@ -464,7 +464,7 @@ class ResProject(LogCommon, models.Model):
         """
         # Not current year, no budget release allowed
         current_fy = self.env['account.fiscalyear'].find()
-        for project in self:
+        for project in self.sudo():
             if project.current_fy_release_only and current_fy != fiscalyear.id:
                 raise ValidationError(
                     _('Not allow to release budget for fiscalyear %s!\nOnly '
