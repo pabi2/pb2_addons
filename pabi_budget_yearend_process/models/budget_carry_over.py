@@ -111,6 +111,7 @@ class BudgetCarryOver(models.Model):
                 join account_fiscalyear fiscal
                     on rpt.fiscalyear_id = fiscal.id
                 where fiscal.date_start < %s and doctype in %s
+                and rpt.budget_commit_type != 'actual'
                 group by doctype, document, document_line,
                     purchase_request_line_id, sale_line_id,
                     purchase_line_id, expense_line_id) a
