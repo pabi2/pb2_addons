@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+from openerp import fields, models, api
 
 
 class WkfConfigDocType(models.Model):
@@ -57,9 +57,25 @@ class WkfCmdApprovalAmount(models.Model):
         string='Level',
         required=True,
     )
-    amount_min = fields.Float(
-        string="Minimum",
-    )
     amount_max = fields.Float(
-        string="Maximum",
+        string='Maximum',
     )
+    amount_max_emotion = fields.Float(
+        string='Maximum Emotion',
+        compute='_compute_amount_max_emotion',
+        store=True,
+        help="This is an internally used field by Alfresco "
+        "Amount = 0.01 signify always in approval workflow."
+    )
+
+    @api.multi
+    @api.depends('org_id.level_emotion')
+    def _compute_amount_max_emotion(self):
+        for rec in self:
+            if rec.org_id.level_emotion:
+                if rec.level.sequence < rec.org_id.level_emotion.sequence:
+                    rec.amount_max_emotion = 0.01  # Alfresco read this value
+                else:
+                    rec.amount_max_emotion = rec.amount_max
+            else:
+                rec.amount_max_emotion = rec.amount_max

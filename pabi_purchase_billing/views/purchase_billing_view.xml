@@ -15,6 +15,7 @@
                     <group expand="0" string="Group By...">
                         <filter string="Supplier" domain="[]" context="{'group_by':'partner_id'}"/>
                         <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Operating Unit" domain="[]" context="{'group_by':'operating_unit_id'}"/>
                     </group>
                 </search>
             </field>

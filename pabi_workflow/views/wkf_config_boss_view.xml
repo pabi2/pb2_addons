@@ -1,8 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+        # Boss View
+        <record id="tree_pb2_boss_view" model="ir.ui.view">
+            <field name="name">tree.pb2.boss.view</field>
+            <field name="model">pb2.boss.view</field>
+            <field name="arch" type="xml">
+                <tree string="Boss Level Approval View">
+                    <field name="org_id" invisible="1"/>
+                    <field name="section_id" invisible="1"/>
+                    <field name="lvl"/>
+                    <field name="employee_id"/>
+                    <field name="amount_max"/>
+                    <field name="amount_max_emotion"/>
+                    <field name="first_name" invisible="1"/>
+                    <field name="last_name" invisible="1"/>
+                    <field name="doc_type" invisible="1"/>
+                    <field name="is_special" invisible="1"/>
+                    <field name="employee_code" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="search_pb2_boss_view" model="ir.ui.view">
+            <field name="name">search.pb2.boss.view</field>
+            <field name="model">pb2.boss.view</field>
+            <field name="arch" type="xml">
+                <search string="Boss Level Approval">
+                    <field name="section_id" string="Section" filter_domain="['|','|',('section_id.name_short','ilike',self),('section_id.code','ilike',self),('section_id.code','ilike',self)]"/>
+                    <field name="org_id"/>
+                    <filter string="AV" domain="[('doc_type','=','AV')]" name="doc_type_av"/>
+                    <filter string="EX" domain="[('doc_type','=','EX')]" name="doc_type_ex"/>
+                    <filter string="PR" domain="[('doc_type','=','PR')]" name="doc_type_pr"/>
+                    <filter string="PD1" domain="[('doc_type','=','PD1')]" name="doc_type_pd1"/>
+                    <filter string="PD2" domain="[('doc_type','=','PD2')]" name="doc_type_pd2"/>
+                    <filter string="PD3" domain="[('doc_type','=','PD3')]" name="doc_type_pd3"/>
+                    <filter string="PD4" domain="[('doc_type','=','PD4')]" name="doc_type_pd4"/>
+                    <filter string="PD5" domain="[('doc_type','=','PD5')]" name="doc_type_pd5"/>
+                    <filter string="PD6" domain="[('doc_type','=','PD6')]" name="doc_type_pd6"/>
+                    <filter string="PD7" domain="[('doc_type','=','PD7')]" name="doc_type_pd7"/>
+                    <filter string="PD8" domain="[('doc_type','=','PD8')]" name="doc_type_pd8"/>
+                    <filter string="PD9" domain="[('doc_type','=','PD9')]" name="doc_type_pd9"/>
+                    <filter string="PD10" domain="[('doc_type','=','PD10')]" name="doc_type_pd10"/>
+                    <filter string="PD11" domain="[('doc_type','=','PD11')]" name="doc_type_pd11"/>
+                    <filter string="PD12" domain="[('doc_type','=','PD12')]" name="doc_type_pd12"/>
+                    <filter string="PD13" domain="[('doc_type','=','PD13')]" name="doc_type_pd13"/>
+                    <filter string="PD14" domain="[('doc_type','=','PD14')]" name="doc_type_pd14"/>
+                    <filter string="PD15" domain="[('doc_type','=','PD15')]" name="doc_type_pd15"/>
+                    <filter string="PD16" domain="[('doc_type','=','PD16')]" name="doc_type_pd16"/>
+                    <filter string="PD17" domain="[('doc_type','=','PD17')]" name="doc_type_pd17"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_doc_type" string="Doc Type" context="{'group_by':'doc_type'}"/>
+                        <filter name="group_by_org_id" string="Org." context="{'group_by':'org_id'}"/>
+                        <filter name="group_by_section_id" string="Section" context="{'group_by':'section_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_pb2_boss_view" model="ir.actions.act_window">
+            <field name="name">Boss View</field>
+            <field name="res_model">pb2.boss.view</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{'search_default_doc_type_ex': 1,
+                                   'search_default_group_by_doc_type': 1,
+                                   'search_default_group_by_section_id': 1}</field>
+        </record>
+
+        <menuitem name="Boss View" id="menu_pb2_boss_view" action="action_pb2_boss_view" parent="menu_wkf_config" sequence="0"/>
+
         # TOP Work Flow Configuration Menu
-        <menuitem name="Boss/Employee" id="menu_wkf_config_boss" parent="menu_wkf_config" sequence="3"/>
+        <!-- Deprecated -->
+        <!-- <menuitem name="Boss/Employee" id="menu_wkf_config_boss"
+          parent="menu_wkf_config" sequence="3"/> -->
 
         # Boss Level Approval
         <record id="view_wkf_cmd_boss_level_approval_tree" model="ir.ui.view">
@@ -65,7 +136,7 @@
             <field name="view_id" ref="view_wkf_cmd_boss_level_approval_tree"/>
         </record>
 
-        <menuitem name="Boss Level Approval" id="menu_wkf_cmd_boss_level_approval" action="action_wkf_cmd_boss_level_approval" parent="menu_wkf_config_boss" sequence="1"/>
+        <menuitem name="Boss Level Approval" id="menu_wkf_cmd_boss_level_approval" action="action_wkf_cmd_boss_level_approval" parent="menu_wkf_config" sequence="3"/>
 
         #Boss Special Level Approval
         <record id="view_wkf_cmd_boss_special_level_tree" model="ir.ui.view">
@@ -104,6 +175,83 @@
             <field name="view_id" ref="view_wkf_cmd_boss_special_level_tree"/>
         </record>
 
-        <menuitem name="Special Level" id="menu_wkf_cmd_boss_special_level" action="action_wkf_cmd_boss_special_level" parent="menu_wkf_config_boss" sequence="2"/>
+        <!-- Deprecated -->
+        <!-- <menuitem name="Special Level" id="menu_wkf_cmd_boss_special_level" action="action_wkf_cmd_boss_special_level" parent="menu_wkf_config_boss" sequence="2"/> -->
+
+        # Special Flow Emotion
+        # If a section is setting up for special level, all level under this level
+        # will be forced to be in the workflow too.
+        <record id="view_special_emotion_flow_tree" model="ir.ui.view">
+            <field name="name">view.special.emotion.flow.tree</field>
+            <field name="model">res.org</field>
+            <field name="arch" type="xml">
+                <tree string="Special Emotion Flow">
+                    <field name="code"/>
+                    <field name="name_short"/>
+                    <field name="level_emotion"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_special_emotion_flow_form" model="ir.ui.view">
+            <field name="name">view.special.emotion.flow.form</field>
+            <field name="model">res.org</field>
+            <field name="arch" type="xml">
+                <form string="Sales Order">
+                    <sheet>
+                        <h1>
+                            <field name="code" class="oe_inline" readonly="1"/>
+                            <field name="name_short" class="oe_inline" readonly="1"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="level_emotion"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <hr/>
+                        <b>Note:</b>
+                        <p>
+                          All user in level below  will be forced to participate in workflow,
+                          even emotional activity amount exceed their normal approval limit.
+                        </p>
+                        <p>
+                          For example, if you select "L7" here (given, limit for L7=1,000,000.00, L4=500,000.00, L3=250,000.00).
+                        <br/>
+                          For requested emotional activities amount 750,000.00, although exceeded L2 and L4 limits,
+                          all of them (L2, L4, L7) will forced to participate in the workflow.
+                        </p>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_special_emotion_flow" model="ir.actions.act_window">
+            <field name="name">Special Emotion Flow</field>
+            <field name="res_model">res.org</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_special_emotion_flow_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_special_emotion_flow_tree"/>
+            <field name="act_window_id" ref="action_special_emotion_flow"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_special_emotion_flow_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_special_emotion_flow_form"/>
+            <field name="act_window_id" ref="action_special_emotion_flow"/>
+        </record>
+
+        <menuitem name="Special Emotion Flow" id="menu_special_emotion_flow"
+          action="action_special_emotion_flow"  parent="menu_wkf_config" sequence="4"/>
+
+
     </data>
 </openerp>
