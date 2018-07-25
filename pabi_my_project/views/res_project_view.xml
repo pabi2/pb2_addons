@@ -272,6 +272,7 @@
                                 <field name="monitor_expense_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
+                                        <field name="charge_type"/>
                                         <field name="planned_amount"/>
                                         <field name="released_amount"/>
                                         <field name="amount_pr_commit"/>
@@ -286,6 +287,7 @@
                                 <field name="monitor_revenue_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
+                                        <field name="charge_type"/>
                                         <field name="planned_amount"/>
                                         <field name="released_amount"/>
                                         <field name="amount_so_commit"/>
