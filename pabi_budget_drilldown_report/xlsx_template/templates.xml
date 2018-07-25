@@ -231,5 +231,62 @@
               }
           </field>
         </record>
+
+        # Budget Unit Base Report
+        <record id="budget_invest_asset_report_xlsx_template" model="ir.attachment">
+            <field name="res_model">budget.drilldown.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_invest_asset_report.xlsx</field>
+            <field name="name">Budget Asset Report</field>
+            <field name="parent_id" eval="ref('dir_budget_drilldown_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Budget Asset Report': {
+                        '_HEAD_': {
+                            'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                            'B3': 'report_type${value and dict(env["budget.drilldown.report"]._columns["report_type"].selection)[value] or ""}',
+                            'B4': 'activity_group_id${value and value.name or ""}',
+                            'B5': 'activity_id${value and value.name or ""}',
+                            'B6': '${env.user.with_context(lang="th_TH").display_name}',
+                            'B7': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                        },
+                        'line_ids': {
+                            'A10': 'org_id${value and value.name_short or ""}',
+                            'B10': 'division_id${value and value.name or ""}',
+                            'C10': 'section_id${value and value.code or ""}',
+                            'D10': 'section_id${value and value.name or ""}',
+                            'E10': 'invest_asset_id${value and value.code or ""}',
+                            'F10': 'invest_asset_id${value and value.name or ""}',
+                            'G10': '${"ดึงยาก"}',
+                            'H10': 'planned_amount${value or 0}#{number_format=number}',
+                            'I10': 'released_amount${value or 0}#{number_format=number}',
+                            'J10': 'amount_pr_commit${value or 0}#{number_format=number}',
+                            'K10': 'amount_po_commit${value or 0}#{number_format=number}',
+                            'L10': 'amount_exp_commit${value or 0}#{number_format=number}',
+                            'M10': 'amount_total_commit${value or 0}#{number_format=number}',
+                            'N10': 'amount_actual${value or 0}#{number_format=number}',
+                            'O10': 'amount_consumed${value or 0}#{number_format=number}',
+                            'P10': 'amount_balance${value or 0}#{number_format=number}',
+                            'Q10': "${'=IF(OR(?(H10)=0,?(L10)=0),0,?(L10)/?(H10))'}#{number_format=percent}",
+                            'R10': "${'=IF(OR(?(H10)=0,?(M10)=0),0,?(M10)/?(H10))'}#{number_format=percent}",
+                            'S10': "${'=IF(OR(?(H10)=0,?(N10)=0),0,?(N10)/?(H10))'}#{number_format=percent}",
+                        },
+                        '_TAIL_0': {
+                            'H10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'I10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'J10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'K10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'L10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'M10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'N10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'O10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'P10': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
+                    }
+                }
+              }
+          </field>
+        </record>
     </data>
 </openerp>

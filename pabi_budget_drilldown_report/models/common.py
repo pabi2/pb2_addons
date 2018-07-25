@@ -13,19 +13,9 @@ REPORT_GROUPBY = {
                   'charge_type', 'activity_id'],
     'project_base': ['project_id', 'activity_group_id',
                      'charge_type', 'activity_id'],
-    'invest_asset': [],  # TODO
+    'invest_asset': ['org_id', 'division_id', 'section_id'],
     'invest_construction': [],  # TODO
 }
-# REPORT_FILTERS = {
-#     'overall': ['org_id'],
-#     'unit_base': ['org_id', 'charge_type', 'sector_id',
-#                   'subsector_id', 'division_id', 'section_id',
-#                   'activity_group_id', 'activity_id'],
-#     'project_base': ['functional_area_id', 'program_group_id',
-#                      'program_id', 'project_group_id', 'project_id'],
-#     'invest_asset': [],  # TODO
-#     'invest_construction': [],  # TODO
-# }
 
 
 class SearchCommon(ChartField, object):
@@ -83,6 +73,7 @@ class SearchCommon(ChartField, object):
         'res.section',
         string='Section',
     )
+    # For unit_base and invest_asset
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
@@ -131,6 +122,14 @@ class SearchCommon(ChartField, object):
     )
     group_by_activity_id = fields.Boolean(
         string='Group By - Activity',
+        default=False,
+    )
+    group_by_org_id = fields.Boolean(
+        string='Group By - Org',
+        default=False,
+    )
+    group_by_division_id = fields.Boolean(
+        string='Group By - Division',
         default=False,
     )
 

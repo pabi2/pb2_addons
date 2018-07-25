@@ -225,6 +225,11 @@ CHART_FIELDS = [
                  'invest_asset',
                  'invest_construction',
                  ]),
+    ('activity_group_id', ['unit_base',
+                           'invest_asset']),
+    ('activity_id', ['unit_base',
+                     'invest_asset']),
+
 ]
 
 

@@ -26,8 +26,9 @@
                           <field name="subsector_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                           <field name="division_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                           <field name="section_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
-                          <field name="activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
-                          <field name="activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                          <!-- unit_base and invest_asset -->
+                          <field name="activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'invest_asset'))]}"/>
+                          <field name="activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'invest_asset'))]}"/>
                           <!-- project_base -->
                           <field name="functional_area_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
                           <field name="program_group_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
