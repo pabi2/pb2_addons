@@ -41,8 +41,8 @@
                             },
                             '_TAIL_0': {
                                 'A10': '${"Total"}#{font=bold}',
-                                'G10': '@{sum}#{font=bold;align=right;number_format=number}',
-                                'H10': '@{sum}#{font=bold;align=right;number_format=number}',
+                                'G10': '@{sum}#{font=bold;number_format=number}',
+                                'H10': '@{sum}#{font=bold;number_format=number}',
                             }
                         }
                     }
@@ -143,77 +143,36 @@
             <field name="name">Advance Status</field>
             <field name="parent_id" eval="ref('dir_account_reports')"/>
             <field name="description">
-              {
-                '__EXPORT__': {
-                    'Advance Status Report': {
-                        '_HEAD_': {
-                            'A1': '${env.user.company_id.display_name}',
-                            'B3': '${date.today()}#{number_format=date}',
-                            'B4': '${env.user.display_name}',
-                            'B5': '${time.strftime("%d/%m/%Y")}',
-                        },
-                        'results': {
-                            'A8': 'operating_unit_id.name${value or ""}',
-                            'B8': 'number${value or ""}',
-                            'C8': 'invoice_id.number${value or ""}',
-                            'D8': 'remark${value or ""}',
-                            'E8': 'invoice_id.date_invoice#{number_format=date}',
-                            'F8': 'date_due#{number_format=date}',
-                            'G8': 'employee_id.employee_code${value or ""}',
-                            'H8': 'employee_id${value and value.first_name + " " + value.last_name or ""}',
-                            'I8': 'amount_advanced${value or 0.0}',
-                            'J8': 'days_diff${value or 0}',
-                            'K8': 'amount_clearing_0${value or 0.0}',
-                            'L8': 'amount_clearing_1${value or 0.0}',
-                            'M8': 'amount_clearing_2${value or 0.0}',
-                            'N8': 'amount_clearing_3${value or 0.0}',
-                            'O8': 'amount_to_clearing${value or 0.0}',
-                        }
-                    },
-                    'Summary': {
-                        '_HEAD_': {
-                            'A1': '${env.user.company_id.display_name}',
-                            'B3': '${date.today()}#{number_format=date}',
-                            'B4': '${env.user.display_name}',
-                            'B5': '${time.strftime("%d/%m/%Y")}',
-                        },
-                        '_BI_': {
-                            'A8': {
-                                'df': 'Advance Status Report',
-                                # Group by A and add Subtotal (so we use pivot)
-                                # By scripting, we need result = ...
-                                'oper_code': """
-df = df[["A", "K", "L", "M", "N", "O"]]
-groupby = ["A"]
-sum_cols = ["K", "L", "M", "N", "O"]
-result = pd.pivot_table(df, index=groupby,
-                      values=sum_cols,
-                      aggfunc=np.sum,
-                      fill_value=0,
-                      margins=True,
-                      margins_name="Total")
-                                """,
+                {
+                    '__EXPORT__': {
+                        'Employee Advance Status Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'date_report${value or ""}#{number_format=date}',
+                                'B4': 'employee_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.with_context(lang="th_TH").title_id.name, x.with_context(lang="th_TH").first_name, x.with_context(lang="th_TH").mid_name, x.with_context(lang="th_TH").last_name]))) for x in value]) or ""}',
+                                'B5': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
+                            'results': {
+                                'A9': 'operating_unit_id.name${value or ""}',
+                                'B9': 'number${value or ""}',
+                                'C9': 'invoice_id.number${value or ""}',
+                                'D9': 'remark${value or ""}',
+                                'E9': 'invoice_id.date_invoice#{number_format=date}',
+                                'F9': 'date_due#{number_format=date}',
+                                'G9': 'employee_id.employee_code${value or ""}',
+                                'H9': 'employee_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title_id.name, value.with_context(lang="th_TH").first_name, value.with_context(lang="th_TH").mid_name, value.with_context(lang="th_TH").last_name]))) or ""}',
+                                'I9': 'amount_advanced${value or ""}#{number_format=number}',
+                                'J9': "${'=IF(AND(B3&lt;&gt;\"\",?(F9)&lt;&gt;\"\"),B3-?(F9),\"\")'}",
+                                'K9': "${'=IF(AND(?(J9)&lt;&gt;\"\",?(J9)&lt;=0),?(I9),\"\")'}#{number_format=number}",
+                                'L9': "${'=IF(AND(?(J9)&lt;&gt;\"\",?(J9)&gt;=1,?(J9)&lt;=15),?(I9),\"\")'}#{number_format=number}",
+                                'M9': "${'=IF(AND(?(J9)&lt;&gt;\"\",?(J9)&gt;=16,?(J9)&lt;=30),?(I9),\"\")'}#{number_format=number}",
+                                'N9': "${'=IF(AND(?(J9)&lt;&gt;\"\",?(J9)&gt;30),?(I9),\"\")'}",
+                            }
                         },
-                    },
-                    'Detailed Summary': {
-                        '_HEAD_': {
-                            'A1': '${env.user.company_id.display_name}',
-                            'B3': '${date.today()}#{number_format=date}',
-                            'B4': '${env.user.display_name}',
-                            'B5': '${time.strftime("%d/%m/%Y")}',
-                        },
-                        '_BI_': {
-                            'A8': {
-                                'df': 'Advance Status Report',
-                                # Group by A, H. User will have to do subtotal themselves
-                                'oper_code': 'df[["A", "H", "K", "L", "M", "N", "O"]].groupby(["A", "H"]).sum()',
-                            },
-                        },
-                    },
+                    }
                 }
-            }
-          </field>
+            </field>
         </record>
 
         # Cheque Register
@@ -254,7 +213,7 @@ result = pd.pivot_table(df, index=groupby,
                             },
                             '_TAIL_0': {
                                 'A11': '${"Total"}#{font=bold}',
-                                'I11': '@{sum}#{font=bold;number_format=number;align=right}',
+                                'I11': '@{sum}#{font=bold;number_format=number}',
                             }
                         }
                     }
@@ -297,15 +256,15 @@ result = pd.pivot_table(df, index=groupby,
                                 'N9': 'currency_id.name${value or ""}',
                                 'O9': 'collateral_agreement_amt${value or ""}#{number_format=number}',
                                 'P9': 'collateral_due_date${value or ""}#{number_format=date}',
-                                'Q9': "${'=B3-?(P9)'}",
-                                'R9': "${'=IF(?(Q9)&lt;=0,?(O9),\"\")'}",
-                                'S9': "${'=IF(AND(?(Q9)&gt;=1,?(Q9)&lt;=30),?(O9),\"\")'}",
-                                'T9': "${'=IF(AND(?(Q9)&gt;=31,?(Q9)&lt;=60),?(O9),\"\")'}",
-                                'U9': "${'=IF(AND(?(Q9)&gt;=61,?(Q9)&lt;=90),?(O9),\"\")'}",
-                                'V9': "${'=IF(AND(?(Q9)&gt;=91,?(Q9)&lt;=180),?(O9),\"\")'}",
-                                'W9': "${'=IF(AND(?(Q9)&gt;=181,?(Q9)&lt;=365),?(O9),\"\")'}",
-                                'X9': "${'=IF(AND(?(Q9)&gt;=366,?(Q9)&lt;=1095),?(O9),\"\")'}",
-                                'Y9': "${'=IF(?(Q9)&gt;1095,?(O9),\"\")'}",
+                                'Q9': "${'=IF(AND(B3&lt;&gt;\"\",?(P9)&lt;&gt;\"\"),B3-?(P9),\"\")'}",
+                                'R9': "${'=IF(AND(?(Q9)&lt;&gt;\"\",?(Q9)&lt;=0),?(O9),\"\")'}",
+                                'S9': "${'=IF(AND(?(Q9)&lt;&gt;\"\",?(Q9)&gt;=1,?(Q9)&lt;=30),?(O9),\"\")'}",
+                                'T9': "${'=IF(AND(?(Q9)&lt;&gt;\"\",?(Q9)&gt;=31,?(Q9)&lt;=60),?(O9),\"\")'}",
+                                'U9': "${'=IF(AND(?(Q9)&lt;&gt;\"\",?(Q9)&gt;=61,?(Q9)&lt;=90),?(O9),\"\")'}",
+                                'V9': "${'=IF(AND(?(Q9)&lt;&gt;\"\",?(Q9)&gt;=91,?(Q9)&lt;=180),?(O9),\"\")'}",
+                                'W9': "${'=IF(AND(?(Q9)&lt;&gt;\"\",?(Q9)&gt;=181,?(Q9)&lt;=365),?(O9),\"\")'}",
+                                'X9': "${'=IF(AND(?(Q9)&lt;&gt;\"\",?(Q9)&gt;=366,?(Q9)&lt;=1095),?(O9),\"\")'}",
+                                'Y9': "${'=IF(AND(?(Q9)&lt;&gt;\"\",?(Q9)&gt;1095),?(O9),\"\")'}",
                             },
                             '_TAIL_0': {
                                 'A9': '${"Total"}#{font=bold}',
@@ -411,43 +370,43 @@ result = pd.pivot_table(df, index=groupby,
                                 'AH9': 'period_length_days${value * 4}',
                             },
                             'results': {
-                                'A16': 'invoice_move_line_id.partner_id.search_key${value or ""}',
-                                'B16': 'invoice_move_line_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
-                                'C16': 'invoice_move_line_id.invoice.supplier_invoice_number${value or ""}',
-                                'D16': 'invoice_move_line_id.invoice.purchase_billing_id.name${value or ""}',
-                                'E16': 'invoice_move_line_id.move_id.name${value or ""}',
-                                'F16': 'invoice_move_line_id${value and value.invoice.date_document or value.move_id.create_date}#{number_format=date}',
-                                'G16': 'invoice_move_line_id.period_id.fiscalyear_id.name${value or ""}',
-                                'H16': 'invoice_move_line_id.period_id.name${value or ""}',
-                                'I16': 'invoice_move_line_id.move_id.date${value or ""}#{number_format=date}',
-                                'J16': 'invoice_move_line_id.invoice.date_due${value or ""}#{number_format=date}',
-                                'K16': "${'=IF(AND(?(J16)&lt;&gt;\"\",AH2&lt;&gt;\"\"),AH2-?(J16),\"\")'}",
+                                'A16': 'partner_id.search_key${value or ""}',
+                                'B16': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
+                                'C16': 'supplier_invoice_number${value or ""}',
+                                'D16': 'purchase_billing_id.name${value or ""}',
+                                'E16': 'document_number${value or ""}',
+                                'F16': 'invoice_move_line_id${value and value.invoice.date_document or value.move_id.date_document}#{number_format=date}',
+                                'G16': 'period_id.fiscalyear_id.name${value or ""}',
+                                'H16': 'period_id.name${value or ""}',
+                                'I16': 'invoice_posting_date${value or ""}#{number_format=date}',
+                                'J16': 'date_due_invoice${value or ""}#{number_format=date}',
+                                'K16': "${'=IF(AND(?(AC16)&lt;&gt;\"Paid\",?(AC16)&lt;&gt;\"Cancelled\",?(J16)&lt;&gt;\"\",AH2&lt;&gt;\"\"),AH2-?(J16),\"\")'}",
                                 'L16': "${'=IF(?(K16)&lt;&gt;\"\",IF(?(K16)&lt;=0,\"Not Due\",IF(AND(?(K16)&gt;=1,?(K16)&lt;=AH6),1&amp;\"-\"&amp;AH6&amp;\" Days\",IF(AND(?(K16)&gt;=AH6+1,?(K16)&lt;=AH7),AH6+1&amp;\"-\"&amp;AH7&amp;\" Days\",IF(AND(?(K16)&gt;=AH7+1,?(K16)&lt;=AH8),AH7+1&amp;\"-\"&amp;AH8&amp;\" Days\",IF(AND(?(K16)&gt;=AH8+1,?(K16)&lt;=AH9),AH8+1&amp;\"-\"&amp;AH9&amp;\" Days\",IF(?(K16)&gt;AH9,\"Over \"&amp;AH9&amp;\" Days\",\"\")))))),\"\")'}",
-                                'M16': 'invoice_move_line_id.invoice.source_document_id${value and (value._name in ("purchase.order", "sale.order") and value.name or value.number) or ""}',
-                                'N16': 'invoice_move_line_id.invoice.source_document_id${value and value._name == "purchase.order" and value.sudo().contract_id.display_code or ""}',
-                                'O16': 'invoice_move_line_id.invoice.amount_untaxed${value or ""}#{number_format=number}',
-                                'P16': 'invoice_move_line_id.invoice.amount_tax${value or ""}#{number_format=number}',
+                                'M16': 'source_document_id${value and (value._name in ("purchase.order", "sale.order") and value.name or value.number) or ""}',
+                                'N16': 'source_document_id${value and value._name == "purchase.order" and value.sudo().contract_id.display_code or ""}',
+                                'O16': 'invoice_move_line_id${value and value.invoice and (value.credit - value.debit &lt; 0 and (-1) * value.invoice.amount_untaxed or value.invoice.amount_untaxed) or ""}#{number_format=number}',
+                                'P16': 'invoice_move_line_id${value and value.invoice and (value.credit - value.debit &lt; 0 and (-1) * value.invoice.amount_tax or value.invoice.amount_tax) or ""}#{number_format=number}',
                                 'Q16': 'invoice_move_line_id${value and value.credit - value.debit or ""}#{number_format=number}',
-                                'R16': 'invoice_move_line_id.currency_id.name${value or "THB"}',
-                                'S16': 'invoice_move_line_id.invoice.tax_line${value and ", ".join(list(filter(lambda l: l != False, [x.tax_code_id.code for x in value]))) or ""}',
-                                'T16': 'invoice_move_line_id.move_id.narration${value or ""}',
-                                'U16': 'payment_move_line_id.move_id.document_id${value and value._name == "account.voucher" and value.number or ""}',
-                                'V16': 'payment_move_line_id${value and value.debit - value.credit or ""}#{number_format=number}',
-                                'W16': 'payment_move_line_id.move_id.document_id${value and value._name == "account.voucher" and (value.payment_type == "transfer" and dict(direct="DIRECT", smart="SMART", oversea="Oversea")[value.transfer_type] or "Cheque") or ""}',
-                                'X16': 'payment_move_line_id.move_id.document_id${value and value._name == "account.voucher" and env["payment.export.line"].search([("voucher_id", "=", value.id)]).mapped("export_id").filtered(lambda l: l.state == "done").name or ""}',
-                                'Y16': 'payment_move_line_id.move_id.document_id${value and value._name == "account.voucher" and value.number_cheque or ""}',
-                                'Z16': 'payment_move_line_id.move_id.document_id${value and value._name == "account.voucher" and value.income_tax_form and dict(pnd1="PND1", pnd3="PND3", pnd3a="PND3a", pnd53="PND53")[value.income_tax_form] or ""}',
-                                'AA16': 'id${value and env["payable.detail.view"].browse(value).payment_move_line_id.move_id.document_id and env["payable.detail.view"].browse(value).payment_move_line_id.move_id.document_id._name == "account.voucher" and env["payable.detail.view"].browse(value).payment_move_line_id.move_id.document_id.tax_line_wht.filtered(lambda l: l.invoice_id.id == env["account.invoice"].search([("move_id", "=", env["payable.detail.view"].browse(value).invoice_move_line_id.move_id.id)]).id).amount or ""}',
-                                'AB16': 'invoice_move_line_id.move_id.write_uid${value and value.with_context(lang="th_TH").display_name or ""}',
-                                'AC16': 'invoice_move_line_id.invoice.state${value and dict(draft="Draft", proforma="Pro-forma", proforma2="Pro-forma", open="Open", paid="Paid", cancel="Cancelled")[value] or ""}',
+                                'R16': 'currency_id.name${value or "THB"}',
+                                'S16': 'invoice_id.tax_line${value and ", ".join(list(filter(lambda l: l != False, [x.tax_code_id.code for x in value]))) or ""}',
+                                'T16': 'invoice_narration${value or ""}',
+                                'U16': 'voucher_number${value or ""}',
+                                'V16': 'voucher_move_line_id${value and value.debit - value.credit or ""}#{number_format=number}',
+                                'W16': 'voucher_id${value and (value.payment_type == "transfer" and dict(direct="DIRECT", smart="SMART", oversea="Oversea")[value.transfer_type] or "Cheque") or ""}',
+                                'X16': 'payment_export_id${value and value.state == "done" and value.name or ""}',
+                                'Y16': 'number_cheque${value or ""}',
+                                'Z16': 'income_tax_form${value and dict(pnd1="PND1", pnd3="PND3", pnd3a="PND3a", pnd53="PND53")[value] or ""}',
+                                'AA16': 'id${value and env["pabi.account.data.mart.view"].browse(value).voucher_move_line_id.move_id.document_id and env["pabi.account.data.mart.view"].browse(value).voucher_move_line_id.move_id.document_id._name == "account.voucher" and env["pabi.account.data.mart.view"].browse(value).voucher_move_line_id.move_id.document_id.tax_line_wht.filtered(lambda l: l.invoice_id.id == env["account.invoice"].search([("move_id", "=", env["pabi.account.data.mart.view"].browse(value).invoice_move_line_id.move_id.id)]).id).amount or ""}',
+                                'AB16': 'invoice_move_write_uid${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'AC16': 'invoice_state${value and dict(env["account.invoice"]._columns["state"].selection)[value] or ""}',
                             },
                             '_TAIL_0': {
                                 'A16': '${"Total"}#{font=bold}',
-                                'O16': '@{sum}#{font=bold;align=right;number_format=number}',
-                                'P16': '@{sum}#{font=bold;align=right;number_format=number}',
-                                'Q16': '@{sum}#{font=bold;align=right;number_format=number}',
-                                'V16': '@{sum}#{font=bold;align=right;number_format=number}',
-                                'AA16': '@{sum}#{font=bold;align=right;number_format=number}',
+                                'O16': '@{sum}#{font=bold;number_format=number}',
+                                'P16': '@{sum}#{font=bold;number_format=number}',
+                                'Q16': '@{sum}#{font=bold;number_format=number}',
+                                'V16': '@{sum}#{font=bold;number_format=number}',
+                                'AA16': '@{sum}#{font=bold;number_format=number}',
                             }
                         }
                     }
@@ -472,7 +431,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'B4': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.with_context(lang="th_TH").title.name, x.with_context(lang="th_TH").name]))) for x in value]) or ""}',
                                 'B5': 'fiscalyear_start_id.name${value or ""}',
                                 'D5': 'fiscalyear_end_id.name${value or ""}',
-                                'B6': 'filter${value and dict(filter_no="No Filters", filter_date="Dates", filter_period="Periods")[value] or ""}',
+                                'B6': 'filter${value and dict(env["xlsx.report.payable.balance"]._columns["filter"].selection)[value] or ""}',
                                 'B7': 'period_start_id.name${value or ""}',
                                 'D7': 'period_end_id.name${value or ""}',
                                 'B8': 'date_start${value or ""}#{number_format=date}',
@@ -486,7 +445,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'C13': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
                                 'D13': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.street, value.street2, value.township_id.name, value.district_id.name, value.province_id.name, value.zip]))) or ""}',
                                 'E13': 'move_id.name${value or ""}',
-                                'F13': 'move_id.id${value and env["account.invoice"].search([("move_id", "=", value)]).supplier_invoice_number or ""}',
+                                'F13': 'invoice.supplier_invoice_number${value or ""}',
                                 'G13': 'move_id.date${value or ""}#{number_format=date}',
                                 'H13': 'move_id.narration${value or ""}',
                                 'I13': 'id${value and (env["account.move.line"].browse(value).credit - env["account.move.line"].browse(value).debit) or ""}#{number_format=number}',
@@ -545,8 +504,8 @@ result = pd.pivot_table(df, index=groupby,
                                 'Q11': 'invoice_id.state${value and dict(draft="Draft", proforma="Pro-forma", proforma2="Pro-forma", open="Open", paid="Paid", cancel="Cancelled")[value] or ""}',
                             },
                             '_TAIL_0': {
-                                'J11': '${"Total"}#{font=bold;align=right}',
-                                'K11': '@{sum}#{font=bold;number_format=number;align=right}',
+                                'A11': '${"Total"}#{font=bold}',
+                                'K11': '@{sum}#{font=bold;number_format=number}',
                             }
                         }
                     }
@@ -683,15 +642,15 @@ result = pd.pivot_table(df, index=groupby,
                                 'C12': 'number${value or ""}',
                                 'D12': 'comment${value or ""}',
                                 'E12': 'partner_id.search_key${value or ""}',
-                                'F12': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
+                                'F12': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
                                 'G12': 'partner_id.category_id.name${value or ""}',
                                 'H12': 'validate_user_id${value and value.with_context(lang="th_TH").display_name or ""}',
                                 'I12': 'payment_type${value and dict(transfer="Transfer", cheque="Cheque")[value] or ""}',
                                 'J12': 'amount_total${value or ""}#{number_format=number}',
                                 'K12': 'date_invoice${value or ""}#{number_format=date}',
                                 'L12': 'date_receipt_billing${value or ""}#{number_format=date}',
-                                'M12': '${"=NETWORKDAYS(?(K12),?(L12),Holliday!B:B)"}',
-                                'N12': "${'=IF(?(P12)&lt;=4,\"Yes\",\"No\")'}",
+                                'M12': '${"=NETWORKDAYS(?(L12),?(K12),Holliday!B:B)"}',
+                                'N12': "${'=IF(?(M12)&lt;=4,\"Yes\",\"No\")'}",
                             }
                         }
                     }
@@ -751,8 +710,8 @@ result = pd.pivot_table(df, index=groupby,
                             },
                             '_TAIL_0': {
                                 'A14': '${"Total"}#{font=bold}',
-                                'H14': '@{sum}#{font=bold;number_format=number;align=right}',
-                                'R14': '@{sum}#{font=bold;number_format=number;align=right}',
+                                'H14': '@{sum}#{font=bold;number_format=number}',
+                                'R14': '@{sum}#{font=bold;number_format=number}',
                             }
                         }
                     }
@@ -794,8 +753,8 @@ result = pd.pivot_table(df, index=groupby,
                             },
                             '_TAIL_0': {
                                 'A10': '${"Total"}#{font=bold}',
-                                'F10': '@{sum}#{font=bold;align=right;number_format=number}',
-                                'G10': '@{sum}#{font=bold;align=right;number_format=number}',
+                                'F10': '@{sum}#{font=bold;number_format=number}',
+                                'G10': '@{sum}#{font=bold;number_format=number}',
                             }
                         }
                     }
