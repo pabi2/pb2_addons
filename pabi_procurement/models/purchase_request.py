@@ -227,6 +227,9 @@ class PurchaseRequest(models.Model):
                     raise ValidationError(
                         _('Committees tab: please recheck committee '
                           'types before accept!'))
+                if not rec.is_small_amount and not rec.purchase_method_id:
+                    raise ValidationError(
+                        _('Please select procurement method!'))
         return True
 
     @api.multi
