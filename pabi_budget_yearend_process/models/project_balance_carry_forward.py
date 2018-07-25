@@ -84,7 +84,7 @@ class ProjectBalanceCarryForward(models.Model):
         where_ext = ''
         if self.from_fiscalyear_id.control_ext_charge_only:
             where_ext = "charge_type = 'external'"
-        self._cr.execute("""
+        sql = """
             select project_id, program_id, balance_amount
             from (
                 select project_id, program_id,
@@ -99,7 +99,8 @@ class ProjectBalanceCarryForward(models.Model):
                 group by project_id,  program_id
             ) a
             where balance_amount > 0.0
-        """, (self.from_fiscalyear_id.id, where_ext))
+        """ % (self.from_fiscalyear_id.id, where_ext)
+        self._cr.execute(sql)
         projects = [(0, 0, project) for project in self._cr.dictfetchall()]
         self.write({'line_ids': projects})
 
