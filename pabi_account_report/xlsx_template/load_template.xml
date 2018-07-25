@@ -28,7 +28,7 @@
                 ref('xlsx_report_receivable_before_due'),
                 ref('xlsx_report_receivable_detail'),
                 ref('xlsx_report_registrar_of_guarantee'),
-                ref('xlsx_report_gl_receivable'),
+                ref('xlsx_report_revenue_ledger'),
                 ref('xlsx_report_gl_payable'),
                 ref('xlsx_report_gl_allowance_doubtful_accounts'),
             ]"/>

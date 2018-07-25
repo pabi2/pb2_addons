@@ -27,7 +27,7 @@ from . import xlsx_report_tax_exemption_receipt
 from . import xlsx_report_receivable_before_due
 from . import xlsx_report_receivable_detail
 from . import xlsx_report_registrar_of_guarantee
-from . import xlsx_report_gl_receivable
+from . import xlsx_report_revenue_ledger
 from . import xlsx_report_gl_allowance_doubtful_accounts
 from . import qweb_report_receivable_confirmation_letter
 from . import jasper_report_cd_receivable_payment_history
