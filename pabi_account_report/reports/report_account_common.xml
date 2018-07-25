@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        # Jasper Reports
-        <record id="view_jasper_report_account_common_form" model="ir.ui.view">
-            <field name="name">view.jasper.report.account.common.form</field>
+        # Common Reports
+        <record id="view_report_account_common_form" model="ir.ui.view">
+            <field name="name">view.report.account.common.form</field>
             <field name="model">report.account.common</field>
             <field name="arch" type="xml">
-                <form string="Jasper Reports">
+                <form string="Reports">
                     <group name="criteria">
                         <group col="4">
                             <field name="chart_account_id" widget="selection"/>
@@ -37,6 +37,32 @@
                         or
                         <button special="cancel" string="Cancel" type="object" class="oe_link"/>
                     </footer>
+                </form>
+            </field>
+        </record>
+
+        # Jasper Reports
+        <record id="view_jasper_report_account_common_form" model="ir.ui.view">
+            <field name="name">view.jasper.report.account.common.form</field>
+            <field name="model">report.account.common</field>
+            <field name="inherit_id" ref="pabi_account_report.view_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <form position="attributes">
+                    <attribute name="string">Jasper Reports</attribute>
+                </form>
+            </field>
+        </record>
+
+        # QWEB Reports
+        <record id="view_qweb_report_account_common_form" model="ir.ui.view">
+            <field name="name">view.qweb.report.account.common.form</field>
+            <field name="model">report.account.common</field>
+            <field name="inherit_id" ref="pabi_account_report.view_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <form position="attributes">
+                    <attribute name="string">QWEB Reports</attribute>
                 </form>
             </field>
         </record>

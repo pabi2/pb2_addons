@@ -19,11 +19,14 @@ class XLSXReportSLAProcurement(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get from account invoice as state in ('open', 'paid')
+        """
         self.ensure_one()
         Result = self.env['account.invoice']
         dom = [('state', 'in', ['open', 'paid']),
-               ('type', 'in',
-                ['in_invoice', 'in_refund', 'in_invoice_debitnote'])]
+               ('type', 'in', ['in_invoice', 'in_refund'])]
         if self.user_ids:
             dom += [('validate_user_id', 'in', self.user_ids.ids)]
         if self.fiscalyear_start_id:

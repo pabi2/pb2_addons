@@ -93,6 +93,11 @@ class XLSXReportPurchaseBilling(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution (Get from account invoice)
+        1. Check billing number is not null (check from purchase.billing.view)
+        2. State in ('draft', 'open') (Check from purchase.billing.view)
+        """
         self.ensure_one()
         Result = self.env['purchase.billing.view']
         dom = []

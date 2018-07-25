@@ -13,7 +13,7 @@
                 <field name="fiscalyear_end_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <xpath expr="//page[@string='Time Filters']/group[1]" position="after">
+                <xpath expr="//page[@name='time_filters']/group[1]" position="after">
                     <group string="Billing Dates" attrs="{'invisible': [('filter', '!=', 'filter_billing_date')], 'required': [('filter', '=', 'filter_billing_date')]}">
                         <field name="date_billing_start"/>
                         <field name="date_billing_end"/>
@@ -42,7 +42,6 @@
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-            <field name="context">{'reset_common_field': True}</field>
         </record>
 
         <menuitem id="menu_xlsx_report_purchase_billing"
