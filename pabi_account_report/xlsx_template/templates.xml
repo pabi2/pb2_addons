@@ -1329,17 +1329,17 @@ result = pd.pivot_table(df, index=groupby,
             </field>
         </record>
 
-        # GL Receivable Report
-        <record id="xlsx_report_gl_receivable" model="ir.attachment">
-            <field name="res_model">xlsx.report.gl.receivable</field>
+        # Revenue Ledger Report
+        <record id="xlsx_report_revenue_ledger" model="ir.attachment">
+            <field name="res_model">xlsx.report.revenue.ledger</field>
             <field name="datas"></field>
-            <field name="datas_fname">xlsx_report_gl_receivable.xlsx</field>
-            <field name="name">GL Receivable Report</field>
+            <field name="datas_fname">xlsx_report_revenue_ledger.xlsx</field>
+            <field name="name">Revenue Ledger Report</field>
             <field name="parent_id" eval="ref('dir_account_reports')"/>
             <field name="description">
                 {
                     '__EXPORT__': {
-                        'GL Receivable Report': {
+                        'Revenue Ledger Report': {
                             '_HEAD_': {
                                 'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
                                 'B3': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',

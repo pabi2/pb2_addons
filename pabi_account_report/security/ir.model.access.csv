@@ -16,5 +16,5 @@ access_receivable_before_due_view,access_receivable_before_due_view,model_receiv
 access_loan_customer_agreement_view,access_loan_customer_agreement_view,model_loan_customer_agreement_view,,1,0,0,0
 access_tax_exemption_view,access_tax_exemption_view,model_tax_exemption_view,,1,0,0,0
 access_payable_balance_view,access_payable_balance_view,model_payable_balance_view,,1,0,0,0
-access_gl_receivable_view,access_gl_receivable_view,model_gl_receivable_view,,1,0,0,0
+access_revenue_ledger_view,access_revenue_ledger_view,model_revenue_ledger_view,,1,0,0,0
 access_gl_payable_view,access_gl_payable_view,model_gl_payable_view,,1,0,0,0
