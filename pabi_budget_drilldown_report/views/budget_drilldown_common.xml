@@ -35,14 +35,18 @@
                           <field name="program_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
                           <field name="project_group_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
                           <field name="project_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
-
+                          <!-- filter invest_construction -->
+                          <field name="invest_construction_id" attrs="{'invisible': [('report_type', 'not in', ('invest_construction'))]}"/>
                       </group>
                       <group>
-                          <field name="group_by_section_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                          <field name="group_by_section_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'invest_asset', 'invest_construction'))]}"/>
                           <field name="group_by_project_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
                           <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
                           <field name="group_by_charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
                           <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
+                          <field name="group_by_org_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset', 'invest_construction'))]}"/>
+                          <field name="group_by_division_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset', 'invest_construction'))]}"/>
+                          <field name="group_by_invest_construction_id" attrs="{'invisible': [('report_type', 'not in', ('invest_construction'))]}"/>
                       </group>
                   </group>
               </form>

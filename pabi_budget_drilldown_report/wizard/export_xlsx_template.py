@@ -5,7 +5,7 @@ EXCEL_NAME = {
     'unit_base': 'budget_unit_base_report.xlsx',
     'project_base': 'budget_project_base_report.xlsx',
     'invest_asset': 'budget_invest_asset_report.xlsx',
-    'invest_construction': [],  # TODO
+    'invest_construction': 'budget_invest_construction_report.xlsx',
 }
 
 

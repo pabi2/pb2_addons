@@ -13,26 +13,26 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
         required=True,
     )
     # Group By Fields (use prefix = group_by_)
-    group_by_section_id = fields.Boolean(
-        string='Group By - Section',
-        default=False,
-    )
-    group_by_project_id = fields.Boolean(
-        string='Group By - Project',
-        default=False,
-    )
-    group_by_activity_group_id = fields.Boolean(
-        string='Group By - Activity Group',
-        default=False,
-    )
-    group_by_charge_type = fields.Boolean(
-        string='Group By - Charge Type',
-        default=False,
-    )
-    group_by_activity_id = fields.Boolean(
-        string='Group By - Activity',
-        default=False,
-    )
+    # group_by_section_id = fields.Boolean(
+    #     string='Group By - Section',
+    #     default=False,
+    # )
+    # group_by_project_id = fields.Boolean(
+    #     string='Group By - Project',
+    #     default=False,
+    # )
+    # group_by_activity_group_id = fields.Boolean(
+    #     string='Group By - Activity Group',
+    #     default=False,
+    # )
+    # group_by_charge_type = fields.Boolean(
+    #     string='Group By - Charge Type',
+    #     default=False,
+    # )
+    # group_by_activity_id = fields.Boolean(
+    #     string='Group By - Activity',
+    #     default=False,
+    # )
 
     @api.onchange('report_type')
     def _onchange_report_type(self):
@@ -40,7 +40,7 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
         # Clear Data
         for field in ['section_id', 'project_id', 'activity_group_id',
                       'charge_type', 'activity_id']:
-            self['group_by_%s' % (field)] = False
+            self['group_by_%s' % field] = False
 
         """ Default Group By to True - by Report Type """
         if self.report_type in REPORT_GROUPBY.keys():

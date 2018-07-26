@@ -232,7 +232,7 @@
           </field>
         </record>
 
-        # Budget Unit Base Report
+        # Budget Invest Asset Report
         <record id="budget_invest_asset_report_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.drilldown.report</field>
             <field name="datas"></field>
@@ -268,9 +268,9 @@
                             'N10': 'amount_actual${value or 0}#{number_format=number}',
                             'O10': 'amount_consumed${value or 0}#{number_format=number}',
                             'P10': 'amount_balance${value or 0}#{number_format=number}',
-                            'Q10': "${'=IF(OR(?(H10)=0,?(L10)=0),0,?(L10)/?(H10))'}#{number_format=percent}",
-                            'R10': "${'=IF(OR(?(H10)=0,?(M10)=0),0,?(M10)/?(H10))'}#{number_format=percent}",
-                            'S10': "${'=IF(OR(?(H10)=0,?(N10)=0),0,?(N10)/?(H10))'}#{number_format=percent}",
+                            'Q10': "${'=IF(OR(?(I10)=0,?(M10)=0),0,?(M10)/?(I10))'}#{number_format=percent}",
+                            'R10': "${'=IF(OR(?(I10)=0,?(N10)=0),0,?(N10)/?(I10))'}#{number_format=percent}",
+                            'S10': "${'=IF(OR(?(I10)=0,?(O10)=0),0,?(O10)/?(I10))'}#{number_format=percent}",
                         },
                         '_TAIL_0': {
                             'H10': '@{sum}#{font=bold;align=right;number_format=number}',
@@ -282,6 +282,64 @@
                             'N10': '@{sum}#{font=bold;align=right;number_format=number}',
                             'O10': '@{sum}#{font=bold;align=right;number_format=number}',
                             'P10': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
+                    }
+                }
+              }
+          </field>
+        </record>
+
+        # Budget Invest Construction Report
+        <record id="budget_invest_construction_report_xlsx_template" model="ir.attachment">
+            <field name="res_model">budget.drilldown.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_invest_construction_report.xlsx</field>
+            <field name="name">Budget Construction Report</field>
+            <field name="parent_id" eval="ref('dir_budget_drilldown_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Budget Construction Report': {
+                        '_HEAD_': {
+                            'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                            'B3': 'report_type${value and dict(env["budget.drilldown.report"]._columns["report_type"].selection)[value] or ""}',
+                            'B4': 'invest_construction_id${value and value.name or ""}',
+                            'B5': '${env.user.with_context(lang="th_TH").display_name}',
+                            'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                        },
+                        'line_ids': {
+                            'A9': 'org_id${value and value.name_short or ""}',
+                            'B9': 'division_id${value and value.name or ""}',
+                            'C9': 'section_id${value and value.code or ""}',
+                            'D9': 'section_id${value and value.name or ""}',
+                            'E9': 'invest_construction_id${value and value.code or ""}',
+                            'F9': 'invest_construction_id${value and value.name or ""}',
+                            'G9': 'invest_construction_phase_id${value and value.code or ""}',
+                            'H9': 'invest_construction_phase_id${value and value.name or ""}',
+                            'I9': '${"ดึงยาก"}',
+                            'J9': 'planned_amount${value or 0}#{number_format=number}',
+                            'K9': 'released_amount${value or 0}#{number_format=number}',
+                            'L9': 'amount_pr_commit${value or 0}#{number_format=number}',
+                            'M9': 'amount_po_commit${value or 0}#{number_format=number}',
+                            'N9': 'amount_exp_commit${value or 0}#{number_format=number}',
+                            'O9': 'amount_total_commit${value or 0}#{number_format=number}',
+                            'P9': 'amount_actual${value or 0}#{number_format=number}',
+                            'Q9': 'amount_consumed${value or 0}#{number_format=number}',
+                            'R9': 'amount_balance${value or 0}#{number_format=number}',
+                            'S9': "${'=IF(OR(?(K9)=0,?(O9)=0),0,?(O9)/?(K9))'}#{number_format=percent}",
+                            'T9': "${'=IF(OR(?(K9)=0,?(P9)=0),0,?(P9)/?(K9))'}#{number_format=percent}",
+                            'U9': "${'=IF(OR(?(K9)=0,?(Q9)=0),0,?(Q9)/?(K9))'}#{number_format=percent}",
+                        },
+                        '_TAIL_0': {
+                            'J9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'K9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'L9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'M9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'N9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'O9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'P9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'Q9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'R9': '@{sum}#{font=bold;align=right;number_format=number}',
                         }
                     }
                 }

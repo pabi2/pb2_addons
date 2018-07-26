@@ -14,7 +14,8 @@ REPORT_GROUPBY = {
     'project_base': ['project_id', 'activity_group_id',
                      'charge_type', 'activity_id'],
     'invest_asset': ['org_id', 'division_id', 'section_id'],
-    'invest_construction': [],  # TODO
+    'invest_construction': ['org_id', 'division_id',
+                            'section_id', 'invest_construction_id'],
 }
 
 
@@ -65,6 +66,7 @@ class SearchCommon(ChartField, object):
         'res.subsector',
         string='Subsector',
     )
+    # For project_base and invest_construction
     division_id = fields.Many2one(
         'res.division',
         string='Division',
@@ -72,6 +74,10 @@ class SearchCommon(ChartField, object):
     section_id = fields.Many2one(
         'res.section',
         string='Section',
+    )
+    invest_construction_id = fields.Many2one(
+        'res.invest.construction',
+        string='Project (C)',
     )
     # For unit_base and invest_asset
     activity_group_id = fields.Many2one(
@@ -132,6 +138,10 @@ class SearchCommon(ChartField, object):
         string='Group By - Division',
         default=False,
     )
+    group_by_invest_construction_id = fields.Boolean(
+        string='Group By - Project C',
+        default=False,
+    )
 
     @api.onchange('report_type')
     def _onchange_report_type(self):
@@ -148,6 +158,7 @@ class SearchCommon(ChartField, object):
         self.program_id = False
         self.project_group_id = False
         self.project_id = False
+        self.invest_construction_id = False
 
     @api.onchange('org_id')
     def _onchange_org_id(self):
