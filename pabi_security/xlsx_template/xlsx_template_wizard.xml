@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      # Assign Security
+      <act_window id="action_assign_security_export_xlsx"
+          name="Export as Excel (.xlsx)"
+          res_model="export.xlsx.template"
+          src_model="pabi.security"
+          view_mode="form"
+          target="new"
+          context="{'lang': 'th_TH'}"/>
+
+      <act_window id="action_assign_security_import_xlsx"
+          name="Import as Excel (.xlsx)"
+          res_model="import.xlsx.template"
+          src_model="pabi.security"
+          view_mode="form"
+          target="new"/>
+    </data>
+</openerp>
