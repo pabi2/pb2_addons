@@ -106,7 +106,7 @@ class PABISecurity(models.Model):
                     if field_dict.get(fn, False):
                         rec['%s_label' % fn] = field_dict[fn]
                     else:
-                        rec['%s_label' % fn] = fn and fn.upper() or ''
+                        rec['%s_label' % fn] = fn and "" or ''
         return True
 
     @api.model

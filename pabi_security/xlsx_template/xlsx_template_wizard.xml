@@ -8,7 +8,7 @@
           src_model="pabi.security"
           view_mode="form"
           target="new"
-          context="{'lang': 'en_US'}"/>
+          context="{'lang': 'th_TH'}"/>
 
       <act_window id="action_assign_security_import_xlsx"
           name="Import as Excel (.xlsx)"
