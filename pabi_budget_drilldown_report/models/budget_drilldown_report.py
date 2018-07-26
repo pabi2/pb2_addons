@@ -144,7 +144,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             line = report_line[2]
             search_keys = []
             for key in line.keys():
-                if key in Budget:
+                if key in Budget and key not in ['released_amount']:
                     search_keys.append(key)
             domain = []
             for key in search_keys:
