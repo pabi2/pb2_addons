@@ -252,7 +252,6 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             report_lines, view_id = report._run_overall_report()
         elif report.report_type == 'unit_base':
             report_lines, view_id = report._run_unit_base_report()
-        # TODO
         elif report.report_type == 'project_base':
             report_lines, view_id = report._run_project_base_report()
         elif report.report_type == 'invest_asset':
