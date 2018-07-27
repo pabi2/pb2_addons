@@ -58,7 +58,11 @@ class BudgetCarryOver(models.Model):
     @api.multi
     def _compute_amount_total(self):
         for rec in self:
-            rec.amount_total = sum(rec.line_ids.mapped('commit_amount'))
+            self._cr.execute("""
+                select coalesce(sum(commit_amount), 0.0) commit_amount
+                from budget_carry_over_line where carry_over_id = %s
+            """, (rec.id, ))
+            rec.amount_total = self._cr.fetchone()[0]
 
     @api.model
     def default_get(self, fields):

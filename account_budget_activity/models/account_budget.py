@@ -539,10 +539,9 @@ class AccountBudget(models.Model):
     @api.model
     def _get_budget_monitor(self, fiscal, budget_type,
                             budget_level, resource,
-                            # add_field=False,
-                            # add_res_id=False,
                             blevel=False):
         """ For budget check, expenses only """
+        # Note: Pass performance test (when compare with Search method)
         monitors = resource.monitor_ids.\
             filtered(lambda x: x.fiscalyear_id == fiscal and
                      x.budget_method == 'expense')
@@ -590,7 +589,6 @@ class AccountBudget(models.Model):
             res['budget_ok'] = True
             res['force_no_budget_check'] = True
             return res
-
         # Validation
         if not monitors:  # No plan
             res['budget_ok'] = False
@@ -598,7 +596,7 @@ class AccountBudget(models.Model):
                                '[%s] No active budget control.') % \
                 (fiscal.name, resource.display_name)
             return res
-        else:  # Current Budget Status
+        else:  # Current Budget Status (Performance Tested, faster then SQL)
             res['budget_status'].update({
                 'planned_amount': sum(monitors.mapped('planned_amount')),
                 'released_amount': sum(monitors.mapped('released_amount')),

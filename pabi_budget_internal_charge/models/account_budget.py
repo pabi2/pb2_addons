@@ -123,7 +123,6 @@ class AccountBudget(models.Model):
     @api.multi
     def _get_past_actual_amount_internal(self):
         self.ensure_one()
-        Consume = self.env['budget.consume.report']
         budget_type_dict = {
             'unit_base': 'section_id',
             'project_base': 'program_id',
@@ -137,12 +136,13 @@ class AccountBudget(models.Model):
                ('budget_method', '=', 'expense'),
                ('charge_type', '=', 'internal'),
                ('chart_view', '=', self.chart_view),
-               (dimension, '=', self[dimension].id)
-               # May said, past actual should include the future one
-               # ('period_id', '<=', current_period.id),
-               ]
-        consumes = Consume.search(dom)
-        return sum(consumes.mapped('amount_actual'))
+               (dimension, '=', self[dimension].id), ]
+        self._cr.execute("""
+            select coalesce(sum(amount_actual), 0.0) amount_actual
+            from budget_consume_report where %s
+        """ % self._domain_to_where_str(dom))
+        amount = self._cr.fetchone()[0]
+        return amount
 
     @api.multi
     def _get_future_plan_amount_internal(self):

@@ -316,7 +316,6 @@ class AccountBudgetLine(models.Model):
             'invest_asset': 'invest_asset_id',
         }
         self.ensure_one()
-        Consume = self.env['budget.consume.report']
         if self.chart_view not in budget_type_dict.keys():
             raise ValidationError(
                 _('This budget (%s) can not use release by rolling') %
@@ -326,8 +325,12 @@ class AccountBudgetLine(models.Model):
                ('fiscalyear_id', '=', self.fiscalyear_id.id),
                (dimension, '=', self[dimension].id),
                ]
-        consumes = Consume.search(dom)
-        return sum(consumes.mapped('amount_actual'))
+        self._cr.execute("""
+            select coalesce(sum(amount_actual), 0.0) amount_actual
+            from budget_consume_report where %s
+        """ % self.env['account.budget']._domain_to_where_str(dom))
+        amount = self._cr.fetchone()[0]
+        return amount
 
     @api.multi
     def _get_future_plan_amount(self):
