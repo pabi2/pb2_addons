@@ -249,13 +249,29 @@ class AccountBudget(models.Model):
         self.ensure_one()
         return self.budget_expense_line_ids
 
+    @api.model
+    def _domain_to_where_str(self, domain):
+        """ Helper Function for better performance """
+        where_dom = [" %s%s%s " % (x[0], x[1], isinstance(x[2], basestring)
+                     and "'%s'" % x[2] or x[2]) for x in domain]
+        where_str = 'and'.join(where_dom)
+        return where_str
+
     @api.multi
     def _get_past_actual_amount(self):
         self.ensure_one()
-        Consume = self.env['budget.consume.report']
+        # Consume = self.env['budget.consume.report']
         dom = self._get_past_consumed_domain()
-        consumes = Consume.search(dom)
-        return sum(consumes.mapped('amount_actual'))
+        # consumes = Consume.search(dom)
+        # amount = sum(consumes.mapped('amount_actual'))
+        # Change domain: [('x', '=', 'y')] to where str: x = 'y'
+        sql = """
+            select coalesce(sum(amount_actual), 0.0) amount_actual
+            from budget_consume_report where %s
+        """ % self._domain_to_where_str(dom)
+        self._cr.execute(sql)
+        amount = self._cr.fetchone()[0]
+        return amount
 
     @api.multi
     def _get_future_plan_amount(self):
@@ -326,9 +342,17 @@ class AccountBudget(models.Model):
 
     @api.multi
     def _compute_released_amount(self):
+        self._cr.execute("""
+            select budget_id, coalesce(sum(released_amount), 0.0)
+            from account_budget_line where budget_id in %s
+            and budget_method = 'expense'
+            group by budget_id
+        """, (tuple(self.ids), ))
+        res_dict = dict(self._cr.fetchall())
         for budget in self:
-            budget.released_amount = \
-                sum(budget.budget_expense_line_ids.mapped('released_amount'))
+            # budget.released_amount = \
+            #     sum(budget.budget_expense_line_ids.mapped('released_amount'))
+            budget.released_amount = res_dict.get(budget.id, 0.0)
 
     @api.multi
     def _compute_commit_amount(self):
