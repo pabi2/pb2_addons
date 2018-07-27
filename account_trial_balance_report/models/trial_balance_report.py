@@ -205,6 +205,7 @@ class AccountTrailBalanceLine(models.Model):
     def open_items(self, move_type):
         self.ensure_one()
         TB = self.env['account.trial.balance.report']
+        MoveLine = self.env['account.move.line']
         rpt = self.report_id
         _x, moves = TB._get_moves(rpt.fiscalyear_id.id,
                                   rpt.date_start, rpt.date_stop,
@@ -212,10 +213,12 @@ class AccountTrailBalanceLine(models.Model):
         move_ids = []
         if move_type == 'debit':
             moves = TB._get_focus_moves(rpt, moves, self.account_id)
-            move_ids = moves.filtered('debit').ids
+            move_ids = MoveLine.search([('id', 'in', moves.ids),
+                                        ('debit', '>', 0.0)]).ids
         if move_type == 'credit':
             moves = TB._get_focus_moves(rpt, moves, self.account_id)
-            move_ids = moves.filtered('credit').ids
+            move_ids = MoveLine.search([('id', 'in', moves.ids),
+                                        ('credit', '>', 0.0)]).ids
         if move_type == 'balance':
             moves = TB._get_focus_moves(rpt, moves, self.account_id)
             move_ids = moves.ids
