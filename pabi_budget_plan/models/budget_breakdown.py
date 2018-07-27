@@ -228,7 +228,6 @@ class BudgetBreakdown(models.Model):
                  'invest_asset_line_ids', 'personnel_line_ids')
     def _compute_all(self):
         for rec in self:
-            lines = False
             if rec.unit_base_line_ids:
                 lines = rec.unit_base_line_ids
             elif rec.invest_asset_line_ids:
@@ -237,8 +236,17 @@ class BudgetBreakdown(models.Model):
                 lines = rec.personnel_line_ids
             else:  # Fall back to basic
                 lines = rec.line_ids
-            rec.planned_amount = sum(lines.mapped('planned_amount'))
-            rec.policy_amount = sum(lines.mapped('policy_amount'))
+            res = {}
+            if lines:
+                self._cr.execute("""
+                    select coalesce(sum(planned_amount), 0.0) planned_amount,
+                        coalesce(sum(policy_amount), 0.0) policy_amount
+                    from budget_breakdown_line
+                    where id in %s
+                """, (tuple(lines.ids), ))
+                res = self._cr.dictfetchone()
+            rec.planned_amount = res.get('planned_amount', 0.0)
+            rec.policy_amount = res.get('policy_amount', 0.0)
             rec.policy_diff = rec.policy_amount - rec.new_policy_amount
 
     @api.onchange('policy_line_id')
