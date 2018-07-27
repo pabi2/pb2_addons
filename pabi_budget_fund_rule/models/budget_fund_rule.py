@@ -391,7 +391,7 @@ class BudgetFundRule(models.Model):
         elif asset_rule.fund_rule_id.state != 'confirmed':
             res['budget_ok'] = False
             res['message'] = _(
-                'Fund rule for this project is not confirmed!')
+                'Selected asset: %s is from unconfirmed fund rule!')
             return res
         elif amount > asset_rule.amount_total:
             res['budget_ok'] = False

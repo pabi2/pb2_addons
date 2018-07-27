@@ -306,6 +306,7 @@ class AccountBudgetLine(models.Model):
 
     @api.multi
     def _get_past_actual_amount(self):
+        """ For auto rolling, only invest asset is allowed """
         """ Will avaliable only if line unique with chart_view """
         budget_type_dict = {
             # 'unit_base': False,

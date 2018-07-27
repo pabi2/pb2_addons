@@ -149,19 +149,37 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             domain = []
             for key in search_keys:
                 domain.append((key, '=', line[key]))
+            consume_dom = []
+            if line.get('charge_type', False):
+                consume_dom = [('charge_type', '=', line['charge_type'])]
+            consume_dict = dict([(x[0], x[2]) for x in consume_dom + domain])
+            consume_where_str = prepare_where_str(consume_dict)
+            sql = """
+                select coalesce(sum(amount_actual), 0.0) actual
+                from budget_consume_report
+                where budget_method = 'expense'
+                %s
+            """ % consume_where_str
+            self._cr.execute(sql)
+            amount_actual = self._cr.fetchone()[0]
+            # consumes = Consume.search(domain + consume_dom)
             budgets = Budget.search(domain)
             rolling = 0.0
             policy = 0.0
+            # amount_actual = sum(consumes.mapped('amount_actual'))
+            amount_future = 0.0
             if line.get('charge_type', False):
                 if line['charge_type'] == 'internal':
-                    rolling = sum(budgets.mapped('rolling_internal'))
+                    amount_future += budgets._get_future_plan_amount_internal()
                 elif line['charge_type'] == 'external':
-                    rolling = sum(budgets.mapped('rolling'))
+                    amount_future += budgets._get_future_plan_amount()
                     policy = sum(budgets.mapped('policy_amount'))
             else:
-                rolling = sum(budgets.mapped('rolling')) + \
-                    sum(budgets.mapped('rolling_internal'))
+                amount_future += budgets._get_future_plan_amount_internal()
+                amount_future += budgets._get_future_plan_amount()
                 policy = sum(budgets.mapped('policy_amount'))
+            # Rolling
+            rolling = amount_actual + amount_future
             line.update({'rolling_amount': rolling,
                          'policy_amount': policy,
                          })

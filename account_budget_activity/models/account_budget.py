@@ -259,22 +259,24 @@ class AccountBudget(models.Model):
 
     @api.multi
     def _get_future_plan_amount(self):
-        self.ensure_one()
+        # self.ensure_one()
         Period = self.env['account.period']
         period_num = 0
         this_period_date_start = Period.find().date_start
-
-        if self.fiscalyear_id.date_start > this_period_date_start:
-            period_num = 0
-        elif self.fiscalyear_id.date_stop < this_period_date_start:
-            period_num = 12
-        else:
-            period_num = Period.get_num_period_by_period()
         future_plan = 0.0
-        expense_lines = self._budget_expense_lines_hook()
-        for line in expense_lines:
-            for i in range(period_num + 1, 13):
-                future_plan += line['m%s' % (i,)]
+        for fiscal in self.mapped('fiscalyear_id'):
+            if fiscal.date_start > this_period_date_start:
+                period_num = 0
+            elif fiscal.date_stop < this_period_date_start:
+                period_num = 12
+            else:
+                period_num = Period.get_num_period_by_period()
+            budgets = self.filtered(lambda l: l.fiscalyear_id == fiscal)
+            for budget in budgets:
+                expense_lines = budget._budget_expense_lines_hook()
+                for line in expense_lines:
+                    for i in range(period_num + 1, 13):
+                        future_plan += line['m%s' % (i,)]
         return future_plan
 
     @api.multi
