@@ -156,9 +156,18 @@ class BudgetBreakdown(models.Model):
 
     @api.multi
     def _compute_budget_count(self):
+        # Tuning,
+        # budget_count = len(breakdown.line_ids.mapped('budget_id'))
+        self._cr.execute("""
+            select breakdown_id, count(budget_id) count
+            from budget_breakdown_line
+            where budget_id is not null
+            and breakdown_id in %s
+            group by breakdown_id
+        """, (tuple(self.ids), ))
+        breakdown_budget_count = dict(self._cr.fetchall())
         for breakdown in self:
-            breakdown.budget_count = \
-                len(breakdown.line_ids.mapped(lambda l: l.budget_id))
+            breakdown.budget_count = breakdown_budget_count[breakdown.id]
 
     @api.multi
     def action_open_budget(self):
