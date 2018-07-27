@@ -313,15 +313,21 @@ class ExportXlsxTemplate(models.TransientModel):
     )
 
     @api.model
+    def _get_template_fname(self):
+        """ By default, get template_fname from context """
+        template_fname = self._context.get('template_fname', False)
+        return template_fname
+
+    @api.model
     def default_get(self, fields):
         res_model = self._context.get('active_model', False)
         res_id = self._context.get('active_id', False)
         template_dom = [('res_model', '=', res_model),
                         ('parent_id', '!=', False)]
-        templates = self.env['ir.attachment'].search(template_dom)
-        template_fname = self._context.get('template_fname', False)
+        template_fname = self._get_template_fname()
         if template_fname:  # Specific template
             template_dom.append(('datas_fname', '=', template_fname))
+        templates = self.env['ir.attachment'].search(template_dom)
         if not templates:
             raise ValidationError(_('No template found!'))
         defaults = super(ExportXlsxTemplate, self).default_get(fields)
