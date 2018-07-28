@@ -146,18 +146,28 @@ class AccountBudget(models.Model):
 
     @api.multi
     def _get_future_plan_amount_internal(self):
+        if not self:
+            return 0.0
         Period = self.env['account.period']
+        Fiscal = self.env['account.fiscalyear']
         period_num = 0
         this_period_date_start = Period.find().date_start
         future_plan = 0.0
-        for fiscal in self.mapped('fiscalyear_id'):
+        self._cr.execute("""
+            select distinct fiscalyear_id from account_budget
+            where id in %s
+        """, (tuple(self.ids), ))
+        fiscal_ids = [x[0] for x in self._cr.fetchall()]
+        fiscals = Fiscal.browse(fiscal_ids)
+        for fiscal in fiscals:
             if fiscal.date_start > this_period_date_start:
                 period_num = 0
             elif fiscal.date_stop < this_period_date_start:
                 period_num = 12
             else:
                 period_num = Period.get_num_period_by_period()
-            budgets = self.filtered(lambda l: l.fiscalyear_id == fiscal)
+            budgets = self.search([('id', 'in', self.ids),
+                                   ('fiscalyear_id', '=', fiscal.id)])
             for budget in budgets:
                 expense_lines = budget.budget_expense_line_ids.\
                     filtered(lambda l: l.charge_type == 'internal')
