@@ -197,38 +197,6 @@ class AccountMoveLine(MergedChartField, models.Model):
                 raise ValidationError(
                     _('Actvitiy is required for activity group!'))
 
-    # @api.multi
-    # def create_analytic_lines(self):
-    #     """ For balance sheet item, do not create analytic line """
-    #     # Before create, always remove analytic line if exists
-    #     for move_line in self:
-    #         move_line.analytic_lines.unlink()
-    #     # Only create analytic line if adjust for budget
-    #     move_lines = self.filtered(
-    #         lambda l: l.journal_id.type != 'adjust_no_budget')
-    #     return super(AccountMoveLine, move_lines).create_analytic_lines()
-
-
-# class AccountJournal(models.Model):
-#     _inherit = 'account.journal'
-#
-#     type = fields.Selection(
-#         selection_add=[('adjust_budget', 'Adjust Budget'),
-#                        ('adjust_no_budget', 'Adjust No-Budget')],
-#     )
-#
-#     @api.onchange('type')
-#     def _onchange_type(self):
-#         if self.type == 'adjust_no_budget':
-#             self.analytic_journal_id = False
-#
-#     @api.multi
-#     def write(self, vals):
-#         if vals.get('type', False):
-#             if vals.get('type') == 'adjust_no_budget':
-#                 vals['analytic_journal_id'] = False
-#         return super(AccountJournal, self).write(vals)
-
 
 class AccountModel(models.Model):
     _inherit = 'account.model'
@@ -238,16 +206,6 @@ class AccountModel(models.Model):
         domain=[('code', 'in', ('AJB', 'AJN'))],
         help="In PABI2, only 2 type of journal is allowed for adjustment",
     )
-
-    # If AJN (Not adjust budget), user must not choose any budget.
-    # @api.multi
-    # @api.constrains('lines_id', 'journal_id')
-    # def _check_adjust_no_budget(self):
-    #     for rec in self:
-    #         if rec.journal_id.code == 'AJN' and \
-    #                 rec.lines_id.filtered('chartfield_id'):
-    #             raise ValidationError(_('For %s, budget are not allowed') %
-    #                                   rec.journal_id.name)
 
     @api.multi
     def onchange_journal_id(self, journal_id):

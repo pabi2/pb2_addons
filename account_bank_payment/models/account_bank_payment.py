@@ -333,7 +333,8 @@ class AccountBankPayment(models.Model):
                 payment, total_credit, total_amount_currency)
             counter_vals['move_id'] = move.id
             MoveLine.create(counter_vals)
-            move.post()
+            if move.state != 'posted':
+                move.post()
             payment.write({'state': 'done',
                            'move_id': move.id,
                            'validate_user_id': self.env.user.id,

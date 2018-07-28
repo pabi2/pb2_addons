@@ -322,7 +322,8 @@ class AccountBankReceipt(models.Model):
                 receipt, total_debit, total_amount_currency)
             counter_vals['move_id'] = move.id
             MoveLine.create(counter_vals)
-            move.post()
+            if move.state != 'posted':
+                move.post()
             receipt.write({'name': move.name,
                            'state': 'done',
                            'move_id': move.id,
