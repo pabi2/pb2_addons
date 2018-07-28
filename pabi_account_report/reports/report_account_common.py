@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import openerp
 from openerp import models, fields, api, tools, _
 from openerp.exceptions import ValidationError
 import time
@@ -28,141 +29,6 @@ PREFIX_DOCTYPE = {
     # Special Type for Monitoring Report
     'account_budget': False,
 }
-
-# Declare all fields
-ACCOUNT_MOVE_LINE_FIELDS = [
-    'id', 'create_date', 'statement_id', 'company_id', 'currency_id',
-    'date_maturity', 'partner_id', 'reconcile_partial_id', 'blocked',
-    'analytic_account_id', 'create_uid', 'credit', 'centralisation',
-    'journal_id', 'reconcile_ref', 'tax_code_id', 'state', 'debit', 'ref',
-    'account_id', 'period_id', 'write_date', 'date_created', 'date',
-    'write_uid', 'move_id', 'name', 'reconcile_id', 'tax_amount',
-    'product_id', 'account_tax_id', 'product_uom_id', 'amount_currency',
-    'quantity', 'asset_profile_id', 'asset_id', 'operating_unit_id',
-    'bank_receipt_id', 'activity_id', 'activity_group_id', 'activity_rpt_id',
-    'invest_construction_id', 'program_group_id', 'subsector_id',
-    'invest_asset_id', 'sector_id', 'spa_id', 'costcenter_id', 'taxbranch_id',
-    'tag_type_id', 'project_id', 'invest_construction_phase_id',
-    'division_id', 'cost_control_id', 'section_id', 'program_id',
-    'mission_id', 'chart_view', 'tag_id', 'personnel_costcenter_id',
-    'functional_area_id', 'org_id', 'cost_control_type_id', 'fund_id',
-    'project_group_id', 'system_id', 'document', 'document_id', 'doctype',
-    'date_value', 'is_tax_line', 'parent_asset_id', 'stock_move_id',
-    'match_import_id', 'sequence', 'last_rec_date', 'gl_currency_rate',
-    'gl_foreign_balance', 'gl_revaluated_balance', 'gl_balance',
-    'investment_id', 'section_program_id', 'charge_type', 'date_reconciled',
-    'docline_seq']
-
-ACCOUNT_MOVE_FIELDS = [
-    'id', 'create_uid', 'partner_id', 'create_date', 'name', 'company_id',
-    'write_uid', 'journal_id', 'state', 'period_id', 'write_date', 'narration',
-    'date', 'balance', 'ref', 'to_check', 'operating_unit_id', 'reversal_id',
-    'to_be_reversed', 'bank_receipt_id', 'model_id', 'cancel_entry',
-    'system_id', 'document', 'document_id', 'doctype', 'date_value',
-    'line_item_summary', 'message_last_post', 'date_document',
-    'auto_reconcile_id']
-
-ACCOUNT_INVOICE_FIELDS = [
-    'id', 'comment', 'date_due', 'check_total', 'reference', 'payment_term',
-    'number', 'message_last_post', 'company_id', 'currency_id', 'create_date',
-    'create_uid', 'fiscal_position', 'amount_untaxed', 'partner_bank_id',
-    'partner_id', 'supplier_invoice_number', 'reference_type', 'journal_id',
-    'amount_tax', 'state', 'move_id', 'type', 'internal_number', 'account_id',
-    'reconciled', 'residual', 'move_name', 'date_invoice', 'period_id',
-    'write_date', 'user_id', 'write_uid', 'origin', 'amount_total', 'name',
-    'sent', 'commercial_partner_id', 'operating_unit_id', 'origin_invoice_id',
-    'cancel_reason_txt', 'section_id', 'is_debitnote', 'amount_total_text_en',
-    'amount_total_text_th', 'is_prepaid', 'clear_prepaid_move_id',
-    'is_advance', 'is_deposit', 'cancel_move_id', 'amount_retention',
-    'retention_on_payment', 'date_paid', 'workflow_process_id', 'expense_id',
-    'invoice_ref_id', 'fixed_retention', 'retention_type', 'percent_retention',
-    'advance_expense_id', 'supplier_invoice_type',
-    'loan_late_payment_invoice_id', 'discard_installment_order_check',
-    'loan_agreement_id', 'taxbranch_id', 'diff_expense_amount_reason',
-    'amount_expense_request', 'late_delivery_work_acceptance_id',
-    'source_document_type', 'source_document', 'source_document_id',
-    'validate_user_id', 'invoice_description', 'number_preprint',
-    'validate_date', 'ref_docs', 'income_tax_form', 'payment_type',
-    'currency_rate', 'adjust_move_id', 'is_retention_return',
-    'retention_return_purchase_id', 'retention_purchase_id', 'receivable_type',
-    'purchase_billing_id', 'partner_code', 'date_document',
-    'clear_pettycash_id', 'asset_adjust_id', 'is_pettycash', 'display_name2',
-    'date_receipt_billing', 'recreated_invoice_id']
-
-INTERFACE_ACCOUNT_ENTRY_FIELDS = [
-    'id', 'create_date', 'number', 'company_id', 'validate_user_id',
-    'create_uid', 'validate_date', 'message_last_post', 'journal_id', 'state',
-    'system_id', 'type', 'residual', 'write_date', 'write_uid', 'move_id',
-    'to_reverse_entry_id', 'name', 'reversed_date', 'preprint_number',
-    'cancel_reason']
-
-ACCOUNT_ACCOUNT_FIELDS = [
-    'id', 'parent_left', 'parent_right', 'code', 'create_date', 'reconcile',
-    'user_type', 'write_uid', 'create_uid', 'company_id', 'shortcut', 'note',
-    'parent_id', 'type', 'write_date', 'active', 'currency_id', 'name',
-    'level', 'currency_mode', 'asset_profile_id', 'operating_unit_id',
-    'centralized', 'currency_revaluation']
-
-ACCOUNT_VOUCHER_FIELDS = [
-    'id', 'comment', 'date_due', 'create_date', 'is_multi_currency', 'number',
-    'journal_id', 'narration', 'partner_id', 'payment_rate_currency_id',
-    'create_uid', 'reference', 'pay_now', 'message_last_post',
-    'writeoff_acc_id', 'state', 'pre_line', 'type', 'payment_option',
-    'account_id', 'company_id', 'period_id', 'write_date', 'date',
-    'tax_amount', 'write_uid', 'move_id', 'tax_id', 'payment_rate', 'name',
-    'analytic_id', 'amount', 'bank_receipt_id', 'operating_unit_id',
-    'writeoff_operating_unit_id', 'amount_total_text_en',
-    'amount_total_text_th', 'bank_branch', 'bank_cheque', 'date_cheque',
-    'date_value', 'number_cheque', 'cancel_move_id', 'wht_period_id',
-    'wht_sequence_display', 'wht_sequence', 'tax_payer',
-    'recognize_vat_move_id', 'income_tax_form', 'cheque_lot_id',
-    'transfer_type', 'supplier_bank_id', 'payment_type',
-    'validate_user_id', 'number_preprint', 'contract_number', 'currency_rate',
-    'invoices_text', 'research_type', 'validate_date', 'is_transdebt',
-    'transdebt_partner_id', 'partner_code', 'date_document', 'force_pay',
-    'payment_export_id', 'receipt_type', 'pit_withhold',
-    'date_cheque_received', 'followup_receipt']
-
-
-def _get_common_sql_select(prefix, suffix, fields):
-    return ', '.join(map(lambda x: '%s%s AS %s%s'
-                         % (prefix, x, suffix, x), fields))
-
-
-# Declare SQL Select
-"""
-Calling column in sql (prefix + <original column>)
-1. Account Move Line (move_line_<original column>)
-   Ex: move_line_name
-2. Account Move (move_<original column>)
-   Ex: move_name
-3. Account Invoice (invoice_<original column>)
-   Ex: invoice_name
-4. Interface Account Entry (interface_<original column>)
-   Ex: interface_name
-5. Account Account (account_<original column>)
-   Ex: account_name
-6. Account Voucher (voucher_<original column>)
-   Ex: voucher_name
-"""
-ACCOUNT_MOVE_LINE_SQL_SELECT = \
-    _get_common_sql_select('aml.', 'move_line_', ACCOUNT_MOVE_LINE_FIELDS)
-
-ACCOUNT_MOVE_SQL_SELECT = \
-    _get_common_sql_select('am.', 'move_', ACCOUNT_MOVE_FIELDS)
-
-ACCOUNT_INVOICE_SQL_SELECT = \
-    _get_common_sql_select('ai.', 'invoice_', ACCOUNT_INVOICE_FIELDS)
-
-INTERFACE_ACCOUNT_ENTRY_SQL_SELECT = \
-    _get_common_sql_select('iae.', 'interface_',
-                           INTERFACE_ACCOUNT_ENTRY_FIELDS)
-
-ACCOUNT_ACCOUNT_SQL_SELECT = \
-    _get_common_sql_select('aa.', 'account_', ACCOUNT_ACCOUNT_FIELDS)
-
-ACCOUNT_VOUCHER_SQL_SELECT = \
-    _get_common_sql_select('av.', 'voucher_', ACCOUNT_VOUCHER_FIELDS)
 
 
 class ReportAccountCommon(models.AbstractModel):
@@ -509,6 +375,55 @@ class PabiAccountDataMartView(models.Model):
         readonly=True,
     )
 
+    def _get_sql_select_dict(self):
+        """
+        Prefix SQL Select (Prefix + <original column>)
+        1. Account Move Line (move_line_<original column>)
+           Ex: move_line_name
+        2. Account Move (move_<original column>)
+           Ex: move_name
+        3. Account Invoice (invoice_<original column>)
+           Ex: invoice_name
+        4. Interface Account Entry (interface_<original column>)
+           Ex: interface_name
+        5. Account Account (account_<original column>)
+           Ex: account_name
+        6. Account Voucher (voucher_<original column>)
+           Ex: voucher_name
+
+        Return
+        {'account.move.line': 'aml.name AS move_line_name, ...'
+         'account.move': 'am.name AS move_name, ...', ...}
+        """
+        model_dict = {
+            'account.move.line': ('aml.', 'move_line_'),
+            'account.move': ('am.', 'move_'),
+            'account.invoice': ('ai.', 'invoice_'),
+            'interface.account.entry': ('iae.', 'interface_'),
+            'account.account': ('aa.', 'account_'),
+            'account.voucher': ('av.', 'voucher_')
+        }
+        sql_select_dict = {}
+        for model in model_dict.keys():
+            # Get all columns (Convert to tuple list)
+            column_tuple_list = self.pool.get(model)._columns.items()
+            # Filter column only store in database
+            field_types = [
+                openerp.osv.fields.one2many, openerp.osv.fields.many2many,
+                openerp.osv.fields.function, openerp.osv.fields.related]
+            column_dict = \
+                dict(filter(lambda l: type(l[1]) not in
+                            (field_types[0], field_types[1],
+                             field_types[2], field_types[3]) or
+                            (type(l[1]) in (field_types[2], field_types[3]) and
+                            l[1].store is not False), column_tuple_list))
+            columns = column_dict.keys()
+            prefix1, prefix2 = model_dict[model][0], model_dict[model][1]
+            sql_select_dict[model] = \
+                ', '.join(map(lambda x: '%s%s AS %s%s'
+                              % (prefix1, x, prefix2, x), columns))
+        return sql_select_dict
+
     def _get_sql_select(self):
         sql_select = """
             /* Invoice */
@@ -545,23 +460,27 @@ class PabiAccountDataMartView(models.Model):
         """
         return sql_select
 
-    def _get_invoice_sql_select(self):
+    def _get_invoice_sql_select(self, sql_select_dict):
         invoice_sql_select = """
             %s, %s, %s, %s, %s
-        """ % (ACCOUNT_MOVE_LINE_SQL_SELECT, ACCOUNT_MOVE_SQL_SELECT,
-               ACCOUNT_INVOICE_SQL_SELECT, INTERFACE_ACCOUNT_ENTRY_SQL_SELECT,
-               ACCOUNT_ACCOUNT_SQL_SELECT)
+        """ % (sql_select_dict['account.move.line'],
+               sql_select_dict['account.move'],
+               sql_select_dict['account.invoice'],
+               sql_select_dict['interface.account.entry'],
+               sql_select_dict['account.account'])
         return invoice_sql_select
 
-    def _get_voucher_sql_select(self):
+    def _get_voucher_sql_select(self, sql_select_dict):
         voucher_sql_select = """
             %s, %s, %s, %s, %s
-        """ % (ACCOUNT_MOVE_LINE_SQL_SELECT, ACCOUNT_MOVE_SQL_SELECT,
-               ACCOUNT_VOUCHER_SQL_SELECT, INTERFACE_ACCOUNT_ENTRY_SQL_SELECT,
-               ACCOUNT_ACCOUNT_SQL_SELECT)
+        """ % (sql_select_dict['account.move.line'],
+               sql_select_dict['account.move'],
+               sql_select_dict['account.voucher'],
+               sql_select_dict['interface.account.entry'],
+               sql_select_dict['account.account'])
         return voucher_sql_select
 
-    def _get_invoice_move_table(self):
+    def _get_invoice_move_table(self, sql_select_dict):
         """
         * Only account type in ('payable', 'receivable') *
         1. Show account.invoice
@@ -586,10 +505,10 @@ class PabiAccountDataMartView(models.Model):
                                     'in_refund', 'in_invoice_debitnote')
                       AND ai.id IS NOT NULL) OR am.doctype = 'adjustment'
                      OR iae.type = 'invoice')
-        """ % (self._get_invoice_sql_select())
+        """ % (self._get_invoice_sql_select(sql_select_dict))
         return invoice_move_line
 
-    def _get_voucher_move_table(self):
+    def _get_voucher_move_table(self, sql_select_dict):
         """
         1. Show account.voucher
            1.1. Customer Payment
@@ -605,10 +524,10 @@ class PabiAccountDataMartView(models.Model):
             WHERE am.state = 'posted' AND aa.type IN ('payable', 'receivable')
                 AND ((am.doctype IN ('receipt', 'payment') AND
                       av.state = 'posted') OR iae.type = 'voucher')
-        """ % (self._get_voucher_sql_select())
+        """ % (self._get_voucher_sql_select(sql_select_dict))
         return voucher_move_line
 
-    def _get_other_invoice_move_table(self):
+    def _get_other_invoice_move_table(self, sql_select_dict):
         """
         * Only account type not in ('payable', 'receivable') *
         1. Show account.invoice
@@ -634,10 +553,14 @@ class PabiAccountDataMartView(models.Model):
                                     'in_refund', 'in_invoice_debitnote')
                       AND ai.id IS NOT NULL) OR am.doctype = 'adjustment'
                      OR iae.type = 'invoice')
-        """ % (self._get_invoice_sql_select())
+        """ % (self._get_invoice_sql_select(sql_select_dict))
         return other_invoice_move_table
 
     def _get_sql_view(self):
+        # Get SQL Select Dict
+        sql_select_dict = self._get_sql_select_dict()
+
+        # SQL View
         sql_view = """
             SELECT ROW_NUMBER()
                     OVER(ORDER BY invoice_move_line_id,
@@ -661,10 +584,13 @@ class PabiAccountDataMartView(models.Model):
                     OR invoice_move_table_2.move_line_reconcile_partial_id =
                     voucher_move_table.move_line_reconcile_partial_id))
                 AS account_data
-        """ % (self._get_sql_select(), self._get_invoice_move_table(),
-               self._get_voucher_move_table(), self._get_sql_select(),
-               self._get_other_invoice_move_table(),
-               self._get_invoice_move_table(), self._get_voucher_move_table())
+        """ % (self._get_sql_select(),
+               self._get_invoice_move_table(sql_select_dict),
+               self._get_voucher_move_table(sql_select_dict),
+               self._get_sql_select(),
+               self._get_other_invoice_move_table(sql_select_dict),
+               self._get_invoice_move_table(sql_select_dict),
+               self._get_voucher_move_table(sql_select_dict))
         return sql_view
 
     def init(self, cr):
