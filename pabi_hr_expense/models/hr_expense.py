@@ -189,10 +189,8 @@ class HRExpense(models.Model):
     @api.depends('line_ids', 'line_ids.project_id', 'line_ids.section_id')
     def _compute_project_section(self):
         for rec in self:
-            projects = rec.line_ids.\
-                filtered(lambda x: x.project_id).mapped('project_id')
-            sections = rec.line_ids.\
-                filtered(lambda x: x.section_id).mapped('section_id')
+            projects = rec.line_ids.mapped('project_id')
+            sections = rec.line_ids.mapped('section_id')
             rec.project_id = len(projects) == 1 and projects[0] or False
             rec.section_id = len(sections) == 1 and sections[0] or False
 
