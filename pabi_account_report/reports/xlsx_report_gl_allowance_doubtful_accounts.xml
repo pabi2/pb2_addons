@@ -28,7 +28,7 @@
                 <field name="date_end" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <field name="date_start" position="before">
+                <field name="date_end" position="after">
                     <field name="date_report"/>
                 </field>
                 <xpath expr="//notebook[@name='additional_criteria']" position="inside">
@@ -49,7 +49,6 @@
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-            <field name="context">{'reset_common_field': True}</field>
         </record>
 
         <menuitem id="menu_report_gl_allowance_doubtful_accounts"

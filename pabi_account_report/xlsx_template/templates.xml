@@ -1482,7 +1482,8 @@ result = pd.pivot_table(df, index=groupby,
                                'E9': 'id${value and (env["account.move.line"].browse(value).debit - env["account.move.line"].browse(value).credit) or ""}#{number_format=number}',
                            },
                            '_TAIL_0': {
-                               'E9': '@{sum}#{font=bold;align=right;number_format=number}',
+                               'A9': '${"Total"}#{font=bold}',
+                               'E9': '@{sum}#{font=bold;number_format=number}',
                            }
                        }
                    }
