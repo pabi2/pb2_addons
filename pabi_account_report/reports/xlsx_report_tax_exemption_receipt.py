@@ -133,7 +133,7 @@ class XLSXReportTaxExemptionReceipt(models.TransientModel):
         """
         Solution
         1. Get from customer invoice, cutomer refund, invoice entries
-           (have not tax)
+           (exclude tax)
         """
         self.ensure_one()
         Result = self.env['tax.exemption.view']
