@@ -18,7 +18,7 @@
                 text-indent: 45px !important;
             }
             .newline_report_receivable_confirmation_letter {
-                margin-top: 40px !important;
+                margin-top: 20px !important;
             }
         </template>
 
