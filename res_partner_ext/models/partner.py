@@ -180,23 +180,31 @@ class ResPartner(models.Model):
 
     @api.model
     def create_partner(self, vals):
-        WS = self.env['pabi.utils.ws']
-        res = WS.friendly_create_data(self._name, vals)
-        if res['is_success']:
-            res_id = res['result']['id']
-            p = self.browse(res_id)
-            # overwrite partner's account with categ's account
-            p.write({
-                'property_account_payable':
-                p.category_id.payable_account_id.id,
-                'property_account_receivable':
-                p.category_id.receivable_account_id.id,
-                # Force customer / supplier = true
-                'supplier': True,
-                'customer': True,
-                })
-            res['result']['name'] = p.name
-            res['result']['search_key'] = p.search_key
+        try:
+            WS = self.env['pabi.utils.ws']
+            res = WS.friendly_create_data(self._name, vals)
+            if res['is_success']:
+                res_id = res['result']['id']
+                p = self.browse(res_id)
+                # overwrite partner's account with categ's account
+                p.write({
+                    'property_account_payable':
+                    p.category_id.payable_account_id.id,
+                    'property_account_receivable':
+                    p.category_id.receivable_account_id.id,
+                    # Force customer / supplier = true
+                    'supplier': True,
+                    'customer': True,
+                    })
+                res['result']['name'] = p.name
+                res['result']['search_key'] = p.search_key
+        except Exception, e:
+            res = {
+                'is_success': False,
+                'result': False,
+                'messages': e,
+            }
+            self._cr.rollback()
         return res
 
     @api.model
