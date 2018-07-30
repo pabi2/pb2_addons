@@ -195,8 +195,6 @@ class ResPartner(models.Model):
                 'supplier': True,
                 'customer': True,
                 })
-            p.property_account_payable = p.category_id.payable_account_id
-            p.property_account_receivable = p.category_id.receivable_account_id
             res['result']['name'] = p.name
             res['result']['search_key'] = p.search_key
         return res
