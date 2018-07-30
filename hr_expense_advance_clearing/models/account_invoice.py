@@ -27,6 +27,7 @@ class AccountInvoice(models.Model):
     advance_expense_id = fields.Many2one(
         'hr.expense.expense',
         string="Advance Expense",
+        index=True,
         copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},

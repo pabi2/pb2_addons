@@ -22,17 +22,31 @@ class HRExpenseExpense(models.Model):
     advance_expense_id = fields.Many2one(
         'hr.expense.expense',
         string='Clear Advance',
+        index=True,
     )
     advance_clearing_ids = fields.One2many(
         'hr.expense.clearing',
         'advance_expense_id',
         string='Advance Clearing Expenses',
     )
+    clearing_expense_ids = fields.One2many(
+        'hr.expense.expense',
+        'advance_expense_id',
+        string='Clearing Document (EX)',
+        help="All expense clearing",
+    )
+    clearing_invoice_ids = fields.One2many(
+        'account.invoice',
+        'advance_expense_id',
+        string='Clearing Document (KV)',
+        help="All invoice clearing",
+    )
     amount_to_clearing = fields.Float(
         string='Advanced Balance',
         compute='_compute_amount_to_clearing',
-        search='_search_amount_to_clearing',
-        copy=False,
+        store=True,
+        # search='_search_amount_to_clearing',
+        # copy=False,
     )
     amount_advanced = fields.Float(
         string='Advanced Amount',
@@ -81,21 +95,9 @@ class HRExpenseExpense(models.Model):
         result['context'] = context
         return result
 
-    @api.model
-    def _search_amount_to_clearing(self, operator, value):
-        # This method is valid only for Advance
-        recs = self.search([('invoice_id.state', 'in', ('open', 'paid')),
-                            ('is_employee_advance', '=', True)])
-        if operator == '=':
-            recs = recs.filtered(lambda x: x.amount_to_clearing == value)
-        if operator == '>':
-            recs = recs.filtered(lambda x: x.amount_to_clearing > value)
-        if operator == '<':
-            recs = recs.filtered(lambda x: x.amount_to_clearing < value)
-        return [('id', 'in', recs.ids)]
-
     @api.multi
-    @api.depends('advance_clearing_ids')
+    @api.depends('clearing_expense_ids.invoice_ids.state',
+                 'clearing_invoice_ids.state')
     def _compute_amount_to_clearing(self):
         for expense in self:
             amount_advanced = (expense.invoice_id.state in ('open', 'paid') and
