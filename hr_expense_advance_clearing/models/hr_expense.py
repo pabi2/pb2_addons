@@ -32,13 +32,15 @@ class HRExpenseExpense(models.Model):
     clearing_expense_ids = fields.One2many(
         'hr.expense.expense',
         'advance_expense_id',
-        string='Clearing Document (EX)',
+        string='Clearing Document (Expense)',
+        readonly=True,
         help="All expense clearing",
     )
     clearing_invoice_ids = fields.One2many(
         'account.invoice',
         'advance_expense_id',
-        string='Clearing Document (KV)',
+        string='Clearing Document (Invoice)',
+        readonly=True,
         help="All invoice clearing",
     )
     amount_to_clearing = fields.Float(
