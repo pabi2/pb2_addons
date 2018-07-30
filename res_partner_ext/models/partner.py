@@ -186,6 +186,15 @@ class ResPartner(models.Model):
             res_id = res['result']['id']
             p = self.browse(res_id)
             # overwrite partner's account with categ's account
+            p.write({
+                'property_account_payable':
+                p.category_id.payable_account_id.id,
+                'property_account_receivable':
+                p.category_id.receivable_account_id.id,
+                # Force customer / supplier = true
+                'supplier': True,
+                'customer': True,
+                })
             p.property_account_payable = p.category_id.payable_account_id
             p.property_account_receivable = p.category_id.receivable_account_id
             res['result']['name'] = p.name
