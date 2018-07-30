@@ -93,9 +93,12 @@ class AccountBudget(models.Model):
     @api.multi
     def _budget_expense_lines_hook(self):
         self.ensure_one()
+        BudgetLine = self.env['account.budget.line']
         if self.fiscalyear_id.control_ext_charge_only:
-            return self.budget_expense_line_ids.\
-                filtered(lambda l: l.charge_type == 'external')
+            expense_lines = BudgetLine.search([
+                ('id', 'in', self.budget_expense_line_ids.ids),
+                ('charge_type', '=', 'external')])
+            return expense_lines
         else:
             return self.budget_expense_line_ids
 
@@ -150,6 +153,7 @@ class AccountBudget(models.Model):
             return 0.0
         Period = self.env['account.period']
         Fiscal = self.env['account.fiscalyear']
+        BudgetLine = self.env['account.budget.line']
         period_num = 0
         this_period_date_start = Period.find().date_start
         future_plan = 0.0
@@ -169,8 +173,9 @@ class AccountBudget(models.Model):
             budgets = self.search([('id', 'in', self.ids),
                                    ('fiscalyear_id', '=', fiscal.id)])
             for budget in budgets:
-                expense_lines = budget.budget_expense_line_ids.\
-                    filtered(lambda l: l.charge_type == 'internal')
+                expense_lines = BudgetLine.search([
+                    ('id', 'in', budget.budget_expense_line_ids.ids),
+                    ('charge_type', '=', 'internal')])
                 for line in expense_lines:
                     for i in range(period_num + 1, 13):
                         future_plan += line['m%s' % (i,)]

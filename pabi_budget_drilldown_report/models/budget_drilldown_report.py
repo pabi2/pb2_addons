@@ -173,11 +173,11 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
                     amount_future += budgets._get_future_plan_amount_internal()
                 elif line['charge_type'] == 'external':
                     amount_future += budgets._get_future_plan_amount()
-                    policy = sum(budgets.mapped('policy_amount'))
+                    policy = sum([x.policy_amount for x in budgets])
             else:
                 amount_future += budgets._get_future_plan_amount_internal()
                 amount_future += budgets._get_future_plan_amount()
-                policy = sum(budgets.mapped('policy_amount'))
+                policy = sum([x.policy_amount for x in budgets])
             # Rolling
             rolling = amount_actual + amount_future
             line.update({'rolling_amount': rolling,
