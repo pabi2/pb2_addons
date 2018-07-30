@@ -165,7 +165,8 @@ class PurchaseRequestLine(CommitLineCommon, ActivityCommon, models.Model):
 
     @api.model
     def _price_subtotal(self, line_qty):
-        return self.price_unit * line_qty
+        return self.price_subtotal
+        # return self.price_unit * line_qty
 
     # @api.multi
     # def _prepare_analytic_line(self, reverse=False, currency=False):

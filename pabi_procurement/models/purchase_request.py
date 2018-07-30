@@ -493,6 +493,16 @@ class PurchaseRequestLine(models.Model):
                     rec.request_id.write({'state': 'done'})
         return res
 
+    @api.multi
+    def _prepare_analytic_line(self, reverse=False, currency=False):
+        # For PABI2, we use manual rate
+        res = super(PurchaseRequestLine, self).\
+            _prepare_analytic_line(reverse=reverse, currency=currency)
+        sign = res.get('amount', 0.0) < 0 and -1 or 1
+        res['amount'] = \
+            sign * self.price_subtotal * self.request_id.currency_rate
+        return res
+
 
 class PurchaseRequestCommittee(models.Model):
     _name = 'purchase.request.committee'
