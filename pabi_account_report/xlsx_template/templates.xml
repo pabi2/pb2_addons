@@ -396,7 +396,7 @@
                                 'X16': 'payment_export_id${value and value.state == "done" and value.name or ""}',
                                 'Y16': 'number_cheque${value or ""}',
                                 'Z16': 'income_tax_form${value and dict(pnd1="PND1", pnd3="PND3", pnd3a="PND3a", pnd53="PND53")[value] or ""}',
-                                'AA16': 'id${value and env["pabi.account.data.mart.view"].browse(value).voucher_move_line_id.move_id.document_id and env["pabi.account.data.mart.view"].browse(value).voucher_move_line_id.move_id.document_id._name == "account.voucher" and env["pabi.account.data.mart.view"].browse(value).voucher_move_line_id.move_id.document_id.tax_line_wht.filtered(lambda l: l.invoice_id.id == env["account.invoice"].search([("move_id", "=", env["pabi.account.data.mart.view"].browse(value).invoice_move_line_id.move_id.id)]).id).amount or ""}',
+                                'AA16': 'id${value and env["pabi.common.account.report.view"].browse(value).voucher_move_line_id.move_id.document_id and env["pabi.common.account.report.view"].browse(value).voucher_move_line_id.move_id.document_id._name == "account.voucher" and env["pabi.common.account.report.view"].browse(value).voucher_move_line_id.move_id.document_id.tax_line_wht.filtered(lambda l: l.invoice_id.id == env["account.invoice"].search([("move_id", "=", env["pabi.common.account.report.view"].browse(value).invoice_move_line_id.move_id.id)]).id).amount or ""}',
                                 'AB16': 'invoice_move_write_uid${value and value.with_context(lang="th_TH").display_name or ""}',
                                 'AC16': 'invoice_state${value and dict(env["account.invoice"]._columns["state"].selection)[value] or ""}',
                             },
