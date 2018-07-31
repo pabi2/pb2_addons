@@ -327,7 +327,7 @@ class PurchaseWebInterface(models.Model):
             'prNo': pr_name,
             'docType': doc_type.name,
             'objective': requisition.objective or '',
-            'total': str(requisition.amount_total),
+            'total': str(requisition.amount_company),
             'reqBy': request_usr.login,
             'appBy': assign_usr.login,
             'doc': {
