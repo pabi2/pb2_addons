@@ -378,7 +378,7 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         readonly=True,
     )
     amount_consumed = fields.Float(
-        string='Toal Spent',
+        string='Total Spent',
         readonly=True,
     )
     amount_balance = fields.Float(

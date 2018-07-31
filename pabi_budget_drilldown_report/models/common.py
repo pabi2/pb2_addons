@@ -13,7 +13,7 @@ REPORT_GROUPBY = {
                   'charge_type', 'activity_id'],
     'project_base': ['project_id', 'activity_group_id',
                      'charge_type', 'activity_id'],
-    'invest_asset': ['org_id', 'division_id', 'section_id'],
+    'invest_asset': ['org_id', 'division_id', 'section_id', 'invest_asset_id'],
     'invest_construction': ['org_id', 'division_id',
                             'section_id', 'invest_construction_id'],
 }
@@ -88,6 +88,10 @@ class SearchCommon(ChartField, object):
         'account.activity',
         string='Activity',
     )
+    invest_asset_id = fields.Many2one(
+        'res.invest.asset',
+        string='Investment Asset',
+    )
     # For project_base
     functional_area_id = fields.Many2one(
         'res.functional.area',
@@ -130,6 +134,10 @@ class SearchCommon(ChartField, object):
         string='Group By - Activity',
         default=False,
     )
+    group_by_invest_asset_id = fields.Boolean(
+        string='Group By - Asset',
+        default=False,
+    )
     group_by_org_id = fields.Boolean(
         string='Group By - Org',
         default=False,
@@ -151,6 +159,7 @@ class SearchCommon(ChartField, object):
         self.subsector_id = False
         self.division_id = False
         self.section_id = False
+        self.invest_asset_id = False
         self.activity_group_id = False
         self.activity_id = False
         self.functional_area_id = False
@@ -162,70 +171,90 @@ class SearchCommon(ChartField, object):
 
     @api.onchange('org_id')
     def _onchange_org_id(self):
-        self.sector_id = False
-        self.subsector_id = False
-        self.division_id = False
-        self.section_id = False
+        if self.org_id:
+            self.sector_id = False
+            self.subsector_id = False
+            self.division_id = False
+            self.section_id = False
 
     @api.onchange('sector_id')
     def _onchange_sector_id(self):
-        self.org_id = False
-        self.subsector_id = False
-        self.division_id = False
-        self.section_id = False
+        if self.sector_id:
+            self.org_id = False
+            self.subsector_id = False
+            self.division_id = False
+            self.section_id = False
 
     @api.onchange('subsector_id')
     def _onchange_subsector_id(self):
-        self.org_id = False
-        self.sector_id = False
-        self.division_id = False
-        self.section_id = False
+        if self.subsector_id:
+            self.org_id = False
+            self.sector_id = False
+            self.division_id = False
+            self.section_id = False
 
     @api.onchange('division_id')
     def _onchange_division_id(self):
-        self.org_id = False
-        self.sector_id = False
-        self.subsector_id = False
-        self.section_id = False
+        if self.division_id:
+            self.org_id = False
+            self.sector_id = False
+            self.subsector_id = False
+            self.section_id = False
 
     @api.onchange('section_id')
     def _onchange_section_id(self):
-        self.org_id = False
-        self.sector_id = False
-        self.subsector_id = False
-        self.division_id = False
+        if self.section_id:
+            self.org_id = False
+            self.sector_id = False
+            self.subsector_id = False
+            self.division_id = False
 
     @api.onchange('functional_area_id')
     def _onchange_functional_area_id(self):
-        self.program_group_id = False
-        self.program_id = False
-        self.project_group_id = False
-        self.project_id = False
+        if self.functional_area_id:
+            self.program_group_id = False
+            self.program_id = False
+            self.project_group_id = False
+            self.project_id = False
 
     @api.onchange('program_group_id')
     def _onchange_program_group_id(self):
-        self.functional_area_id = False
-        self.program_id = False
-        self.project_group_id = False
-        self.project_id = False
+        if self.program_group_id:
+            self.functional_area_id = False
+            self.program_id = False
+            self.project_group_id = False
+            self.project_id = False
 
     @api.onchange('program_id')
     def _onchange_program_id(self):
-        self.functional_area_id = False
-        self.program_group_id = False
-        self.project_group_id = False
-        self.project_id = False
+        if self.program_id:
+            self.functional_area_id = False
+            self.program_group_id = False
+            self.project_group_id = False
+            self.project_id = False
 
     @api.onchange('project_group_id')
     def _onchange_project_group_id(self):
-        self.functional_area_id = False
-        self.program_group_id = False
-        self.program_id = False
-        self.project_id = False
+        if self.project_group_id:
+            self.functional_area_id = False
+            self.program_group_id = False
+            self.program_id = False
+            self.project_id = False
 
     @api.onchange('project_id')
     def _onchange_project_id(self):
-        self.functional_area_id = False
-        self.program_group_id = False
-        self.program_id = False
-        self.project_group_id = False
+        if self.project_id:
+            self.functional_area_id = False
+            self.program_group_id = False
+            self.program_id = False
+            self.project_group_id = False
+
+    @api.onchange('activity_id')
+    def _onchange_activity_id(self):
+        if self.activity_id:
+            self.activity_group_id = False
+
+    @api.onchange('activity_group_id')
+    def _onchange_activity_group_id(self):
+        if self.activity_group_id:
+            self.activity_id = False
