@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 	<data>
-		# Payable Confirmation Letter
-		<record id="payable_confirmation_letter" model="ir.actions.report.xml">
-			<field name="auto">True</field>
-			<field name="model">account.move.line</field>
-			<field name="name">Payable Confirmation Letter</field>
-			<field name="report_name">payable_confirmation_letter</field>
-			<field name="report_rml">pabi_account_report/reports/jasper_report_payable_confirmation_letter.jrxml</field>
-			<field name="menu">True</field>
-			<field name="header">False</field>
-			<field name="jasper_report">True</field>
-			<field name="jasper_output">pdf</field>
-			<field name="copies">1</field>
-			<field name="force_locale">th_TH</field>
-			<field name="download_filename"></field>
-		</record>
-
-		<record id="payable_confirmation_letter_values" model="ir.values">
-			<field name="name">Payable Confirmation Letter</field>
-			<field name="model">account.move.line</field>
-			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(payable_confirmation_letter)"/>
-		</record>
-
 		# CD Receivable Payment History Group By Customer
 		<record id="cd_receivable_payment_history_group_by_customer" model="ir.actions.report.xml">
 			<field name="auto">True</field>
@@ -109,28 +87,6 @@
 			<field name="name">CD Receivable Follow Up</field>
 			<field name="model">cd.receivable.follow.up.view</field>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cd_receivable_follow_up_group_by_bank)"/>
-		</record>
-
-		# Receivable Confirmation Letter
-		<record id="receivable_confirmation_letter" model="ir.actions.report.xml">
-			<field name="auto">True</field>
-			<field name="model">account.move.line</field>
-			<field name="name">Receivable Confirmation Letter</field>
-			<field name="report_name">receivable_confirmation_letter</field>
-			<field name="report_rml">pabi_account_report/reports/jasper_report_receivable_confirmation_letter.jrxml</field>
-			<field name="menu">True</field>
-			<field name="header">False</field>
-			<field name="jasper_report">True</field>
-			<field name="jasper_output">pdf</field>
-			<field name="copies">1</field>
-			<field name="force_locale">th_TH</field>
-			<field name="download_filename"></field>
-		</record>
-
-		<record id="receivable_confirmation_letter_values" model="ir.values">
-			<field name="name">Receivable Confirmation Letter</field>
-			<field name="model">account.move.line</field>
-			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(receivable_confirmation_letter)"/>
 		</record>
 	</data>
 </openerp>

@@ -3,7 +3,7 @@
     <data>
         <template id="style_report_payable_confirmation_letter">
             .page_report_payable_confirmation_letter {
-                font-size: 28px !important;
+                font-size: 27px !important;
                 text-align: justify !important;
                 text-justify: inter-word !important;
                 line-height: 1 !important;
@@ -18,7 +18,7 @@
                 text-indent: 45px !important;
             }
             .newline_report_payable_confirmation_letter {
-                margin-top: 40px !important;
+                margin-top: 30px !important;
             }
         </template>
 
