@@ -11,7 +11,7 @@
                 <group name="filter" position="after">
                     <group string="External" attrs="{'invisible': [('line_external_ids', '=', [])]}">
                         <field name="line_external_ids" nolabel="1" edtible="bottom">
-                            <tree edtible="bottom">
+                            <tree editable="bottom">
                                 <field name="chart_view"/>
                                 <field name="charge_type"/>
                                 <field name="planned_amount" sum="Total"/>

@@ -11,7 +11,7 @@
                 <group name="filter" position="after">
                     <group>
                         <field name="line_ids" nolabel="1">
-                            <tree edtible="bottom">
+                            <tree editable="bottom">
                                 <field name="section_id"/>
                                 <field name="activity_group_id"/>
                                 <field name="charge_type"/>
