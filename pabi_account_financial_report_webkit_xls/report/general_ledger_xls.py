@@ -319,14 +319,13 @@ class general_ledger_xls(report_xls):
                         label_elements.append(
                             "(%s)" % (line['invoice_number'],))
                     label = ' '.join(label_elements)
-
-                    # Start write data
                     _charge_type = dict(self.pool.get("account.move.line")
                                         ._columns["charge_type"].selection)
 
+                    # Start write data
                     c_specs = [('charge_type', 1, 0, 'text',
                                 _charge_type.get(
-                                    line.get('charge_type', False)))]
+                                    line.get('charge_type', False), False))]
 
                     if line.get('document_date'):
                         c_specs += [
