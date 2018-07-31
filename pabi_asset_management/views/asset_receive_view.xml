@@ -122,7 +122,7 @@
                                 <group string="General Informations">
                                     <group>
                                         <field name="move_type"/>
-                                        <field name="picking_type_id"/>
+                                        <field name="picking_type_id" invisible="1"/>
                                         <field name="picking_type_code" invisible="1"/>
                                         <field name="quant_reserved_exist" invisible="1"/>
                                         <field name="location_id" invisible="1"/>
