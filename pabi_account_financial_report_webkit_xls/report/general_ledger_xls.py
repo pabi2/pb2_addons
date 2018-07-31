@@ -372,7 +372,7 @@ class general_ledger_xls(report_xls):
                         ('taxbranch', 1, 0, 'text',
                          line.get('taxbranch_name', '')),
                         ('move', 1, 0, 'text', line.get('move_name', '')),
-                        ('item', 1, 0, 'number', None, item_formula),
+                        ('item', 1, 0, 'number', line.get('item', '')),
                         ('doctype', 1, 0, 'text', line.get('doctype', '')),
                         ('doc_journel', 1, 0, 'text', line.get('journal', '')),
                         ('activity_group', 1, 0, 'text',
