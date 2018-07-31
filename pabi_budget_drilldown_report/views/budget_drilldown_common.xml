@@ -27,6 +27,7 @@
                           <field name="division_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                           <field name="section_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                           <!-- unit_base and invest_asset -->
+                          <field name="invest_asset_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset'))]}"/>
                           <field name="activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'invest_asset'))]}"/>
                           <field name="activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'invest_asset'))]}"/>
                           <!-- project_base -->
@@ -46,6 +47,7 @@
                           <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
                           <field name="group_by_org_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset', 'invest_construction'))]}"/>
                           <field name="group_by_division_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset', 'invest_construction'))]}"/>
+                          <field name="group_by_invest_asset_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset'))]}"/>
                           <field name="group_by_invest_construction_id" attrs="{'invisible': [('report_type', 'not in', ('invest_construction'))]}"/>
                       </group>
                   </group>
