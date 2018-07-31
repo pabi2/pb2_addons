@@ -97,6 +97,22 @@ class AccountAssetAdjust(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    source_document_type = fields.Selection(
+        [('purchase', 'Purchase Order'),
+         ('sale', 'Sales Order'),
+         ('expense', 'Expense'),
+         ('advance', 'Advance')],
+        string='Source Document Type',
+        related='invoice_id.source_document_type',
+    )
+    ship_purchase_id = fields.Many2one(
+        'purchase.order',
+        string='Ship Expense For PO',
+        domain="[('order_type', '=', 'purchase_order'),"
+        "('state', 'not in', ('draft', 'cancel'))]",
+        help="This expense is shipping handling for things bought "
+        "with this purchase order.",
+    )
     adjust_line_ids = fields.One2many(
         'account.asset.adjust.line',
         'adjust_id',
@@ -443,6 +459,7 @@ class AccountAssetAdjust(models.Model):
     @api.multi
     def adjust_expense_to_asset(self):
         """ The Concept
+        * If ship_purchase_id is selected, set it to EX
         * Create new asset
         * Create collective moves
         """
@@ -453,6 +470,12 @@ class AccountAssetAdjust(models.Model):
         Analytic = self.env['account.analytic.account']
         if not self.adjust_expense_to_asset_ids:
             raise ValidationError(_('No asset selected!'))
+        # ship po
+        if self.ship_purchase_id and self.source_document_type == 'expense':
+            self.invoice_id.source_document_id.write({
+                'ship_expense': True,
+                'ship_purchase_id': self.ship_purchase_id.id, })
+        # --
         for line in self.adjust_expense_to_asset_ids:
             line.account_analytic_id = \
                 Analytic.create_matched_analytic(line)

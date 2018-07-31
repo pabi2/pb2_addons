@@ -694,7 +694,7 @@ class AccountVoucher(CommonVoucher, models.Model):
                 voucher.write({
                     'recognize_vat_move_id': move.id,
                 })
-                if journal.entry_posted:
+                if journal.entry_posted and move.state != 'posted':
                     move.post()
             # Call just to by pass in hook, but still benefit from others
             super(AccountVoucher,

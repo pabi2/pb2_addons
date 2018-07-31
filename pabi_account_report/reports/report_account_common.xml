@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        # Jasper Reports
-        <record id="view_jasper_report_account_common_form" model="ir.ui.view">
-            <field name="nmae">view.jasper.report.account.common.form</field>
+        # Common Reports
+        <record id="view_report_account_common_form" model="ir.ui.view">
+            <field name="name">view.report.account.common.form</field>
             <field name="model">report.account.common</field>
             <field name="arch" type="xml">
-                <form string="Jasper Reports">
-                    <group col="4">
-                        <field name="chart_account_id" widget="selection"/>
-                        <field name="company_id" invisible="True"/>
-                        <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
-                        <field name="fiscalyear_end_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
-                        <field name="fiscalyear_date_start" invisible="1"/>
-                        <field name="fiscalyear_date_end" invisible="1"/>
+                <form string="Reports">
+                    <group name="criteria">
+                        <group col="4">
+                            <field name="chart_account_id" widget="selection"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]"/>
+                            <field name="fiscalyear_end_id" domain="[('company_id', '=', company_id)]"/>
+                            <field name="fiscalyear_date_start" invisible="1"/>
+                            <field name="fiscalyear_date_end" invisible="1"/>
+                        </group>
                     </group>
-                    <notebook>
-                        <page string="Time Filters">
+                    <notebook name="additional_criteria">
+                        <page string="Time Filters" name="time_filters">
                             <group>
                                 <field name="filter"/>
                             </group>
@@ -39,6 +41,32 @@
             </field>
         </record>
 
+        # Jasper Reports
+        <record id="view_jasper_report_account_common_form" model="ir.ui.view">
+            <field name="name">view.jasper.report.account.common.form</field>
+            <field name="model">report.account.common</field>
+            <field name="inherit_id" ref="pabi_account_report.view_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <form position="attributes">
+                    <attribute name="string">Jasper Reports</attribute>
+                </form>
+            </field>
+        </record>
+
+        # QWEB Reports
+        <record id="view_qweb_report_account_common_form" model="ir.ui.view">
+            <field name="name">view.qweb.report.account.common.form</field>
+            <field name="model">report.account.common</field>
+            <field name="inherit_id" ref="pabi_account_report.view_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <form position="attributes">
+                    <attribute name="string">QWEB Reports</attribute>
+                </form>
+            </field>
+        </record>
+
         # XLSX Reports
         <record id="view_xlsx_report_account_common_form" model="ir.ui.view">
             <field name="name">view.xlsx.report.account.common.form</field>
@@ -49,16 +77,16 @@
                 <xpath expr="//group[@name='criteria']" position="inside">
                     <group col="4">
                         <field name="chart_account_id" widget="selection"/>
-                        <field name="company_id" invisible="True"/>
-                        <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
-                        <field name="fiscalyear_end_id" domain="[('company_id', '=', company_id)]" attrs="{'required': [('filter', '=', 'filter_period')]}"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]"/>
+                        <field name="fiscalyear_end_id" domain="[('company_id', '=', company_id)]"/>
                         <field name="fiscalyear_date_start" invisible="1"/>
                         <field name="fiscalyear_date_end" invisible="1"/>
                     </group>
                 </xpath>
                 <xpath expr="group[@name='criteria']" position="after">
-                    <notebook name="other_criteria" states="choose">
-                        <page string="Time Filters">
+                    <notebook name="additional_criteria" states="choose">
+                        <page string="Time Filters" name="time_filters">
                             <group>
                                 <field name="filter"/>
                             </group>

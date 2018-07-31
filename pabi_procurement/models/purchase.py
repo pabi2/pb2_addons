@@ -41,6 +41,17 @@ class PurchaseOrder(models.Model):
         compute='_compute_contract_id',
         store=True
     )
+    contract_type_id = fields.Many2one(
+        'purchase.contract.type',
+        string='Contract Type',
+        related='contract_id.contract_type_id',
+    )
+    po_contract_type_id = fields.Many2one(
+        'purchase.contract.type',
+        string='PO Contract Type',
+        track_visibility='onchange',
+        states={'draft': [('readonly', False)]},
+    )
     date_contract_start = fields.Date(
         string='Contract Start Date',
         default=lambda self: fields.Date.context_today(self),
@@ -199,14 +210,16 @@ class PurchaseOrder(models.Model):
                 latest_contract_id = max(rec.requisition_id.contract_ids.ids)
                 rec.contract_id = latest_contract_id
 
-    @api.model
+    @api.multi
     def check_over_requisition_limit(self):
-        if self.state not in ('done', 'cancel'):
+        self.ensure_one()
+        if self.state not in ('done', 'cancel') and self.requisition_id:
             po_total_payment = 0
             confirmed_rfqs = self.search(
                 [
                     ('requisition_id', '=', self.requisition_id.id),
                     ('state', '=', 'done'),
+                    ('order_type', '=', 'purchase_order'),
                 ]
             )
             for rfq in confirmed_rfqs:
@@ -216,13 +229,14 @@ class PurchaseOrder(models.Model):
             if po_total_payment + self.amount_total > cfb_total_amount:
                 raise ValidationError(
                     _("""Can't evaluate this acceptance.
-                         This RfQ total amount is over than
+                         This RfQ total amount is over
                          call for bids total amount.""")
                 )
         return True
 
-    @api.model
+    @api.multi
     def _check_request_for_quotation(self):
+        self.ensure_one()
         if self.requisition_id.purchase_method_id.require_rfq:
             raise ValidationError(
                 _("Can't convert to order. Have to wait for PD approval.")
@@ -466,6 +480,11 @@ class PRWebPurchaseMethod(models.Model):
     _name = 'prweb.purchase.method'
     _description = 'PRWeb Purchase Method'
 
+    name = fields.Char(
+        string='Name',
+        compute='_compute_name',
+        store=True,
+    )
     type_id = fields.Many2one(
         'purchase.type',
         string='Type',
@@ -477,7 +496,7 @@ class PRWebPurchaseMethod(models.Model):
     doctype_id = fields.Many2one(
         'wkf.config.doctype',
         string='Doc Type',
-        domain=[('module', '=', 'purchase')],
+        domain=[('module', 'in', ('purchase', 'purchase_pd'))],
     )
     price_range_id = fields.Many2one(
         'purchase.price.range',
@@ -487,23 +506,35 @@ class PRWebPurchaseMethod(models.Model):
         'purchase.condition',
         string='Condition',
     )
+    committee_type_ids = fields.One2many(
+        'purchase.committee.type.prweb.method',
+        'method_id',
+        string='Committee Types',
+    )
 
     @api.multi
-    def name_get(self):
-        res = []
+    @api.depends('type_id', 'method_id', 'price_range_id')
+    def _compute_name(self):
         for rec in self:
-            res.append((rec.id,
-                        '%s - %s' % (rec.type_id.name, rec.method_id.name)))
-        return res
+            names = [rec.type_id.name,
+                     rec.method_id.name,
+                     rec.price_range_id.name]
+            names = [x for x in names if x]
+            rec.name = ' - '.join(names)
 
 
 class PurchaseType(models.Model):
     _name = 'purchase.type'
+    _order = 'sequence'
     _description = 'PABI2 Purchase Type'
 
     name = fields.Char(
         string='Purchase Type',
         required=True,
+    )
+    sequence = fields.Integer(
+        string='Sequence',
+        default=10,
     )
 
 
@@ -529,6 +560,11 @@ class PurchaseMethod(models.Model):
         string='Require for RfQ',
         help='At least 1 RfQ must be created before verifying CfBs',
     )
+    doctype_id = fields.Many2one(
+        'wkf.config.doctype',
+        string='Doc Type',
+        domain=[('module', 'in', ('purchase', 'purchase_pd'))],
+    )
 
 
 class PurchaseCommitteeType(models.Model):
@@ -542,6 +578,10 @@ class PurchaseCommitteeType(models.Model):
     code = fields.Char(
         string='Purchase Committee Type Code',
         required=False,
+    )
+    prweb_only = fields.Boolean(
+        string='PRWeb Only',
+        default=False,
     )
     web_method_ids = fields.One2many(
         'purchase.committee.type.prweb.method',
@@ -567,15 +607,21 @@ class PurchaseCommiteeTypePRWebMethod(models.Model):
         string='Commitee Type',
         index=True,
         ondelete='cascade',
-        readonly=True,
+        required=True,
     )
     sequence = fields.Integer(
         string='Sequence',
         default=10,
     )
+    number_committee = fields.Integer(
+        string='Number of Committee',
+        default=1,
+    )
     method_id = fields.Many2one(
         'prweb.purchase.method',
         string='PRWeb Method',
+        index=True,
+        ondelete='cascade',
         required=True,
     )
     doctype_id = fields.Many2one(
@@ -650,6 +696,7 @@ class PurchaseOrderCommittee(models.Model):
     sequence = fields.Integer(
         string='Sequence',
         default=1,
+        required=True,
     )
     name = fields.Char(
         string='Name',

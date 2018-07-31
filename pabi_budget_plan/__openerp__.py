@@ -54,6 +54,7 @@
         'views/budget_plan_invest_construction_view.xml',
         'views/invest_asset_plan_view.xml',
         'views/account_view.xml',
+        'views/account_config.xml',
     ],
     'demo': [
     ],

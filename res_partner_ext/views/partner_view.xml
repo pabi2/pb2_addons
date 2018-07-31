@@ -77,18 +77,6 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//page[@name='accounting']/group//field[@name='property_account_receivable']" position="after">
-                    <field name="require_receivable_account" invisible="1"/>
-                </xpath>
-                <xpath expr="//page[@name='accounting']/group//field[@name='property_account_receivable']" position="attributes">
-                    <attribute name="attrs">{'required': [('require_receivable_account', '=', True)]}</attribute>
-                </xpath>
-                <xpath expr="//page[@name='accounting']/group//field[@name='property_account_payable']" position="after">
-                    <field name="require_payable_account" invisible="1"/>
-                </xpath>
-                <xpath expr="//page[@name='accounting']/group//field[@name='property_account_payable']" position="attributes">
-                    <attribute name="attrs">{'required': [('require_payable_account', '=', True)]}</attribute>
-                </xpath>
                 <!-- For some reason, without using replace, it got error in install -->
                 <field name="category_id" position="replace">
                     <field name="category_id" placeholder="Category..." domain="[('parent_id','=',False)]"/>
@@ -173,6 +161,27 @@
                 <field name="lang" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </field>
+            </field>
+        </record>
+
+        <record id="view_partner_form_ext2" model="ir.ui.view">
+            <field name="name">view.partner.form.ext</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='accounting']/group//field[@name='property_account_receivable']" position="after">
+                    <field name="require_receivable_account" invisible="1"/>
+                </xpath>
+                <xpath expr="//page[@name='accounting']/group//field[@name='property_account_receivable']" position="attributes">
+                    <attribute name="attrs">{'required': [('require_receivable_account', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//page[@name='accounting']/group//field[@name='property_account_payable']" position="after">
+                    <field name="require_payable_account" invisible="1"/>
+                </xpath>
+                <xpath expr="//page[@name='accounting']/group//field[@name='property_account_payable']" position="attributes">
+                    <attribute name="attrs">{'required': [('require_payable_account', '=', True)]}</attribute>
+                </xpath>
             </field>
         </record>
 

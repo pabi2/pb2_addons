@@ -17,6 +17,7 @@
         "pabi_attachment_helper",
         "pabi_web_config",
         "pabi_utils",
+        "pabi_budget_internal_charge",
     ],
     "data": [
     ],

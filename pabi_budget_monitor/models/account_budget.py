@@ -12,6 +12,7 @@ class AccountBudget(models.Model):
         # 'activity_id': 'Activity',
         # Fund
         # 'fund_id': 'Fund (for all)',
+        'company_id': 'NSTDA',
         # Project Based
         'spa_id': 'SPA',
         'mission_id': 'Mission',
@@ -137,11 +138,17 @@ class AccountBudget(models.Model):
         return self.document_check_budget(doc_date, doc_lines)
 
     @api.model
-    def document_check_budget(self, doc_date, doc_lines, amount_field=False):
+    def document_check_budget(self, doc_date, doc_lines, amount_field=False,
+                              internal_charge=False):
         res = {'budget_ok': True,
                'budget_status': {},
                'message': False}
         fiscal_id, budget_levels = self.get_fiscal_and_budget_level(doc_date)
+        # Internal Charge, no budget check
+        if internal_charge:
+            fiscal = self.env['account.fiscalyear'].browse(fiscal_id)
+            if fiscal.control_ext_charge_only:
+                self = self.with_context(force_no_budget_check=True)
         # Validate Budget Level
         if not self._validate_budget_levels(budget_levels):
             return {'budget_ok': False,
@@ -172,7 +179,9 @@ class AccountBudget(models.Model):
 
     @api.model
     def simple_check_budget(self, doc_date, budget_type,
-                            amount, res_id):
+                            amount, res_id,
+                            internal_charge=False
+                            ):
         """ This method is used to check budget of one type and one res_id
             :param date: doc_date, document date or date to check budget
             :param budget_type: 1 of the 5 budget types
@@ -182,30 +191,27 @@ class AccountBudget(models.Model):
         """
         res = {'budget_ok': True,
                'budget_status': {},
-               'message': False}
+               'message': False,
+               'force_no_budget_check': False}
         fiscal_id, budget_levels = self.get_fiscal_and_budget_level(doc_date)
+        # Internal Charge, no budget check
+        if isinstance(internal_charge, basestring):
+            # Because java may pass as string
+            internal_charge = \
+                internal_charge.lower() == "true" and True or False
+        if internal_charge:
+            fiscal = self.env['account.fiscalyear'].browse(fiscal_id)
+            if fiscal.control_ext_charge_only:
+                self = self.with_context(force_no_budget_check=True)
         # Validate Budget Level
         if not self._validate_budget_levels(budget_levels):
             return {'budget_ok': False,
                     'budget_status': {},
-                    'message': 'Budget level(s) is not set!'}
+                    'message': 'Budget level(s) is not set!',
+                    'force_no_budget_check': False,
+                    }
         # Check for single budget type
         budget_level = budget_levels[budget_type]
-        # sel_fields = self._prepare_sel_budget_fields(budget_type,
-        #                                              budget_level)
-        # ext_res_id = False
-        # ext_field = False
-        # if len(sel_fields) > 1 and 'fund_id' in sel_fields:
-        #     if not fund_id:
-        #         return {'budget_ok': False,
-        #                 'budget_status': {},
-        #                 'message': 'Fund is not selected!'}
-        #     else:
-        #         ext_field = len(sel_fields) == 2 and sel_fields[1] or False
-        #         # Reassign
-        #         ext_res_id = res_id
-        #         res_id = fund_id
-
         amount = self._calc_amount_company_currency(amount)
         res = self.check_budget(fiscal_id,
                                 budget_type,  # eg, project_base
@@ -300,6 +306,7 @@ class AccountBudgetLine(models.Model):
 
     @api.multi
     def _get_past_actual_amount(self):
+        """ For auto rolling, only invest asset is allowed """
         """ Will avaliable only if line unique with chart_view """
         budget_type_dict = {
             # 'unit_base': False,
@@ -309,7 +316,6 @@ class AccountBudgetLine(models.Model):
             'invest_asset': 'invest_asset_id',
         }
         self.ensure_one()
-        Consume = self.env['budget.consume.report']
         if self.chart_view not in budget_type_dict.keys():
             raise ValidationError(
                 _('This budget (%s) can not use release by rolling') %
@@ -319,8 +325,12 @@ class AccountBudgetLine(models.Model):
                ('fiscalyear_id', '=', self.fiscalyear_id.id),
                (dimension, '=', self[dimension].id),
                ]
-        consumes = Consume.search(dom)
-        return sum(consumes.mapped('amount_actual'))
+        self._cr.execute("""
+            select coalesce(sum(amount_actual), 0.0) amount_actual
+            from budget_consume_report where %s
+        """ % self.env['account.budget']._domain_to_where_str(dom))
+        amount = self._cr.fetchone()[0]
+        return amount
 
     @api.multi
     def _get_future_plan_amount(self):

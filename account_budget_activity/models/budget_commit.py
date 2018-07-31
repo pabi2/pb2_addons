@@ -45,8 +45,12 @@ class CommitCommon(object):
         (obj_line, line_model, head_field, line_field) = self._CC[self._name]
         for rec in self:
             rec[obj_line].release_committed_budget()
-            rec.budget_transition_ids.filtered('active').\
-                write({'active': False})
+            trans_ids = rec.budget_transition_ids.ids
+            if trans_ids:
+                self._cr.execute("""
+                    update budget_transition set active = false
+                    where active = true and id in %s
+                """, (tuple(trans_ids), ))
 
     @api.multi
     def recreate_all_budget_commitment(self):

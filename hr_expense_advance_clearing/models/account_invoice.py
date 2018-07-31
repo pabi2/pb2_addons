@@ -27,6 +27,7 @@ class AccountInvoice(models.Model):
     advance_expense_id = fields.Many2one(
         'hr.expense.expense',
         string="Advance Expense",
+        index=True,
         copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -83,9 +84,21 @@ class AccountInvoice(models.Model):
                                     'set in Account Settings!'))
         lines = invoice.invoice_line
         # Advance with Negative Amount
-        advance_lines = lines.filtered(lambda x: x.price_subtotal < 0 and
-                                       x.account_id == advance_account)
-        return sum([l.price_subtotal for l in advance_lines])
+        # kittiu: Performance Tuning
+        # advance_lines = lines.filtered(lambda x: x.price_subtotal < 0 and
+        #                                x.account_id == advance_account)
+        # return sum([l.price_subtotal for l in advance_lines])
+        amount = 0.0
+        if lines:
+            self._cr.execute("""
+                select coalesce(sum(price_subtotal), 0.0) price_subtotal
+                from account_invoice_line
+                where id in %s
+                and account_id = %s
+                and price_subtotal < 0.0
+            """, (tuple(lines.ids), advance_account.id))
+            amount = self._cr.fetchone()[0]
+        return amount
 
     @api.multi
     def invoice_validate(self):

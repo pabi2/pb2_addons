@@ -182,8 +182,8 @@ class ResInvestConstruction(LogCommon, models.Model):
         for rec in self:
             plans = rec.budget_plan_ids
             # Find current and previous years plan line
-            prev_plans = plans.filtered(lambda l: l.fiscalyear_id.date_start <=
-                                        current_fy.date_start)
+            prev_plans = plans.filtered(
+                lambda l: l.fiscalyear_id.date_start <= current_fy.date_start)
             rec.amount_before = sum(prev_plans.mapped('amount_plan'))
             future_plans = plans - prev_plans  # Only future
             future_plans = future_plans.sorted(
@@ -1038,6 +1038,7 @@ class ResInvestConstructionPhaseSync(models.Model):
         string='Budget Line Ref',
         index=True,
         ondelete='cascade',
+        copy=False,
         help="This is of latest version of fiscalyear's budget control",
     )
     budget_id = fields.Many2one(
@@ -1054,6 +1055,7 @@ class ResInvestConstructionPhaseSync(models.Model):
     synced = fields.Boolean(
         string='Synced',
         default=False,
+        copy=False,
         help="Checked when it is synced. Unchecked when phase is updated"
         "then it will be synced again",
     )

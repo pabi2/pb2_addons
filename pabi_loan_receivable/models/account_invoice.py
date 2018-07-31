@@ -117,13 +117,11 @@ class AccountInvoice(models.Model):
     @api.model
     def _check_loan_invoice_in_advance(self, loan_agreement_id, date_due):
         if loan_agreement_id:
-            dom = [
-                ('type', 'in', ('out_invoice', 'out_refund')),
-                ('state', '=', 'draft'),
-                ('date_due', '<', date_due),
-                ('loan_agreement_id', '=', loan_agreement_id),
-            ]
-            if len(self.search(dom)._ids) > 0:
+            dom = [('type', 'in', ('out_invoice', 'out_refund')),
+                   ('state', '=', 'draft'),
+                   ('date_due', '<', date_due),
+                   ('loan_agreement_id', '=', loan_agreement_id), ]
+            if self.search_count(dom) > 0:
                 raise ValidationError(
                     _('You are not allowed to validate '
                       'invoice plan in advance!'))

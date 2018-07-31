@@ -40,7 +40,7 @@
           <field name="type">ir.actions.act_window</field>
           <field name="res_model">export.xlsx.template</field>
           <field name="view_type">form</field>
-          <field name="view_mode">tree,form</field>
+          <field name="view_mode">form</field>
           <field name="target">new</field>
     			<field name="context"
             eval="{'template_fname': 'budget_breakdown_unit_base.xlsx',
@@ -55,7 +55,7 @@
           <field name="type">ir.actions.act_window</field>
           <field name="res_model">import.xlsx.template</field>
           <field name="view_type">form</field>
-          <field name="view_mode">tree,form</field>
+          <field name="view_mode">form</field>
           <field name="target">new</field>
      			<field name="context"
             eval="{'template_fname': 'budget_breakdown_unit_base.xlsx',

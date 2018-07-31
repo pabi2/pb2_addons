@@ -1,6 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_account_move_ic_user,account.move.ic.user,account.model_account_move,group_approve_ic_activity,1,1,1,1
 access_account_move_line_ic_user,account.move.line.ic.user,account.model_account_move_line,group_approve_ic_activity,1,1,1,1
+access_account_journal_period_user,account.journal.period.ic.user,account.model_account_journal_period,group_approve_ic_activity,1,1,1,0
 access_account_invoice_ic_user,account.invoice.ic.user,account.model_account_invoice,group_approve_ic_activity,1,0,0,0
 access_account_voucher_ic_user,account.voucher.ic.user,account_voucher.model_account_voucher,group_approve_ic_activity,1,0,0,0
 access_account_bank_receipt_ic_user,account.bank.receipt.ic.user,account_bank_receipt.model_account_bank_receipt,group_approve_ic_activity,1,0,0,0

@@ -15,6 +15,9 @@ class StockPicking(models.Model):
     @api.model
     def default_get(self, fields):
         res = super(StockPicking, self).default_get(fields)
+        if self._context.get('default_picking_type_id', False):
+            # If has default_picking_type_id already, by pass it.
+            return res
         ou = self.env['res.users'].operating_unit_default_get(self._uid)
         # Find quick picking type with warehouse_id in same ou
         picking_type = self.env['stock.picking.type'].search([

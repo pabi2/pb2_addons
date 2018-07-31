@@ -19,9 +19,22 @@ class AccountMove(models.Model):
         string='Document Date',
         readonly=True,
         states={'draft': [('readonly', False)]},
-        copy=False,
-        default=lambda self: fields.Date.context_today(self),
+        # copy=False,
+        # default=lambda self: fields.Date.context_today(self),
+        compute='_compute_date_document',
+        store=True,
+        help="Document date follow original document's document date, "
+        "otherwise, use current date",
     )
+
+    @api.multi
+    @api.depends('document_id')
+    def _compute_date_document(self):
+        for rec in self:
+            if rec.document_id and 'date_document' in rec.document_id:
+                rec.date_document = rec.document_id.date_document
+            else:
+                rec.date_document = fields.Date.context_today(self)
 
     @api.multi
     def _write(self, vals):
@@ -85,7 +98,7 @@ class AccountJournal(models.Model):
         res = super(AccountJournal, self).\
             fields_view_get(view_id=view_id, view_type=view_type,
                             toolbar=toolbar, submenu=submenu)
-        if self._context.get('default_type', False) != 'bank':
+        if self._context.get('default_type', False) not in ('bank', 'cash'):
             if view_type in ('tree', 'form'):
                 tag = view_type == 'tree' and "/tree" or "/form"
                 doc = etree.XML(res['arch'])

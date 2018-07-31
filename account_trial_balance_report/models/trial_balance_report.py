@@ -52,27 +52,37 @@ class AccountTrailBalanceReport(models.Model):
             domain.append(('move_id.state', '=', 'posted'))
         moves = Move.search(domain)
         if with_movement:
-            accounts = moves.mapped('account_id').sorted(key=lambda l: l.code)
+            self._cr.execute("""
+                select distinct aa.code, aa.id account_id
+                from account_move_line aml
+                join account_account aa on aa.id = aml.account_id
+                and aml.id in %s
+                order by aa.code
+            """, (tuple(moves.ids), ))
+            acct_ids = map(lambda x: x[1], self._cr.fetchall())
+            accounts = Account.search([('id', 'in', acct_ids)], order='code')
         else:
             accounts = Account.search([('type', '!=', 'view')], order='code')
         return (accounts, moves)
 
     @api.model
     def _get_init_moves(self, report, moves, account):
-        init_moves = moves.filtered(
-            lambda l: l.account_id == account and
-            (l.centralisation != 'normal' or  # opening entry
-             (l.centralisation == 'normal' and l.date < report.date_start))
-        )
+        MoveLine = self.env['account.move.line']
+        init_moves = MoveLine.search(
+            [('account_id', '=', account.id),
+             '|', ('centralisation', '!=', 'normal'),
+             '&', ('centralisation', '=', 'normal'),
+             ('date', '<', report.date_start), ])
         return init_moves
 
     @api.model
     def _get_focus_moves(self, report, moves, account):
-        focus_moves = moves.filtered(
-            lambda l: l.account_id == account and
-            (l.centralisation == 'normal' and
-             l.date >= report.date_start and l.date <= report.date_stop)
-        )
+        MoveLine = self.env['account.move.line']
+        focus_moves = MoveLine.search(
+            [('account_id', '=', account.id),
+             ('centralisation', '=', 'normal'),
+             ('date', '>=', report.date_start),
+             ('date', '<=', report.date_stop), ])
         return focus_moves
 
     @api.model
@@ -102,10 +112,25 @@ class AccountTrailBalanceReport(models.Model):
         for account in accounts:
             init_moves = self._get_init_moves(report, moves, account)
             focus_moves = self._get_focus_moves(report, moves, account)
-            initial = sum(init_moves.mapped('debit')) - \
-                sum(init_moves.mapped('credit'))
-            debit = sum(focus_moves.mapped('debit'))
-            credit = sum(focus_moves.mapped('credit'))
+            initial = 0.0
+            debit = 0.0
+            credit = 0.0
+            # Init
+            if init_moves:
+                self._cr.execute("""
+                    select coalesce(sum(debit - credit), 0.0)
+                    from account_move_line where id in %s
+                """, (tuple(init_moves.ids),))
+                initial = init_moves and self._cr.fetchone()[0]
+            # Focus
+            if focus_moves:
+                self._cr.execute("""
+                    select coalesce(sum(debit), 0.0) debit,
+                        coalesce(sum(credit), 0.0) credit
+                    from account_move_line where id in %s
+                """, (tuple(focus_moves.ids),))
+                res = self._cr.fetchone()
+                (debit, credit) = (res[0], res[1])
             line_dict = {
                 'account_id': account.id,
                 'initial': initial,
@@ -180,6 +205,7 @@ class AccountTrailBalanceLine(models.Model):
     def open_items(self, move_type):
         self.ensure_one()
         TB = self.env['account.trial.balance.report']
+        MoveLine = self.env['account.move.line']
         rpt = self.report_id
         _x, moves = TB._get_moves(rpt.fiscalyear_id.id,
                                   rpt.date_start, rpt.date_stop,
@@ -187,10 +213,12 @@ class AccountTrailBalanceLine(models.Model):
         move_ids = []
         if move_type == 'debit':
             moves = TB._get_focus_moves(rpt, moves, self.account_id)
-            move_ids = moves.filtered('debit').ids
+            move_ids = MoveLine.search([('id', 'in', moves.ids),
+                                        ('debit', '>', 0.0)]).ids
         if move_type == 'credit':
             moves = TB._get_focus_moves(rpt, moves, self.account_id)
-            move_ids = moves.filtered('credit').ids
+            move_ids = MoveLine.search([('id', 'in', moves.ids),
+                                        ('credit', '>', 0.0)]).ids
         if move_type == 'balance':
             moves = TB._get_focus_moves(rpt, moves, self.account_id)
             move_ids = moves.ids

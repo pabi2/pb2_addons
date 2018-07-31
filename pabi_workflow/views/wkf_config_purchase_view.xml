@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-	<data>  
+	<data>
    		#TOP Work Flow Configuration Menu
-   		<menuitem name="Purchase" id="menu_wkf_config_purchase" parent="menu_wkf_config" sequence="4"/>
-    	      
+   		<!-- <menuitem name="Purchase" id="menu_wkf_config_purchase" parent="menu_wkf_config" sequence="10"/> -->
+
    		#Purchasing Unit
         <record id="view_wkf_config_purchase_unit_tree" model="ir.ui.view">
             <field name="name">view.wkf.config.purchase.unit.tree</field>
@@ -17,7 +17,7 @@
                 </tree>
             </field>
         </record>
-        
+
         <record id="view_wkf_config_purchase_unit_form" model="ir.ui.view">
             <field name="name">view.wkf.config.purchase.unit.form</field>
             <field name="model">wkf.config.purchase.unit</field>
@@ -57,7 +57,7 @@
                 </form>
             </field>
         </record>
-        
+
         <record id="view_wkf_config_purchase_unit_search" model="ir.ui.view">
             <field name="name">view.wkf.config.purchase.unit.search</field>
             <field name="model">wkf.config.purchase.unit</field>
@@ -69,7 +69,7 @@
                     </group>
                 </search>
             </field>
-        </record>               
+        </record>
 
         <record id="action_wkf_config_purchase_unit" model="ir.actions.act_window">
             <field name="name">Purchasing Unit</field>
@@ -77,11 +77,11 @@
             <field name="view_type">form</field>
             <field name="view_id" ref="view_wkf_config_purchase_unit_tree"/>
         </record>
-        
+
         <menuitem name="Purchasing Unit"
          	id="menu_wkf_config_purchase_unit"
-        	action="action_wkf_config_purchase_unit" 
-        	parent="menu_wkf_config_purchase" 
-        	sequence="1"/>	
+        	action="action_wkf_config_purchase_unit"
+        	parent="menu_wkf_config"
+        	sequence="10"/>
     </data>
 </openerp>

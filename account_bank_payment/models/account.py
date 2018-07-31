@@ -38,10 +38,13 @@ class AccountMove(models.Model):
         for move in self:
             if move.bank_payment_id:  # Not yet assigned
                 break
-            move_lines = move.line_id.filtered('bank_payment_id')
-            bank_payments = move_lines.mapped('bank_payment_id')
-            if bank_payments:
-                move.bank_payment_id = bank_payments[0]
+            self._cr.execute("""
+                select bank_payment_id from account_move_line
+                where move_id = %s and bank_payment_id is not null
+            """, (move.id, ))
+            bank_payment_ids = [i[0] for i in self._cr.fetchall()]
+            if bank_payment_ids:
+                move.bank_payment_id = bank_payment_ids[0]
 
     @api.multi
     def create_bank_payment(self, payment_date):

@@ -6,3 +6,5 @@ from . import budget_breakdown
 from . import account_budget
 from . import account
 from . import res_invest_asset
+from . import res_company
+from . import account_config

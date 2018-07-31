@@ -12,7 +12,7 @@ class PurchaseRequest(models.Model):
         ('to_approve', 'To Accept'),
         ('approved', 'Accepted'),
         ('done', 'Done'),
-        ('rejected', 'Rejected')
+        ('rejected', 'Rejected'),
     ]
 
     @api.model
@@ -56,8 +56,10 @@ class PurchaseRequest(models.Model):
             'draft': [('readonly', False)],
             'to_approve': [('readonly', False)],
         },
-        domain="[('operating_unit_ids', 'in', operating_unit_id)]",
         track_visibility='onchange',
+        domain=lambda self:
+        [('id', 'in', self.env.ref('purchase.'
+                                   'group_purchase_manager').users.ids)],
     )
     currency_id = fields.Many2one(
         'res.currency',
@@ -204,6 +206,11 @@ class PurchaseRequest(models.Model):
         },
         default=False,
     )
+    small_amount_reason = fields.Char(
+        string='Small Amount Reason',
+        readonly=True,
+        copy=False,
+    )
     accept_reason_txt = fields.Char(
         string='Accept Reason',
         readonly=True,
@@ -215,23 +222,21 @@ class PurchaseRequest(models.Model):
     ]
 
     @api.multi
+    @api.constrains('state')
+    def _check_committee_type(self):
+        for rec in self:
+            if rec.state in ('approved'):  # Accepted
+                committee_types = rec.committee_ids.mapped('committee_type_id')
+                if committee_types.filtered('prweb_only'):
+                    raise ValidationError(
+                        _('Committees tab: please recheck committee '
+                          'types before accept!'))
+        return True
+
+    @api.multi
     def _compute_amount_company(self):
         for rec in self:
             rec.amount_company = rec.amount_total * rec.currency_rate
-
-    @api.onchange('is_central_purchase')
-    def _onchange_is_central_purchase(self):
-        if self.is_central_purchase:
-            domain = {
-                'responsible_uid': []
-            }
-        else:
-            domain = {
-                'responsible_uid': [
-                    ('operating_unit_ids', 'in', self.operating_unit_id.id)
-                ]
-            }
-        return {'domain': domain}
 
     @api.one
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_ids')
@@ -490,6 +495,16 @@ class PurchaseRequestLine(models.Model):
                 pr_line_states = rec.request_id.line_ids.mapped('state')
                 if len(pr_line_states) == 1 and pr_line_states[0] == 'close':
                     rec.request_id.write({'state': 'done'})
+        return res
+
+    @api.multi
+    def _prepare_analytic_line(self, reverse=False, currency=False):
+        # For PABI2, we use manual rate
+        res = super(PurchaseRequestLine, self).\
+            _prepare_analytic_line(reverse=reverse, currency=currency)
+        sign = res.get('amount', 0.0) < 0 and -1 or 1
+        res['amount'] = \
+            sign * self.price_subtotal * self.request_id.currency_rate
         return res
 
 

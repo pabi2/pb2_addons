@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from .budget_plan_common import BPCommon, BPLMonthCommon
@@ -7,6 +8,7 @@ from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 # from openerp.addons.document_status_history.models.document_history import \
 #     LogCommon
+_logger = logging.getLogger(__name__)
 
 
 class BudgetPlanProject(BPCommon, models.Model):
@@ -103,6 +105,21 @@ class BudgetPlanProject(BPCommon, models.Model):
         string='Fund Type',
         compute='_compute_master_fund_type_ids'
     )
+    master_employee_ids = fields.Many2many(
+        'hr.employee',
+        sring='Employee Master Data',
+        compute='_compute_master_employee_ids',
+    )
+    master_section_ids = fields.Many2many(
+        'res.section',
+        sring='Section Master Data',
+        compute='_compute_master_section_ids',
+    )
+    master_division_ids = fields.Many2many(
+        'res.division',
+        sring='Division Master Data',
+        compute='_compute_master_division_ids',
+    )
 
     _sql_constraints = [
         ('uniq_plan', 'unique(program_id, fiscalyear_id)',
@@ -158,6 +175,27 @@ class BudgetPlanProject(BPCommon, models.Model):
         for rec in self:
             rec.master_fund_type_ids = FundType.search([]).ids
 
+    @api.multi
+    def _compute_master_employee_ids(self):
+        Employee = self.env['hr.employee']
+        for rec in self:
+            employees = Employee.search([('id', '!=', 1),
+                                         ('employee_code', '!=', False)],
+                                        order='employee_code')
+            rec.master_employee_ids = employees
+
+    @api.multi
+    def _compute_master_section_ids(self):
+        Section = self.env['res.section']
+        for rec in self:
+            rec.master_section_ids = Section.search([]).ids
+
+    @api.multi
+    def _compute_master_division_ids(self):
+        Division = self.env['res.division']
+        for rec in self:
+            rec.master_division_ids = Division.search([]).ids
+
     @api.model
     def create(self, vals):
         name = self._get_doc_number(vals['fiscalyear_id'],
@@ -181,6 +219,8 @@ class BudgetPlanProject(BPCommon, models.Model):
                                 'program_id': program.id,
                                 'user_id': False})
             plan_ids.append(plan.id)
+        _logger.info("Project plan created - %s", plan_ids)
+        self._cr.commit()
 
         # Special for Project Based, also create budget control too
         budget_ids = self.env['account.budget'].\

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
+from openerp.exceptions import ValidationError
 
 
 class ResProject(models.Model):
@@ -142,3 +143,50 @@ class ResProject(models.Model):
             result = res['result'] or {}
             res['result'] = result.get(fiscal.name, 0.0)
         return res
+
+    @api.model
+    def change_project_budget_lock_status(self, project_code, status):
+        """ Update lock status,
+        state = ['lock', 'unlock']
+        """
+        res = {
+            'is_success': False,
+            'result': False,
+            'messages': False,
+        }
+        try:
+            if status not in ('lock', 'unlock'):
+                raise ValidationError(_('Wrong input status: %s') % status)
+            project_id = self.name_search(project_code, operator='=')
+            if len(project_id) > 1:
+                raise ValidationError(
+                    _('%s match more > 1 record.') % project_code)
+            elif len(project_id) == 0:
+                raise ValidationError(
+                    _('%s found no match.') % project_code)
+            project = self.browse(project_id[0][0])
+            project.write({'lock_release': status == 'lock' and True or False})
+            res['is_success'] = True
+        except Exception, e:
+            res = {
+                'is_success': False,
+                'result': False,
+                'messages': e,
+            }
+            self._cr.rollback()
+        return res
+
+
+class ResProjectBudgetPlan(models.Model):
+    _inherit = 'res.project.budget.plan'
+
+    @api.model
+    def release_budget(self, plan_id, amount):
+        """ Helper function for webservice call """
+        budget_line = self.search([('id', '=', plan_id)])
+        if amount > budget_line.planned_amount:
+            raise ValidationError(
+                _('Release amount exceed planned amount!'))
+        budget_line.write({'released_amount': amount})
+        budget_line.project_id._trigger_auto_sync()
+        return True

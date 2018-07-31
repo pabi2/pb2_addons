@@ -10,10 +10,7 @@ from openerp.addons.pabi_base.models.res_common import ResCommon
 
 
 MY_PROJECT_STATES = [('draft', 'Draft'),
-                     ('submit', 'Submitted'),
-                     ('unapprove', 'Un-Approved'),
                      ('approve', 'Approved'),
-                     ('reject', 'Rejected'),
                      ('delete', 'Deleted'),
                      ('cancel', 'Cancelled'),
                      ('close', 'Closed'),
@@ -67,8 +64,8 @@ class ResProject(LogCommon, models.Model):
     project_date_end_proposal = fields.Date(
         string='Project End Date (by proposal)',
     )
-    project_date_end_extension = fields.Date(
-        string='Project End Date (by extension)',
+    project_date_close_cond = fields.Date(
+        string='Project Close Date (Condition)',
     )
     project_date_start = fields.Date(
         string='Project start Date',
@@ -77,7 +74,10 @@ class ResProject(LogCommon, models.Model):
         string='Project End Date',
     )
     project_date_close = fields.Date(
-        string='Project Close Date',
+        string='Project Close Date (Complete)',
+    )
+    project_date_terminate = fields.Date(
+        string='Project Terminate Date',
     )
     contract_date_start = fields.Date(
         string='Contract start Date',
@@ -119,6 +119,10 @@ class ResProject(LogCommon, models.Model):
     ref_program_id = fields.Many2one(
         'res.program',
         string='Program Reference',
+    )
+    target_program_id = fields.Many2one(
+        'res.program',
+        string='Program Target',
     )
     proposal_program_id = fields.Many2one(
         'res.program',
@@ -289,8 +293,14 @@ class ResProject(LogCommon, models.Model):
     overall_revenue_plan = fields.Float(
         string='Overall Revenue Plan',
     )
+    proposal_overall_budget = fields.Float(
+        string='Proposal Overall Budget (External)',
+    )
     overall_expense_budget = fields.Float(
-        string='Overall Expense Budget',
+        string='Overall Expense Budget (External)',
+    )
+    overall_expense_budget_internal = fields.Float(
+        string='Overall Expense Budget (Internal)',
     )
     project_type_id = fields.Many2one(
         'project.type',
@@ -444,6 +454,7 @@ class ResProject(LogCommon, models.Model):
                 if budget.project_auto_sync:
                     budget.with_context(
                         project_id=project.id).sync_budget_my_project()
+        return True
 
     @api.multi
     def _release_fiscal_budget(self, fiscalyear, released_amount):
@@ -452,11 +463,12 @@ class ResProject(LogCommon, models.Model):
             show warning if released amount > planned amout
         """
         # Not current year, no budget release allowed
-        if self.env['account.fiscalyear'].find() != fiscalyear.id:
-            raise ValidationError(
-                _('Not allow to release budget for fiscalyear %s!\nOnly '
-                  'current year budget is allowed.' % fiscalyear.name))
-        for project in self:
+        current_fy = self.env['account.fiscalyear'].find()
+        for project in self.sudo():
+            if project.current_fy_release_only and current_fy != fiscalyear.id:
+                raise ValidationError(
+                    _('Not allow to release budget for fiscalyear %s!\nOnly '
+                      'current year budget is allowed.' % fiscalyear.name))
             budget_plans = project.budget_plan_ids.\
                 filtered(lambda l: l.fiscalyear_id == fiscalyear)
             if not budget_plans:
@@ -741,6 +753,7 @@ class ResProjectBudgetPlan(models.Model):
     released_amount = fields.Float(
         string='Released Amount',
         default=0.0,
+        copy=False,
     )
     # Sync information
     sync_budget_line_id = fields.Many2one(
@@ -748,6 +761,7 @@ class ResProjectBudgetPlan(models.Model):
         string='Budget Line Ref',
         index=True,
         ondelete='set null',
+        copy=False,
         help="This is of latest version of fiscalyear's budget control",
     )
     budget_id = fields.Many2one(
@@ -764,6 +778,7 @@ class ResProjectBudgetPlan(models.Model):
     synced = fields.Boolean(
         string='Synced',
         default=False,
+        copy=False,
         help="Checked when it is synced. Unchecked when plan is updated"
         "then it will be synced again",
     )

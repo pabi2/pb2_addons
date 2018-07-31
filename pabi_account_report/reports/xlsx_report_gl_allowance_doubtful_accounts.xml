@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="xlsx_report_gl_allowance_doubtful_accounts_view" model="ir.ui.view">
+            <field name="name">xlsx.report.gl.allowance.doubtful.accounts.view</field>
+            <field name="model">xlsx.report.gl.allowance.doubtful.accounts</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <field name="fiscalyear_start_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="fiscalyear_end_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="period_start_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="period_end_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="period_end_id" position="after">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_start" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_end" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_end" position="after">
+                    <field name="date_report"/>
+                </field>
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Account Filter">
+                        <group>
+                            <group>
+                                <field name="allowance_for_doubtful_account_code"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_report_gl_allowance_doubtful_accounts" model="ir.actions.act_window">
+            <field name="name">Allowance for Doubtful Accounts</field>
+            <field name="res_model">xlsx.report.gl.allowance.doubtful.accounts</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_report_gl_allowance_doubtful_accounts"
+            name="Allowance for Doubtful Accounts"
+            parent="menu_pabi_general_ledger_report"
+            action="action_report_gl_allowance_doubtful_accounts"
+            sequence="60"/>
+    </data>
+</openerp>

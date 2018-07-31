@@ -19,6 +19,10 @@ class PABIWebConfigSettings(models.TransientModel):
         string='Open Connection to PABI Web.',
         related='company_id.pabiweb_active',
     )
+    pabiweb_pd_inactive = fields.Boolean(
+        string='Disable PD Interface.',
+        related='company_id.pabiweb_pd_inactive',
+    )
     pabiweb_hr_url = fields.Char(
         string='PABI Web URL for HR Salary',
         related='company_id.pabiweb_hr_url',

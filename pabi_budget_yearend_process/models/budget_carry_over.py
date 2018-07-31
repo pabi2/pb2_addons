@@ -58,7 +58,11 @@ class BudgetCarryOver(models.Model):
     @api.multi
     def _compute_amount_total(self):
         for rec in self:
-            rec.amount_total = sum(rec.line_ids.mapped('commit_amount'))
+            self._cr.execute("""
+                select coalesce(sum(commit_amount), 0.0) commit_amount
+                from budget_carry_over_line where carry_over_id = %s
+            """, (rec.id, ))
+            rec.amount_total = self._cr.fetchone()[0]
 
     @api.model
     def default_get(self, fields):
@@ -111,10 +115,10 @@ class BudgetCarryOver(models.Model):
                 join account_fiscalyear fiscal
                     on rpt.fiscalyear_id = fiscal.id
                 where fiscal.date_start < %s and doctype in %s
+                and rpt.budget_commit_type != 'actual'
                 group by doctype, document, document_line,
                     purchase_request_line_id, sale_line_id,
                     purchase_line_id, expense_line_id) a
-            where a.amount_consumed > 0
             """, (rec.fiscalyear_id.date_start, tuple(doctypes)))
             result = self._cr.dictfetchall()
             for r in result:

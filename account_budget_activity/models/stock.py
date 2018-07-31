@@ -15,12 +15,10 @@ class StockPicking(models.Model):
 
     @api.multi
     def _compute_budget_commit_ids(self):
-        Move = self.env['account.move']
         Analytic = self.env['account.analytic.line']
         for rec in self:
-            _ids = Move.search(
-                [('document', '=', rec.name)]).mapped('line_id').ids
-            rec.budget_commit_ids = Analytic.search([('move_id', 'in', _ids)])
+            rec.budget_commit_ids = \
+                Analytic.search([('move_id.document', '=', rec.name)])
 
 
 class StockMove(ActivityCommon, models.Model):

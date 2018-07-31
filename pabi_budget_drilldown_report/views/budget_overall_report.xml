@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_budget_overall_report_form">
+            <field name="name">view.budget.overall.report.form</field>
+            <field name="model">budget.drilldown.report</field>
+            <field name="inherit_id" ref="view_budget_drilldown_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <group name="filter" position="after">
+                    <group string="External" attrs="{'invisible': [('line_external_ids', '=', [])]}">
+                        <field name="line_external_ids" nolabel="1" edtible="bottom">
+                            <tree editable="bottom">
+                                <field name="chart_view"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount" sum="Total"/>
+                                <field name="policy_amount" sum="Total"/>
+                                <field name="rolling_amount" sum="Total"/>
+                                <field name="released_amount" sum="Total"/>
+                                <field name="amount_pr_commit" sum="Total"/>
+                                <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_po_commit" sum="Total"/>
+                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_exp_commit" sum="Total"/>
+                                <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_total_commit" sum="Total"/>
+                                <button name="open_total_commit_items" string="Total Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_actual" sum="Total"/>
+                                <button name="open_actual_items" string="Actual Items" icon="gtk-add" type="object"/>
+                                <field name="amount_consumed" sum="Total"/>
+                                <button name="open_consumed_items" string="Consumed Items" icon="gtk-add" type="object"/>
+                                <field name="amount_balance" sum="Total"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="Internal" attrs="{'invisible': [('line_internal_ids', '=', [])]}">
+                        <field name="line_internal_ids" nolabel="1">
+                            <tree edtible="bottom">
+                                <field name="chart_view"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount" sum="Total"/>
+                                <field name="policy_amount" sum="Total"/>
+                                <field name="rolling_amount" sum="Total"/>
+                                <field name="released_amount" sum="Total"/>
+                                <field name="amount_pr_commit" sum="Total"/>
+                                <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_po_commit" sum="Total"/>
+                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_exp_commit" sum="Total"/>
+                                <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_total_commit" sum="Total"/>
+                                <button name="open_total_commit_items" string="Total Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_actual" sum="Total"/>
+                                <button name="open_actual_items" string="Actual Items" icon="gtk-add" type="object"/>
+                                <field name="amount_consumed" sum="Total"/>
+                                <button name="open_consumed_items" string="Consumed Items" icon="gtk-add" type="object"/>
+                                <field name="amount_balance" sum="Total"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="All" attrs="{'invisible': [('line_all_ids', '=', [])]}">
+                        <field name="line_all_ids" nolabel="1">
+                            <tree edtible="bottom">
+                                <field name="chart_view"/>
+                                <field name="planned_amount" sum="Total"/>
+                                <field name="policy_amount" sum="Total"/>
+                                <field name="rolling_amount" sum="Total"/>
+                                <field name="released_amount" sum="Total"/>
+                                <field name="amount_pr_commit" sum="Total"/>
+                                <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_po_commit" sum="Total"/>
+                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_exp_commit" sum="Total"/>
+                                <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_total_commit" sum="Total"/>
+                                <button name="open_total_commit_items" string="Total Commit Items" icon="gtk-add" type="object"/>
+                                <field name="amount_actual" sum="Total"/>
+                                <button name="open_actual_items" string="Actual Items" icon="gtk-add" type="object"/>
+                                <field name="amount_consumed" sum="Total"/>
+                                <button name="open_consumed_items" string="Consumed Items" icon="gtk-add" type="object"/>
+                                <field name="amount_balance" sum="Total"/>
+                            </tree>
+                        </field>
+                    </group>
+                </group>
+            </field>
+        </record>
+
+    </data>
+</openerp>

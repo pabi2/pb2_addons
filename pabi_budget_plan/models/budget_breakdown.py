@@ -156,9 +156,18 @@ class BudgetBreakdown(models.Model):
 
     @api.multi
     def _compute_budget_count(self):
+        # Tuning,
+        # budget_count = len(breakdown.line_ids.mapped('budget_id'))
+        self._cr.execute("""
+            select breakdown_id, count(budget_id) count
+            from budget_breakdown_line
+            where budget_id is not null
+            and breakdown_id in %s
+            group by breakdown_id
+        """, (tuple(self.ids), ))
+        breakdown_budget_count = dict(self._cr.fetchall())
         for breakdown in self:
-            breakdown.budget_count = \
-                len(breakdown.line_ids.mapped(lambda l: l.budget_id))
+            breakdown.budget_count = breakdown_budget_count[breakdown.id]
 
     @api.multi
     def action_open_budget(self):
@@ -219,7 +228,6 @@ class BudgetBreakdown(models.Model):
                  'invest_asset_line_ids', 'personnel_line_ids')
     def _compute_all(self):
         for rec in self:
-            lines = False
             if rec.unit_base_line_ids:
                 lines = rec.unit_base_line_ids
             elif rec.invest_asset_line_ids:
@@ -228,8 +236,17 @@ class BudgetBreakdown(models.Model):
                 lines = rec.personnel_line_ids
             else:  # Fall back to basic
                 lines = rec.line_ids
-            rec.planned_amount = sum(lines.mapped('planned_amount'))
-            rec.policy_amount = sum(lines.mapped('policy_amount'))
+            res = {}
+            if lines:
+                self._cr.execute("""
+                    select coalesce(sum(planned_amount), 0.0) planned_amount,
+                        coalesce(sum(policy_amount), 0.0) policy_amount
+                    from budget_breakdown_line
+                    where id in %s
+                """, (tuple(lines.ids), ))
+                res = self._cr.dictfetchone()
+            rec.planned_amount = res.get('planned_amount', 0.0)
+            rec.policy_amount = res.get('policy_amount', 0.0)
             rec.policy_diff = rec.policy_amount - rec.new_policy_amount
 
     @api.onchange('policy_line_id')

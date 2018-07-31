@@ -49,28 +49,25 @@ class AccountMoveLine(models.Model):
 
     @api.multi
     def create_analytic_lines(self):
-        """ Create Analytic Line only when,
-            - Is not BS and has (Activity or Product)
-            - Product Valuation is not real_time (invioce)
-            - Product Valuation is real_time (picking) """
         # Before create, always remove analytic line if exists
-        for move_line in self:
-            move_line.analytic_lines.unlink()
         move_lines = self._budget_eligible_move_lines()
-        # Invoice realtime stockable, no budget charge.
-        invoice = self._context.get('invoice', False)
-        move_lines = move_lines.filtered(
-            lambda l: not invoice or l.product_id.type == 'service' or
-            l.product_id.valuation != 'real_time')
         return super(AccountMoveLine, move_lines).create_analytic_lines()
 
     @api.multi
     def _budget_eligible_move_lines(self):
-        """ To be eligible, move line must,
+        """ To be eligible, move line must be,
         * With journal with analytic_journal
-        * Have AG """
-        Budget = self.env['account.budget']
-        move_lines = self.filtered(
-            lambda l: Budget.budget_eligible_line(
-                l.journal_id.analytic_journal_id, l))
+        * Have AG
+        * Invoice with realtime stockable product, no budget charge
+        """
+        BG = self.env['account.budget']
+        invoice = self._context.get('invoice', False)
+        move_lines = self.filtered(  # Too complicated to use SQL
+            lambda l: not l.analytic_lines  # If already created, do not create
+            # Must be budge eligible move line (Analytic JOurnal and AG)
+            and BG.budget_eligible_line(l.journal_id.analytic_journal_id, l)
+            # Invoice with realtime stockable product, no budget charge.
+            and (not invoice or l.product_id.type == 'service' or
+                 l.product_id.valuation != 'real_time')
+        )
         return move_lines

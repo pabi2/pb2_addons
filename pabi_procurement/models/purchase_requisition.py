@@ -31,7 +31,7 @@ class PurchaseRequisition(models.Model):
     )
     purchase_type_id = fields.Many2one(
         'purchase.type',
-        string='Type',
+        string='Procurement Type',
         readonly=True,
         required=True,
         states={'draft': [('readonly', False)]},
@@ -66,7 +66,7 @@ class PurchaseRequisition(models.Model):
     )
     purchase_method_id = fields.Many2one(
         'purchase.method',
-        string='Method',
+        string='Procurement Method',
         readonly=True,
         required=True,
         states={'draft': [('readonly', False)]},
@@ -243,6 +243,24 @@ class PurchaseRequisition(models.Model):
     require_rfq = fields.Boolean(
         string='Require for RFQs',
         related='purchase_method_id.require_rfq',
+    )
+    user_id = fields.Many2one(
+        'res.users',
+        domain=lambda self:
+        [('id', 'in', self.env.ref('purchase.'
+                                   'group_purchase_manager').users.ids)],
+    )
+    egp_date1 = fields.Date(
+        string=u'รายงานขอซื้อ/จ้าง/เช่า',
+        track_visibility='onchange',
+    )
+    egp_date2 = fields.Date(
+        string=u'รายงานผลการพิจารณาและขออนุมัติสั่งซื้อสั่งจ้าง',
+        track_visibility='onchange',
+    )
+    egp_date3 = fields.Date(
+        string=u'ประกาศผลผู้ชนะ',
+        track_visibility='onchange',
     )
 
     @api.multi
@@ -524,18 +542,28 @@ class PurchaseRequisition(models.Model):
                 request.message_post(body=message)
         return True
 
-    @api.model
+    # Move method to below function
+    # @api.model
+    # def get_doc_type(self):
+    #     res = False
+    #     WMethod = self.env['prweb.purchase.method']
+    #     web_method = WMethod.search([
+    #         ('type_id', '=', self.purchase_type_id.id),
+    #         ('method_id', '=', self.purchase_method_id.id),
+    #     ])
+    #     for method in web_method:
+    #         res = method.doctype_id
+    #         break
+    #     return res
+
+    @api.multi
     def get_doc_type(self):
-        res = False
-        WMethod = self.env['prweb.purchase.method']
-        web_method = WMethod.search([
-            ('type_id', '=', self.purchase_type_id.id),
-            ('method_id', '=', self.purchase_method_id.id),
-        ])
-        for method in web_method:
-            res = method.doctype_id
-            break
-        return res
+        self.ensure_one()
+        # Now, doctype is setup in purchase method
+        doctype = self.purchase_method_id.doctype_id
+        if not doctype:
+            raise ValidationError(_('No Purchase Method and/or No Doctype'))
+        return doctype
 
     @api.multi
     def tender_cancel(self):
@@ -673,27 +701,37 @@ class PurchaseRequisitionLine(models.Model):
         if 'value' in res:
             if 'product_qty' in res['value']:
                 del res['value']['product_qty']
-            if 'product_uom_id' in res['value']:
-                del res['value']['product_uom_id']
+            # if 'product_uom_id' in res['value']:
+            #     del res['value']['product_uom_id']
         return res
+
+    # @api.multi
+    # @api.depends('product_qty', 'price_unit', 'tax_ids')
+    # def _compute_price_subtotal(self):
+    #     tax_amount = 0.0
+    #     for line in self:
+    #         amount_untaxed = line.product_qty * line.price_unit
+    #         for line_tax in line.tax_ids:
+    #             if line_tax.type == 'percent':
+    #                 tax_amount += line.product_qty * (
+    #                     line.price_unit * line_tax.amount
+    #                 )
+    #             elif line_tax.type == 'fixed':
+    #                 tax_amount += line.product_qty * (
+    #                     line.price_unit + line_tax.amount
+    #                 )
+    #         cur = line.requisition_id.currency_id
+    #         line.price_subtotal = cur.round(amount_untaxed + tax_amount)
 
     @api.multi
     @api.depends('product_qty', 'price_unit', 'tax_ids')
     def _compute_price_subtotal(self):
-        tax_amount = 0.0
         for line in self:
-            amount_untaxed = line.product_qty * line.price_unit
-            for line_tax in line.tax_ids:
-                if line_tax.type == 'percent':
-                    tax_amount += line.product_qty * (
-                        line.price_unit * line_tax.amount
-                    )
-                elif line_tax.type == 'fixed':
-                    tax_amount += line.product_qty * (
-                        line.price_unit + line_tax.amount
-                    )
+            price = line.price_unit
+            taxes = line.tax_ids.compute_all(price, line.product_qty)
+            line.price_subtotal = taxes['total']
             cur = line.requisition_id.currency_id
-            line.price_subtotal = cur.round(amount_untaxed + tax_amount)
+            line.price_subtotal = cur.round(line.price_subtotal)
 
 
 class PurchaseRequisitionCommittee(models.Model):

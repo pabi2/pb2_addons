@@ -1,20 +1,20 @@
 import openerplib
-# connection = openerplib.get_connection(
-#     hostname="pabi2o-test.intra.nstda.or.th",
-#     port=80,
-#     database="PABI2",
-#     login="admin",
-#     password="admin",
-#     protocol="jsonrpc",
-#     user_id=1)
 connection = openerplib.get_connection(
-    hostname="localhost",
-    port=8069,
-    database="PABI2_int3",
+    hostname="pabi2o-test.intra.nstda.or.th",
+    port=80,
+    database="PABI2",
     login="admin",
-    password="admin",
+    password="pabi2",
     protocol="jsonrpc",
     user_id=1)
+# connection = openerplib.get_connection(
+#     hostname="localhost",
+#     port=8069,
+#     database="PABI2_int11",
+#     login="admin",
+#     password="pabi2",
+#     protocol="jsonrpc",
+#     user_id=1)
 
 connection.check_login()
 
@@ -41,8 +41,13 @@ BudgetPlan = connection.get_model('res.project.budget.plan')
 #     res = Budget.sync_budget_my_project([budget])
 
 
+count = BudgetPlan.search_count([('synced', '=', False)])
+print 'Remaining = %s' % count
 plan_ids = BudgetPlan.search([('synced', '=', False)])
 project_ids = []
 for plan in plan_ids:
     print plan
-    BudgetPlan.write([plan], {'released_amount': 10000000})
+    try:
+        BudgetPlan.release_budget(plan, 10000000)
+    except Exception:
+        pass

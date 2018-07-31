@@ -71,7 +71,7 @@
                             'AK11': 'm11#{number_format=number}',
                             'AL11': 'm12#{number_format=number}',
                             'AM11': 'planned_amount#{number_format=number}',
-                            'AN11': 'state${value and value.title() or ""}',
+                            'AN11': 'state${value and dict(env["budget.plan.unit"]._columns["state"].selection)[value] or ""}',
                         },
                         '_TAIL_0': {
                             'R11': '${"TOTAL"}#{font=bold;align=center;fill=blue}',

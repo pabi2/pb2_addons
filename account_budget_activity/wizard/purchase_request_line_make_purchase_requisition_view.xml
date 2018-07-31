@@ -9,10 +9,9 @@
             <field name="arch" type="xml">
                 <xpath expr="/form/group/field/tree/field[@name='product_qty']" position="before">
                     <field name="activity_group_id" invisible="0"/>
-                    <field name="activity_id"/>
+                    <field name="activity_id" invisible="1"/> <!-- will use activity_rpt_id instead -->
                 </xpath>
             </field>
         </record>
-    	
     </data>
 </openerp>

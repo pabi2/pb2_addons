@@ -16,10 +16,9 @@ class AccountInvoiceConfirm(models.TransientModel):
         if False in loan_ids:
             loan_ids.remove(False)
         for loan_id in loan_ids:
-            date_due = min(invoices.
-                           filtered(lambda l:
-                                    l.loan_agreement_id.id == loan_id).
-                           mapped('date_due'))
+            date_dues = invoices.filtered(
+                lambda l: l.loan_agreement_id.id == loan_id).mapped('date_due')
+            date_due = min(date_dues)
             Invoice._check_loan_invoice_in_advance(loan_id, date_due)
         # Make sure it won't be check again.
         invoices.write({'discard_installment_order_check': True})

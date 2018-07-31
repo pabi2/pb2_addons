@@ -17,6 +17,7 @@
     Purchase invoice plan by fiscal year
     """,
     'data': [
+        'wizard/edit_invoice_plan_date.xml',
         'views/purchase_view.xml',
         'views/account_config.xml',
         'wizard/purchase_create_invoice_plan_view.xml',

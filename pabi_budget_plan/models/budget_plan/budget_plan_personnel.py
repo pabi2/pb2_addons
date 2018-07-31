@@ -95,17 +95,21 @@ class BudgetPlanPersonnelLine(BPLMonthCommon, ActivityCommon, models.Model):
     # Extra
     org_id = fields.Many2one(
         'res.org',
-        required=True,
+        required=False,
         domain=[('special', '=', False)],
     )
     personnel_costcenter_id = fields.Many2one(
         'res.personnel.costcenter',
-        required=True,
+        required=False,  # If not false, can't import
     )
     # Default fund to NSTDA, so it will be sent to Budget Control too.
     fund_id = fields.Many2one(
         'res.fund',
         default=lambda self: self.env.ref('base.fund_nstda'),
+    )
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        required=False,  # If not false, can't import
     )
 
     # Required for updating dimension

@@ -59,6 +59,11 @@ class PurchaseOrder(models.Model):
                             if line.price_subtotal < 0:
                                 line.price_unit = -(adv_amount + adv_accum)
                     count += 1
+        # For NSTDA only, date_document = date_invoice
+        invoices = self.env['account.invoice'].browse(invoice_ids)
+        for invoice in invoices:
+            invoice.write({'date_document': invoice.date_invoice,
+                           'date_invoice': False})
         return res
 
     @api.model

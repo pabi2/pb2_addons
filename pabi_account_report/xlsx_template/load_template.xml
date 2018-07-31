@@ -8,9 +8,8 @@
                 ref('xlsx_report_input_tax'),
                 ref('xlsx_report_partner_detail'),
                 ref('xlsx_report_advance_status'),
-                ref('xlsx_report_supplier_invoice_detail'),
                 ref('xlsx_report_cheque_register'),
-                ref('xlsx_report_purchase_contract'),
+                ref('xlsx_report_contract_collateral'),
                 ref('xlsx_report_advance_payment'),
                 ref('xlsx_report_payable_detail'),
                 ref('xlsx_report_payable_balance'),
@@ -24,7 +23,14 @@
                 ref('xlsx_report_cd_receivable_planning'),
                 ref('xlsx_report_sla_receipt'),
                 ref('xlsx_report_cd_receivable_balance_sheet_summary'),
+                ref('xlsx_report_cd_receivable_balance_sheet_detail'),
                 ref('xlsx_report_tax_exemption_receipt'),
+                ref('xlsx_report_receivable_before_due'),
+                ref('xlsx_report_receivable_detail'),
+                ref('xlsx_report_registrar_of_guarantee'),
+                ref('xlsx_report_revenue_ledger'),
+                ref('xlsx_report_gl_payable'),
+                ref('xlsx_report_gl_allowance_doubtful_accounts'),
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>

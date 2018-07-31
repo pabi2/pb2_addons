@@ -55,7 +55,7 @@
             <field name="arch" type="xml">
                 <form string="Project">
                     <header>
-                        <field name="state2" widget="statusbar" statusbar_visible="draft,submit,unapprove,approve,reject,delete,cancel,close" readonly="1"/>
+                        <field name="state2" widget="statusbar" statusbar_visible="draft,approve,delete,cancel,close" readonly="1"/>
                     </header>
                     <sheet string="Project">
                         <div class="oe_right oe_button_box" name="buttons" groups="base.group_user">
@@ -104,8 +104,9 @@
                                 <field name="analyst_employee_id"/>
                                 <field name="analyst_section_id"/>
                                 <field name="project_date_end_proposal"/>
-                                <field name="project_date_end_extension"/>
                                 <field name="project_date_close"/>
+                                <field name="project_date_close_cond"/>
+                                <field name="project_date_terminate"/>
                             </group>
                         </group>
                         <notebook>
@@ -221,6 +222,7 @@
                                         <field name="operation_id"/>
                                         <field name="fund_type_id"/>
                                         <field name="master_plan_id"/>
+                                        <field name="target_program_id"/>
                                     </group>
                                     <group>
                                         <field name="project_status"/>
@@ -236,7 +238,9 @@
                                     <group string="Budget Planning">
                                         <field name="revenue_budget"/>
                                         <field name="overall_revenue_plan"/>
+                                        <field name="proposal_overall_budget"/>
                                         <field name="overall_expense_budget"/>
+                                        <field name="overall_expense_budget_internal"/>
                                     </group>
                                     <group string="Dates">
                                         <field name="project_date_start"/>
@@ -268,6 +272,7 @@
                                 <field name="monitor_expense_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
+                                        <field name="charge_type"/>
                                         <field name="planned_amount"/>
                                         <field name="released_amount"/>
                                         <field name="amount_pr_commit"/>
@@ -282,6 +287,7 @@
                                 <field name="monitor_revenue_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
+                                        <field name="charge_type"/>
                                         <field name="planned_amount"/>
                                         <field name="released_amount"/>
                                         <field name="amount_so_commit"/>
@@ -308,9 +314,7 @@
                     <field name="name" string="Project" filter_domain="['|',('name','ilike',self),('code','ilike',self)]"/>
                     <field name="program_id"/>
                     <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
-                    <filter name="submit" string="Submitted" domain="[('state','=','submit')]"/>
                     <filter name="approve" string="Approved" domain="[('state','=','approve')]"/>
-                    <filter name="reject" string="Rejected" domain="[('state','=','reject')]"/>
                     <filter name="cancel" string="Cancelled" domain="[('state','=','cancel')]"/>
                     <filter name="close" string="Closed" domain="[('state','=','close')]"/>
                     <group expand="0" string="Group By">

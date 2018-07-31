@@ -93,9 +93,12 @@ class AccountBudget(models.Model):
     @api.multi
     def _budget_expense_lines_hook(self):
         self.ensure_one()
+        BudgetLine = self.env['account.budget.line']
         if self.fiscalyear_id.control_ext_charge_only:
-            return self.budget_expense_line_ids.\
-                filtered(lambda l: l.charge_type == 'external')
+            expense_lines = BudgetLine.search([
+                ('id', 'in', self.budget_expense_line_ids.ids),
+                ('charge_type', '=', 'external')])
+            return expense_lines
         else:
             return self.budget_expense_line_ids
 
@@ -123,45 +126,67 @@ class AccountBudget(models.Model):
     @api.multi
     def _get_past_actual_amount_internal(self):
         self.ensure_one()
-        Consume = self.env['budget.consume.report']
+        budget_type_dict = {
+            'unit_base': 'section_id',
+            'project_base': 'program_id',
+            'personnel': 'personnel_costcenter_id',  # TODO: ???
+            'invest_asset': 'org_id',
+            'invest_construction': 'org_id'}
+        dimension = budget_type_dict[self.chart_view]
         # Period = self.env['account.period']
         # current_period = Period.find()
         dom = [('fiscalyear_id', '=', self.fiscalyear_id.id),
                ('budget_method', '=', 'expense'),
                ('charge_type', '=', 'internal'),
-               # May said, past actual should include the future one
-               # ('period_id', '<=', current_period.id),
-               ]
-        consumes = Consume.search(dom)
-        return sum(consumes.mapped('amount_actual'))
+               ('chart_view', '=', self.chart_view),
+               (dimension, '=', self[dimension].id), ]
+        self._cr.execute("""
+            select coalesce(sum(amount_actual), 0.0) amount_actual
+            from budget_consume_report where %s
+        """ % self._domain_to_where_str(dom))
+        amount = self._cr.fetchone()[0]
+        return amount
 
     @api.multi
     def _get_future_plan_amount_internal(self):
-        self.ensure_one()
+        if not self:
+            return 0.0
         Period = self.env['account.period']
+        Fiscal = self.env['account.fiscalyear']
+        BudgetLine = self.env['account.budget.line']
         period_num = 0
         this_period_date_start = Period.find().date_start
-
-        if self.fiscalyear_id.date_start > this_period_date_start:
-            period_num = 0
-        elif self.fiscalyear_id.date_stop < this_period_date_start:
-            period_num = 12
-        else:
-            period_num = Period.get_num_period_by_period()
         future_plan = 0.0
-        expense_lines = self.budget_expense_line_ids.\
-            filtered(lambda l: l.charge_type == 'internal')
-        for line in expense_lines:
-            for i in range(period_num + 1, 13):
-                future_plan += line['m%s' % (i,)]
+        self._cr.execute("""
+            select distinct fiscalyear_id from account_budget
+            where id in %s
+        """, (tuple(self.ids), ))
+        fiscal_ids = [x[0] for x in self._cr.fetchall()]
+        fiscals = Fiscal.browse(fiscal_ids)
+        for fiscal in fiscals:
+            if fiscal.date_start > this_period_date_start:
+                period_num = 0
+            elif fiscal.date_stop < this_period_date_start:
+                period_num = 12
+            else:
+                period_num = Period.get_num_period_by_period()
+            budgets = self.search([('id', 'in', self.ids),
+                                   ('fiscalyear_id', '=', fiscal.id)])
+            for budget in budgets:
+                expense_lines = BudgetLine.search([
+                    ('id', 'in', budget.budget_expense_line_ids.ids),
+                    ('charge_type', '=', 'internal')])
+                for line in expense_lines:
+                    for i in range(period_num + 1, 13):
+                        future_plan += line['m%s' % (i,)]
         return future_plan
 
     @api.multi
     def _compute_past_future_rolling_internal(self):
         """ For internal charge """
-        if not self.fiscalyear_id.control_ext_charge_only:
-            return
         for budget in self:
+            if not budget.fiscalyear_id.control_ext_charge_only:
+                continue
             budget.past_consumed_internal = \
                 budget._get_past_actual_amount_internal()
             budget.future_plan_internal = \

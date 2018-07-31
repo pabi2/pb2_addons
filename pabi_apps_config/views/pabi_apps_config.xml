@@ -209,6 +209,21 @@
                             </div>
                         </div>
                     </group>
+                    <!-- Default AG for Invest Asset and Invest Construction -->
+                    <separator string="Budget Planning"/>
+                    <group>
+                      <label for="id" string="Default Activity Group"/>
+                      <div>
+                          <div>
+                            <label for="default_ag_invest_construction_id"/>
+                            <field name="default_ag_invest_construction_id" class="oe_inline"/>
+                          </div>
+                          <div>
+                            <label for="default_ag_invest_asset_id"/>
+                            <field name="default_ag_invest_asset_id" class="oe_inline"/>
+                          </div>
+                      </div>
+                    </group>
                 </form>
             </field>
         </record>

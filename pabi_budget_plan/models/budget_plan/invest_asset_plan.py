@@ -124,7 +124,7 @@ class InvestAssetPlan(models.Model):
         compute='_compute_master_program_ids',
     )
     master_requester_ids = fields.Many2many(
-        'res.users',
+        'hr.employee',
         sring='Requester Master Data',
         compute='_compute_master_requester_ids',
     )
@@ -176,8 +176,8 @@ class InvestAssetPlan(models.Model):
         Employee = self.env['hr.employee']
         for rec in self:
             employees = Employee.search([('org_id', '=', rec.org_id.id)])
-            users = employees.mapped('user_id').sorted(key=lambda l: l.name)
-            rec.master_requester_ids = users
+            employees = employees.sorted(key=lambda l: l.employee_code)
+            rec.master_requester_ids = employees
 
     @api.multi
     def _compute_master_strategy_ids(self):
@@ -282,9 +282,11 @@ class InvestAssetPlan(models.Model):
     @api.model
     def _prepare_plan_line(self, item):
         invest_asset = item.invest_asset_id
+        ag_id = self.env.user.company_id.default_ag_invest_asset_id.id
         data = {
             'invest_asset_id': invest_asset.id,
             'fund_id': invest_asset.fund_ids and invest_asset.fund_ids[0].id,
+            'activity_group_id': ag_id,
             # Past Commitment Only
             'm0': item.total_commitment,
             # If first year of this asset, use amount_plan_total or amount_plan
@@ -481,6 +483,14 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
         string='Beyond Next FY Commitment',
         readonly=True,
         help="Commitment on future PR/PO after next fy and beyond",
+    )
+    # Excel force this to be related field
+    owner_section_id = fields.Many2one(
+        'res.section',
+        related='request_user_id.section_id',
+        required=False,
+        readonly=True,
+        store=True,
     )
 
     @api.multi

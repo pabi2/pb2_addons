@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_pabi_security_form">
+            <field name="name">pabi.security.form</field>
+            <field name="model">pabi.security</field>
+            <field name="arch" type="xml">
+                <form string="PABI Security">
+                    <h1>
+                        <field name="name"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <button name="apply_security" string="Apply Security" type="object"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                        </group>
+                    </group>
+                    <p>
+                        This window enable mass apply of meta groups and groups.
+                        Got to More > Export Template, you can export excel template and import back.<br/>
+                        <b>Note:</b> for each selcted users, previous groups will be removed first, and then reapply.
+                    </p>
+                    <field name="line_ids" nolabel="1">
+                        <tree editable="bottom">
+                            <!-- This section must be change to match SECURITY_DICT -->
+                            <field name="user_id"/>
+                            <field name="mg1" invisible="1"/>
+                            <field name="mg2" invisible="1"/>
+                            <field name="mg3" invisible="1"/>
+                            <field name="mg4" invisible="1"/>
+                            <field name="mg5" invisible="1"/>
+                            <field name="mg6" invisible="1"/>
+                            <field name="mg7" invisible="1"/>
+                            <field name="mg8" invisible="1"/>
+                            <field name="mg9" invisible="1"/>
+                            <field name="mg10" invisible="1"/>
+                            <field name="g1" invisible="1"/>
+                            <field name="g2" invisible="1"/>
+                            <field name="g3" invisible="1"/>
+                            <field name="g4" invisible="1"/>
+                            <field name="g5" invisible="1"/>
+                            <field name="g6" invisible="1"/>
+                            <field name="g7" invisible="1"/>
+                            <field name="g8" invisible="1"/>
+                            <field name="g9" invisible="1"/>
+                            <field name="g10" invisible="1"/>
+                            <field name="g11" invisible="1"/>
+                            <field name="g12" invisible="1"/>
+                            <field name="g13" invisible="1"/>
+                            <field name="g14" invisible="1"/>
+                            <field name="g15" invisible="1"/>
+                            <field name="g16" invisible="1"/>
+                            <field name="g17" invisible="1"/>
+                            <field name="g18" invisible="1"/>
+                            <field name="g19" invisible="1"/>
+                            <field name="g20" invisible="1"/>
+                            <field name="g21" invisible="1"/>
+                            <field name="g22" invisible="1"/>
+                            <field name="g23" invisible="1"/>
+                            <field name="g24" invisible="1"/>
+                            <field name="g25" invisible="1"/>
+                            <field name="g26" invisible="1"/>
+                            <field name="g27" invisible="1"/>
+                            <field name="g28" invisible="1"/>
+                            <field name="g29" invisible="1"/>
+                            <field name="g30" invisible="1"/>
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_pabi_security">
+            <field name="name">Assign Security</field>
+            <field name="res_model">pabi.security</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_pabi-security" name="Assign Security"
+          parent="base.menu_users" action="action_pabi_security" sequence="30"/>
+
+
+        # Interit Meta Groups
+        <record id="access_form_view" model="ir.ui.view">
+            <field name="name">access.form.view</field>
+            <field name="model">access.access</field>
+            <field name="inherit_id" ref="meta_groups.access_form_view"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="pabi_security"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="access_tree_view" model="ir.ui.view">
+            <field name="name">access.tree.view</field>
+            <field name="model">access.access</field>
+            <field name="inherit_id" ref="meta_groups.access_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="pabi_security"/>
+                </field>
+            </field>
+        </record>
+
+        # Groups
+        <record id="view_groups_form" model="ir.ui.view">
+            <field name="name">view.groups.form</field>
+            <field name="model">res.groups</field>
+            <field name="inherit_id" ref="base.view_groups_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='/form/sheet/group' position="inside">
+                    <field name="pabi_security"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_res_groups_form" model="ir.ui.view">
+            <field name="name">view.res.groups.form</field>
+            <field name="model">res.groups</field>
+            <field name="arch" type="xml">
+                <tree string="Group Definition">
+                    <field name="name"/>
+                    <field name="pabi_security"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -35,7 +35,6 @@
         "data/default_value.xml",
         "security/security_group.xml",
         "security/ir.model.access.csv",
-        "security/model_no_delete.xml",
         "wizard/print_wht_cert_wizard.xml",
         "wizard/voucher_invoice_description_view.xml",
         "views/account_view.xml",

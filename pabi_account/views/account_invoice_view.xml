@@ -129,6 +129,14 @@
                     <field name="account_id_readonly"/>
                 </xpath> -->
                 <!-- Test account_id editable -->
+                <field name="state" position="before">
+                    <field name="recreated_invoice_id" invisible="1"/>
+                    <button name="recover_cancelled_invoice" type="object"
+                      attrs="{'invisible': ['|', '|', ('recreated_invoice_id', '!=', False),
+                                            ('state', '!=', 'cancel'),
+                                            ('source_document_type', '!=', 'purchase')]}"
+                      string="Recreate Invoice"/>
+                </field>
             </field>
         </record>
         <record model="ir.ui.view" id="invoice_supplier_form2">

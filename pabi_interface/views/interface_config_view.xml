@@ -1,8 +1,12 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-        <menuitem name="System Interface" id="menu_system_interface" parent="base.menu_custom" groups="pabi_interface.group_interface_user" sequence="100"/>
-        <menuitem name="Configurations" id="menu_interface_system_configuration" parent="menu_system_interface" sequence="100"/>
+        <menuitem name="System Interface" id="menu_system_interface" parent="base.menu_custom"
+          groups="pabi_interface.group_interface_user" sequence="100"/>
+        <menuitem name="Entries" id="menu_system_interface_entries" parent="menu_system_interface"
+          groups="pabi_interface.group_interface_user" sequence="100"/>
+        <menuitem name="Configurations" id="menu_interface_system_configuration" parent="menu_system_interface"
+          groups="pabi_interface.group_interface_user" sequence="200"/>
 
         # System
         <record id="view_interface_system_tree" model="ir.ui.view">
@@ -50,10 +54,12 @@
             <field name="view_id" ref="view_interface_system_tree"/>
         </record>
 
-        <menuitem name="Systems" id="menu_interface_system" action="action_interface_system" parent="menu_interface_system_configuration" sequence="1"/>
+        <menuitem name="Systems" id="menu_interface_system" action="action_interface_system"
+          parent="menu_interface_system_configuration" sequence="1"
+          groups="pabi_interface.group_interface_user" />
 
-        # Actions
-        <record id="view_interface_action_tree" model="ir.ui.view">
+        # Actions (not sure what is this for)
+        <!-- <record id="view_interface_action_tree" model="ir.ui.view">
             <field name="name">view.interface.action.tree</field>
             <field name="model">interface.action</field>
             <field name="arch" type="xml">
@@ -100,7 +106,7 @@
             <field name="view_id" ref="view_interface_action_tree"/>
         </record>
 
-        <menuitem name="Actions" id="menu_interface_action" action="action_interface_action" parent="menu_interface_system_configuration" sequence="1"/>
+        <menuitem name="Actions" id="menu_interface_action" action="action_interface_action" parent="menu_interface_system_configuration" sequence="1"/> -->
 
     </data>
 </openerp>

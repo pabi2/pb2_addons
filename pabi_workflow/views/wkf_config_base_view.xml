@@ -51,7 +51,7 @@
             <field name="name">view.wkf.cmd.level.tree</field>
             <field name="model">wkf.cmd.level</field>
             <field name="arch" type="xml">
-                <tree string="Level">
+                <tree string="Level" editable="top">
                     <field name="sequence"/>
                     <field name="name"/>
                     <field name="description"/>
@@ -94,7 +94,6 @@
                     <field name="org_id"/>
                     <field name="doctype_id"/>
                     <field name="level"/>
-                    <field name="amount_min"/>
                     <field name="amount_max"/>
                 </tree>
             </field>
@@ -110,8 +109,8 @@
                             <field name="org_id"/>
                             <field name="doctype_id"/>
                             <field name="level"/>
-                            <field name="amount_min"/>
                             <field name="amount_max"/>
+                            <field name="amount_max_emotion"/>
                         </group>
                         <group></group>
                     </group>

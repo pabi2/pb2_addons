@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="document.directory" id="dir_account_reports">
+            <field name="name">Account Move Reports</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        # Account Move Report
+        <record id="xlsx_report_account_move" model="ir.attachment">
+            <field name="res_model">xlsx.report.account.move</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_account_move.xlsx</field>
+            <field name="name">Account Move Report</field>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Account Move Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                                'B4': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.with_context(lang="th_TH").title.name, x.with_context(lang="th_TH").name]))) for x in value]) or ""}',
+                                'B5': 'fiscalyear_start_id.name${value or ""}',
+                                'D5': 'fiscalyear_end_id.name${value or ""}',
+                                'B6': 'filter${value and dict(filter_no="No Filters", filter_date="Dates", filter_period="Periods")[value] or ""}',
+                                'B7': 'period_start_id.name${value or ""}',
+                                'D7': 'period_end_id.name${value or ""}',
+                                'B8': 'date_start${value or ""}#{number_format=date}',
+                                'D8': 'date_end${value or ""}#{number_format=date}',
+                                'B9': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B10': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'results': {
+                                'A14': 'move_id${value or ""}',
+                                'B14': 'auto_reconcile_id.name${value or ""}',
+                                'C14': 'cancel_entry${value or ""}',
+                                'D14': 'date_document${value or ""}#{number_format=date}',
+                                'E14': 'date_value${value or ""}#{number_format=date}',
+                                'F14': 'doctype${value and dict(in_invoice="Supplier Invoice", out_invoice="Customer Invoice", adjustment="Adjustment", payment="Payment", receipt="Customer Payment", internal_transfer="Internal Transfer", incoming_shipment="Incoming Shipment")[value] or ""}',
+                                'G14': 'document${value or ""}',
+                                'H14': 'document_id${value or ""}',
+                                'I14': 'line_item_summary${value or ""}',
+                                'J14': 'model_id.id${value or ""}',
+                                'K14': 'narration${value or ""}',
+                                'L14': 'ref${value or ""}',
+                                'M14': 'reversal_id${value or ""}',
+                                'N14': 'move_state${value and dict(posted="Posted", draft="Unposted")[value] or ""}',
+                                'O14': 'system_id.name${value or ""}',
+                                'P14': 'to_be_reversed${value or ""}',
+                                'Q14': 'to_check${value or ""}',
+                                'R14': 'move_line_id.id${value or ""}',
+                                'S14': 'account_id.code${value or ""}',
+                                'T14': 'account_id.name${value or ""}',
+                                'U14': 'account_tax_id.name${value or ""}',
+                                'V14': 'activity_group_id.code${value or ""}',
+                                'W14': 'activity_group_id.name${value or ""}',
+                                'X14': 'activity_id.code${value or ""}',
+                                'Y14': 'activity_id.name${value or ""}',
+                                'Z14': 'activity_rpt_id.code${value or ""}',
+                                'AA14': 'activity_rpt_id.name${value or ""}',
+                                'AB14': 'amount_currency${value or ""}',
+                                'AC14': 'analytic_account_id.code${value or ""}',
+                                'AD14': 'analytic_account_id.name${value or ""}',
+                                'AE14': 'asset_id.code${value or ""}',
+                                'AF14': 'asset_id.name${value or ""}',
+                                'AG14': 'asset_profile_id.name${value or ""}',
+                                'AH14': 'bank_receipt_id${value or ""}',
+                                'AI14': 'blocked${value or ""}',
+                                'AJ14': 'centralisation${value or ""}',
+                                'AK14': 'charge_type${value or ""}',
+                                'AL14': 'chart_view${value or ""}',
+                                'AM14': 'company_id.name${value or ""}',
+                                'AN14': 'costcenter_id.code${value or ""}',
+                                'AO14': 'costcenter_id.name${value or ""}',
+                                'AP14': 'cost_control_id.code${value or ""}',
+                                'AQ14': 'cost_control_id.name${value or ""}',
+                                'AR14': 'cost_control_type_id.code${value or ""}',
+                                'AS14': 'cost_control_type_id.name${value or ""}',
+                                'AT14': 'create_date${value or ""}#{number_format=date}',
+                                'AU14': 'create_uid${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'AV14': 'credit${value or ""}#{number_format=number}',
+                                'AW14': 'currency_id.name${value or ""}',
+                                'AX14': 'date${value or ""}#{number_format=date}',
+                                'AY14': 'date_created${value or ""}#{number_format=date}',
+                                'AZ14': 'date_maturity${value or ""}#{number_format=date}',
+                                'BA14': 'date_reconciled${value or ""}#{number_format=date}',
+                                'BB14': 'debit${value or ""}#{number_format=number}',
+                                'BC14': 'division_id.code${value or ""}',
+                                'BD14': 'docline_seq${value or ""}',
+                                'BE14': 'functional_area_id.name${value or ""}',
+                                'BF14': 'fund_id.code${value or ""}',
+                                'BG14': 'fund_id.name_short${value or ""}',
+                                'BH14': 'invest_asset_id.code${value or ""}',
+                                'BI14': 'invest_asset_id.name${value or ""}',
+                                'BJ14': 'invest_construction_id.code${value or ""}',
+                                'BK14': 'invest_construction_id.name${value or ""}',
+                                'BL14': 'invest_construction_phase_id.phase${value or ""}',
+                                'BM14': 'investment_id${value or ""}',
+                                'BN14': 'is_tax_line${value or ""}',
+                                'BO14': 'journal_id.name${value or ""}',
+                                'BP14': 'last_rec_date${value or ""}#{number_format=date}',
+                                'BQ14': 'match_import_id${value or ""}',
+                                'BR14': 'mission_id.name${value or ""}',
+                                'BS14': 'name${value or ""}',
+                                'BT14': 'operating_unit_id.name${value or ""}',
+                                'BU14': 'org_id.name_short${value or ""}',
+                                'BV14': 'parent_asset_id.code${value or ""}',
+                                'BW14': 'parent_asset_id.name${value or ""}',
+                                'BX14': 'partner_id.search_key${value or ""}',
+                                'BY14': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
+                                'BZ14': 'period_id.name${value or ""}',
+                                'CA14': 'personnel_costcenter_id.code${value or ""}',
+                                'CB14': 'personnel_costcenter_id.name${value or ""}',
+                                'CC14': 'product_id.name${value or ""}',
+                                'CD14': 'product_uom_id.name${value or ""}',
+                                'CE14': 'program_group_id.name${value or ""}',
+                                'CF14': 'program_id.code${value or ""}',
+                                'CG14': 'program_id.name${value or ""}',
+                                'CH14': 'project_group_id.code${value or ""}',
+                                'CI14': 'project_group_id.name${value or ""}',
+                                'CJ14': 'project_id.code${value or ""}',
+                                'CK14': 'project_id.name${value or ""}',
+                                'CL14': 'quantity${value or ""}#{number_format=number}',
+                                'CM14': 'reconcile_id.name${value or ""}',
+                                'CN14': 'reconcile_partial_id.name${value or ""}',
+                                'CO14': 'reconcile_ref${value or ""}',
+                                'CP14': 'section_id.code${value or ""}',
+                                'CQ14': 'section_id.name_short${value or ""}',
+                                'CR14': 'section_program_id.code${value or ""}',
+                                'CS14': 'section_program_id.name${value or ""}',
+                                'CT14': 'sector_id.code${value or ""}',
+                                'CU14': 'sector_id.name${value or ""}',
+                                'CV14': 'spa_id.name${value or ""}',
+                                'CW14': 'state${value or ""}',
+                                'CX14': 'statement_id${value or ""}',
+                                'CY14': 'stock_move_id.name${value or ""}',
+                                'CZ14': 'subsector_id.code${value or ""}',
+                                'DA14': 'subsector_id.name${value or ""}',
+                                'DB14': 'tag_id.name${value or ""}',
+                                'DC14': 'tag_type_id.name${value or ""}',
+                                'DD14': 'tax_amount${value or ""}#{number_format=number}',
+                                'DE14': 'taxbranch_id.code${value or ""}',
+                                'DF14': 'taxbranch_id.name${value or ""}',
+                                'DG14': 'tax_code_id.code${value or ""}',
+                                'DH14': 'tax_code_id.name${value or ""}',
+                                'DI14': 'write_date${value or ""}#{number_format=date}',
+                                'DJ14': 'write_uid${value and value.with_context(lang="th_TH").display_name or ""}',
+                            },
+                        }
+                    }
+                }
+            </field>
+        </record>
+      </data>
+  </openerp>

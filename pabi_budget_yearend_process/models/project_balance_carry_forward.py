@@ -47,7 +47,12 @@ class ProjectBalanceCarryForward(models.Model):
     @api.multi
     def _compute_amount_total(self):
         for rec in self:
-            rec.amount_total = rec.line_ids.mapped('balance_amount')
+            self._cr.execute("""
+                select coalesce(sum(balance_amount), 0.0) balance_amount
+                from project_balance_carry_forward_line
+                where carry_forward_id = %s
+            """, (rec.id, ))
+            rec.amount_total = self._cr.fetchone()[0]
 
     @api.model
     def default_get(self, fields):
@@ -81,7 +86,10 @@ class ProjectBalanceCarryForward(models.Model):
         self.ensure_one()
         self.line_ids.unlink()
         """ This method, list all projects with, budget balance > 0 """
-        self._cr.execute("""
+        where_ext = ''
+        if self.from_fiscalyear_id.control_ext_charge_only:
+            where_ext = "and charge_type = 'external'"
+        sql = """
             select project_id, program_id, balance_amount
             from (
                 select project_id, program_id,
@@ -90,12 +98,14 @@ class ProjectBalanceCarryForward(models.Model):
                 where budget_method = 'expense'
                 and project_id is not null
                 and fiscalyear_id = %s
+                %s
                 and (coalesce(released_amount, 0.0) != 0.0
                      or coalesce(amount_actual, 0.0) != 0.0)
                 group by project_id,  program_id
             ) a
             where balance_amount > 0.0
-        """, (self.from_fiscalyear_id.id, ))
+        """ % (self.from_fiscalyear_id.id, where_ext)
+        self._cr.execute(sql)
         projects = [(0, 0, project) for project in self._cr.dictfetchall()]
         self.write({'line_ids': projects})
 

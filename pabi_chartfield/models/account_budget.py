@@ -94,6 +94,12 @@ class AccountBudget(ChartField, models.Model):
     )
 
     @api.model
+    def create(self, vals):
+        res = super(AccountBudget, self).create(vals)
+        res.update_related_dimension(vals)
+        return res
+
+    @api.model
     def _get_budget_level_type_hook(self, budget):
         if 'chart_view' in budget and budget.chart_view:
             return budget.chart_view
@@ -214,6 +220,10 @@ class AccountBudget(ChartField, models.Model):
         messages = self.env['account.budget.line']._change_content(vals, todo)
         for message in messages:
             self.message_post(body=message)
+        # Update dimentions of header
+        for rec in self:
+            rec.update_related_dimension(vals)
+        # --
         return super(AccountBudget, self).write(vals)
 
 

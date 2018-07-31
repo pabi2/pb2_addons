@@ -4,19 +4,15 @@
         <record model="ir.ui.view" id="view_purchase_requisition_form">
             <field name="name">purchase.requisition.form</field>
             <field name="model">purchase.requisition</field>
-            <field name="inherit_id"
-                   ref="purchase_requisition.view_purchase_requisition_form"/>
+            <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//form[@string='Call for Bids']" position="attributes">
                     <attribute name="create">false</attribute>
                 </xpath>
-                <xpath expr="//field[@name='name']"
-                       position="attributes">
-                    <attribute name="attrs"/>
+                <xpath expr="//field[@name='name']" position="attributes">
                     <attribute name="readonly">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='date_end']"
-                       position="attributes">
+                <xpath expr="//field[@name='date_end']" position="attributes">
                     <attribute name="widget">date</attribute>
                 </xpath>
                 <xpath expr="//field[@name='origin']" position="replace">
@@ -28,7 +24,7 @@
                 <xpath expr="//field[@name='multiple_rfq_per_supplier']"
                        position="after">
                     <field name="is_central_purchase"/>
-                    <field name="purchase_type_id"/>
+                    <field name="purchase_type_id" required="1"/>
                     <field name="objective"/>
                     <field name="description" string="Reason"/>
                     <field name="total_budget_value" attrs="{'invisible': [('total_budget_value', '=', 0)]}"/>
@@ -65,8 +61,8 @@
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
                        position="after">
-                    <field name="purchase_method_id"/>
-                    <field name="purchase_price_range_id"/>
+                    <field name="purchase_method_id" required="1"/>
+                    <field name="purchase_price_range_id" required="1"/>
                     <field name="require_rfq" invisible='1'/>
                     <field name="purchase_condition_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
                     <field name="purchase_condition_detail_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
@@ -79,8 +75,10 @@
                        position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='line_ids']/tree/field[@name='product_id']"
-                       position="after">
+                <xpath expr="//field[@name='line_ids']/form/group/field[@name='product_id']" position="attributes">
+                    <attribute name="on_change">onchange_product_id(product_id,product_uom_id,parent.account_analytic_id,account_analytic_id,parent.schedule_date,schedule_date)</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='product_id']" position="after">
                     <field name="product_name"/>
                 </xpath>
                 <xpath expr="//button[@name='open_bid']" position="attributes">
@@ -171,10 +169,10 @@
                		<page string="Committee">
                         <field name="committee_ids">
                             <tree editable="bottom">
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="committee_type_id"/>
+                                <field name="sequence" required="1"/>
+                                <field name="name" required="1"/>
+                                <field name="position" required="1"/>
+                                <field name="committee_type_id" required="1" doman="[('prweb_only', '=', False)]"/>
                             </tree>
                         </field>
                     </page>
@@ -198,6 +196,17 @@
                                 <field name="doc_no"/>
                                 <field name="doc_header"/>
                                 <field name="doc_body"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="eGP Dates" name="egp" attrs="{'invisible': [('amount_total', '&lt;=', 100000)]}">
+                        <group>
+                            <group>
+                                <field name="egp_date1" attrs="{'required': [('amount_total', '&gt;', 100000)]}"/>
+                                <field name="egp_date2" attrs="{'required': [('amount_total', '&gt;', 100000)]}"/>
+                                <field name="egp_date3" attrs="{'required': [('amount_total', '&gt;', 100000)]}"/>
+                            </group>
+                            <group>
                             </group>
                         </group>
                     </page>

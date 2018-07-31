@@ -150,7 +150,10 @@
                         <notebook>
                             <page string="Expense" name="expense">
                                 <div name="expense_extra"></div>
-                                <field name="budget_expense_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}" context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'fiscalyear_id': fiscalyear_id}"/>
+                                <field name="budget_expense_line_ids" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}"
+                                  context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view',
+                                            'fiscalyear_id': fiscalyear_id,
+                                            'budget_level_id': budget_level_id}"/>
                                 <group>
                                     <group class="oe_subtotal_footer oe_right" name="expense_extra2"></group>
                                     <group class="oe_subtotal_footer oe_right" name="expense_footer">
@@ -167,7 +170,9 @@
                                     colspan="4"
                                     nolabel="1"
                                     attrs="{'readonly':[('state','!=','draft')]}"
-                                    context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view', 'fiscalyear_id': fiscalyear_id, 'default_budget_method': 'revenue'}"/>
+                                    context="{'tree_view_ref': 'account_budget_activity.budget_line_tree_view',
+                                              'fiscalyear_id': fiscalyear_id, 'default_budget_method': 'revenue',
+                                              'budget_level_id': budget_level_id}"/>
                             </page>
                             <page string="Plan Summary">
                                 <separator string="Budgeted Expense"/>

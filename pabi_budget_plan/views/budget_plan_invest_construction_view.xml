@@ -64,7 +64,7 @@
                                         <field name="amount_fy3" sum="Total"/>
                                         <field name="amount_fy4" sum="Total"/>
                                         <field name="amount_beyond" sum="Total"/>
-                                        
+
                                         <field name="overall_released" sum="Total"/>
                                         <field name="overall_all_commit" sum="Total"/>
                                         <field name="overall_pr_commit" sum="Total"/>
@@ -93,6 +93,7 @@
             <field name="arch" type="xml">
                 <tree string="Budget">
                     <field name="fiscalyear_id"/>
+                    <field name="org_id"/>
                     <field name="name"/>
                     <field name="user_id"/>
                     <field name="planned_expense" sum="Total"/>
@@ -145,8 +146,8 @@
             <field name="search_view_id" ref="view_budget_plan_invest_construction_search"/>
             <field name="context">{}</field>
             <field name="help" type="html">
-                <p class="oe_view_nocontent_create">
-                    Click to create a new budget preparation.
+                <p>
+                    This menu display budget plan for investment construction.
                 </p>
             </field>
         </record>

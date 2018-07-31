@@ -61,5 +61,3 @@ Note: This module provide only framework. There will be no budget check here.
     'installable': True,
     'auto_install': False,
 }
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

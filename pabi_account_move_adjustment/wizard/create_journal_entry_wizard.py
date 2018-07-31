@@ -29,6 +29,9 @@ class CreateJournalEntryWizard(models.TransientModel):
     def view_init(self, fields_list):
         invoice_id = self._context.get('active_id')
         invoice = self.env['account.invoice'].browse(invoice_id)
+        if invoice.state not in ('open', 'paid'):
+            raise ValidationError(
+                _('Only open invoice allowed!'))
         if invoice.adjust_move_id:
             raise ValidationError(
                 _('The adjustmnet journal entry already created!'))

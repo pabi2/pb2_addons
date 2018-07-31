@@ -395,9 +395,10 @@ class LoanCustomerAgreement(models.Model):
                     raise ValidationError(
                         _('Please cancel related sales order first!'))
                 # Check bank invoice cancelled
-                invoices = self.env['account.invoice'].search(
-                    [('loan_agreement_id', '=', rec.id)])
-                if invoices.filtered(lambda l: l.state != 'cancel'):
+                invoices = self.env['account.invoice'].search([
+                    ('loan_agreement_id', '=', rec.id),
+                    ('state', '!=', 'cancel')])
+                if invoices:
                     raise ValidationError(
                         _('Please cancel all related invoices first!'))
         # Update status

@@ -69,7 +69,7 @@ class InvestAssetCommon(object):
         "program group owner of this asset",
     )
     request_user_id = fields.Many2one(
-        'res.users',
+        'hr.employee',
         string='Requester',
     )
     location = fields.Char(

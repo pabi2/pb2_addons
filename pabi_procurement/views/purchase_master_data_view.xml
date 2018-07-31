@@ -11,7 +11,12 @@
             <field name="arch" type="xml">
                 <form string="Purchase Type">
                     <group>
-                        <field name="name"/>
+                        <group>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="name"/>
+                        </group>
                     </group>
                 </form>
             </field>
@@ -21,6 +26,7 @@
             <field name="model">purchase.type</field>
             <field name="arch" type="xml">
                 <tree string="Purchase Type">
+                    <field name="sequence"/>
                     <field name="name"/>
                 </tree>
             </field>
@@ -56,8 +62,13 @@
             <field name="arch" type="xml">
                 <form string="Purchase Method">
                     <group>
-                        <field name="name"/>
-                        <field name="require_rfq"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="require_rfq"/>
+                        </group>
+                        <group>
+                            <field name="doctype_id"/>
+                        </group>
                     </group>
                 </form>
             </field>
@@ -69,6 +80,7 @@
                 <tree string="Purchase Method">
                     <field name="name"/>
                     <field name="require_rfq"/>
+                    <field name="doctype_id"/>
                 </tree>
             </field>
        </record>
@@ -289,18 +301,24 @@
             <field name="arch" type="xml">
                 <form string="Purchase Committee Type">
                     <group>
-                        <field name="name"/>
-                        <field name="code"/>
-                        <field name="web_method_ids">
-                            <tree editable="bottom">
-                                <field name="sequence"/>
-                                <field name="method_id"/>
-                                <field name="doctype_id"/>
-                                <field name="price_range_id"/>
-                                <field name="condition_id"/>
-                            </tree>
-                        </field>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="prweb_only"/>
+                        </group>
                     </group>
+                    <!-- <field name="web_method_ids" nolabel="1">
+                        <tree editable="bottom">
+                            <field name="sequence"/>
+                            <field name="number_committee"/>
+                            <field name="method_id"/>
+                            <field name="doctype_id"/>
+                            <field name="price_range_id"/>
+                            <field name="condition_id"/>
+                        </tree>
+                    </field> -->
                 </form>
             </field>
        </record>
@@ -311,7 +329,7 @@
                 <tree string="Purchase Committee Type">
                     <field name="name"/>
                     <field name="code"/>
-                    <field name="web_method_ids"/>
+                    <field name="prweb_only"/>
                 </tree>
             </field>
        </record>
@@ -322,7 +340,7 @@
                 <search string="Search Purchase Committee Type">
                     <field name="name" string="Purchase Committee Type"/>
                     <field name="code" string="Purchase Committee Type Code"/>
-                    <field name="web_method_ids" string="Purchase Method"/>
+                    <!-- <field name="web_method_ids" string="Purchase Method"/> -->
                 </search>
             </field>
        </record>
@@ -347,13 +365,25 @@
             <field name="model">prweb.purchase.method</field>
             <field name="arch" type="xml">
                 <form string="PRWeb Method">
+                    <h2><field name="name"/></h2>
                     <group>
-                        <field name="type_id"/>
-                        <field name="method_id"/>
-                        <field name="doctype_id"/>
-                        <field name="price_range_id"/>
-                        <field name="condition_id"/>
+                        <group>
+                            <field name="type_id"/>
+                            <field name="method_id"/>
+                            <field name="doctype_id"/>
+                        </group>
+                        <group>
+                            <field name="price_range_id"/>
+                            <field name="condition_id"/>
+                        </group>
                     </group>
+                    <field name="committee_type_ids" nolabel="1">
+                        <tree editable="bottom">
+                            <field name="sequence"/>
+                            <field name="committee_type_id" domain="[('prweb_only', '=', True)]"/>
+                            <field name="number_committee"/>
+                        </tree>
+                    </field>
                 </form>
             </field>
        </record>
@@ -362,6 +392,7 @@
             <field name="model">prweb.purchase.method</field>
             <field name="arch" type="xml">
                 <tree string="PRWeb Method">
+                    <field name="name"/>
                     <field name="type_id"/>
                     <field name="method_id"/>
                     <field name="doctype_id"/>
@@ -375,6 +406,7 @@
             <field name="model">prweb.purchase.method</field>
             <field name="arch" type="xml">
                 <search string="Search PRWeb Method">
+                    <field name="name" string="Name"/>
                     <field name="type_id" string="Type"/>
                     <field name="method_id" string="Method"/>
                     <field name="doctype_id" string="Doc Type"/>

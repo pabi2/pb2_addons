@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 from openerp import models, fields, api
 
 
@@ -6,12 +6,6 @@ class XLSXReportOutputTax(models.TransientModel):
     _name = 'xlsx.report.output.tax'
     _inherit = 'report.account.common'
 
-    fiscalyear_start_id = fields.Many2one(
-        default=False,
-    )
-    fiscalyear_end_id = fields.Many2one(
-        default=False,
-    )
     filter = fields.Selection(
         readonly=True,
         default='filter_period',
@@ -35,6 +29,11 @@ class XLSXReportOutputTax(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get from account.tax.report
+        2. Check document type is sale (doc_type = sale)
+        """
         self.ensure_one()
         Result = self.env['account.tax.report']
         dom = [('doc_type', '=', 'sale')]

@@ -28,7 +28,7 @@
                     <field name="tax_base_amount"/>
                     <field name="date"/>
                     <field name="date_maturity"/>
-                    <field name="reconcile_move_line_id" />
+                    <field name="reconcile_move_id" />
                 </tree>
             </field>
         </record>
@@ -116,7 +116,8 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_interface_account_entry_search"/>
         </record>
-        <menuitem action="action_interface_account_entry" name="All Entries" id="menu_interface_account_entry" sequence="5" parent="menu_system_interface"/>
+        <menuitem action="action_interface_account_entry" name="All Entries" id="menu_interface_account_entry"
+          sequence="5" parent="menu_system_interface_entries" groups="pabi_interface.group_interface_user" />
         <!-- Invoice -->
         <record id="action_interface_account_entry_invoice" model="ir.actions.act_window">
             <field name="name">Invoice Entries</field>
@@ -127,7 +128,8 @@
             <field name="context">{'default_type': 'invoice'}</field>
             <field name="search_view_id" ref="view_interface_account_entry_search"/>
         </record>
-        <menuitem action="action_interface_account_entry_invoice" name="Invoice Entries" id="menu_interface_account_entry_invoice" sequence="6" parent="menu_system_interface"/>
+        <menuitem action="action_interface_account_entry_invoice" name="Invoice Entries" id="menu_interface_account_entry_invoice"
+          sequence="6" parent="menu_system_interface_entries" groups="pabi_interface.group_interface_user" />
         <!-- Payment -->
         <record id="action_interface_account_entry_payment" model="ir.actions.act_window">
             <field name="name">Payment Entries</field>
@@ -138,7 +140,8 @@
             <field name="context">{'default_type': 'voucher'}</field>
             <field name="search_view_id" ref="view_interface_account_entry_search"/>
         </record>
-        <menuitem action="action_interface_account_entry_payment" name="Payment Entries" id="menu_interface_account_entry_payment" sequence="7" parent="menu_system_interface"/>
+        <menuitem action="action_interface_account_entry_payment" name="Payment Entries" id="menu_interface_account_entry_payment"
+          sequence="7" parent="menu_system_interface_entries" groups="pabi_interface.group_interface_user" />
         <!-- Reverse -->
         <record id="action_interface_account_entry_reverse" model="ir.actions.act_window">
             <field name="name">Reverse Entries</field>
@@ -149,7 +152,8 @@
             <field name="context">{'default_type': 'reverse'}</field>
             <field name="search_view_id" ref="view_interface_account_entry_search"/>
         </record>
-        <menuitem action="action_interface_account_entry_reverse" name="Reverse Entries" id="menu_interface_account_entry_reverse" sequence="8" parent="menu_system_interface"/>
+        <menuitem action="action_interface_account_entry_reverse" name="Reverse Entries" id="menu_interface_account_entry_reverse"
+          sequence="8" parent="menu_system_interface_entries" groups="pabi_interface.group_interface_user" />
 
     </data>
 </openerp>

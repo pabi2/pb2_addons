@@ -1,172 +1,141 @@
-from openerp import models, fields, api, tools
-
-
-class PayableDetailView(models.Model):
-    _name = 'payable.detail.view'
-    _auto = False
-
-    id = fields.Integer(
-        string='ID',
-        readonly=True,
-    )
-    move_line_id = fields.Many2one(
-        'account.move.line',
-        string='Move Line',
-        readonly=True,
-    )
-    voucher_id = fields.Many2one(
-        'account.voucher',
-        string='Voucher',
-        readonly=True,
-    )
-    export_id = fields.Many2one(
-        'payment.export',
-        string='Export',
-        readonly=True,
-    )
-    purchase_id = fields.Many2one(
-        'purchase.order',
-        string='Purchase Order',
-        readonly=True,
-    )
-    tax_id = fields.Many2one(
-        'account.voucher.tax',
-        string='Tax',
-        readonly=True,
-    )
-
-    def _get_sql_view(self):
-        sql_view = """
-            SELECT ROW_NUMBER() OVER(ORDER BY av.id) AS id,
-                l.id AS move_line_id, av.id AS voucher_id, exp_line.export_id,
-                po.id AS purchase_id, tax.id AS tax_id
-            FROM account_move_line l
-            LEFT JOIN account_invoice inv ON l.move_id = inv.move_id OR
-                l.move_id = inv.cancel_move_id OR
-                l.move_id = inv.adjust_move_id
-            LEFT JOIN purchase_invoice_rel rel ON inv.id = rel.invoice_id
-            LEFT JOIN purchase_order po ON rel.purchase_id = po.id
-            LEFT JOIN account_move_reconcile r ON l.reconcile_id = r.id
-                OR l.reconcile_partial_id = r.id
-            LEFT JOIN (SELECT * FROM account_move_line
-                       WHERE doctype = 'payment') l2 ON
-                r.id = l2.reconcile_id OR r.id = l2.reconcile_partial_id
-            LEFT JOIN account_voucher av ON l2.move_id = av.move_id
-            LEFT JOIN (SELECT * FROM payment_export_line l3
-                       LEFT JOIN payment_export exp ON l3.export_id = exp.id
-                       WHERE exp.state = 'done') exp_line ON
-                av.id = exp_line.voucher_id
-            LEFT JOIN account_voucher_tax tax ON inv.id = tax.invoice_id
-                AND tax.voucher_id = av.id AND tax.tax_code_type = 'wht'
-            WHERE l.doctype IN ('in_invoice', 'in_refund', 'adjustment') AND
-                l.account_id = inv.account_id
-            ORDER BY l.partner_id
-        """
-        return sql_view
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
-                   % (self._table, self._get_sql_view()))
+# -*- coding: utf-8 -*-
+from openerp import models, fields, api
+import time
+import pandas as pd
 
 
 class XLSXReportPayableDetail(models.TransientModel):
     _name = 'xlsx.report.payable.detail'
-    _inherit = 'xlsx.report'
+    _inherit = 'report.account.common'
 
-    # Search Criteria
     account_ids = fields.Many2many(
         'account.account',
-        'xlsx_report_partner_detail_account_rel',
-        'report_id', 'account_id',
-        string='Account(s)',
-        domain=[('type', '=', 'payable')],
-        required=True,
+        string='Accounts',
     )
     partner_ids = fields.Many2many(
         'res.partner',
-        'xlsx_report_payable_detail_partner_rel',
-        'report_id', 'partner_id',
-        string='Supplier(s)',
-        domain=[('supplier', '=', True)],
+        string='Partners',
     )
-    start_fiscalyear_id = fields.Many2one(
-        'account.fiscalyear',
-        string='Fiscal Year From',
+    as_of_date = fields.Date(
+        string='As of Date',
     )
-    end_fiscalyear_id = fields.Many2one(
-        'account.fiscalyear',
-        string='Fiscal Year To',
-    )
-    start_period_id = fields.Many2one(
-        'account.period',
-        string='Period From',
-        domain=[('special', '=', False), ('state', '=', 'draft')],
-    )
-    end_period_id = fields.Many2one(
-        'account.period',
-        string='Period To',
-        domain=[('special', '=', False), ('state', '=', 'draft')],
-    )
-    start_doc_posting_date = fields.Date(
-        string='Document Posting Date From',
-    )
-    end_doc_posting_date = fields.Date(
-        string='Document Posting Date To',
-    )
-    start_doc_date = fields.Date(
-        string='Document Date From',
-    )
-    end_doc_date = fields.Date(
-        string='Document Date To',
+    period_length_days = fields.Integer(
+        string='Period Length (days)',
+        default=30,
+        required=True,
     )
     move_ids = fields.Many2many(
         'account.move',
-        'xlsx_report_payable_detail_move_rel',
-        'report', 'move_id',
-        string='Document Number(s)',
-        domain=[('state', '=', 'posted'),
-                ('doctype', 'in', ['in_invoice', 'in_refund', 'adjustment'])],
+        string='Document Numbers',
     )
-    # Report Result
+    filter = fields.Selection(
+        selection_add=[('filter_as_of_date', 'As of Date')],
+    )
+    date_start_real = fields.Date(
+        string='Real Start Date',
+        compute='_compute_date_real',
+    )
+    date_end_real = fields.Date(
+        string='Real End Date',
+        compute='_compute_date_real',
+    )
     results = fields.Many2many(
-        'payable.detail.view',
+        'pabi.common.account.report.view',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
 
+    @api.onchange('filter')
+    def _onchange_filter(self):
+        super(XLSXReportPayableDetail, self)._onchange_filter()
+        self.as_of_date = False
+        if self.filter == "filter_as_of_date":
+            self.as_of_date = time.strftime('%Y-%m-%d')
+            self.fiscalyear_start_id = self.fiscalyear_end_id = False
+
+    @api.model
+    def _get_date_list(self, date_start, date_end):
+        return [x.strftime("%Y-%m-%d") for x in pd.date_range(date_start,
+                                                              date_end)]
+
+    @api.multi
+    def _compute_date_real(self):
+        self.ensure_one()
+        Fiscalyear = self.env['account.fiscalyear']
+        date_start = Fiscalyear.search(
+            [('company_id', '=', self.company_id.id)],
+            order="date_start", limit=1).date_start
+        date_end = Fiscalyear.search(
+            [('company_id', '=', self.company_id.id)],
+            order="date_stop desc", limit=1).date_stop
+        date_list = self._get_date_list(date_start, date_end)
+        if self.fiscalyear_start_id:
+            date_fiscalyear_start = self.fiscalyear_start_id.date_start
+            temp_date_list = self._get_date_list(date_fiscalyear_start,
+                                                 date_end)
+            date_list = list(set(date_list) & set(temp_date_list))
+        if self.fiscalyear_end_id:
+            date_fiscalyear_end = self.fiscalyear_end_id.date_stop
+            temp_date_list = self._get_date_list(date_start,
+                                                 date_fiscalyear_end)
+            date_list = list(set(date_list) & set(temp_date_list))
+        if self.period_start_id:
+            date_period_start = self.period_start_id.date_start
+            temp_date_list = self._get_date_list(date_period_start, date_end)
+            date_list = list(set(date_list) & set(temp_date_list))
+        if self.period_end_id:
+            date_period_end = self.period_end_id.date_stop
+            temp_date_list = self._get_date_list(date_start, date_period_end)
+            date_list = list(set(date_list) & set(temp_date_list))
+        if self.date_start:
+            temp_date_list = self._get_date_list(self.date_start, date_end)
+            date_list = list(set(date_list) & set(temp_date_list))
+        if self.date_end:
+            temp_date_list = self._get_date_list(date_start, self.date_end)
+            date_list = list(set(date_list) & set(temp_date_list))
+        if self.as_of_date:
+            temp_date_list = self._get_date_list(date_start, self.as_of_date)
+            date_list = list(set(date_list) & set(temp_date_list))
+        try:
+            self.date_start_real = min(date_list)
+            self.date_end_real = max(date_list)
+        except Exception:
+            self.date_start_real = self.date_end_real = False
+
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get from pabi.common.account.report.view
+        2. Check account type is payable
+        """
         self.ensure_one()
-        Result = self.env['payable.detail.view']
-        dom = [('move_line_id.account_id', 'in', self.account_ids.ids)]
+        Result = self.env['pabi.common.account.report.view']
+        dom = [('account_id.type', '=', 'payable')]
+        if self.account_ids:
+            dom += [('account_id', 'in', self.account_ids.ids)]
         if self.partner_ids:
-            dom += [('move_line_id.partner_id', 'in', self.partner_ids.ids)]
-        if self.start_fiscalyear_id:
-            dom += [('move_line_id.period_id.fiscalyear_id.date_start', '>=',
-                     self.start_fiscalyear_id.date_start)]
-        if self.end_fiscalyear_id:
-            dom += [('move_line_id.period_id.fiscalyear_id.date_start', '<=',
-                     self.end_fiscalyear_id.date_start)]
-        if self.start_period_id:
-            dom += [('move_line_id.period_id.date_start', '>=',
-                     self.start_period_id.date_start)]
-        if self.end_period_id:
-            dom += [('move_line_id.period_id.date_start', '<=',
-                     self.end_period_id.date_start)]
-        if self.start_doc_posting_date:
-            dom += [('move_line_id.move_id.date', '>=',
-                     self.start_doc_posting_date)]
-        if self.end_doc_posting_date:
-            dom += [('move_line_id.move_id.date', '<=',
-                     self.end_doc_posting_date)]
-        if self.start_doc_date:
-            dom += [('move_line_id.move_id.date_document', '>=',
-                     self.start_doc_date)]
-        if self.end_doc_date:
-            dom += [('move_line_id.move_id.date_document', '<=',
-                     self.end_doc_date)]
+            dom += [('partner_id', 'in', self.partner_ids.ids)]
         if self.move_ids:
-            dom += [('move_line_id.move_id', 'in', self.move_ids.ids)]
-        self.results = Result.search(dom)
+            dom += [('invoice_move_id', 'in', self.move_ids.ids)]
+        if self.fiscalyear_start_id:
+            dom += [('invoice_posting_date', '>=',
+                     self.fiscalyear_start_id.date_start)]
+        if self.fiscalyear_end_id:
+            dom += [('invoice_posting_date', '<=',
+                     self.fiscalyear_end_id.date_stop)]
+        if self.period_start_id:
+            dom += [('invoice_posting_date', '>=',
+                     self.period_start_id.date_start)]
+        if self.period_end_id:
+            dom += [('invoice_posting_date', '<=',
+                     self.period_end_id.date_stop)]
+        if self.date_start:
+            dom += [('invoice_posting_date', '>=', self.date_start)]
+        if self.date_end:
+            dom += [('invoice_posting_date', '<=', self.date_end)]
+        if self.as_of_date:
+            dom += [('invoice_posting_date', '<=', self.as_of_date)]
+        self.results = Result.search(
+            dom, order="partner_id,invoice_posting_date,document_number")

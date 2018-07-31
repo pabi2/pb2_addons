@@ -31,7 +31,7 @@
             <field name="inherit_id" ref="account.view_account_invoice_filter" />
             <field name="arch" type="xml">
                 <field name="user_id" position="before">
-                    <field name="purchase_billing_id" string="Billing Number" filter_domain="[('purchase_billing_id','ilike',self)]"/>
+                    <field name="purchase_billing_id" string="Billing Number" filter_domain="[('purchase_billing_id.name','ilike',self)]"/>
                 </field>
                 <filter name="group_by_partner_id" position="after">
                     <filter string="Billing" domain="[]" context="{'group_by':'purchase_billing_id'}"/>

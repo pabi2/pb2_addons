@@ -13,20 +13,20 @@
                 <field name="fiscalyear_end_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <xpath expr="//page[@string='Time Filters']/group[1]" position="after">
+                <xpath expr="//page[@name='time_filters']/group[1]" position="after">
                     <group string="Billing Dates" attrs="{'invisible': [('filter', '!=', 'filter_billing_date')], 'required': [('filter', '=', 'filter_billing_date')]}">
-                        <field name="billing_date_start"/>
-                        <field name="billing_date_end"/>
+                        <field name="date_billing_start"/>
+                        <field name="date_billing_end"/>
                     </group>
                     <group string="Billing Due Dates" attrs="{'invisible': [('filter', '!=', 'filter_billing_due_date')], 'required': [('filter', '=', 'filter_billing_due_date')]}">
-                        <field name="billing_due_date_start"/>
-                        <field name="billing_due_date_end"/>
+                        <field name="date_due_billing_start"/>
+                        <field name="date_due_billing_end"/>
                     </group>
                 </xpath>
-                <xpath expr="//page[1]" position="after">
-                    <page string="Partner Filters">
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Supplier Filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="partner_ids" colspan="4" nolabel="1"/>
+                        <field name="partner_ids" domain="[('company_id', '=', company_id), ('supplier', '=', True)]" colspan="4" nolabel="1"/>
                     </page>
                     <page string="Billing Filters">
                         <separator string="Print only" colspan="4"/>

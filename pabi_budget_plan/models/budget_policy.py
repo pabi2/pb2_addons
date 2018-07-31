@@ -303,8 +303,17 @@ class BudgetPolicy(models.Model):
                 lines = rec.invest_construction_line_ids
             else:  # Fall back to basic
                 lines = rec.line_ids
-            rec.planned_amount = sum(lines.mapped('planned_amount'))
-            rec.policy_amount = sum(lines.mapped('policy_amount'))
+            res = {}
+            if lines:
+                self._cr.execute("""
+                    select coalesce(sum(planned_amount), 0.0) planned_amount,
+                        coalesce(sum(policy_amount), 0.0) policy_amount
+                    from budget_breakdown_line
+                    where id in %s
+                """, (tuple(lines.ids), ))
+                res = self._cr.dictfetchone()
+            rec.planned_amount = res.get('planned_amount', 0.0)
+            rec.policy_amount = res.get('policy_amount', 0.0)
             rec.policy_diff = rec.policy_amount - rec.new_policy_amount
 
     @api.multi
@@ -557,9 +566,9 @@ class BudgetPolicyLine(ChartField, models.Model):
         for rec in self:
             chart_view = rec.policy_id.chart_view
             if chart_view == 'unit_base':
-                rec.name = rec.org_id.name_short
+                rec.name = rec.org_id.display_name
             elif chart_view == 'project_base':
-                rec.name = rec.program_id.name_short
+                rec.name = rec.program_id.display_name
             elif chart_view == 'personnel':
                 rec.name = 'NSTDA'
             elif chart_view == 'invest_asset':

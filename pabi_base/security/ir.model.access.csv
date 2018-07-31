@@ -33,3 +33,4 @@ access_project_subprogram_user,access_project_subprogram_user,model_project_subp
 access_res_building_user,access_res_building_user,model_res_building,,1,0,0,0
 access_res_floor_user,access_res_floor_user,model_res_floor,,1,0,0,0
 access_res_room_user,access_res_room_user,model_res_room,,1,0,0,0
+access_res_section_program,access_res_section_program,model_res_section_program,base.group_user,1,0,0,0

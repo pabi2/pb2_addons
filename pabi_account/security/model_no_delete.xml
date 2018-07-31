@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
-        <function model="ir.model.access" name="write" >
-        	<function model="ir.model.access" name="search" eval="[[('model_id','=', ref('account.model_account_invoice'))]]" />
-            <value eval="{'perm_unlink': False}" />
-        </function>
-    </data>
-</openerp>

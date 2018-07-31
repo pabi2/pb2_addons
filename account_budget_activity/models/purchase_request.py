@@ -51,14 +51,14 @@ class PurchaseRequestLine(CommitLineCommon, ActivityCommon, models.Model):
     budget_transition_ids = fields.One2many(
         inverse_name='purchase_request_line_id')
 
-    purchased_qty = fields.Float(
-        string='Purchased Quantity',
-        digits=(12, 6),
-        compute='_compute_purchased_qty',
-        store=True,
-        help="This field calculate purchased quantity at line level. "
-        "Will be used to calculate committed budget",
-    )
+    # purchased_qty = fields.Float(
+    #     string='Purchased Quantity',
+    #     digits=(12, 6),
+    #     compute='_compute_purchased_qty',
+    #     store=True,
+    #     help="This field calculate purchased quantity at line level. "
+    #     "Will be used to calculate committed budget",
+    # )
     price_unit = fields.Float(
         string='Unit Price',
     )
@@ -134,22 +134,22 @@ class PurchaseRequestLine(CommitLineCommon, ActivityCommon, models.Model):
     #         if aline and rec.budget_commit_bal:
     #             aline.copy({'amount': -rec.budget_commit_bal})
 
-    @api.multi
-    @api.depends('requisition_lines.purchase_line_ids.order_id.state')
-    def _compute_purchased_qty(self):
-        Uom = self.env['product.uom']
-        for request_line in self:
-            purchased_qty = 0.0
-            for reqisition_line in request_line.requisition_lines:
-                for purchase_line in reqisition_line.purchase_line_ids:
-                    if purchase_line.order_id.state in ['approved']:
-                        # Purchased Qty in PO Line's UOM
-                        purchased_qty += \
-                            Uom._compute_qty(purchase_line.product_uom.id,
-                                             purchase_line.product_qty,
-                                             request_line.product_uom_id.id)
-            request_line.purchased_qty = min(request_line.product_qty,
-                                             purchased_qty)
+    # @api.multi
+    # @api.depends('requisition_lines.purchase_line_ids.order_id.state')
+    # def _compute_purchased_qty(self):
+    #     Uom = self.env['product.uom']
+    #     for request_line in self:
+    #         purchased_qty = 0.0
+    #         for reqisition_line in request_line.requisition_lines:
+    #             for purchase_line in reqisition_line.purchase_line_ids:
+    #                 if purchase_line.order_id.state in ['approved']:
+    #                     # Purchased Qty in PO Line's UOM
+    #                     purchased_qty += \
+    #                         Uom._compute_qty(purchase_line.product_uom.id,
+    #                                          purchase_line.product_qty,
+    #                                          request_line.product_uom_id.id)
+    #         request_line.purchased_qty = min(request_line.product_qty,
+    #                                          purchased_qty)
 
     # ================= PR Commitment =====================
     # DO NOT DELETE, Pending decision on what to use.
@@ -165,7 +165,8 @@ class PurchaseRequestLine(CommitLineCommon, ActivityCommon, models.Model):
 
     @api.model
     def _price_subtotal(self, line_qty):
-        return self.price_unit * line_qty
+        return self.price_subtotal
+        # return self.price_unit * line_qty
 
     # @api.multi
     # def _prepare_analytic_line(self, reverse=False, currency=False):

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 from openerp import models, fields, api
 
 
@@ -19,26 +19,29 @@ class XLSXReportSLAProcurement(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get from account invoice as state in ('open', 'paid')
+        """
         self.ensure_one()
         Result = self.env['account.invoice']
-        dom = []
-        dom = [('type', 'in', ('in_invoice', 'in_refund'))]
+        dom = [('state', 'in', ['open', 'paid']),
+               ('type', 'in', ['in_invoice', 'in_refund'])]
         if self.user_ids:
             dom += [('validate_user_id', 'in', self.user_ids.ids)]
         if self.fiscalyear_start_id:
-            dom += [('period_id.fiscalyear_id.date_start', '>=',
+            dom += [('date_invoice', '>=',
                      self.fiscalyear_start_id.date_start)]
         if self.fiscalyear_end_id:
-            dom += [('period_id.fiscalyear_id.date_stop', '<=',
+            dom += [('date_invoice', '<=',
                      self.fiscalyear_end_id.date_stop)]
         if self.period_start_id:
-            dom += [('period_id.date_start', '>=',
+            dom += [('date_invoice', '>=',
                      self.period_start_id.date_start)]
         if self.period_end_id:
-            dom += [('period_id.date_stop', '<=',
-                     self.period_end_id.date_stop)]
+            dom += [('date_invoice', '<=', self.period_end_id.date_stop)]
         if self.date_start:
-            dom += [('date_value', '>=', self.date_start)]
+            dom += [('date_invoice', '>=', self.date_start)]
         if self.date_end:
-            dom += [('date_value', '<=', self.date_end)]
+            dom += [('date_invoice', '<=', self.date_end)]
         self.results = Result.search(dom, order="number")

@@ -11,7 +11,7 @@
                         <button name="action_done" type="object" states="evaluation" string="Done" class="oe_highlight"/>
                         <button name="action_cancel" type="object" states="draft,evaluation" string="Cancel"/>
                         <button name="action_set_draft" type="object" states="cancel" string="Set to draft"/>
-                        <button name="open_order_line" type="object" string="Create Invoices" attrs="{'invisible':['|',('order_method', '!=', 'manual'),('invoice_created', '=', True)]}"/>
+                        <button name="open_order_line" type="object" string="Create Invoices" attrs="{'invisible':['|',('order_method', '!=', 'manual'),('invoice_created', '!=', False)]}"/>
                         <field name="state" widget="statusbar" readonly="1" statusbar_visible="draft,evaluation,done"/>
                     </header>
                     <sheet>

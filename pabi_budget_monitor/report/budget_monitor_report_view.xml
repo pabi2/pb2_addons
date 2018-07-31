@@ -9,7 +9,6 @@
         <field name="arch" type="xml">
         	<xpath expr="//graph" position="replace">
 	             <graph string="Budget Monitor" type="pivot">
-	                 <field name="fiscalyear_id" type="col"/>
 	                 <field name="planned_amount" type="measure"/>
 	                 <field name="released_amount" type="measure"/>
 	                 <field name="amount_pr_commit" type="measure"/>

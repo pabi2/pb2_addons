@@ -15,9 +15,10 @@
                     <div>
                         <div>
                             <field name="is_small_amount"/>
-                            <field name="accept_reason_txt" attrs="{'invisible': [('accept_reason_txt', '=', False)]}" class="oe_inline"/>
+                            <field name="small_amount_reason" attrs="{'invisible': [('small_amount_reason', '=', False)]}" class="oe_inline"/>
                         </div>
                     </div>
+                    <field name="accept_reason_txt" attrs="{'invisible': [('small_amount_reason', '=', False)]}"/>
                 </xpath>
 
                 <xpath expr="//form/sheet/group/group/field[@name='assigned_to']" position="after">
@@ -29,7 +30,7 @@
                     <field name="delivery_address"/>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='description']" position="before">
-                    <field name="purchase_type_id" attrs="{'required': [('is_small_amount', '=', False)]}"/>
+                    <field name="purchase_type_id"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='product_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -57,7 +58,7 @@
                     <field name="currency_rate"/>
                     <field name="amount_company"/>
                     <field name="purchase_method_id"/>
-                    <field name="purchase_price_range_id" attrs="{'required': [('is_small_amount', '=', False)]}"/>
+                    <field name="purchase_price_range_id"/>
                     <field name="purchase_condition_id"/>
                     <field name="purchase_condition_detail_id"/>
                     <field name="purchase_condition_detail"/>
@@ -104,13 +105,16 @@
                     <attribute name="string">Cancel</attribute>
                     <attribute name="groups">purchase_request.group_purchase_request_manager,purchase_request.group_purchase_request_user</attribute>
                 </xpath>
-                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="after">
-                    <!--<field name="price_unit"/>-->
+                <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='analytic_account_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='is_editable']" position="after">
                     <field name="fixed_asset" invisible="1"/>
                     <field name="tax_ids" widget="many2many_tags"/>
                     <field name="price_subtotal"/>
+                </xpath>
+                <xpath expr="//form/sheet/group/group/field[@name='analytic_account_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='analytic_account_id']" position="after">
                     <!--<field name="price_unit" />-->
@@ -133,10 +137,10 @@
                     <page string="Committee">
                         <field name="committee_ids">
                             <tree editable="bottom">
-                                <field name="sequence"/>
-                                <field name="name"/>
-                                <field name="position"/>
-                                <field name="committee_type_id"/>
+                                <field name="sequence" required="1"/>
+                                <field name="name" required="1"/>
+                                <field name="position" required="1"/>
+                                <field name="committee_type_id" required="1" doman="[('prweb_only', '=', False)]"/>
                             </tree>
                         </field>
                     </page>

@@ -1,54 +1,5 @@
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 from openerp import models, fields, api, tools
-
-
-class XLSXReportSLAEmployee(models.TransientModel):
-    _name = 'xlsx.report.sla.employee'
-    _inherit = 'report.account.common'
-
-    user_ids = fields.Many2many(
-        'res.users',
-        string='Responsible',
-    )
-    category_ids = fields.Many2many(
-        'res.partner.category',
-        string='Supplier Category',
-        domain=[('parent_id', '=', False)],
-    )
-    results = fields.Many2many(
-        'sla.employee.view',
-        string='Results',
-        compute='_compute_results',
-        help='Use compute fields, so there is nothing store in database',
-    )
-
-    @api.multi
-    def _compute_results(self):
-        self.ensure_one()
-        Result = self.env['sla.employee.view']
-        dom = []
-        if self.user_ids:
-            dom += [('voucher_id.create_uid', 'in', self.user_ids.ids)]
-        if self.category_ids:
-            dom += [('voucher_id.partner_id.category_id', 'in',
-                     self.category_ids.ids)]
-        if self.fiscalyear_start_id:
-            dom += [('voucher_id.period_id.fiscalyear_id.date_start', '>=',
-                     self.fiscalyear_start_id.date_start)]
-        if self.fiscalyear_end_id:
-            dom += [('voucher_id.period_id.fiscalyear_id.date_stop', '<=',
-                     self.fiscalyear_end_id.date_stop)]
-        if self.period_start_id:
-            dom += [('voucher_id.period_id.date_start', '>=',
-                     self.period_start_id.date_start)]
-        if self.period_end_id:
-            dom += [('voucher_id.period_id.date_stop', '<=',
-                     self.period_end_id.date_stop)]
-        if self.date_start:
-            dom += [('voucher_id.date_value', '>=', self.date_start)]
-        if self.date_end:
-            dom += [('voucher_id.date_value', '<=', self.date_end)]
-        self.results = Result.search(dom, order="date_invoice,invoice_number")
 
 
 class SLAEmployeeView(models.Model):
@@ -117,3 +68,54 @@ class SLAEmployeeView(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
                    % (self._table, self._get_sql_view()))
+
+
+class XLSXReportSLAEmployee(models.TransientModel):
+    _name = 'xlsx.report.sla.employee'
+    _inherit = 'report.account.common'
+
+    user_ids = fields.Many2many(
+        'res.users',
+        string='Validated By',
+    )
+    source_document_type = fields.Selection(
+        [('expense', 'Expense'),
+         ('advance', 'Advance')],
+        string='Source Document Ref.',
+    )
+    results = fields.Many2many(
+        'sla.employee.view',
+        string='Results',
+        compute='_compute_results',
+        help='Use compute fields, so there is nothing store in database',
+    )
+
+    @api.multi
+    def _compute_results(self):
+        self.ensure_one()
+        Result = self.env['sla.employee.view']
+        dom = []
+
+        if self.user_ids:
+            dom += [('voucher_id.create_uid', 'in', self.user_ids.ids)]
+        if self.source_document_type:
+            dom += [('invoice_id.source_document_type', '=',
+                     self.source_document_type != 'nothing' and
+                     self.source_document_type or False)]
+        if self.fiscalyear_start_id:
+            dom += [('voucher_id.date', '>=',
+                     self.fiscalyear_start_id.date_start)]
+        if self.fiscalyear_end_id:
+            dom += [('voucher_id.date', '<=',
+                     self.fiscalyear_end_id.date_stop)]
+        if self.period_start_id:
+            dom += [('voucher_id.date', '>=',
+                     self.period_start_id.date_start)]
+        if self.period_end_id:
+            dom += [('voucher_id.date', '<=',
+                     self.period_end_id.date_stop)]
+        if self.date_start:
+            dom += [('voucher_id.date', '>=', self.date_start)]
+        if self.date_end:
+            dom += [('voucher_id.date', '<=', self.date_end)]
+        self.results = Result.search(dom, order="date_invoice,invoice_number")

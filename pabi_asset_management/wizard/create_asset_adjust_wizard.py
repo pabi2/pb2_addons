@@ -17,6 +17,21 @@ class CreateAssetAdjustWizard(models.TransientModel):
         string='Type of Adjustment',
         required=True,
     )
+    source_document_type = fields.Selection(
+        [('purchase', 'Purchase Order'),
+         ('sale', 'Sales Order'),
+         ('expense', 'Expense'),
+         ('advance', 'Advance')],
+        string='Source Document Type',
+    )
+    ship_purchase_id = fields.Many2one(
+        'purchase.order',
+        string='Ship Expense For PO',
+        domain="[('order_type', '=', 'purchase_order'),"
+        "('state', 'not in', ('draft', 'cancel'))]",
+        help="This expense is shipping handling for things bought "
+        "with this purchase order.",
+    )
     adjust_asset_type_ids = fields.One2many(
         'adjust.asset.type',
         'wizard_id',
@@ -43,6 +58,14 @@ class CreateAssetAdjustWizard(models.TransientModel):
         if invoice.asset_adjust_id:
             raise ValidationError(
                 _('The asset adjustment already created!'))
+
+    @api.model
+    def default_get(self, fields):
+        res = super(CreateAssetAdjustWizard, self).default_get(fields)
+        active_id = self._context.get('active_id')
+        invoice = self.env['account.invoice'].browse(active_id)
+        res['source_document_type'] = invoice.source_document_type
+        return res
 
     @api.multi
     def _validate(self):
@@ -88,6 +111,7 @@ class CreateAssetAdjustWizard(models.TransientModel):
                                  for x in self.expense_to_asset_ids])
         ctx.update({'default_adjust_type': self.adjust_type,
                     'default_invoice_id': invoice_id,
+                    'default_ship_purchase_id': self.ship_purchase_id.id,
                     'adjust_asset_type_dict': dict(adjust_asset_types),
                     'asset_to_expense_dict': dict(asset_to_expenses),
                     'expense_to_asset_dict': expense_to_assets,

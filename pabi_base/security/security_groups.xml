@@ -16,6 +16,12 @@
             <field name="category_id" ref="module_category_nstda_admin"/>
         </record>
 
+        <record id="group_nstda_admin_technical" model="res.groups">
+            <field name="name">Technical Admin</field>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="category_id" ref="module_category_nstda_admin"/>
+        </record>
+
         # Budgeting
         <record model="ir.module.category" id="module_category_account_budget">
             <field name="name">Budget Management</field>

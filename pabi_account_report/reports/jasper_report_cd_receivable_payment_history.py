@@ -1,19 +1,58 @@
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 from openerp import models, fields, api, tools
 from datetime import datetime
 import time
+
+
+class CDReceivablePaymentHistoryView(models.Model):
+    _name = 'cd.receivable.payment.history.view'
+    _auto = False
+
+    id = fields.Integer(
+        string='ID',
+        readonly=True,
+    )
+    loan_agreement_id = fields.Many2one(
+        'loan.customer.agreement',
+        string='Loan Agreement',
+        readonly=True,
+    )
+    invoice_plan_id = fields.Many2one(
+        'sale.invoice.plan',
+        string='Invoice Plan',
+        readonly=True,
+    )
+    payment_id = fields.Many2one(
+        'account.voucher',
+        string='Payment',
+        readonly=True,
+    )
+
+    def _get_sql_view(self):
+        sql_view = """
+            SELECT ROW_NUMBER() OVER(ORDER BY lca.id, sip.id, av.id) AS id,
+                   lca.id AS loan_agreement_id,
+                   sip.id AS invoice_plan_id,
+                   av.id AS payment_id
+            FROM loan_customer_agreement lca
+            LEFT JOIN sale_order so ON lca.sale_id = so.id
+            LEFT JOIN sale_invoice_plan sip ON so.id = sip.order_id
+            LEFT JOIN account_invoice inv ON sip.ref_invoice_id = inv.id
+            LEFT JOIN account_voucher_line avl ON inv.id = avl.invoice_id
+            LEFT JOIN account_voucher av ON avl.voucher_id = av.id
+        """
+        return sql_view
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
+                   % (self._table, self._get_sql_view()))
 
 
 class JasperReportCDReceivablePaymentHistory(models.TransientModel):
     _name = 'jasper.report.cd.receivable.payment.history'
     _inherit = 'report.account.common'
 
-    fiscalyear_start_id = fields.Many2one(
-        default=False,
-    )
-    fiscalyear_end_id = fields.Many2one(
-        default=False,
-    )
     filter = fields.Selection(
         readonly=True,
         default='filter_date',
@@ -34,7 +73,6 @@ class JasperReportCDReceivablePaymentHistory(models.TransientModel):
     partner_ids = fields.Many2many(
         'res.partner',
         string='Customers',
-        domain="[('customer', '=', True)]",
     )
 
     @api.onchange('bank_id')
@@ -92,48 +130,3 @@ class JasperReportCDReceivablePaymentHistory(models.TransientModel):
             'report_name': self._get_report_name(),
             'datas': self._get_datas(),
         }
-
-
-class CDReceivablePaymentHistoryView(models.Model):
-    _name = 'cd.receivable.payment.history.view'
-    _auto = False
-
-    id = fields.Integer(
-        string='ID',
-        readonly=True,
-    )
-    loan_agreement_id = fields.Many2one(
-        'loan.customer.agreement',
-        string='Loan Agreement',
-        readonly=True,
-    )
-    invoice_plan_id = fields.Many2one(
-        'sale.invoice.plan',
-        string='Invoice Plan',
-        readonly=True,
-    )
-    payment_id = fields.Many2one(
-        'account.voucher',
-        string='Payment',
-        readonly=True,
-    )
-
-    def _get_sql_view(self):
-        sql_view = """
-            SELECT ROW_NUMBER() OVER(ORDER BY lca.id, sip.id, av.id) AS id,
-                   lca.id AS loan_agreement_id,
-                   sip.id AS invoice_plan_id,
-                   av.id AS payment_id
-            FROM loan_customer_agreement lca
-            LEFT JOIN sale_order so ON lca.sale_id = so.id
-            LEFT JOIN sale_invoice_plan sip ON so.id = sip.order_id
-            LEFT JOIN account_invoice inv ON sip.ref_invoice_id = inv.id
-            LEFT JOIN account_voucher_line avl ON inv.id = avl.invoice_id
-            LEFT JOIN account_voucher av ON avl.voucher_id = av.id
-        """
-        return sql_view
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
-                   % (self._table, self._get_sql_view()))

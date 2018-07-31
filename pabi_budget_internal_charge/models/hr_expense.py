@@ -256,7 +256,7 @@ class HRExpense(models.Model):
             if expense.pay_to == 'internal' and \
                     period.fiscalyear_id.control_ext_charge_only:
                 exp_move.with_context(ctx).post()
-            else:
+            elif exp_move.state != 'posted':
                 exp_move.post()
 
     @api.multi

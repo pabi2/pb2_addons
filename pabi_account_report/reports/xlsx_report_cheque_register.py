@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 from openerp import models, fields, api
 
 
@@ -6,22 +6,9 @@ class XLSXReportChequeRegisterReport(models.TransientModel):
     _name = 'xlsx.report.cheque.register'
     _inherit = 'report.account.common'
 
-    fiscalyear_start_id = fields.Many2one(
-        default=False,
-    )
-    fiscalyear_end_id = fields.Many2one(
-        default=False,
-    )
-    date_start = fields.Date(
-        default=False,
-    )
-    date_end = fields.Date(
-        default=False,
-    )
     filter = fields.Selection(
-        [('filter_no', 'No Filters'),
-         ('filter_date', 'Dates')],
-        default='filter_no',
+        default='filter_date',
+        readonly=True,
     )
     date_cheque_received = fields.Date(
         string='Cheque Received Date',
@@ -50,6 +37,11 @@ class XLSXReportChequeRegisterReport(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get data from cheque register
+        2. Filter follow by criteria as we selected
+        """
         self.ensure_one()
         Result = self.env['cheque.register']
         dom = []

@@ -38,6 +38,7 @@
                   action="action_pabi_hr_advance_status_report_wizard"
                   name="Advance Status Report"
                   parent="hr.menu_hr_report"
-                  sequence="110"/>
+                  sequence="110"
+                  groups="account.group_account_user"/>
     </data>
 </openerp>

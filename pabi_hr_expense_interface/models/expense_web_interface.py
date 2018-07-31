@@ -285,11 +285,6 @@ class HRExpense(models.Model):
         return data_dict
 
     @api.model
-    def _post_process_hr_expense(self, expense):
-        # Submit to manager
-        expense.signal_workflow('confirm')
-
-    @api.model
     def generate_hr_expense(self, data_dict, test=False):
         if not test and not self.env.user.company_id.pabiweb_active:
             raise ValidationError(_('Odoo/PABIWeb Disconnected!'))

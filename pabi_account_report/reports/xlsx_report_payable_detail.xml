@@ -1,58 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="xlsx_report_payable_detail_view" model="ir.ui.view">
-            <field name="name">xlsx.report.payable.detail.view</field>
+        <record id="view_xlsx_report_payable_detail_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.payable.detail.form</field>
             <field name="model">xlsx.report.payable.detail</field>
-            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <data>
-                    <xpath expr="//group[@name='criteria']" position="inside">
-                        <group>
-                            <field name="account_ids" widget="many2many_tags"/>
-                            <label for="start_fiscalyear_id" string="Fiscal Year"/>
-                            <div>
-                                <field name="start_fiscalyear_id" class="oe_inline" placeholder="Fiscal Year From" nolabel="1"/>
-                                <field name="end_fiscalyear_id" class="oe_inline" placeholder="Fiscal Year To" nolabel="1"/>
-                            </div>
-                            <label for="start_doc_posting_date" string="Document Posting Date"/>
-                            <div>
-                                <field name="start_doc_posting_date" class="oe_inline" placeholder="From" nolabel="1"/> -
-                                <field name="end_doc_posting_date" class="oe_inline" placeholder="To" nolabel="1"/>
-                            </div>
-                            <field name="move_ids" widget="many2many_tags"/>
-                        </group>
-                        <group>
-                            <field name="partner_ids" widget="many2many_tags"/>
-                            <label for="start_period_id" string="Period"/>
-                            <div>
-                                <field name="start_period_id" class="oe_inline" placeholder="Period From" nolabel="1"/>
-                                <field name="end_period_id" class="oe_inline" placeholder="Period To" nolabel="1"/>
-                            </div>
-                            <label for="start_doc_date" string="Document Date"/>
-                            <div>
-                                <field name="start_doc_date" class="oe_inline" placeholder="From" nolabel="1"/> -
-                                <field name="end_doc_date" class="oe_inline" placeholder="To" nolabel="1"/>
-                            </div>
-                        </group>
-                    </xpath>
-                </data>
+                <xpath expr="//group[@name='criteria']/group[1]" position="inside">
+                    <field name="period_length_days"/>
+                </xpath>
+                <xpath expr="//group[@name='criteria']/group[1]/field[@name='fiscalyear_start_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('filter', '=', 'filter_as_of_date')]}</attribute>
+                </xpath>
+                <xpath expr="//group[@name='criteria']/group[1]/field[@name='fiscalyear_end_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('filter', '=', 'filter_as_of_date')]}</attribute>
+                </xpath>
+                <xpath expr="//notebook[@name='additional_criteria']/page[@name='time_filters']" position="inside">
+                    <group string="Dates" attrs="{'invisible': [('filter', '!=', 'filter_as_of_date')], 'required':[('filter', '=', 'filter_as_of_date')]}">
+                        <field name="as_of_date"/>
+                    </group>
+                </xpath>
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Account Filters" name="account_filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="account_ids" domain="[('company_id', '=', company_id), ('type', '=', 'payable')]"/>
+                    </page>
+                    <page string="Supplier Filters" name="supplier_filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids" domain="[('company_id', '=', company_id), ('supplier', '=', True)]"/>
+                    </page>
+                    <page string="Document Filters" name="document_filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="move_ids" domain="[('company_id', '=', company_id), ('state', '=', 'posted'), ('doctype', 'in', ['in_invoice', 'in_refund', 'in_invoice_debitnote', 'adjustment'])]"/>
+                    </page>
+                </xpath>
             </field>
         </record>
 
-        <record id="action_report_payable_detail" model="ir.actions.act_window">
-            <field name="name">Payable Detail Report</field>
+        <record id="action_xlsx_report_payable_detail_form" model="ir.actions.act_window">
+            <field name="name">Payable Detail</field>
             <field name="res_model">xlsx.report.payable.detail</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_report_payable_detail"
+        <menuitem id="menu_xlsx_report_payable_detail"
             name="Payable Detail"
             parent="menu_pabi_payable_report"
-            action="action_report_payable_detail"
+            action="action_xlsx_report_payable_detail_form"
             sequence="60"/>
     </data>
 </openerp>

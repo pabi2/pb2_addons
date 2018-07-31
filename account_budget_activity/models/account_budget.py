@@ -249,32 +249,59 @@ class AccountBudget(models.Model):
         self.ensure_one()
         return self.budget_expense_line_ids
 
+    @api.model
+    def _domain_to_where_str(self, domain):
+        """ Helper Function for better performance """
+        where_dom = [" %s%s%s " % (x[0], x[1], isinstance(x[2], basestring)
+                     and "'%s'" % x[2] or x[2]) for x in domain]
+        where_str = 'and'.join(where_dom)
+        return where_str
+
     @api.multi
     def _get_past_actual_amount(self):
         self.ensure_one()
-        Consume = self.env['budget.consume.report']
+        # Consume = self.env['budget.consume.report']
         dom = self._get_past_consumed_domain()
-        consumes = Consume.search(dom)
-        return sum(consumes.mapped('amount_actual'))
+        # consumes = Consume.search(dom)
+        # amount = sum(consumes.mapped('amount_actual'))
+        # Change domain: [('x', '=', 'y')] to where str: x = 'y'
+        sql = """
+            select coalesce(sum(amount_actual), 0.0) amount_actual
+            from budget_consume_report where %s
+        """ % self._domain_to_where_str(dom)
+        self._cr.execute(sql)
+        amount = self._cr.fetchone()[0]
+        return amount
 
     @api.multi
     def _get_future_plan_amount(self):
-        self.ensure_one()
+        if not self:
+            return 0.0
         Period = self.env['account.period']
+        Fiscal = self.env['account.fiscalyear']
         period_num = 0
         this_period_date_start = Period.find().date_start
-
-        if self.fiscalyear_id.date_start > this_period_date_start:
-            period_num = 0
-        elif self.fiscalyear_id.date_stop < this_period_date_start:
-            period_num = 12
-        else:
-            period_num = Period.get_num_period_by_period()
         future_plan = 0.0
-        expense_lines = self._budget_expense_lines_hook()
-        for line in expense_lines:
-            for i in range(period_num + 1, 13):
-                future_plan += line['m%s' % (i,)]
+        self._cr.execute("""
+            select distinct fiscalyear_id from account_budget
+            where id in %s
+        """, (tuple(self.ids), ))
+        fiscal_ids = [x[0] for x in self._cr.fetchall()]
+        fiscals = Fiscal.browse(fiscal_ids)
+        for fiscal in fiscals:
+            if fiscal.date_start > this_period_date_start:
+                period_num = 0
+            elif fiscal.date_stop < this_period_date_start:
+                period_num = 12
+            else:
+                period_num = Period.get_num_period_by_period()
+            budgets = self.search([('id', 'in', self.ids),
+                                   ('fiscalyear_id', '=', fiscal.id)])
+            for budget in budgets:
+                expense_lines = budget._budget_expense_lines_hook()
+                for line in expense_lines:
+                    for i in range(period_num + 1, 13):
+                        future_plan += line['m%s' % (i,)]
         return future_plan
 
     @api.multi
@@ -324,9 +351,17 @@ class AccountBudget(models.Model):
 
     @api.multi
     def _compute_released_amount(self):
+        self._cr.execute("""
+            select budget_id, coalesce(sum(released_amount), 0.0)
+            from account_budget_line where budget_id in %s
+            and budget_method = 'expense'
+            group by budget_id
+        """, (tuple(self.ids), ))
+        res_dict = dict(self._cr.fetchall())
         for budget in self:
-            budget.released_amount = \
-                sum(budget.budget_expense_line_ids.mapped('released_amount'))
+            # budget.released_amount = \
+            #     sum(budget.budget_expense_line_ids.mapped('released_amount'))
+            budget.released_amount = res_dict.get(budget.id, 0.0)
 
     @api.multi
     def _compute_commit_amount(self):
@@ -513,10 +548,9 @@ class AccountBudget(models.Model):
     @api.model
     def _get_budget_monitor(self, fiscal, budget_type,
                             budget_level, resource,
-                            # add_field=False,
-                            # add_res_id=False,
                             blevel=False):
         """ For budget check, expenses only """
+        # Note: Pass performance test (when compare with Search method)
         monitors = resource.monitor_ids.\
             filtered(lambda x: x.fiscalyear_id == fiscal and
                      x.budget_method == 'expense')
@@ -539,7 +573,8 @@ class AccountBudget(models.Model):
                 'amount_exp_commit': 0.0,
                 'amount_actual': 0.0,
                 'amount_balance': 0.0, },
-            'message': False, }
+            'message': False,
+            'force_no_budget_check': False}
         AccountFiscalyear = self.env['account.fiscalyear']
         BudgetLevel = self.env['account.fiscalyear.budget.level']
         fiscal = AccountFiscalyear.browse(fiscal_id)
@@ -561,8 +596,8 @@ class AccountBudget(models.Model):
         # No plan and no control, do nothing
         if not monitors and not blevel.is_budget_control:
             res['budget_ok'] = True
+            res['force_no_budget_check'] = True
             return res
-
         # Validation
         if not monitors:  # No plan
             res['budget_ok'] = False
@@ -570,7 +605,7 @@ class AccountBudget(models.Model):
                                '[%s] No active budget control.') % \
                 (fiscal.name, resource.display_name)
             return res
-        else:  # Current Budget Status
+        else:  # Current Budget Status (Performance Tested, faster then SQL)
             res['budget_status'].update({
                 'planned_amount': sum(monitors.mapped('planned_amount')),
                 'released_amount': sum(monitors.mapped('released_amount')),
@@ -601,6 +636,7 @@ class AccountBudget(models.Model):
         if self._context.get('force_no_budget_check', False) or \
                 not blevel.is_budget_control:
             res['budget_ok'] = True  # No control, just return information
+            res['force_no_budget_check'] = True
         return res
 
 
@@ -728,6 +764,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     current_period = fields.Integer(
         string='Current Period',
         compute='_compute_current_period',
+        default=lambda self: self._default_current_period(),
     )
     description = fields.Char(
         string='Description',
@@ -807,19 +844,35 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         #         rec.budget_id.message_post(body=message)
         return super(AccountBudgetLine, self).write(vals)
 
+    @api.model
+    def _get_current_period(self, fiscal, period, adjust_past_plan=True):
+        if adjust_past_plan or fiscal.date_start > period.date_start:
+            return 0
+        elif fiscal.date_stop < period.date_start:
+            return 12
+        else:
+            return self.env['account.period'].get_num_period_by_period()
+
     @api.multi
     def _compute_current_period(self):
-        Period = self.env['account.period']
-        this_period_date_start = Period.find().date_start
+        period = self.env['account.period'].find()
         for rec in self:
-            if rec.budget_id.budget_level_id.adjust_past_plan:
-                rec.current_period = 0
-            elif rec.fiscalyear_id.date_start > this_period_date_start:
-                rec.current_period = 0
-            elif rec.fiscalyear_id.date_stop < this_period_date_start:
-                rec.current_period = 12
-            else:
-                rec.current_period = Period.get_num_period_by_period()
+            adjust_past_plan = rec.budget_id.budget_level_id.adjust_past_plan
+            rec.current_period = \
+                self._get_current_period(rec.fiscalyear_id, period,
+                                         adjust_past_plan)
+        return True
+
+    @api.model
+    def _default_current_period(self):
+        fiscalyear_id = self._context['default_fiscalyear_id']
+        fiscal = self.env['account.fiscalyear'].browse(fiscalyear_id)
+        budget_level_id = self._context['budget_level_id']
+        budget_level = \
+            self.env['account.fiscalyear.budget.level'].browse(budget_level_id)
+        period = self.env['account.period'].find()
+        return self._get_current_period(fiscal, period,
+                                        budget_level.adjust_past_plan)
 
     @api.model
     def _default_period_split_lines(self):

@@ -69,6 +69,15 @@ class InterfaceAccountEntry(models.Model):
         required=True,
         help="Journal to be used in creating Journal Entry",
     )
+    contract_number = fields.Char(
+        string='Contract Number',
+    )
+    contract_date_start = fields.Date(
+        string='Contract Start Date',
+    )
+    contract_date_end = fields.Date(
+        string='Contract Start End',
+    )
     to_reconcile = fields.Boolean(
         string='To Reconcile',
         compute='_compute_to_reconcile',
@@ -380,10 +389,11 @@ class InterfaceAccountEntry(models.Model):
             # if report_type not in ('asset', 'liability'):
             move_line.update_related_dimension(vals)
             analytic_account = Analytic.create_matched_analytic(move_line)
-            if analytic_account and not journal.analytic_journal_id:
-                raise ValidationError(
-                    _("You have to define an analytic journal on the "
-                      "'%s' journal!") % (journal.name,))
+            # kittiu: This throw error in some case, so temp remove it.
+            # if analytic_account and not journal.analytic_journal_id:
+            #     raise ValidationError(
+            #         _("You have to define an analytic journal on the "
+            #           "'%s' journal!") % (journal.name,))
             move_line.analytic_account_id = analytic_account
 
             # For Normal Tax Line, also add to account_tax_detail
@@ -442,7 +452,8 @@ class InterfaceAccountEntry(models.Model):
             # Validate Account
             if payment_ml.account_id != invoice_ml.account_id:
                 raise ValidationError(
-                    _("Wrong account to reconcile for line '%s'") %
+                    _("Wrong account to reconcile for line '%s'.\nInvoice "
+                      "move line account not equal to that of payment") %
                     (line.name,))
             # Validate Amount Sign
             # NOTE: remove this condition for case Undue Tax
@@ -671,17 +682,38 @@ class InterfaceAccountEntryLine(models.Model):
         readonly=True,
         copy=False,
     )
+    reconcile_move_id = fields.Many2one(
+        'account.move',
+        string='Reconcile with',
+        domain="[('state','=','posted'),"
+        "('partner_id', '=', partner_id)]",
+        copy=False,
+    )
     reconcile_move_line_id = fields.Many2one(
         'account.move.line',
         string='Reconcile with',
-        domain="""
-        [('state','=','valid'),
-         ('account_id.type', 'in', ['payable', 'receivable']),
-         ('partner_id', '=', partner_id),
-         ('reconcile_id', '=', False),]
-        """,
-        copy=False,
+        compute='_compute_reconcile_move_line_id',
+        store=True,
     )
+
+    @api.multi
+    @api.depends('reconcile_move_id')
+    def _compute_reconcile_move_line_id(self):
+        AccountMoveLine = self.env['account.move.line']
+        for rec in self:
+            if not rec.reconcile_move_id:
+                continue
+            move_lines = AccountMoveLine.search(
+                [('move_id', '=', rec.reconcile_move_id.id),
+                 ('state', '=', 'valid'),
+                 ('account_id.type', 'in', ['payable', 'receivable']),
+                 ('reconcile_id', '=', False)])
+            if len(move_lines) != 1:
+                raise ValidationError(
+                    _('No valid reconcilable move line for %s') %
+                    rec.reconcile_move_id.name)
+            rec.reconcile_move_line_id = move_lines[0]
+        return True
 
 
 class InterfaceAccountChecker(models.AbstractModel):

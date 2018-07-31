@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="document.directory" id="dir_assign_security_template">
+            <field name="name">Assign Security Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        # Assign Security
+        <record id="xlsx_report_assign_security" model="ir.attachment">
+            <field name="res_model">pabi.security</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_assign_security.xlsx</field>
+            <field name="name">Assign Security</field>
+            <field name="parent_id" eval="ref('dir_assign_security_template')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Assign Security': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'name${value or ""}',
+                                'B4': 'date${value or ""}#{number_format=date}',
+                                'B5': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                                'B12': 'mg1_label${value or ""}',
+                                'C12': 'mg2_label${value or ""}',
+                                'D12': 'mg3_label${value or ""}',
+                                'E12': 'mg4_label${value or ""}',
+                                'F12': 'mg5_label${value or ""}',
+                                'G12': 'mg6_label${value or ""}',
+                                'H12': 'mg7_label${value or ""}',
+                                'I12': 'mg8_label${value or ""}',
+                                'J12': 'mg9_label${value or ""}',
+                                'K12': 'mg10_label${value or ""}',
+                                'L12': 'g1_label${value or ""}',
+                                'M12': 'g2_label${value or ""}',
+                                'N12': 'g3_label${value or ""}',
+                                'O12': 'g4_label${value or ""}',
+                                'P12': 'g5_label${value or ""}',
+                                'Q12': 'g6_label${value or ""}',
+                                'R12': 'g7_label${value or ""}',
+                                'S12': 'g8_label${value or ""}',
+                                'T12': 'g9_label${value or ""}',
+                                'U12': 'g10_label${value or ""}',
+                                'V12': 'g11_label${value or ""}',
+                                'W12': 'g12_label${value or ""}',
+                                'X12': 'g13_label${value or ""}',
+                                'Y12': 'g14_label${value or ""}',
+                                'Z12': 'g15_label${value or ""}',
+                                'AA12': 'g16_label${value or ""}',
+                                'AB12': 'g17_label${value or ""}',
+                                'AC12': 'g18_label${value or ""}',
+                                'AD12': 'g19_label${value or ""}',
+                                'AE12': 'g20_label${value or ""}',
+                                'AF12': 'g21_label${value or ""}',
+                                'AG12': 'g22_label${value or ""}',
+                                'AH12': 'g23_label${value or ""}',
+                                'AI12': 'g24_label${value or ""}',
+                                'AJ12': 'g25_label${value or ""}',
+                                'AK12': 'g26_label${value or ""}',
+                                'AL12': 'g27_label${value or ""}',
+                                'AM12': 'g28_label${value or ""}',
+                                'AN12': 'g29_label${value or ""}',
+                                'AO12': 'g30_label${value or ""}',
+                            },
+                            'line_ids': {
+                                'A13': 'user_id${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'B13': 'mg1${value and "X" or ""}',
+                                'C13': 'mg2${value and "X" or ""}',
+                                'D13': 'mg3${value and "X" or ""}',
+                                'E13': 'mg4${value and "X" or ""}',
+                                'F13': 'mg5${value and "X" or ""}',
+                                'G13': 'mg6${value and "X" or ""}',
+                                'H13': 'mg7${value and "X" or ""}',
+                                'I13': 'mg8${value and "X" or ""}',
+                                'J13': 'mg9${value and "X" or ""}',
+                                'K13': 'mg10${value and "X" or ""}',
+                                'L13': 'g1${value and "X" or ""}',
+                                'M13': 'g2${value and "X" or ""}',
+                                'N13': 'g3${value and "X" or ""}',
+                                'O13': 'g4${value and "X" or ""}',
+                                'P13': 'g5${value and "X" or ""}',
+                                'Q13': 'g6${value and "X" or ""}',
+                                'R13': 'g7${value and "X" or ""}',
+                                'S13': 'g8${value and "X" or ""}',
+                                'T13': 'g9${value and "X" or ""}',
+                                'U13': 'g10${value and "X" or ""}',
+                                'V13': 'g11${value and "X" or ""}',
+                                'W13': 'g12${value and "X" or ""}',
+                                'X13': 'g13${value and "X" or ""}',
+                                'Y13': 'g14${value and "X" or ""}',
+                                'Z13': 'g15${value and "X" or ""}',
+                                'AA13': 'g16${value and "X" or ""}',
+                                'AB13': 'g17${value and "X" or ""}',
+                                'AC13': 'g18${value and "X" or ""}',
+                                'AD13': 'g19${value and "X" or ""}',
+                                'AE13': 'g20${value and "X" or ""}',
+                                'AF13': 'g21${value and "X" or ""}',
+                                'AG13': 'g22${value and "X" or ""}',
+                                'AH13': 'g23${value and "X" or ""}',
+                                'AI13': 'g24${value and "X" or ""}',
+                                'AJ13': 'g25${value and "X" or ""}',
+                                'AK13': 'g26${value and "X" or ""}',
+                                'AL13': 'g27${value and "X" or ""}',
+                                'AM13': 'g28${value and "X" or ""}',
+                                'AN13': 'g29${value and "X" or ""}',
+                                'AO13': 'g30${value and "X" or ""}',
+                            },
+                        }
+                    },
+                    '__IMPORT__': {
+                        'Assign Security': {
+                            'line_ids': {
+                                'A13': 'user_id',
+                                'B13': 'mg1${value and True or False}',
+                                'C13': 'mg2${value and True or False}',
+                                'D13': 'mg3${value and True or False}',
+                                'E13': 'mg4${value and True or False}',
+                                'F13': 'mg5${value and True or False}',
+                                'G13': 'mg6${value and True or False}',
+                                'H13': 'mg7${value and True or False}',
+                                'I13': 'mg8${value and True or False}',
+                                'J13': 'mg9${value and True or False}',
+                                'K13': 'mg10${value and True or False}',
+                                'L13': 'g1${value and True or False}',
+                                'M13': 'g2${value and True or False}',
+                                'N13': 'g3${value and True or False}',
+                                'O13': 'g4${value and True or False}',
+                                'P13': 'g5${value and True or False}',
+                                'Q13': 'g6${value and True or False}',
+                                'R13': 'g7${value and True or False}',
+                                'S13': 'g8${value and True or False}',
+                                'T13': 'g9${value and True or False}',
+                                'U13': 'g10${value and True or False}',
+                                'V13': 'g11${value and True or False}',
+                                'W13': 'g12${value and True or False}',
+                                'X13': 'g13${value and True or False}',
+                                'Y13': 'g14${value and True or False}',
+                                'Z13': 'g15${value and True or False}',
+                                'AA13': 'g16${value and True or False}',
+                                'AB13': 'g17${value and True or False}',
+                                'AC13': 'g18${value and True or False}',
+                                'AD13': 'g19${value and True or False}',
+                                'AE13': 'g20${value and True or False}',
+                                'AF13': 'g21${value and True or False}',
+                                'AG13': 'g22${value and True or False}',
+                                'AH13': 'g23${value and True or False}',
+                                'AI13': 'g24${value and True or False}',
+                                'AJ13': 'g25${value and True or False}',
+                                'AK13': 'g26${value and True or False}',
+                                'AL13': 'g27${value and True or False}',
+                                'AM13': 'g28${value and True or False}',
+                                'AN13': 'g29${value and True or False}',
+                                'AO13': 'g30${value and True or False}',
+                            },
+                        }
+                    }
+                }
+            </field>
+        </record>
+    </data>
+</openerp>

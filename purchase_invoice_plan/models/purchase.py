@@ -67,7 +67,7 @@ class PurchaseOrder(models.Model):
     @api.one
     @api.depends('invoice_ids.state')
     def _compute_plan_invoice_created(self):
-        if not self.invoice_ids:
+        if not self.invoice_ids or not self.use_invoice_plan:
             self.plan_invoice_created = False
         else:
             total_invoice_amt = 0
@@ -373,9 +373,12 @@ class PurchaseOrder(models.Model):
         # Hook
         # Check total amount PO must equal to Invoice
         if self._context.get('first_time', False) and len(invoice_ids) > 0:
-            invoices = self.env['account.invoice'].browse(invoice_ids)
+            self._cr.execute("""
+                select coalesce(sum(amount_untaxed), 0.0)
+                from account_invoice where id in %s
+            """, (tuple(invoice_ids), ))
+            invoice_untaxed = self._cr.fetchone()[0]
             prec = self.env['decimal.precision'].precision_get('Account')
-            invoice_untaxed = sum(invoices.mapped('amount_untaxed'))
             if float_compare(invoice_untaxed, self.amount_untaxed,
                              precision_digits=prec) != 0:
                 raise except_orm(

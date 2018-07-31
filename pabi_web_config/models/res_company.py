@@ -29,6 +29,9 @@ class ResCompany(models.Model):
     pabiweb_active = fields.Boolean(
         string="Open Connection to PABI Web.",
     )
+    pabiweb_pd_inactive = fields.Boolean(
+        string="Disable PD Interface.",
+    )
     pabiweb_hr_url = fields.Char(
         string='PABI Web URL for HR Salary',
     )

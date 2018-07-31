@@ -14,7 +14,7 @@
                             type="action"
                             string="Create Work Acceptance"
                             class="oe_highlight"
-                            attrs="{'invisible':[('state', '!=', 'approved'),]}"/>
+                            attrs="{'invisible':[('state', 'not in', ('approved', 'done')),]}"/>
                 </xpath>
                 <xpath expr="//div[@name='buttons']/button[@name='view_picking']" position="before">
                     <button type="object"  name="acceptance_open"
