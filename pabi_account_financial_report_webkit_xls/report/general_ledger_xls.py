@@ -319,11 +319,6 @@ class general_ledger_xls(report_xls):
                         label_elements.append(
                             "(%s)" % (line['invoice_number'],))
                     label = ' '.join(label_elements)
-                    doc = rowcol_to_cell(row_pos, 9)
-                    doc_above = rowcol_to_cell(row_pos - 1, 9)
-                    item_above = rowcol_to_cell(row_pos - 1, 10)
-                    item_formula = 'IF((' + doc + '<>' + doc_above + '),1,' + \
-                                   item_above + '+1)'
 
                     # Start write data
                     c_specs = [('charge_type', 1, 0, 'text',
