@@ -40,7 +40,7 @@ class XLSXReportPayableDetail(models.TransientModel):
         compute='_compute_date_real',
     )
     results = fields.Many2many(
-        'pabi.account.data.mart.view',
+        'pabi.common.account.report.view',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
@@ -107,11 +107,11 @@ class XLSXReportPayableDetail(models.TransientModel):
     def _compute_results(self):
         """
         Solution
-        1. Get from pabi.account.data.mart.view
+        1. Get from pabi.common.account.report.view
         2. Check account type is payable
         """
         self.ensure_one()
-        Result = self.env['pabi.account.data.mart.view']
+        Result = self.env['pabi.common.account.report.view']
         dom = [('account_id.type', '=', 'payable')]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]

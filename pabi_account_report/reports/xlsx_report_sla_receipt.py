@@ -19,6 +19,11 @@ class XLSXReportSLAReceipt(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get from account bank receipt
+        2. Check state is done
+        """
         self.ensure_one()
         Result = self.env['account.bank.receipt']
         dom = [('state', '=', 'done')]

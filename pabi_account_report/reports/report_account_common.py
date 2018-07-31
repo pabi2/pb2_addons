@@ -236,8 +236,8 @@ class AccountMoveLine(FieldReportAccountMove, models.Model):
     _inherit = 'account.move.line'
 
 
-class PabiAccountDataMartView(models.Model):
-    _name = 'pabi.account.data.mart.view'
+class PabiCommonAccountReportView(models.Model):
+    _name = 'pabi.common.account.report.view'
     _auto = False
 
     # Invoice
@@ -333,6 +333,15 @@ class PabiAccountDataMartView(models.Model):
     invoice_move_write_uid = fields.Many2one(
         'res.users',
         string='Invoice Move Write',
+        readonly=True,
+    )
+    system_id = fields.Many2one(
+        'interface.system',
+        string='System Origin',
+        readonly=True,
+    )
+    document_origin = fields.Char(
+        string='Document Origin',
         readonly=True,
     )
     # Voucher
@@ -448,6 +457,8 @@ class PabiAccountDataMartView(models.Model):
             invoice_move_table.move_line_currency_id AS currency_id,
             invoice_move_table.move_narration AS invoice_narration,
             invoice_move_table.move_write_uid AS invoice_move_write_uid,
+            invoice_move_table.interface_system_id AS system_id,
+            invoice_move_table.interface_name AS document_origin,
 
             /* Voucher */
             voucher_move_table.move_name AS voucher_number,
