@@ -764,6 +764,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     current_period = fields.Integer(
         string='Current Period',
         compute='_compute_current_period',
+        default=lambda self: self._default_current_period(),
     )
     description = fields.Char(
         string='Description',
@@ -843,19 +844,35 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         #         rec.budget_id.message_post(body=message)
         return super(AccountBudgetLine, self).write(vals)
 
+    @api.model
+    def _get_current_period(self, fiscal, period, adjust_past_plan=True):
+        if adjust_past_plan or fiscal.date_start > period.date_start:
+            return 0
+        elif fiscal.date_stop < period.date_start:
+            return 12
+        else:
+            return self.env['account.period'].get_num_period_by_period()
+
     @api.multi
     def _compute_current_period(self):
-        Period = self.env['account.period']
-        this_period_date_start = Period.find().date_start
+        period = self.env['account.period'].find()
         for rec in self:
-            if rec.budget_id.budget_level_id.adjust_past_plan:
-                rec.current_period = 0
-            elif rec.fiscalyear_id.date_start > this_period_date_start:
-                rec.current_period = 0
-            elif rec.fiscalyear_id.date_stop < this_period_date_start:
-                rec.current_period = 12
-            else:
-                rec.current_period = Period.get_num_period_by_period()
+            adjust_past_plan = rec.budget_id.budget_level_id.adjust_past_plan
+            rec.current_period = \
+                self._get_current_period(rec.fiscalyear_id, period,
+                                         adjust_past_plan)
+        return True
+
+    @api.model
+    def _default_current_period(self):
+        fiscalyear_id = self._context['default_fiscalyear_id']
+        fiscal = self.env['account.fiscalyear'].browse(fiscalyear_id)
+        budget_level_id = self._context['budget_level_id']
+        budget_level = \
+            self.env['account.fiscalyear.budget.level'].browse(budget_level_id)
+        period = self.env['account.period'].find()
+        return self._get_current_period(fiscal, period,
+                                        budget_level.adjust_past_plan)
 
     @api.model
     def _default_period_split_lines(self):

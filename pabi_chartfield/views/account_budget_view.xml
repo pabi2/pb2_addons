@@ -71,52 +71,62 @@
                             context="{'tree_view_ref': 'pabi_chartfield.unit_base_tree_view',
                                       'default_section_id': section_id,
                                       'default_fiscalyear_id': fiscalyear_id,
-                                      'default_budget_method': 'revenue'}" />
+                                      'default_budget_method': 'revenue',
+                                      'budget_level_id': budget_level_id}"/>
                     <field name="budget_revenue_line_project_base" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.project_base_tree_view',
                                       'default_program_id': program_id,
                                       'default_fiscalyear_id': fiscalyear_id,
-                                      'default_budget_method': 'revenue'}" />
+                                      'default_budget_method': 'revenue',
+                                      'budget_level_id': budget_level_id}"/>
                     <field name="budget_revenue_line_personnel" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.personnel_tree_view',
                                       'default_fiscalyear_id': fiscalyear_id,
-                                      'default_budget_method': 'revenue'}" />
+                                      'default_budget_method': 'revenue',
+                                      'budget_level_id': budget_level_id}"/>
                     <field name="budget_revenue_line_invest_asset" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.invest_asset_tree_view',
                                       'default_org_id': org_id,
                                       'default_fiscalyear_id': fiscalyear_id,
-                                      'default_budget_method': 'revenue'}" />
+                                      'default_budget_method': 'revenue',
+                                      'budget_level_id': budget_level_id}"/>
                     <field name="budget_revenue_line_invest_construction" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.invest_construction_tree_view',
                                       'default_org_id': org_id,
                                       'default_fiscalyear_id': fiscalyear_id,
-                                      'default_budget_method': 'revenue'}" />
+                                      'default_budget_method': 'revenue',
+                                      'budget_level_id': budget_level_id}"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook//field[@name='budget_expense_line_ids']" position="replace">
                     <field name="budget_expense_line_unit_base" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.unit_base_tree_view',
                                       'default_section_id': section_id,
                                       'default_fiscalyear_id': fiscalyear_id,
-                                      'default_budget_method': 'expense'}" />
+                                      'default_budget_method': 'expense',
+                                      'budget_level_id': budget_level_id}"/>
                     <field name="budget_expense_line_project_base" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.project_base_tree_view',
                                       'default_program_id': program_id,
                                       'default_fiscalyear_id': fiscalyear_id,
-                                      'default_budget_method': 'expense'}" />
+                                      'default_budget_method': 'expense',
+                                      'budget_level_id': budget_level_id}"/>
                     <field name="budget_expense_line_personnel" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.personnel_tree_view',
                                       'default_fiscalyear_id': fiscalyear_id,
-                                      'default_budget_method': 'expense'}" />
+                                      'default_budget_method': 'expense',
+                                      'budget_level_id': budget_level_id}"/>
                     <field name="budget_expense_line_invest_asset" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.invest_asset_tree_view',
                                       'default_org_id': org_id,
                                       'default_fiscalyear_id': fiscalyear_id,
-                                      'default_budget_method': 'expense'}" />
+                                      'default_budget_method': 'expense',
+                                      'budget_level_id': budget_level_id}"/>
                     <field name="budget_expense_line_invest_construction" colspan="4" nolabel="1"
                             context="{'tree_view_ref': 'pabi_chartfield.invest_construction_tree_view',
                                       'default_org_id': org_id,
                                       'default_fiscalyear_id': fiscalyear_id,
-                                      'default_budget_method': 'expense'}" />
+                                      'default_budget_method': 'expense',
+                                      'budget_level_id': budget_level_id}"/>
                 </xpath>
             </field>
         </record>
