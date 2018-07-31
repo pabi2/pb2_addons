@@ -150,7 +150,6 @@ class SearchCommon(ChartField, object):
         string='Group By - Project C',
         default=False,
     )
-    x = "org_id"
 
     @api.onchange('report_type')
     def _onchange_report_type(self):
