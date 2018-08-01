@@ -107,6 +107,11 @@ class StockMove(models.Model):
         string='Room',
         ondelete='restrict',
     )
+    responsible_user_id = fields.Many2one(
+        'res.users',
+        string='Responsible',
+        ondelete='restrict',
+    )
 
     # Building / Floor / Room
     @api.multi

@@ -53,6 +53,12 @@ class AccountMoveLine(models.Model):
             move_line.invest_construction_id.pm_section_id.id or
             move_line.invest_asset_id.owner_section_id.id,
             'owner_project_id': move_line.project_id.id,
+            # Buildings
+            'building_id': move_line.stock_move_id.building_id.id,
+            'floor_id': move_line.stock_move_id.floor_id.id,
+            'room_id': move_line.stock_move_id.room_id.id,
+            'responsible_user_id':
+            move_line.stock_move_id.responsible_user_id.id,
         }
         # With context data about the installment
         if self._context.get('work_acceptance_id', False):
