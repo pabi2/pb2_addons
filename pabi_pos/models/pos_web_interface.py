@@ -87,12 +87,16 @@ class ProductProduct(models.Model):
         product_ids = [x['product_id'] for x in vals]
         products = self.env['product.product'].browse(product_ids)
         products_dict = dict([(x.id, {'uom': x.uom_id.name,
-                                      'list_price': x.list_price})
+                                      'list_price': x.list_price,
+                                      'name': x.name,
+                                      'default_code': x.default_code, })
                              for x in products])
         for val in vals:
             product = products_dict.get(val['product_id'], {})
             val['uom'] = product.get('uom', False)
             val['list_price'] = product.get('list_price', False)
+            val['name'] = product.get('name', False)
+            val['default_code'] = product.get('default_code', False)
         return vals
 
     @api.model
@@ -114,10 +118,6 @@ class ProductProduct(models.Model):
                                    ('default_code', 'in', product_names),
                                    ('name', 'in', product_names)]).ids
         result = self._get_product_count_by_loc(location_id, product_ids)
-        for x in result:
-            product = self.browse(x['product_id'])
-            x['name'] = product.name
-            x['default_code'] = product.default_code
         res = {
             'is_success': True,
             'result': result,
