@@ -109,38 +109,15 @@ class StockMove(models.Model):
     )
 
     # Building / Floor / Room
-    # @api.multi
-    # @api.constrains('building_id', 'floor_id', 'room_id')
-    # def _check_building(self):
-    #     for rec in self:
-    #         self.env['res.building']._check_room_location(rec.building_id,
-    #                                                       rec.floor_id,
-    #                                                       rec.room_id)
-
-    @api.model
-    def create(self, vals):
-        print '=======WRITE START======'
-        print vals
-        import time
-        start = time.time()
-        res = super(StockMove, self).create(vals)
-        end = time.time()
-        print '=======CREATE========> %s' % (end - start)
-        return res
+    @api.multi
+    @api.constrains('building_id', 'floor_id', 'room_id')
+    def _check_building(self):
+        for rec in self:
+            self.env['res.building']._check_room_location(rec.building_id,
+                                                          rec.floor_id,
+                                                          rec.room_id)
 
     @api.multi
-    def write(self, vals):
-        print '=======WRITE START======'
-        print vals
-        import time
-        start = time.time()
-        res = super(StockMove, self).write(vals)
-        end = time.time()
-        print '=======WRITE========> %s' % (end - start)
-        return res
-
-    @api.multi
-    @api.depends('asset_value', 'product_uom_qty')
     def _compute_asset_value_total(self):
         for rec in self:
             rec.asset_value_total = rec.product_uom_qty * rec.asset_value
