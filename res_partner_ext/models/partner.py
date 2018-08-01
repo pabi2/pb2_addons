@@ -172,6 +172,9 @@ class ResPartner(models.Model):
 
     @api.model
     def create(self, vals):
+        if not vals.get('category_id', False):
+            vals['category_id'] = \
+                self.env.user.company_id.default_employee_partner_categ_id.id
         partner = super(ResPartner, self).create(vals)
         # Always use same tag as parent.
         if vals.get('parent_id', False):
