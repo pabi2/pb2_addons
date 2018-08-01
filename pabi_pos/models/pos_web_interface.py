@@ -83,6 +83,16 @@ class ProductProduct(models.Model):
         """, args)
 
         vals = self._cr.dictfetchall()
+        # Add list_price and uom
+        product_ids = [x['product_id'] for x in vals]
+        products = self.env['product.product'].browse(product_ids)
+        products_dict = dict([(x.id, {'uom': x.uom_id.name,
+                                      'list_price': x.list_price})
+                             for x in products])
+        for val in vals:
+            product = products_dict.get(val['product_id'], {})
+            val['uom'] = product.get('uom', False)
+            val['list_price'] = product.get('list_price', False)
         return vals
 
     @api.model
