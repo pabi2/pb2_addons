@@ -695,6 +695,14 @@ class InterfaceAccountEntryLine(models.Model):
         compute='_compute_reconcile_move_line_id',
         store=True,
     )
+    contract_charge_type = fields.Char(
+        string='Contract Charge Type',
+        help="Text information of contract",
+    )
+    cost_control_id = fields.Many2one(
+        'cost.control',
+        string='Job Order',
+    )
 
     @api.multi
     @api.depends('reconcile_move_id')
