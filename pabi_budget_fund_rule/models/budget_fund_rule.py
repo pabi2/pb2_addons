@@ -128,6 +128,16 @@ class BudgetFundRule(models.Model):
         self.write({'state': 'draft'})
 
     @api.multi
+    def action_copy(self):
+        copy_project = self.copy()
+        action = self.env.ref('pabi_budget_fund_rule.action_budget_fund_rule')
+        result = action.read()[0]
+        result['views'] = [(1860, u'form'), (1859, u'tree')]
+        result['domain'] = [('id', '=', copy_project.id)]
+        result['res_id'] = copy_project.id
+        return result
+
+    @api.multi
     @api.constrains('name', 'template', 'fund_id', 'project_id', 'active')
     def _check_unique(self):
         for rec in self:
