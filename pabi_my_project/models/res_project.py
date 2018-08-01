@@ -23,15 +23,9 @@ class ResProject(LogCommon, models.Model):
     state = fields.Selection(
         MY_PROJECT_STATES,
         string='Status',
-        required=True,
-        copy=False,
-        default='draft',
-    )
-    state2 = fields.Selection(
-        MY_PROJECT_STATES,
-        string='Status',
-        related='state',
-        help="For display purposes",
+        related='project_status.res_project_state',
+        store=False,
+        readonly=True,
     )
     lock_release = fields.Boolean(
         string='Lock Budget Release',
@@ -961,6 +955,11 @@ class ResProjectBudgetRelease(models.Model):
 class MyProjectStatus(ResCommon, models.Model):
     _name = 'myproject.status'
     _description = 'myProject Status'
+
+    res_project_state = fields.Selection(
+        MY_PROJECT_STATES,
+        string='Project State'
+    )
 
 
 class ProposalStatus(ResCommon, models.Model):

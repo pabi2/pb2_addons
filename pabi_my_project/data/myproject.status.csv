@@ -1,33 +1,27 @@
-id,code,name
-myproject_status_10,10,กรอกข้อเสนอโครงการ
-myproject_status_20,20,ส่งข้อเสนอโครงการ
-myproject_status_30,30,ตรวจสอบความถูกต้องตามโปรแกรม
-myproject_status_35,35,กำหนดนักวิเคราะห์ดูแลโครงการ
-myproject_status_39,39,ไม่ถูกต้องตามโปรแกรม
-myproject_status_40,40,กำหนด Flow ข้อเสนอโครงการ
-myproject_status_50,50,พิจารณาข้อเสนอโครงการเบื้องต้น
-myproject_status_51,51,ขอข้อมูลเพิ่มเติม (สำหรับการพิจารณาเบื้องต้น)
-myproject_status_52,52,ขอข้อมูลเพิ่มเติม พร้อมเสนอรายชื่อผู้เชี่ยวชาญ
-myproject_status_58,58,ไม่ผ่านการพิจารณาเบื้องต้น เนื่องจากไม่ได้รับข้อมูลเพิ่มเติม
-myproject_status_59,59,ไม่ผ่านการพิจารณาเบื้องต้น
-myproject_status_60,60,เสนอรายชื่อผู้เชี่ยวชาญ
-myproject_status_70,70,พิจารณาข้อเสนอโครงการโดยผู้เชี่ยวชาญ
-myproject_status_71,71,ขอข้อมูลเพิ่มเติม (สำหรับการพิจารณาโดยผู้เชี่ยวชาญ)
-myproject_status_78,78,ไม่ผ่านการพิจารณาโดยผู้เชี่ยวชาญ เนื่องจากไม่ได้รับข้อมูลเพิ่มเติม
-myproject_status_79,79,ไม่ผ่านการพิจารณาโดยผู้เชี่ยวชาญ
-myproject_status_80,80,พิจารณาข้อเสนอโครงการด้านเทคนิค
-myproject_status_81,81,ขอข้อมูลเพิ่มเติม (สำหรับการพิจารณาด้านเทคนิค)
-myproject_status_88,88,ไม่ผ่านการพิจารณาด้านเทคนิค เนื่องจากไม่ได้รับข้อมูลเพิ่มเติม
-myproject_status_89,89,ไม่ผ่านการพิจารณาด้านเทคนิค
-myproject_status_90,90,พิจารณาอนุมัติกรอบงบประมาณโครงการ
-myproject_status_91,91,ขอข้อมูลเพิ่มเติม (สำหรับการพิจารณาอนุมัติกรอบงบประมาณโครงการ)
-myproject_status_98,98,ไม่ผ่านการอนุมัติกรอบงบประมาณโครงการ เนื่องจากไม่ได้รับข้อมูลเพิ่มเติม
-myproject_status_99,99,ไม่ผ่านการอนุมัติกรอบงบประมาณโครงการ
-myproject_status_100,100,พิจารณาอนุมัติโครงการในระบบ SAP
-myproject_status_107,107,อนุมัติโครงการในระบบ SAP
-myproject_status_110,110,หัวหน้าโครงการขอยุติโครงการ
-myproject_status_119,119,แหล่งทุนอนุมัติการยุติโครงการ
-myproject_status_121,121,ขอข้อมูลเพิ่มเติม (สำหรับตรวจสอบความถูกต้อง)
-myproject_status_128,128,ไม่ผ่านการตรวจสอบความถูกต้อง เนื่องจากไม่ได้รับข้อมูลเพิ่มเติม
-myproject_status_129,129,ไม่ผ่านการตรวจสอบความถูกต้อง
-myproject_status_120,120,ตรวจสอบความถูกต้องก่อนอนุมัติโครงการ
+id,code,name,res_project_state
+myproject_status_1,1,โครงการรอโอนไป PABI,draft
+myproject_status_10,10,โครงการได้รับจัดสรร,approve
+myproject_status_20,20,ยกเลิกโครงการ,delete
+myproject_status_30,30,ติดตามรายงานความก้าวหน้า,approve
+myproject_status_31,31,ส่งรายงานความก้าวหน้า,approve
+myproject_status_32,32,กำลังพิจารณารายงานความก้าวหน้า,approve
+myproject_status_33,33,ขอข้อมูลเพิ่มเติมรายงานความก้าวหน้า,approve
+myproject_status_40,40,ดำเนินโครงการ (ongoing Project),approve
+myproject_status_50,50,ขอปรับแผน,approve
+myproject_status_51,51,กำลังพิจารณาขอปรับแผน,approve
+myproject_status_52,52,ขอข้อมูลเพิ่มเติมปรับแผน,approve
+myproject_status_60,60,ติดตามรายงานฉบับสมบูรณ์,approve
+myproject_status_61,61,ส่งรายงานฉบับสมบูรณ์,approve
+myproject_status_62,62,กำลังพิจารณารายงานฉบับสมบูรณ์,approve
+myproject_status_63,63,เสร็จสิ้นการประเมินรายงานฉบับสมบูรณ์,approve
+myproject_status_64,64,ขอข้อมูลเพิ่มเติมรายงานฉบับสมบูรณ์,approve
+myproject_status_70,70,ยุติโครงการ,cancel
+myproject_status_71,71,ขอยุติโครงการ,approve
+myproject_status_72,72,กำลังพิจารณาขอยุติโครงการ,approve
+myproject_status_73,73,ขอข้อมูลเพิ่มเติมยุติโครงการ,approve
+myproject_status_74,74,เสร็จสิ้นการประเมินการขอยุติโครงการ,approve
+myproject_status_75,75,ยุติโครงการแต่รอเบิกจ่าย,approve
+myproject_status_100,100,รายงานฉบับสมบูรณ์ผ่านการประเมิน,approve
+myproject_status_101,101,รอปิดโครงการ,approve
+myproject_status_102,102,ปิดโครงการแบบมีเงื่อนไข,close
+myproject_status_103,103,ปิดโครงการโดยสมบูรณ์,close

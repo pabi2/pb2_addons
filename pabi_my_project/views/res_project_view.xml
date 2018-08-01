@@ -55,7 +55,7 @@
             <field name="arch" type="xml">
                 <form string="Project">
                     <header>
-                        <field name="state2" widget="statusbar" statusbar_visible="draft,approve,delete,cancel,close" readonly="1"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approve,delete,cancel,close" readonly="1"/>
                     </header>
                     <sheet string="Project">
                         <div class="oe_right oe_button_box" name="buttons" groups="base.group_user">
@@ -83,7 +83,6 @@
                                 <field name="project_group_id"/>
                             </group>
                             <group>
-                                <field name="state"/>
                                 <field name="fund_ids" widget="many2many_tags"/>
                                 <field name="mission_id" required="1"/>
                                 <field name="costcenter_id" required="1"/>
@@ -471,7 +470,7 @@
                     </h2>
                     <group>
                         <group>
-                            <field name="state2" readonly="1"/>
+                            <field name="state" readonly="1"/>
                         </group>
                         <group>
                             <field name="current_fy_release_only" readonly="1"/>
