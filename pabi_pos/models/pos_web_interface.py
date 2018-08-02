@@ -101,6 +101,8 @@ class ProductProduct(models.Model):
 
     @api.model
     def get_pos_product_count(self, pos_name, product_names=None):
+        # Always use th_TH
+        self = self.with_context(lang='th_TH')
         if product_names is None:
             product_names = []
         WorkflowProcess = self.env['sale.workflow.process']
