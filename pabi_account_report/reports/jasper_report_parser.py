@@ -8,30 +8,24 @@ def jasper_report_parser(cr, uid, ids, data, context):
 
 jasper_reports.report_jasper(
     'report.cd_receivable_payment_history_group_by_customer',
-    'cd.receivable.payment.history.view',
+    'pabi.common.loan.agreement.report.view',
     parser=jasper_report_parser,
 )
 
 jasper_reports.report_jasper(
     'report.cd_receivable_payment_history_group_by_bank',
-    'cd.receivable.payment.history.view',
+    'pabi.common.loan.agreement.report.view',
     parser=jasper_report_parser,
 )
 
 jasper_reports.report_jasper(
     'report.cd_receivable_follow_up_group_by_customer',
-    'cd.receivable.follow.up.view',
+    'pabi.common.loan.agreement.report.view',
     parser=jasper_report_parser,
 )
 
 jasper_reports.report_jasper(
     'report.cd_receivable_follow_up_group_by_bank',
-    'cd.receivable.follow.up.view',
-    parser=jasper_report_parser,
-)
-
-jasper_reports.report_jasper(
-    'report.receivable_confirmation_letter',
-    'account.move.line',
+    'pabi.common.loan.agreement.report.view',
     parser=jasper_report_parser,
 )

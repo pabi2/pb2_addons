@@ -608,3 +608,53 @@ class PabiCommonAccountReportView(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
                    % (self._table, self._get_sql_view()))
+
+
+class PabiCommonLoanAgreementReportView(models.Model):
+    _name = 'pabi.common.loan.agreement.report.view'
+    _auto = False
+
+    id = fields.Integer(
+        string='ID',
+        readonly=True,
+    )
+    loan_agreement_id = fields.Many2one(
+        'loan.customer.agreement',
+        string='Loan Agreement',
+        readonly=True,
+    )
+    invoice_plan_id = fields.Many2one(
+        'sale.invoice.plan',
+        string='Invoice Plan',
+        readonly=True,
+    )
+    payment_id = fields.Many2one(
+        'account.voucher',
+        string='Payment',
+        readonly=True,
+    )
+
+    def _get_sql_select(self):
+        sql_select = """
+            ROW_NUMBER() OVER(ORDER BY lca.id, sip.id, av.id) AS id,
+            lca.id AS loan_agreement_id, sip.id AS invoice_plan_id,
+            av.id AS payment_id
+        """
+        return sql_select
+
+    def _get_sql_view(self):
+        sql_view = """
+            SELECT %s
+            FROM loan_customer_agreement lca
+            LEFT JOIN sale_order so ON lca.sale_id = so.id
+            LEFT JOIN sale_invoice_plan sip ON so.id = sip.order_id
+            LEFT JOIN account_invoice ai ON sip.ref_invoice_id = ai.id
+            LEFT JOIN account_voucher_line avl ON ai.id = avl.invoice_id
+            LEFT JOIN account_voucher av ON avl.voucher_id = av.id
+        """ % (self._get_sql_select())
+        return sql_view
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
+                   % (self._table, self._get_sql_view()))
