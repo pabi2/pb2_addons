@@ -85,9 +85,15 @@
                     <field name="name" string="Asset Request"/>
                     <field name="user_id"/>
                     <field name="responsible_user_id"/>
-                    <group expand="0" string="Group By...">
+                    <filter icon="terp-check" name="draft" string="Draft" domain="[('state','=','draft')]" help="Draft Moves"/>
+                    <filter icon="terp-check" name="confirm" string="Waiting Approval" domain="[('state','=', 'confirm')]" help="Confirm Moves"/>
+                    <filter icon="terp-check" name="approve" string="Approved" domain="[('state','=',('approve'))]" help="Approved Moves"/>
+                    <filter icon="terp-check" name="done" string="Requested" domain="[('state','=', 'done')]" help="Requested Moves"/>
+                    <filter icon="terp-check" name="cancel" string="Cancelled" domain="[('state','=','cancel')]" help="Cancelled Moves"/>
+                    <group expand="0" string="Group By">
                         <filter string="Received By" domain="" context="{'group_by':'responsible_user_id'}"/>
                         <filter string="Status" domain="" context="{'group_by':'state'}"/>
+                        <filter string="Request Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_request'}"/>
                     </group>
                 </search>
             </field>

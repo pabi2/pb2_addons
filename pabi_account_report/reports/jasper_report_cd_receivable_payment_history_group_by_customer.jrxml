@@ -323,7 +323,7 @@
 					<text><![CDATA[Paid Amount]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Transparent" x="534" y="156" width="82" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="534" y="156" width="80" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<box>
 						<pen lineWidth="1.0"/>
 						<topPen lineWidth="1.0"/>
@@ -471,7 +471,7 @@
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{paid_amount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="534" y="0" width="82" height="20"/>
+				<reportElement mode="Transparent" x="534" y="0" width="80" height="20"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>

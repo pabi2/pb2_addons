@@ -114,9 +114,13 @@
                 <search string="Asset Change Owner">
                     <field name="name" string="Asset Change Owner"/>
                     <field name="user_id"/>
-                    <group expand="0" string="Group By...">
+                    <filter icon="terp-check" name="draft" string="Draft" domain="[('state','=','draft')]" help="Draft Moves"/>
+                    <filter icon="terp-check" name="done" string="Owner Changed" domain="[('state','=', 'done')]" help="Changed Moves"/>
+                    <filter icon="terp-check" name="cancel" string="Cancelled" domain="[('state','=','cancel')]" help="Cancelled Moves"/>
+                    <group expand="0" string="Group By">
                         <filter string="User" domain="" context="{'group_by':'user_id'}"/>
                         <filter string="Status" domain="" context="{'group_by':'state'}"/>
+                        <filter string="Order Date" icon="terp-go-month" domain="[]" context="{'group_by':'date'}"/>
                     </group>
                 </search>
             </field>

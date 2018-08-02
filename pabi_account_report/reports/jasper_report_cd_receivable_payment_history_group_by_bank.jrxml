@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CD Receivable Payment History" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="62"/>
+	<property name="ireport.y" value="193"/>
 	<parameter name="date_report" class="java.lang.String"/>
 	<parameter name="user" class="java.lang.String"/>
 	<parameter name="date_run" class="java.lang.String"/>
@@ -323,7 +323,7 @@
 					<text><![CDATA[Paid Amount]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Transparent" x="534" y="156" width="82" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="534" y="156" width="80" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="1.0"/>
@@ -470,7 +470,7 @@
 				<textFieldExpression class="java.lang.Number"><![CDATA[$V{date_paid} != null ? $F{paid_amount} : null]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="534" y="0" width="82" height="20"/>
+				<reportElement x="534" y="0" width="80" height="20"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
