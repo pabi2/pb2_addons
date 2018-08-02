@@ -15,6 +15,7 @@ class JasperReportCDReceivablePaymentHistory(models.TransientModel):
     date_report = fields.Date(
         string='Report Date',
         required=True,
+        readonly=True,
         default=lambda self: fields.Date.context_today(self),
     )
     bank_id = fields.Many2one(
@@ -46,12 +47,15 @@ class JasperReportCDReceivablePaymentHistory(models.TransientModel):
     @api.multi
     def _get_domain(self):
         """
-        Snap short
+        Solution
         1. Bank invoice must paid
-        2. Bank invoice must paid before date
+        2. Sale order not in (draft, cancel)
         """
         self.ensure_one()
-        dom = []
+        dom = [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
+                False),
+               ('loan_agreement_id.sale_id.state',
+                'not in', ('draft', 'cancel'))]
         if self.partner_ids:
             dom += [('loan_agreement_id.borrower_partner_id', 'in',
                      self.partner_ids.ids)]
@@ -61,11 +65,6 @@ class JasperReportCDReceivablePaymentHistory(models.TransientModel):
         if self.bank_branch_id:
             dom += [('loan_agreement_id.bank_id.bank_branch', '=',
                      self.bank_branch_id.id)]
-        # Check for snap short
-        dom += [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
-                 False),
-                ('loan_agreement_id.supplier_invoice_id.date_paid', '<=',
-                 self.date_report)]
         return dom
 
     @api.multi

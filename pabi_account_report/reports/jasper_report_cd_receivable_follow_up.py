@@ -47,17 +47,19 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
     @api.multi
     def _get_domain(self):
         """
-        Snap short
+        Solution
         1. Bank invoice must paid
-        2. Bank invoice must paid before date
-        3. Customer invoice not paid "OR"
-           Customer invoice paid after report date
-        4. Customer invoice not cancel "OR"
-           Customer invoice cancel after report date
+        2. Sale order not in (draft, cancel)
+        3. Date due of customer invoice
         """
         self.ensure_one()
-        dom = [('invoice_plan_id.ref_invoice_id.date_due', '<',
-                self.date_report)]
+        dom = [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
+                False), ('loan_agreement_id.sale_id.state', 'not in',
+               ('draft', 'cancel')),
+               ('invoice_plan_id.ref_invoice_id.date_due', '<',
+                self.date_report),
+               ('invoice_plan_id.ref_invoice_id.date_paid', '=', False),
+               ('invoice_plan_id.ref_invoice_id.cancel_move_id', '=', False)]
         if self.partner_ids:
             dom += [('loan_agreement_id.borrower_partner_id', 'in',
                      self.partner_ids.ids)]
@@ -67,18 +69,6 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
         if self.bank_branch_id:
             dom += [('loan_agreement_id.bank_id.bank_branch', '=',
                      self.bank_branch_id.id)]
-        # Check for snap short
-        dom += [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
-                 False),
-                ('loan_agreement_id.supplier_invoice_id.date_paid', '<=',
-                 self.date_report),
-                '|', ('invoice_plan_id.ref_invoice_id.date_paid', '=', False),
-                ('invoice_plan_id.ref_invoice_id.date_paid', '>',
-                 self.date_report),
-                '|', ('invoice_plan_id.ref_invoice_id.cancel_move_id', '=',
-                      False),
-                ('invoice_plan_id.ref_invoice_id.cancel_move_id.create_date',
-                 '>', self.date_report)]
         return dom
 
     @api.multi
