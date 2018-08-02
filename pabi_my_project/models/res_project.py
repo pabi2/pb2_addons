@@ -970,7 +970,3 @@ class ProposalStatus(ResCommon, models.Model):
 class ProgramTarget(ResCommon, models.Model):
     _name = 'program.target'
     _description = 'Program Target'
-
-    description = fields.Text(
-        string='Description',
-    )
