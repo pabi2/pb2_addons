@@ -14,7 +14,7 @@
                     1: {
                         '_HEAD_': {
                             'Z2': 'journal_id',
-                            '${"payment_cheque"}': 'report_type',
+                            '${"payment_direct"}': 'report_type',
                         },
                         'import_ids': {
                             'A2${"Tranfer"}': 'description',
@@ -47,7 +47,7 @@
                     1: {
                         '_HEAD_': {
                             'Z2': 'journal_id',
-                            '${"payment_cheque"}': 'report_type',
+                            '${"payment_smart"}': 'report_type',
                         },
                         'import_ids': {
                             'A2${"Tranfer"}': 'description',
