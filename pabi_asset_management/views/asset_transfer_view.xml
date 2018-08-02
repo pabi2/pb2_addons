@@ -60,7 +60,7 @@
                           groups="purchase.group_purchase_user"/>
                         <button name="action_draft2" states="draft,ready"
                           string="Set Target Assets" type="object"
-                          groups="purchase.group_purchase_user, account.group_account_user"/>
+                          groups="purchase.group_purchase_user,account.group_account_user"/>
                         <button name="action_ready" states="draft2"
                           string="Submit to Finance" type="object" class="oe_highlight"
                           groups="purchase.group_purchase_user"/>
