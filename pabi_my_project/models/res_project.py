@@ -115,7 +115,7 @@ class ResProject(LogCommon, models.Model):
         string='Program Reference',
     )
     target_program_id = fields.Many2one(
-        'res.program',
+        'program.target',
         string='Program Target',
     )
     proposal_program_id = fields.Many2one(
@@ -965,3 +965,12 @@ class MyProjectStatus(ResCommon, models.Model):
 class ProposalStatus(ResCommon, models.Model):
     _name = 'proposal.status'
     _description = 'Proposal Status'
+
+
+class ProgramTarget(ResCommon, models.Model):
+    _name = 'program.target'
+    _description = 'Program Target'
+
+    description = fields.Text(
+        string='Description',
+    )

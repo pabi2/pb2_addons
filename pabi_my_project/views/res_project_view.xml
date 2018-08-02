@@ -3,6 +3,16 @@
     <data>
 
         <!-- More Master Data -->
+        <record id="view_myproject_status" model="ir.ui.view">
+            <field name="name">view.myproject.status</field>
+            <field name="model">myproject.status</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
         <record id="action_myproject_status" model="ir.actions.act_window">
             <field name="name">myProject Status</field>
             <field name="res_model">myproject.status</field>
@@ -10,6 +20,16 @@
         </record>
         <menuitem name="myProject Status" id="menu_myproject_status" action="action_myproject_status" parent="pabi_base.menu_res_project" sequence="100"/>
 
+        <record id="view_proposal_status" model="ir.ui.view">
+            <field name="name">view.proposal.status</field>
+            <field name="model">proposal.status</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
         <record id="action_proposal_status" model="ir.actions.act_window">
             <field name="name">Proposal Status</field>
             <field name="res_model">proposal.status</field>
@@ -17,6 +37,22 @@
         </record>
         <menuitem name="Proposal Status" id="menu_proposal_status" action="action_proposal_status" parent="pabi_base.menu_res_project" sequence="110"/>
 
+        <record id="view_program_target" model="ir.ui.view">
+            <field name="name">view.program.target</field>
+            <field name="model">program.target</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_program_target" model="ir.actions.act_window">
+            <field name="name">Program Target</field>
+            <field name="res_model">program.target</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem name="Program Target" id="menu_program_target" action="action_program_target" parent="pabi_base.menu_res_project" sequence="120"/>
 
         <!-- Top menu item -->
         <menuitem name="myProjects" id="menu_main_project" sequence="4"

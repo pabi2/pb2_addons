@@ -2,6 +2,16 @@
 <openerp>
     <data>
         <!-- Fund Type -->
+        <record id="view_project_fund_type" model="ir.ui.view">
+            <field name="name">view.project.fund.type</field>
+            <field name="model">project.fund.type</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
         <record id="action_project_fund_type" model="ir.actions.act_window">
             <field name="name">Fund Type</field>
             <field name="res_model">project.fund.type</field>
@@ -10,6 +20,16 @@
         <menuitem name="Fund Type" id="menu_project_fund_type" action="action_project_fund_type" parent="menu_res_project" sequence="10"/>
 
         <!-- Type -->
+        <record id="view_project_type" model="ir.ui.view">
+            <field name="name">view.project.type</field>
+            <field name="model">project.type</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
         <record id="action_project_type" model="ir.actions.act_window">
             <field name="name">Type</field>
             <field name="res_model">project.type</field>
@@ -18,6 +38,16 @@
         <menuitem name="Type" id="menu_project_type" action="action_project_type" parent="menu_res_project" sequence="20"/>
 
         <!-- Operation -->
+        <record id="view_project_operation" model="ir.ui.view">
+            <field name="name">view.project.operation</field>
+            <field name="model">project.operation</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
         <record id="action_project_operation" model="ir.actions.act_window">
             <field name="name">Operation</field>
             <field name="res_model">project.operation</field>
@@ -26,6 +56,16 @@
         <menuitem name="Operation" id="menu_project_operation" action="action_project_operation" parent="menu_res_project" sequence="30"/>
 
         <!-- Objective -->
+        <record id="view_project_subprogram" model="ir.ui.view">
+            <field name="name">view.project.subprogram</field>
+            <field name="model">project.subprogram</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
         <record id="action_project_subprogram" model="ir.actions.act_window">
             <field name="name">Subprogram</field>
             <field name="res_model">project.subprogram</field>
@@ -34,6 +74,16 @@
         <menuitem name="Subprogram" id="menu_project_subprogram" action="action_project_subprogram" parent="menu_res_project" sequence="35"/>
 
         <!-- Master Plan -->
+        <record id="view_project_master_plan" model="ir.ui.view">
+            <field name="name">view.project.master.plan</field>
+            <field name="model">project.master.plan</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
         <record id="action_project_master_plan" model="ir.actions.act_window">
             <field name="name">Master Plan</field>
             <field name="res_model">project.master.plan</field>
@@ -42,12 +92,33 @@
         <menuitem name="Master Plan" id="menu_project_master_plan" action="action_project_master_plan" parent="menu_res_project" sequence="40"/>
 
         <!-- NSTDA Strategy -->
+        <record id="view_project_nstda_strategy_group" model="ir.ui.view">
+            <field name="name">view.project.nstda.strategy.group</field>
+            <field name="model">project.nstda.strategy.group</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
         <record id="action_project_nstda_strategy_group" model="ir.actions.act_window">
             <field name="name">NSTDA Strategy Group</field>
             <field name="res_model">project.nstda.strategy.group</field>
             <field name="view_type">form</field>
         </record>
         <menuitem name="NSTDA Strategy Group" id="menu_project_nstda_strategy_group" action="action_project_nstda_strategy_group" parent="menu_res_project" sequence="50"/>
+
+        <record id="view_project_nstda_strategy" model="ir.ui.view">
+            <field name="name">view.project.nstda.strategy</field>
+            <field name="model">project.nstda.strategy</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
         <record id="action_project_nstda_strategy" model="ir.actions.act_window">
             <field name="name">NSTDA Strategy</field>
             <field name="res_model">project.nstda.strategy</field>
