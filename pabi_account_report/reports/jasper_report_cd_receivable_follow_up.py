@@ -51,6 +51,8 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
         1. Bank invoice must paid
         2. Sale order not in (draft, cancel)
         3. Date due of customer invoice < report date
+        4. Customer invoice not paid
+        5. Customer invoice not cancel
         """
         self.ensure_one()
         dom = [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
