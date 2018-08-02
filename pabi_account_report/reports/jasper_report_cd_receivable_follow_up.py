@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*
-from openerp import models, fields, api, tools
+# -*- coding: utf-8 -*-
+from openerp import models, fields, api
 from datetime import datetime
 import time
 
@@ -8,12 +8,6 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
     _name = 'jasper.report.cd.receivable.follow.up'
     _inherit = 'report.account.common'
 
-    fiscalyear_start_id = fields.Many2one(
-        default=False,
-    )
-    fiscalyear_end_id = fields.Many2one(
-        default=False,
-    )
     filter = fields.Selection(
         readonly=True,
         default='filter_date',
@@ -52,6 +46,15 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
 
     @api.multi
     def _get_domain(self):
+        """
+        Snap short
+        1. Bank invoice must paid
+        2. Bank invoice must paid before date
+        3. Customer invoice not paid "OR"
+           Customer invoice paid after report date
+        4. Customer invoice not cancel "OR"
+           Customer invoice cancel after report date
+        """
         self.ensure_one()
         dom = [('invoice_plan_id.ref_invoice_id.date_due', '<',
                 self.date_report)]
@@ -64,7 +67,7 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
         if self.bank_branch_id:
             dom += [('loan_agreement_id.bank_id.bank_branch', '=',
                      self.bank_branch_id.id)]
-        # Check for history view
+        # Check for snap short
         dom += [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
                  False),
                 ('loan_agreement_id.supplier_invoice_id.date_paid', '<=',
@@ -83,7 +86,8 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
         self.ensure_one()
         data = {'parameters': {}}
         dom = self._get_domain()
-        data['ids'] = self.env['cd.receivable.follow.up.view'].search(dom).ids
+        data['ids'] = \
+            self.env['pabi.common.loan.agreement.report.view'].search(dom).ids
         date_report = datetime.strptime(self.date_report, '%Y-%m-%d')
         data['parameters']['date_report'] = date_report.strftime('%d/%m/%Y')
         user = self.env.user.with_context(lang="th_TH").display_name
@@ -99,39 +103,3 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
             'report_name': self._get_report_name(),
             'datas': self._get_datas(),
         }
-
-
-class CDReceivableFollowUpView(models.Model):
-    _name = 'cd.receivable.follow.up.view'
-    _auto = False
-
-    id = fields.Integer(
-        string='ID',
-        readonly=True,
-    )
-    loan_agreement_id = fields.Many2one(
-        'loan.customer.agreement',
-        string='Loan Agreement',
-        readonly=True,
-    )
-    invoice_plan_id = fields.Many2one(
-        'sale.invoice.plan',
-        string='Invoice Plan',
-        readonly=True,
-    )
-
-    def _get_sql_view(self):
-        sql_view = """
-            SELECT ROW_NUMBER() OVER(ORDER BY lca.id, sip.id) AS id,
-                   lca.id AS loan_agreement_id,
-                   sip.id AS invoice_plan_id
-            FROM loan_customer_agreement lca
-            LEFT JOIN sale_order so ON lca.sale_id = so.id
-            LEFT JOIN sale_invoice_plan sip ON so.id = sip.order_id
-        """
-        return sql_view
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
-                   % (self._table, self._get_sql_view()))
