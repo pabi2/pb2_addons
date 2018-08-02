@@ -649,8 +649,10 @@ class PabiCommonLoanAgreementReportView(models.Model):
             LEFT JOIN sale_order so ON lca.sale_id = so.id
             LEFT JOIN sale_invoice_plan sip ON so.id = sip.order_id
             LEFT JOIN account_invoice ai ON sip.ref_invoice_id = ai.id
-            LEFT JOIN account_voucher_line avl ON ai.id = avl.invoice_id
-            LEFT JOIN account_voucher av ON avl.voucher_id = av.id
+            LEFT JOIN (SELECT av.*, avl.invoice_id
+                       FROM account_voucher_line avl
+                       LEFT JOIN account_voucher av ON avl.voucher_id = av.id
+                       WHERE av.state != 'cancel') av ON ai.id = av.invoice_id
         """ % (self._get_sql_select())
         return sql_view
 
