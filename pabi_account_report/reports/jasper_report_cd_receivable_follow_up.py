@@ -50,7 +50,7 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
         Solution
         1. Bank invoice must paid
         2. Sale order not in (draft, cancel)
-        3. Date due of customer invoice < report date
+        3. Date due of customer invoice <= report date
         4. Customer invoice not paid
         5. Customer invoice not cancel
         """
