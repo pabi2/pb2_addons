@@ -27,6 +27,18 @@ class GlPayableView(models.Model):
         string='budget',
         readonly=True,
     )
+    charge_type = fields.Char(
+        string='Chage Type',
+        readonly=True,
+    )
+    account_code = fields.Char(
+        string='Account Code',
+        readonly=True,
+    )
+    document_name = fields.Char(
+        string='Document name',
+        readonly=True,
+    )
 
     def _get_sql_view(self):
         sql_view = """
@@ -35,6 +47,8 @@ class GlPayableView(models.Model):
             payment_table.payment_move_line_id) AS id,
             expense_table.invoice_move_line_id AS invoice_move_line_id ,
             payment_table.payment_move_line_id AS payment_move_line_id,
+            expense_table.charge_type, expense_table.account_code,
+            expense_table.document_name,
             CASE WHEN expense_table.section_id IS NOT NULL THEN
              concat('res.section,', expense_table.section_id)
              WHEN expense_table.project_id IS NOT NULL THEN
@@ -52,7 +66,8 @@ class GlPayableView(models.Model):
             FROM
             (SELECT aml.id AS invoice_move_line_id, aml.move_id,
             aml.section_id,aml.project_id,aml.personnel_costcenter_id,
-            aml.invest_asset_id, aml.invest_construction_id
+            aml.invest_asset_id, aml.invest_construction_id, aml.charge_type,
+            aa.code AS account_code, am.name AS document_name
              FROM account_move_line aml
              LEFT JOIN account_account aa ON aml.account_id = aa.id
              LEFT JOIN account_account_type aat ON aa.user_type = aat.id
@@ -146,4 +161,5 @@ class XLSXReportGlPayable(models.TransientModel):
                      self.date_start)]
         if self.date_end:
             dom += [('invoice_move_line_id.move_id.date', '<=', self.date_end)]
-        self.results = Result.search(dom)
+        self.results = Result.search(
+            dom, order='charge_type,account_code ,document_name')

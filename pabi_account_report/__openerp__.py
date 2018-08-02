@@ -48,6 +48,7 @@
         'reports/xlsx_report_gl_payable.xml',
         'reports/qweb_report_payable_confirmation_letter_template.xml',
         'reports/qweb_report_payable_confirmation_letter.xml',
+        'reports/xlsx_report_status_cheque_inventory.xml',
         # Receivable Reports
         'reports/xlsx_report_output_tax.xml',
         'reports/xlsx_report_cd_receivable_confirmation.xml',
