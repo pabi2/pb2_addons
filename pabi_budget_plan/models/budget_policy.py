@@ -303,17 +303,8 @@ class BudgetPolicy(models.Model):
                 lines = rec.invest_construction_line_ids
             else:  # Fall back to basic
                 lines = rec.line_ids
-            res = {}
-            if lines:
-                self._cr.execute("""
-                    select coalesce(sum(planned_amount), 0.0) planned_amount,
-                        coalesce(sum(policy_amount), 0.0) policy_amount
-                    from budget_breakdown_line
-                    where id in %s
-                """, (tuple(lines.ids), ))
-                res = self._cr.dictfetchone()
-            rec.planned_amount = res.get('planned_amount', 0.0)
-            rec.policy_amount = res.get('policy_amount', 0.0)
+            rec.planned_amount = sum(lines.mapped('planned_amount'))
+            rec.policy_amount = sum(lines.mapped('policy_amount'))
             rec.policy_diff = rec.policy_amount - rec.new_policy_amount
 
     @api.multi
