@@ -56,7 +56,7 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
         dom = [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
                 False), ('loan_agreement_id.sale_id.state', 'not in',
                ('draft', 'cancel')),
-               ('invoice_plan_id.ref_invoice_id.date_due', '<',
+               ('invoice_plan_id.ref_invoice_id.date_due', '<=',
                 self.date_report),
                ('invoice_plan_id.ref_invoice_id.date_paid', '=', False),
                ('invoice_plan_id.ref_invoice_id.cancel_move_id', '=', False)]
