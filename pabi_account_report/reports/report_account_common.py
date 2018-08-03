@@ -623,6 +623,11 @@ class PabiCommonLoanAgreementReportView(models.Model):
         string='Loan Agreement',
         readonly=True,
     )
+    order_id = fields.Many2one(
+        'sale.order',
+        string='Sale Order',
+        readonly=True,
+    )
     invoice_plan_id = fields.Many2one(
         'sale.invoice.plan',
         string='Invoice Plan',
@@ -636,9 +641,9 @@ class PabiCommonLoanAgreementReportView(models.Model):
 
     def _get_sql_select(self):
         sql_select = """
-            ROW_NUMBER() OVER(ORDER BY lca.id, sip.id, av.id) AS id,
-            lca.id AS loan_agreement_id, sip.id AS invoice_plan_id,
-            av.id AS payment_id
+            ROW_NUMBER() OVER(ORDER BY lca.id, so.id, sip.id, av.id) AS id,
+            lca.id AS loan_agreement_id, so.id AS order_id,
+            sip.id AS invoice_plan_id, av.id AS payment_id
         """
         return sql_select
 

@@ -785,12 +785,16 @@
                                 'A10': 'loan_agreement_id.borrower_partner_id.search_key${value or ""}',
                                 'B10': 'loan_agreement_id.borrower_partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
                                 'C10': 'loan_agreement_id.sale_id.name${value or ""}',
-                                'D10': 'loan_agreement_id.bank_id.bank_name${value or ""}',
-                                'E10': 'loan_agreement_id.bank_id.bank_branch.name${value or ""}',
+                                'D10': 'loan_agreement_id.bank_id.bank${value and value.with_context(lang="th_TH").name or ""}',
+                                'E10': 'loan_agreement_id.bank_id.bank_branch${value and value.with_context(lang="th_TH").name or ""}',
                                 'F10': 'loan_agreement_id.name${value or ""}',
-                                'G10': 'invoice_id.number${value or ""}',
-                                'H10': 'invoice_id.amount_total${value or ""}',
+                                'G10': 'invoice_plan_id.ref_invoice_id.number${value or ""}',
+                                'H10': 'invoice_plan_id.ref_invoice_id.amount_total${value or ""}',
                             },
+                            '_TAIL_0': {
+                                'A10': '${"Total"}#{font=bold}',
+                                'H10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            }
                         },
                         'Receivable CD Confirmation Report': {
                             '_HEAD_': {
