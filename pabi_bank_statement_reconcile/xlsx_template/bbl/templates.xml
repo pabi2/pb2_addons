@@ -5,7 +5,7 @@
         <record id="bbl_direct" model="ir.attachment">
             <field name="res_model">pabi.bank.statement</field>
             <field name="datas"></field>
-            <field name="datas_fname">bbl_direct.xlsx</field>
+            <field name="datas_fname">bbl_direct.xls</field>
             <field name="name">BBL Direct</field>
             <field name="parent_id" eval="ref('dir_statement_reconcile_template')"/>
             <field name="description">
@@ -13,7 +13,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'Z2': 'journal_id',
+                            'Z2': 'journal_id${value and env["res.partner.bank"].search([("acc_number", "=", value)]).journal_id.name or ""}',
                             '${"payment_direct"}': 'report_type',
                         },
                         'import_ids': {
@@ -38,7 +38,7 @@
         <record id="bbl_smart" model="ir.attachment">
             <field name="res_model">pabi.bank.statement</field>
             <field name="datas"></field>
-            <field name="datas_fname">bbl_smart.xlsx</field>
+            <field name="datas_fname">bbl_smart.xls</field>
             <field name="name">BBL Smart</field>
             <field name="parent_id" eval="ref('dir_statement_reconcile_template')"/>
             <field name="description">
@@ -46,7 +46,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'Z2': 'journal_id',
+                            'Z2': 'journal_id${value and env["res.partner.bank"].search([("acc_number", "=", value)]).journal_id.name or ""}',
                             '${"payment_smart"}': 'report_type',
                         },
                         'import_ids': {
@@ -79,7 +79,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'G4': 'journal_id${value and value.split(":")[1]}',
+                            'G4': 'journal_id${value and env["res.partner.bank"].search([("acc_number", "=", value.split(":")[1])]).journal_id.name or ""}',
                             '${"payment_cheque"}': 'report_type',
                         },
                         'import_ids': {
@@ -110,7 +110,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'G4': 'journal_id${value and value.split(":")[1]}',
+                            'G4': 'journal_id${value and env["res.partner.bank"].search([("acc_number", "=", value.split(":")[1])]).journal_id.name or ""}',
                             '${"bank_receipt"}': 'report_type',
                         },
                         'import_ids': {

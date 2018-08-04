@@ -14,7 +14,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'B1': 'journal_id',
+                            'B1': 'journal_id${value and env["res.partner.bank"].search([("acc_number", "=", value)]).journal_id.name or ""}',
                             '${"payment_cheque"}': 'report_type',
                         },
                         'import_ids': {
@@ -46,7 +46,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'B1': 'journal_id',
+                            'B1': 'journal_id${value and env["res.partner.bank"].search([("acc_number", "=", value)]).journal_id.name or ""}',
                             '${"bank_receipt"}': 'report_type',
                         },
                         'import_ids': {
