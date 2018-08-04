@@ -1,6 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_advance_payment_view,access_advance_payment_view,model_advance_payment_view,,1,0,0,0
-access_cd_receivable_confirmation_view,access_cd_receivable_confirmation_view,model_cd_receivable_confirmation_view,,1,0,0,0
 access_cd_receivable_planning_view,access_cd_receivable_planning_view,model_cd_receivable_planning_view,,1,0,0,0
 access_res_partner_view,access_res_partner_view,model_res_partner_view,,1,0,0,0
 access_purchase_billing_view,access_purchase_billing_view,model_purchase_billing_view,,1,0,0,0
