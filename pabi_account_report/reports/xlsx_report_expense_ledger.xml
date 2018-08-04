@@ -14,7 +14,7 @@
                     </page>
                     <page string="Partner Filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="partner_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id)]"/>
+                        <field name="partner_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id), ('supplier', '=', True)]"/>
                     </page>
                 </xpath>
             </field>
