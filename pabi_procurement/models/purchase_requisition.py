@@ -614,7 +614,7 @@ class PurchaseRequisition(models.Model):
                     ('name', 'ilike', '_main_form.pdf'),
                 ])
                 if len(exist_pd_file) > 0:
-                    exist_pd_file.unlink()
+                    exist_pd_file.sudo().unlink()
                 result = base64.b64encode(result)
                 file_name = self.display_name
                 file_name = re.sub(r'[^a-zA-Z0-9_-]', '_', file_name)
