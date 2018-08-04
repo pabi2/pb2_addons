@@ -21,6 +21,7 @@
         'sale_invoice_plan',
         'report',
         'l10n_th_amount_text',
+        'pabi_account_move_document_ref',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -45,7 +46,6 @@
         'reports/xlsx_report_sla_employee.xml',
         'reports/xlsx_report_sla_procurement.xml',
         'reports/xlsx_report_supplier_receipt_follow_up.xml',
-        'reports/xlsx_report_gl_payable.xml',
         'reports/qweb_report_payable_confirmation_letter_template.xml',
         'reports/qweb_report_payable_confirmation_letter.xml',
         # Receivable Reports
@@ -59,12 +59,14 @@
         'reports/xlsx_report_receivable_before_due.xml',
         'reports/xlsx_report_receivable_detail.xml',
         'reports/xlsx_report_registrar_of_guarantee.xml',
-        'reports/xlsx_report_revenue_ledger.xml',
-        'reports/xlsx_report_gl_allowance_doubtful_accounts.xml',
         'reports/jasper_report_cd_receivable_payment_history.xml',
         'reports/jasper_report_cd_receivable_follow_up.xml',
         'reports/qweb_report_receivable_confirmation_letter_template.xml',
         'reports/qweb_report_receivable_confirmation_letter.xml',
+        # GL Reports
+        'reports/xlsx_report_expense_ledger.xml',
+        'reports/xlsx_report_revenue_ledger.xml',
+        'reports/xlsx_report_gl_allowance_doubtful_accounts.xml',
     ],
     'demo': [
     ],

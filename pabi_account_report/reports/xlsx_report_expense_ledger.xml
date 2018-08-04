@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_expense_ledger_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.expense.ledger.form</field>
+            <field name="model">xlsx.report.expense.ledger</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Account Filters" name="account_filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="account_ids" domain="[('company_id', '=', company_id), ('user_type.code', '=', 'Expense')]"/>
+                    </page>
+                    <page string="Partner Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id)]"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_expense_ledger_form" model="ir.actions.act_window">
+            <field name="name">Expense Ledger</field>
+            <field name="res_model">xlsx.report.expense.ledger</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_expense_ledger"
+            name="Expense Ledger"
+            parent="menu_pabi_general_ledger_report"
+            action="action_xlsx_report_expense_ledger_form"
+            sequence="10"/>
+    </data>
+</openerp>
