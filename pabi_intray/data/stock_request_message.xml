@@ -14,8 +14,8 @@
 #   - boss = Chumchai
 #   - action = False
 #   - is_complete = False
-object = object.with_context(lang='th_TH')
-subject=u"เอกสารขอเบิกวัสดุ: %s" % object.name
+object=object.with_context(lang='th_TH')
+subject=object.name
 body=u"%s จาก %s รอการยืนยันจาก %s" % (object.name, object.employee_id.name,
                                      object.supervisor_emp_id.name)
 owner=object.employee_id.employee_code
@@ -33,11 +33,11 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
           <field name="code">
 # Supervisor Confirmed
 #  - owner = Chumchai
-#  - boss = null
+#  - boss = False
 #  - action = 'A'
 #  - is_complete = False
-object = object.with_context(lang='th_TH')
-subject=u"เอกสารขอเบิกวัสดุ: %s" % object.name
+object=object.with_context(lang='th_TH')
+subject=object.name
 body=u"%s ได้รับการยืนยันจาก %s" % (object.name, object.supervisor_emp_id.name)
 owner=object.supervisor_emp_id.employee_code
 boss=False
@@ -57,12 +57,33 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
 # - boss = Maytinee
 # - action = False
 # - is_complete = True
-object = object.with_context(lang='th_TH')
-subject=u"เอกสารขอเบิกวัสดุ: %s" % object.name
+object=object.with_context(lang='th_TH')
+subject=object.name
 body=u"%s พร้อมจ่ายให้กับ %s" % (object.name, object.employee_id.name)
 owner=object.write_uid.partner_id.employee_id.employee_code
 boss=object.employee_id.employee_code
-action=False
+action='A'
+is_complete=False
+pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
+          </field>
+      </record>
+      <record id="action_stock_request_transferred" model="ir.actions.server">
+          <field name="name">Transferred</field>
+          <field name="model_id" ref="stock_request.model_stock_request"/>
+          <field name="state">code</field>
+          <field name="condition">object.state == 'done'</field>
+          <field name="code">
+# Ready to Transfer
+# - owner = Maytinee
+# - boss = False
+# - action = 'A'
+# - is_complete = True
+object=object.with_context(lang='th_TH')
+subject=object.name
+body=u"%s จ่ายของเรียบร้อยแล้ว" % (object.name, )
+owner=object.employee_id.employee_code
+boss=False
+action='A'
 is_complete=True
 pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
           </field>
@@ -78,8 +99,8 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
 #   - boss = Maytinee
 #   - action = 'R'
 #   - is_complete = 1
-object = object.with_context(lang='th_TH')
-subject=u"เอกสารขอเบิกวัสดุ: %s" % object.name
+object=object.with_context(lang='th_TH')
+subject=object.name
 body=u"%s ไม่ได้รับการอนุมัติให้เบิกจ่าย" % (object.name, )
 owner=object.write_uid.partner_id.employee_id.employee_code
 boss=object.employee_id.employee_code
@@ -98,6 +119,7 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
             eval="[(6,0,[ref('action_stock_request_supervisor_approval'),
                          ref('action_stock_request_supervisor_approved'),
                          ref('action_stock_request_ready_to_transfer'),
+                         ref('action_stock_request_transferred'),
                          ref('action_stock_request_rejected')])]"/>
       </record>
 

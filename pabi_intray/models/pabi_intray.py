@@ -45,7 +45,7 @@ class PABIIntray(models.Model):
             select pi.id, pi.owner, pi.boss, pi.action, pi.is_complete,
             (select value from ir_config_parameter
              where key = 'web.base.url') || '?' || url as url,
-            mm.subject, mm.body
+            mm.subject, mm.body, mm.write_date
             from pabi_intray pi
             join mail_message mm on mm.id = pi.message_id
         )""")

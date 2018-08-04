@@ -9,7 +9,10 @@ This module contain helper function to post message as subtype intray.
 So, intray system can watch and/or post message to portal.
 
 It also contain defined message for following modules,
-- Stock Request
+
+  - Stock Request
+
+Odoo will provide view for other system to call as - pabi_intray_view
 
     """,
     "website": "https://nstda.or.th/",
