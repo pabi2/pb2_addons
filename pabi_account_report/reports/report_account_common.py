@@ -260,6 +260,10 @@ class PabiCommonAccountReportView(models.Model):
         string='Move',
         readonly=True,
     )
+    invoice_document_date = fields.Date(
+        string='Invoice Document Date',
+        readonly=True,
+    )
     invoice_posting_date = fields.Date(
         string='Invoice Posting Date',
         readonly=True,
@@ -344,6 +348,11 @@ class PabiCommonAccountReportView(models.Model):
         string='Document Origin',
         readonly=True,
     )
+    reconcile_id = fields.Many2one(
+        'account.move.reconcile',
+        string='Reconcile',
+        readonly=True,
+    )
     # Voucher
     voucher_number = fields.Char(
         string='Voucher Number',
@@ -381,6 +390,19 @@ class PabiCommonAccountReportView(models.Model):
     payment_export_id = fields.Many2one(
         'payment.export',
         string='Payment Export',
+        readonly=True,
+    )
+    voucher_posting_date = fields.Date(
+        string='Voucher Posting Date',
+        readonly=True,
+    )
+    voucher_document_origin = fields.Char(
+        string='Voucher Document Origin',
+        readonly=True,
+    )
+    voucher_move_id = fields.Many2one(
+        'account.move',
+        string='Voucher Move',
         readonly=True,
     )
 
@@ -439,6 +461,7 @@ class PabiCommonAccountReportView(models.Model):
             invoice_move_table.move_line_account_id AS account_id,
             invoice_move_table.move_line_partner_id AS partner_id,
             invoice_move_table.move_id AS invoice_move_id,
+            invoice_move_table.move_date_document AS invoice_document_date,
             invoice_move_table.move_date AS invoice_posting_date,
             invoice_move_table.move_name AS document_number,
             invoice_move_table.invoice_supplier_invoice_number
@@ -447,7 +470,7 @@ class PabiCommonAccountReportView(models.Model):
                 AS purchase_billing_id,
             invoice_move_table.invoice_id,
             invoice_move_table.move_line_period_id AS period_id,
-            invoice_move_table.invoice_date_due AS date_due_invoice,
+            invoice_move_table.move_line_date_maturity AS date_due_invoice,
             invoice_move_table.invoice_state,
             invoice_move_table.invoice_source_document_id
                 AS source_document_id,
@@ -459,6 +482,7 @@ class PabiCommonAccountReportView(models.Model):
             invoice_move_table.move_write_uid AS invoice_move_write_uid,
             invoice_move_table.interface_system_id AS system_id,
             invoice_move_table.interface_name AS document_origin,
+            invoice_move_table.move_line_reconcile_id AS reconcile_id,
 
             /* Voucher */
             voucher_move_table.move_name AS voucher_number,
@@ -467,7 +491,10 @@ class PabiCommonAccountReportView(models.Model):
             voucher_move_table.voucher_id,
             voucher_move_table.voucher_number_cheque AS number_cheque,
             voucher_move_table.voucher_income_tax_form AS income_tax_form,
-            voucher_move_table.voucher_payment_export_id AS payment_export_id
+            voucher_move_table.voucher_payment_export_id AS payment_export_id,
+            voucher_move_table.move_date AS voucher_posting_date,
+            voucher_move_table.interface_name AS voucher_document_origin,
+            voucher_move_table.move_id AS voucher_move_id
         """
         return sql_select
 
