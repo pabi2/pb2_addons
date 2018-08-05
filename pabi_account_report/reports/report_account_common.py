@@ -508,6 +508,18 @@ class PabiCommonAccountReportView(models.Model):
         string='Supplier Bank Account',
         readonly=True,
     )
+    receipt_type = fields.Selection(
+        [('cash', 'Cash'),
+         ('credit', 'Credit'),
+         ('transfer', 'Transfer'),
+         ('cheque', 'Cheque')],
+        string='Receipt Type',
+        readonly=True,
+    )
+    number_preprint = fields.Char(
+        string='Preprint Number',
+        readonly=True,
+    )
 
     def _get_sql_select_dict(self):
         """
@@ -631,7 +643,13 @@ class PabiCommonAccountReportView(models.Model):
             voucher_move_table.move_id AS voucher_move_id,
             voucher_move_table.move_journal_id AS payment_method_id,
             voucher_move_table.voucher_date_value,
-            voucher_move_table.voucher_supplier_bank_id AS supplier_bank_id
+            voucher_move_table.voucher_supplier_bank_id AS supplier_bank_id,
+            voucher_move_table.voucher_receipt_type AS receipt_type,
+            CASE WHEN voucher_move_table.voucher_id IS NOT NULL THEN
+            voucher_move_table.voucher_number_preprint
+            WHEN voucher_move_table.interface_id IS NOT NULL THEN
+            voucher_move_table.interface_preprint_number
+            ELSE NULL END AS number_preprint
         """
         return sql_select
 
