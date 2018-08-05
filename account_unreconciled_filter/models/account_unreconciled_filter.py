@@ -27,11 +27,16 @@ class AccountUnreconciledFilter(models.Model):
         'account.period',
         string='Period',
         default=lambda self: self.env['account.period'].find(),
+        domain="[('fiscalyear_id', '=', fiscalyear_id)]",
     )
     unreconciled_count = fields.Integer(
         string='Unreconciled Move Lines',
         compute='_compute_unreconciled_count',
     )
+
+    @api.onchange('fiscalyear_id')
+    def _onchange_fiscalyear_id(self):
+        self.period_id = False
 
     @api.multi
     def _get_search_domain(self):
