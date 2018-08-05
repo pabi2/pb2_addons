@@ -28,7 +28,15 @@
                                 <field name="account_id"/>
                             </group>
                         </group>
-                        <field name="description" placeholder="Description..."/>
+                        <group>
+                            <group>
+                                <field name="description" nolabel="1" placeholder="Description..."/>
+                            </group>
+                            <group string="Defaults for Reconcile Write-Off">
+                                <field name="journal_id"/>
+                                <field name="writeoff_acc_id"/>
+                            </group>
+                        </group>
                     </sheet>
                 </form>
             </field>

@@ -33,6 +33,19 @@ class AccountUnreconciledFilter(models.Model):
         string='Unreconciled Move Lines',
         compute='_compute_unreconciled_count',
     )
+    # Defaults
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Write-Off Journal',
+        help="When user click to open reconcile items, this value will be "
+        "set as user default, to be used in Reconcile Writeoff Wizard"
+    )
+    writeoff_acc_id = fields.Many2one(
+        'account.account',
+        string='Write-Off Account',
+        help="When user click to open reconcile items, this value will be "
+        "set as user default, to be used in Reconcile Writeoff Wizard"
+    )
 
     @api.onchange('fiscalyear_id')
     def _onchange_fiscalyear_id(self):
@@ -62,10 +75,35 @@ class AccountUnreconciledFilter(models.Model):
             rec.unreconciled_count = MoveLine.search_count(domain)
         return True
 
+    @api.model
+    def _set_default_values(self, model, default_fields):
+        defaults = self.env['ir.values'].search([
+            ('key', '=', 'default'),
+            ('model', '=', model),
+            ('user_id', '=', self._uid), ])
+        defaults.unlink()
+        for field in default_fields:
+            value = self[field] and self[field].id or False
+            if value:
+                self.env['ir.values'].create({
+                    'key': 'default',
+                    'key2': False,
+                    'user_id': self._uid,
+                    'company_id': self.env.user.company_id.id,
+                    'name': field,
+                    'value_unpickle': value,
+                    'model': model,
+                })
+        return True
+
     @api.multi
     def open_unreconciled(self):
         """ Open the view of move line with the unreconciled move lines"""
         self.ensure_one()
+        # Set default values to be used later in the process
+        self._set_default_values('account.move.line.reconcile.writeoff',
+                                 ['journal_id',
+                                  'writeoff_acc_id'])
         MoveLine = self.env['account.move.line']
         domain = self._get_search_domain()
         lines = MoveLine.search(domain)

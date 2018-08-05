@@ -44,7 +44,9 @@ class AccountMoveLineReconcileWriteoff(models.TransientModel):
         ids = period_obj.find(cr, uid, dt=date, context=context)
         if ids:
             period_id = ids[0]
-        # HOOK, and open journal entry
+        # HOOK, for newly created move line, do not set partner
+        # also, open all related journal entry
+        context['force_no_partner_on_new_move_line'] = True
         rec_id = account_move_line_obj.reconcile(
             cr, uid, context['active_ids'], 'manual', account_id,
             period_id, journal_id, context=context)
