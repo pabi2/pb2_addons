@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import openerp
 from openerp import models, fields, api, tools, _
+from openerp.addons.pabi_account_move_document_ref.models.account_move import \
+    DOCTYPE_SELECT
 from openerp.exceptions import ValidationError
 import time
 
@@ -29,6 +31,14 @@ PREFIX_DOCTYPE = {
     # Special Type for Monitoring Report
     'account_budget': False,
 }
+
+REFERENCE_SELECT = [
+    ('res.section', 'Section'),
+    ('res.project', 'Project'),
+    ('res.personnal.costcenter', 'Personnal Costcenter'),
+    ('res.invest.asset', 'Invest Asset'),
+    ('res.invest.construction', 'Invest Construction'),
+]
 
 
 class ReportAccountCommon(models.AbstractModel):
@@ -353,6 +363,85 @@ class PabiCommonAccountReportView(models.Model):
         string='Reconcile',
         readonly=True,
     )
+    budget = fields.Reference(
+        REFERENCE_SELECT,
+        string='Budget',
+        readonly=True,
+    )
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        readonly=True,
+    )
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        string='Activity Group',
+        readonly=True,
+    )
+    activity_id = fields.Many2one(
+        'account.activity',
+        string='Activity',
+        readonly=True,
+    )
+    move_line_name = fields.Char(
+        string='Description',
+        readonly=True,
+    )
+    doctype = fields.Selection(
+        DOCTYPE_SELECT,
+        string='Doctype',
+        readonly=True,
+    )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Journal',
+        readonly=True,
+    )
+    docline_seq = fields.Integer(
+        string='#',
+        readonly=True,
+    )
+    fund_id = fields.Many2one(
+        'res.fund',
+        string='Fund',
+        readonly=True,
+    )
+    cost_control_type_id = fields.Many2one(
+        'cost.control.type',
+        string='Job Order Type',
+        readonly=True,
+    )
+    cost_control_id = fields.Many2one(
+        'cost.control',
+        string='Job Order',
+        readonly=True,
+    )
+    costcenter_id = fields.Many2one(
+        'res.costcenter',
+        string='Costcenter',
+        readonly=True,
+    )
+    project_id = fields.Many2one(
+        'res.project',
+        string='Project',
+        readonly=True,
+    )
+    mission_id = fields.Many2one(
+        'res.mission',
+        string='Mission',
+        readonly=True,
+    )
+    cancel_move_id = fields.Many2one(
+        'account.move',
+        string='Cancel Journal Entry',
+        readonly=True,
+    )
+    payment_term = fields.Many2one(
+        'account.payment.term',
+        string='Payment Terms',
+        readonly=True,
+    )
     # Voucher
     voucher_number = fields.Char(
         string='Voucher Number',
@@ -403,6 +492,20 @@ class PabiCommonAccountReportView(models.Model):
     voucher_move_id = fields.Many2one(
         'account.move',
         string='Voucher Move',
+        readonly=True,
+    )
+    payment_method_id = fields.Many2one(
+        'account.journal',
+        string='Payment Method',
+        readonly=True,
+    )
+    voucher_date_value = fields.Date(
+        string='Value Date',
+        readonly=True,
+    )
+    supplier_bank_id = fields.Many2one(
+        'res.partner.bank',
+        string='Supplier Bank Account',
         readonly=True,
     )
 
@@ -483,6 +586,37 @@ class PabiCommonAccountReportView(models.Model):
             invoice_move_table.interface_system_id AS system_id,
             invoice_move_table.interface_name AS document_origin,
             invoice_move_table.move_line_reconcile_id AS reconcile_id,
+            CASE WHEN invoice_move_table.move_line_section_id IS NOT NULL THEN
+            CONCAT('res.section,', invoice_move_table.move_line_section_id)
+            WHEN invoice_move_table.move_line_project_id IS NOT NULL THEN
+            CONCAT('res.project,', invoice_move_table.move_line_project_id)
+            WHEN invoice_move_table.move_line_personnel_costcenter_id
+            IS NOT NULL THEN CONCAT('res.personnel.costcenter,',
+            invoice_move_table.move_line_personnel_costcenter_id)
+            WHEN invoice_move_table.move_line_invest_asset_id IS NOT NULL THEN
+            CONCAT('res.invest.asset,',
+            invoice_move_table.move_line_invest_asset_id)
+            WHEN invoice_move_table.move_line_invest_construction_id
+            IS NOT NULL THEN CONCAT('res.invest.construction,',
+            invoice_move_table.move_line_invest_construction_id)
+            ELSE NULL END AS budget,
+            invoice_move_table.move_line_charge_type AS charge_type,
+            invoice_move_table.move_line_activity_group_id
+            AS activity_group_id,
+            invoice_move_table.move_line_activity_id AS activity_id,
+            invoice_move_table.move_line_name,
+            invoice_move_table.move_doctype AS doctype,
+            invoice_move_table.move_journal_id AS journal_id,
+            invoice_move_table.move_line_docline_seq AS docline_seq,
+            invoice_move_table.move_line_fund_id AS fund_id,
+            invoice_move_table.move_line_cost_control_type_id
+            AS cost_control_type_id,
+            invoice_move_table.move_line_cost_control_id AS cost_control_id,
+            invoice_move_table.move_line_costcenter_id AS costcenter_id,
+            invoice_move_table.move_line_project_id AS project_id,
+            invoice_move_table.move_line_mission_id AS mission_id,
+            invoice_move_table.invoice_cancel_move_id AS cancel_move_id,
+            invoice_move_table.invoice_payment_term AS payment_term,
 
             /* Voucher */
             voucher_move_table.move_name AS voucher_number,
@@ -494,7 +628,10 @@ class PabiCommonAccountReportView(models.Model):
             voucher_move_table.voucher_payment_export_id AS payment_export_id,
             voucher_move_table.move_date AS voucher_posting_date,
             voucher_move_table.interface_name AS voucher_document_origin,
-            voucher_move_table.move_id AS voucher_move_id
+            voucher_move_table.move_id AS voucher_move_id,
+            voucher_move_table.move_journal_id AS payment_method_id,
+            voucher_move_table.voucher_date_value,
+            voucher_move_table.voucher_supplier_bank_id AS supplier_bank_id
         """
         return sql_select
 
