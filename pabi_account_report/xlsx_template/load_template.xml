@@ -29,7 +29,7 @@
                 ref('xlsx_report_receivable_detail'),
                 ref('xlsx_report_registrar_of_guarantee'),
                 ref('xlsx_report_revenue_ledger'),
-                ref('xlsx_report_gl_payable'),
+                ref('xlsx_report_expense_ledger'),
                 ref('xlsx_report_gl_allowance_doubtful_accounts'),
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
