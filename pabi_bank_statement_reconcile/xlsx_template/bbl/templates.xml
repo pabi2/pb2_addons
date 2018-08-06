@@ -79,7 +79,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'G4': 'journal_id${env["res.partner.bank"].convert_acc_number_to_journal(value)}',
+                            'G4': 'journal_id${env["res.partner.bank"].convert_acc_number_to_journal(value and value.split(":")[1])}',
                             '${"payment_cheque"}': 'report_type',
                         },
                         'import_ids': {
@@ -110,7 +110,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'G4': 'journal_id${env["res.partner.bank"].convert_acc_number_to_journal(value)}',
+                            'G4': 'journal_id${env["res.partner.bank"].convert_acc_number_to_journal(value and value.split(":")[1])}',
                             '${"bank_receipt"}': 'report_type',
                         },
                         'import_ids': {
