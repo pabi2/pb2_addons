@@ -100,6 +100,7 @@
             <field name="model">interface.account.entry</field>
             <field name="arch" type="xml">
                 <tree string="Journal Entry Model" colors="blue:(state == 'draft')">
+                    <field name="system_id"/>
                     <field name="name"/>
                     <field name="journal_id"/>
                     <field name="move_id"/>
