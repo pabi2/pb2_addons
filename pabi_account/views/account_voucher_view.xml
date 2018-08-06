@@ -104,6 +104,17 @@
             </field>
         </record>
 
+        <record id="view_vendor_receipt_form_no_create_bank_receipt" model="ir.ui.view">
+            <field name="name">view.vendor.receipt.form.no.create.bank.receipt</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_bank_receipt.view_vendor_receipt_form"/>
+            <field name="arch" type="xml">
+                <button name="%(account_bank_receipt.action_voucher_create_bank_receipt)d" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </button>
+            </field>
+        </record>
+
         # List invoices in Payment tree view
         <record id="view_voucher_tree" model="ir.ui.view">
             <field name="name">account.voucher.tree</field>
