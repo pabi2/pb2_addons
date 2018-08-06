@@ -211,6 +211,23 @@ class ResPartner(models.Model):
         return res
 
     @api.model
+    def create_update_partner(self, vals):
+        # No search key, do create, else try to update.
+        if not vals.get('search_key', False):
+            return self.create_partner(vals)
+        try:  # Update
+            WS = self.env['pabi.utils.ws']
+            res = WS.friendly_update_data(self._name, vals, 'search_key')
+        except Exception, e:
+            res = {
+                'is_success': False,
+                'result': False,
+                'messages': e,
+            }
+            self._cr.rollback()
+        return res
+
+    @api.model
     def _pre_category_change(self, vals):
         # Do not allow change of partner tag,
         # if it result in change of its accounting
