@@ -13,7 +13,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'Z2': 'journal_id${value and env["res.partner.bank"].search([("acc_number", "=", value)]).journal_id.name or ""}',
+                            'Z2': 'journal_id${env["res.partner.bank"].convert_acc_number_to_journal(value)}',
                             '${"payment_direct"}': 'report_type',
                         },
                         'import_ids': {
@@ -46,7 +46,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'Z2': 'journal_id${value and env["res.partner.bank"].search([("acc_number", "=", value)]).journal_id.name or ""}',
+                            'Z2': 'journal_id${env["res.partner.bank"].convert_acc_number_to_journal(value)}',
                             '${"payment_smart"}': 'report_type',
                         },
                         'import_ids': {
@@ -79,7 +79,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'G4': 'journal_id${value and env["res.partner.bank"].search([("acc_number", "=", value.split(":")[1])]).journal_id.name or ""}',
+                            'G4': 'journal_id${env["res.partner.bank"].convert_acc_number_to_journal(value)}',
                             '${"payment_cheque"}': 'report_type',
                         },
                         'import_ids': {
@@ -110,7 +110,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'G4': 'journal_id${value and env["res.partner.bank"].search([("acc_number", "=", value.split(":")[1])]).journal_id.name or ""}',
+                            'G4': 'journal_id${env["res.partner.bank"].convert_acc_number_to_journal(value)}',
                             '${"bank_receipt"}': 'report_type',
                         },
                         'import_ids': {
