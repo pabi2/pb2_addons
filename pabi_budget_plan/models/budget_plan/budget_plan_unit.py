@@ -299,6 +299,11 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     _description = "Unit - Budget Plan Line"
     _rec_name = 'activity_group_id'
 
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        default=lambda self:
+        self.env.user.company_id.default_ag_unit_base_id,
+    )
     charge_type = fields.Selection(
         [('internal', 'Internal'),
          ('external', 'External')],

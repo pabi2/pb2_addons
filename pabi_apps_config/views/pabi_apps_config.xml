@@ -219,6 +219,10 @@
                       <label for="id" string="Default Activity Group"/>
                       <div>
                           <div>
+                            <label for="default_ag_unit_base_id"/>
+                            <field name="default_ag_unit_base_id" class="oe_inline"/>
+                          </div>
+                          <div>
                             <label for="default_ag_invest_construction_id"/>
                             <field name="default_ag_invest_construction_id" class="oe_inline"/>
                           </div>

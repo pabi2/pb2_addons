@@ -167,7 +167,8 @@ class BudgetBreakdown(models.Model):
         """, (tuple(self.ids), ))
         breakdown_budget_count = dict(self._cr.fetchall())
         for breakdown in self:
-            breakdown.budget_count = breakdown_budget_count[breakdown.id]
+            breakdown.budget_count = \
+                breakdown_budget_count.get(breakdown.id, 0)
 
     @api.multi
     def action_open_budget(self):

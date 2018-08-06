@@ -5,6 +5,10 @@ from openerp import fields, models
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
+    default_ag_unit_base_id = fields.Many2one(
+        'account.activity.group',
+        string='Default Unit Based Activity Group',
+    )
     default_ag_invest_construction_id = fields.Many2one(
         'account.activity.group',
         string='Default Invest Constuction Activity Group',

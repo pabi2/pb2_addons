@@ -189,3 +189,19 @@ class AccountBudgetLine(models.Model):
     @api.onchange('invest_construction_id')
     def _onchange_invest_construction_id(self):
         self.invest_construction_phase_id = False
+
+    @api.model
+    def create(self, vals):
+        """ Assign default AG for some Budget Type """
+        rec = super(AccountBudgetLine, self).create(vals)
+        if not rec.activity_group_id:
+            ag_dict = {
+                'unit_base': 'default_ag_unit_base_id',
+                'invest_asset': 'default_ag_invest_asset_id',
+                'invest_construction': 'default_ag_invest_construction_id',
+            }
+            company = self.env.user.company_id
+            ag_field = ag_dict.get(rec.budget_id.chart_view, False)
+            if ag_field:
+                rec.activity_group_id = company[ag_field]
+        return rec

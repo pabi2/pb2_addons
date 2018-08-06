@@ -178,6 +178,11 @@ class PABIAppsConfigSettings(models.TransientModel):
         related="company_id.longterm_invest_account_id",
     )
     # Default AG for invest asset / construction
+    default_ag_unit_base_id = fields.Many2one(
+        'account.activity.group',
+        string='Default Unit Based Activity Group',
+        related="company_id.default_ag_unit_base_id",
+    )
     default_ag_invest_asset_id = fields.Many2one(
         'account.activity.group',
         string='Default Invest Asset Activity Group',
