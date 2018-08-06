@@ -43,6 +43,7 @@ class AccountUnreconciledFilter(models.Model):
     writeoff_acc_id = fields.Many2one(
         'account.account',
         string='Write-Off Account',
+        domain=[('type', '!=', 'view')],
         help="When user click to open reconcile items, this value will be "
         "set as user default, to be used in Reconcile Writeoff Wizard"
     )
