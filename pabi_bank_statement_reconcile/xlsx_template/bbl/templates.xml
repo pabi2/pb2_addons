@@ -121,7 +121,7 @@
                     }
                 },
                 '__POST_IMPORT__': [
-                  '${object.import_ids.filtered(lambda l: l.debit == 0.0).unlink()}',
+                  '${object.import_ids.filtered(lambda l: l.credit &lt;= 0.0).unlink()}',
                   '${object.post_xlsx_import_statement()}',
                 ],
             }
