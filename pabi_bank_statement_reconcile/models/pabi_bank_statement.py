@@ -178,7 +178,7 @@ class PABIBankStatement(models.Model):
         """ Make sure that, only 1 in work in process statement is allowed
             Make sure that, when state != 'draft', all 3 fields is required """
         for rec in self:
-            if rec.state != 'draft':
+            if rec.state == 'reconcile':
                 if not (rec.report_type and rec.journal_id
                         and rec.partner_bank_id):
                     raise ValidationError(
