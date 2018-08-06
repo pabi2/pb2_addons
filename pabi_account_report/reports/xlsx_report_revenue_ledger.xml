@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="xlsx_report_revenue_ledger_view" model="ir.ui.view">
-            <field name="name">xlsx.report.revenue.ledger.view</field>
+        <record id="view_xlsx_report_revenue_ledger_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.revenue.ledger.form</field>
             <field name="model">xlsx.report.revenue.ledger</field>
             <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-              <xpath expr="//notebook[@name='additional_criteria']" position="inside">
-                  <page string="Account Filters" name="account_filters">
-                      <separator string="Print only" colspan="4"/>
-                      <field name="account_ids" domain="[('company_id', '=', company_id), ('user_type.name', '=', 'Revenue')]"/>
-                  </page>
-                  <page string="Partner Filters">
-                      <separator string="Print only" colspan="4"/>
-                      <field name="partner_ids" colspan="4" nolabel="1"/>
-                  </page>
-              </xpath>
-          </field>
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Account Filters" name="account_filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="account_ids" domain="[('company_id', '=', company_id), ('user_type.code', '=', 'Revenue')]"/>
+                    </page>
+                    <page string="Partner Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id), ('customer', '=', True)]"/>
+                    </page>
+                </xpath>
+            </field>
         </record>
 
-        <record id="action_report_revenue_ledger" model="ir.actions.act_window">
+        <record id="action_xlsx_report_revenue_ledger_form" model="ir.actions.act_window">
             <field name="name">Revenue Ledger</field>
             <field name="res_model">xlsx.report.revenue.ledger</field>
             <field name="view_type">form</field>
@@ -28,10 +28,10 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_report_revenue_ledger"
+        <menuitem id="menu_xlsx_report_revenue_ledger"
             name="Revenue Ledger"
             parent="menu_pabi_general_ledger_report"
-            action="action_report_revenue_ledger"
+            action="action_xlsx_report_revenue_ledger_form"
             sequence="20"/>
     </data>
 </openerp>
