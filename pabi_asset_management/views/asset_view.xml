@@ -280,6 +280,9 @@
             <field name="inherit_id" ref="account_asset_management.account_asset_profile_view_form"/>
             <field name="type">search</field>
             <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="code"/>
+                </field>
                 <field name="name" position="after">
                     <field name="product_categ_id"/>
                 </field>

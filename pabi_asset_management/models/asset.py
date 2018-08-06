@@ -660,6 +660,10 @@ class AccountAsset(ChartFieldAction, models.Model):
 class AccountAssetProfile(models.Model):
     _inherit = 'account.asset.profile'
 
+    code = fields.Char(
+        string='Code',
+        required=True,
+    )
     account_depreciation_id = fields.Many2one(
         'account.account',
         required=False,
@@ -700,6 +704,17 @@ class AccountAssetProfile(models.Model):
         required=True,
         default='normal',
     )
+
+    @api.multi
+    def name_get(self):
+        res = []
+        for record in self:
+            if record.code and record.code != '/':
+                name = "[%s] %s" % (record.code, record.name)
+            else:
+                name = record.name
+            res.append((record.id, name))
+        return res
 
     @api.multi
     @api.depends('profile_type')
