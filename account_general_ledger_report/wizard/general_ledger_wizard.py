@@ -21,6 +21,7 @@ class AccountTrialBalanceWizard(models.TransientModel):
         'account.account',
         string='Accounts',
         required=True,
+        domain=[('type', '!=', ('view'))],
     )
     amount_currency = fields.Boolean(
         string='With Currency',

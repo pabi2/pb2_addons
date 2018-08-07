@@ -72,7 +72,7 @@ class AccountGeneralLedgerReport(models.Model):
         moveLine = self.env['account.move.line']
         period_moves = moveLine.search(
             [('period_id.fiscalyear_id', '=', report.fiscalyear_id.id),
-             ('period_id', '<', period.id),
+             ('period_id.date_start', '<', period.date_start),
              ('centralisation', '=', 'normal'), ])
         return period_moves
 
