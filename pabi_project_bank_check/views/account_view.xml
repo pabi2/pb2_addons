@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <field name="type" position="after">
                     <field name="project_ids" widget="many2many_tags" attrs="{'invisible': [('type', '!=', 'bank')]}"/>
-                    <field name="bank_mandate_emp_id" attrs="{'invisible': [('type', '!=', 'bank')]}"/>
+                    <field name="bank_mandate_emp_ids" widget="many2many_tags" attrs="{'invisible': [('type', '!=', 'bank')]}"/>
                 </field>
             </field>
         </record>

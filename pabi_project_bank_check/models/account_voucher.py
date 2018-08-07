@@ -36,10 +36,12 @@ class AccountVoucher(models.Model):
         track_visibility='onchange',
         help="Force payment regardless of account balance."
     )
-    bank_mandate_emp_id = fields.Many2one(
+    bank_mandate_emp_ids = fields.Many2many(
         'hr.employee',
-        string='Project bank mandate',
-        compute='_compute_bank_mandate_emp_id',
+        'account_voucher_employee_rel',
+        'voucher_id', 'employee_id',
+        string='Project bank mandate(s)',
+        compute='_compute_bank_mandate_emp_ids',
         store=True,
         readonly=True,
         help="Information about bank madate for this account, if any."
@@ -47,9 +49,9 @@ class AccountVoucher(models.Model):
 
     @api.multi
     @api.depends('journal_id')
-    def _compute_bank_mandate_emp_id(self):
+    def _compute_bank_mandate_emp_ids(self):
         for rec in self:
-            rec = rec.journal_id.bank_mandate_emp_id
+            rec.bank_mandate_emp_ids = rec.journal_id.bank_mandate_emp_ids
         return True
 
     @api.multi
