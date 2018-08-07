@@ -198,6 +198,9 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             groupby_field = 'group_by_%s' % field
             if self[groupby_field]:
                 group_by.append(field)
+
+        if chart_view == 'invest_construction':
+            group_by.append('invest_construction_phase_id')
         # --
         where_str = prepare_where_str(where)
         fields_str = ', '.join(group_by)
