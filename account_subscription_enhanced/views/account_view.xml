@@ -110,6 +110,9 @@
                     <field name="type" invisible="1"/>
                     <field name="amount" attrs="{'readonly': [('type', '=', 'standard')]}"/>
                 </field>
+                <field name="move_id" position="after">
+                    <field name="reversal_id"/>
+                </field>
             </field>
         </record>
         <record id="view_subscription_line_form_complete" model="ir.ui.view">
