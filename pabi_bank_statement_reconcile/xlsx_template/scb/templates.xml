@@ -51,7 +51,7 @@
                         'import_ids': {
                             'A2${"Receipt"}': 'description',
                             'B2': 'date_value',
-                            'H8': 'credit${value and float(value) or 0.0}',
+                            'H2': 'credit${value and float(value) or 0.0}',
                         }
                     }
                 },
