@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_account_general_ledger_report_form">
+            <field name="name">view.account.general.ledger.report.form</field>
+            <field name="model">account.general.ledger.report</field>
+            <field name="arch" type="xml">
+                <form string="General Ledger" edit="0" create="0" delete="0">
+                    <h1>
+                        <field name="name"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="fiscalyear_id"/>
+                            <field name="account_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="target_move"/>
+                            <field name="reconcile_cond"/>
+                            <field name="amount_currency"/>
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <tree editable="bottom">
+                            <field name="period_id"/>
+                            <field name="debit" sum="Total Debit"/>
+                            <button name="open_debit_items" string="Journal Items" icon="gtk-add" type="object"/>
+                            <field name="credit" sum="Total Credit"/>
+                            <button name="open_credit_items" string="Journal Items" icon="gtk-add" type="object"/>
+                            <field name="balance" sum="Total Balance"/>
+                            <button name="open_balance_items" string="Journal Items" icon="gtk-add" type="object"/>
+                            <field name="accum_balance" />
+                            <button name="open_accum_balance_items" string="Journal Items" icon="gtk-add" type="object"/>
+                            <!-- <field name="curr_balance" invisible="not context.get('amount_currency', False)"/>
+                            <button name="open_curr_balance_items" string="Journal Items" icon="gtk-add" type="object" invisible="not context.get('amount_currency', False)"/>
+                            <field name="curr" invisible="not context.get('amount_currency', False)"/> -->
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_account_general_ledger_report" model="ir.actions.act_window">
+            <field name="name">General Ledger</field>
+            <field name="res_model">account.general.ledger.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+        </record>
+
+    </data>
+</openerp>
