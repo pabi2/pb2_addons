@@ -14,13 +14,12 @@ class AccountTrialBalanceWizard(models.TransientModel):
     target_move = fields.Selection(
         [('posted', 'All Posted Entries'),
          ('all', 'All Entries')],
-        string='Target Moves',
         required=True,
         default='posted',
     )
     account_ids = fields.Many2many(
         'account.account',
-        string="Accounts",
+        string='Accounts',
         required=True,
     )
     amount_currency = fields.Boolean(
@@ -31,11 +30,9 @@ class AccountTrialBalanceWizard(models.TransientModel):
         [('all', 'All Items'),
          ('open_item', 'Open Items'),
          ('reconciled', 'Full Reconciled')],
-        string=" ",
-        default="all",
+        default='all',
         required=True,
     )
-    field_free = fields.Char()
 
     @api.multi
     def run_report(self):

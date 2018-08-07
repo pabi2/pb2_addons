@@ -25,12 +25,11 @@ class AccountGeneralLedgerReport(models.Model):
         [('all', 'All Items'),
          ('open_item', 'Open Items'),
          ('reconciled', 'Full Reconciled')],
-        string=" ",
         readonly=True,
     )
     account_ids = fields.Many2many(
         'account.account',
-        string="Accounts",
+        string='Accounts',
         required=True,
     )
     amount_currency = fields.Boolean(
@@ -46,9 +45,9 @@ class AccountGeneralLedgerReport(models.Model):
     @api.model
     def _get_moves(self, fiscalyear_id, target_move, reconcile_cond,
                    account_ids, amount_currency):
-        Period = self.env['account.period']
-        Move = self.env['account.move.line']
-        Fiscalyear = self.env['account.fiscalyear'].browse(fiscalyear_id)
+        period = self.env['account.period']
+        move = self.env['account.move.line']
+        fiscalyear = self.env['account.fiscalyear'].browse(fiscalyear_id)
         periods = []
         # All moves, begin of this year until date_stop
         domain = [('period_id.fiscalyear_id', '=', fiscalyear_id),
@@ -59,7 +58,7 @@ class AccountGeneralLedgerReport(models.Model):
             domain.append(('reconcile_id', '=', False))
         if reconcile_cond == 'reconciled':
             domain.append(('reconcile_id', '!=', False))
-        moves = Move.search(domain)
+        moves = move.search(domain)
 
         self._cr.execute("""
             SELECT periods.period_id, periods.name
@@ -67,26 +66,26 @@ class AccountGeneralLedgerReport(models.Model):
                 FROM account_period ap
                 LEFT JOIN account_fiscalyear af
                 ON ap.fiscalyear_id = af.id
-                WHERE ap.special = 'f' AND af.code = '%s') periods
+                WHERE ap.special = false AND af.id = '%s') periods
                 LEFT JOIN
                 (SELECT ap.id AS period_id, ap.name
                 FROM account_move_line aml
                 LEFT JOIN account_period ap ON aml.period_id = ap.id
                 LEFT JOIN account_fiscalyear af ON ap.fiscalyear_id = af.id
-                WHERE ap.special = 'f' AND af.code = '%s'
+                WHERE ap.special = false AND af.id = '%s'
                 GROUP BY ap.id) rpt
                 ON periods.period_id = rpt.period_id
-                ORDER BY periods.name
-        """ % (Fiscalyear.code, Fiscalyear.code))
-        period_name = map(lambda x: x[1], self._cr.fetchall())
-        periods = Period.search(
-            [('name', 'in', period_name)], order='name')
+                ORDER BY periods.period_id
+        """ % (fiscalyear.id, fiscalyear.id))
+        period_ids = map(lambda x: x[0], self._cr.fetchall())
+        periods = period.search(
+            [('id', 'in', period_ids)], order='id')
         return (periods, moves)
 
     @api.model
     def _get_period_moves(self, report, period):
-        MoveLine = self.env['account.move.line']
-        period_moves = MoveLine.search(
+        moveLine = self.env['account.move.line']
+        period_moves = moveLine.search(
             [('period_id.fiscalyear_id', '=', report.fiscalyear_id.id),
              ('period_id', '<', period.id),
              ('centralisation', '=', 'normal'), ])
@@ -94,8 +93,8 @@ class AccountGeneralLedgerReport(models.Model):
 
     @api.model
     def _get_focus_moves(self, moves, period):
-        MoveLine = self.env['account.move.line']
-        focus_moves = MoveLine.search(
+        moveLine = self.env['account.move.line']
+        focus_moves = moveLine.search(
             [('period_id', '=', period.id),
              ('centralisation', '=', 'normal'),
              ('id', 'in', moves.ids)])
@@ -161,7 +160,7 @@ class AccountGeneralLedgerReport(models.Model):
         reports.unlink()
 
 
-class AccountTrailBalanceLine(models.Model):
+class AccountGeneralLedgerLine(models.Model):
     _name = 'account.general.ledger.line'
 
     report_id = fields.Many2one(
@@ -207,7 +206,7 @@ class AccountTrailBalanceLine(models.Model):
     def open_items(self, move_type):
         self.ensure_one()
         TB = self.env['account.general.ledger.report']
-        MoveLine = self.env['account.move.line']
+        moveLine = self.env['account.move.line']
         rpt = self.report_id
         _x, moves = TB._get_moves(rpt.fiscalyear_id.id, rpt.target_move,
                                   rpt.reconcile_cond, rpt.account_ids,
@@ -215,11 +214,11 @@ class AccountTrailBalanceLine(models.Model):
         move_ids = []
         if move_type == 'debit':
             moves = TB._get_focus_moves(moves, self.period_id)
-            move_ids = MoveLine.search([('id', 'in', moves.ids),
+            move_ids = moveLine.search([('id', 'in', moves.ids),
                                         ('debit', '>', 0.0)]).ids
         if move_type == 'credit':
             moves = TB._get_focus_moves(moves, self.period_id)
-            move_ids = MoveLine.search([('id', 'in', moves.ids),
+            move_ids = moveLine.search([('id', 'in', moves.ids),
                                         ('credit', '>', 0.0)]).ids
         if move_type == 'balance':
             moves = TB._get_focus_moves(moves, self.period_id)

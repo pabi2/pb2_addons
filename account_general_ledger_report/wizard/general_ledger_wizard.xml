@@ -24,17 +24,17 @@
                             <field name="fiscalyear_id"/>
                             <field name="account_ids" widget="many2many_tags"
                               context="{'tree_view_ref': 'account_general_ledger_report.account_line_tree_view'}"/>
-                            <!-- create space -->
-                            <field name="field_free" readonly="True" string=" "/>
-                            <field name="field_free" readonly="True" string=" "/>
-                            <field name="field_free" readonly="True" string=" "/>
                         </group>
                         <group>
-                            <field name="target_move"/>
-                            <field name="reconcile_cond"/>
+                            <label for="id" string="Target Moves"/>
+                            <div>
+                              <field name="target_move"/>
+                              <field name="reconcile_cond"/>
+                            </div>
                             <field name="amount_currency"/>
-                            <!-- create space -->
-                            <field name="field_free" readonly="True" string=" "/>
+                            <br/>
+                            <br/>
+                            <br/>
                         </group>
                     </group>
                     <footer>
