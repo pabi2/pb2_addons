@@ -57,22 +57,11 @@ class AccountGeneralLedgerReport(models.Model):
         moves = move.search(domain)
 
         self._cr.execute("""
-            SELECT periods.period_id, periods.name
-            FROM (SELECT ap.id AS period_id, ap.name
+            SELECT ap.id AS period_id, ap.name
                 FROM account_period ap
-                LEFT JOIN account_fiscalyear af
-                ON ap.fiscalyear_id = af.id
-                WHERE ap.special = false AND af.id = '%s') periods
-                LEFT JOIN
-                (SELECT ap.id AS period_id, ap.name
-                FROM account_move_line aml
-                LEFT JOIN account_period ap ON aml.period_id = ap.id
-                LEFT JOIN account_fiscalyear af ON ap.fiscalyear_id = af.id
-                WHERE ap.special = false AND af.id = '%s'
-                GROUP BY ap.id) rpt
-                ON periods.period_id = rpt.period_id
-                ORDER BY periods.period_id
-        """ % (fiscalyear.id, fiscalyear.id))
+                WHERE ap.special = False AND ap.fiscalyear_id = '%s'
+                ORDER BY ap.id
+        """ % (fiscalyear.id))
         period_ids = map(lambda x: x[0], self._cr.fetchall())
         periods = period.search(
             [('id', 'in', period_ids)], order='id')
