@@ -8,24 +8,20 @@ class AccountGeneralLedgerReport(models.Model):
 
     name = fields.Char(
         string='Name',
-        readonly=True,
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
-        readonly=True,
     )
     target_move = fields.Selection(
         [('posted', 'All Posted Entries'),
          ('all', 'All Entries')],
         string='Target Moves',
-        readonly=True,
     )
     reconcile_cond = fields.Selection(
         [('all', 'All Items'),
          ('open_item', 'Open Items'),
          ('reconciled', 'Full Reconciled')],
-        readonly=True,
     )
     account_ids = fields.Many2many(
         'account.account',
