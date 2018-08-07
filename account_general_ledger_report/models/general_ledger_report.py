@@ -64,7 +64,7 @@ class AccountGeneralLedgerReport(models.Model):
         """ % (fiscalyear.id))
         period_ids = map(lambda x: x[0], self._cr.fetchall())
         periods = period.search(
-            [('id', 'in', period_ids)], order='id')
+            [('id', 'in', period_ids)], order='name')
         return (periods, moves)
 
     @api.model
