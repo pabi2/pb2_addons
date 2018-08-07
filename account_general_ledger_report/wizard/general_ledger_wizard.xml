@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="account_line_tree_view" model="ir.ui.view">
+            <field name="name">account.line.tree.view</field>
+            <field name="model">account.account</field>
+            <field name="arch" type="xml">
+                <tree string="GL Lines" editable="bottom">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="user_type"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_general_ledger_wizard" model="ir.ui.view">
+            <field name="name">view.account.general.ledger.wizard</field>
+            <field name="model">account.general.ledger.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Report Options">
+                    <group string="General Ledger (web)">
+                        <group>
+                            <field name="fiscalyear_id"/>
+                            <field name="account_ids" widget="many2many_tags"
+                              context="{'tree_view_ref': 'account_general_ledger_report.account_line_tree_view'}"/>
+                        </group>
+                        <group>
+                            <label for="id" string="Target Moves"/>
+                            <div>
+                              <field name="target_move"/>
+                              <field name="reconcile_cond"/>
+                            </div>
+                            <field name="amount_currency"/>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="run_report" string="View Report" type="object" default_focus="1" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_account_general_ledger_wizard" model="ir.actions.act_window">
+            <field name="name">General Ledger (web)</field>
+            <field name="res_model">account.general.ledger.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_general_ledger_wizard"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem action="action_account_general_ledger_wizard" sequence="180" id="menu_account_general_ledger_report" parent="account.menu_finance_legal_statement"/>
+
+    </data>
+</openerp>
