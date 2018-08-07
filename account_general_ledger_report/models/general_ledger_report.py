@@ -130,7 +130,6 @@ class AccountGeneralLedgerReport(models.Model):
             focus_moves = self._get_focus_moves(moves, period)
             debit = 0.0
             credit = 0.0
-            # curr_balance = 0.0
             # Focus
             if focus_moves:
                 self._cr.execute("""
@@ -187,13 +186,6 @@ class AccountTrailBalanceLine(models.Model):
     accum_balance = fields.Float(
         string='Accum.Balance',
     )
-    # curr_balance = fields.Float(
-    #     string='Curr.Balance'
-    # )
-    # curr = fields.Many2one(
-    #     'res.currency',
-    #     string='Curr'
-    # )
 
     @api.multi
     def open_debit_items(self):
@@ -210,10 +202,6 @@ class AccountTrailBalanceLine(models.Model):
     @api.multi
     def open_accum_balance_items(self):
         return self.open_items('accum_balance')
-
-    # @api.multi
-    # def open_curr_balance_items(self):
-    #     return self.open_items('curr_balance')
 
     @api.multi
     def open_items(self, move_type):
@@ -240,12 +228,7 @@ class AccountTrailBalanceLine(models.Model):
             period_moves = TB._get_period_moves(rpt, self.period_id)
             blance_moves = TB._get_focus_moves(moves, self.period_id)
             move_ids = blance_moves.ids + period_moves.ids
-        # if move_type == 'curr_balance':
-        #     currency_moves = TB._get_focus_moves(moves, self.period_id)
-        #     move_ids = currency_moves.ids
-        # print rpt.amount_currency
-        # print "====================================="
-        # x=1/0
+
         return {
             'name': _("Journal Items"),
             'view_type': 'form',

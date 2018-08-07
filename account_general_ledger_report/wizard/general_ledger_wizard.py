@@ -50,6 +50,5 @@ class AccountTrialBalanceWizard(models.TransientModel):
                               'action_account_general_ledger_report')
         result = action.read()[0]
         result.update({'res_id': report_id,
-                       'domain': [('id', '=', report_id)],
-                       'context': {'currency': self.amount_currency}})
+                       'domain': [('id', '=', report_id)]})
         return result

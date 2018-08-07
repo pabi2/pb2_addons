@@ -32,9 +32,6 @@
                             <button name="open_balance_items" string="Journal Items" icon="gtk-add" type="object"/>
                             <field name="accum_balance" />
                             <button name="open_accum_balance_items" string="Journal Items" icon="gtk-add" type="object"/>
-                            <!-- <field name="curr_balance" invisible="not context.get('amount_currency', False)"/>
-                            <button name="open_curr_balance_items" string="Journal Items" icon="gtk-add" type="object" invisible="not context.get('amount_currency', False)"/>
-                            <field name="curr" invisible="not context.get('amount_currency', False)"/> -->
                         </tree>
                     </field>
                 </form>
