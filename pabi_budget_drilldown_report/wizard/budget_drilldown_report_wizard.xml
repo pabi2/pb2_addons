@@ -39,8 +39,7 @@
                         </group>
                         <group>
                             <field name="group_by_org_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset', 'invest_construction'))]}"/>
-                            <field name="group_by_division_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset', 'invest_construction'))]}"/>
-                            <field name="group_by_section_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'invest_asset', 'invest_construction'))]}"/>
+                            <field name="group_by_section_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="group_by_invest_construction_id" attrs="{'invisible': [('report_type', 'not in', ('invest_construction'))]}"/>
                             <field name="group_by_project_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
                             <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
