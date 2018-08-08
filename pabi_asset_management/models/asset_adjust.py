@@ -640,7 +640,15 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
                    company_id=old_asset.company_id.id,
                    allow_asset=True, novalidate=True)
         period = Period.with_context(ctx).find(adjust_date)
-        ref = '%s,%s' % (old_asset.name, new_asset.name)
+        # Accountant want to use ref KV, EX
+        # ref = '%s,%s' % (old_asset.name, new_asset.name)
+        ref_docs = [adjust.name]
+        if adjust.invoice_id:
+            ref_docs.append(adjust.invoice_id.number)
+        if adjust.ship_purchase_id:
+            ref_docs.append(adjust.ship_purchase_id.name)
+        ref = ', '.join(ref_docs)
+        # --
         am_vals = AssetAdjust._setup_move_data(adjust.journal_id,
                                                adjust_date, period, ref)
         move = self.env['account.move'].with_context(ctx).create(am_vals)
