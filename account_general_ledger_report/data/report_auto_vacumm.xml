@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record model="ir.cron" id="cronjob_tb_report_autovacuum">
+        <record model="ir.cron" id="general_ledger_report_autovacuum">
             <field name='name'>AutoVacuum Old General Ledger (web) Reports</field>
             <field name='interval_number'>1</field>
             <field name='interval_type'>days</field>
