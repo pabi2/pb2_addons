@@ -190,15 +190,15 @@ class AccountAssetAdjust(models.Model):
         for rec in self:
             ctx = {'active_test': False}
             # New
-            asset_ids = self.adjust_line_ids.\
+            asset_ids = rec.adjust_line_ids.\
                 with_context(ctx).mapped('ref_asset_id').ids
-            asset_ids += self.adjust_expense_to_asset_ids.\
+            asset_ids += rec.adjust_expense_to_asset_ids.\
                 with_context(ctx).mapped('ref_asset_id').ids
             rec.asset_count = len(asset_ids)
             # Old
-            old_asset_ids = self.adjust_line_ids.\
+            old_asset_ids = rec.adjust_line_ids.\
                 with_context(ctx).mapped('asset_id').ids
-            old_asset_ids += self.adjust_asset_to_expense_ids.\
+            old_asset_ids += rec.adjust_asset_to_expense_ids.\
                 with_context(ctx).mapped('asset_id').ids
             rec.old_asset_count = len(old_asset_ids)
 

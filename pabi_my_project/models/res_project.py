@@ -24,7 +24,7 @@ class ResProject(LogCommon, models.Model):
         MY_PROJECT_STATES,
         string='Status',
         related='project_status.res_project_state',
-        store=False,
+        store=True,
         readonly=True,
     )
     lock_release = fields.Boolean(
@@ -321,6 +321,21 @@ class ResProject(LogCommon, models.Model):
         "We are doing this as temp solution, in the future it might "
         "be configurable somewhere else."
     )
+    active = fields.Boolean(
+        compute='_compute_active',
+        store=True,
+    )
+    _sql_constraints = [
+        ('code_unique', 'unique(code)',
+         'Project Code must be unique!'),
+    ]
+
+    @api.multi
+    @api.depends('state')
+    def _compute_active(self):
+        for rec in self:
+            rec.active = rec.state in ('draft', 'approve')
+        return True
 
     @api.onchange('pm_employee_id')
     def _onchange_user_id(self):
