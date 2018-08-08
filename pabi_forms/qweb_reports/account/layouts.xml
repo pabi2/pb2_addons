@@ -203,7 +203,7 @@
         <!-- Column Header -->
         <template id="account_column_header">
             <tr>
-                <td colspan="11" class="text-center" style="border: 0px;">AMOUNT (THB)</td>
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" class="text-center" style="border: 0px;">AMOUNT (THB)</td>
             </tr>
             <tr>
                 <td class="text-center pabi-col-header">Activity</td>
