@@ -581,7 +581,7 @@
                                 'D5': 'period_end_id.name${value or ""}',
                                 'B6': 'date_start${value or ""}#{number_format=date}',
                                 'D6': 'date_end${value or ""}#{number_format=date}',
-                                'B7': 'source_document_type${value and dict(env["account.invoice"]._columns["source_document_type"].selection)[value] or ""}',
+                                'B7': 'source_document_type${value and dict(env["xlsx.report.sla.employee"]._columns["source_document_type"].selection)[value] or ""}',
                                 'B8': 'user_ids${value and ", ".join([x.with_context(lang="th_TH").display_name for x in value]) or ""}',
                                 'B9': '${env.user.with_context(lang="th_TH").display_name}',
                                 'B10': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
