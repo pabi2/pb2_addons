@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 from openerp import fields, models, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
@@ -7,6 +8,8 @@ from openerp.tools import float_compare
 SALE_JOURNAL = ['sale', 'sale_refund', 'sale_debitnote']
 PURCHASE_JOURNAL = ['purchase', 'purchase_refund', 'purchase_debitnote']
 BANK_CASH = ['bank', 'cash']
+
+_logger = logging.getLogger(__name__)
 
 
 class InterfaceAccountEntry(models.Model):
@@ -560,6 +563,7 @@ class InterfaceAccountEntry(models.Model):
 
     @api.model
     def generate_interface_account_entry(self, data_dict):
+        _logger.info("IA - Input: %s" % data_dict)
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
@@ -578,6 +582,7 @@ class InterfaceAccountEntry(models.Model):
                 'messages': e,
             }
             self._cr.rollback()
+        _logger.info("IA - Output: %s" % res)
         return res
 
 
