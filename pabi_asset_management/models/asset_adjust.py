@@ -68,7 +68,6 @@ class AccountAssetAdjust(models.Model):
     )
     adjust_type = fields.Selection(
         [('asset_type', 'Asset => Assset'),
-         ('asset_type_past', 'Asset => Asset (back date)'),
          ('asset_to_expense', 'Asset => Expense'),
          ('expense_to_asset', 'Expense => Asset')],
         string='Adjust Type',
