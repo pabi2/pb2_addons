@@ -570,51 +570,6 @@ class XLSXReportAccountMove(models.TransientModel):
         self.fiscalyear_date_end = date_end
 
     @api.multi
-    def _reset_common_field(self):
-        self.ensure_one()
-        if not self._context.get('reset_common_field', False):
-            return False
-        self.fiscalyear_start_id = False
-        self.fiscalyear_end_id = False
-        self.period_start_id = False
-        self.period_end_id = False
-        self.date_start = False
-        self.date_end = False
-        return True
-
-    @api.onchange('chart_account_id')
-    def _onchange_chart_account_id(self):
-        # Reset common field
-        if self._reset_common_field():
-            return {}
-        # --
-        company = self.chart_account_id.company_id
-        now = time.strftime('%Y-%m-%d')
-        domain = [('company_id', '=', company.id),
-                  ('date_start', '<=', now),
-                  ('date_stop', '>=', now)]
-        fiscalyear = self.env['account.fiscalyear'].search(domain, limit=1)
-        self.company_id = company
-        self.fiscalyear_start_id = fiscalyear
-        self.fiscalyear_end_id = fiscalyear
-        if self.filter == "filter_period":
-            Period = self.env['account.period']
-            period_start = Period.search(
-                [('company_id', '=', company.id),
-                 ('fiscalyear_id', '=', fiscalyear.id),
-                 ('special', '=', False)], order="date_start", limit=1)
-            period_end = Period.search(
-                [('company_id', '=', company.id),
-                 ('fiscalyear_id', '=', fiscalyear.id),
-                 ('date_start', '<=', now), ('date_stop', '>=', now),
-                 ('special', '=', False)], limit=1)
-            self.period_start_id = period_start
-            self.period_end_id = period_end
-        elif self.filter == "filter_date":
-            self.date_start = fiscalyear.date_start
-            self.date_end = fiscalyear and now or False
-
-    @api.multi
     def _get_common_period_and_date(self):
         self.ensure_one()
         period_start = period_end = False
@@ -647,23 +602,6 @@ class XLSXReportAccountMove(models.TransientModel):
     def _onchange_fiscalyear_id(self):
         period_start, period_end, date_start, date_end = \
             self._get_common_period_and_date()
-        if self.filter == "filter_period":
-            self.period_start_id = period_start
-            self.period_end_id = period_end
-        elif self.filter == "filter_date":
-            self.date_start = date_start
-            self.date_end = date_end
-
-    @api.onchange('filter')
-    def _onchange_filter(self):
-        # Reset common field
-        if self._reset_common_field():
-            return {}
-        # --
-        period_start, period_end, date_start, date_end = \
-            self._get_common_period_and_date()
-        self.period_start_id = self.period_end_id = False
-        self.date_start = self.date_end = False
         if self.filter == "filter_period":
             self.period_start_id = period_start
             self.period_end_id = period_end
