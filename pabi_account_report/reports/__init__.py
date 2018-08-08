@@ -34,5 +34,3 @@ from . import jasper_report_parser
 from . import xlsx_report_expense_ledger
 from . import xlsx_report_revenue_ledger
 from . import xlsx_report_gl_allowance_doubtful_accounts
-
-from . import _remove_model
