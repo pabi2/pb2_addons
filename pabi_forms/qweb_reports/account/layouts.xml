@@ -86,7 +86,7 @@
                     </t>
                 </t>
                 <tr>
-                    <td colspan="10" style="border: 0px; padding-left: 0px; padding-right: 0px;">
+                    <td colspan="11" style="border: 0px; padding-left: 0px; padding-right: 0px;">
                         <table class="pabi-table-doc-header">
                             <tr>
                                 <td class="text-center pabi-col-doc-header">
@@ -127,7 +127,7 @@
         <!-- Narration -->
         <template id="account_naration_header">
             <tr>
-                <td colspan="10" class="pabi-text-header">
+                <td colspan="11" class="pabi-text-header">
                     <table style="width: 100%;">
                         <tr>
                             <td style="width: 50px;">Text:</td>
@@ -141,7 +141,7 @@
         <!-- Payment Type -->
         <template id="account_payment_type">
             <tr>
-                <td colspan="10" style="border: 0px; padding-left: 0px; padding-right: 0px;">
+                <td colspan="11" style="border: 0px; padding-left: 0px; padding-right: 0px;">
                     <table class="pabi-table-payment-type-header">
                         <tr>
                             <td style="width: 50%;">
@@ -203,7 +203,7 @@
         <!-- Column Header -->
         <template id="account_column_header">
             <tr>
-                <td colspan="10" class="text-center" style="border: 0px;">AMOUNT (THB)</td>
+                <td colspan="11" class="text-center" style="border: 0px;">AMOUNT (THB)</td>
             </tr>
             <tr>
                 <td class="text-center pabi-col-header">Activity</td>
@@ -592,7 +592,7 @@
         <!-- Summary -->
         <template id="account_summary_footer">
             <tr>
-                <td colspan="3" class="pabi-col-footer"></td>
+                <td colspan="4" class="pabi-col-footer"></td>
                 <td class="pabi-col-footer">Total</td>
                 <td class="text-right pabi-col-footer">
                     <span t-esc="'{:,.2f}'.format(sum(o.line_id.mapped('debit')))"/>
@@ -607,7 +607,7 @@
         <!-- Layout Footer 1 -->
         <template id="account_layout_footer_1">
             <tr>
-                <td colspan="10" style="border: 0px; padding-left: 0px; padding-right: 0px;">
+                <td colspan="11" style="border: 0px; padding-left: 0px; padding-right: 0px;">
                     <div class="pabi-footer">
                         <div class="row">
                             <div class="col-xs-12">
@@ -660,7 +660,7 @@
         <!-- Layout Footer 2 -->
         <template id="account_layout_footer_2">
             <tr>
-                <td colspan="10" style="border: 0px; padding-left: 0px; padding-right: 0px;">
+                <td colspan="11" style="border: 0px; padding-left: 0px; padding-right: 0px;">
                     <div class="pabi-footer">
                         <div class="row">
                             <div class="col-xs-12">
