@@ -213,7 +213,6 @@ class CompanyLDAP(osv.osv):
 
 CompanyLDAP()
 
-
 class res_company(osv.osv):
     _inherit = "res.company"
     _columns = {
@@ -221,6 +220,3 @@ class res_company(osv.osv):
             'res.company.ldap', 'company', 'LDAP Parameters'),
     }
 res_company()
-
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

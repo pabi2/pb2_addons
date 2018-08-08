@@ -1,6 +1,5 @@
 <openerp>
     <data>
-
         <!-- ldap installer Form View -->
         <record model="ir.ui.view" id="view_ldap_installer_form">
             <field name="name">ldap.installer.form</field>
