@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        # Ensure that, some critical models are not updatable
         <function model="ir.model.access" name="write" >
-        	<function model="ir.model.access" name="search"
-              eval="[[('model_id','in', (ref('account.model_account_invoice'),
-                                         ref('account_voucher.model_account_voucher'),
-                                         ref('purchase_request.model_purchase_request'),
-                                         ref('purchase_requisition.model_purchase_requisition'),
-                                         ref('purchase.model_purchase_order'),
-                                         ref('sale.model_sale_order'),
-                                         ref('stock.model_stock_picking'),
-                                         ref('hr_expense.model_hr_expense_expense'),))]]" />
+            <function model="ir.model.access" name="search"
+                eval="[[('model_id','in', (
+                  ref('account.model_account_invoice'),
+                  ref('account_voucher.model_account_voucher'),
+                  ref('purchase_request.model_purchase_request'),
+                  ref('purchase_requisition.model_purchase_requisition'),
+                  ref('purchase.model_purchase_order'),
+                  ref('sale.model_sale_order'),
+                  ref('stock.model_stock_picking'),
+                  ref('hr_expense.model_hr_expense_expense'),
+                  ref('pabi_bank_statement_reconcile.model_pabi_bank_statement'),
+                  ref('pabi_asset_management.model_account_asset_request'),
+                  ref('pabi_asset_management.model_account_asset_changeowner'),
+                  ref('pabi_asset_management.model_account_asset_transfer'),
+                  ref('pabi_asset_management.model_account_asset_adjust'),
+                  ref('pabi_asset_management.model_account_asset_removal'),
+                ))]]" />
             <value eval="{'perm_unlink': False}" />
         </function>
     </data>
