@@ -181,3 +181,27 @@ class PurchaseWorkAcceptance(models.Model, ReadonlyCommon):
             view_id, view_type, toolbar=toolbar, submenu=submenu)
         res = self.set_right_readonly_group(res)
         return res
+
+
+class AccountMove(models.Model, ReadonlyCommon):
+    _inherit = 'account.move'
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form',
+                        toolbar=False, submenu=False):
+        res = super(AccountMove, self).fields_view_get(
+            view_id, view_type, toolbar=toolbar, submenu=submenu)
+        res = self.set_right_readonly_group(res)
+        return res
+
+
+class AccountMoveLine(models.Model, ReadonlyCommon):
+    _inherit = 'account.move.line'
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form',
+                        toolbar=False, submenu=False):
+        res = super(AccountMoveLine, self).fields_view_get(
+            view_id, view_type, toolbar=toolbar, submenu=submenu)
+        res = self.set_right_readonly_group(res)
+        return res
