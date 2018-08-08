@@ -16,8 +16,7 @@
                             </button>
                         </div>
                         <h1>
-                            <label string="Profile Name"/>
-                            <field name="name" class="oe_inline"/>
+                            <field name="name" class="oe_inline" placeholder="Name"/>
                         </h1>
                         <group>
                             <group>
