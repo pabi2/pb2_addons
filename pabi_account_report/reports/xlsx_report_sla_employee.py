@@ -35,7 +35,7 @@ class XLSXReportSLAEmployee(models.TransientModel):
             dom += [('voucher_id.validate_user_id', 'in', self.user_ids.ids)]
         if self.source_document_type:
             dom += [('invoice_id.source_document_type', '=',
-                     self.source_document_type or False)]
+                     self.source_document_type)]
         if self.fiscalyear_start_id:
             dom += [('voucher_id.date', '>=',
                      self.fiscalyear_start_id.date_start)]
