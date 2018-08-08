@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data noupdate="1">
+		<record id="nstdajob_syncuser_email_notify" model="ir.config_parameter">
+			<field name="key">nstdajob_syncuser.email_notify</field>
+			<field name="value">thapanat@nstda.or.th</field>
+		</record>
+	</data>
+</openerp>
