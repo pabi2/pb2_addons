@@ -1,6 +1,9 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-import logging
+import logging
 from openerp import models, api, _
 # from openerp.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class SalesOrder(models.Model):
@@ -37,6 +40,7 @@ class SalesOrder(models.Model):
 
     @api.model
     def generate_pos_order(self, data_dict):
+        _logger.info('generate_pos_order() - input: %s' % data_dict)
         try:
             # data_dict = self._pre_process_pos_order(data_dict)
             data_dict['order_type'] = 'sale_order'
@@ -51,6 +55,7 @@ class SalesOrder(models.Model):
                 'messages': e,
             }
             self._cr.rollback()
+        _logger.info('generate_pos_order() - output: %s' % res)
         return res
 
 
