@@ -92,7 +92,6 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         WHERE rfq.order_type = 'quotation' AND
             rfq.order_id = selected_po.id) reason,
         pd.create_date::date as po_date
-
         FROM purchase_requisition pd
         LEFT JOIN operating_unit ou
         ON ou.id = pd.operating_unit_id

@@ -20,6 +20,12 @@
         'wizards/pabi_purchase_summarize_report_wizard.xml',
         # Created using pabi_utils xlsx_template
         'reports/xlsx_report_pabi_purchase_summarize.xml',
+        'reports/xlsx_report_pabi_standard_asset.xml',
+        'reports/xlsx_report_pabi_stock_card_for_accounting.xml',
+        'reports/xlsx_report_pabi_monthly_work_acceptance.xml',
+        'reports/xlsx_report_pabi_sla_balance.xml',
+        'reports/xlsx_report_pabi_supplier_list.xml',
+        'reports/xlsx_report_pabi_stock_balance.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/load_template.xml',
     ],

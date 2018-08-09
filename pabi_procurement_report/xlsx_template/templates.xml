@@ -40,5 +40,202 @@
             }
           </field>
         </record>
+
+        <!-- PABI Standard Asset -->
+        <record id="xlsx_report_pabi_standard_asset" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.standard.asset</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_standard_asset.xlsx</field>
+            <field name="name">PABI Standard Asset</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'results': {
+                            'B9': 'po_number${value or ""}',
+                            'C9': 'pol_product_name${value or ""}',
+                            'D9': 'prl_price#{number_format=number}',
+                            'E9': 'pol_price#{number_format=number}',
+                            'F9': 'po_date${value or ""}',
+                            'G9': 'supplier${value or ""}',
+                            'H9': 'brand${value or ""}',
+                            'I9': 'province${value or ""}',
+                            'J9': 'remark${value or ""}',
+                            'K9': 'warranty${value or ""}',
+                            'L9': 'is_standard${value or ""}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+        <!-- PABI Stock Card for Accounting -->
+        <record id="xlsx_report_pabi_stock_card_for_accounting" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.stock.card.for.accounting</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_stock_card_for_accounting.xlsx</field>
+            <field name="name">PABI Stock Card for Accounting</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'results': {
+                            'A12': 'src_loc_name${value or ""}',
+                            'B12': 'date_move${value or ""}',
+                            'C12': 'grgi_slip${value or ""}',
+                            'D12': 'grgi_slip${value or ""}',
+                            'E12': 'product_uom_qty#{number_format=number}',
+                            'F12': 'product_uom_qty#{number_format=number}',
+                            'I12': 'price_unit#{number_format=number}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+        <!-- PABI Monthly Work Acceptance -->
+        <record id="xlsx_report_pabi_monthly_work_acceptance" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.monthly.work.acceptance</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_monthly_work_acceptance.xlsx</field>
+            <field name="name">PABI Monthly Work Acceptance</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'results': {
+                            'A6': 'id${value or ""}',
+                            'B6': 'po_name${value or ""}',
+                            'C6': 'date_po${value or ""}',
+                            'D6': 'pr_text${value or ""}',
+                            'E6': 'budget_code${value or ""}',
+                            'F6': 'budget_name${value or ""}',
+                            'G6': 'approver${value or ""}',
+                            'H6': 'amount_total#{number_format=number}',
+                            'I6': 'currency${value or ""}',
+                            'J6': 'supplier_name${value or ""}',
+                            'K6': 'method${value or ""}',
+                            'L6': 'date_doc_approve${value or ""}',
+                            'M6': 'wa_name${value or ""}',
+                            'N6': 'date_accept${value or ""}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+        <!-- PABI SLA Balance -->
+        <record id="xlsx_report_pabi_sla_balance" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.sla.balance</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_sla_balance.xlsx</field>
+            <field name="name">PABI SLA Balance</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'results': {
+                            'A6': 'sr_name${value or ""}',
+                            'B6': 'requester${value or ""}',
+                            'C6': 'project${value or ""}',
+                            'D6': 'section${value or ""}',
+                            'E6': 'requester_ou_name${value or ""}',
+                            'F6': 'date_request${value or ""}',
+                            'G6': 'date_approve${value or ""}',
+                            'K6': 'date_receive${value or ""}',
+                            'J6': 'date_transfer${value or ""}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+              }
+          </field>
+        </record>
+
+        <!-- PABI Supplier List -->
+        <record id="xlsx_report_pabi_supplier_list" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.supplier.list</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_supplier_list.xlsx</field>
+            <field name="name">PABI Supplier List</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'results': {
+                            'A5': 'id${value or ""}',
+                            'B5': 'category_name${value or ""}',
+                            'C5': 'search_key${value or ""}',
+                            'D5': 'supplier_name${value or ""}',
+                            'E5': 'address${value or ""}',
+                            'F5': 'vat${value or ""}',
+                            'G5': 'taxbranch${value or ""}',
+                            'H5': 'phone${value or ""}',
+                            'I5': 'email${value or ""}',
+                            'J5': 'tag_name${value or ""}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+              }
+             </field>
+        </record>
+
+        <!-- PABI Stock Balance -->
+        <record id="xlsx_report_pabi_stock_balance" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.stock.balance</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_stock_balance.xlsx</field>
+            <field name="name">PABI Stock Balance</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'results': {
+                            'A6': 'product_code${value or ""}',
+                            'B6': 'product_name${value or ""}',
+                            'C6': 'ou_name${value or ""}',
+                            'D6': 'location_name${value or ""}',
+                            'E6': 'balance${value or ""}',
+                            'F6': 'uom${value or ""}',
+                            'G6': 'balance${value or ""}',
+                            'H6': 'currency${value or ""}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+              }
+          </field>
+        </record>
     </data>
 </openerp>
