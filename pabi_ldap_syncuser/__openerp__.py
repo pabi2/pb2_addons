@@ -5,7 +5,7 @@
     """,
     'author': 'Jakkrich.cha,Thapanat',
     'category': 'NSTDA-BASE',
-    'depends':  ['base','nstdaauth_ldap'],
+    'depends':  ['base','pabi_ldap'],
     'data':[
         'data/ir_config_parameter.xml',
     ],
