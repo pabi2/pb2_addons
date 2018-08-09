@@ -67,6 +67,8 @@
                     <field name="purchase_condition_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
                     <field name="purchase_condition_detail_id" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
                     <field name="purchase_condition_detail" attrs="{'invisible': [('require_rfq', '=', True)]}"/>
+                    <field name="standard_price"/>
+                    <field name="delivery_detail"/>
                     <field name="currency_id"/>
                     <field name="currency_rate"/>
                     <field name="amount_company"/>
