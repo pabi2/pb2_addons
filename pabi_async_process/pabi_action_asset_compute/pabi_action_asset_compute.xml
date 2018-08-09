@@ -8,18 +8,66 @@
             <field name="mode">primary</field>
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='criteria']" position="inside">
-                  <group string="Run Depreciation For">
-                      <field name="calendar_period_id"/>
-                  </group>
-                  <group string="By Asset's Category/Profile">
-                      <field name="categ_ids" widget="many2many_tags"/>
-                      <field name="profile_ids" nolabel="1" colspan="2" domain="[('product_categ_id', 'in', categ_ids and categ_ids and categ_ids[0] and categ_ids[0][2])]">
-                          <tree>
-                              <field name="name" string="Profile"/>
-                          </tree>
-                      </field>
-                      <button name="check_affected_asset" class="oe_link oe_right" type="object" string="(Check number of affected assets)" colspan="2"/>
-                  </group>
+                  <field name="run_state" invisible="1"/>
+                  <notebook>
+                      <page string="Run Asset Depreciation" attrs="{'invisible': [('run_state', '!=', 'run')]}">
+                          <group>
+                              <group>
+                                  <field name="calendar_period_id"/>
+                              </group>
+                              <group>
+                              </group>
+                          </group>
+                          <group>
+                              <group>
+                                  <field name="categ_ids" nolabel="1" colspan="2">
+                                      <tree>
+                                          <field name="name" string="Category"/>
+                                      </tree>
+                                  </field>
+                              </group>
+                              <group>
+                                  <field name="profile_ids" nolabel="1" colspan="2" domain="[('product_categ_id', 'in', categ_ids and categ_ids and categ_ids[0] and categ_ids[0][2])]">
+                                      <tree>
+                                          <field name="name" string="Profile"/>
+                                      </tree>
+                                  </field>
+                                  <button name="check_affected_asset" class="oe_link oe_right" type="object" string="(Check number of affected assets)" colspan="2"/>
+                              </group>
+                          </group>
+                      </page>
+                      <page string="Run Asset Test (Optional)" attrs="{'invisible': [('run_state', '!=', 'run')]}">
+                          <p>
+                              You can run test multiple times. System will keep track what has been tested in each session.
+                          </p>
+                          <group>
+                              <group>
+                                  <field name="max_asset_test"/>
+                              </group>
+                              <group>
+                                  <button name="run_asset_test" type="object" string="Run Test"/>
+                              </group>
+                          </group>
+                      </page>
+                      <page string="Test Result" attrs="{'invisible': [('run_state', '!=', 'test')]}">
+                        <group>
+                            <group>
+                                <button name="action_back" class="oe_link" type="object" string="&lt;= Go Back to Run Asset" colspan="2"/>
+                                <field name="tested_assets" invisible="1"/>
+                            </group>
+                            <group>
+                                <h2 attrs="{'invisible': [('test_log_ids', '!=', [])]}">No errors...</h2>
+                            </group>
+                            <field name="test_log_ids" nolabel="1" attrs="{'invisible': [('test_log_ids', '=', [])]}" colspan="4">
+                                <tree>
+                                    <field name="asset_id"/>
+                                    <field name="message"/>
+                                </tree>
+                            </field>
+                        </group>
+                      </page>
+
+                  </notebook>
                 </xpath>
             </field>
         </record>

@@ -32,6 +32,7 @@ class AccountAnalyticAccount(ChartFieldAction, models.Model):
             :return: (active, err_message)
         """
         test_model = {
+            'res.costcenter': 'costcenter_id',
             'res.section': 'section_id',
             'res.project': 'project_id',
             'res.invest.construction.phase': 'invest_construction_phase_id',
@@ -44,7 +45,8 @@ class AccountAnalyticAccount(ChartFieldAction, models.Model):
                     [('id', '=', chartfield_dict[field]),
                      ('active', '=', False)])
                 if obj:
-                    return (False, _('%s is not active!') % obj.code)
+                    return (False,
+                            _('%s -- is not active!') % obj.display_name_2)
         return (True, False)
 
     @api.model

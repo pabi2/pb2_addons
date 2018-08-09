@@ -58,6 +58,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         # Need this way of doing default, because default_type in context will
         # cause problem compute depreciation table, it set line type wrongly
         default=lambda self: self._context.get('type') or 'normal',
+        index=True,
     )
     profile_type = fields.Selection(
         [('normal', 'Normal'),
