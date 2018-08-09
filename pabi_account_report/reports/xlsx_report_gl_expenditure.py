@@ -30,10 +30,6 @@ class XLSXReportGlExpenditure(models.TransientModel):
         'account.account',
         string='Accounts',
     )
-    partner_ids = fields.Many2many(
-        'res.partner',
-        string='Partners',
-    )
     activity_ids = fields.Many2many(
         'account.activity',
         string='Activitys',
