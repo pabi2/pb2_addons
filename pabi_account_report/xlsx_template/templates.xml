@@ -1512,5 +1512,90 @@ result = pd.pivot_table(df, index=groupby,
                }
            </field>
        </record>
+
+      # GL Expenditure
+     <record id="xlsx_report_gl_expenditure" model="ir.attachment">
+        <field name="res_model">xlsx.report.gl.expenditure</field>
+        <field name="datas"></field>
+        <field name="datas_fname">xlsx_report_gl_expenditure.xlsx</field>
+        <field name="name">GL Expenditure</field>
+        <field name="description">
+            {
+                '__EXPORT__': {
+                    'Expenditure': {
+                        '_HEAD_': {
+                            'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                            'B3': 'posting_date${value or ""}#{number_format=date}',
+                            'B4': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                            'B5': 'activity_group_ids${value and ", ".join([x.code for x in value]) or ""}',
+                            'B6': 'activity_ids${value and ", ".join([x.code for x in value]) or ""}',
+                            'B7': 'fund_ids${value and ", ".join([x.code for x in value]) or ""}',
+                            'B8': 'costcenter_ids${value and ", ".join([x.code for x in value]) or ""}',
+                         },
+                        'results': {
+                            'A14': 'charge_type${value and dict(env["pabi.common.account.report.view"]._columns["charge_type"].selection)[value] or ""}',
+                            'B14': 'budget_fund_rule.expense_group_id.name${value or ""}',
+                            'C14': 'account_id.code${value or ""}',
+                            'D14': 'account_id.name${value or ""}',
+                            'E14': 'activity_group_id.code${value or ""}',
+                            'F14': 'activity_group_id.name${value or ""}',
+                            'G14': 'activity_id.code${value or ""}',
+                            'H14': 'activity_id.name${value or ""}',
+                            'I14': 'period_id.fiscalyear_id.name${value or ""}',
+                            'J14': "${'=IF(AND(?(K14)&gt;=1,?(K14)&lt;=12),?(K14),12)'}",
+                            'K14': 'period_id.name${value or ""}',
+                            'L14': 'invoice_move_line_id.invoice.tax_line${value and (value[0].tax_code_id.code or "") or ""}',
+                            'M14': 'budget_fund_rule.amount_init${value or ""}#{number_format=number}',
+                            'N14': 'budget_fund_rule.amount${value or ""}#{number_format=number}',
+                            'O14': 'invoice_move_line_id${value and value.debit - value.credit or 0}#{number_format=number}',
+                            'P14': 'invoice_id.tax_line${value and value.amount or ""}#{number_format=number}',
+                            'Q14': 'invoice_id.tax_line${value and value.base or ""}#{number_format=number}',
+                            'R14': 'voucher_id.tax_line_wht${value and value.amount or ""}#{number_format=number}',
+                            'S14': 'move_line_name${value or ""}',
+                            'T14': 'invoice_narration${value or ""}',
+                            'U14': 'invoice_move_line_id.prefix_doctype${value or ""}',
+                            'V14': 'journal_id.name${value or ""}',
+                            'W14': 'document_number${value or ""}',
+                            'X14': 'docline_seq${value or ""}',
+                            'Y14': 'invoice_document_date${value or ""}#{number_format=date}',
+                            'Z14': 'invoice_posting_date${value or ""}#{number_format=date}',
+                            'AA14': 'voucher_number${value or ""}',
+                            'AB14': 'voucher_posting_date${value or ""}#{number_format=date}',
+                            'AC14': 'source_document_id${value and (value._name in ("purchase.order", "sale.order") and value.name or value.number) or ""}',
+                            'AD14': 'fund_id.name${value or ""}',
+                            'AE14': 'project_id${value and value.project_type_id.name or ""}',
+                            'AF14': 'budget${value and value.code or ""}',
+                            'AG14': 'budget${value and value.name or ""}',
+                            'AH14': 'project_id.master_plan_id.code${value or ""}',
+                            'AI14': 'project_id.master_plan_id.name${value or ""}',
+                            'AJ14': 'mission_id.name${value or ""}',
+                            'AK14': 'invoice_move_line_id.program_id.code${value or ""}',
+                            'AL14': 'invoice_move_line_id.program_id.name${value or ""}',
+                            'AM14': 'invoice_move_line_id.program_id.section_program_id.code${value or ""}',
+                            'AN14': 'invoice_move_line_id.program_id.section_program_id.name${value or ""}',
+                            'AO14': 'cost_control_type_id.code${value or ""}',
+                            'AP14': 'cost_control_type_id.name${value or ""}',
+                            'AQ14': 'cost_control_id.code${value or ""}',
+                            'AR14': 'cost_control_id.name${value or ""}',
+                            'AS14': 'costcenter_id.code${value or ""}',
+                            'AT14': 'costcenter_id.name${value or ""}',
+                            'AU14': 'invoice_move_line_id.write_uid${value and value.with_context(lang="th_TH").display_name or ""}',
+                            'AV14': 'invoice_move_line_id.document_id.date_due${value or ""}#{number_format=date}',
+                            'AW14': 'voucher_date_value${value or ""}#{number_format=date}',
+                            'AX14': 'cancel_move_id.name${value or ""}',
+                            'AY14': 'cancel_move_id.date${value or ""}#{number_format=date}',
+                            'AZ14': 'payment_term.name${value or ""}',
+                            'BA14': 'purchase_billing_id.name${value or ""}',
+                            'BB14': 'payment_method_id.name${value or ""}',
+                            'BC14': 'voucher_id${value and (value.transfer_type and dict(env["pabi.common.account.report.view"]._columns["transfer_type"].selection)[value.transfer_type] or "Cheque") or ""}',
+                            'BD14': 'supplier_bank_id.acc_number${value or ""}',
+                            'BE14': 'supplier_bank_id.bank_branch${value and value.with_context(lang="th_TH").name or ""}',
+                            'BF14': 'payment_export_id.name${value or ""}',
+                        }
+                    }
+                }
+            }
+        </field>
+     </record>
     </data>
 </openerp>

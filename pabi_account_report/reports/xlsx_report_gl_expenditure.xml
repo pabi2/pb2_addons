@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_gl_expenditure_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.gl.expenditure.form</field>
+            <field name="model">xlsx.report.gl.expenditure</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <field name="fiscalyear_start_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="fiscalyear_end_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="period_start_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="period_end_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="period_end_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_start" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_end" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_end" position="after">
+                    <field name="posting_date"/>
+                </field>
+
+              <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                  <page string="Account Filters" name="account_filters">
+                      <separator string="Print only" colspan="4"/>
+                      <field name="account_ids" domain="[('user_type.name', '=', 'Expense')]"/>
+                  </page>
+                  <page string="Activity Group Filters">
+                      <separator string="Print only" colspan="4"/>
+                      <field name="activity_group_ids" domain="[('budget_method', '=', 'expense')]"/>
+                  </page>
+                  <page string="Activity Filters">
+                      <separator string="Print only" colspan="4"/>
+                      <field name="activity_ids" domain="[('budget_method', '=', 'expense')]"/>
+                  </page>
+                  <page string="Fund Filters">
+                      <separator string="Print only" colspan="4"/>
+                      <field name="fund_ids" domain="[('type', '=', 'external')]"/>
+                  </page>
+                  <page string="Costcenter Filters">
+                      <separator string="Print only" colspan="4"/>
+                      <field name="costcenter_ids"/>
+                  </page>
+              </xpath>
+          </field>
+        </record>
+
+        <record id="action_xlsx_report_gl_expenditure_form" model="ir.actions.act_window">
+            <field name="name">GL Expenditure</field>
+            <field name="res_model">xlsx.report.gl.expenditure</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_gl_expenditure"
+            name="GL Expenditure"
+            parent="menu_pabi_general_ledger_report"
+            action="action_xlsx_report_gl_expenditure_form"
+            sequence="10"/>
+    </data>
+</openerp>
