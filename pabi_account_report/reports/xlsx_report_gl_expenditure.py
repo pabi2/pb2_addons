@@ -5,21 +5,21 @@ from openerp import models, fields, api
 class PabiCommonAccountReportView(models.Model):
     _inherit = 'pabi.common.account.report.view'
 
-    budget_fund_rule = fields.Many2many(
+    budget_fund_rule_ids = fields.Many2many(
         'budget.fund.rule.line',
-        string='Fund Rule',
-        compute='_compute_budget_fund_rule',
+        string='Budget Fund Rule Line',
+        compute='_compute_budget_fund_rule_line',
     )
 
     @api.multi
-    def _compute_budget_fund_rule(self):
+    def _compute_budget_fund_rule_line(self):
         for rec in self:
             Fund = self.env['budget.fund.rule.line']
             domain = ([('fund_rule_id.fund_id', '=', rec.fund_id.id),
                        ('fund_rule_id.project_id', '=', rec.project_id.id),
                        ('fund_rule_id.state', '=', 'confirmed'),
                        ('account_ids', 'in', rec.account_id.id)])
-            rec.budget_fund_rule = Fund.search(domain)
+            rec.budget_fund_rule_ids = Fund.search(domain)
 
 
 class XLSXReportGlExpenditure(models.TransientModel):
@@ -38,7 +38,7 @@ class XLSXReportGlExpenditure(models.TransientModel):
         'account.activity.group',
         string='Activitys',
     )
-    posting_date = fields.Date(
+    date_posting = fields.Date(
         string='Posting Date',
     )
     filter = fields.Selection(
@@ -65,16 +65,15 @@ class XLSXReportGlExpenditure(models.TransientModel):
         self.ensure_one()
         Result = self.env['pabi.common.account.report.view']
         dom = [('account_id.user_type.code', '=', 'Expense'),
-               ('invoice_move_line_id.project_id', '!=', False)]
-
+               ('project_id', '!=', False)]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
         if self.activity_ids:
             dom += [('activity_id', 'in', self.activity_ids.ids)]
         if self.activity_group_ids:
             dom += [('activity_group_id', 'in', self.activity_group_ids.ids)]
-        if self.posting_date:
-            dom += [('invoice_move_line_id.date', '=', self.posting_date)]
+        if self.date_posting:
+            dom += [('invoice_move_line_id.date', '=', self.date_posting)]
         if self.fund_ids:
             dom += [('fund_id', 'in', self.fund_ids.ids)]
         if self.costcenter_ids:
