@@ -19,11 +19,15 @@ class PabiActionAssetCompute(models.TransientModel):
     )
     categ_ids = fields.Many2many(
         'product.category',
+        'pabi_action_asset_compute_product_category_rel',
+        'compute_id', 'category_id',
         string='Category',
         domain=lambda self: self._get_categ_domain()
     )
     profile_ids = fields.Many2many(
         'account.asset.profile',
+        'pabi_action_asset_compute_account_asset_profile_rel',
+        'compute_id', 'profile_id',
         string='Profile',
     )
     test_log_ids = fields.One2many(
@@ -91,6 +95,7 @@ class PabiActionAssetCompute(models.TransientModel):
         domain = [
             ('asset_id.state', '=', 'open'),
             ('asset_id.type', '=', 'normal'),
+            ('asset_id.active', '=', True),
             ('type', '=', 'depreciate'),
             ('init_entry', '=', False),
             ('line_date', '<=', period.date_stop),
@@ -98,10 +103,22 @@ class PabiActionAssetCompute(models.TransientModel):
             ('move_check', '=', False)
         ]
         if categ_ids:
-            domain += [('asset_id.profile_id.product_categ_id',
-                        'in', categ_ids)]
+            self._cr.execute("""
+                select a.id from account_asset a
+                join account_asset_profile ap on ap.id = a.profile_id
+                join product_category pc on pc.id = ap.product_categ_id
+                where pc.id in %s
+            """, (tuple(categ_ids), ))
+            asset_ids = [x[0] for x in self._cr.fetchall()]
+            domain += [('asset_id', 'in', asset_ids)]
         if profile_ids:
-            domain += [('asset_id.profile_id', 'in', profile_ids)]
+            self._cr.execute("""
+                select a.id from account_asset a
+                join account_asset_profile ap on ap.id = a.profile_id
+                where ap.id in %s
+            """, (tuple(profile_ids), ))
+            asset_ids = [x[0] for x in self._cr.fetchall()]
+            domain += [('asset_id', 'in', asset_ids)]
         if exclude_asset_ids:
             domain += [('asset_id', 'not in', exclude_asset_ids)]
         depre_lines = self.env['account.asset.line'].search(domain)

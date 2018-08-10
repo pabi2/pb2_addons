@@ -37,6 +37,17 @@ class AccountMove(models.Model):
     )
 
     @api.multi
+    def button_delete(self):
+        self.ensure_one()
+        if self.state == 'posted' or self.name:
+            raise ValidationError(
+                _('Posted document is not allowed to be deleted'))
+        self.unlink()
+        action = self.env.ref('account.action_move_journal_line')
+        result = action.read()[0]
+        return result
+
+    @api.multi
     def _compute_date_due(self):
         for rec in self:
             date_due = rec.line_id.mapped('date_maturity')
