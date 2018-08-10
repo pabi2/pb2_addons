@@ -36,7 +36,7 @@
                               </group>
                           </group>
                       </page>
-                      <page string="Run Asset Test (Optional)" attrs="{'invisible': [('run_state', '!=', 'run')]}">
+                      <page string="Run Asset Test" attrs="{'invisible': [('run_state', '!=', 'run')]}">
                           <p>
                               You can run test multiple times. System will keep track what has been tested in each session.
                           </p>
@@ -56,7 +56,7 @@
                                 <field name="tested_assets" invisible="1"/>
                             </group>
                             <group>
-                                <h2 attrs="{'invisible': [('test_log_ids', '!=', [])]}">No errors...</h2>
+                                <h2 attrs="{'invisible': [('test_log_ids', '!=', [])]}">No errors :)</h2>
                             </group>
                             <field name="test_log_ids" nolabel="1" attrs="{'invisible': [('test_log_ids', '=', [])]}" colspan="4">
                                 <tree>
