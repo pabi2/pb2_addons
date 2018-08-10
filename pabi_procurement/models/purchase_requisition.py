@@ -33,6 +33,7 @@ class PurchaseRequisition(models.Model):
         'purchase.type',
         string='Procurement Type',
         readonly=True,
+        required=True,
         states={'draft': [('readonly', False)]},
     )
     objective = fields.Text(
@@ -67,6 +68,7 @@ class PurchaseRequisition(models.Model):
         'purchase.method',
         string='Procurement Method',
         readonly=True,
+        required=True,
         states={'draft': [('readonly', False)]},
         track_visibility='onchange',
     )
@@ -92,6 +94,22 @@ class PurchaseRequisition(models.Model):
         string='Condition Info',
         readonly=True,
         states={'draft': [('readonly', False)]},
+    )
+    standard_price = fields.Float(
+        string='Standard Price',
+        readonly=True,
+        states={
+            'draft': [('readonly', False)],
+            'in_progress': [('readonly', False)],
+        },
+    )
+    delivery_detail = fields.Text(
+        string='Delivery Detail',
+        readonly=True,
+        states={
+            'draft': [('readonly', False)],
+            'in_progress': [('readonly', False)],
+        },
     )
     currency_id = fields.Many2one(
         'res.currency',
@@ -596,8 +614,11 @@ class PurchaseRequisition(models.Model):
         matching_reports = Report.search([
             ('model', '=', self._name),
             ('report_type', '=', 'pdf'),
-            ('report_name', '=',
-             'purchase.requisition_' + doc_type.name.lower())],)
+            # ('report_name', '=',
+            #  'purchase.requisition_' + doc_type.name.lower()),
+            ('report_name', '=', 'purchase.requisition_pd1'),
+
+        ],)
         if matching_reports:
             report = matching_reports[0]
             result, _x = openerp.report.render_report(self._cr, self._uid,
@@ -634,7 +655,8 @@ class PurchaseRequisition(models.Model):
         doc_type = self.get_doc_type()
         if not doc_type:
             raise ValidationError(_("Can't get PD Document Type."))
-        report_name = 'purchase.requisition_' + doc_type.name.lower()
+        # report_name = 'purchase.requisition_' + doc_type.name.lower()
+        report_name = 'purchase.requisition_pd1'
         return self.env['report'].get_action(self, report_name)
 
     @api.multi

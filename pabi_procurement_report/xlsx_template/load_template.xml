@@ -6,6 +6,12 @@
         <function model="ir.attachment" name="load_xlsx_template">
             <value eval="[
                 ref('xlsx_report_pabi_purchase_summarize'),
+                ref('xlsx_report_pabi_standard_asset'),
+                ref('xlsx_report_pabi_stock_card_for_accounting'),
+                ref('xlsx_report_pabi_monthly_work_acceptance'),
+                ref('xlsx_report_pabi_sla_balance'),
+                ref('xlsx_report_pabi_supplier_list'),
+                ref('xlsx_report_pabi_stock_balance'),
             ]"/>
             <value>pabi_procurement_report/xlsx_template</value>
         </function>

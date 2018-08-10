@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="xlsx_report_pabi_sla_balance_view" model="ir.ui.view">
+            <field name="name">xlsx.report.pabi.sla.balance.view</field>
+            <field name="model">xlsx.report.pabi.sla.balance</field>
+            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='criteria']" position="inside">
+                    <group>
+                        <field name="operating_unit_id"/>
+                        <field name="select_status"/>
+                    </group>
+                    <group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_pabi_sla_balance" model="ir.actions.act_window">
+            <field name="name">PABI SLA Balance</field>
+            <field name="res_model">xlsx.report.pabi.sla.balance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_pabi_sla_balance" name="PABI SLA Balance" parent="menu_procurement_report" action="action_xlsx_report_pabi_sla_balance" sequence="100"/>
+
+
+    </data>
+</openerp>
