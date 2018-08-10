@@ -32,6 +32,10 @@ class PabiActionAssetCompute(models.TransientModel):
         string='Asset Test Log',
         readonly=True,
     )
+    test_completed = fields.Boolean(
+        string='Test Completed',
+        default=False,
+    )
     max_asset_test = fields.Integer(
         string='Max Assets',
         default=1000,
@@ -155,7 +159,6 @@ class PabiActionAssetCompute(models.TransientModel):
     def run_asset_test(self):
         """ Based on matched assets, run through series of test """
         self.ensure_one()
-        self.test_log_ids.unlink()
         # Matched assets exclude tested one
         tested_asset_ids = ast.literal_eval(self.tested_assets)
         assets = self._search_asset(
@@ -170,7 +173,9 @@ class PabiActionAssetCompute(models.TransientModel):
         self._log_test_prev_depre_posted(self.calendar_period_id, assets)
         self._log_test_active_chartfield(assets)
         self.write({'run_state': 'test',
-                    'tested_assets': str(tested_asset_ids)})
+                    'tested_assets': str(tested_asset_ids),
+                    'test_completed': not assets.ids and True or False,
+                    })
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'pabi.action.asset.compute',
@@ -252,7 +257,7 @@ class PabiActionAssetCompute(models.TransientModel):
 
 class PabiActionAssetComputeTestLog(models.TransientModel):
     _name = 'pabi.action.asset.compute.test.log'
-    _order = 'asset_id'
+    _order = 'id desc'
 
     wizard_id = fields.Many2one(
         'pabi.action.asset.compute',
