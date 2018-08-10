@@ -5,7 +5,7 @@ from openerp import models, fields, api
 class PabiCommonAccountReportView(models.Model):
     _inherit = 'pabi.common.account.report.view'
 
-    budget_fund_rule_ids = fields.Many2many(
+    budget_fund_rule_line_id = fields.Many2one(
         'budget.fund.rule.line',
         string='Budget Fund Rule Line',
         compute='_compute_budget_fund_rule_line',
@@ -19,7 +19,10 @@ class PabiCommonAccountReportView(models.Model):
                        ('fund_rule_id.project_id', '=', rec.project_id.id),
                        ('fund_rule_id.state', '=', 'confirmed'),
                        ('account_ids', 'in', rec.account_id.id)])
-            rec.budget_fund_rule_ids = Fund.search(domain)
+            lines = Fund.search(domain)
+            if len(lines) > 1:
+                rec.budget_fund_rule_line_id = lines[0]
+            rec.budget_fund_rule_line_id = lines
 
 
 class XLSXReportGlExpenditure(models.TransientModel):
@@ -36,7 +39,7 @@ class XLSXReportGlExpenditure(models.TransientModel):
     )
     activity_group_ids = fields.Many2many(
         'account.activity.group',
-        string='Activitys',
+        string='Activity Groups',
     )
     date_posting = fields.Date(
         string='Posting Date',
