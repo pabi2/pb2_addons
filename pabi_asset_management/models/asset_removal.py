@@ -135,7 +135,8 @@ class AccountAssetRemoval(models.Model):
                 if line.asset_id.state != 'open':
                     continue
                 asset = line.asset_id
-                ctx = {'active_ids': [asset.id], 'active_id': asset.id}
+                ctx = {'active_ids': [asset.id], 'active_id': asset.id,
+                       'overwrite_move_name': '/'}
                 if asset.value_residual and not asset.no_depreciation:
                     ctx.update({'early_removal': True})
                 line.with_context(ctx).remove()
