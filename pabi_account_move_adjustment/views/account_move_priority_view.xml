@@ -67,6 +67,7 @@
                                     <field name="product_id" invisible="1"/>
                                     <field name="activity_group_id"/>
                                     <field name="activity_id" domain="[('activity_group_ids', 'in', activity_group_id)]"/>
+                                    <field name="activity_rpt_id" readonly="1"/>
                                     <field name="name" string="Description"/>
                                     <button name="%(action_edit_desc)d" string="Edit" type="action" icon="gtk-justify-fill"/>
                                     <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>

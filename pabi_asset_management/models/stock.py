@@ -24,6 +24,13 @@ class StockPicking(models.Model):
         string='Aquisition Method',
         help="In case of direct receive, user will manually choose it."
     )
+    asset_journal_id = fields.Many2one(
+        'account.journal',
+        string='Asset Journal',
+        required=True,
+        domain=[('asset', '=', True)],
+        help="To overwrite whatever journal form standard IN operation",
+    )
 
     @api.onchange('partner_id')
     def _onchange_partner_id(self):
@@ -79,6 +86,17 @@ class StockPicking(models.Model):
                 if rec.move_lines.filtered(lambda l: not l.chartfield_id):
                     raise ValidationError(
                         _('Budget is required for all assets'))
+
+    @api.multi
+    def action_confirm(self):
+        for rec in self:
+            # Check for AG/A
+            if rec.asset_journal_id.analytic_journal_id:
+                for line in rec.move_lines:
+                    if not line.activity_rpt_id:
+                        raise ValidationError(
+                            _('AG/A is required for adjustment with budget'))
+        return super(StockPicking, self).action_confirm()
 
 
 class StockMove(models.Model):

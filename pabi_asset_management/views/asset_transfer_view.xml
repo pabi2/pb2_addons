@@ -93,6 +93,7 @@
                                 <field name="target_asset_value"/>
                             </group>
                             <group>
+                                <field name="journal_id"/>
                                 <field name="user_id"/>
                                 <field name="date_accept"/>
                                 <field name="date"/>

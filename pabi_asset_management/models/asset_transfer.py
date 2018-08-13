@@ -122,6 +122,22 @@ class AccountAssetTransfer(models.Model):
         string='Source Asset Count',
         compute='_compute_asset_count',
     )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Journal',
+        domain=[('asset', '=', True), ('analytic_journal_id', '=', False)],
+        default=lambda self: self._default_journal(),
+        readonly=True,
+        help="Asset Journal (No-Budget)",
+    )
+
+    @api.model
+    def _default_journal(self):
+        journal = self.env['account.journal'].search([
+            ('asset', '=', True), ('analytic_journal_id', '=', False)])
+        if len(journal) != 1:
+            raise ValidationError(_('No valid Asset Journal (No-Budget)'))
+        return journal
 
     @api.multi
     def _compute_asset_count(self):
@@ -295,7 +311,9 @@ class AccountAssetTransfer(models.Model):
             # Property of New Asset
             new_product = target_asset.product_id
             new_asset_profile = new_product.asset_profile_id
-            new_journal = new_asset_profile.journal_id
+            # Force to AN before lek think it should be fixed.
+            # new_journal = new_asset_profile.journal_id
+            new_journal = self.journal_id
             new_account_asset = new_asset_profile.account_asset_id
             # For transfer, for each new asset, update following fields
             new_asset_move_line_dict.update({

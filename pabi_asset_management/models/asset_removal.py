@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
+from openerp.addons.account_budget_activity_rpt.models.account_activity \
+    import ActivityCommon
+from openerp.addons.pabi_chartfield_merged.models.chartfield \
+    import MergedChartField
+from openerp.addons.pabi_chartfield.models.chartfield \
+    import ChartFieldAction
 from openerp.exceptions import ValidationError
 
 
@@ -60,6 +66,14 @@ class AccountAssetRemoval(models.Model):
     asset_count = fields.Integer(
         string='New Asset Count',
         compute='_compute_assset_count',
+    )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Adjustment Journal',
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        domain=[('asset', '=', True)],
     )
 
     @api.multi
@@ -130,6 +144,12 @@ class AccountAssetRemoval(models.Model):
     @api.multi
     def action_done(self):
         for rec in self:
+            # Check for AG/A
+            if self.journal_id.analytic_journal_id:
+                for line in self.removal_asset_ids:
+                    if not line.activity_rpt_id:
+                        raise ValidationError(
+                            _('AG/A is required for adjustment with budget'))
             assets = rec.removal_asset_ids.mapped('asset_id')
             assets.validate_asset_to_removal()
         self._remove_confirmed_assets()
@@ -153,7 +173,8 @@ class AccountAssetRemoval(models.Model):
         return result
 
 
-class AccountAssetRemovalLine(models.Model):
+class AccountAssetRemovalLine(MergedChartField, ActivityCommon,
+                              ChartFieldAction, models.Model):
     _name = 'account.asset.removal.line'
     _inherit = 'account.asset.remove'
 
@@ -188,6 +209,11 @@ class AccountAssetRemovalLine(models.Model):
     def _onchange_asset_id(self):
         Remove = self.env['account.asset.remove'].\
             with_context(active_id=self.asset_id.id)
+        # Chartfield
+        self.section_id = False
+        self.project_id = False
+        self.invest_asset_id = False
+        self.invest_construction_phase_id = False
         if self.asset_id:
             vals = Remove._get_sale()
             self.sale_value = vals['sale_value']
@@ -199,3 +225,9 @@ class AccountAssetRemovalLine(models.Model):
             self.account_residual_value_id = \
                 Remove._default_account_residual_value_id()
             self.posting_regime = Remove._get_posting_regime()
+            # Chartfield
+            self.section_id = self.asset_id.section_id
+            self.project_id = self.asset_id.project_id
+            self.invest_asset_id = self.asset_id.invest_asset_id
+            self.invest_construction_phase_id = \
+                self.asset_id.invest_construction_phase_id

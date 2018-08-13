@@ -33,6 +33,7 @@
                                 <field name="user_id"/>
                             </group>
                             <group>
+                                <field name="journal_id"/>
                                 <field name="date_remove"/>
                                 <field name="target_status"/>
                             </group>
@@ -52,6 +53,15 @@
                                         <field name="account_sale_id" attrs="{'required': [('sale_value', '>', 0.0)]}"/>
                                         <field name="period_id" invisible="1"/>
                                         <field name="target_status"/>
+                                        <field name="activity_group_id" required="0" invisible="0"/>
+                                        <field name="activity_rpt_id" required="0"
+                                          domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense'')]"/>
+                                        <field name="chartfield_id" required="1"/>
+                                        <field name="project_id" invisible="1"/>
+                                        <field name="section_id" invisible="1"/>
+                                        <field name="invest_asset_id" invisible="1"/>
+                                        <field name="invest_construction_phase_id" invisible="1"/>
+                                        <field name="personnel_costcenter_id" invisible="1"/>
                                     </tree>
                                 </field>
                             </page>

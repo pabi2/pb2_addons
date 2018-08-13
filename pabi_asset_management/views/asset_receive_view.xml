@@ -41,6 +41,7 @@
                                 <field name="asset_purchase_method_id" domain="[('direct', '=', True)]" required="1" widget="selection"/>
                             </group>
                             <group>
+                                <field name="asset_journal_id"/>
                                 <field name="date"/>
                                 <field name="min_date" invisible="1"/>
                                 <field name="origin" placeholder="e.g. PO0032" class="oe_inline"/>
@@ -58,6 +59,9 @@
                                     <tree editable="bottom">
                                       <field name="product_id" on_change="onchange_product_id(product_id)" domain="[('asset', '=', True)]" string="Asset Type"/>
                                       <field name="name" string="Asset Name"/>
+                                      <field name="activity_group_id" required="0" invisible="0"/>
+                                      <field name="activity_rpt_id" required="0"
+                                        domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense'')]"/>
                                       <field name="product_uom_qty" on_change="onchange_quantity(product_id, product_uom_qty, product_uom, product_uos)"/>
                                       <field name="product_uom" string="Unit of Measure" groups="product.group_uom"/>
                                       <field name="product_uos_qty" groups="product.group_uos"/>

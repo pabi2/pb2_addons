@@ -66,6 +66,7 @@
                                 <field name="user_id"/>
                             </group>
                             <group>
+                                <field name="journal_id"/>
                                 <field name="date"/>
                             </group>
                         </group>

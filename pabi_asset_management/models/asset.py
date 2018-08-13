@@ -368,6 +368,7 @@ class AccountAsset(ChartFieldAction, models.Model):
     def _compute_total_child_value(self):
         for rec in self:
             rec.total_child_value = sum(rec.child_ids.mapped('purchase_value'))
+        return True
 
     @api.multi
     @api.depends('installment')
@@ -376,6 +377,7 @@ class AccountAsset(ChartFieldAction, models.Model):
             if rec.installment:
                 rec.installment_str = '%s/%s' % (rec.installment,
                                                  rec.num_installment)
+        return True
 
     @api.multi
     def validate_asset_to_request(self):
@@ -785,7 +787,8 @@ class AccountAssetLine(models.Model):
                                   period, account, type, move)
         asset = self.asset_id
         move_line_data.update({'section_id': asset.owner_section_id.id,
-                               'project_id': asset.owner_project_id.id})
+                               'project_id': asset.owner_project_id.id,
+                               'name': asset.code})
         return move_line_data
 
     @api.multi
@@ -793,7 +796,8 @@ class AccountAssetLine(models.Model):
         self.ensure_one()
         move_data = super(AccountAssetLine, self).\
             _setup_move_data(depreciation_date, period)
-        move_data.update({'name': '/'})
+        move_data.update({'name': '/',
+                          'ref': self.name})
         return move_data
 
 
