@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from openerp.addons.account_budget_activity_rpt.models.account_activity \
-    import ActivityCommon
-from openerp.addons.pabi_chartfield_merged.models.chartfield \
-    import MergedChartField
-from openerp.addons.pabi_chartfield.models.chartfield \
-    import ChartFieldAction
 from openerp.exceptions import ValidationError
 
 
@@ -72,9 +66,16 @@ class AccountAssetRemoval(models.Model):
         string='Adjustment Journal',
         required=True,
         readonly=True,
-        states={'draft': [('readonly', False)]},
-        domain=[('asset', '=', True)],
+        default=lambda self: self._default_journal()
     )
+
+    @api.model
+    def _default_journal(self):
+        journal = self.env['account.journal'].search([
+            ('asset', '=', True), ('analytic_journal_id', '=', False)])
+        if len(journal) != 1:
+            raise ValidationError(_('No valid Asset Journal (No-Budget)'))
+        return journal
 
     @api.multi
     @api.depends('removal_asset_ids')
@@ -136,7 +137,8 @@ class AccountAssetRemoval(models.Model):
                     continue
                 asset = line.asset_id
                 ctx = {'active_ids': [asset.id], 'active_id': asset.id,
-                       'overwrite_move_name': '/'}
+                       'overwrite_move_name': '/',
+                       'overwrite_journal_id': removal.journal_id.id}
                 if asset.value_residual and not asset.no_depreciation:
                     ctx.update({'early_removal': True})
                 line.with_context(ctx).remove()
@@ -145,12 +147,6 @@ class AccountAssetRemoval(models.Model):
     @api.multi
     def action_done(self):
         for rec in self:
-            # Check for AG/A
-            if self.journal_id.analytic_journal_id:
-                for line in self.removal_asset_ids:
-                    if not line.activity_rpt_id:
-                        raise ValidationError(
-                            _('AG/A is required for adjustment with budget'))
             assets = rec.removal_asset_ids.mapped('asset_id')
             assets.validate_asset_to_removal()
         self._remove_confirmed_assets()
@@ -174,8 +170,7 @@ class AccountAssetRemoval(models.Model):
         return result
 
 
-class AccountAssetRemovalLine(MergedChartField, ActivityCommon,
-                              ChartFieldAction, models.Model):
+class AccountAssetRemovalLine(models.Model):
     _name = 'account.asset.removal.line'
     _inherit = 'account.asset.remove'
 
@@ -210,11 +205,6 @@ class AccountAssetRemovalLine(MergedChartField, ActivityCommon,
     def _onchange_asset_id(self):
         Remove = self.env['account.asset.remove'].\
             with_context(active_id=self.asset_id.id)
-        # Chartfield
-        self.section_id = False
-        self.project_id = False
-        self.invest_asset_id = False
-        self.invest_construction_phase_id = False
         if self.asset_id:
             vals = Remove._get_sale()
             self.sale_value = vals['sale_value']
@@ -226,9 +216,3 @@ class AccountAssetRemovalLine(MergedChartField, ActivityCommon,
             self.account_residual_value_id = \
                 Remove._default_account_residual_value_id()
             self.posting_regime = Remove._get_posting_regime()
-            # Chartfield
-            self.section_id = self.asset_id.section_id
-            self.project_id = self.asset_id.project_id
-            self.invest_asset_id = self.asset_id.invest_asset_id
-            self.invest_construction_phase_id = \
-                self.asset_id.invest_construction_phase_id

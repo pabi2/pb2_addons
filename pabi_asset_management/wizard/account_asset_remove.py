@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models, api
+from openerp import fields, models, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountAssetRemove(models.TransientModel):
@@ -15,8 +16,17 @@ class AccountAssetRemove(models.TransientModel):
         'account.journal',
         string='Adjustment Journal',
         required=True,
-        domain=[('asset', '=', True)],
+        readonly=True,
+        default=lambda self: self._default_journal()
     )
+
+    @api.model
+    def _default_journal(self):
+        journal = self.env['account.journal'].search([
+            ('asset', '=', True), ('analytic_journal_id', '=', False)])
+        if len(journal) != 1:
+            raise ValidationError(_('No valid Asset Journal (No-Budget)'))
+        return journal
 
     @api.multi
     def remove(self):
