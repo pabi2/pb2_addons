@@ -112,10 +112,16 @@ class XLSXReportCDReceivablePlanning(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. State supplier invoice to paid
+        2. State sale order not in ('draft', 'cancel')
+        """
         self.ensure_one()
         Result = self.env['cd.receivable.planning.view']
-        dom = [('invoice_plan_id.order_id.state', 'not in',
-                ('draft', 'cancel'))]
+        dom = \
+            [('loan_agreement_id.supplier_invoice_id.state', '=', 'paid'),
+             ('invoice_plan_id.order_id.state', 'not in', ('draft', 'cancel'))]
         if self.fiscalyear_start_id:
             dom += [('invoice_plan_id.date_invoice', '>=',
                      self.fiscalyear_start_id.date_start)]

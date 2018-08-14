@@ -32,6 +32,8 @@
                     <header>
                         <button name="button_validate" states="draft" string="Post" type="object" class="oe_highlight" groups="account.group_account_invoice"/>
                         <button name="button_cancel" states="posted" string="Cancel Entry" type="object" groups="account.group_account_invoice" invisible="1"/>
+                        <button name="button_delete" string="Delete Entry" confirm="Are you sure to delete this entry?" type="object" groups="account.group_account_invoice"
+                          attrs="{'invisible': [('name', '=', False), ('state', '=', 'draft')]}"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <label for="name" class="oe_edit_only" attrs="{'invisible':[('name','=','/')]}"/>
@@ -65,6 +67,7 @@
                                     <field name="product_id" invisible="1"/>
                                     <field name="activity_group_id"/>
                                     <field name="activity_id" domain="[('activity_group_ids', 'in', activity_group_id)]"/>
+                                    <field name="activity_rpt_id" readonly="1"/>
                                     <field name="name" string="Description"/>
                                     <button name="%(action_edit_desc)d" string="Edit" type="action" icon="gtk-justify-fill"/>
                                     <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>

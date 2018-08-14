@@ -38,13 +38,10 @@ class AccountMove(models.Model):
         for move in self:
             if move.bank_receipt_id:  # Not yet assigned
                 break
-            self._cr.execute("""
-                select bank_receipt_id from account_move_line
-                where move_id = %s and bank_receipt_id is not null
-            """, (move.id, ))
-            bank_receipts = [i[0] for i in self._cr.fetchall()]
+            move_lines = move.line_id.filtered('bank_receipt_id')
+            bank_receipts = move_lines.mapped('bank_receipt_id')
             if bank_receipts:
-                move.write({'bank_payment_id': bank_receipts[0]})
+                move.bank_receipt_id = bank_receipts[0]
 
     @api.multi
     def create_bank_receipt(self, receipt_date):

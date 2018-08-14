@@ -89,15 +89,16 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             group_by = 'group by %s' % fields_str
         return """
             select %s
-                sum(planned_amount) planned_amount,
-                sum(released_amount) released_amount,
-                sum(amount_so_commit) amount_so_commit,
-                sum(amount_pr_commit) amount_pr_commit,
-                sum(amount_po_commit) amount_po_commit,
-                sum(amount_exp_commit) amount_exp_commit,
-                sum(amount_so_commit) + sum(amount_pr_commit) +
-                sum(amount_po_commit) + sum(amount_exp_commit)
-                    as amount_total_commit,
+                coalesce(sum(planned_amount), 0.0) planned_amount,
+                coalesce(sum(released_amount), 0.0) released_amount,
+                coalesce(sum(amount_so_commit), 0.0) amount_so_commit,
+                coalesce(sum(amount_pr_commit), 0.0) amount_pr_commit,
+                coalesce(sum(amount_po_commit), 0.0) amount_po_commit,
+                coalesce(sum(amount_exp_commit), 0.0) amount_exp_commit,
+                coalesce(sum(amount_so_commit), 0.0) +
+                coalesce(sum(amount_pr_commit), 0.0) +
+                coalesce(sum(amount_po_commit), 0.0) +
+                coalesce(sum(amount_exp_commit), 0.0) as amount_total_commit,
                 sum(amount_actual) amount_actual,
                 sum(amount_consumed) amount_consumed,
                 sum(amount_balance) amount_balance
@@ -198,6 +199,9 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             groupby_field = 'group_by_%s' % field
             if self[groupby_field]:
                 group_by.append(field)
+
+        if chart_view == 'invest_construction':
+            group_by.append('invest_construction_phase_id')
         # --
         where_str = prepare_where_str(where)
         fields_str = ', '.join(group_by)

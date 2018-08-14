@@ -11,7 +11,6 @@ class CreateAssetAdjustWizard(models.TransientModel):
 
     adjust_type = fields.Selection(
         [('asset_type', 'Asset => Asset'),
-         ('asset_type_past', 'Asset => Asset (back date)'),
          ('asset_to_expense', 'Asset => Expense'),
          ('expense_to_asset', 'Expense => Asset')],
         string='Type of Adjustment',

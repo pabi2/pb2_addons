@@ -11,7 +11,7 @@ class AccountInvoice(models.Model):
         string='Adjustment Journal Entry',
         readonly=True,
         index=True,
-        ondelete='restrict',
+        ondelete='set null',
         copy=False,
     )
 

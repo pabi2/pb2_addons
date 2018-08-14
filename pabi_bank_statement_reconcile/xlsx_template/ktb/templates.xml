@@ -14,7 +14,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'B1': 'journal_id',
+                            'B1': 'journal_id${env["res.partner.bank"].convert_acc_number_to_journal(value)}',
                             '${"payment_cheque"}': 'report_type',
                         },
                         'import_ids': {
@@ -46,7 +46,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'B1': 'journal_id',
+                            'B1': 'journal_id${env["res.partner.bank"].convert_acc_number_to_journal(value)}',
                             '${"bank_receipt"}': 'report_type',
                         },
                         'import_ids': {

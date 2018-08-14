@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import openerp
 from openerp import models, fields, api, tools, _
+from openerp.addons.pabi_account_move_document_ref.models.account_move import \
+    DOCTYPE_SELECT
 from openerp.exceptions import ValidationError
 import time
 
@@ -29,6 +31,14 @@ PREFIX_DOCTYPE = {
     # Special Type for Monitoring Report
     'account_budget': False,
 }
+
+REFERENCE_SELECT = [
+    ('res.section', 'Section'),
+    ('res.project', 'Project'),
+    ('res.personnal.costcenter', 'Personnal Costcenter'),
+    ('res.invest.asset', 'Invest Asset'),
+    ('res.invest.construction', 'Invest Construction'),
+]
 
 
 class ReportAccountCommon(models.AbstractModel):
@@ -260,6 +270,10 @@ class PabiCommonAccountReportView(models.Model):
         string='Move',
         readonly=True,
     )
+    invoice_document_date = fields.Date(
+        string='Invoice Document Date',
+        readonly=True,
+    )
     invoice_posting_date = fields.Date(
         string='Invoice Posting Date',
         readonly=True,
@@ -344,6 +358,90 @@ class PabiCommonAccountReportView(models.Model):
         string='Document Origin',
         readonly=True,
     )
+    reconcile_id = fields.Many2one(
+        'account.move.reconcile',
+        string='Reconcile',
+        readonly=True,
+    )
+    budget = fields.Reference(
+        REFERENCE_SELECT,
+        string='Budget',
+        readonly=True,
+    )
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        readonly=True,
+    )
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        string='Activity Group',
+        readonly=True,
+    )
+    activity_id = fields.Many2one(
+        'account.activity',
+        string='Activity',
+        readonly=True,
+    )
+    move_line_name = fields.Char(
+        string='Description',
+        readonly=True,
+    )
+    doctype = fields.Selection(
+        DOCTYPE_SELECT,
+        string='Doctype',
+        readonly=True,
+    )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Journal',
+        readonly=True,
+    )
+    docline_seq = fields.Integer(
+        string='#',
+        readonly=True,
+    )
+    fund_id = fields.Many2one(
+        'res.fund',
+        string='Fund',
+        readonly=True,
+    )
+    cost_control_type_id = fields.Many2one(
+        'cost.control.type',
+        string='Job Order Type',
+        readonly=True,
+    )
+    cost_control_id = fields.Many2one(
+        'cost.control',
+        string='Job Order',
+        readonly=True,
+    )
+    costcenter_id = fields.Many2one(
+        'res.costcenter',
+        string='Costcenter',
+        readonly=True,
+    )
+    project_id = fields.Many2one(
+        'res.project',
+        string='Project',
+        readonly=True,
+    )
+    mission_id = fields.Many2one(
+        'res.mission',
+        string='Mission',
+        readonly=True,
+    )
+    cancel_move_id = fields.Many2one(
+        'account.move',
+        string='Cancel Journal Entry',
+        readonly=True,
+    )
+    payment_term = fields.Many2one(
+        'account.payment.term',
+        string='Payment Terms',
+        readonly=True,
+    )
     # Voucher
     voucher_number = fields.Char(
         string='Voucher Number',
@@ -381,6 +479,45 @@ class PabiCommonAccountReportView(models.Model):
     payment_export_id = fields.Many2one(
         'payment.export',
         string='Payment Export',
+        readonly=True,
+    )
+    voucher_posting_date = fields.Date(
+        string='Voucher Posting Date',
+        readonly=True,
+    )
+    voucher_document_origin = fields.Char(
+        string='Voucher Document Origin',
+        readonly=True,
+    )
+    voucher_move_id = fields.Many2one(
+        'account.move',
+        string='Voucher Move',
+        readonly=True,
+    )
+    payment_method_id = fields.Many2one(
+        'account.journal',
+        string='Payment Method',
+        readonly=True,
+    )
+    voucher_date_value = fields.Date(
+        string='Value Date',
+        readonly=True,
+    )
+    supplier_bank_id = fields.Many2one(
+        'res.partner.bank',
+        string='Supplier Bank Account',
+        readonly=True,
+    )
+    receipt_type = fields.Selection(
+        [('cash', 'Cash'),
+         ('credit', 'Credit'),
+         ('transfer', 'Transfer'),
+         ('cheque', 'Cheque')],
+        string='Receipt Type',
+        readonly=True,
+    )
+    number_preprint = fields.Char(
+        string='Preprint Number',
         readonly=True,
     )
 
@@ -439,6 +576,7 @@ class PabiCommonAccountReportView(models.Model):
             invoice_move_table.move_line_account_id AS account_id,
             invoice_move_table.move_line_partner_id AS partner_id,
             invoice_move_table.move_id AS invoice_move_id,
+            invoice_move_table.move_date_document AS invoice_document_date,
             invoice_move_table.move_date AS invoice_posting_date,
             invoice_move_table.move_name AS document_number,
             invoice_move_table.invoice_supplier_invoice_number
@@ -447,7 +585,7 @@ class PabiCommonAccountReportView(models.Model):
                 AS purchase_billing_id,
             invoice_move_table.invoice_id,
             invoice_move_table.move_line_period_id AS period_id,
-            invoice_move_table.invoice_date_due AS date_due_invoice,
+            invoice_move_table.move_line_date_maturity AS date_due_invoice,
             invoice_move_table.invoice_state,
             invoice_move_table.invoice_source_document_id
                 AS source_document_id,
@@ -459,6 +597,38 @@ class PabiCommonAccountReportView(models.Model):
             invoice_move_table.move_write_uid AS invoice_move_write_uid,
             invoice_move_table.interface_system_id AS system_id,
             invoice_move_table.interface_name AS document_origin,
+            invoice_move_table.move_line_reconcile_id AS reconcile_id,
+            CASE WHEN invoice_move_table.move_line_section_id IS NOT NULL THEN
+            CONCAT('res.section,', invoice_move_table.move_line_section_id)
+            WHEN invoice_move_table.move_line_project_id IS NOT NULL THEN
+            CONCAT('res.project,', invoice_move_table.move_line_project_id)
+            WHEN invoice_move_table.move_line_personnel_costcenter_id
+            IS NOT NULL THEN CONCAT('res.personnel.costcenter,',
+            invoice_move_table.move_line_personnel_costcenter_id)
+            WHEN invoice_move_table.move_line_invest_asset_id IS NOT NULL THEN
+            CONCAT('res.invest.asset,',
+            invoice_move_table.move_line_invest_asset_id)
+            WHEN invoice_move_table.move_line_invest_construction_id
+            IS NOT NULL THEN CONCAT('res.invest.construction,',
+            invoice_move_table.move_line_invest_construction_id)
+            ELSE NULL END AS budget,
+            invoice_move_table.move_line_charge_type AS charge_type,
+            invoice_move_table.move_line_activity_group_id
+            AS activity_group_id,
+            invoice_move_table.move_line_activity_id AS activity_id,
+            invoice_move_table.move_line_name,
+            invoice_move_table.move_doctype AS doctype,
+            invoice_move_table.move_journal_id AS journal_id,
+            invoice_move_table.move_line_docline_seq AS docline_seq,
+            invoice_move_table.move_line_fund_id AS fund_id,
+            invoice_move_table.move_line_cost_control_type_id
+            AS cost_control_type_id,
+            invoice_move_table.move_line_cost_control_id AS cost_control_id,
+            invoice_move_table.move_line_costcenter_id AS costcenter_id,
+            invoice_move_table.move_line_project_id AS project_id,
+            invoice_move_table.move_line_mission_id AS mission_id,
+            invoice_move_table.invoice_cancel_move_id AS cancel_move_id,
+            invoice_move_table.invoice_payment_term AS payment_term,
 
             /* Voucher */
             voucher_move_table.move_name AS voucher_number,
@@ -467,7 +637,19 @@ class PabiCommonAccountReportView(models.Model):
             voucher_move_table.voucher_id,
             voucher_move_table.voucher_number_cheque AS number_cheque,
             voucher_move_table.voucher_income_tax_form AS income_tax_form,
-            voucher_move_table.voucher_payment_export_id AS payment_export_id
+            voucher_move_table.voucher_payment_export_id AS payment_export_id,
+            voucher_move_table.move_date AS voucher_posting_date,
+            voucher_move_table.interface_name AS voucher_document_origin,
+            voucher_move_table.move_id AS voucher_move_id,
+            voucher_move_table.move_journal_id AS payment_method_id,
+            voucher_move_table.voucher_date_value,
+            voucher_move_table.voucher_supplier_bank_id AS supplier_bank_id,
+            voucher_move_table.voucher_receipt_type AS receipt_type,
+            CASE WHEN voucher_move_table.voucher_id IS NOT NULL THEN
+            voucher_move_table.voucher_number_preprint
+            WHEN voucher_move_table.interface_id IS NOT NULL THEN
+            voucher_move_table.interface_preprint_number
+            ELSE NULL END AS number_preprint
         """
         return sql_select
 
@@ -603,6 +785,128 @@ class PabiCommonAccountReportView(models.Model):
                self._get_invoice_move_table(sql_select_dict),
                self._get_voucher_move_table(sql_select_dict))
         return sql_view
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
+                   % (self._table, self._get_sql_view()))
+
+
+class PabiCommonLoanAgreementReportView(models.Model):
+    _name = 'pabi.common.loan.agreement.report.view'
+    _auto = False
+
+    id = fields.Integer(
+        string='ID',
+        readonly=True,
+    )
+    loan_agreement_id = fields.Many2one(
+        'loan.customer.agreement',
+        string='Loan Agreement',
+        readonly=True,
+    )
+    order_id = fields.Many2one(
+        'sale.order',
+        string='Sale Order',
+        readonly=True,
+    )
+    invoice_plan_id = fields.Many2one(
+        'sale.invoice.plan',
+        string='Invoice Plan',
+        readonly=True,
+    )
+    payment_id = fields.Many2one(
+        'account.voucher',
+        string='Payment',
+        readonly=True,
+    )
+
+    def _get_sql_select(self):
+        sql_select = """
+            ROW_NUMBER() OVER(ORDER BY lca.id, so.id, sip.id, av.id) AS id,
+            lca.id AS loan_agreement_id, so.id AS order_id,
+            sip.id AS invoice_plan_id, av.id AS payment_id
+        """
+        return sql_select
+
+    def _get_sql_view(self):
+        sql_view = """
+            SELECT %s
+            FROM loan_customer_agreement lca
+            LEFT JOIN sale_order so ON lca.sale_id = so.id
+            LEFT JOIN sale_invoice_plan sip ON so.id = sip.order_id
+            LEFT JOIN account_invoice ai ON sip.ref_invoice_id = ai.id
+            LEFT JOIN (SELECT av.*, avl.invoice_id
+                       FROM account_voucher_line avl
+                       LEFT JOIN account_voucher av ON avl.voucher_id = av.id
+                       WHERE av.state != 'cancel') av ON ai.id = av.invoice_id
+        """ % (self._get_sql_select())
+        return sql_view
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
+                   % (self._table, self._get_sql_view()))
+
+
+class PabiCommonAccountVoucherReportView(models.Model):
+    _name = 'pabi.common.account.voucher.report.view'
+    _auto = False
+
+    id = fields.Integer(
+        string='ID',
+        readonly=True,
+    )
+    voucher_id = fields.Many2one(
+        'account.voucher',
+        string='Voucher',
+        readonly=True,
+    )
+    invoice_id = fields.Many2one(
+        'account.invoice',
+        string='Invoice',
+        readonly=True,
+    )
+    voucher_line_id = fields.Many2one(
+        'account.voucher.line',
+        string='Voucher Line',
+        readonly=True,
+    )
+    fiscalyear = fields.Char(
+        string='Fiscal Year',
+        readonly=True,
+    )
+    voucher_number = fields.Char(
+        string='Voucher Number',
+        readonly=True,
+    )
+    invoice_number = fields.Char(
+        string='Invoice Number',
+        readonly=True,
+    )
+
+    def _get_sql_select(self):
+        sql_select = """
+            ROW_NUMBER() OVER(ORDER BY av.id, ai.id) AS id,
+            av.id AS voucher_id, ai.id AS invoice_id,
+            av_line.id AS voucher_line_id, af.name AS fiscalyear,
+            av.number AS voucher_number, ai.number AS invoice_number
+        """
+        return sql_select
+
+    def _get_sql_view(self):
+        sql_select = """
+            SELECT %s
+            FROM account_voucher av
+            LEFT JOIN account_voucher_line av_line
+                ON av.id = av_line.voucher_id
+            LEFT JOIN account_move_line am_line
+                ON av_line.move_line_id = am_line.id
+            LEFT JOIN account_invoice ai ON am_line.move_id = ai.move_id
+            LEFT JOIN account_period ap ON av.period_id = ap.id
+            LEFT JOIN account_fiscalyear af ON ap.fiscalyear_id = af.id
+        """ % (self._get_sql_select())
+        return sql_select
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)

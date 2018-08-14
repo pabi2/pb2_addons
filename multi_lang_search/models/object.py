@@ -20,7 +20,8 @@ def _get_rec_names(self):
     return rec_name + other_names
 
 
-def _extend_name_results_translation(self, field_name, name, results, limit):
+def _extend_name_results_translation(self, field_name, name,
+                                     operator, results, limit):
     result_count = len(results)
     limit = limit or 100
     if result_count < limit:
@@ -33,15 +34,20 @@ def _extend_name_results_translation(self, field_name, name, results, limit):
             if trans_name == 'res.users,name':
                 trans_name = 'res.partner,name'
         # -------------------------------------------------------------------
-
-        self._cr.execute("""
-            SELECT res_id
-            FROM ir_translation
-            WHERE (src ilike %s or value ilike %s) AND
-                name = %s
-            LIMIT %s
-        """, ('%' + name + '%', '%' + name + '%', trans_name, limit))
-        res = self._cr.dictfetchall()
+        res = []
+        if operator in ('like', 'ilike'):
+            self._cr.execute("""
+                SELECT res_id FROM ir_translation WHERE
+                (src """ + operator + """ %s OR value """ + operator + """ %s)
+                AND name = %s LIMIT %s
+            """, ('%' + name + '%', '%' + name + '%', trans_name, limit))
+            res = self._cr.dictfetchall()
+        elif operator == '=':
+            self._cr.execute("""
+                SELECT res_id FROM ir_translation WHERE
+                (src = %s OR value = %s) AND name = %s LIMIT %s
+            """, (name, name, trans_name, limit))
+            res = self._cr.dictfetchall()
         record_ids = [t['res_id'] for t in res]
 
         # -------------------------------------------------------------------
@@ -128,7 +134,7 @@ class ModelExtended(models.Model):
                     # Try translation word search each of the search fields
                     for rec_name in all_names:
                         res = _extend_name_results_translation(
-                            self, rec_name, name, res, limit)
+                            self, rec_name, name, operator, res, limit)
                 return res
             return name_search
 

@@ -55,8 +55,8 @@ class MergedChartField(ChartField):
                                  rec.personnel_costcenter_id.id)
             if res_id:
                 Chart = self.env['chartfield.view']
-                rec.chartfield_id = Chart.search([('model', '=', model),
-                                                  ('res_id', '=', res_id)])
+                rec.chartfield_id = Chart.with_context(active_test=False).\
+                    search([('model', '=', model), ('res_id', '=', res_id)])
             else:
                 rec.chartfield_id = False
 
@@ -113,6 +113,9 @@ class ChartfieldView(models.Model):
         'res.costcenter',
         string='Costcenter',
     )
+    active = fields.Boolean(
+        string='Active',
+    )
 
     @api.multi
     def name_get(self):
@@ -130,26 +133,30 @@ class ChartfieldView(models.Model):
         _sql = """
         select * from (
         (select 1 seq, 'sc:' as type, 'res.section' as model,
-        id+1000000 as id, id as res_id, code, name, name_short, costcenter_id
-        from res_section where active=true)
+        id+1000000 as id, id as res_id, code, name,
+        name_short, costcenter_id, active
+        from res_section)
             union all
         (select 2 seq, 'pj:' as type, 'res.project' as model,
-        id+2000000 as id, id as res_id, code, name, name_short, costcenter_id
-        from res_project where active=true)
+        id+2000000 as id, id as res_id, code, name, name_short,
+        costcenter_id, active
+        from res_project)
             union all
         (select 3 seq, 'cp:' as type, 'res.invest.construction.phase' as model,
         p.id+3000000 as id, p.id as res_id, p.code, c.name as name,
-        phase as name_short, p.costcenter_id
+        phase as name_short, p.costcenter_id, p.active
         from res_invest_construction_phase p join res_invest_construction c on
-        c.id = p.invest_construction_id where p.active=true)
+        c.id = p.invest_construction_id)
             union all
         (select 4 seq, 'ia:' as type, 'res.invest.asset' as model,
-        id+4000000 as id, id as res_id, code, name, name_short, costcenter_id
-        from res_invest_asset where active=true)
+        id+4000000 as id, id as res_id, code, name, name_short,
+        costcenter_id, active
+        from res_invest_asset)
             union all
         (select 5 seq, 'pc:' as type, 'res.personnel.costcenter' as model,
-        id+5000000 as id, id as res_id, code, name, name_short, costcenter_id
-        from res_personnel_costcenter where active=true)
+        id+5000000 as id, id as res_id, code, name, name_short,
+        costcenter_id, active
+        from res_personnel_costcenter)
         ) a
         """
         cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" %

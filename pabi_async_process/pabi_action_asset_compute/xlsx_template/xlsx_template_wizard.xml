@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+          <!-- Optional: To be specific to some template and context -->
+      		<record id="action_asset_compute_test_log_xlsx_template" model="ir.actions.act_window">
+              <field name="name">Export Log</field>
+              <field name="type">ir.actions.act_window</field>
+              <field name="res_model">export.xlsx.template</field>
+              <field name="view_type">form</field>
+              <field name="view_mode">form</field>
+              <field name="target">new</field>
+        			<field name="context"
+                eval="{'template_fname': 'asset_compute_test_log.xlsx',
+                       'template_context': {},
+                       'template_import_states': [],
+                       'lang': 'th_TH'}"/>
+          </record>
+
+    </data>
+</openerp>

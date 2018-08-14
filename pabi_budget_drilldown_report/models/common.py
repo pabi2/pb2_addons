@@ -13,9 +13,8 @@ REPORT_GROUPBY = {
                   'charge_type', 'activity_id'],
     'project_base': ['project_id', 'activity_group_id',
                      'charge_type', 'activity_id'],
-    'invest_asset': ['org_id', 'division_id', 'section_id', 'invest_asset_id'],
-    'invest_construction': ['org_id', 'division_id',
-                            'section_id', 'invest_construction_id'],
+    'invest_asset': ['org_id', 'invest_asset_id'],
+    'invest_construction': ['org_id', 'invest_construction_id'],
 }
 
 
@@ -140,10 +139,6 @@ class SearchCommon(ChartField, object):
     )
     group_by_org_id = fields.Boolean(
         string='Group By - Org',
-        default=False,
-    )
-    group_by_division_id = fields.Boolean(
-        string='Group By - Division',
         default=False,
     )
     group_by_invest_construction_id = fields.Boolean(

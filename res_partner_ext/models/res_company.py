@@ -10,3 +10,8 @@ class ResCompany(models.Model):
                "when it result in changing account code for that partner",
         default=False,
     )
+    default_employee_partner_categ_id = fields.Many2one(
+        'res.partner.category',
+        string="Default employee's partner category",
+        help="To be used when partner is auto created by creating new user"
+    )

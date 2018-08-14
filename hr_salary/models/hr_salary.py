@@ -143,15 +143,8 @@ class HRSalaryExpense(models.Model):
     @api.depends('line_ids.amount')
     def _compute_amount_total(self):
         for rec in self:
-            # kittiu: Performance tuning
-            # lines = rec.line_ids.filtered(lambda l: l.amount > 0.0)
-            # rec.amount_total = sum(lines.mapped('amount'))
-            self._cr.execute("""
-                select coalesce(sum(amount), 0.0) amount
-                from hr_salary_line
-                where salary_id = %s and amount > 0.0
-            """, (rec.id, ))
-            rec.amount_total = self._cr.fetchone()[0]
+            lines = rec.line_ids.filtered(lambda l: l.amount > 0.0)
+            rec.amount_total = sum(lines.mapped('amount'))
 
     # kittiu: Just get data from eHR, no vailidation required at this moment
     # @api.multi

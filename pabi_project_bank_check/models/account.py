@@ -13,15 +13,18 @@ class AccountJournal(models.Model):
         help="This bank account can be used only for selected project.\n"
         "Supplier payment to this project, only this bank account will show/"
     )
-    bank_mandate_emp_id = fields.Many2one(
+    bank_mandate_emp_ids = fields.Many2many(
         'hr.employee',
-        string='Project bank mandate',
+        'account_journal_employee_rel'
+        'journal_id', 'employee_id',
+        string='Project bank mandate(s)',
         help="Information about bank madate for this account, if any."
     )
 
     @api.onchange('project_ids')
     def _onchange_project_ids(self):
-        self.bank_mandate_emp_id = False
+        for project in self.project_ids:
+            self.bank_mandate_emp_ids += project.pm_employee_id
 
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=80):

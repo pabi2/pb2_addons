@@ -24,6 +24,13 @@ class StockPicking(models.Model):
         string='Aquisition Method',
         help="In case of direct receive, user will manually choose it."
     )
+    asset_journal_id = fields.Many2one(
+        'account.journal',
+        string='Asset Journal',
+        required=True,
+        domain=[('asset', '=', True)],
+        help="To overwrite whatever journal form standard IN operation",
+    )
 
     @api.onchange('partner_id')
     def _onchange_partner_id(self):
@@ -80,6 +87,17 @@ class StockPicking(models.Model):
                     raise ValidationError(
                         _('Budget is required for all assets'))
 
+    @api.multi
+    def action_confirm(self):
+        for rec in self:
+            # Check for AG/A
+            if rec.asset_journal_id.analytic_journal_id:
+                for line in rec.move_lines:
+                    if not line.activity_rpt_id:
+                        raise ValidationError(
+                            _('AG/A is required for adjustment with budget'))
+        return super(StockPicking, self).action_confirm()
+
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
@@ -92,9 +110,37 @@ class StockMove(models.Model):
         string='Total Value',
         compute='_compute_asset_value_total',
     )
+    building_id = fields.Many2one(
+        'res.building',
+        string='Building',
+        ondelete='restrict',
+    )
+    floor_id = fields.Many2one(
+        'res.floor',
+        string='Floor',
+        ondelete='restrict',
+    )
+    room_id = fields.Many2one(
+        'res.room',
+        string='Room',
+        ondelete='restrict',
+    )
+    responsible_user_id = fields.Many2one(
+        'res.users',
+        string='Responsible',
+        ondelete='restrict',
+    )
+
+    # Building / Floor / Room
+    @api.multi
+    @api.constrains('building_id', 'floor_id', 'room_id')
+    def _check_building(self):
+        for rec in self:
+            self.env['res.building']._check_room_location(rec.building_id,
+                                                          rec.floor_id,
+                                                          rec.room_id)
 
     @api.multi
-    @api.depends('asset_value', 'product_uom_qty')
     def _compute_asset_value_total(self):
         for rec in self:
             rec.asset_value_total = rec.product_uom_qty * rec.asset_value

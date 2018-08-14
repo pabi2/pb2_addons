@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="account_unreconciled_filter_view_form" model="ir.ui.view">
+            <field name="name">account.unreconciled.filter.form</field>
+            <field name="model">account.unreconciled.filter</field>
+            <field name="arch" type="xml">
+                <form string="Unreconciled Filter">
+                    <sheet>
+                        <div class="oe_right oe_button_box">
+                            <button type="object" name="open_unreconciled" class="oe_stat_button"
+                              icon="fa-angle-right" attrs="{'invisible': [('unreconciled_count', '=', 0)]}">
+                                <field name="unreconciled_count" widget="statinfo"
+                                  string="Unreconciled Items"/>
+                            </button>
+                        </div>
+                        <h1>
+                            <field name="name" class="oe_inline" placeholder="Name"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="fiscalyear_id" widget="selection"/>
+                                <field name="period_id"/>
+                            </group>
+                            <group>
+                                <field name="account_id"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="description" nolabel="1" placeholder="Description..."/>
+                            </group>
+                            <group string="Defaults for Reconcile Write-Off">
+                                <field name="journal_id"/>
+                                <field name="writeoff_acc_id"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_unreconciled_filter_view_tree" model="ir.ui.view">
+            <field name="name">account.unreconciled.filter.tree</field>
+            <field name="model">account.unreconciled.filter</field>
+            <field name="arch" type="xml">
+                <tree string="Unreconciled Filter">
+                    <field name="name"/>
+                    <field name="account_id"/>
+                    <field name="fiscalyear_id"/>
+                    <field name="period_id"/>
+                    <field name="unreconciled_count"/>
+                    <button icon="gtk-go-forward" name="open_unreconciled" colspan="4"
+                        string="Open Unreconciled Items" type="object"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_reconcile_search" model="ir.ui.view">
+            <field name="name">account.unreconciled.filter.search</field>
+            <field name="model">account.unreconciled.filter</field>
+            <field name="arch" type="xml">
+                <search string="Search Unreconciled Move Lines">
+                    <field name="name"/>
+                    <filter name="account_id"/>
+                    <filter name="fiscalyear_id"/>
+                    <filter name="period_id"/>
+                    <group string="Group By" name="groupby">
+                        <filter name="account_id" string="Account" context="{'group_by': 'account_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_account_unreconciled_filter" model="ir.actions.act_window">
+            <field name="name">Unreconciled Filters</field>
+            <field name="res_model">account.unreconciled.filter</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="action_account_unreconciled_filter"
+          id="menu_account_unreconciled_filter"
+          parent="account.periodical_processing_reconciliation" sequence="20"/>
+
+    </data>
+</openerp>

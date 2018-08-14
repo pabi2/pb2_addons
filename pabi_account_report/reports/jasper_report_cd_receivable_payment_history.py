@@ -1,52 +1,7 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api, tools
+from openerp import models, fields, api
 from datetime import datetime
 import time
-
-
-class CDReceivablePaymentHistoryView(models.Model):
-    _name = 'cd.receivable.payment.history.view'
-    _auto = False
-
-    id = fields.Integer(
-        string='ID',
-        readonly=True,
-    )
-    loan_agreement_id = fields.Many2one(
-        'loan.customer.agreement',
-        string='Loan Agreement',
-        readonly=True,
-    )
-    invoice_plan_id = fields.Many2one(
-        'sale.invoice.plan',
-        string='Invoice Plan',
-        readonly=True,
-    )
-    payment_id = fields.Many2one(
-        'account.voucher',
-        string='Payment',
-        readonly=True,
-    )
-
-    def _get_sql_view(self):
-        sql_view = """
-            SELECT ROW_NUMBER() OVER(ORDER BY lca.id, sip.id, av.id) AS id,
-                   lca.id AS loan_agreement_id,
-                   sip.id AS invoice_plan_id,
-                   av.id AS payment_id
-            FROM loan_customer_agreement lca
-            LEFT JOIN sale_order so ON lca.sale_id = so.id
-            LEFT JOIN sale_invoice_plan sip ON so.id = sip.order_id
-            LEFT JOIN account_invoice inv ON sip.ref_invoice_id = inv.id
-            LEFT JOIN account_voucher_line avl ON inv.id = avl.invoice_id
-            LEFT JOIN account_voucher av ON avl.voucher_id = av.id
-        """
-        return sql_view
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
-                   % (self._table, self._get_sql_view()))
 
 
 class JasperReportCDReceivablePaymentHistory(models.TransientModel):
@@ -60,6 +15,7 @@ class JasperReportCDReceivablePaymentHistory(models.TransientModel):
     date_report = fields.Date(
         string='Report Date',
         required=True,
+        readonly=True,
         default=lambda self: fields.Date.context_today(self),
     )
     bank_id = fields.Many2one(
@@ -90,8 +46,16 @@ class JasperReportCDReceivablePaymentHistory(models.TransientModel):
 
     @api.multi
     def _get_domain(self):
+        """
+        Solution
+        1. Bank invoice must paid
+        2. Sale order not in (draft, cancel)
+        """
         self.ensure_one()
-        dom = []
+        dom = [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
+                False),
+               ('loan_agreement_id.sale_id.state',
+                'not in', ('draft', 'cancel'))]
         if self.partner_ids:
             dom += [('loan_agreement_id.borrower_partner_id', 'in',
                      self.partner_ids.ids)]
@@ -101,11 +65,6 @@ class JasperReportCDReceivablePaymentHistory(models.TransientModel):
         if self.bank_branch_id:
             dom += [('loan_agreement_id.bank_id.bank_branch', '=',
                      self.bank_branch_id.id)]
-        # Check for history view
-        dom += [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
-                 False),
-                ('loan_agreement_id.supplier_invoice_id.date_paid', '<=',
-                 self.date_report)]
         return dom
 
     @api.multi
@@ -114,7 +73,7 @@ class JasperReportCDReceivablePaymentHistory(models.TransientModel):
         data = {'parameters': {}}
         dom = self._get_domain()
         data['ids'] = \
-            self.env['cd.receivable.payment.history.view'].search(dom).ids
+            self.env['pabi.common.loan.agreement.report.view'].search(dom).ids
         date_report = datetime.strptime(self.date_report, '%Y-%m-%d')
         data['parameters']['date_report'] = date_report.strftime('%d/%m/%Y')
         user = self.env.user.with_context(lang="th_TH").display_name

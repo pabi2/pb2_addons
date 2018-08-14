@@ -49,9 +49,10 @@ class AccountInvoice(models.Model):
                 expense.write({'invoice_id': False})
         return result
 
-    @api.model
-    def _get_invoice_total(self, invoice):
-        return invoice.amount_total
+    # Not use ???
+    # @api.model
+    # def _get_invoice_total(self, invoice):
+    #     return invoice.amount_total
 
 
 class AccountInvoiceLine(models.Model):

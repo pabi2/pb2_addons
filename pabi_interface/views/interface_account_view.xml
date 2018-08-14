@@ -29,6 +29,9 @@
                     <field name="date"/>
                     <field name="date_maturity"/>
                     <field name="reconcile_move_id" />
+                    <!-- Job Order -->
+                    <field name="cost_control_id"/>
+                    <field name="contract_charge_type"/>
                 </tree>
             </field>
         </record>
@@ -69,7 +72,22 @@
                                 <field name="residual" attrs="{'invisible': [('type', '!=', 'invoice')]}"/>
                             </group>
                         </group>
-                        <field name="line_ids" widget="one2many_list" attrs="{'invisible': [('type', '=', 'reverse')]}"/>
+                        <notebook>
+                            <page string="Entries">
+                                <field name="line_ids" widget="one2many_list" attrs="{'invisible': [('type', '=', 'reverse')]}"/>
+                            </page>
+                            <page string="Other Info" attrs="{'invisible': [('type', '!=', 'invoice')]}">
+                                <group>
+                                    <group name="contract" string="Contract">
+                                        <field name="contract_number"/>
+                                        <field name="contract_date_start"/>
+                                        <field name="contract_date_end"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_ids" widget="mail_thread"/>
@@ -82,6 +100,7 @@
             <field name="model">interface.account.entry</field>
             <field name="arch" type="xml">
                 <tree string="Journal Entry Model" colors="blue:(state == 'draft')">
+                    <field name="system_id"/>
                     <field name="name"/>
                     <field name="journal_id"/>
                     <field name="move_id"/>

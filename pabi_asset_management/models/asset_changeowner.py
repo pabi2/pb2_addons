@@ -61,6 +61,14 @@ class AccountAssetChangeowner(models.Model):
         copy=False,
         track_visibility='onchange',
     )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Journal',
+        domain=[('asset', '=', True), ('analytic_journal_id', '=', False)],
+        readonly=True,
+        required=True,
+        help="Asset Journal (No-Budget)",
+    )
 
     @api.model
     def create(self, vals):
@@ -134,11 +142,14 @@ class AccountAssetChangeowner(models.Model):
                     move_lines.append(new_depre_move_lines_dict)
                 # Finalize all moves before create it.
                 final_move_lines = [(0, 0, x) for x in move_lines]
-                move_dict = {'journal_id': asset.profile_id.journal_id.id,
-                             'line_id': final_move_lines,
-                             'period_id': period.id,
-                             'date': fields.Date.context_today(self),
-                             'ref': self.name}
+                move_dict = {
+                    # Force using AN
+                    'journal_id': self.journal_id.id,
+                    # 'journal_id': asset.profile_id.journal_id.id,
+                    'line_id': final_move_lines,
+                    'period_id': period.id,
+                    'date': fields.Date.context_today(self),
+                    'ref': self.name}
                 AccountMove.with_context(allow_asset=True).create(move_dict)
             # Asset Owner Info update
             if line.responsible_user_id:

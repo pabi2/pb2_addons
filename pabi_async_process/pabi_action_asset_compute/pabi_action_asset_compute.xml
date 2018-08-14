@@ -8,35 +8,185 @@
             <field name="mode">primary</field>
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='criteria']" position="inside">
-                  <group string="Run Depreciation For">
-                      <field name="calendar_period_id"/>
-                  </group>
-                  <group string="By Asset's Category/Profile">
-                      <field name="categ_ids" widget="many2many_tags"/>
-                      <field name="profile_ids" nolabel="1" colspan="2" domain="[('product_categ_id', 'in', categ_ids and categ_ids and categ_ids[0] and categ_ids[0][2])]">
-                          <tree>
-                              <field name="name" string="Profile"/>
-                          </tree>
-                      </field>
-                      <button name="check_affected_asset" class="oe_link oe_right" type="object" string="(Check number of affected assets)" colspan="2"/>
-                  </group>
+                  <field name="run_state" invisible="1"/>
+                  <notebook>
+                      <page string="Run Asset Depreciation" attrs="{'invisible': [('run_state', '!=', 'run')]}">
+                          <group>
+                              <group>
+                                  <field name="calendar_period_id"/>
+                              </group>
+                              <group>
+                                  <field name="batch_note"/>
+                              </group>
+                          </group>
+                          <group>
+                              <group>
+                                  <field name="categ_ids" nolabel="1" colspan="2">
+                                      <tree>
+                                          <field name="name" string="Category"/>
+                                      </tree>
+                                  </field>
+                              </group>
+                              <group>
+                                  <field name="profile_ids" nolabel="1" colspan="2" domain="[('product_categ_id', 'in', categ_ids and categ_ids and categ_ids[0] and categ_ids[0][2])]">
+                                      <tree>
+                                          <field name="name" string="Profile"/>
+                                      </tree>
+                                  </field>
+                                  <button name="check_affected_asset" class="oe_link oe_right" type="object" string="(Check number of affected assets)" colspan="2"/>
+                              </group>
+                          </group>
+                      </page>
+                      <page string="Run Asset Test" attrs="{'invisible': [('run_state', '!=', 'run')]}">
+                          <p>
+                              You can run test multiple times. System will keep track what has been tested in each session.
+                          </p>
+                          <group>
+                              <group>
+                                  <field name="max_asset_test"/>
+                              </group>
+                              <group>
+                                  <button name="run_asset_test" type="object" string="Run Test"/>
+                              </group>
+                          </group>
+                      </page>
+                      <page string="Test Result" attrs="{'invisible': [('run_state', '!=', 'test')]}">
+                        <group>
+                            <group>
+                                <button name="action_back" class="oe_link" type="object" string="&lt;= Go Back to Run Asset" colspan="2"/>
+                                <field name="tested_assets" invisible="1"/>
+                                <field name="test_completed" invisible="1"/>
+                            </group>
+                            <group>
+                                <button name="%(action_asset_compute_test_log_xlsx_template)d" attrs="{'invisible': [('test_log_ids', '=', [])]}"
+                                  type="action" string="Export to Excel =&gt;" class="oe_link oe_right"/>
+                            </group>
+                            <center colspan="4" >
+                                <h2 colspan="4" attrs="{'invisible': [('test_completed', '=', False)]}">Test Completed :)</h2>
+                            </center>
+                            <field name="test_log_ids" nolabel="1" attrs="{'invisible': [('test_log_ids', '=', [])]}" colspan="4">
+                                <tree>
+                                    <field name="asset_id"/>
+                                    <field name="message"/>
+                                </tree>
+                            </field>
+                        </group>
+                      </page>
+
+                  </notebook>
                 </xpath>
             </field>
         </record>
 
         <record id="action_pabi_action_asset_compute" model="ir.actions.act_window">
-            <field name="name">Compute Assets (new)</field>
+            <field name="name">Compute Assets</field>
             <field name="res_model">pabi.action.asset.compute</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-            <field name="context">{'return_action': 'account.action_move_journal_line'}</field>
+            <field name="context">{'return_action': 'pabi_async_process.action_pabi_asset_depre_batch'}</field>
         </record>
 
-        <menuitem id="menu_pabi_action_asset_compute"
-          name="Compute Assets (new)"
-          parent="account.menu_finance_recurrent_entries"
+        # Replace the existing menu
+        <menuitem id="account_asset_management.account_asset_compute_menu"
           action="action_pabi_action_asset_compute"
+          parent="account.menu_finance_recurrent_entries"
           sequence="14"/>
+
+
+        # Asset Depre Batch
+        <record id="view_pabi_asset_depre_batch_tree" model="ir.ui.view">
+            <field name="name">view.pabi.asset.depre.batch.tree</field>
+            <field name="model">pabi.asset.depre.batch</field>
+            <field name="arch" type="xml">
+                <tree string="Asset Depreciation Batch" create="0" edit="0" delete="0">
+                    <field name="note"/>
+                    <field name="name"/>
+                    <field name="period_id"/>
+                    <field name="amount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_pabi_asset_depre_batch_form" model="ir.ui.view">
+            <field name="name">view.pabi.asset.depre.batch.form</field>
+            <field name="model">pabi.asset.depre.batch</field>
+            <field name="arch" type="xml">
+                <form string="Asset Depreciation Batch" create="0" edit="0" delete="0">
+                    <header>
+                        <button name="post_entries" string="Post Entries" class="oe_highlight" confirm="Post all entries?" type="object" states="draft"/>
+                        <button name="delete_unposted_entries" string="Delete Unposted Entries" confirm="Are you sure to delete unposted entries?" type="object" states="draft,posted"/>
+                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,posted,deleted"/>
+                    </header>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" class="oe_inline" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="period_id"/>
+                            <field name="run_number"/>
+                            <field name="note"/>
+                        </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="create_uid" readonly="1"/>
+                            <field name="write_uid" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Journal Entries">
+                            <field name="move_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="ref"/>
+                                    <field name="date"/>
+                                    <field name="journal_id"/>
+                                    <field name="partner_id"/>
+                                    <field name="amount"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Journal Items">
+                            <field name="move_line_ids">
+                                <tree editable="bottom">
+                                    <field name="move_id"/>
+                                    <field name="name"/>
+                                    <field name="account_id"/>
+                                    <field name="debit"/>
+                                    <field name="credit"/>
+                                    <field name="chartfield_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_pabi_asset_depre_batch_search" model="ir.ui.view">
+            <field name="name">view.pabi.asset.depre.batch.search</field>
+            <field name="model">pabi.asset.depre.batch</field>
+            <field name="arch" type="xml">
+                <search string="Asset Depreciation Batch">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="note"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_pabi_asset_depre_batch" model="ir.actions.act_window">
+            <field name="name">Asset Depre. Batch</field>
+            <field name="res_model">pabi.asset.depre.batch</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_pabi_asset_depre_batch_tree"/>
+        </record>
+
+        <menuitem action="action_pabi_asset_depre_batch" id="menu_pabi_asset_depre_batch" parent="account.menu_finance_recurrent_entries" sequence="20"/>
+
+
     </data>
 </openerp>

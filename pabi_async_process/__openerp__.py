@@ -28,8 +28,12 @@
         # Using pabi.asset class as guideline
         'pabi_action_generate_entries/pabi_action_generate_entries.xml',
         'pabi_action_generate_entries/pabi_process.xml',
-        'pabi_action_asset_compute/pabi_action_asset_compute.xml',
+        'pabi_action_asset_compute/security/ir.model.access.csv',
         'pabi_action_asset_compute/pabi_process.xml',
+        'pabi_action_asset_compute/xlsx_template/templates.xml',
+        'pabi_action_asset_compute/xlsx_template/load_template.xml',
+        'pabi_action_asset_compute/xlsx_template/xlsx_template_wizard.xml',
+        'pabi_action_asset_compute/pabi_action_asset_compute.xml',
     ],
     'installable': True,
     'application': False,

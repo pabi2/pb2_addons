@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import ast
 from openerp import models, fields, api, _
-from openerp.addons.account_budget_activity.models.account_activity \
+from openerp.addons.account_budget_activity_rpt.models.account_activity \
     import ActivityCommon
 from openerp.addons.pabi_chartfield_merged.models.chartfield \
     import MergedChartField
@@ -30,7 +30,8 @@ class AccountAssetAdjust(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
-        default=lambda self: self._default_journal(),
+        # default=lambda self: self._default_journal(),
+        domain=[('asset', '=', True)],
     )
     date = fields.Date(
         string='Date',
@@ -68,7 +69,6 @@ class AccountAssetAdjust(models.Model):
     )
     adjust_type = fields.Selection(
         [('asset_type', 'Asset => Assset'),
-         ('asset_type_past', 'Asset => Asset (back date)'),
          ('asset_to_expense', 'Asset => Expense'),
          ('expense_to_asset', 'Expense => Asset')],
         string='Adjust Type',
@@ -156,12 +156,12 @@ class AccountAssetAdjust(models.Model):
         help="Limit asset value for case Expense -> Asset",
     )
 
-    @api.model
-    def _default_journal(self):
-        try:
-            return self.env.ref('pabi_asset_management.journal_asset')
-        except Exception:
-            pass
+    # @api.model
+    # def _default_journal(self):
+    #     try:
+    #         return self.env.ref('pabi_asset_management.journal_asset')
+    #     except Exception:
+    #         pass
 
     @api.multi
     def action_view_asset(self):
@@ -191,15 +191,15 @@ class AccountAssetAdjust(models.Model):
         for rec in self:
             ctx = {'active_test': False}
             # New
-            asset_ids = self.adjust_line_ids.\
+            asset_ids = rec.adjust_line_ids.\
                 with_context(ctx).mapped('ref_asset_id').ids
-            asset_ids += self.adjust_expense_to_asset_ids.\
+            asset_ids += rec.adjust_expense_to_asset_ids.\
                 with_context(ctx).mapped('ref_asset_id').ids
             rec.asset_count = len(asset_ids)
             # Old
-            old_asset_ids = self.adjust_line_ids.\
+            old_asset_ids = rec.adjust_line_ids.\
                 with_context(ctx).mapped('asset_id').ids
-            old_asset_ids += self.adjust_asset_to_expense_ids.\
+            old_asset_ids += rec.adjust_asset_to_expense_ids.\
                 with_context(ctx).mapped('asset_id').ids
             rec.old_asset_count = len(old_asset_ids)
 
@@ -416,6 +416,12 @@ class AccountAssetAdjust(models.Model):
         Analytic = self.env['account.analytic.account']
         if not self.adjust_line_ids:
             raise ValidationError(_('No asset selected!'))
+        # Check for AG/A
+        if self.journal_id.analytic_journal_id:
+            for line in self.adjust_line_ids:
+                if not line.activity_rpt_id:
+                    raise ValidationError(
+                        _('AG/A is required for adjustment with budget'))
         for line in self.adjust_line_ids.\
                 filtered(lambda l: l.asset_id.state == 'open'):
             line.account_analytic_id = \
@@ -445,6 +451,12 @@ class AccountAssetAdjust(models.Model):
         Analytic = self.env['account.analytic.account']
         if not self.adjust_asset_to_expense_ids:
             raise ValidationError(_('No asset selected!'))
+        # Check for AG/A
+        if self.journal_id.analytic_journal_id:
+            for line in self.adjust_asset_to_expense_ids:
+                if not line.activity_id:
+                    raise ValidationError(
+                        _('AG/A is required for adjustment with budget'))
         for line in self.adjust_asset_to_expense_ids.\
                 filtered(lambda l: l.asset_id.state == 'open'):
             line.account_analytic_id = \
@@ -470,6 +482,12 @@ class AccountAssetAdjust(models.Model):
         Analytic = self.env['account.analytic.account']
         if not self.adjust_expense_to_asset_ids:
             raise ValidationError(_('No asset selected!'))
+        # Check for AG/A
+        if self.journal_id.analytic_journal_id:
+            for line in self.adjust_expense_to_asset_ids:
+                if not line.activity_rpt_id:
+                    raise ValidationError(
+                        _('AG/A is required for adjustment with budget'))
         # ship po
         if self.ship_purchase_id and self.source_document_type == 'expense':
             self.invoice_id.source_document_id.write({
@@ -640,7 +658,15 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
                    company_id=old_asset.company_id.id,
                    allow_asset=True, novalidate=True)
         period = Period.with_context(ctx).find(adjust_date)
-        ref = '%s,%s' % (old_asset.name, new_asset.name)
+        # Accountant want to use ref KV, EX
+        # ref = '%s,%s' % (old_asset.name, new_asset.name)
+        ref_docs = [adjust.name]
+        if adjust.invoice_id:
+            ref_docs.append(adjust.invoice_id.number)
+        if adjust.ship_purchase_id:
+            ref_docs.append(adjust.ship_purchase_id.name)
+        ref = ', '.join(ref_docs)
+        # --
         am_vals = AssetAdjust._setup_move_data(adjust.journal_id,
                                                adjust_date, period, ref)
         move = self.env['account.move'].with_context(ctx).create(am_vals)
@@ -675,11 +701,11 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
         purchase_value = old_asset.purchase_value
         if purchase_value:
             new_asset_debit = AssetAdjust._setup_move_line_data(
-                new_asset.name, new_asset, period, new_asset_acc, adjust_date,
+                new_asset.code, new_asset, period, new_asset_acc, adjust_date,
                 debit=purchase_value, credit=False,
                 analytic_id=new_asset.account_analytic_id.id)
             old_asset_credit = AssetAdjust._setup_move_line_data(
-                old_asset.name, old_asset, period, old_asset_acc, adjust_date,
+                old_asset.code, old_asset, period, old_asset_acc, adjust_date,
                 debit=False, credit=purchase_value,
                 analytic_id=old_asset.account_analytic_id.id)
             line_dict += [(0, 0, new_asset_debit), (0, 0, old_asset_credit)]
@@ -691,21 +717,21 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
         # Old
         if amount_depre and not old_asset.profile_id.no_depreciation:
             old_depre_debit = AssetAdjust._setup_move_line_data(
-                old_asset.name, old_asset, period, old_depr_acc, adjust_date,
+                old_asset.code, old_asset, period, old_depr_acc, adjust_date,
                 debit=amount_depre, credit=False, analytic_id=False)
             old_exp_credit = AssetAdjust._setup_move_line_data(
-                old_asset.name, old_asset, period, old_exp_acc, adjust_date,
+                old_asset.code, old_asset, period, old_exp_acc, adjust_date,
                 debit=False, credit=amount_depre,
                 analytic_id=old_asset.account_analytic_id.id)
             line_dict += [(0, 0, old_depre_debit), (0, 0, old_exp_credit), ]
         # New
         if amount_depre and not new_asset.profile_id.no_depreciation:
             new_depre_debit = AssetAdjust._setup_move_line_data(
-                new_asset.name, new_asset, period, new_exp_acc, adjust_date,
+                new_asset.code, new_asset, period, new_exp_acc, adjust_date,
                 debit=amount_depre, credit=False,
                 analytic_id=new_asset.account_analytic_id.id)
             new_exp_credit = AssetAdjust._setup_move_line_data(
-                new_asset.name, new_asset, period, new_depr_acc, adjust_date,
+                new_asset.code, new_asset, period, new_depr_acc, adjust_date,
                 debit=False, credit=amount_depre, analytic_id=False)
             line_dict += [(0, 0, new_depre_debit), (0, 0, new_exp_credit), ]
         return line_dict
@@ -799,7 +825,14 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
                    company_id=old_asset.company_id.id,
                    allow_asset=True, novalidate=True)
         period = Period.with_context(ctx).find(adjust_date)
-        ref = old_asset.name
+        # ref = old_asset.name
+        ref_docs = [adjust.name]
+        if adjust.invoice_id:
+            ref_docs.append(adjust.invoice_id.number)
+        if adjust.ship_purchase_id:
+            ref_docs.append(adjust.ship_purchase_id.name)
+        ref = ', '.join(ref_docs)
+        # --
         am_vals = AssetAdjust._setup_move_data(adjust.journal_id,
                                                adjust_date, period, ref)
         move = self.env['account.move'].with_context(ctx).create(am_vals)
@@ -831,7 +864,7 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
                 debit=purchase_value, credit=False,
                 analytic_id=self.account_analytic_id.id)
             old_asset_credit = AssetAdjust._setup_move_line_data(
-                old_asset.name, old_asset, period, old_asset_acc, adjust_date,
+                old_asset.code, old_asset, period, old_asset_acc, adjust_date,
                 debit=False, credit=purchase_value,
                 analytic_id=False)
             line_dict += [(0, 0, expense_debit), (0, 0, old_asset_credit)]
@@ -841,10 +874,10 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
         # Old
         if amount_depre and not old_asset.profile_id.no_depreciation:
             old_depre_debit = AssetAdjust._setup_move_line_data(
-                old_asset.name, old_asset, period, old_depr_acc, adjust_date,
+                old_asset.code, old_asset, period, old_depr_acc, adjust_date,
                 debit=amount_depre, credit=False, analytic_id=False)
             old_exp_credit = AssetAdjust._setup_move_line_data(
-                old_asset.name, old_asset, period, old_exp_acc, adjust_date,
+                old_asset.code, old_asset, period, old_exp_acc, adjust_date,
                 debit=False, credit=amount_depre,
                 analytic_id=old_asset.account_analytic_id.id)
             line_dict += [(0, 0, old_depre_debit), (0, 0, old_exp_credit), ]
@@ -951,7 +984,14 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                    company_id=new_asset.company_id.id,
                    allow_asset=True, novalidate=True)
         period = Period.with_context(ctx).find(adjust_date)
-        ref = self.asset_name
+        # ref = self.asset_name
+        ref_docs = [adjust.name]
+        if adjust.invoice_id:
+            ref_docs.append(adjust.invoice_id.number)
+        if adjust.ship_purchase_id:
+            ref_docs.append(adjust.ship_purchase_id.name)
+        ref = ', '.join(ref_docs)
+        # --
         am_vals = AssetAdjust._setup_move_data(adjust.journal_id,
                                                adjust_date, period, ref)
         move = self.env['account.move'].with_context(ctx).create(am_vals)
@@ -981,7 +1021,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         purchase_value = new_asset.purchase_value
         if purchase_value:
             new_asset_debit = AssetAdjust._setup_move_line_data(
-                new_asset.name, new_asset, period, new_asset_acc, adjust_date,
+                new_asset.code, new_asset, period, new_asset_acc, adjust_date,
                 debit=purchase_value, credit=False,
                 analytic_id=False)
             expenese_credit = AssetAdjust._setup_move_line_data(
@@ -993,11 +1033,11 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         #   Cr: new - depre accum value (account_depreciation_id)
         if amount_depre and not new_asset.profile_id.no_depreciation:
             new_exp_debit = AssetAdjust._setup_move_line_data(
-                new_asset.name, new_asset, period, new_exp_acc, adjust_date,
+                new_asset.code, new_asset, period, new_exp_acc, adjust_date,
                 debit=amount_depre, credit=False,
                 analytic_id=new_asset.account_analytic_id.id)
             new_depr_credit = AssetAdjust._setup_move_line_data(
-                new_asset.name, new_asset, period, new_depr_acc, adjust_date,
+                new_asset.code, new_asset, period, new_depr_acc, adjust_date,
                 debit=False, credit=amount_depre,
                 analytic_id=False)
             line_dict += [(0, 0, new_exp_debit), (0, 0, new_depr_credit), ]

@@ -534,6 +534,7 @@ SELECT l.id AS id,
             j.type AS jtype,
             l.currency_id,
             l.account_id,
+            l.docline_seq AS item,
             l.amount_currency,
             l.ref AS lref,
             l.name AS lname,
@@ -561,8 +562,7 @@ SELECT l.id AS id,
             WHERE pmp.id = (CASE WHEN rproject.master_plan_id IS NOT NULL
                 THEN rproject.master_plan_id ELSE NULL END)) AS master_plan,
             (SELECT CONCAT(CASE WHEN rp.code IS NOT NULL THEN
-                CONCAT('[',rp.code,'] ') ELSE '' END, CASE WHEN rp.name_short
-                IS NOT NULL THEN rp.name_short WHEN rp.name
+                CONCAT('[',rp.code,'] ') ELSE '' END, CASE WHEN rp.name
                 IS NOT NULL THEN rp.name ELSE '' END)
             FROM res_program rp
             WHERE rp.id = (CASE WHEN l.program_id IS NOT NULL
@@ -579,7 +579,7 @@ SELECT l.id AS id,
             FROM account_activity aa
             WHERE aa.id = (CASE WHEN l.activity_id IS NOT NULL
                 THEN l.activity_id ELSE NULL END)) AS activity,
-            (SELECT rp.name FROM res_users ru LEFT JOIN res_partner rp
+            (SELECT rp.display_name FROM res_users ru LEFT JOIN res_partner rp
              ON rp.id = ru.partner_id WHERE ru.id = m.write_uid LIMIT 1)
              AS posted_by,
             (SELECT CONCAT(CASE WHEN rsp.code IS NOT NULL THEN
