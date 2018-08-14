@@ -14,19 +14,13 @@ class AccountAssetRemove(models.TransientModel):
     )
     journal_id = fields.Many2one(
         'account.journal',
-        string='Adjustment Journal',
-        required=True,
+        string='Journal',
+        default=lambda self:
+        self.ref('pabi_asset_management.journal_asset_no_budget', False),
         readonly=True,
-        default=lambda self: self._default_journal()
+        required=True,
+        help="Asset Journal (No-Budget)",
     )
-
-    @api.model
-    def _default_journal(self):
-        journal = self.env['account.journal'].search([
-            ('asset', '=', True), ('analytic_journal_id', '=', False)])
-        if len(journal) != 1:
-            raise ValidationError(_('No valid Asset Journal (No-Budget)'))
-        return journal
 
     @api.multi
     def remove(self):

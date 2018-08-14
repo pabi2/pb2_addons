@@ -64,19 +64,12 @@ class AccountAssetChangeowner(models.Model):
     journal_id = fields.Many2one(
         'account.journal',
         string='Journal',
-        domain=[('asset', '=', True), ('analytic_journal_id', '=', False)],
-        default=lambda self: self._default_journal(),
+        default=lambda self:
+        self.ref('pabi_asset_management.journal_asset_no_budget', False),
         readonly=True,
+        required=True,
         help="Asset Journal (No-Budget)",
     )
-
-    @api.model
-    def _default_journal(self):
-        journal = self.env['account.journal'].search([
-            ('asset', '=', True), ('analytic_journal_id', '=', False)])
-        if len(journal) != 1:
-            raise ValidationError(_('No valid Asset Journal (No-Budget)'))
-        return journal
 
     @api.model
     def create(self, vals):
