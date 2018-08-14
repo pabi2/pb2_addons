@@ -74,7 +74,7 @@ class AccountAssetChangeowner(models.Model):
     def _default_journal_id(self):
         journal = self.env.ref('pabi_asset_management.journal_asset_no_budget',
                                False)
-        return journal and journal.id or False
+        return journal or False
 
     @api.model
     def create(self, vals):
