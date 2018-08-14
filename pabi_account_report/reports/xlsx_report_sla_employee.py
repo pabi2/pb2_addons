@@ -24,6 +24,12 @@ class XLSXReportSLAEmployee(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get data from pabi.common.supplier.payment.report.view
+        2. Source document type = advance or expense
+        3. Pay type != supplier
+        """
         self.ensure_one()
         Result = self.env['pabi.common.supplier.payment.report.view']
         dom = [('invoice_id.source_document_type', 'in',

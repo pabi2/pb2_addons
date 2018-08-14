@@ -31,7 +31,7 @@ class SLASupplierView(models.Model):
         readonly=True,
     )
     date_due = fields.Date(
-        string='Date Due',
+        string='Due Date',
         readonly=True,
     )
 
@@ -93,6 +93,11 @@ class XLSXReportSLASupplier(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get data from pabi.common.supplier.payment.report.view
+        2. Source document type = purchase or expense or null
+        """
         self.ensure_one()
         Result = self.env['sla.supplier.view']
         dom = [('source_document_type', '=',
