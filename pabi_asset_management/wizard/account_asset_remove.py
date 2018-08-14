@@ -16,7 +16,6 @@ class AccountAssetRemove(models.TransientModel):
         'account.journal',
         string='Journal',
         domain=[('asset', '=', True), ('analytic_journal_id', '=', False)],
-        readonly=True,
         required=True,
         help="Asset Journal (No-Budget)",
     )
