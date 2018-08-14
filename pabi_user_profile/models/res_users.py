@@ -15,10 +15,10 @@ class ResUsers(models.Model):
         store=True,
         required=False,
     )
-    system_user = fields.Boolean(
-        string='System User',
-        default=False,
-    )
+    # system_user = fields.Boolean(
+    #     string='System User',
+    #     default=False,
+    # )
 
     @api.multi
     @api.depends('employee_ids.org_id', 'employee_ids.org_ids')
