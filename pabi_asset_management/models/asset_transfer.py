@@ -126,7 +126,7 @@ class AccountAssetTransfer(models.Model):
         'account.journal',
         string='Journal',
         default=lambda self:
-        self.ref('pabi_asset_management.journal_asset_no_budget', False),
+        self.env.ref('pabi_asset_management.journal_asset_no_budget', False),
         readonly=True,
         required=True,
         help="Asset Journal (No-Budget)",
