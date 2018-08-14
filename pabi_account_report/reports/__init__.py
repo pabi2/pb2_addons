@@ -10,7 +10,7 @@ from . import xlsx_report_advance_payment
 from . import xlsx_report_payable_detail
 from . import xlsx_report_payable_balance
 from . import xlsx_report_purchase_billing
-from . import xlsx_report_sla_purchase
+from . import xlsx_report_sla_supplier
 from . import xlsx_report_sla_employee
 from . import xlsx_report_sla_procurement
 from . import xlsx_report_supplier_receipt_follow_up
