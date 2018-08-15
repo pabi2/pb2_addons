@@ -75,6 +75,17 @@ class CommonReportHeaderWebkit(common_report_header):
         else:
             return val
 
+    def _get_display_reconciled(self, data):
+        val = self._get_form_param('reconcile_cond', data)
+        if val == 'all':
+            return _('All Items')
+        elif val == 'open_item':
+            return _('Open Items')
+        elif val == 'reconciled':
+            return _('Full Reconciled')
+        else:
+            return val
+
     def _get_display_account_raw(self, data):
         return self._get_form_param('display_account', data)
 
