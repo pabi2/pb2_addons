@@ -3,6 +3,25 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 
 
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    @api.model
+    def create(self, vals):
+        # Case stock picking with force journal_id
+        if self._context.get('overwrite_journal_id', False):
+            vals['journal_id'] = self._context['overwrite_journal_id']
+        elif self._context.get('active_model', False) == 'stock.picking':
+            if 'journal_id' in vals:
+                picking_id = self._context.get('active_id', False)
+                picking = self.env['stock.picking'].browse(picking_id)
+                vals['journal_id'] = picking.asset_journal_id.id or False
+        # Move name to '/'
+        if self._context.get('overwrite_move_name', False):
+            vals['name'] = '/'
+        return super(AccountMove, self).create(vals)
+
+
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
@@ -53,6 +72,12 @@ class AccountMoveLine(models.Model):
             move_line.invest_construction_id.pm_section_id.id or
             move_line.invest_asset_id.owner_section_id.id,
             'owner_project_id': move_line.project_id.id,
+            # Buildings
+            'building_id': move_line.stock_move_id.building_id.id,
+            'floor_id': move_line.stock_move_id.floor_id.id,
+            'room_id': move_line.stock_move_id.room_id.id,
+            'responsible_user_id':
+            move_line.stock_move_id.responsible_user_id.id,
         }
         # With context data about the installment
         if self._context.get('work_acceptance_id', False):

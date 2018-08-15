@@ -164,7 +164,7 @@ class PABIUtilsWS(models.AbstractModel):
                                                          operator='=')
                     if len(values) > 1:
                         raise ValidationError(
-                            _('%s match more > 1 record.') % rec_dict[key])
+                            _('%s matched more than 1 record') % rec_dict[key])
                     elif not values:
                         raise ValidationError(
                             _('%s found no match.') % rec_dict[key])

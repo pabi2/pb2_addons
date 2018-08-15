@@ -146,6 +146,8 @@ class PABISecurityLine(models.Model):
         'pabi.security',
         string='Security',
         readonly=True,
+        index=True,
+        ondelele='cascade',
     )
     user_id = fields.Many2one(
         'res.users',

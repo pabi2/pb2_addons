@@ -5,6 +5,11 @@ from openerp import fields, models
 class AccountConfigSettings(models.TransientModel):
     _inherit = 'account.config.settings'
 
+    default_ag_unit_base_id = fields.Many2one(
+        'account.activity.group',
+        string='Default Unit Based Activity Group',
+        related="company_id.default_ag_unit_base_id",
+    )
     default_ag_invest_construction_id = fields.Many2one(
         'account.activity.group',
         string='Default Invest Constuction Activity Group',

@@ -23,15 +23,9 @@ class ResProject(LogCommon, models.Model):
     state = fields.Selection(
         MY_PROJECT_STATES,
         string='Status',
-        required=True,
-        copy=False,
-        default='draft',
-    )
-    state2 = fields.Selection(
-        MY_PROJECT_STATES,
-        string='Status',
-        related='state',
-        help="For display purposes",
+        related='project_status.res_project_state',
+        store=True,
+        readonly=True,
     )
     lock_release = fields.Boolean(
         string='Lock Budget Release',
@@ -121,7 +115,7 @@ class ResProject(LogCommon, models.Model):
         string='Program Reference',
     )
     target_program_id = fields.Many2one(
-        'res.program',
+        'program.target',
         string='Program Target',
     )
     proposal_program_id = fields.Many2one(
@@ -327,6 +321,21 @@ class ResProject(LogCommon, models.Model):
         "We are doing this as temp solution, in the future it might "
         "be configurable somewhere else."
     )
+    active = fields.Boolean(
+        compute='_compute_active',
+        store=True,
+    )
+    _sql_constraints = [
+        ('code_unique', 'unique(code)',
+         'Project Code must be unique!'),
+    ]
+
+    @api.multi
+    @api.depends('state')
+    def _compute_active(self):
+        for rec in self:
+            rec.active = rec.state in ('draft', 'approve')
+        return True
 
     @api.onchange('pm_employee_id')
     def _onchange_user_id(self):
@@ -962,7 +971,17 @@ class MyProjectStatus(ResCommon, models.Model):
     _name = 'myproject.status'
     _description = 'myProject Status'
 
+    res_project_state = fields.Selection(
+        MY_PROJECT_STATES,
+        string='Project State'
+    )
+
 
 class ProposalStatus(ResCommon, models.Model):
     _name = 'proposal.status'
     _description = 'Proposal Status'
+
+
+class ProgramTarget(ResCommon, models.Model):
+    _name = 'program.target'
+    _description = 'Program Target'

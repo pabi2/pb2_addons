@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CD Receivable Payment History" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="85"/>
+	<property name="ireport.y" value="193"/>
 	<parameter name="date_report" class="java.lang.String"/>
 	<parameter name="user" class="java.lang.String"/>
 	<parameter name="date_run" class="java.lang.String"/>
@@ -82,19 +82,19 @@
 		<variableExpression><![CDATA[$F{amount_total}]]></variableExpression>
 	</variable>
 	<variable name="paid_amount_group_by_loan_agreement" class="java.lang.Number" resetType="Group" resetGroup="Loan Agreement" calculation="Sum">
-		<variableExpression><![CDATA[$V{date_paid} != null && new Date().parse("yyyy-MM-dd HH:mm:ss.S",$V{date_paid}).format("yyyy-MM-dd") <= new Date().parse("dd/MM/yyyy",$P{date_report}).format("yyyy-MM-dd") ? $F{paid_amount} : null]]></variableExpression>
+		<variableExpression><![CDATA[$V{date_paid} != null ? $F{paid_amount} : null]]></variableExpression>
 	</variable>
 	<variable name="amount_total_group_by_partner" class="java.lang.Number" resetType="Group" resetGroup="bank" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount_total}]]></variableExpression>
 	</variable>
 	<variable name="paid_amount_group_by_partner" class="java.lang.Number" resetType="Group" resetGroup="bank" calculation="Sum">
-		<variableExpression><![CDATA[$V{date_paid} != null && new Date().parse("yyyy-MM-dd HH:mm:ss.S",$V{date_paid}).format("yyyy-MM-dd") <= new Date().parse("dd/MM/yyyy",$P{date_report}).format("yyyy-MM-dd") ? $F{paid_amount} : null]]></variableExpression>
+		<variableExpression><![CDATA[$V{date_paid} != null ? $F{paid_amount} : null]]></variableExpression>
 	</variable>
 	<variable name="amount_total" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount_total}]]></variableExpression>
 	</variable>
 	<variable name="paid_amount" class="java.lang.Number" calculation="Sum">
-		<variableExpression><![CDATA[$V{date_paid} != null && new Date().parse("yyyy-MM-dd HH:mm:ss.S",$V{date_paid}).format("yyyy-MM-dd") <= new Date().parse("dd/MM/yyyy",$P{date_report}).format("yyyy-MM-dd") ? $F{paid_amount} : null]]></variableExpression>
+		<variableExpression><![CDATA[$V{date_paid} != null ? $F{paid_amount} : null]]></variableExpression>
 	</variable>
 	<variable name="date_paid" class="java.lang.String" resetType="None">
 		<variableExpression><![CDATA[$F{date_paid}]]></variableExpression>
@@ -323,7 +323,7 @@
 					<text><![CDATA[Paid Amount]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Transparent" x="534" y="156" width="82" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="534" y="156" width="80" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="1.0"/>
@@ -449,7 +449,7 @@
 					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$V{date_paid} != null && new Date().parse("yyyy-MM-dd HH:mm:ss.S",$V{date_paid}).format("yyyy-MM-dd") <= new Date().parse("dd/MM/yyyy",$P{date_report}).format("yyyy-MM-dd") ? $F{date_document} : null]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$V{date_paid} != null ? $F{date_document} : null]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="370" y="0" width="82" height="20"/>
@@ -458,7 +458,7 @@
 					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$V{date_paid} != null && new Date().parse("yyyy-MM-dd HH:mm:ss.S",$V{date_paid}).format("yyyy-MM-dd") <= new Date().parse("dd/MM/yyyy",$P{date_report}).format("yyyy-MM-dd") ? $F{date_posting} : null]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$V{date_paid} != null ? $F{date_posting} : null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
 				<reportElement x="452" y="0" width="82" height="20"/>
@@ -467,17 +467,17 @@
 					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{date_paid} != null && new Date().parse("yyyy-MM-dd HH:mm:ss.S",$V{date_paid}).format("yyyy-MM-dd") <= new Date().parse("dd/MM/yyyy",$P{date_report}).format("yyyy-MM-dd") ? $F{paid_amount} : null]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{date_paid} != null ? $F{paid_amount} : null]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="534" y="0" width="82" height="20"/>
+				<reportElement x="534" y="0" width="80" height="20"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{date_paid} != null && new Date().parse("yyyy-MM-dd HH:mm:ss.S",$V{date_paid}).format("yyyy-MM-dd") <= new Date().parse("dd/MM/yyyy",$P{date_report}).format("yyyy-MM-dd") ? $F{payment_number} : null]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{date_paid} != null ? $F{payment_number} : null]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

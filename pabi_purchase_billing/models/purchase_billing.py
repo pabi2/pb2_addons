@@ -140,11 +140,13 @@ class PurchaseBilling(models.Model):
                   "It must be more than or equal %s"
                     % (time.strftime('%d/%m/%Y'))))
 
-    @api.one
+    @api.multi
     @api.depends('supplier_invoice_ids')
     def _compute_amount_total(self):
-        self.amount_total = sum([x.amount_total
-                                 for x in self.supplier_invoice_ids])
+        for rec in self:
+            rec.amount_total = \
+                sum(rec.supplier_invoice_ids.mapped('amount_total'))
+        return True
 
     @api.onchange('partner_id')
     def _onchange_partner_id(self):

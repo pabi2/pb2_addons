@@ -160,9 +160,13 @@ class PurchaseOrderLine(models.Model):
 
 
 class PurchaseInvoicePlan(models.Model):
-    _inherit = "purchase.invoice.plan"
+    _inherit = 'purchase.invoice.plan'
 
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
     )
+
+    @api.onchange('order_line_id')
+    def _onchange_order_line_id(self):
+        self.fiscalyear_id = self.order_line_id.fiscalyear_id

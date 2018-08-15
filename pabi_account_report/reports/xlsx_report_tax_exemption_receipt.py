@@ -72,28 +72,30 @@ class TaxExemptionlView(models.Model):
                          validate_user_id
                   FROM account_invoice
                   WHERE type IN ('out_invoice', 'out_refund')
-                    AND state NOT IN ('draft', 'cancel'))
+                    AND state NOT IN ('draft', 'cancel')
+                    AND id NOT IN
+                        (SELECT DISTINCT invoice_id FROM account_invoice_tax))
                  UNION ALL
                  (SELECT iae.move_id, iael.taxbranch_id,
                          iael.date AS date_invoice,
                          iae.preprint_number AS number_preprint,
                          iael.partner_id, SUM(iael.debit) AS amount_untaxed,
-                         (SELECT SUM(amount)
-                          FROM account_tax_detail
-                          WHERE ref_move_id = iae.move_id
-                          GROUP BY ref_move_id) AS amount_tax,
+                         (SELECT ABS(SUM(credit) - SUM(debit))
+                          FROM interface_account_entry_line
+                          WHERE tax_id IS NOT NULL AND interface_id = iae.id
+                          GROUP BY interface_id) AS amount_tax,
                          NULL AS source_document_id, iae.number,
                          iae.name AS document_origin, iae.validate_user_id
                   FROM interface_account_entry iae
                   LEFT JOIN interface_account_entry_line iael
                     ON iae.id = iael.interface_id
-                  WHERE iae.type = 'invoice' AND iae.state = 'done'
+                  WHERE iae.type = 'invoice' AND iae.state = 'done' AND
+                        iae.id NOT IN
+                        (SELECT DISTINCT interface_id
+                         FROM interface_account_entry_line
+                         WHERE tax_id IS NOT NULL)
                   GROUP BY iae.id, iael.taxbranch_id, iael.date,
                            iael.partner_id)) invoice
-            WHERE invoice.move_id NOT IN
-                (SELECT DISTINCT ref_move_id
-                 FROM account_tax_detail
-                 WHERE ref_move_id IS NOT NULL)
         """
         return sql_view
 

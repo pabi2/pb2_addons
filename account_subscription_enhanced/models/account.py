@@ -225,6 +225,12 @@ class AccountSubscriptionLine(models.Model):
     amount = fields.Float(
         string='Amount',
     )
+    reversal_id = fields.Many2one(
+        'account.move',
+        string='Reversal',
+        related='move_id.reversal_id',
+        readonly=True,
+    )
 
     @api.multi
     def move_create(self):

@@ -12,6 +12,10 @@
                         <field name="no_partner_tag_change_account" class="oe_inline"/>
                         <label for="no_partner_tag_change_account"/>
                     </div>
+                    <div>
+                      <label for="default_employee_partner_categ_id"/>
+                      <field name="default_employee_partner_categ_id" class="oe_inline"/>
+                    </div>
                 </div>
             </field>
         </record>

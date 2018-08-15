@@ -167,7 +167,8 @@ class BudgetBreakdown(models.Model):
         """, (tuple(self.ids), ))
         breakdown_budget_count = dict(self._cr.fetchall())
         for breakdown in self:
-            breakdown.budget_count = breakdown_budget_count[breakdown.id]
+            breakdown.budget_count = \
+                breakdown_budget_count.get(breakdown.id, 0)
 
     @api.multi
     def action_open_budget(self):
@@ -236,17 +237,8 @@ class BudgetBreakdown(models.Model):
                 lines = rec.personnel_line_ids
             else:  # Fall back to basic
                 lines = rec.line_ids
-            res = {}
-            if lines:
-                self._cr.execute("""
-                    select coalesce(sum(planned_amount), 0.0) planned_amount,
-                        coalesce(sum(policy_amount), 0.0) policy_amount
-                    from budget_breakdown_line
-                    where id in %s
-                """, (tuple(lines.ids), ))
-                res = self._cr.dictfetchone()
-            rec.planned_amount = res.get('planned_amount', 0.0)
-            rec.policy_amount = res.get('policy_amount', 0.0)
+            rec.planned_amount = sum(lines.mapped('planned_amount'))
+            rec.policy_amount = sum(lines.mapped('policy_amount'))
             rec.policy_diff = rec.policy_amount - rec.new_policy_amount
 
     @api.onchange('policy_line_id')

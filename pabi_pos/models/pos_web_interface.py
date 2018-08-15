@@ -1,6 +1,9 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-import logging
+import logging
 from openerp import models, api, _
 # from openerp.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class SalesOrder(models.Model):
@@ -37,6 +40,7 @@ class SalesOrder(models.Model):
 
     @api.model
     def generate_pos_order(self, data_dict):
+        _logger.info('generate_pos_order() - input: %s' % data_dict)
         try:
             # data_dict = self._pre_process_pos_order(data_dict)
             data_dict['order_type'] = 'sale_order'
@@ -44,6 +48,8 @@ class SalesOrder(models.Model):
                                                                  data_dict)
             pos = self.browse(res['result']['id'])
             pos.post_process_pos_order()
+            # return more data
+            res['result']['name'] = pos.name
         except Exception, e:
             res = {
                 'is_success': False,
@@ -51,6 +57,7 @@ class SalesOrder(models.Model):
                 'messages': e,
             }
             self._cr.rollback()
+        _logger.info('generate_pos_order() - output: %s' % res)
         return res
 
 
@@ -83,10 +90,28 @@ class ProductProduct(models.Model):
         """, args)
 
         vals = self._cr.dictfetchall()
+        # Add list_price and uom
+        product_ids = [x['product_id'] for x in vals]
+        products = self.env['product.product'].browse(product_ids)
+        products_dict = dict([(x.id, {'uom_id': x.uom_id.id,
+                                      'uom': x.uom_id.name,
+                                      'list_price': x.list_price,
+                                      'name': x.name,
+                                      'default_code': x.default_code, })
+                             for x in products])
+        for val in vals:
+            product = products_dict.get(val['product_id'], {})
+            val['uom_id'] = product.get('uom_id', False)
+            val['uom'] = product.get('uom', False)
+            val['list_price'] = product.get('list_price', False)
+            val['name'] = product.get('name', False)
+            val['default_code'] = product.get('default_code', False)
         return vals
 
     @api.model
     def get_pos_product_count(self, pos_name, product_names=None):
+        # Always use th_TH
+        self = self.with_context(lang='th_TH')
         if product_names is None:
             product_names = []
         WorkflowProcess = self.env['sale.workflow.process']
@@ -104,10 +129,6 @@ class ProductProduct(models.Model):
                                    ('default_code', 'in', product_names),
                                    ('name', 'in', product_names)]).ids
         result = self._get_product_count_by_loc(location_id, product_ids)
-        for x in result:
-            product = self.browse(x['product_id'])
-            x['name'] = product.name
-            x['default_code'] = product.default_code
         res = {
             'is_success': True,
             'result': result,

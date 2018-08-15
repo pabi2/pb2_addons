@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 from openerp import fields, models, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
@@ -7,6 +8,8 @@ from openerp.tools import float_compare
 SALE_JOURNAL = ['sale', 'sale_refund', 'sale_debitnote']
 PURCHASE_JOURNAL = ['purchase', 'purchase_refund', 'purchase_debitnote']
 BANK_CASH = ['bank', 'cash']
+
+_logger = logging.getLogger(__name__)
 
 
 class InterfaceAccountEntry(models.Model):
@@ -202,6 +205,7 @@ class InterfaceAccountEntry(models.Model):
                 vals.get('to_reverse_entry_id', False):
             reverse_entry = self.browse(vals['to_reverse_entry_id'])
             vals['system_id'] = reverse_entry.system_id.id
+            vals['journal_id'] = reverse_entry.journal_id.id
         return super(InterfaceAccountEntry, self).create(vals)
 
     # ================== Main Execution Method ==================
@@ -560,6 +564,7 @@ class InterfaceAccountEntry(models.Model):
 
     @api.model
     def generate_interface_account_entry(self, data_dict):
+        _logger.info("IA - Input: %s" % data_dict)
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
@@ -578,6 +583,7 @@ class InterfaceAccountEntry(models.Model):
                 'messages': e,
             }
             self._cr.rollback()
+        _logger.info("IA - Output: %s" % res)
         return res
 
 
@@ -694,6 +700,14 @@ class InterfaceAccountEntryLine(models.Model):
         string='Reconcile with',
         compute='_compute_reconcile_move_line_id',
         store=True,
+    )
+    contract_charge_type = fields.Char(
+        string='Contract Charge Type',
+        help="Text information of contract",
+    )
+    cost_control_id = fields.Many2one(
+        'cost.control',
+        string='Job Order',
     )
 
     @api.multi

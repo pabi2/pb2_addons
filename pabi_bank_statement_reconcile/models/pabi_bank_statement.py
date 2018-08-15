@@ -173,10 +173,17 @@ class PABIBankStatement(models.Model):
         return [('parent_id', '=', directory.id)]
 
     @api.multi
-    @api.constrains('report_type', 'journal_id')
+    @api.constrains('report_type', 'journal_id', 'partner_bank_id', 'state')
     def _check_wip_statement(self):
-        """ Make sure that, only 1 in work in process statement is allowed """
+        """ Make sure that, only 1 in work in process statement is allowed
+            Make sure that, when state != 'draft', all 3 fields is required """
         for rec in self:
+            if rec.state == 'reconcile':
+                if not (rec.report_type and rec.journal_id
+                        and rec.partner_bank_id):
+                    raise ValidationError(
+                        _('Missing Report Type, Payment Method '
+                          'or Bank Account'))
             # Find statement of the same type and journal that is in WIP state
             wip_statements = self.search([
                 ('report_type', '=', rec.report_type),
@@ -233,13 +240,23 @@ class PABIBankStatement(models.Model):
     @api.onchange('journal_id')
     def _onchange_journal_id(self):
         self.partner_bank_id = False
+        BankAcct = self.env['res.partner.bank']
         if self.journal_id:
-            BankAcct = self.env['res.partner.bank']
-            banks = BankAcct.search([('journal_id', '=', self.journal_id.id)])
+            banks = False
             if self.doctype in ('bank_receipt', 'payment_oversea'):
-                banks = banks.filtered(lambda l: l.state == 'SA')
-            else:
-                banks = banks.filtered(lambda l: l.state == 'CA')
+                banks = BankAcct.search(
+                    [('journal_id', '=', self.journal_id.id),
+                     ('state', '=', 'SA')])
+                if not banks:
+                    raise ValidationError(_('No SA account for Payment Method '
+                                            '%s') % self.journal_id.name)
+            elif self.doctype:  # Doctype selected, but not the above
+                banks = BankAcct.search(
+                    [('journal_id', '=', self.journal_id.id),
+                     ('state', '=', 'CA')])
+                if not banks:
+                    raise ValidationError(_('No CA account for Payment Method '
+                                            '%s') % self.journal_id.name)
             self.partner_bank_id = banks and banks[0] or False
 
     @api.onchange('doctype')

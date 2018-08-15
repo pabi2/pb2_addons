@@ -14,7 +14,7 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'A2': 'journal_id${value and value.strip()}',
+                            'A2': 'journal_id${env["res.partner.bank"].convert_acc_number_to_journal(value)}',
                             '${"payment_cheque"}': 'report_type',
                         },
                         'import_ids': {
@@ -45,13 +45,13 @@
                 '__IMPORT__': {
                     1: {
                         '_HEAD_': {
-                            'A2': 'journal_id${value and value.strip()}',
+                            'A2': 'journal_id${env["res.partner.bank"].convert_acc_number_to_journal(value)}',
                             '${"bank_receipt"}': 'report_type',
                         },
                         'import_ids': {
                             'A2${"Receipt"}': 'description',
                             'B2': 'date_value',
-                            'H8': 'credit${value and float(value) or 0.0}',
+                            'H2': 'credit${value and float(value) or 0.0}',
                         }
                     }
                 },

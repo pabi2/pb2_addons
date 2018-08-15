@@ -19,15 +19,15 @@
                 <field name="date_end" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <field name="date_start" position="before">
+                <field name="date_end" position="after">
                     <field name="date_report"/>
                 </field>
-                <xpath expr="//page[1]" position="after">
-                    <page string="Customers">
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Customer Filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="partner_ids"/>
+                        <field name="partner_ids" domain="[('company_id', '=', company_id), ('customer', '=', True)]"/>
                     </page>
-                    <page string="Banks">
+                    <page string="Bank Filters">
                         <separator string="Print only" colspan="4"/>
                         <field name="bank_ids"/>
                     </page>

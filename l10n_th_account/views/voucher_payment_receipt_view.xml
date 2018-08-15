@@ -49,6 +49,20 @@
             </field>
         </record>
 
+        <record id="view_voucher_filter_vendor_pay" model="ir.ui.view">
+            <field name="name">account.voucher.supplier.pay.select</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_voucher_filter_vendor_pay"/>
+            <field name="arch" type="xml">
+                <filter icon="terp-camera_test" position="after">
+                    <separator/>
+                    <filter name="uncleared_deferred_vat" string="Uncleared Deferred VAT"
+                      domain="[('recognize_vat_move_id', '=', False), ('tax_line_normal','!=',[]), ('state','=','posted')]"
+                      help="Deferred VAT has not been cleared."/>
+                </filter>
+            </field>
+        </record>
+
         <record id="view_vendor_receipt_form_ext" model="ir.ui.view">
             <field name="name">view.vendor.receipt.form.ext</field>
             <field name="model">account.voucher</field>

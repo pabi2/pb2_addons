@@ -14,7 +14,7 @@ For more specific reconcilation event, we are using new auto_reconcile_id,
 in which, if documents are deemed to be related they will be marked with same
 auto_reconcile_id. Mostly, will be grouped by source document.
 
-Currently we have dont for following events,
+Currently we have done for following events,
 * HR Expense Advance -> Clearing/Return (use Advance document as auto_id)
 * Inv Plan Adv/Deposit -> Cleared by following invoices (SO/PO as auto_id)
 * GR/IR -> clearing between Picking and Invoice (SO/PO as auto_id)

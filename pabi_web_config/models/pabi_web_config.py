@@ -81,7 +81,8 @@ class PABIWebConfigSettings(models.TransientModel):
         if not pabiweb_active:
             return False
         url = self.env.user.company_id[_URL[type]]
-        username = self.env.user.login
+        # username = self.env.user.login
+        username = ConfParam.get_param('pabiweb_username')
         password = ConfParam.get_param('pabiweb_password')
         connect_string = url % (username, password)
         alfresco = xmlrpclib.ServerProxy(connect_string)

@@ -219,8 +219,8 @@
                         <p>
                           For example, if you select "L7" here (given, limit for L7=1,000,000.00, L4=500,000.00, L3=250,000.00).
                         <br/>
-                          For requested emotional activities amount 750,000.00, although exceeded L2 and L4 limits,
-                          all of them (L2, L4, L7) will forced to participate in the workflow.
+                          For requested emotional activities amount 750,000.00, although exceeded L3 and L4 limits,
+                          all of them (L3, L4, L7) will forced to participate in the workflow.
                         </p>
                     </sheet>
                 </form>

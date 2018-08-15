@@ -8,6 +8,8 @@
             <field name="inherit_id" ref="stock.view_inventory_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='theoretical_qty']" position="before">
+                    <field name="activity_group_id"/>
+                    <field name="activity_rpt_id"/>
                     <field name="section_id" attrs="{'required': [('project_id', '=', False)]}" />
                 		<field name="project_id" attrs="{'required': [('section_id', '=', False)]}" />
                     <field name="fund_id" required="1"/>

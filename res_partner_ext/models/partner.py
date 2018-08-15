@@ -172,6 +172,9 @@ class ResPartner(models.Model):
 
     @api.model
     def create(self, vals):
+        if not vals.get('category_id', False):
+            vals['category_id'] = \
+                self.env.user.company_id.default_employee_partner_categ_id.id
         partner = super(ResPartner, self).create(vals)
         # Always use same tag as parent.
         if vals.get('parent_id', False):
@@ -196,6 +199,28 @@ class ResPartner(models.Model):
                     'supplier': True,
                     'customer': True,
                     })
+                res['result']['name'] = p.name
+                res['result']['search_key'] = p.search_key
+        except Exception, e:
+            res = {
+                'is_success': False,
+                'result': False,
+                'messages': e,
+            }
+            self._cr.rollback()
+        return res
+
+    @api.model
+    def create_update_partner(self, vals):
+        # No search key, do create, else try to update.
+        if not vals.get('search_key', False):
+            return self.create_partner(vals)
+        try:  # Update
+            WS = self.env['pabi.utils.ws']
+            res = WS.friendly_update_data(self._name, vals, 'search_key')
+            if res['is_success']:
+                res_id = res['result']['id']
+                p = self.browse(res_id)
                 res['result']['name'] = p.name
                 res['result']['search_key'] = p.search_key
         except Exception, e:

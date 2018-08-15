@@ -319,15 +319,13 @@ class general_ledger_xls(report_xls):
                         label_elements.append(
                             "(%s)" % (line['invoice_number'],))
                     label = ' '.join(label_elements)
-                    doc = rowcol_to_cell(row_pos, 9)
-                    doc_above = rowcol_to_cell(row_pos - 1, 9)
-                    item_above = rowcol_to_cell(row_pos - 1, 10)
-                    item_formula = 'IF((' + doc + '<>' + doc_above + '),1,' + \
-                                   item_above + '+1)'
+                    _charge_type = dict(self.pool.get("account.move.line")
+                                        ._columns["charge_type"].selection)
 
                     # Start write data
                     c_specs = [('charge_type', 1, 0, 'text',
-                                line.get('charge_type', ''))]
+                                _charge_type.get(
+                                    line.get('charge_type', False), False))]
 
                     if line.get('document_date'):
                         c_specs += [
@@ -372,7 +370,7 @@ class general_ledger_xls(report_xls):
                         ('taxbranch', 1, 0, 'text',
                          line.get('taxbranch_name', '')),
                         ('move', 1, 0, 'text', line.get('move_name', '')),
-                        ('item', 1, 0, 'number', None, item_formula),
+                        ('item', 1, 0, 'number', line.get('item', '')),
                         ('doctype', 1, 0, 'text', line.get('doctype', '')),
                         ('doc_journel', 1, 0, 'text', line.get('journal', '')),
                         ('activity_group', 1, 0, 'text',

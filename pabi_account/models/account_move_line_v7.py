@@ -12,6 +12,9 @@ class account_move_line(osv.osv):
     def reconcile(self, cr, uid, ids, type='auto',
                   writeoff_acc_id=False, writeoff_period_id=False,
                   writeoff_journal_id=False, context=None):
+        # HOOK
+        hook_writeoff_move_id = False
+        # --
         account_obj = self.pool.get('account.account')
         move_obj = self.pool.get('account.move')
         move_rec_obj = self.pool.get('account.move.reconcile')
@@ -177,6 +180,9 @@ class account_move_line(osv.osv):
                     'state': 'draft',
                     'line_id': writeoff_lines
                 })
+                # HOOK
+                hook_writeoff_move_id = writeoff_move_id
+                # --
 
             writeoff_line_ids = self.search(
                 cr, uid, [('move_id', '=', writeoff_move_id),
@@ -208,4 +214,16 @@ class account_move_line(osv.osv):
                     cr, uid, partner_id, context=context):
                 partner_obj.mark_as_reconciled(cr, uid, [partner_id],
                                                context=context)
+
+        # HOOK, with this context no partner in new writeoff move line
+        # To by pass constraint _check_reconcile_same_partner()
+        # We use SQL to update move lie
+        if context.get('force_no_partner_on_new_move_line', False) and \
+                hook_writeoff_move_id:
+            cr.execute("""
+                update account_move_line set partner_id = null
+                where move_id = %s
+            """, (hook_writeoff_move_id, ))
+        # --
+
         return r_id

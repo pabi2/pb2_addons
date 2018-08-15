@@ -42,7 +42,7 @@ class AccountFiscalyear(models.Model):
 
     @api.multi
     def _compute_latest_remain_policy(self):
-        for rec in self:
+        for rec in self.sudo():
             allocations = rec.budget_allocation_ids.sorted(
                 key=lambda r: r.revision, reverse=True)
             amounts = {'amount_unit_base': 0.0,

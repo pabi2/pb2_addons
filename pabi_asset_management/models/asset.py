@@ -58,6 +58,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         # Need this way of doing default, because default_type in context will
         # cause problem compute depreciation table, it set line type wrongly
         default=lambda self: self._context.get('type') or 'normal',
+        index=True,
     )
     profile_type = fields.Selection(
         [('normal', 'Normal'),
@@ -367,6 +368,7 @@ class AccountAsset(ChartFieldAction, models.Model):
     def _compute_total_child_value(self):
         for rec in self:
             rec.total_child_value = sum(rec.child_ids.mapped('purchase_value'))
+        return True
 
     @api.multi
     @api.depends('installment')
@@ -375,6 +377,7 @@ class AccountAsset(ChartFieldAction, models.Model):
             if rec.installment:
                 rec.installment_str = '%s/%s' % (rec.installment,
                                                  rec.num_installment)
+        return True
 
     @api.multi
     def validate_asset_to_request(self):
@@ -660,6 +663,10 @@ class AccountAsset(ChartFieldAction, models.Model):
 class AccountAssetProfile(models.Model):
     _inherit = 'account.asset.profile'
 
+    code = fields.Char(
+        string='Code',
+        required=True,
+    )
     account_depreciation_id = fields.Many2one(
         'account.account',
         required=False,
@@ -700,6 +707,17 @@ class AccountAssetProfile(models.Model):
         required=True,
         default='normal',
     )
+
+    @api.multi
+    def name_get(self):
+        res = []
+        for record in self:
+            if record.code and record.code != '/':
+                name = "[%s] %s" % (record.code, record.name)
+            else:
+                name = record.name
+            res.append((record.id, name))
+        return res
 
     @api.multi
     @api.depends('profile_type')
@@ -769,7 +787,8 @@ class AccountAssetLine(models.Model):
                                   period, account, type, move)
         asset = self.asset_id
         move_line_data.update({'section_id': asset.owner_section_id.id,
-                               'project_id': asset.owner_project_id.id})
+                               'project_id': asset.owner_project_id.id,
+                               'name': asset.code})
         return move_line_data
 
     @api.multi
@@ -777,7 +796,8 @@ class AccountAssetLine(models.Model):
         self.ensure_one()
         move_data = super(AccountAssetLine, self).\
             _setup_move_data(depreciation_date, period)
-        move_data.update({'name': '/'})
+        move_data.update({'name': '/',
+                          'ref': self.name})
         return move_data
 
 

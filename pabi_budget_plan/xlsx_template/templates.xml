@@ -15,7 +15,7 @@
         <record id="budget_plan_unit_base_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.unit</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_unit_base_20180531.xlsx</field>
+            <field name="datas_fname">Budget_Plan_Unit_Base_20180803-form.xlsx</field>
             <field name="name">Unit Based Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
@@ -252,7 +252,7 @@
         <record id="invest_asset_plan_xlsx_template" model="ir.attachment">
             <field name="res_model">invest.asset.plan</field>
             <field name="datas"></field>
-            <field name="datas_fname">invest_asset_plan_20180510.xlsx</field>
+            <field name="datas_fname">Budget_Plan_Investment_Asset_Item_20180803-form.xlsx</field>
             <field name="name">Invest Asset Plan Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
@@ -370,7 +370,7 @@
         <record id="budget_plan_invest_construction_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.invest.construction</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_invest_construction_20180516.xlsx</field>
+            <field name="datas_fname">Budget_Plan_Investment_Construction_20180803-form.xlsx</field>
             <field name="name">Invest Construction Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
@@ -465,7 +465,7 @@
         <record id="budget_plan_project_base_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.project</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_project_20180709.xlsx</field>
+            <field name="datas_fname">Budget_Plan_Project_20180803-form.xlsx</field>
             <field name="name">Project Based Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
@@ -679,7 +679,7 @@
         <record id="budget_plan_personnel_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.personnel</field>
             <field name="datas"></field>
-            <field name="datas_fname">budget_plan_personnel_20180711.xlsx</field>
+            <field name="datas_fname">Budget_Plan_HREXP_Budget_20180803-form.xlsx</field>
             <field name="name">Personnel Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">

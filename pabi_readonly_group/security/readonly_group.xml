@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record model="ir.module.category" id="base.module_category_readonly">
+            <field name="name">Document Readonly (Force)</field>
+            <field name="sequence">1000</field>
+        </record>
+        <record id="group_readonly_sale_order" model="res.groups">
+            <field name="name">Sales Order</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_purchase_order" model="res.groups">
+            <field name="name">Purchase Order</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_purchase_request" model="res.groups">
+            <field name="name">Purchase Request</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_purchase_requisition" model="res.groups">
+            <field name="name">Purchase Requisition</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_hr_expense_expense" model="res.groups">
+            <field name="name">Expense</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_account_invoice" model="res.groups">
+            <field name="name">Invoice</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_account_voucher" model="res.groups">
+            <field name="name">Payment</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_account_budget" model="res.groups">
+            <field name="name">Budget Control</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_budget_plan_unit" model="res.groups">
+            <field name="name">Budget Plan (Unit)</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_budget_plan_project" model="res.groups">
+            <field name="name">Budget Plan (Project)</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_budget_plan_invest_asset" model="res.groups">
+            <field name="name">Budget Plan (Asset)</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_budget_plan_invest_construction" model="res.groups">
+            <field name="name">Budget Plan (Construction)</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_budget_plan_personnel" model="res.groups">
+            <field name="name">Budget Plan (Personnel)</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_purchase_billing" model="res.groups">
+            <field name="name">Purchase Billing</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_purchase_work_acceptance" model="res.groups">
+            <field name="name">Work Acceptance</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_account_move" model="res.groups">
+            <field name="name">Account Move</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+        <record id="group_readonly_account_move_line" model="res.groups">
+            <field name="name">Account Move Line</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
+    </data>
+</openerp>

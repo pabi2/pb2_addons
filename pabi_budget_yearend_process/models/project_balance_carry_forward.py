@@ -47,12 +47,7 @@ class ProjectBalanceCarryForward(models.Model):
     @api.multi
     def _compute_amount_total(self):
         for rec in self:
-            self._cr.execute("""
-                select coalesce(sum(balance_amount), 0.0) balance_amount
-                from project_balance_carry_forward_line
-                where carry_forward_id = %s
-            """, (rec.id, ))
-            rec.amount_total = self._cr.fetchone()[0]
+            rec.amount_total = sum(rec.line_ids.mapped('balance_amount'))
 
     @api.model
     def default_get(self, fields):
