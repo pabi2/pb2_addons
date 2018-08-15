@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
+from openerp.exceptions import ValidationError
 
 
 class AccountFiscalyearBudgetLevel(models.Model):
@@ -57,6 +58,12 @@ class AccountFiscalyear(models.Model):
                         amounts[key] = line[key]
             rec.latest_policy = sum(amounts.values())
             rec.remain_policy = rec.overall_policy - rec.latest_policy
+
+    @api.constrains('overall_policy')
+    def _check_overall_policy(self):
+        if self.overall_policy < 0:
+            raise ValidationError(
+                  "NSTDA Policy field must no be negative value")
 
     # def init(self, cr):
     #     env = Environment(cr, SUPERUSER_ID, {})
