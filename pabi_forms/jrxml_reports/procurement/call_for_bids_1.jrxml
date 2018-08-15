@@ -947,10 +947,10 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:column width="308">
+					<jr:column width="292">
 						<jr:columnHeader height="20" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="308" height="20"/>
+								<reportElement x="0" y="0" width="292" height="20"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
@@ -965,14 +965,14 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						</jr:columnHeader>
 						<jr:detailCell height="43" rowSpan="1">
 							<textField>
-								<reportElement x="0" y="0" width="308" height="20"/>
+								<reportElement x="0" y="0" width="292" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="10" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{requested_by}]]></textFieldExpression>
 							</textField>
 							<textField pattern="dd/MM/yyyy">
-								<reportElement x="144" y="20" width="164" height="19"/>
+								<reportElement x="141" y="20" width="151" height="19"/>
 								<textElement lineSpacing="Single">
 									<font size="10" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -986,7 +986,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<text><![CDATA[วันที่]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="0" y="0" width="308" height="43"/>
+								<reportElement x="0" y="0" width="292" height="43"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
@@ -1000,10 +1000,10 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							</staticText>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="261">
+					<jr:column width="279">
 						<jr:columnHeader height="20" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="260" height="20"/>
+								<reportElement x="0" y="0" width="276" height="20"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
@@ -1039,7 +1039,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{approver}]]></textFieldExpression>
 							</textField>
 							<staticText>
-								<reportElement x="0" y="0" width="260" height="43"/>
+								<reportElement x="0" y="0" width="276" height="43"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
