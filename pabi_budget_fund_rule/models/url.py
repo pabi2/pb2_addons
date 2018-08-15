@@ -9,6 +9,7 @@ class ExternalFundRuleURL(http.Controller):
     """
     - http://localhost:8069/fund_rule?mode=create&project=P1350398
     - http://localhost:8069/fund_rule?mode=edit&project=P1350045&fund=100012
+    - http://localhost:8069/fund_rule?mode=list&project=P1350398
     """
     @http.route('/fund_rule/', type='http', auth='public')
     def myproject_to_project(self, **kw):
@@ -20,6 +21,9 @@ class ExternalFundRuleURL(http.Controller):
         elif mode == 'create':
             project = kw.get('project', False)
             return self._fund_rule_create_url(project)
+        elif mode == 'list':
+            project = kw.get('project', False)
+            return self._fund_rule_list_url(project)
 
     def _fund_rule_edit_url(self, project, fund):
         Fund = request.registry.get('res.fund')
@@ -72,5 +76,28 @@ class ExternalFundRuleURL(http.Controller):
                            [action.res_id], {'context': ctx})
         # URL
         url = "/web?toolbar=hide&#model=budget.fund.rule&view_type=form"
+        ext_url = "&action=%s" % (action.res_id,)
+        return werkzeug.utils.redirect(url + ext_url)
+
+    def _fund_rule_list_url(self, project):
+        Project = request.registry.get('res.project')
+        pids = Project.name_search(request.cr, SUPERUSER_ID,
+                                   project, operator='=')
+        if len(pids) != 1:
+            return False
+        project_id = pids[0][0]
+        # action
+        Action = request.registry.get('ir.model.data')
+        WindowAction = request.registry.get('ir.actions.act_window')
+        action_id = Action.search(
+            request.cr, SUPERUSER_ID,
+            [('module', '=', 'pabi_budget_fund_rule'),
+             ('name', '=', 'action_budget_fund_rule')])
+        action = Action.browse(request.cr, SUPERUSER_ID, action_id)
+        WindowAction.write(request.cr, SUPERUSER_ID, [action.res_id],
+                           {'domain':
+                            "[('project_id', '=', %s)]" % project_id})
+        # URL
+        url = "/web?toolbar=hide&#model=budget.fund.rule&view_type=tree"
         ext_url = "&action=%s" % (action.res_id,)
         return werkzeug.utils.redirect(url + ext_url)
