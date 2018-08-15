@@ -42,7 +42,7 @@
         'reports/xlsx_report_payable_detail.xml',
         'reports/xlsx_report_payable_balance.xml',
         'reports/xlsx_report_purchase_billing.xml',
-        'reports/xlsx_report_sla_purchase.xml',
+        'reports/xlsx_report_sla_supplier.xml',
         'reports/xlsx_report_sla_employee.xml',
         'reports/xlsx_report_sla_procurement.xml',
         'reports/xlsx_report_supplier_receipt_follow_up.xml',

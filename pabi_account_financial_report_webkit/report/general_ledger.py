@@ -40,6 +40,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
             'initial_balance': self._get_initial_balance,
             'amount_currency': self._get_amount_currency,
             'display_target_move': self._get_display_target_move,
+            'display_reconciled': self._get_display_reconciled,
             'accounts': self._get_accounts_br,
             'additional_args': [
                 ('--header-font-name', 'Helvetica'),

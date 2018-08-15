@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="view_xlsx_report_sla_purchase_form" model="ir.ui.view">
-            <field name="name">view.xlsx.report.sla.purchase.form</field>
-            <field name="model">xlsx.report.sla.purchase</field>
+        <record id="view_xlsx_report_sla_supplier_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.sla.supplier.form</field>
+            <field name="model">xlsx.report.sla.supplier</field>
             <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
@@ -21,18 +21,18 @@
             </field>
         </record>
 
-        <record id="action_xlsx_report_sla_purchase_form" model="ir.actions.act_window">
-            <field name="name">SLA Purchase</field>
-            <field name="res_model">xlsx.report.sla.purchase</field>
+        <record id="action_xlsx_report_sla_supplier_form" model="ir.actions.act_window">
+            <field name="name">SLA Supplier</field>
+            <field name="res_model">xlsx.report.sla.supplier</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_sla_purchase"
-            name="SLA Purchase"
+        <menuitem id="menu_xlsx_report_sla_supplier"
+            name="SLA Supplier"
             parent="menu_pabi_payable_report"
-            action="action_xlsx_report_sla_purchase_form"
+            action="action_xlsx_report_sla_supplier_form"
             sequence="100"/>
     </data>
 </openerp>
