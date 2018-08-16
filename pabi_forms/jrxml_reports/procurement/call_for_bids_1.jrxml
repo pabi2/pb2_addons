@@ -1170,17 +1170,12 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<text><![CDATA[ประเภทกรรมการ]]></text>
 							</staticText>
 						</jr:tableHeader>
-						<jr:tableFooter height="30" rowSpan="1">
-							<box>
-								<topPen lineWidth="0.0"/>
-							</box>
-						</jr:tableFooter>
-						<jr:detailCell height="30" rowSpan="1">
+						<jr:detailCell height="20" rowSpan="1">
 							<box>
 								<leftPen lineWidth="0.0"/>
 							</box>
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="189" height="30"/>
+								<reportElement x="0" y="0" width="189" height="20"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -1198,18 +1193,9 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<text><![CDATA[ชื่อ - นามสกุล]]></text>
 							</staticText>
 						</jr:tableHeader>
-						<jr:tableFooter height="30" rowSpan="1">
-							<box>
-								<pen lineWidth="0.0"/>
-								<topPen lineWidth="0.0"/>
-								<leftPen lineWidth="0.0"/>
-								<bottomPen lineWidth="0.0"/>
-								<rightPen lineWidth="0.0"/>
-							</box>
-						</jr:tableFooter>
-						<jr:detailCell height="30" rowSpan="1">
+						<jr:detailCell height="20" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="196" height="30"/>
+								<reportElement x="0" y="0" width="196" height="20"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -1227,18 +1213,12 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<text><![CDATA[ตำแหน่ง]]></text>
 							</staticText>
 						</jr:tableHeader>
-						<jr:tableFooter height="30" rowSpan="1">
-							<box>
-								<topPen lineWidth="0.0"/>
-								<bottomPen lineWidth="0.0"/>
-							</box>
-						</jr:tableFooter>
-						<jr:detailCell height="30" rowSpan="1">
+						<jr:detailCell height="20" rowSpan="1">
 							<box>
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="185" height="30"/>
+								<reportElement x="0" y="0" width="185" height="20"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -1249,9 +1229,9 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				</jr:table>
 			</componentElement>
 		</band>
-		<band height="91">
+		<band height="108">
 			<frame>
-				<reportElement x="1" y="1" width="573" height="91"/>
+				<reportElement x="1" y="17" width="573" height="90"/>
 				<rectangle>
 					<reportElement x="0" y="0" width="571" height="84"/>
 				</rectangle>
