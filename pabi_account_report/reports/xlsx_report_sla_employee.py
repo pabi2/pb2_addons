@@ -16,7 +16,7 @@ class XLSXReportSLAEmployee(models.TransientModel):
         string='Source Document Ref.',
     )
     results = fields.Many2many(
-        'pabi.common.account.voucher.report.view',
+        'pabi.common.supplier.payment.report.view',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
@@ -24,13 +24,17 @@ class XLSXReportSLAEmployee(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
+        """
+        Solution
+        1. Get data from pabi.common.supplier.payment.report.view
+        2. Source document type = advance or expense
+        3. Pay type != supplier
+        """
         self.ensure_one()
-        Result = self.env['pabi.common.account.voucher.report.view']
-        dom = [('voucher_id.type', '=', 'payment'),
-               ('voucher_id.state', '=', 'posted'),
-               ('voucher_id.payment_export_id.state', '=', 'done'),
-               ('invoice_id.source_document_type', 'in',
-                ['advance', 'expense'])]
+        Result = self.env['pabi.common.supplier.payment.report.view']
+        dom = [('invoice_id.source_document_type', 'in',
+                ['advance', 'expense']),
+               ('expense_id.pay_to', '!=', 'supplier')]
         if self.user_ids:
             dom += [('voucher_id.validate_user_id', 'in', self.user_ids.ids)]
         if self.source_document_type:

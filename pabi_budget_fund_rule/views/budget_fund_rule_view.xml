@@ -158,6 +158,15 @@
             <field name="domain">[('template','=',False)]</field>
         </record>
 
+        <record id="action_new_tree_budget_fund_rule" model="ir.actions.act_window">
+            <field name="name">External Fund Rule</field>
+            <field name="res_model">budget.fund.rule</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="view_budget_fund_rule_search"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_budget_fund_rule_tree"/>
+        </record>
+
         # Fund Rule Template
         <record id="view_budget_fund_rule_template_tree" model="ir.ui.view">
             <field name="name">view.budget.fund.rule.template.tree</field>
