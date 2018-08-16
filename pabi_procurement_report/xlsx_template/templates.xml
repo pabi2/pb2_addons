@@ -24,14 +24,16 @@
                         '_HEAD_': {
                         },
                         'results': {
-                            'B7': 'pd_number${value or ""}',
-                            'C7': 'objective${value or ""}',
-                            'D7': 'rfq_supplier${value or ""}',
-                            'E7': 'amount_total#{number_format=number}',
-                            'F7': 'method${value or ""}',
+                            'K7': 'pd_number${value or ""}',
+                            'B7': 'objective${value or ""}',
+                            'F7': 'rfq_supplier${value or ""}',
+                            'H7': 'rfq_supplier${value or ""}',
+                            'C7': 'amount_standard#{number_format=number}',
+                            'D7': 'amount_total#{number_format=number}',
+                            'E7': 'method${value or ""}',
                             'G7': 'rfq_amount_total#{number_format=number}',
-                            'H7': 'reason${value or ""}',
-                            'I7': 'po_date${value or ""}',
+                            'J7': 'reason${value or ""}',
+                            'L7': 'po_date${value or ""}',
                         },
                         '_TAIL_0': {
                         }
@@ -117,22 +119,24 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B3': 'date_from${value or ""}',
+                            'E3': 'date_to${value or ""}',
                         },
                         'results': {
-                            'A6': 'id${value or ""}',
-                            'B6': 'po_name${value or ""}',
-                            'C6': 'date_po${value or ""}',
-                            'D6': 'pr_text${value or ""}',
-                            'E6': 'budget_code${value or ""}',
-                            'F6': 'budget_name${value or ""}',
-                            'G6': 'approver${value or ""}',
-                            'H6': 'amount_total#{number_format=number}',
-                            'I6': 'currency${value or ""}',
-                            'J6': 'supplier_name${value or ""}',
-                            'K6': 'method${value or ""}',
-                            'L6': 'date_doc_approve${value or ""}',
-                            'M6': 'wa_name${value or ""}',
-                            'N6': 'date_accept${value or ""}',
+                            'A6': 'ou_name${value or ""}',
+                            'C6': 'po_name${value or ""}',
+                            'D6': 'date_po${value or ""}',
+                            'E6': 'pr_text${value or ""}',
+                            'F6': 'budget_code${value or ""}',
+                            'G6': 'budget_name${value or ""}',
+                            'H6': 'approver${value or ""}',
+                            'I6': 'amount_total#{number_format=number}',
+                            'J6': 'currency${value or ""}',
+                            'K6': 'supplier_name${value or ""}',
+                            'L6': 'method${value or ""}',
+                            'M6': 'date_doc_approve${value or ""}',
+                            'N6': 'wa_name${value or ""}',
+                            'O6': 'date_accept${value or ""}',
                         },
                         '_TAIL_0': {
                         }

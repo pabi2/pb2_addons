@@ -8,6 +8,18 @@ class XLSXReportPabiPurchaseSummarize(models.TransientModel):
     _inherit = 'xlsx.report'
 
     # Search Criteria
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
+    )
+    partner_ids = fields.Many2many(
+        'res.partner',
+        string='Supplier',
+    )
+    method_ids = fields.Many2many(
+        'purchase.method',
+        string='Method',
+    )
     date_from = fields.Date(
         string='Date From',
     )
@@ -26,10 +38,17 @@ class XLSXReportPabiPurchaseSummarize(models.TransientModel):
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['xlsx.report.pabi.purchase.summarize.results']
-        self.results = Result.search([
+        dom = [
             ('po_date', '>=', self.date_from),
             ('po_date', '<=', self.date_to),
-        ])
+        ]
+        if self.partner_ids:
+            dom += [('partner_id', 'in', self.partner_ids._ids)]
+        if self.method_ids:
+            dom += [('method_id', 'in', self.method_ids._ids)]
+        if self.org_ids:
+            dom += [('org_id', 'in', self.org_ids._ids)]
+        self.results = Result.search(dom)
 
 
 class XLSXReportPabiPurchaseSummarizeResults(models.Model):
@@ -37,6 +56,14 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
     _auto = False
     _description = 'Temp table as ORM holder'
 
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+    )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Supplier',
+    )
     pd_number = fields.Char(
         string='PD No.',
         readonly=True,
@@ -47,6 +74,10 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
     )
     rfq_supplier = fields.Char(
         string='Supplier RFQ',
+        readonly=True,
+    )
+    amount_standard = fields.Float(
+        string='Amount Standard',
         readonly=True,
     )
     amount_total = fields.Float(
@@ -74,18 +105,32 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
         SELECT row_number() over (order by pd.id) as id,
-        pd.name as pd_number,
+        po.name as pd_number,
+        po.partner_id,
+        pd.purchase_method_id as method_id,
+        (
+        SELECT id from res_org WHERE operating_unit_id = ou.id
+        LIMIT 1
+        ) as org_id,
         CONCAT((SELECT pt.name FROM purchase_type pt WHERE
-            pt.id = pd.purchase_type_id),' ',pd.objective) objective,
+            pt.id = pd.purchase_type_id  LIMIT 1),' ',pd.objective) objective,
         (SELECT COUNT(*) FROM purchase_requisition_line pdl
-        WHERE pdl.requisition_id = pd.id) qty,
+        WHERE pdl.requisition_id = pd.id LIMIT 1) qty,
+        (
+        CASE WHEN pd.amount_total > 100000
+        THEN 
+        pd.amount_total
+        ELSE
+        0.00
+        END
+        ) as amount_standard,
         pd.amount_total,
         pm.name as method,
         (SELECT CONCAT(COALESCE(rpt.name || ' ',''),rp.name)
             FROM res_partner rp
         LEFT JOIN res_partner_title rpt
         ON rpt.id = rp.title
-        WHERE rp.id = selected_po.partner_id) as rfq_supplier,
+        WHERE rp.id = selected_po.partner_id  LIMIT 1) as rfq_supplier,
         selected_po.amount_total as rfq_amount_total,
         (SELECT psr.name FROM purchase_order rfq
         LEFT JOIN purchase_select_reason psr ON psr.id = rfq.select_reason
@@ -105,7 +150,7 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         ON selected_po.requisition_id = pd.id AND
             selected_po.order_type LIKE 'purchase_order' AND
             selected_po.state NOT LIKE 'cancel'
-        GROUP BY pd.id, pd.name, pd.objective, pd.amount_total, pm.name,
-            selected_po.partner_id, selected_po.amount_total,
+        GROUP BY pd.id, ou.id, po.name,pd.name, pd.objective, pd.amount_total, pm.name,
+            selected_po.partner_id, selected_po.amount_total, po.partner_id,
         selected_po.id
         )""" % (self._table, ))

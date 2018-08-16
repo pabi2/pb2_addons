@@ -8,18 +8,25 @@ class XLSXReportPabiMonthlyWorkAcceptance(models.TransientModel):
     _inherit = 'xlsx.report'
 
     # Search Criteria
-    operating_unit_id = fields.Many2one(
-        'operating.unit',
-        string='Operating Unit',
+    # operating_unit_id = fields.Many2one(
+    #     'operating.unit',
+    #     string='Operating Unit',
+    # )
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
     )
-    date_po = fields.Date(
-        string='Date Move',
+    partner_ids = fields.Many2many(
+        'res.partner',
+        string='Supplier',
     )
     date_from = fields.Date(
         string='Date From',
+        required=True,
     )
     date_to = fields.Date(
         string='Date To',
+        required=True,
     )
 
     # Report Result
@@ -38,8 +45,10 @@ class XLSXReportPabiMonthlyWorkAcceptance(models.TransientModel):
             ('date_po', '>=', self.date_from),
             ('date_po', '<=', self.date_to),
         ]
-        if self.operating_unit_id:
-            dom += [('operating_unit_id', '=', self.operating_unit_id.id)]
+        if self.org_ids:
+            dom += [('org_id', 'in', self.org_ids._ids)]
+        if self.partner_ids:
+            dom += [('partner_id', 'in', self.partner_ids._ids)]
         self.results = Result.search(dom)
 
 
@@ -48,9 +57,21 @@ class XLSXReportPabiMonthlyWorkAcceptanceResults(models.Model):
     _auto = False
     _description = 'Temp table as ORM holder'
 
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+    )
     operating_unit_id = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
+    )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Supplier',
+    )
+    ou_name = fields.Char(
+        string='OU name',
+        readonly=True,
     )
     ou_code = fields.Char(
         string='OU Code',
@@ -114,13 +135,32 @@ class XLSXReportPabiMonthlyWorkAcceptanceResults(models.Model):
         SELECT 
         row_number() over (order by po.id) as id,
         po.operating_unit_id,
+        ou.name as ou_name,
+        (
+        SELECT id from res_org WHERE operating_unit_id = po.operating_unit_id
+        LIMIT 1
+        ) as org_id,
         (SELECT value
         FROM ir_translation
         WHERE res_id = ro.id AND name LIKE 'res.org,name') ou_code,
         po.name as po_name,
         po.date_order as date_po,
-        '' as budget_code,
-        '' as budget_name,
+        (
+        select rc.code
+        from purchase_order_line pol
+        left join purchase_order po2 on po2.id = pol.order_id
+        left join res_costcenter rc on rc.id = pol.costcenter_id  
+        WHERE po2.id = po.id
+        LIMIT 1
+        ) as budget_code,
+        (
+        select rc.name_short
+        from purchase_order_line pol
+        left join purchase_order po2 on po2.id = pol.order_id
+        left join res_costcenter rc on rc.id = pol.costcenter_id  
+        WHERE po2.id = po.id
+        LIMIT 1
+        ) as budget_name,
         CONCAT(
         COALESCE((SELECT value FROM ir_translation it
         WHERE it.res_id = (SELECT rpt.id FROM res_users ru
@@ -149,10 +189,13 @@ class XLSXReportPabiMonthlyWorkAcceptanceResults(models.Model):
         po.amount_total,
         rc.name currency,
         CONCAT(COALESCE(rpt.name || ' ',''),rp.name) as supplier_name,
+        po.partner_id,
         pd.date_doc_approve,
         wa.name wa_name,
         wa.date_receive date_accept
         FROM purchase_order po
+        LEFT JOIN operating_unit ou
+        ON ou.id = po.operating_unit_id
         LEFT JOIN purchase_requisition pd
         ON pd.name = po.origin
         LEFT JOIN purchase_method pm

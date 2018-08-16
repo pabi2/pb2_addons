@@ -8,9 +8,15 @@ class PabiMonthlyWorkAcceptanceReportWizard(models.TransientModel, Common):
     _name = 'pabi.monthly.work.acceptance.report.wizard'
 
     # Search Criteria
-    operating_unit_id = fields.Many2one(
-        'operating.unit',
-        string='Operating Unit',
+    # operating_unit_id = fields.Many2many(
+    #     'operating.unit.view',
+    #     'monthly_work_acceptance_ou_view_rel'
+    #     'work_acc_report_id', 'ou_id',
+    #     string='Operating Unit',
+    # )
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
     )
     date_from = fields.Date(
         string='Date From',
@@ -23,6 +29,7 @@ class PabiMonthlyWorkAcceptanceReportWizard(models.TransientModel, Common):
     def xls_export(self):
         fields = [
             'operating_unit_id',
+            'org_ids',
             'date_from',
             'date_to',
         ]
