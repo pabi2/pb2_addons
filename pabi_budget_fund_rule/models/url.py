@@ -92,12 +92,12 @@ class ExternalFundRuleURL(http.Controller):
         action_id = Action.search(
             request.cr, SUPERUSER_ID,
             [('module', '=', 'pabi_budget_fund_rule'),
-             ('name', '=', 'action_budget_fund_rule')])
+             ('name', '=', 'action_new_tree_budget_fund_rule')])
         action = Action.browse(request.cr, SUPERUSER_ID, action_id)
         WindowAction.write(request.cr, SUPERUSER_ID, [action.res_id],
                            {'domain':
                             "[('project_id', '=', %s)]" % project_id})
         # URL
-        url = "/web?toolbar=hide&#model=budget.fund.rule&view_type=tree"
+        url = "/web?toolbar=hide&#model=budget.fund.rule"
         ext_url = "&action=%s" % (action.res_id,)
         return werkzeug.utils.redirect(url + ext_url)
