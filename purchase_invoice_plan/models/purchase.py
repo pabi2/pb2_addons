@@ -51,7 +51,6 @@ class PurchaseOrder(models.Model):
     plan_invoice_created = fields.Boolean(
         string='Invoice Created',
         compute='_compute_plan_invoice_created',
-        # store=True,
         help="Compute whether number of invoices "
         "(not cancelled invoices) are created as planned",
     )
