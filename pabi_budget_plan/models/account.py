@@ -61,9 +61,9 @@ class AccountFiscalyear(models.Model):
 
     @api.constrains('overall_policy')
     def _check_overall_policy(self):
-        if self.overall_policy < 0:
+        if self.overall_policy < 0.0:
             raise ValidationError(
-                  "NSTDA Policy field must no be negative value")
+                  _('NSTDA Policy field must no be negative value'))
 
     # def init(self, cr):
     #     env = Environment(cr, SUPERUSER_ID, {})
