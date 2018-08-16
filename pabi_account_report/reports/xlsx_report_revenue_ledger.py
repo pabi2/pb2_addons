@@ -52,7 +52,8 @@ class XLSXReportRevenueLedger(models.TransientModel):
         if self.date_end:
             dom += [('invoice_posting_date', '<=', self.date_end)]
         self.results = Result.search(dom).sorted(
-                       key=lambda l: (l.account_id.code,
+                       key=lambda l: (l.charge_type,
+                                      l.account_id.code,
                                       l.activity_group_id.code,
                                       l.activity_id.code,
                                       l.period_id.fiscalyear_id.name,

@@ -1468,6 +1468,10 @@ result = pd.pivot_table(df, index=groupby,
                                'AW13': 'partner_id.search_key${value or ""}',
                                'AX13': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
                            },
+                           '_TAIL_0': {
+                               'A13': '${"Total"}#{font=bold}',
+                               'L13': '@{sum}#{font=bold;number_format=number}',
+                          }
                        }
                    }
                }
