@@ -14,7 +14,7 @@
                 ref('xlsx_report_payable_detail'),
                 ref('xlsx_report_payable_balance'),
                 ref('xlsx_report_purchase_billing'),
-                ref('xlsx_report_sla_purchase'),
+                ref('xlsx_report_sla_supplier'),
                 ref('xlsx_report_sla_employee'),
                 ref('xlsx_report_sla_procurement'),
                 ref('xlsx_report_supplier_receipt_follow_up'),

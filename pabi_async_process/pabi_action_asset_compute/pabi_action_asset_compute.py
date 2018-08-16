@@ -19,11 +19,15 @@ class PabiActionAssetCompute(models.TransientModel):
     )
     categ_ids = fields.Many2many(
         'product.category',
+        'pabi_action_asset_compute_product_category_rel',
+        'compute_id', 'category_id',
         string='Category',
         domain=lambda self: self._get_categ_domain()
     )
     profile_ids = fields.Many2many(
         'account.asset.profile',
+        'pabi_action_asset_compute_account_asset_profile_rel',
+        'compute_id', 'profile_id',
         string='Profile',
     )
     test_log_ids = fields.One2many(
@@ -31,6 +35,10 @@ class PabiActionAssetCompute(models.TransientModel):
         'wizard_id',
         string='Asset Test Log',
         readonly=True,
+    )
+    test_completed = fields.Boolean(
+        string='Test Completed',
+        default=False,
     )
     max_asset_test = fields.Integer(
         string='Max Assets',
@@ -46,6 +54,10 @@ class PabiActionAssetCompute(models.TransientModel):
         string='Tested Assets',
         default='[]',
         help="String representative of tested asset_ids, i.e, '[1,2,4]'"
+    )
+    batch_note = fields.Char(
+        string='Batch Note',
+        help="Note that will be filled in asset depreciation batch",
     )
 
     @api.onchange('calendar_period_id')
@@ -87,6 +99,7 @@ class PabiActionAssetCompute(models.TransientModel):
         domain = [
             ('asset_id.state', '=', 'open'),
             ('asset_id.type', '=', 'normal'),
+            ('asset_id.active', '=', True),
             ('type', '=', 'depreciate'),
             ('init_entry', '=', False),
             ('line_date', '<=', period.date_stop),
@@ -94,10 +107,22 @@ class PabiActionAssetCompute(models.TransientModel):
             ('move_check', '=', False)
         ]
         if categ_ids:
-            domain += [('asset_id.profile_id.product_categ_id',
-                        'in', categ_ids)]
+            self._cr.execute("""
+                select a.id from account_asset a
+                join account_asset_profile ap on ap.id = a.profile_id
+                join product_category pc on pc.id = ap.product_categ_id
+                where pc.id in %s
+            """, (tuple(categ_ids), ))
+            asset_ids = [x[0] for x in self._cr.fetchall()]
+            domain += [('asset_id', 'in', asset_ids)]
         if profile_ids:
-            domain += [('asset_id.profile_id', 'in', profile_ids)]
+            self._cr.execute("""
+                select a.id from account_asset a
+                join account_asset_profile ap on ap.id = a.profile_id
+                where ap.id in %s
+            """, (tuple(profile_ids), ))
+            asset_ids = [x[0] for x in self._cr.fetchall()]
+            domain += [('asset_id', 'in', asset_ids)]
         if exclude_asset_ids:
             domain += [('asset_id', 'not in', exclude_asset_ids)]
         depre_lines = self.env['account.asset.line'].search(domain)
@@ -107,17 +132,22 @@ class PabiActionAssetCompute(models.TransientModel):
         return assets
 
     @api.multi
-    def asset_compute(self, period_id, categ_ids, profile_ids):
+    def asset_compute(self, period_id, categ_ids, profile_ids, batch_note):
         period = self.env['account.period'].browse(period_id)
         assets = self._search_asset(period, categ_ids, profile_ids)
         created_move_ids, error_log = \
             assets._compute_entries(period, check_triggers=True)
         # Return
-        records = self.env['account.move'].browse(created_move_ids)
+        moves = self.env['account.move'].browse(created_move_ids)
         if not error_log:
-            error_log = _('Computed depreciation for %s assets') % len(records)
+            error_log = _('Computed depreciation for %s assets') % \
+                len(created_move_ids)
         result_msg = error_log
-        return (records, result_msg)
+        # Assign Batch ID
+        depre_batch = self.env['pabi.asset.depre.batch'].new_batch(period,
+                                                                   batch_note)
+        moves.write({'asset_depre_batch_id': depre_batch.id})
+        return (depre_batch, result_msg)
 
     @api.multi
     def pabi_action(self):
@@ -131,7 +161,8 @@ class PabiActionAssetCompute(models.TransientModel):
         # Prepare kwargs, the params for method action_generate
         kwargs = {'period_id': self.calendar_period_id.id,
                   'categ_ids': self.categ_ids.ids,
-                  'profile_ids': self.profile_ids.ids, }
+                  'profile_ids': self.profile_ids.ids,
+                  'batch_note': self.batch_note, }
         # Call the function
         res = super(PabiActionAssetCompute, self).\
             pabi_action(process_xml_id, job_desc, func_name, **kwargs)
@@ -155,7 +186,6 @@ class PabiActionAssetCompute(models.TransientModel):
     def run_asset_test(self):
         """ Based on matched assets, run through series of test """
         self.ensure_one()
-        self.test_log_ids.unlink()
         # Matched assets exclude tested one
         tested_asset_ids = ast.literal_eval(self.tested_assets)
         assets = self._search_asset(
@@ -170,7 +200,9 @@ class PabiActionAssetCompute(models.TransientModel):
         self._log_test_prev_depre_posted(self.calendar_period_id, assets)
         self._log_test_active_chartfield(assets)
         self.write({'run_state': 'test',
-                    'tested_assets': str(tested_asset_ids)})
+                    'tested_assets': str(tested_asset_ids),
+                    'test_completed': not assets.ids and True or False,
+                    })
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'pabi.action.asset.compute',
@@ -252,7 +284,7 @@ class PabiActionAssetCompute(models.TransientModel):
 
 class PabiActionAssetComputeTestLog(models.TransientModel):
     _name = 'pabi.action.asset.compute.test.log'
-    _order = 'asset_id'
+    _order = 'id desc'
 
     wizard_id = fields.Many2one(
         'pabi.action.asset.compute',
@@ -269,3 +301,105 @@ class PabiActionAssetComputeTestLog(models.TransientModel):
         string='Message',
         readonly=True,
     )
+
+
+class PabiAssetDepreBatch(models.Model):
+    _name = 'pabi.asset.depre.batch'
+    _order = 'name desc'
+    _description = 'Asset Depreciation Compute Batch'
+
+    name = fields.Char(
+        string='Name',
+        compute='_compute_name',
+        store=True,
+        help="As <period>-<run number>",
+    )
+    run_number = fields.Integer(
+        string='Run Number',
+        readonly=True,
+        required=True,
+    )
+    period_id = fields.Many2one(
+        'account.period',
+        string='Period',
+        readonly=True,
+        required=True,
+    )
+    note = fields.Char(
+        string='Note',
+        readonly=True,
+    )
+    state = fields.Selection(
+        [('draft', 'Draft'),
+         ('posted', 'Posted'),
+         ('deleted', 'Deleted')],
+        string='State',
+        default='draft',
+        help="* Draft: first created, user prevew\n"
+        "* Posted: all journal entries posted\n"
+        "* Deleted: user choose to delete and will redo again"
+    )
+    move_ids = fields.One2many(
+        'account.move',
+        'asset_depre_batch_id',
+        string='Journal Entries',
+    )
+    move_line_ids = fields.One2many(
+        'account.move.line',
+        'asset_depre_batch_id',
+        string='Journal Items',
+    )
+    amount = fields.Float(
+        string='Depreciation Amount',
+        compute='_compute_amount',
+    )
+
+    @api.model
+    def new_batch(self, period, note):
+        # Get last batch's run_number
+        batch = self.search([('period_id', '=', period.id)],
+                            order='run_number desc', limit=1)
+        next_run = batch and (batch.run_number + 1) or 1
+        new_batch = self.create({'period_id': period.id,
+                                 'run_number': next_run,
+                                 'note': note, })
+        return new_batch
+
+    @api.multi
+    @api.depends('run_number', 'period_id')
+    def _compute_name(self):
+        for rec in self:
+            number = str(rec.run_number)
+            rec.name = '%s-%s' % (rec.period_id.name, number.zfill(2))
+        return True
+
+    @api.multi
+    def delete_unposted_entries(self):
+        AccountMove = self.env['account.move']
+        for rec in self:
+            moves = AccountMove.search([('id', 'in', rec.move_ids.ids),
+                                        ('state', '=', 'draft'),
+                                        ('name', '=', False)])
+            moves.with_context(unlink_from_asset=True).unlink()
+            rec.write({'state': 'deleted'})
+        return True
+
+    @api.multi
+    def post_entries(self):
+        for rec in self:
+            rec.move_ids.post()
+            rec.write({'state': 'posted'})
+        return True
+
+    @api.multi
+    def _compute_amount(self):
+        self._cr.execute("""
+            select asset_depre_batch_id, sum(debit) as amount
+            from account_move_line
+            where asset_depre_batch_id in %s
+            group by asset_depre_batch_id
+        """, (tuple(self.ids), ))
+        amount_dict = dict([(x[0], x[1]) for x in self._cr.fetchall()])
+        for rec in self:
+            rec.amount = amount_dict.get(rec.id, 0.0)
+        return True

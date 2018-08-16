@@ -18,7 +18,7 @@
             groups="purchase.group_purchase_user,account.group_account_user"/>
 
         <menuitem id="menu_asset_actions" name="Asset Actions"
-          sequence="20" parent="account_asset_management.menu_finance_assets"/>
+          sequence="20" parent="menu_asset_main"/>
 
         <!-- Account Asset View -->
         <record id="account_asset_view_search" model="ir.ui.view">

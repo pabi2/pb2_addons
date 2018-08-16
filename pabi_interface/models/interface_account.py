@@ -205,6 +205,7 @@ class InterfaceAccountEntry(models.Model):
                 vals.get('to_reverse_entry_id', False):
             reverse_entry = self.browse(vals['to_reverse_entry_id'])
             vals['system_id'] = reverse_entry.system_id.id
+            vals['journal_id'] = reverse_entry.journal_id.id
         return super(InterfaceAccountEntry, self).create(vals)
 
     # ================== Main Execution Method ==================

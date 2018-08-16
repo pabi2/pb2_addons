@@ -513,28 +513,28 @@
             </field>
         </record>
 
-        # SLA Purchase
-        <record id="xlsx_report_sla_purchase" model="ir.attachment">
-            <field name="res_model">xlsx.report.sla.purchase</field>
+        # SLA Supplier
+        <record id="xlsx_report_sla_supplier" model="ir.attachment">
+            <field name="res_model">xlsx.report.sla.supplier</field>
             <field name="datas"></field>
-            <field name="datas_fname">xlsx_report_sla_purchase.xlsx</field>
-            <field name="name">SLA Purchase</field>
+            <field name="datas_fname">xlsx_report_sla_supplier.xlsx</field>
+            <field name="name">SLA Supplier</field>
             <field name="parent_id" eval="ref('dir_account_reports')"/>
             <field name="description">
                 {
                     '__EXPORT__': {
-                        'SLA Purchase Report': {
+                        'SLA Supplier Report': {
                             '_HEAD_': {
                                 'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
                                 'B3': 'fiscalyear_start_id.name${value or ""}',
                                 'D3': 'fiscalyear_end_id.name${value or ""}',
-                                'B4': 'filter${value and dict(filter_no="No Filters", filter_date="Dates", filter_period="Periods")[value] or ""}',
+                                'B4': 'filter${value and dict(env["xlsx.report.sla.supplier"]._columns["filter"].selection)[value] or ""}',
                                 'B5': 'period_start_id.name${value or ""}',
                                 'D5': 'period_end_id.name${value or ""}',
                                 'B6': 'date_start${value or ""}#{number_format=date}',
                                 'D6': 'date_end${value or ""}#{number_format=date}',
-                                'B7': 'user_ids${value and ", ".join([x.with_context(lang="th_TH").display_name for x in value]) or ""}',
-                                'B8': 'source_document_type${value or ""}',
+                                'B7': 'source_document_type${value and dict(env["xlsx.report.sla.supplier"]._columns["source_document_type"].selection)[value] or ""}',
+                                'B8': 'user_ids${value and ", ".join([x.with_context(lang="th_TH").display_name for x in value]) or ""}',
                                 'B9': '${env.user.with_context(lang="th_TH").display_name}',
                                 'B10': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
@@ -542,15 +542,15 @@
                                 'A13': 'voucher_id.period_id.fiscalyear_id.name${value or ""}',
                                 'B13': 'voucher_id.number${value or ""}',
                                 'C13': 'voucher_id.partner_id.search_key${value or ""}',
-                                'D13': 'voucher_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title_lang, value.with_context(lang="th_TH").name]))) or ""}',
-                                'E13': 'voucher_id.partner_id.category_id.name${value or ""}',
-                                'F13': 'export_id.name${value or ""}',
+                                'D13': 'voucher_id.partner_id${value and " ".join(list(filter(lambda l: l != False, [value.with_context(lang="th_TH").title.name, value.with_context(lang="th_TH").name]))) or ""}',
+                                'E13': 'voucher_id.partner_id.category_id${value and value.with_context(lang="th_TH").name or ""}',
+                                'F13': 'voucher_id.payment_export_id.name${value or ""}',
                                 'G13': 'count_invoice${value or ""}',
-                                'H13': 'voucher_id.create_uid${value and value.with_context(lang="th_TH").display_name or ""}',
-                                'I13': 'voucher_id${value and (value.payment_type == "transfer" and dict(direct="Direct", smart="Smart", oversea="Oversea")[value.transfer_type] or "Cheque") or ""}',
+                                'H13': 'voucher_id.validate_user_id${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'I13': 'voucher_id${value and value.payment_type == "transfer" and dict(env["account.voucher"]._columns["transfer_type"].selection)[value.transfer_type] or "Cheque"}',
                                 'J13': 'voucher_id.amount${value or ""}#{number_format=number}',
                                 'K13': 'voucher_id.date${value or ""}#{number_format=date}',
-                                'L13': 'export_id.date_value${value or ""}#{number_format=date}',
+                                'L13': 'voucher_id.payment_export_id.date_value${value or ""}#{number_format=date}',
                                 'M13': 'date_due${value or ""}#{number_format=date}',
                                 'N13': "${'=?(M13)-?(L13)'}",
                                 'O13': "${'=IF(?(M13)&gt;=?(L13),\"Yes\",\"No\")'}",
@@ -1349,7 +1349,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'S13': 'docline_seq${value or ""}',
                                 'T13': 'invoice_document_date${value or ""}#{number_format=date}',
                                 'U13': 'invoice_posting_date${value or ""}#{number_format=date}',
-                                'V13': 'voucher_move_id${value and value.document_id and value.document_id._name == "interface.account.entry" and value.document_id.name or value.name}',
+                                'V13': 'voucher_move_id${value and value.document_id and (value.document_id._name == "interface.account.entry" and value.document_id.name or value.name) or ""}',
                                 'W13': 'voucher_posting_date${value or ""}#{number_format=date}',
                                 'X13': 'source_document_id${value and (value._name in ("purchase.order", "sale.order") and value.name or value.number) or ""}',
                                 'Y13': '',

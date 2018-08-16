@@ -48,6 +48,8 @@ class SalesOrder(models.Model):
                                                                  data_dict)
             pos = self.browse(res['result']['id'])
             pos.post_process_pos_order()
+            # return more data
+            res['result']['name'] = pos.name
         except Exception, e:
             res = {
                 'is_success': False,
@@ -91,13 +93,15 @@ class ProductProduct(models.Model):
         # Add list_price and uom
         product_ids = [x['product_id'] for x in vals]
         products = self.env['product.product'].browse(product_ids)
-        products_dict = dict([(x.id, {'uom': x.uom_id.name,
+        products_dict = dict([(x.id, {'uom_id': x.uom_id.id,
+                                      'uom': x.uom_id.name,
                                       'list_price': x.list_price,
                                       'name': x.name,
                                       'default_code': x.default_code, })
                              for x in products])
         for val in vals:
             product = products_dict.get(val['product_id'], {})
+            val['uom_id'] = product.get('uom_id', False)
             val['uom'] = product.get('uom', False)
             val['list_price'] = product.get('list_price', False)
             val['name'] = product.get('name', False)

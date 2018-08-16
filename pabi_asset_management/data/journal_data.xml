@@ -21,6 +21,29 @@
             <field name="sequence_id" ref="seq_journal_asset"/>
             <field name="entry_posted">True</field>
             <field name="update_posted">True</field>
+            <field name="asset">True</field>
+        </record>
+
+        # Journal for Asset (No Budget)
+        <record id="seq_journal_asset_no_budget" model="ir.sequence">
+            <field name="name">Asset Journal (No-Budget)</field>
+            <field name="code"></field>
+            <field name="prefix">AN%(fy)s</field>
+            <field eval="6" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="journal_asset_no_budget" model="account.journal">
+            <field name="name">Asset Journal (No-Budget)</field>
+            <field name="code">AN</field>
+            <field name="type">general</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="sequence_id" ref="seq_journal_asset_no_budget"/>
+            <field name="entry_posted">True</field>
+            <field name="update_posted">True</field>
+            <field name="asset">True</field>
         </record>
 
         # Journal for Asset Depre

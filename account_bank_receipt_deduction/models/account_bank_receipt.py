@@ -28,6 +28,8 @@ class AccuontBankReceiptMultipleReconcile(models.Model):
     bank_receipt_id = fields.Many2one(
         'account.bank.receipt',
         string='Related Bank Receipt',
+        index=True,
+        ondelete='cascade',
     )
     analytic_id = fields.Many2one(
         'account.analytic.account',

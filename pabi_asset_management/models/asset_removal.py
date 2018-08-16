@@ -61,6 +61,14 @@ class AccountAssetRemoval(models.Model):
         string='New Asset Count',
         compute='_compute_assset_count',
     )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Journal',
+        domain=[('asset', '=', True), ('analytic_journal_id', '=', False)],
+        readonly=True,
+        required=True,
+        help="Asset Journal (No-Budget)",
+    )
 
     @api.multi
     @api.depends('removal_asset_ids')
@@ -121,7 +129,9 @@ class AccountAssetRemoval(models.Model):
                 if line.asset_id.state != 'open':
                     continue
                 asset = line.asset_id
-                ctx = {'active_ids': [asset.id], 'active_id': asset.id}
+                ctx = {'active_ids': [asset.id], 'active_id': asset.id,
+                       'overwrite_move_name': '/',
+                       'overwrite_journal_id': removal.journal_id.id}
                 if asset.value_residual and not asset.no_depreciation:
                     ctx.update({'early_removal': True})
                 line.with_context(ctx).remove()

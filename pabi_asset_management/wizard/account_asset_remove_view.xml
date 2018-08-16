@@ -9,6 +9,10 @@
                 <field name="posting_regime" position="after">
                     <field name="target_status"/>
                 </field>
+                <field name="sale_value" position="after">
+                    <field name="journal_id"/>
+                </field>
+
             </field>
         </record>
     </data>

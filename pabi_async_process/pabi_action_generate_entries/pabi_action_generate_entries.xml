@@ -21,7 +21,7 @@
         </record>
 
         <record id="action_pabi_action_generate_entries" model="ir.actions.act_window">
-            <field name="name">Generate Entries (new)</field>
+            <field name="name">Generate Entries</field>
             <field name="res_model">pabi.action.generate.entries</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
@@ -29,8 +29,8 @@
             <field name="context">{'return_action': 'account.action_move_journal_line'}</field>
         </record>
 
-        <menuitem id="menu_pabi_action_generate_entries"
-          name="Generate Entries (new)"
+        <menuitem id="account.menu_generate_subscription"
+          name="Generate Entries"
           parent="account.menu_finance_recurrent_entries"
           action="action_pabi_action_generate_entries"
           sequence="1"/>

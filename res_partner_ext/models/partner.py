@@ -218,6 +218,11 @@ class ResPartner(models.Model):
         try:  # Update
             WS = self.env['pabi.utils.ws']
             res = WS.friendly_update_data(self._name, vals, 'search_key')
+            if res['is_success']:
+                res_id = res['result']['id']
+                p = self.browse(res_id)
+                res['result']['name'] = p.name
+                res['result']['search_key'] = p.search_key
         except Exception, e:
             res = {
                 'is_success': False,

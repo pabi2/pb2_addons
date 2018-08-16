@@ -93,6 +93,7 @@
                                 <field name="target_asset_value"/>
                             </group>
                             <group>
+                                <field name="journal_id"/>
                                 <field name="user_id"/>
                                 <field name="date_accept"/>
                                 <field name="date"/>
@@ -186,6 +187,7 @@
             <field name="view_type">form</field>
             <field name="view_id" ref="view_account_asset_transfer_tree"/>
             <field name="search_view_id" ref="view_account_asset_transfer_search"/>
+            <field name="context" eval="{'default_journal_id': ref('journal_asset_no_budget')}"/>
         </record>
 
         <menuitem parent="menu_asset_actions" id="menu_action_account_asset_transfer"
