@@ -12,6 +12,10 @@ class XLSXReportPabiComparisonPrPo(models.TransientModel):
         'res.partner',
         string='Partner',
     )
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
+    )
 
     # Report Result
     results = fields.Many2many(
@@ -28,6 +32,8 @@ class XLSXReportPabiComparisonPrPo(models.TransientModel):
         dom = []
         if self.partner_id:
             dom += [('partner_id', '=', self.partner_id.id)]
+        if self.org_ids:
+            dom += [('org_id', 'in', self.org_ids._ids)]
         self.results = Result.search(dom)
 
 
@@ -80,6 +86,13 @@ class XLSXReportPabiComparisonPrPoResults(models.Model):
         'res.partner',
         string='Partner',
     )
+    org_id = fields.Many2one(
+        'res.org',
+        string='org',
+    )
+    ou_name = fields.Char(
+        string='OU',
+    )
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -110,7 +123,9 @@ class XLSXReportPabiComparisonPrPoResults(models.Model):
         coalesce(
         (pol.price_unit * pol.product_qty) - prl.price_subtotal,
          0.00
-         )  as diff
+         )  as diff,
+        ou.name as ou_name,
+        org.id as org_id
         from purchase_request_line prl
         left join purchase_request pr on pr.id = prl.request_id
         left join purchase_request_purchase_order_line_rel prpolr
@@ -123,6 +138,10 @@ class XLSXReportPabiComparisonPrPoResults(models.Model):
         on pot.tax_id = at.id
         left join purchase_order po
         on pol.order_id = po.id
+        left join operating_unit ou
+        on ou.id = po.operating_unit_id
+        left join res_org org
+        on org.operating_unit_id = ou.id
         left join res_partner rp
         on rp.id = po.partner_id
         where po.state in ('purchase_order','done')

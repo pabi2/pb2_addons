@@ -9,9 +9,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='criteria']" position="inside">
                     <group>
-                        <field name="operating_unit_id"/>
+                        <field name="org_ids" widget="many2many_tags"/>
                         <field name="method_id"/>
-                        <field name="price_range_id"/>
+                        <field name="is_standard"/>
                         <field name="partner_id"/>
                         <field name="order_id"/>
                         <field name="date_from"/>
