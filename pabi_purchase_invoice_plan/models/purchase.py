@@ -106,11 +106,12 @@ class PurchaseOrder(models.Model):
             assets = [x.product_id.asset or False for x in self.order_line]
             if True in assets:  # has some asset in line
                 if len(list(set(assets))) != 1:
-                    raise ValidationError(_('Invoice plan not allow mixing '
+                    raise ValidationError(_('Invoice plan do not allow mixing '
                                             'asset and non-asset!'))
-                if self.invoice_mode != 'change_price':
-                    raise ValidationError(_('Invoice Plan/Assets, please use '
-                                            'invoice mode "As 1 Job"'))
+                # We can't use this as it conflict when po asset > 1 qty
+                # if self.invoice_mode != 'change_price':
+                #   raise ValidationError(_('Invoice Plan/Assets, please use '
+                #                             'invoice mode "As 1 Job"'))
         return res
 
     @api.model

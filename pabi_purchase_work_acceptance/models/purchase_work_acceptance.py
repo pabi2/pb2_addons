@@ -583,6 +583,16 @@ class PurchaseWorkAcceptance(models.Model):
                 )
 
     @api.multi
+    def _validate_asset_line(self):
+        for rec in self:
+            for line in rec.acceptance_line_ids:
+                if line.product_id.asset and line.to_receive_qty and \
+                        not line.to_receive_qty.is_integer():
+                    raise ValidationError(_('For asset, receiving quantity '
+                                            'must be whole number.'))
+        return True
+
+    @api.multi
     def action_evaluate(self):
         self.ensure_one()
         if len(self.acceptance_line_ids) == 0:
@@ -595,7 +605,9 @@ class PurchaseWorkAcceptance(models.Model):
             raise ValidationError(
                 _('To Receive Quantity must greater than zero!'))
         self.validate_amount_total_with_order()
+        self._validate_asset_line()
         self.state = 'evaluation'
+        return True
 
     @api.multi
     def validate_evaluation(self):

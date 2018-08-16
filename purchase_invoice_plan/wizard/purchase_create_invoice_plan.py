@@ -105,30 +105,21 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         #           "equal to order amount %d!")
         #         % (amount_total, self.order_amount))
 
-    @api.one
-    def _check_invoice_mode(self, order):
-        if order.invoice_method == 'invoice_plan':
-            if self.invoice_mode == 'change_price':
-                for order_line in order.order_line:
-                    if order_line.product_qty != 1:
-                        raise ValidationError(
-                            _('For invoice plan mode "As 1 Job", '
-                              'all line quantity must equal to 1'))
-
     @api.model
     def _check_installment_amount(self):
         if any([i.amount <= 0 for i in self.installment_ids]):
             raise ValidationError(
                 _('Negative or zero installment amount not allowed!'))
 
-    @api.one
+    @api.multi
     def do_create_purchase_invoice_plan(self):
+        self.ensure_one()
         self._validate_total_amount()
         self._check_installment_amount()
         self.env['purchase.invoice.plan']._validate_installment_date(
             self.installment_ids)
         order = self.env['purchase.order'].browse(self._context['active_id'])
-        self._check_invoice_mode(order)
+        # order._check_invoice_mode()
         order.invoice_plan_ids.unlink()
         lines = []
 

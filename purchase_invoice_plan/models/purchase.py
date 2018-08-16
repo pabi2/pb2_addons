@@ -167,12 +167,7 @@ class PurchaseOrder(models.Model):
     def _check_invoice_plan(self):
         self.ensure_one()
         if self.invoice_method == 'invoice_plan':
-            if self.invoice_mode == 'change_price':
-                for order_line in self.order_line:
-                    if order_line.product_qty != 1:
-                        raise ValidationError(
-                            _('For invoice plan mode "As 1 Job", '
-                              'all line quantity must equal to 1'))
+            # self._check_invoice_mode()
             # kittiu: problem with decimal, so we dicide to test with 0
             # obj_precision = self.env['decimal.precision']
             # prec = obj_precision.precision_get('Account')
@@ -294,6 +289,21 @@ class PurchaseOrder(models.Model):
     def wkf_approve_order(self):
         self._check_invoice_plan()
         return super(PurchaseOrder, self).wkf_approve_order()
+
+    # @api.multi
+    # def _check_invoice_mode(self):
+    #     # Removed as it conflict between asset must use 1 job, but sometime
+    #     # we PO asset > 1 qty
+    #     # --
+    #     # for order in self:
+    #     #     if order.invoice_method == 'invoice_plan':
+    #     #         if order.invoice_mode == 'change_price':
+    #     #             for order_line in order.order_line:
+    #     #                 if order_line.product_qty != 1:
+    #     #                     raise ValidationError(
+    #     #                         _('For invoice plan mode "As 1 Job", '
+    #     #                           'all line quantity must equal to 1'))
+    #     return True
 
     @api.multi
     def action_invoice_create(self):

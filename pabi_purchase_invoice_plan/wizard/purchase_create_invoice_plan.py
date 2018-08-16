@@ -169,7 +169,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             return super(PurchaseCreateInvoicePlan, self).\
                 _compute_installment_details()
         order = self.env['purchase.order'].browse(self._context['active_id'])
-        self._check_invoice_mode(order)
+        # order._check_invoice_mode()
         fiscalyear_dict = {}
         for f in self.env['account.fiscalyear'].search_read([],
                                                             ['name', 'id']):
@@ -276,8 +276,8 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         self._check_installment_amount()
         self.env['purchase.invoice.plan']._validate_installment_date(
             self.installment_ids)
-        order = self.env['purchase.order'].browse(self._context['active_id'])
-        self._check_invoice_mode(order)
+        # order = self.env['purchase.order'].browse(self._context['active_id'])
+        # order._check_invoice_mode()
         order.invoice_plan_ids.unlink()
         lines = []
 
