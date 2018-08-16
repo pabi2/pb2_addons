@@ -44,10 +44,6 @@ class XLSXReportPabiSupplierEvaluationResults(models.Model):
         string='Partner',
         readonly=True,
     )
-    supplier_name = fields.Char(
-        string='Name',
-        readonly=True,
-    )
     wa_no = fields.Char(
         string='Material Doc',
         readonly=True,
@@ -96,9 +92,42 @@ class XLSXReportPabiSupplierEvaluationResults(models.Model):
         wa.name as wa_no,
         wa.date_contract_end,
         wa.date_receive,
-        wa.eval_service,
-        wa.eval_quality,
-        wa.eval_receiving,
+        (
+        SELECT pwas.score
+        FROM
+        purchase_work_acceptance_evaluation_line wael
+        left join purchase_work_acceptance_score pwas
+        ON pwas.id = wael.score_id
+        left join purchase_work_acceptance_case pwac
+        ON pwac.id = wael.case_id
+        WHERE wael.case_id = 1
+        AND wael.acceptance_id = wa.id
+        LIMIT 1
+        ) as eval_receiving,
+        (
+        SELECT pwas.score
+        FROM
+        purchase_work_acceptance_evaluation_line wael
+        left join purchase_work_acceptance_score pwas
+        ON pwas.id = wael.score_id
+        left join purchase_work_acceptance_case pwac
+        ON pwac.id = wael.case_id
+        WHERE wael.case_id = 3
+        AND wael.acceptance_id = wa.id
+        LIMIT 1
+        ) as eval_service,
+        (
+        SELECT pwas.score
+        FROM
+        purchase_work_acceptance_evaluation_line wael
+        left join purchase_work_acceptance_score pwas
+        ON pwas.id = wael.score_id
+        left join purchase_work_acceptance_case pwac
+        ON pwac.id = wael.case_id
+        WHERE wael.case_id = 2
+        AND wael.acceptance_id = wa.id
+        LIMIT 1
+        ) as eval_quality,
         case
         when (-1 * DATE_PART('day', wa.date_contract_end ::timestamp -
             wa.date_receive::timestamp)) > 0
