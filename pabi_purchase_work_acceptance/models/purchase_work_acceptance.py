@@ -516,7 +516,8 @@ class PurchaseWorkAcceptance(models.Model):
     @api.multi
     def write(self, vals):
         res = super(PurchaseWorkAcceptance, self).write(vals)
-        self.change_invoice_detail()
+        # Redmine #2346
+        # self.change_invoice_detail()
         return res
 
     @api.model
