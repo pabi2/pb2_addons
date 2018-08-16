@@ -22,6 +22,8 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B3': 'date_from${value or ""}',
+                            'B4': 'date_to${value or ""}',
                         },
                         'results': {
                             'K7': 'pd_number${value or ""}',
