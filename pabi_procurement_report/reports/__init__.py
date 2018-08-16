@@ -7,3 +7,6 @@ from . import xlsx_report_pabi_monthly_work_acceptance
 from . import xlsx_report_pabi_sla_balance
 from . import xlsx_report_pabi_supplier_list
 from . import xlsx_report_pabi_stock_balance
+from . import xlsx_report_pabi_supplier_evaluation
+from . import xlsx_report_pabi_comparison_pr_po
+

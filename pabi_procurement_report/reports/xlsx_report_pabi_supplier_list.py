@@ -121,4 +121,5 @@ class XLSXReportPabiSupplierListResults(models.Model):
         LEFT JOIN res_partner_category rpc
         ON rp.category_id = rpc.id
         WHERE rp.supplier = True
+        AND rp.employee = False
         )""" % (self._table, ))

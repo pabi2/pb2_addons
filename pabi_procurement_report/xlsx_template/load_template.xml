@@ -12,6 +12,8 @@
                 ref('xlsx_report_pabi_sla_balance'),
                 ref('xlsx_report_pabi_supplier_list'),
                 ref('xlsx_report_pabi_stock_balance'),
+                ref('xlsx_report_pabi_supplier_evaluation'),
+                ref('xlsx_report_pabi_comparison_pr_po'),
             ]"/>
             <value>pabi_procurement_report/xlsx_template</value>
         </function>

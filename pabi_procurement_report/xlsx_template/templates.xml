@@ -237,5 +237,71 @@
               }
           </field>
         </record>
+
+        <!-- PABI Supplier Evaluation -->
+        <record id="xlsx_report_pabi_supplier_evaluation" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.supplier.evaluation</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_supplier_evaluation.xlsx</field>
+            <field name="name">PABI Supplier Evaluation</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'results': {
+                            'A5': 'id${value or ""}',
+                            'B5': 'partner_code${value or ""}',
+                            'C5': 'partner_name${value or ""}',
+                            'D5': 'po_no${value or ""}',
+                            'E5': 'wa_no${value or ""}',
+                            'F5': 'date_contract_end${value or ""}',
+                            'G5': 'date_receive${value or ""}',
+                            'H5': 'delay_day${value or ""}',
+                            'I5': 'eval_receiving${value or ""}',
+                            'J5': 'eval_quality${value or ""}',
+                            'K5': 'eval_service${value or ""}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+              }
+             </field>
+        </record>
+
+        <!-- PABI Compare PR PO -->
+        <record id="xlsx_report_pabi_comparison_pr_po" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.comparison.pr.po</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_comparison_pr_po.xlsx</field>
+            <field name="name">PABI PR and PO Comparison</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'results': {
+                            'A5': 'pr_name${value or ""}',
+                            'B5': 'pr_header${value or ""}',
+                            'C5': 'pr_total#{number_format=number}',
+                            'D5': 'po_name${value or ""}',
+                            'E5': 'partner_name${value or ""}',
+                            'F5': 'po_no_vat#{number_format=number}',
+                            'G5': 'po_tax#{number_format=number}',
+                            'H5': 'po_vat#{number_format=number}',
+                            'I5': 'diff#{number_format=number}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+              }
+             </field>
+        </record>
     </data>
 </openerp>
