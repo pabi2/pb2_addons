@@ -34,8 +34,11 @@ class AccountMove(models.Model):
         # Getting move_line_ids of the voided documents.
         move_lines = \
             AccountMoveLine.search([('account_id.reconcile', '=', True),
-                                    ('reconcile_id', '=', False),
                                     ('move_id', 'in', move_ids)])
+        # Make sure to remove reconicle_id if any (case GR/IR)
+        reconciles = move_lines.mapped('reconcile_id')
+        reconciles.unlink()
+        move_lines.refresh()  # clear cache
         if move_lines:
             move_lines.reconcile('manual')
 
