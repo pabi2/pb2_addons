@@ -91,7 +91,7 @@ class PurchaseRequest(models.Model):
         'purchase.method',
         string='Procurement Method',
         readonly=True,
-        required=True,
+        required=False,
         states={
             'draft': [('readonly', False)],
             'to_approve': [('readonly', False)]
