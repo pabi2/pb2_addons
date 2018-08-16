@@ -51,7 +51,7 @@ class PurchaseOrder(models.Model):
     plan_invoice_created = fields.Boolean(
         string='Invoice Created',
         compute='_compute_plan_invoice_created',
-        store=True,
+        # store=True,
         help="Compute whether number of invoices "
         "(not cancelled invoices) are created as planned",
     )
@@ -64,23 +64,24 @@ class PurchaseOrder(models.Model):
         default=0,
     )
 
-    @api.one
-    @api.depends('invoice_ids.state')
+    @api.multi
     def _compute_plan_invoice_created(self):
-        if not self.invoice_ids or not self.use_invoice_plan:
-            self.plan_invoice_created = False
-        else:
-            total_invoice_amt = 0
-            num_valid_invoices = 0
-            for i in self.invoice_ids:
-                if i.state not in ('cancel'):
-                    num_valid_invoices += 1
-                if i.state in ('open', 'paid'):
-                    total_invoice_amt += i.amount_untaxed
-            num_plan_invoice = len(list(set([i.installment
-                                             for i in self.invoice_plan_ids])))
-            self.plan_invoice_created = num_valid_invoices == num_plan_invoice
-            self.total_invoice_amount = total_invoice_amt
+        for rec in self:
+            if not rec.invoice_ids or not rec.use_invoice_plan:
+                rec.plan_invoice_created = False
+            else:
+                total_invoice_amt = 0
+                num_valid_invoices = 0
+                for i in rec.invoice_ids:
+                    if i.state not in ('cancel'):
+                        num_valid_invoices += 1
+                    if i.state in ('open', 'paid'):
+                        total_invoice_amt += i.amount_untaxed
+                plan_invoice = len(list(set([i.installment for i in
+                                             rec.invoice_plan_ids])))
+                rec.plan_invoice_created = num_valid_invoices == plan_invoice
+                rec.total_invoice_amount = total_invoice_amt
+        return True
 
     @api.model
     def _calculate_subtotal(self, vals):
