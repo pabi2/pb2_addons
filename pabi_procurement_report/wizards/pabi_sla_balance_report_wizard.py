@@ -8,23 +8,21 @@ class PabiSlaBalanceReportWizard(models.TransientModel, Common):
     _name = 'pabi.monthly.sla.balance.report.wizard'
 
     # Search Criteria
-    operating_unit_id = fields.Many2one(
-        'operating.unit',
-        string='Operating Unit',
+    # Search Criteria
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
     )
-    select_status = fields.Selection(
-        [
-            ('done', 'Done'),
-            ('cancel', 'Cancel'),
-        ],
-        string='Status',
+    date_end = fields.Date(
+        string='Date End',
+        required=True
     )
 
     @api.multi
     def xls_export(self):
         fields = [
-            'operating_unit_id',
-            'status',
+            'org_ids',
+            'date_end',
         ]
         report_name = 'xlsx_report_pabi_sla_balance'
         return self._get_report(fields, report_name)

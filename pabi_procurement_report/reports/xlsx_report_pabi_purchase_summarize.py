@@ -22,9 +22,11 @@ class XLSXReportPabiPurchaseSummarize(models.TransientModel):
     )
     date_from = fields.Date(
         string='Date From',
+        required=True,
     )
     date_to = fields.Date(
         string='Date To',
+        required=True,
     )
     # Report Result
     results = fields.Many2many(

@@ -12,6 +12,10 @@ class XLSXReportPabiSupplierEvaluation(models.TransientModel):
         'res.partner',
         string='Partner',
     )
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
+    )
 
     # Report Result
     results = fields.Many2many(
@@ -62,6 +66,10 @@ class XLSXReportPabiSupplierEvaluationResults(models.Model):
     partner_id = fields.Many2one(
         'res.partner',
         string='Partner',
+    )
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
     )
     eval_service = fields.Char(
         string='Service',
@@ -137,9 +145,12 @@ class XLSXReportPabiSupplierEvaluationResults(models.Model):
         else
         0
         end
-        as delay_day
+        as delay_day,
+        org_id as org_id
         from purchase_work_acceptance wa
         left join purchase_order po on po.id = wa.order_id
+        left join operating_unit ou on ou.id = po.operating_unit_id
+        left join res_org org on org.operating_unit_id = ou.id
         left join res_partner rp on rp.id = po. partner_id
         left join res_partner_title rpt on rpt.id = rp.title
         )""" % (self._table, ))

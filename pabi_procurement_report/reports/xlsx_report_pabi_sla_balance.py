@@ -8,16 +8,13 @@ class XLSXReportPabiSlaBalance(models.TransientModel):
     _inherit = 'xlsx.report'
 
     # Search Criteria
-    operating_unit_id = fields.Many2one(
-        'operating.unit',
-        string='Operating Unit',
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
     )
-    select_status = fields.Selection(
-        [
-            ('done', 'Done'),
-            ('cancel', 'Cancel'),
-        ],
-        string='Status',
+    date_end = fields.Date(
+        string='Date End',
+        required=True
     )
 
     # Report Result
@@ -33,11 +30,10 @@ class XLSXReportPabiSlaBalance(models.TransientModel):
         self.ensure_one()
         Result = self.env['xlsx.report.pabi.sla.balance.results']
         dom = []
-        print self.select_status
-        if self.operating_unit_id:
-            dom += [('operating_unit_id', '=', self.operating_unit_id.id)]
-        if self.select_status:
-            dom += [('select_status', '=', self.select_status)]
+        if self.org_ids:
+            dom += [('org_id', 'in', self.org_ids._ids)]
+        if self.date_end:
+            dom += [('date_transfer', '<=', self.date_end)]
         self.results = Result.search(dom)
 
 
@@ -49,6 +45,10 @@ class XLSXReportPabiSlaBalanceResults(models.Model):
     operating_unit_id = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
+    )
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
     )
     requester_ou_name = fields.Char(
         string='OU Name',
@@ -94,9 +94,10 @@ class XLSXReportPabiSlaBalanceResults(models.Model):
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
-       SELECT 
+        SELECT 
         row_number() over (order by sr.id) as id,
         sr.operating_unit_id,
+        org.id as org_id,
         sr.name as sr_name,
         CONCAT(
         COALESCE((SELECT value FROM ir_translation it
@@ -136,6 +137,8 @@ class XLSXReportPabiSlaBalanceResults(models.Model):
         FROM stock_picking sp
         LEFT JOIN stock_request sr
         ON sr.transfer_picking_id = sp.id
+        LEFT JOIN res_org org
+        ON sr.operating_unit_id = org.operating_unit_id
         LEFT JOIN res_project prj
         ON sr.project_id = prj.id
         LEFT JOIN res_section sec

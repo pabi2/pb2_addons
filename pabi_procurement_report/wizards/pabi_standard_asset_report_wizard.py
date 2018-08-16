@@ -7,17 +7,22 @@ class PabiStandardAssetReportWizard(models.TransientModel, Common):
 
     _name = 'pabi.standard.asset.report.wizard'
 
-    operating_unit_id = fields.Many2one(
-        'operating.unit',
-        string='Operating Unit',
+    # Search Criteria
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
     )
     method_id = fields.Many2one(
         'purchase.method',
         string='Purchase Method',
     )
-    price_range_id = fields.Many2one(
-        'purchase.price.range',
-        string='Purchase Price Range',
+    is_standard = fields.Selection(
+        [
+            ('all', 'All'),
+            ('yes', 'Yes'),
+            ('no', 'No'),
+        ],
+        string='Standard',
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -27,15 +32,21 @@ class PabiStandardAssetReportWizard(models.TransientModel, Common):
         'purchase.order',
         string='Purchase Order',
     )
-    date_from = fields.Date(string='From Date')
-    date_to = fields.Date(string='To Date')
+    date_from = fields.Date(
+        string='From Date',
+        required=True,
+    )
+    date_to = fields.Date(
+        string='To Date',
+        required=True,
+    )
 
     @api.multi
     def xls_export(self):
         fields = [
-            'operating_unit_id',
+            'org_ids',
             'method_id',
-            'price_range_id',
+            'is_standard',
             'partner_id',
             'order_id',
             'date_from',

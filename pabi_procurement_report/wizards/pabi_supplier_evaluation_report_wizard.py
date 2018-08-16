@@ -12,11 +12,15 @@ class PabiSupplierEvaluationReportWizard(models.TransientModel, Common):
         'res.partner',
         string='Partner',
     )
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
+    )
 
     @api.multi
     def xls_export(self):
         fields = [
-            'partner_id',
+            'partner_id', 'org_ids'
         ]
         report_name = 'xlsx_report_pabi_supplier_evaluation'
         return self._get_report(fields, report_name)
