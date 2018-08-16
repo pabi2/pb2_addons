@@ -108,6 +108,7 @@ class general_ledger_xls(report_xls):
              'filter_date' and _('Dates Filter') or _('Periods Filter')),
             ('af', 1, 0, 'text', _('Accounts Filter')),
             ('tm', 2, 0, 'text', _('Target Moves')),
+            ('rec', 2, 0, 'text', _('Reconciled')),
             ('ib', 2, 0, 'text', _('Initial Balance')),
 
         ]
@@ -137,6 +138,7 @@ class general_ledger_xls(report_xls):
             ('af', 1, 0, 'text', _p.accounts(data) and ', '.join(
                 [account.code for account in _p.accounts(data)]) or _('All')),
             ('tm', 2, 0, 'text', _p.display_target_move(data)),
+            ('rec', 2, 0, 'text', _p.display_reconciled(data)),
             ('ib', 2, 0, 'text', initial_balance_text[
              _p.initial_balance_mode]),
         ]
@@ -403,11 +405,14 @@ class general_ledger_xls(report_xls):
                                 'currency_code') or '', None,
                              ll_cell_style_center),
                         ]
+                    if _p.display_reconciled(data) == 'Open Items':
+                        rec = None
+                    else:
+                        rec = line.get('reconcile_id', '')
                     c_specs += [
                         # PABI2
                         ('posted_by', 1, 0, 'text', line.get('posted_by', '')),
-                        ('reconcile_id', 1, 0, 'text',
-                         line.get('reconcile_id', '')),
+                        ('reconcile_id', 1, 0, 'text', rec),
                         ('partial_id', 1, 0, 'text',
                             line.get('partial_id', '')),
                         # --

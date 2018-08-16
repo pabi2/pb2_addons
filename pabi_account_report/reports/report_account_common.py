@@ -849,8 +849,8 @@ class PabiCommonLoanAgreementReportView(models.Model):
                    % (self._table, self._get_sql_view()))
 
 
-class PabiCommonAccountVoucherReportView(models.Model):
-    _name = 'pabi.common.account.voucher.report.view'
+class PabiCommonSupplierPaymentReportView(models.Model):
+    _name = 'pabi.common.supplier.payment.report.view'
     _auto = False
 
     id = fields.Integer(
@@ -872,6 +872,11 @@ class PabiCommonAccountVoucherReportView(models.Model):
         string='Voucher Line',
         readonly=True,
     )
+    expense_id = fields.Many2one(
+        'hr.expense.expense',
+        string='Expense',
+        readonly=True,
+    )
     fiscalyear = fields.Char(
         string='Fiscal Year',
         readonly=True,
@@ -884,13 +889,35 @@ class PabiCommonAccountVoucherReportView(models.Model):
         string='Invoice Number',
         readonly=True,
     )
+    pay_to = fields.Selection(
+        [('employee', 'Employee'),
+         ('supplier', 'Supplier'),
+         ('pettycash', 'Petty Cash'),
+         ('internal', 'Internal Charge')],
+        string='Pay Type',
+        readonly=True,
+    )
+    source_document_type = fields.Selection(
+        [('purchase', 'Purchase Order'),
+         ('sale', 'Sales Order'),
+         ('expense', 'Expense'),
+         ('advance', 'Advance')],
+        string='Source Document Type',
+        readonly=True,
+    )
+    date_due = fields.Date(
+        string='Due Date',
+        readonly=True,
+    )
 
     def _get_sql_select(self):
         sql_select = """
             ROW_NUMBER() OVER(ORDER BY av.id, ai.id) AS id,
             av.id AS voucher_id, ai.id AS invoice_id,
-            av_line.id AS voucher_line_id, af.name AS fiscalyear,
-            av.number AS voucher_number, ai.number AS invoice_number
+            av_line.id AS voucher_line_id, ex.id AS expense_id,
+            af.name AS fiscalyear, av.number AS voucher_number,
+            ai.number AS invoice_number, ex.pay_to, ai.source_document_type,
+            ai.date_due
         """
         return sql_select
 
@@ -905,6 +932,10 @@ class PabiCommonAccountVoucherReportView(models.Model):
             LEFT JOIN account_invoice ai ON am_line.move_id = ai.move_id
             LEFT JOIN account_period ap ON av.period_id = ap.id
             LEFT JOIN account_fiscalyear af ON ap.fiscalyear_id = af.id
+            LEFT JOIN payment_export pe ON av.payment_export_id = pe.id
+            LEFT JOIN hr_expense_expense ex ON ai.expense_id = ex.id
+            WHERE av.type = 'payment' AND av.state = 'posted'
+                AND pe.state = 'done'
         """ % (self._get_sql_select())
         return sql_select
 
