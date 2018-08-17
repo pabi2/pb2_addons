@@ -16,6 +16,7 @@
     "installable": True,
     "depends": [
         "pabi_procurement",
+        "pabi_budget_plan",
     ],
     "data": [
         "views/purchase_requisition_view.xml",
