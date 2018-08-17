@@ -40,8 +40,8 @@ class SectionBudgetTransfer(models.Model):
         string='Fiscal Year',
         required=True,
         readonly=True,
-        states={'draft': [('readonly', False)]},
-        default=lambda self: self.env['account.period'].find().fiscalyear_id,
+        # states={'draft': [('readonly', False)]},
+        default=lambda self: self.env['account.fiscalyear'].find(),
         help="Fiscalyear will be as of current date only, no backdate allowed"
     )
     division_id = fields.Many2one(
@@ -143,6 +143,11 @@ class SectionBudgetTransfer(models.Model):
                     raise ValidationError(
                         _('Please verify that all budgets are unit based'))
                 # Fiscal year
+                this_fy = self.env['account.fiscalyear'].find()
+                if this_fy != trans.fiscalyear_id.id:
+                    raise ValidationError(
+                        _('Current FY is %s, you are not allow to transfer '
+                          'budget out of this fiscalyear.') % (this_fy.name))
                 if l.from_budget_id.fiscalyear_id != trans.fiscalyear_id or \
                         l.to_budget_id.fiscalyear_id != trans.fiscalyear_id:
                     raise ValidationError(
@@ -153,7 +158,7 @@ class SectionBudgetTransfer(models.Model):
                 # if l.from_budget_id.org_id != trans.org_id or \
                 #         l.to_budget_id.org_id != trans.org_id:
                 #     raise ValidationError(
-                #         _('Please verify that all budgets belong to Org %s') %
+                #        _('Please verify that all budgets belong to Org %s') %
                 #         (trans.org_id.name_short))
                 # Not same budget
                 if l.from_budget_id == l.to_budget_id:
