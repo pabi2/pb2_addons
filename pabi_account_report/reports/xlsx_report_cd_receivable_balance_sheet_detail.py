@@ -198,9 +198,9 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
                     'partner_name': first_rec and " ".join(
                         list(filter(lambda l: l is not False,
                                     [loan_agreement.borrower_partner_id
-                                        .with_context(lang="th_TH").title.name,
+                                        .title.name,
                                      loan_agreement.borrower_partner_id
-                                        .with_context(lang="th_TH").name])))
+                                        .name])))
                         or False,
                     'mou': first_rec and loan_agreement.mou_id.name or False,
                     'brought_forward': first_rec and rec[1] or False,
