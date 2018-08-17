@@ -329,20 +329,14 @@ class ResProject(LogCommon, models.Model):
         'res.org',
         string='Org',
         related='pm_employee_id.org_id',
-<<<<<<< HEAD
         store=True,
-=======
->>>>>>> f5f0b1408fbc3706bf4fed1e38f7fb8cc5a2e9f3
         readonly=True,
     )
     costcenter_id = fields.Many2one(
         'res.costcenter',
         string='Cost Center',
         related='pm_employee_id.costcenter_id',
-<<<<<<< HEAD
         store=True,
-=======
->>>>>>> f5f0b1408fbc3706bf4fed1e38f7fb8cc5a2e9f3
         readonly=True,
     )
     _sql_constraints = [
