@@ -6,6 +6,6 @@ class AccountBudget(models.Model):
     _inherit = 'account.budget'
 
     policy_amount = fields.Float(
-        readony=False,
+        readonly=False,
         help="Editable only in pabi__pre_go_live",
     )
