@@ -112,7 +112,7 @@
                         </h2>
                         <group>
                             <group>
-                                <field name="org_id" required="1"/>
+                                <field name="org_id"/>
                                 <field name="functional_area_id"/>
                                 <field name="program_group_id"/>
                                 <field name="program_id"/>
@@ -121,7 +121,7 @@
                             <group>
                                 <field name="fund_ids" widget="many2many_tags"/>
                                 <field name="mission_id" required="1"/>
-                                <field name="costcenter_id" required="1"/>
+                                <field name="costcenter_id"/>
                             </group>
                         </group>
                         <group>
@@ -152,7 +152,7 @@
                                         <field name="budget_method" invisible="1"/>
                                         <field name="charge_type"/>
                                         <field name="income_section_id"/>
-                                        <field name="activity_group_id" required="1"/>
+                                        <field name="activity_group_id" required="1" domain="[('budget_method', '=', budget_method)]"/>
                                         <field name="description"/>
                                         <field name="m1"/>
                                         <field name="m2"/>
@@ -194,7 +194,7 @@
                                         <field name="fiscalyear_id"/>
                                         <field name="budget_method" invisible="1"/>
                                         <field name="charge_type" invisible="1"/>
-                                        <field name="activity_group_id" required="1"/>
+                                        <field name="activity_group_id" required="1" domain="[('budget_method', '=', budget_method)]"/>
                                         <field name="description"/>
                                         <field name="m1"/>
                                         <field name="m2"/>

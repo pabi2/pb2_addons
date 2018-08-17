@@ -447,6 +447,11 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
                                                       limit=limit, order=order,
                                                       count=count)
 
+    @api.onchange('unit', 'activity_unit_price', 'activity_unit')
+    def _onchange_calculate_total_budget(self):
+        self.total_budget = self.unit * self.activity_unit_price * \
+                            self.activity_unit
+
 
 class BudgetPlanUnitSummary(models.Model):
     _name = 'budget.plan.unit.summary'

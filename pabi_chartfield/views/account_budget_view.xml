@@ -169,7 +169,7 @@
                     <field name="cost_control_id" invisible="0" /> <!-- for unit base -->
 
                     <!-- ACTIVITY -->
-                    <field name="activity_group_id" invisible="0"/>
+                    <field name="activity_group_id" invisible="0" domain="[('budget_method', '=', budget_method)]"/>
                     <field name="activity_id" invisible="1" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
 
                     <!-- DESC -->
@@ -242,7 +242,7 @@
                     <field name="cost_control_id" invisible="1" />
 
                     <!-- ACTIVITY -->
-                    <field name="activity_group_id" invisible="0"/>
+                    <field name="activity_group_id" invisible="0" domain="[('budget_method', '=', budget_method)]"/>
                     <field name="activity_id" invisible="1" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
 
                     <!-- DESC -->
@@ -306,7 +306,7 @@
                     <field name="cost_control_type_id" invisible="1"/>
                     <field name="cost_control_id" invisible="1" />
                     <!-- ACTIVITY -->
-                    <field name="activity_group_id" invisible="0"/>
+                    <field name="activity_group_id" invisible="0" domain="[('budget_method', '=', budget_method)]"/>
                     <field name="activity_id" invisible="1"  domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', budget_method)]"/>
 
                     <!-- DESC -->
