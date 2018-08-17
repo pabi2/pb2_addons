@@ -30,7 +30,7 @@ class AccountWhtCert(models.Model):
         states={'draft': [('readonly', False)]},
     )
     state = fields.Selection(
-        [('draft', 'Darft'),
+        [('draft', 'Draft'),
          ('done', 'Done'),
          ('cancel', 'Cancelled')],
         string='Status',
@@ -164,8 +164,10 @@ class AccountWhtCert(models.Model):
             supplier = rec.supplier_partner_id
             rec.x_voucher_number = rec.voucher_id.number
             rec.x_date_value = rec.date
-            rec.x_company_name = company.display_name
-            rec.x_supplier_name = supplier.display_name
+            rec.x_company_name = company.name
+            rec.x_supplier_name = ' '.join(list(
+                filter(lambda l: l is not False, [supplier.title.name,
+                                                  supplier.name])))
             rec.x_company_taxid = \
                 company.vat and len(company.vat) == 13 and company.vat or ''
             rec.x_supplier_taxid = \

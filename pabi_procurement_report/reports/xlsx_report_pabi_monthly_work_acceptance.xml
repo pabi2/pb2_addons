@@ -9,7 +9,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='criteria']" position="inside">
                     <group>
-                        <field name="operating_unit_id"/>
+                        <field name="org_ids" widget="many2many_tags"/>
+                        <field name="partner_ids" widget="many2many_tags"/>
                         <field name="date_from"/>
                         <field name="date_to"/>
                     </group>
@@ -20,14 +21,14 @@
         </record>
 
         <record id="action_xlsx_report_pabi_monthly_work_acceptance" model="ir.actions.act_window">
-            <field name="name">PABI Monthly Work Acceptance</field>
+            <field name="name">Monthly Work Acceptance</field>
             <field name="res_model">xlsx.report.pabi.monthly.work.acceptance</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_pabi_monthly_work_acceptance" name="PABI Monthly Work Acceptance" parent="menu_procurement_report" action="action_xlsx_report_pabi_monthly_work_acceptance" sequence="100"/>
+        <menuitem id="menu_xlsx_report_pabi_monthly_work_acceptance" name="Monthly Work Acceptance" parent="menu_procurement_report" action="action_xlsx_report_pabi_monthly_work_acceptance" sequence="100"/>
 
 
     </data>

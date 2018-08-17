@@ -8,17 +8,21 @@ class XLSXReportPabiStandardAsset(models.TransientModel):
     _inherit = 'xlsx.report'
 
     # Search Criteria
-    operating_unit_id = fields.Many2one(
-        'operating.unit',
-        string='Operating Unit',
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
     )
     method_id = fields.Many2one(
         'purchase.method',
         string='Purchase Method',
     )
-    price_range_id = fields.Many2one(
-        'purchase.price.range',
-        string='Purchase Price Range',
+    is_standard = fields.Selection(
+        [
+            ('all', 'All'),
+            ('yes', 'Yes'),
+            ('no', 'No'),
+        ],
+        string='Standard',
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -52,12 +56,15 @@ class XLSXReportPabiStandardAsset(models.TransientModel):
             ('po_date', '>=', self.date_from),
             ('po_date', '<=', self.date_to),
         ]
-        if self.operating_unit_id:
-            dom += [('operating_unit_id', '=', self.operating_unit_id.id)]
+        if self.is_standard:
+            if self.is_standard == 'yes':
+                dom += [('is_standard', '=', True)]
+            elif self.is_standard == 'no':
+                dom += [('is_standard', '=', False)]
+        if self.org_ids:
+            dom += [('org_id', 'in', self.org_ids._ids)]
         if self.method_id:
             dom += [('method_id', '=', self.method_id.id)]
-        if self.price_range_id:
-            dom += [('price_range_id', '=', self.method_id.id)]
         if self.partner_id:
             dom += [('partner_id', '=', self.partner_id.id)]
         if self.order_id:
@@ -72,6 +79,10 @@ class XLSXReportPabiStandardAssetResults(models.Model):
 
     po_number = fields.Char(
         string='PO No.',
+        readonly=True,
+    )
+    ou_name = fields.Char(
+        string='OU Name',
         readonly=True,
     )
     pol_product_name = fields.Char(
@@ -106,7 +117,7 @@ class XLSXReportPabiStandardAssetResults(models.Model):
         string='Warranty',
         readonly=True,
     )
-    is_standard = fields.Char(
+    is_standard = fields.Boolean(
         string='Is Standard',
         readonly=True,
     )
@@ -116,6 +127,10 @@ class XLSXReportPabiStandardAssetResults(models.Model):
     operating_unit_id = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
+    )
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
     )
     method_id = fields.Many2one(
         'purchase.method',
@@ -156,7 +171,11 @@ class XLSXReportPabiStandardAssetResults(models.Model):
         prq.purchase_method_id AS method_id,
         prq.purchase_price_range_id AS price_range_id,
         rp.id AS partner_id,
-        po.id AS order_id
+        po.id AS order_id,
+        (
+        SELECT id from res_org WHERE operating_unit_id = po.operating_unit_id
+        ) as org_id,
+        ou.name as ou_name
         FROM
         account_asset aaa
         LEFT JOIN product_product pp ON pp.id = aaa.product_id
@@ -174,6 +193,7 @@ class XLSXReportPabiStandardAssetResults(models.Model):
             ON prl.id = purchase_requisition_line_id
         LEFT JOIN purchase_request_line prql
             ON prprl.purchase_request_line_id = prql.id
+        LEFT JOIN operating_unit ou ON po.operating_unit_id = ou.id
         WHERE po.order_type = 'purchase_order'
         ORDER BY id
         )""" % (self._table, ))

@@ -1471,7 +1471,7 @@ result = pd.pivot_table(df, index=groupby,
                            '_TAIL_0': {
                                'A13': '${"Total"}#{font=bold}',
                                'L13': '@{sum}#{font=bold;number_format=number}',
-                           }
+                          }
                        }
                    }
                }

@@ -18,14 +18,14 @@
         </record>
 
         <record id="action_xlsx_report_pabi_supplier_list" model="ir.actions.act_window">
-            <field name="name">PABI Supplier List</field>
+            <field name="name">Supplier List</field>
             <field name="res_model">xlsx.report.pabi.supplier.list</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_pabi_supplier_list" name="PABI Supplier List" parent="menu_procurement_report" action="action_xlsx_report_pabi_supplier_list" sequence="100"/>
+        <menuitem id="menu_xlsx_report_pabi_supplier_list" name="Supplier List" parent="menu_procurement_report" action="action_xlsx_report_pabi_supplier_list" sequence="100"/>
 
 
     </data>

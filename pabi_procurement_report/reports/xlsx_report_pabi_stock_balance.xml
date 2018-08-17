@@ -18,14 +18,14 @@
         </record>
 
         <record id="action_xlsx_report_pabi_stock_balance" model="ir.actions.act_window">
-            <field name="name">PABI Stock Balance</field>
+            <field name="name">Stock Balance</field>
             <field name="res_model">xlsx.report.pabi.stock.balance</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_pabi_stock_balance" name="PABI Stock Balance" parent="menu_procurement_report" action="action_xlsx_report_pabi_stock_balance" sequence="100"/>
+        <menuitem id="menu_xlsx_report_pabi_stock_balance" name="Stock Balance" parent="menu_procurement_report" action="action_xlsx_report_pabi_stock_balance" sequence="100"/>
 
 
     </data>

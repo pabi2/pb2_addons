@@ -9,9 +9,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='criteria']" position="inside">
                     <group>
-                        <field name="operating_unit_id"/>
+                        <field name="org_ids" widget="many2many_tags"/>
                         <field name="method_id"/>
-                        <field name="price_range_id"/>
+                        <field name="is_standard"/>
                         <field name="partner_id"/>
                         <field name="order_id"/>
                         <field name="date_from"/>
@@ -24,14 +24,14 @@
         </record>
 
         <record id="action_xlsx_report_pabi_standard_asset" model="ir.actions.act_window">
-            <field name="name">PABI Standard Asset</field>
+            <field name="name">Standard Asset</field>
             <field name="res_model">xlsx.report.pabi.standard.asset</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_pabi_standard_asset" name="PABI Standard Asset" parent="menu_procurement_report" action="action_xlsx_report_pabi_standard_asset" sequence="100"/>
+        <menuitem id="menu_xlsx_report_pabi_standard_asset" name="Standard Asset" parent="menu_procurement_report" action="action_xlsx_report_pabi_standard_asset" sequence="100"/>
 
 
     </data>
