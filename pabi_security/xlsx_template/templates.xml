@@ -69,7 +69,7 @@
                                 'AO12': 'g30_label${value or ""}',
                             },
                             'line_ids': {
-                                'A13': 'user_id${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'A13': 'user_id.login${value or ""}',
                                 'B13': 'mg1${value and "X" or ""}',
                                 'C13': 'mg2${value and "X" or ""}',
                                 'D13': 'mg3${value and "X" or ""}',
