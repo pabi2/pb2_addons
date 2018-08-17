@@ -353,10 +353,7 @@ class ResProject(LogCommon, models.Model):
 
     @api.onchange('pm_employee_id')
     def _onchange_user_id(self):
-        self.pm_section_id = self.pm_employee_id.section_id
         self.owner_disivion_id = self.pm_employee_id.section_id.division_id
-        self.costcenter_id = self.pm_employee_id.costcenter_id
-        self.org_id = self.pm_employee_id.org_id
 
     @api.onchange('analyst_employee_id')
     def _onchange_analyst_employee_id(self):
