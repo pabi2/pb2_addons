@@ -152,7 +152,7 @@
                                         <field name="budget_method" invisible="1"/>
                                         <field name="charge_type"/>
                                         <field name="income_section_id"/>
-                                        <field name="activity_group_id" required="1"/>
+                                        <field name="activity_group_id" required="1" domain="[('budget_method', '=', budget_method)]"/>
                                         <field name="description"/>
                                         <field name="m1"/>
                                         <field name="m2"/>
@@ -194,7 +194,7 @@
                                         <field name="fiscalyear_id"/>
                                         <field name="budget_method" invisible="1"/>
                                         <field name="charge_type" invisible="1"/>
-                                        <field name="activity_group_id" required="1"/>
+                                        <field name="activity_group_id" required="1" domain="[('budget_method', '=', budget_method)]"/>
                                         <field name="description"/>
                                         <field name="m1"/>
                                         <field name="m2"/>
