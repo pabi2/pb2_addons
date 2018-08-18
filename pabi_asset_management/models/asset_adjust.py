@@ -397,12 +397,11 @@ class AccountAssetAdjust(models.Model):
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
         asset_dict.update({'date_start': asset_date,
                            'purchase_value': amount,
+                           'type': 'normal',
                            })
         new_asset = Asset.create(asset_dict)
         new_asset.account_analytic_id = \
             Analytic.create_matched_analytic(new_asset)
-        # Set back to normal
-        new_asset.type = 'normal'
         return new_asset
 
     @api.multi
