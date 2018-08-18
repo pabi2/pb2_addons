@@ -110,7 +110,7 @@
             <field name="model">budget.fund.rule</field>
             <field name="arch" type="xml">
                 <search string="Fund">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|', '|', ('name','ilike',self), ('project_id.code','ilike',self), ('project_id','ilike',self)]" string="Name"/>
                     <field name="fund_id"/>
                     <field name="project_id"/>
                     <field name="template_id"/>
