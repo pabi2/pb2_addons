@@ -36,24 +36,11 @@ class PabiActionAssetCompute(models.TransientModel):
         string='Asset Test Log',
         readonly=True,
     )
-    test_completed = fields.Boolean(
-        string='Test Completed',
-        default=False,
-    )
-    max_asset_test = fields.Integer(
-        string='Max Assets',
-        default=1000,
-    )
     run_state = fields.Selection(
         [('run', 'Run Asset'),
          ('test', 'Test Result')],
         string='Run State',
         default='run',
-    )
-    tested_assets = fields.Char(  # unlimited size
-        string='Tested Assets',
-        default='[]',
-        help="String representative of tested asset_ids, i.e, '[1,2,4]'"
     )
     batch_note = fields.Char(
         string='Batch Note',
@@ -93,8 +80,7 @@ class PabiActionAssetCompute(models.TransientModel):
                 ('type', '=', 'normal')]
 
     @api.model
-    def _search_asset(self, period, categ_ids, profile_ids,
-                      exclude_asset_ids=[], limit=False):
+    def _search_asset(self, period, categ_ids, profile_ids):
         # Serach for matched asset depre lines first
         domain = [
             ('asset_id.state', '=', 'open'),
@@ -123,12 +109,10 @@ class PabiActionAssetCompute(models.TransientModel):
             """, (tuple(profile_ids), ))
             asset_ids = [x[0] for x in self._cr.fetchall()]
             domain += [('asset_id', 'in', asset_ids)]
-        if exclude_asset_ids:
-            domain += [('asset_id', 'not in', exclude_asset_ids)]
         depre_lines = self.env['account.asset.line'].search(domain)
         # Find Assets
         domain = [('depreciation_line_ids', 'in', depre_lines.ids)]
-        assets = self.env['account.asset'].search(domain, limit=limit)
+        assets = self.env['account.asset'].search(domain)
         return assets
 
     @api.multi
@@ -186,23 +170,17 @@ class PabiActionAssetCompute(models.TransientModel):
     def run_asset_test(self):
         """ Based on matched assets, run through series of test """
         self.ensure_one()
-        # Matched assets exclude tested one
-        tested_asset_ids = ast.literal_eval(self.tested_assets)
+        self.test_log_ids.unlink()
         assets = self._search_asset(
             self.calendar_period_id, self.categ_ids.ids,
-            self.profile_ids.ids, exclude_asset_ids=tested_asset_ids,
-            limit=self.max_asset_test
+            self.profile_ids.ids
         )
-        tested_asset_ids += assets.ids
         # TEST
         self._log_test_period_closed(self.calendar_period_id)
         self._log_test_asset_profile_account(assets)
         self._log_test_prev_depre_posted(self.calendar_period_id, assets)
         self._log_test_active_chartfield(assets)
-        self.write({'run_state': 'test',
-                    'tested_assets': str(tested_asset_ids),
-                    'test_completed': not assets.ids and True or False,
-                    })
+        self.write({'run_state': 'test'})
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'pabi.action.asset.compute',
@@ -227,9 +205,20 @@ class PabiActionAssetCompute(models.TransientModel):
             logs = []
             self._cr.execute("""
                 select id asset_id, section_id, project_id, invest_asset_id,
-                    invest_construction_phase_id, costcenter_id
+                    invest_construction_phase_id
                 from account_asset
-                where id in %s
+                where id in %s and
+                (
+                 section_id in (select res_id from chartfield_view
+                    where model = 'res.section' and active = false) or
+                 project_id in (select res_id from chartfield_view
+                    where model = 'res.project' and active = false) or
+                 invest_asset_id in (select res_id from chartfield_view
+                    where model = 'res.invest.asset' and active = false) or
+                 invest_construction_phase_id in (select res_id from
+                    chartfield_view where model =
+                    'res.invest.construction.phase' and active = false)
+                )
             """, (tuple(assets.ids), ))
             results = self._cr.dictfetchall()
             for res in results:
@@ -262,7 +251,7 @@ class PabiActionAssetCompute(models.TransientModel):
             account_ids = [x[0] for x in self._cr.fetchall()]
             accounts = self.env['account.account'].browse(account_ids)
             for account in accounts:
-                message = _("Profile's account code, %s, is inactive") % \
+                message = _("Inactive asset profile's account code: %s") % \
                     account.code
                 logs.append((0, 0, {'message': message}))
             self.write({'test_log_ids': logs})
@@ -272,13 +261,16 @@ class PabiActionAssetCompute(models.TransientModel):
     def _log_test_prev_depre_posted(self, period, assets):
         self.ensure_one()
         Asset = self.env['account.asset']
-        logs = []
-        for asset in assets:
-            posted, err_message = Asset._test_prev_depre_posted(period, asset)
-            if not posted:
+        if assets:
+            logs = []
+            unposted_asset_ids = assets._test_prev_depre_unposted(period)
+            assets = Asset.browse(unposted_asset_ids)
+            for asset in assets:
+                message = \
+                    _("Unposted lines prior to period: %s")
                 logs.append((0, 0, {'asset_id': asset.id,
-                                    'message': err_message}))
-        self.write({'test_log_ids': logs})
+                                    'message': message % period.name}))
+            self.write({'test_log_ids': logs})
         return True
 
 

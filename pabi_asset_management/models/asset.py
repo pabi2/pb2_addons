@@ -342,6 +342,22 @@ class AccountAsset(ChartFieldAction, models.Model):
 
     # Building / Floor / Room
     @api.multi
+    @api.constrains('section_id', 'project_id', 'invest_asset_id',
+                    'invest_construction_phase_id', 'personnel_costcenter_id')
+    def _check_chartfield(self):
+        for rec in self:
+            count = 0
+            count += rec.section_id and 1 or 0
+            count += rec.project_id and 1 or 0
+            count += rec.invest_asset_id and 1 or 0
+            count += rec.invest_construction_phase_id and 1 or 0
+            count += rec.personnel_costcenter_id and 1 or 0
+            if count > 1:
+                raise ValidationError(_('Budget field > 1 is not allowed.'))
+        return True
+
+    # Building / Floor / Room
+    @api.multi
     @api.constrains('building_id', 'floor_id', 'room_id')
     def _check_building(self):
         for rec in self:

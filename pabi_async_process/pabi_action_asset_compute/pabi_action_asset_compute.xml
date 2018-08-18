@@ -33,20 +33,22 @@
                                           <field name="name" string="Profile"/>
                                       </tree>
                                   </field>
-                                  <button name="check_affected_asset" class="oe_link oe_right" type="object" string="(Check number of affected assets)" colspan="2"/>
                               </group>
                           </group>
                       </page>
                       <page string="Run Asset Test" attrs="{'invisible': [('run_state', '!=', 'run')]}">
-                          <p>
-                              You can run test multiple times. System will keep track what has been tested in each session.
-                          </p>
                           <group>
                               <group>
-                                  <field name="max_asset_test"/>
+                                  <button name="run_asset_test" type="object" string="Run Test"/>
                               </group>
                               <group>
-                                  <button name="run_asset_test" type="object" string="Run Test"/>
+                                  <p>
+                                      This action will test following conditions,<br/><br/>
+                                      - Period is open<br/>
+                                      - Asset's profile account is active<br/>
+                                      - All previous period depreciation posted<br/>
+                                      - All assets' cost center is active<br/>
+                                  </p>
                               </group>
                           </group>
                       </page>
@@ -54,16 +56,11 @@
                         <group>
                             <group>
                                 <button name="action_back" class="oe_link" type="object" string="&lt;= Go Back to Run Asset" colspan="2"/>
-                                <field name="tested_assets" invisible="1"/>
-                                <field name="test_completed" invisible="1"/>
                             </group>
                             <group>
                                 <button name="%(action_asset_compute_test_log_xlsx_template)d" attrs="{'invisible': [('test_log_ids', '=', [])]}"
                                   type="action" string="Export to Excel =&gt;" class="oe_link oe_right"/>
                             </group>
-                            <center colspan="4" >
-                                <h2 colspan="4" attrs="{'invisible': [('test_completed', '=', False)]}">Test Completed :)</h2>
-                            </center>
                             <field name="test_log_ids" nolabel="1" attrs="{'invisible': [('test_log_ids', '=', [])]}" colspan="4">
                                 <tree>
                                     <field name="asset_id"/>
@@ -72,8 +69,8 @@
                             </field>
                         </group>
                       </page>
-
                   </notebook>
+                  <button name="check_affected_asset" class="oe_link oe_right" type="object" string="(Check number of affected assets)" colspan="2"/>
                 </xpath>
             </field>
         </record>

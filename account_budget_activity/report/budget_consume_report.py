@@ -158,7 +158,7 @@ class BudgetConsumeReport(models.Model):
 
     def _get_dimension(self):
         return 'aal.product_id, aal.activity_group_id, aal.activity_id, ' + \
-            'aal.account_id, aal.period_id, aal.quarter'
+            'aal.general_account_id account_id, aal.period_id, aal.quarter'
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
