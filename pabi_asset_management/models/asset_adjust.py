@@ -155,6 +155,30 @@ class AccountAssetAdjust(models.Model):
         readonly=True,
         help="Limit asset value for case Expense -> Asset",
     )
+    move_ids = fields.Many2many(
+        'account.move',
+        string='Journal Entries',
+        compute='_compute_moves',
+    )
+    move_count = fields.Integer(
+        string='JE Count',
+        compute='_compute_moves',
+    )
+
+    @api.multi
+    def _compute_moves(self):
+        for rec in self:
+            rec.move_ids = (
+                rec.adjust_line_ids.mapped('move_id') or
+                rec.adjust_expense_to_asset_ids.mapped('move_id') or
+                rec.adjust_asset_to_expense_ids.mapped('move_id')
+            ) + (
+                rec.adjust_line_ids.mapped('cancel_move_id') or
+                rec.adjust_expense_to_asset_ids.mapped('cancel_move_id') or
+                rec.adjust_asset_to_expense_ids.mapped('cancel_move_id')
+            )
+            rec.move_count = len(rec.move_ids)
+        return True
 
     # @api.model
     # def _default_journal(self):
@@ -162,6 +186,21 @@ class AccountAssetAdjust(models.Model):
     #         return self.env.ref('pabi_asset_management.journal_asset')
     #     except Exception:
     #         pass
+
+    @api.multi
+    def open_entries(self):
+        self.ensure_one()
+        return {
+            'name': _("Journal Entries"),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': self._context,
+            'nodestroy': True,
+            'domain': [('id', 'in', self.move_ids.ids)],
+        }
 
     @api.multi
     def action_view_asset(self):
@@ -186,7 +225,6 @@ class AccountAssetAdjust(models.Model):
         return result
 
     @api.multi
-    @api.depends('adjust_line_ids', 'adjust_expense_to_asset_ids')
     def _compute_assset_count(self):
         for rec in self:
             ctx = {'active_test': False}
@@ -236,6 +274,34 @@ class AccountAssetAdjust(models.Model):
 
     @api.multi
     def action_cancel(self):
+        Status = self.env['account.asset.status']
+        AccountMove = self.env['account.move']
+        Period = self.env['account.period']
+        for rec in self:
+            adjust_lines = rec.adjust_line_ids or \
+                rec.adjust_asset_to_expense_ids or \
+                rec.adjust_expense_to_asset_ids
+            for line in adjust_lines:
+                move = line.move_id
+                if not move:
+                    continue
+                move_dict = move.copy_data({
+                    'name': move.name + '_VOID',
+                    'ref': move.ref,
+                    'period_id': Period.find().id,
+                    'date': fields.Date.context_today(self),
+                    'reversal_id': move.id})[0]
+                move_dict = AccountMove._switch_move_dict_dr_cr(move_dict)
+                ctx = {'allow_asset': True}  # Allow linking asset, w/o create
+                rev_move = AccountMove.with_context(ctx).create(move_dict)
+                rev_move.button_validate()
+                line.cancel_move_id = rev_move
+                # Just remove asset
+                target_status = Status.search([('map_state', '=', 'draft')],
+                                              limit=1)
+                self._set_asset_as_removed(line.ref_asset_id, target_status)
+            # Detach asset adjust from invoice, do it can create again.
+            rec.invoice_id.asset_adjust_id = False
         self.write({'state': 'cancel'})
 
     @api.model
@@ -351,7 +417,8 @@ class AccountAssetAdjust(models.Model):
             'profile_id': profile.id,
             'product_id': product.id,
             'name': name,
-            'type': 'view',  # so it won't create the first line journal entry
+            # 'type': 'view', # so it won't create the first line journal entry
+            'type': 'normal',
             'move_id': False,
             'adjust_id': self.id,
             'active': True,
@@ -381,7 +448,7 @@ class AccountAssetAdjust(models.Model):
         new_asset = asset.copy(asset_dict)
         asset.target_asset_ids += new_asset
         # Set back to normal
-        new_asset.type = 'normal'
+        # new_asset.type = 'normal'
         # Also duplicate lines
         previous_id = False
         for line in asset.depreciation_line_ids.filtered(lambda l:
@@ -402,7 +469,7 @@ class AccountAssetAdjust(models.Model):
         new_asset.account_analytic_id = \
             Analytic.create_matched_analytic(new_asset)
         # Set back to normal
-        new_asset.type = 'normal'
+        # new_asset.type = 'normal'
         return new_asset
 
     @api.multi
@@ -614,6 +681,13 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
         'account.move',
         string='Journal Entry',
         readonly=True,
+        copy=False,
+    )
+    cancel_move_id = fields.Many2one(
+        'account.move',
+        string='Cancel Journal Entry',
+        readonly=True,
+        copy=False,
     )
     account_analytic_id = fields.Many2one(
         'account.analytic.account',
@@ -787,6 +861,13 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
         'account.move',
         string='Journal Entry',
         readonly=True,
+        copy=False,
+    )
+    cancel_move_id = fields.Many2one(
+        'account.move',
+        string='Cancel Journal Entry',
+        readonly=True,
+        copy=False,
     )
     account_analytic_id = fields.Many2one(
         'account.analytic.account',
@@ -940,6 +1021,13 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         'account.move',
         string='Journal Entry',
         readonly=True,
+        copy=False,
+    )
+    cancel_move_id = fields.Many2one(
+        'account.move',
+        string='Cancel Journal Entry',
+        readonly=True,
+        copy=False,
     )
     account_analytic_id = fields.Many2one(
         'account.analytic.account',
