@@ -646,7 +646,7 @@ class AccountAsset(ChartFieldAction, models.Model):
                   'Invalid or no journal entry in original asset.'))
         move_line_dict = move_lines_dict[0].copy()
         move_line_dict.update({
-            'analytic_account_id': False,  # To refresh dimension
+            'analytic_account_id': False,  # To refresh dimension TODO:
             'credit': debit,
             'debit': credit,
         })

@@ -11,7 +11,8 @@
                     <header>
                         <!-- <button name="action_draft" states="done" string="Back to Draft" type="object" groups="account.group_account_user"/> -->
                         <button name="action_done" states="draft" string="Adjust" type="object" class="oe_highlight" groups="account.group_account_user"/>
-                        <button name="action_cancel" states="draft,done" string="Cancel" type="object" groups="account.group_account_user"/>
+                        <button name="action_cancel" states="draft,done" string="Cancel" type="object" groups="account.group_account_user"
+                          confirm="Are you sure to cancel this document?"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>
@@ -48,7 +49,7 @@
                                                                                      ('adjust_type', '!=', 'expense_to_asset')]}"/>
                             </group>
                             <group>
-                                <field name="journal_id"/>
+                                <field name="journal_id" widget="selection"/>
                                 <field name="user_id"/>
                                 <field name="date"/>
                                 <field name="date_approve"/>
@@ -60,6 +61,7 @@
                                     <tree editable="bottom" colors="gray:asset_state != 'open'">
                                         <field name="asset_id"/>
                                         <field name="asset_state"/>
+                                        <field name="origin_status"/>
                                         <field name="target_status"/>
                                         <field name="product_id"/>
                                         <field name="activity_group_id" required="0" invisible="0"/>
@@ -83,6 +85,7 @@
                                     <tree editable="bottom" colors="gray:asset_state != 'open'">
                                         <field name="asset_id"/>
                                         <field name="asset_state"/>
+                                        <field name="origin_status"/>
                                         <field name="target_status"/>
                                         <field name="activity_group_id" required="0" invisible="0"/>
                                         <field name="activity_id" required="0"
