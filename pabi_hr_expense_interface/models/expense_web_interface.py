@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
 from openerp.exceptions import ValidationError
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class HRExpense(models.Model):
@@ -286,6 +288,7 @@ class HRExpense(models.Model):
 
     @api.model
     def generate_hr_expense(self, data_dict, test=False):
+        _logger.info('generate_hr_expense(), input: %s' % data_dict)
         if not test and not self.env.user.company_id.pabiweb_active:
             raise ValidationError(_('Odoo/PABIWeb Disconnected!'))
         try:
@@ -318,10 +321,13 @@ class HRExpense(models.Model):
                 'messages': e,
             }
             self._cr.rollback()
+        _logger.info('generate_hr_expense(), input: %s' % res)
         return res
 
     @api.multi
     def send_signal_to_pabiweb(self, signal, comment=''):
+        _logger.info(
+            'send_signal_to_pabiweb(), input: [%s, %s]' % (signal, comment))
         self.ensure_one()
         alfresco = self.env['pabi.web.config.settings'].\
             _get_alfresco_connect('exp')
@@ -343,10 +349,15 @@ class HRExpense(models.Model):
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
+        _logger.info('send_signal_to_pabiweb(), output: %s' % result)
         return result
 
     @api.multi
     def send_comment_to_pabiweb(self, status, status_th, comment):
+        _logger.info(
+            'send_comment_to_pabiweb(), input: [%s, %s, %s]' % (status,
+                                                                status_th,
+                                                                comment))
         self.ensure_one()
         alfresco = \
             self.env['pabi.web.config.settings']._get_alfresco_connect('exp')
@@ -371,6 +382,7 @@ class HRExpense(models.Model):
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
+        _logger.info('send_comment_to_pabiweb(), output: %s' % result)
         return result
 
     @api.multi
