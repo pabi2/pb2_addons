@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import logging
 from openerp import models, api
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountBudget(models.Model):
@@ -30,6 +33,10 @@ class AccountBudget(models.Model):
     @api.model
     def pabiweb_check_budget(self, doc_type, doc_date, budget_type,
                              res_id, fund_id, doc_lines, currency_id=False):
+        _logger.info(
+            'pabiweb_check_budget(), input: [%s, %s, %s, %s, %s, %s, %s]' %
+            (doc_type, doc_date, budget_type, res_id,
+             fund_id, doc_lines, currency_id))
         """ Combine 3 types of budget check
         1) Checkbudget by structure (i.e., unit_base, project_base, etc.)
         For project_base,
@@ -96,5 +103,5 @@ class AccountBudget(models.Model):
             res = FundRule.document_validate_asset_price(asset_doc_lines)
             if not res['budget_ok']:
                 return res
-
+        _logger.info('pabiweb_check_budget(), output: %s' % res)
         return res

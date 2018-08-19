@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+import logging
 from openerp import models, api, _
 from openerp.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class ResProject(models.Model):
@@ -8,6 +11,7 @@ class ResProject(models.Model):
 
     @api.model
     def create_project(self, data_dict):
+        _logger.info('create_project(), input: %s' % data_dict)
         """ Create project using friendly dict
         data_dict = {
             'code': 'K-00-00006',
@@ -78,10 +82,12 @@ class ResProject(models.Model):
                 'messages': e,
             }
             self._cr.rollback()
+        _logger.info('create_project(), output: %s' % res)
         return res
 
     @api.model
     def update_project(self, data_dict):
+        _logger.info('update_project(), input: %s' % data_dict)
         """ Friendly update data, sample data_dict,
         data_dict = {
             'code': 'XXX', 'pm_employee_id': '102190',
@@ -111,10 +117,12 @@ class ResProject(models.Model):
                 'messages': e,
             }
             self._cr.rollback()
+        _logger.info('update_project(), output: %s' % res)
         return res
 
     @api.model
     def get_all_fy_budget_release(self, project_code):
+        _logger.info('get_all_fy_budget_release(), input: %s' % project_code)
         """ Return result as dict i.e., {'2018': 234, '2019': 456} """
         res = {
             'is_success': False,
@@ -131,10 +139,13 @@ class ResProject(models.Model):
                 result[l.fiscalyear_id.name] = l.released_amount
             res['is_success'] = True
             res['result'] = result
+        _logger.info('get_all_fy_budget_release(), output: %s' % res)
         return res
 
     @api.model
     def get_current_fy_budget_release(self, project_code):
+        _logger.info('get_current_fy_budget_release(), input: %s' %
+                     project_code)
         """ Return result as float """
         res = self.get_all_fy_budget_release(project_code)
         if res['is_success']:
@@ -142,10 +153,13 @@ class ResProject(models.Model):
             fiscal = self.env['account.fiscalyear'].browse(fiscalyear_id)
             result = res['result'] or {}
             res['result'] = result.get(fiscal.name, 0.0)
+        _logger.info('get_current_fy_budget_release(), output: %s' % res)
         return res
 
     @api.model
     def change_project_budget_lock_status(self, project_code, status):
+        _logger.info('change_project_budget_lock_status(), input: [%s, %s]' %
+                     (project_code, status))
         """ Update lock status,
         state = ['lock', 'unlock']
         """
@@ -174,6 +188,7 @@ class ResProject(models.Model):
                 'messages': e,
             }
             self._cr.rollback()
+        _logger.info('change_project_budget_lock_status(), output: %s' % res)
         return res
 
 
