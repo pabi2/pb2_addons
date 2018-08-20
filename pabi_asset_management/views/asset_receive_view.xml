@@ -41,7 +41,7 @@
                                 <field name="asset_purchase_method_id" domain="[('direct', '=', True)]" required="1" widget="selection"/>
                             </group>
                             <group>
-                                <field name="asset_journal_id"/>
+                                <field name="asset_journal_id" required="1"/>
                                 <field name="date"/>
                                 <field name="min_date" invisible="1"/>
                                 <field name="origin" placeholder="e.g. PO0032" class="oe_inline"/>
