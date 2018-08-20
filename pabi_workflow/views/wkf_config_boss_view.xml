@@ -72,8 +72,8 @@
 
         # TOP Work Flow Configuration Menu
         <!-- Deprecated -->
-        <!-- <menuitem name="Boss/Employee" id="menu_wkf_config_boss"
-          parent="menu_wkf_config" sequence="3"/> -->
+        <menuitem name="Boss/Employee" id="menu_wkf_config_boss"
+          parent="menu_wkf_config" sequence="3"/>
 
         # Boss Level Approval
         <record id="view_wkf_cmd_boss_level_approval_tree" model="ir.ui.view">
@@ -176,7 +176,7 @@
         </record>
 
         <!-- Deprecated -->
-        <!-- <menuitem name="Special Level" id="menu_wkf_cmd_boss_special_level" action="action_wkf_cmd_boss_special_level" parent="menu_wkf_config_boss" sequence="2"/> -->
+        <menuitem name="Special Level" id="menu_wkf_cmd_boss_special_level" action="action_wkf_cmd_boss_special_level" parent="menu_wkf_config_boss" sequence="2"/>
 
         # Special Flow Emotion
         # If a section is setting up for special level, all level under this level
