@@ -27,7 +27,7 @@ class StockPicking(models.Model):
     asset_journal_id = fields.Many2one(
         'account.journal',
         string='Asset Journal',
-        required=True,
+        required=False,
         domain=[('asset', '=', True)],
         help="To overwrite whatever journal form standard IN operation",
     )
