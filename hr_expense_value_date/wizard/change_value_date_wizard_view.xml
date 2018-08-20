@@ -4,14 +4,14 @@
 
     <act_window id="action_change_date_value"
         name="Change Value Date"
-        src_model="account.voucher" 
+        src_model="account.voucher"
         res_model="change.date.value"
         view_type="form"
         view_mode="form"
         key2="client_action_multi"
         target="new"
     />
-    
+
     <record id="wizard_change_date_value" model="ir.ui.view">
         <field name="name">change.date.value.wizard</field>
         <field name="model">change.date.value</field>
