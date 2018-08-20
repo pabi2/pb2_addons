@@ -21,10 +21,10 @@
                   <group name="filter" string="Filter / Group By">
                       <group>
                           <field name="charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
-                          <field name="org_id" attrs="{'invisible': [('report_type', 'not in', ('overall', 'unit_base'))]}"/>
-                          <field name="sector_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
-                          <field name="subsector_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
-                          <field name="division_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                          <field name="org_id" attrs="{'invisible': [('report_type', 'not in', ('overall', 'unit_base', 'personnel'))]}"/>
+                          <field name="sector_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'personnel'))]}"/>
+                          <field name="subsector_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'personnel'))]}"/>
+                          <field name="division_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'personnel'))]}"/>
                           <field name="section_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                           <!-- unit_base and invest_asset -->
                           <field name="invest_asset_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset'))]}"/>
@@ -40,14 +40,15 @@
                           <field name="invest_construction_id" attrs="{'invisible': [('report_type', 'not in', ('invest_construction'))]}"/>
                       </group>
                       <group>
+                          <field name="group_by_org_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset', 'invest_construction', 'personnel'))]}"/>
                           <field name="group_by_section_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
-                          <field name="group_by_project_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
-                          <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
-                          <field name="group_by_charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
-                          <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
-                          <field name="group_by_org_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset', 'invest_construction'))]}"/>
-                          <field name="group_by_invest_asset_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset'))]}"/>
                           <field name="group_by_invest_construction_id" attrs="{'invisible': [('report_type', 'not in', ('invest_construction'))]}"/>
+                          <field name="group_by_project_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
+                          <field name="group_by_charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
+                          <field name="group_by_personnel_costcenter_id" attrs="{'invisible': [('report_type', 'not in', ('personnel'))]}"/>
+                          <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel'))]}"/>
+                          <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel'))]}"/>
+                          <field name="group_by_invest_asset_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset'))]}"/>
                       </group>
                   </group>
               </form>
