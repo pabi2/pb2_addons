@@ -6,7 +6,8 @@ REPORT_TYPES = [('overall', 'Overall'),
                 ('unit_base', 'Section'),
                 ('project_base', 'Project'),
                 ('invest_asset', 'Asset'),
-                ('invest_construction', 'Construction')]
+                ('invest_construction', 'Construction'),
+                ('personnel', 'Personnel')]
 
 REPORT_GROUPBY = {
     'unit_base': ['section_id', 'activity_group_id',
@@ -15,6 +16,8 @@ REPORT_GROUPBY = {
                      'charge_type', 'activity_id'],
     'invest_asset': ['org_id', 'invest_asset_id'],
     'invest_construction': ['org_id', 'invest_construction_id'],
+    'personnel': ['org_id', 'personnel_costcenter_id',
+                  'activity_group_id', 'activity_id']
 }
 
 
@@ -112,6 +115,9 @@ class SearchCommon(ChartField, object):
         'res.project',
         string='Project'
     )
+    personnel_costcenter_id = fields.Many2one(
+        'res.personnel.costcenter'
+    )
     # Group By
     group_by_section_id = fields.Boolean(
         string='Group By - Section',
@@ -119,6 +125,10 @@ class SearchCommon(ChartField, object):
     )
     group_by_project_id = fields.Boolean(
         string='Group By - Project',
+        default=False,
+    )
+    group_by_personnel_costcenter_id = fields.Boolean(
+        string='Group By - Personnel Budget',
         default=False,
     )
     group_by_activity_group_id = fields.Boolean(
@@ -145,6 +155,10 @@ class SearchCommon(ChartField, object):
         string='Group By - Project C',
         default=False,
     )
+    # group_by_personnel_budget_id = fields.Boolean(
+    #     string='Group By - Personnel Budget',
+    #     default=False,
+    # )
 
     @api.onchange('report_type')
     def _onchange_report_type(self):
