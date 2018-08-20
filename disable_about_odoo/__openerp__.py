@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Disable about odoo for general user (Except admin)',
+    'name': 'Disable about odoo',
     'summary': '',
     'version': '8.0.1.0.0',
     'category': 'Uncategorized',
@@ -14,8 +14,9 @@
     'depends': [
         'web',
     ],
-    'data': [],
-    'qweb': [
-        'static/src/xml/base.xml',
-    ]
+    'data': [
+        'security/disable_about_odoo_security.xml',
+        'views/disable_about_odoo.xml',
+    ],
+    'qweb': [],
 }

@@ -26,6 +26,7 @@
         'views/budget_project_base_report.xml',
         'views/budget_invest_asset_report.xml',
         'views/budget_invest_construction_report.xml',
+        'views/budget_personnel_report.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/xlsx_template_wizard.xml',
         'xlsx_template/load_template.xml',

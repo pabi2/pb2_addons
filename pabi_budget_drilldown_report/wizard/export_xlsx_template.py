@@ -6,6 +6,7 @@ EXCEL_NAME = {
     'project_base': 'budget_project_base_report.xlsx',
     'invest_asset': 'budget_invest_asset_report.xlsx',
     'invest_construction': 'budget_invest_construction_report.xlsx',
+    'personnel': 'budget_personnel_report.xlsx',
 }
 
 
