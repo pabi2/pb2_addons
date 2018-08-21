@@ -28,6 +28,16 @@ class AccountModel(models.Model):
         string='Credit Account',
         domain=[('user_type.report_type', 'in', ('asset', 'liability'))],
     )
+    fin_debit_account_id = fields.Many2one(
+        'account.account',
+        string='Fin. Debit Account',
+        domain=[('user_type.report_type', 'in', ('asset', 'liability'))],
+    )
+    fin_credit_account_id = fields.Many2one(
+        'account.account',
+        string='Fin. Credit Account',
+        domain=[('user_type.report_type', 'in', ('asset', 'liability'))],
+    )
 
     @api.onchange('special_type')
     def _onchange_special_type(self):
