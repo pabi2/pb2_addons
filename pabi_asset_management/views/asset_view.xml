@@ -223,6 +223,8 @@
                             <group string="Depreciation On">
                                 <field name="owner_section_id"/>
                                 <field name="owner_project_id"/>
+                                <field name="owner_invest_asset_id"/>
+                                <field name="owner_invest_construction_phase_id"/>
                             </group>
                             <group string="Responsible By">
                                 <field name="purchase_request_id"/>

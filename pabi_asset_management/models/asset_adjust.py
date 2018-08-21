@@ -484,8 +484,6 @@ class AccountAssetAdjust(models.Model):
             # Dimension
             'section_id': analytic.section_id.id,
             'project_id': analytic.project_id.id,
-            'owner_section_id': analytic.section_id.id,  # default
-            'owner_project_id': analytic.project_id.id,  # default
             'invest_asset_id': analytic.invest_asset_id.id,
             'invest_construction_phase_id':
             analytic.invest_construction_phase_id.id,
@@ -496,6 +494,9 @@ class AccountAssetAdjust(models.Model):
     def _duplicate_asset(self, asset, product, asset_name, analytic):
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
         new_asset = asset.copy(asset_dict)
+        Analytic = self.env['account.analytic.account']
+        new_asset.account_analytic_id = \
+            Analytic.create_matched_analytic(new_asset)
         asset.target_asset_ids += new_asset
         # Set back to normal
         # new_asset.type = 'normal'
