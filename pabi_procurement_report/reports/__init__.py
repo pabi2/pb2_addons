@@ -9,4 +9,7 @@ from . import xlsx_report_pabi_supplier_list
 from . import xlsx_report_pabi_stock_balance
 from . import xlsx_report_pabi_supplier_evaluation
 from . import xlsx_report_pabi_comparison_pr_po
-
+from . import xlsx_report_pabi_procurement_result
+from . import xlsx_report_pabi_hiring_summary
+from . import xlsx_report_pabi_green_product_summary
+from . import xlsx_report_pabi_purchase_annual
