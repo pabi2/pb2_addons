@@ -186,9 +186,13 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
         for loan_agreement_id in list(set(map(lambda x: x[0], datas))):
             loan_agreement = LoanAgreement.browse(loan_agreement_id)
             first_rec = True
+            skip_row = False
             subtotal_invoice_amount = 0
             old_outstanding = 0
             for rec in filter(lambda x: x[0] == loan_agreement_id, datas):
+                if not(rec[1] or rec[2] or rec[3]):
+                    skip_row = True
+                    continue
                 supplier_payment = Voucher.browse(rec[2] or 0)
                 invoice_plan = InvoicePlan.browse(rec[3] or 0)
                 lines.append((0, 0, {
@@ -231,11 +235,12 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
                 subtotal_invoice_amount += \
                     invoice_plan.ref_invoice_id.amount_total
             total_invoice_amount += subtotal_invoice_amount
-            # Subtotal
-            lines.append((0, 0, {
-                'partner_code': 'Subtotal',
-                'customer_invoice_amount': subtotal_invoice_amount,
-            }))
+            if not skip_row:
+                # Subtotal
+                lines.append((0, 0, {
+                    'partner_code': 'Subtotal',
+                    'customer_invoice_amount': subtotal_invoice_amount,
+                }))
         # Grand Total
         lines.append((0, 0, {
             'partner_code': 'Grand Total',
