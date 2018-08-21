@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_account_asset_report" name="Reports"
+                  parent="pabi_asset_management.menu_asset_main"/>
+
+    </data>
+</openerp>
