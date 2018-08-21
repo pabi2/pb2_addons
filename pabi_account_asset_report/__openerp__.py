@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Account Asset Report',
-    'summary': '',
+    'summary': 'Export data asset report to excel',
     'version': '8.0.1.0.0',
     'category': 'Accounting & Finance',
     'description': """
-
     """,
     'website': 'https://ecosoft.co.th/',
-    'author': 'Kitti U.',
-    'license': 'AGPL-3',
+    'author': 'Saran Lim.',
     'application': False,
     'installable': True,
     'depends': [

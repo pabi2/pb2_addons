@@ -17,53 +17,29 @@ class AssetRepairView(models.Model):
         string='ID',
         readonly=True,
     )
-    asset_code = fields.Char(
-        string='Asset Code',
+    asset_id = fields.Many2one(
+        'account.asset',
+        string='Account Asset Id',
         readonly=True,
     )
-    asset_name = fields.Char(
-        string='Asset Name',
+    asset_repair_id = fields.Many2one(
+        'asset.repair.note',
+        string='Asset Repair Id',
         readonly=True,
     )
-    purchase_value = fields.Float(
-        string='Purchase Value',
+    purchase_order_id = fields.Many2one(
+        'purchase.order',
+        string='Purchase Order Id',
         readonly=True,
     )
-    repair_date = fields.Char(
-        string='Repair Date',
-        readonly=True,
-    )
-    purchase_name = fields.Char(
-        string='Purchase Name',
-        readonly=True,
-    )
-    amount_total = fields.Float(
-        string='Amount Total',
-        readonly=True,
-    )
-    note = fields.Char(
-        string='Note',
-        readonly=True,
-    )
-    org_id = fields.Char(
-        string='Orgs',
-        readonly=True,
-    )
-    costcenter_code = fields.Char(
-        string='Costcenter Code',
-        readonly=True,
-    )
-    costcenter_name = fields.Char(
-        string='Costcenter Name',
+    costcenter_id = fields.Many2one(
+        'res.costcenter',
+        string='Costcenter Id',
         readonly=True,
     )
     responsible_user_id = fields.Many2one(
         'res.users',
         string='Responsible User',
-        readonly=True,
-    )
-    status = fields.Char(
-        string='Status',
         readonly=True,
     )
     budget = fields.Reference(
@@ -76,21 +52,13 @@ class AssetRepairView(models.Model):
         string='Section id',
         readonly=True,
     )
-    asset_repair_id = fields.Many2one(
-        'asset.repair.note',
-        string='Asset Repair ID',
-        readonly=True,
-    )
 
     def _get_sql_view(self):
         sql_view = """
             SELECT ROW_NUMBER() OVER(ORDER BY acr.id, ac.id) AS id,
-                ac.code as asset_code, ac.name as asset_name,
-                ac.purchase_value, acr.date as repair_date,
-                po.name as purchase_name, po.amount_total,
-                acr.note, ro.name_short as org_id, rc.code as costcenter_code,
-                rc.name as costcenter_name, ac.responsible_user_id,
-                aas.name as status, ac.section_id,
+                ac.id as asset_id, acr.id as asset_repair_id,
+                po.id as purchase_order_id, rc.id as costcenter_id,
+                ac.responsible_user_id, ac.section_id,
                 CASE WHEN ac.section_id IS NOT NULL THEN
                 CONCAT('res.section,', ac.section_id)
                 WHEN ac.project_id IS NOT NULL THEN
@@ -100,14 +68,11 @@ class AssetRepairView(models.Model):
                 WHEN ac.invest_construction_phase_id IS NOT NULL THEN
                 CONCAT('res.invest.construction.phase,',
                 ac.invest_construction_phase_id)
-                ELSE NULL END AS budget,
-                acr.id AS asset_repair_id
+                ELSE NULL END AS budget
                 FROM asset_repair_note acr
-                LEFT JOIN account_asset ac ON acr.asset_id = ac.id
-                LEFT JOIN account_asset_status aas ON ac.status = aas.id
-                LEFT JOIN res_costcenter rc ON ac.costcenter_id = rc.id
+                JOIN account_asset ac ON acr.asset_id = ac.id
+                JOIN res_costcenter rc ON ac.costcenter_id = rc.id
                 LEFT JOIN purchase_order po ON acr.purchase_id = po.id
-                LEFT JOIN res_org ro ON ac.org_id = ro.id
         """
         return sql_view
 
