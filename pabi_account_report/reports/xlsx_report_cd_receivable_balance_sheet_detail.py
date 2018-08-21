@@ -245,6 +245,7 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
             total_invoice_amount += subtotal_invoice_amount
             if not skip_row:
                 # Subtotal
+                print subtotal_invoice_amount or -1
                 lines.append((0, 0, {
                     'partner_code': 'Subtotal',
                     'supplier_payment_amount': subtotal_payment_amount or -1,
