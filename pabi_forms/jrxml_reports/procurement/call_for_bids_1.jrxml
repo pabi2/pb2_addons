@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="392"/>
+	<property name="ireport.y" value="244"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -572,7 +572,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[โดยมีรายการดังนี้]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="101" y="30" width="182" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="41" y="30" width="182" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -621,7 +621,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{deliver_to}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="57" y="0" width="477" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="25" y="-1" width="477" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -641,24 +641,24 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="43" height="30"/>
 								<box>
-									<topPen lineWidth="1.0"/>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+									<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<text><![CDATA[ลำดับที่]]></text>
 							</staticText>
 						</jr:tableHeader>
-						<jr:tableFooter height="13" rowSpan="1">
+						<jr:tableFooter height="6" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="43" height="13"/>
+								<reportElement x="0" y="0" width="43" height="6"/>
 								<box>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement lineSpacing="Single"/>
 								<text><![CDATA[]]></text>
@@ -668,8 +668,8 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<textField>
 								<reportElement x="0" y="0" width="43" height="30"/>
 								<box>
-									<leftPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -683,24 +683,24 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="183" height="30"/>
 								<box>
-									<topPen lineWidth="1.0"/>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+									<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<text><![CDATA[รายละเอียดพัสดุ/งานจ้าง/การเช่า]]></text>
 							</staticText>
 						</jr:tableHeader>
-						<jr:tableFooter height="13" rowSpan="1">
+						<jr:tableFooter height="6" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="183" height="13"/>
+								<reportElement x="0" y="0" width="183" height="6"/>
 								<box>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement lineSpacing="Single"/>
 								<text><![CDATA[]]></text>
@@ -717,9 +717,9 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="183" height="30"/>
 								<box>
-									<leftPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.5"/>
 									<bottomPen lineWidth="0.0"/>
-									<rightPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement lineSpacing="Single"/>
 								<text><![CDATA[]]></text>
@@ -731,25 +731,25 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="67" height="30"/>
 								<box>
-									<topPen lineWidth="1.0"/>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+									<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<text><![CDATA[ราคาประมาณ
 ต่อหน่วย]]></text>
 							</staticText>
 						</jr:tableHeader>
-						<jr:tableFooter height="13" rowSpan="1">
+						<jr:tableFooter height="6" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="67" height="13"/>
+								<reportElement x="0" y="0" width="67" height="6"/>
 								<box>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement lineSpacing="Single"/>
 								<text><![CDATA[]]></text>
@@ -766,9 +766,9 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="67" height="30"/>
 								<box>
-									<leftPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.5"/>
 									<bottomPen lineWidth="0.0"/>
-									<rightPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement lineSpacing="Single"/>
 								<text><![CDATA[]]></text>
@@ -780,24 +780,25 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="124" height="30"/>
 								<box>
-									<topPen lineWidth="1.0"/>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+									<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<text><![CDATA[PR Number]]></text>
 							</staticText>
 						</jr:tableHeader>
-						<jr:tableFooter height="13" rowSpan="1">
+						<jr:tableFooter height="6" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="124" height="13"/>
+								<reportElement x="0" y="0" width="124" height="6"/>
 								<box>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement lineSpacing="Single"/>
 								<text><![CDATA[]]></text>
@@ -807,8 +808,8 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<textField>
 								<reportElement x="0" y="0" width="124" height="30"/>
 								<box>
-									<leftPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -822,24 +823,25 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="58" height="30"/>
 								<box>
-									<topPen lineWidth="1.0"/>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+									<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<text><![CDATA[จำนวน]]></text>
 							</staticText>
 						</jr:tableHeader>
-						<jr:tableFooter height="13" rowSpan="1">
+						<jr:tableFooter height="6" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="58" height="13"/>
+								<reportElement x="0" y="0" width="58" height="6"/>
 								<box>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement lineSpacing="Single"/>
 								<text><![CDATA[]]></text>
@@ -849,8 +851,8 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<textField pattern="#,##0">
 								<reportElement x="0" y="0" width="58" height="30"/>
 								<box>
-									<leftPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -874,25 +876,26 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="90" height="30"/>
 								<box>
-									<topPen lineWidth="1.0"/>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+									<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<text><![CDATA[ราคารวมโดยประมาณ
 (บาท/รวม Vat ถ้ามี) ]]></text>
 							</staticText>
 						</jr:tableHeader>
-						<jr:tableFooter height="13" rowSpan="1">
+						<jr:tableFooter height="6" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="90" height="13"/>
+								<reportElement x="0" y="0" width="90" height="6"/>
 								<box>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement lineSpacing="Single"/>
 								<text><![CDATA[]]></text>
@@ -909,9 +912,9 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="90" height="30"/>
 								<box>
-									<leftPen lineWidth="1.0"/>
+									<leftPen lineWidth="0.5"/>
 									<bottomPen lineWidth="0.0"/>
-									<rightPen lineWidth="1.0"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement lineSpacing="Single"/>
 								<text><![CDATA[]]></text>
@@ -952,13 +955,13 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="292" height="20"/>
 								<box>
-									<topPen lineWidth="1.0"/>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+									<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<text><![CDATA[ผู้ขอจัดหา]]></text>
 							</staticText>
@@ -988,10 +991,11 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="292" height="43"/>
 								<box>
-									<topPen lineWidth="1.0"/>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement lineSpacing="Single">
 									<font size="8"/>
@@ -1005,15 +1009,15 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="276" height="20"/>
 								<box>
-									<topPen lineWidth="1.0"/>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+									<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<text><![CDATA[ผู้มีอำนาจปนุมัติ]]></text>
+								<text><![CDATA[ผู้มีอำนาจอนุมัติ]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell height="43" rowSpan="1">
@@ -1041,10 +1045,11 @@ WHERE $X{IN, pd.id, PIDS}]]>
 							<staticText>
 								<reportElement x="0" y="0" width="276" height="43"/>
 								<box>
-									<topPen lineWidth="1.0"/>
-									<leftPen lineWidth="1.0"/>
-									<bottomPen lineWidth="1.0"/>
-									<rightPen lineWidth="1.0"/>
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
 								</box>
 								<textElement lineSpacing="Single">
 									<font size="8"/>
@@ -1088,14 +1093,14 @@ WHERE $X{IN, pd.id, PIDS}]]>
 					<text><![CDATA[เห็นควรดำเนินการจัดซื้อ/จัดจ้าง/เช่าโดยวิธี ]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="293" y="0" width="229" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="238" y="0" width="229" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{purchase_condition_detail}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="178" y="0" width="115" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="123" y="0" width="115" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
@@ -1164,8 +1169,8 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						<jr:tableHeader height="30" rowSpan="1">
 							<staticText>
 								<reportElement x="0" y="0" width="189" height="30"/>
-								<textElement verticalAlignment="Middle" lineSpacing="Single">
-									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<text><![CDATA[ประเภทกรรมการ]]></text>
 							</staticText>
@@ -1187,8 +1192,8 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						<jr:tableHeader height="30" rowSpan="1">
 							<staticText>
 								<reportElement x="0" y="0" width="196" height="30"/>
-								<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
-									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<text><![CDATA[ชื่อ - นามสกุล]]></text>
 							</staticText>
@@ -1207,8 +1212,8 @@ WHERE $X{IN, pd.id, PIDS}]]>
 						<jr:tableHeader height="30" rowSpan="1">
 							<staticText>
 								<reportElement x="0" y="0" width="185" height="30"/>
-								<textElement verticalAlignment="Middle" lineSpacing="Single">
-									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+									<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<text><![CDATA[ตำแหน่ง]]></text>
 							</staticText>
@@ -1234,6 +1239,9 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<reportElement x="1" y="17" width="573" height="90"/>
 				<rectangle>
 					<reportElement x="0" y="0" width="571" height="84"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
 				</rectangle>
 				<staticText>
 					<reportElement x="19" y="26" width="162" height="20"/>
@@ -1244,31 +1252,40 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				</staticText>
 				<rectangle>
 					<reportElement x="0" y="0" width="571" height="20"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
 				</rectangle>
 				<staticText>
 					<reportElement x="386" y="0" width="185" height="20"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-						<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+						<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[เสนอผู้มีอำนาจอนุมัติ]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="0" y="0" width="190" height="20"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-						<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+						<font isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[เจ้าหน้าที่พัสดุหรือผู้ที่ได้รับมอบหมาย]]></text>
 				</staticText>
 				<line>
 					<reportElement x="190" y="0" width="1" height="84"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
 				</line>
 				<line>
 					<reportElement x="385" y="0" width="1" height="84"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
 				</line>
 				<staticText>
 					<reportElement x="181" y="0" width="214" height="20"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-						<font isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+						<font isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[เสนอหัวหน้าเจ้าหน้าที่พัสดุหรือผู้ที่ได้รับมอบหมาย]]></text>
 				</staticText>
