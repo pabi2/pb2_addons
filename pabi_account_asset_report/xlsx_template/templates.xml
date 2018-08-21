@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory for Account XLSX Reports -->
+        <record model="document.directory" id="dir_asset_reports">
+            <field name="name">Asset Reports</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        # Assset Repair
+        <record id="xlsx_report_asset_repair" model="ir.attachment">
+            <field name="res_model">xlsx.report.asset.repair</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_asset_repair.xlsx</field>
+            <field name="name">Asset Repair Report</field>
+            <field name="parent_id" eval="ref('dir_asset_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Asset Repair Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'org_id${value and value.name_short or ""}',
+                                'B4': 'sector_id${value and value.name or ""}',
+                                'B5': 'subsector_id${value and value.name or ""}',
+                                'B6': 'division_id${value and value.name or ""}',
+                                'B7': 'section_id${value and value.name or ""}',
+                                'B8': 'asset_id${value and value.code or ""}',
+                                'B9': 'responsible_by${value and value.name or ""}',
+                                'B10': 'budget${value and value.name_short or ""}',
+                                'B11': 'status_id${value and value.name or ""}',
+                                'B12': 'as_of_date${value or ""}#{number_format=date}',
+                                'B13': '${env.user.with_context(lang="th_TH").display_name}',
+                                'B14': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'results': {
+                                'A17': 'asset_code${value or ""}',
+                                'B17': 'asset_name${value or ""}',
+                                'C17': 'purchase_value${value or ""}#{number_format=number}',
+                                'D17': 'repair_date${value or ""}#{number_format=date}',
+                                'E17': 'purchase_name${value or ""}',
+                                'F17': 'amount_total${value or ""}#{number_format=number}',
+                                'G17': 'note${value or ""}',
+                                'H17': 'org_id${value or ""}',
+                                'I17': 'budget${value and value.code or ""}',
+                                'J17': 'budget${value and value.name_short or ""}',
+                                'K17': 'costcenter_code${value or ""}',
+                                'L17': 'costcenter_name${value or ""}',
+                                'M17': 'responsible_user_id${value and value.login or ""}',
+                                'N17': 'responsible_user_id${value and value.partner_id.with_context(lang="th_TH").display_name or ""}',
+                                'O17': 'status${value or ""}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
+    </data>
+</openerp>
