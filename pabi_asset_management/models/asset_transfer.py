@@ -130,6 +130,22 @@ class AccountAssetTransfer(models.Model):
         required=True,
         help="Asset Journal (No-Budget)",
     )
+    move_ids = fields.Many2many(
+        'account.move',
+        string='Journal Entries',
+        compute='_compute_moves',
+    )
+    move_count = fields.Integer(
+        string='JE Count',
+        compute='_compute_moves',
+    )
+
+    @api.multi
+    def _compute_moves(self):
+        for rec in self:
+            rec.move_ids = rec.target_asset_ids.mapped('move_id')
+            rec.move_count = len(rec.move_ids)
+        return True
 
     @api.multi
     def _compute_asset_count(self):
@@ -357,7 +373,8 @@ class AccountAssetTransfer(models.Model):
                 raise ValidationError(
                     _('An asset should be created, something went wrong!'))
             new_asset_ids.append(asset.id)
-            target_asset.ref_asset_id = asset.id
+            target_asset.write({'ref_asset_id': asset.id,
+                                'move_id': move.id})
             asset.source_asset_ids = self.asset_ids
         self.asset_ids.write({
             'active': False,
@@ -386,6 +403,21 @@ class AccountAssetTransfer(models.Model):
         dom = [('id', 'in', assets.ids)]
         result.update({'domain': dom, 'context': {'active_test': False}})
         return result
+
+    @api.multi
+    def open_entries(self):
+        self.ensure_one()
+        return {
+            'name': _("Journal Entries"),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': self._context,
+            'nodestroy': True,
+            'domain': [('id', 'in', self.move_ids.ids)],
+        }
 
 
 class AccountAssetTransferTarget(models.Model):
@@ -424,6 +456,12 @@ class AccountAssetTransferTarget(models.Model):
         string='New Asset',
         readonly=True,
         ondelete='restrict',
+    )
+    move_id = fields.Many2one(
+        'account.move',
+        string='Journal Entry',
+        readonly=True,
+        copy=False,
     )
 
     @api.onchange('product_id')
