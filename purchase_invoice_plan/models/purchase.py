@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
+import decimal
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, \
@@ -414,18 +415,29 @@ class PurchaseOrder(models.Model):
         invoice_plan_percent = self._context.get('invoice_plan_percent', False)
         if invoice_plan_percent:
             if order_line in invoice_plan_percent:
+                line_percent = invoice_plan_percent.get(order_line, 0.0)
                 if order_line.order_id.invoice_mode == 'change_quantity':
-                    res.update({'quantity': (res.get('quantity') or 0.0) *
-                                (order_line and
-                                invoice_plan_percent[order_line] or 0.0) /
-                                100})
+                    quantity = res.get('quantity', 0.0) * line_percent / 100
+                    d = decimal.Decimal(str(quantity))
+                    if d.as_tuple().exponent < -2:
+                        raise ValidationError(
+                            _('Too many decimal places in percent will cause '
+                              'rounding error in invoice quantity, i.e., %s.'
+                              '\nPlease reduce to maximum 2 decimal places') %
+                            quantity)
+                    res.update({'quantity': quantity})
                 elif order_line.order_id.invoice_mode == 'change_price':
-                    res.update({'price_unit': (res.get('price_unit') or 0.0) *
-                                (res.get('quantity') or 0.0) *
-                                (order_line and
-                                invoice_plan_percent[order_line] or 0.0) /
-                                100,
+                    price_unit = res.get('price_unit', 0.0) * \
+                        res.get('quantity', 0.0) * line_percent / 100
+                    res.update({'price_unit': price_unit,
                                 'quantity': 1.0})
+                    d = decimal.Decimal(str(price_unit))
+                    if d.as_tuple().exponent < -2:
+                        raise ValidationError(
+                            _('Too many decimal places in percent will cause '
+                              'rounding error in invoice unit price, i.e., %s.'
+                              '\nPlease reduce to maximum 2 decimal places') %
+                            price_unit)
             else:
                 return {}
         return res

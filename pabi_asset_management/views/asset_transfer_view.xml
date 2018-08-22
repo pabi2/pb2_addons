@@ -73,6 +73,11 @@
                     </header>
                     <sheet>
                         <div class="oe_button_box oe_right">
+                            <button type="object" name="open_entries"
+                              class="oe_stat_button" icon="fa-book"
+                              attrs="{'invisible': [('move_count', '=', 0)]}">
+                                <field name="move_count" widget="statinfo" string="Journal Entries"/>
+                            </button>
                             <button type="object" name="open_source_asset" class="oe_stat_button" icon="fa-building-o" attrs="{'invisible': [('source_asset_count', '=', 0)]}">
                                 <field name="source_asset_count" widget="statinfo" string="Source Asset(s)"/>
                             </button>
@@ -130,6 +135,7 @@
                                         <field name="asset_profile_id"/>
                                         <field name="asset_name"/>
                                         <field name="depreciation_base" sum="Total"/>
+                                        <field name="move_id"/>
                                         <field name="ref_asset_id"/>
                                     </tree>
                                 </field>

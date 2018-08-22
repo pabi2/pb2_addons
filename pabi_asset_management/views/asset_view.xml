@@ -120,6 +120,9 @@
                             <field name="type" invisible="1"/>
                             <field name="parent_id"/>
                             <field name="code2"/>
+                            <field name="is_standard"/>
+                            <field name="asset_brand"/>
+                            <field name="asset_model"/>
                         </group>
                         <group>
                             <field name="company_id" widget="selection" groups="base.group_multi_company"/>
@@ -223,6 +226,8 @@
                             <group string="Depreciation On">
                                 <field name="owner_section_id"/>
                                 <field name="owner_project_id"/>
+                                <field name="owner_invest_asset_id"/>
+                                <field name="owner_invest_construction_phase_id"/>
                             </group>
                             <group string="Responsible By">
                                 <field name="purchase_request_id"/>

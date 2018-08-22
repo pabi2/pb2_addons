@@ -197,6 +197,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    # Owner Dimensions
     owner_project_id = fields.Many2one(
         'res.project',
         string='Project',
@@ -209,6 +210,19 @@ class AccountAsset(ChartFieldAction, models.Model):
         readonly=True,
         help="Owner section of the budget structure",
     )
+    owner_invest_asset_id = fields.Many2one(
+        'res.invest.asset',
+        string='Investment Asset',
+        readonly=True,
+        help="Owner invest asset of the budget structure",
+    )
+    owner_invest_construction_phase_id = fields.Many2one(
+        'res.invest.construction.phase',
+        string='Construction Phase',
+        readonly=True,
+        help="Owner construction phase of the budget structure",
+    )
+    # --
     purchase_value = fields.Float(
         default=0.0,  # to avoid false
     )
@@ -253,6 +267,21 @@ class AccountAsset(ChartFieldAction, models.Model):
         default=lambda self: fields.Date.context_today(self),
         track_visibility='onchange',
         readonly=False,
+    )
+    is_standard = fields.Boolean(
+        string='Standard Asset',
+        track_visibility='onchange',
+        readonly=False,
+    )
+    asset_brand = fields.Char(
+        string='Brand',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    asset_model = fields.Char(
+        string='Model',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     # Transfer Asset
     target_asset_ids = fields.Many2many(
@@ -526,20 +555,21 @@ class AccountAsset(ChartFieldAction, models.Model):
                 raise ValidationError(
                     _('No asset sequence setup for selected product!'))
             vals['code'] = self.env['ir.sequence'].next_by_id(sequence.id)
-
         # Set Salvage Value from Category
         profile_id = vals.get('profile_id', False)
         if profile_id:
             profile = self.env['account.asset.profile'].browse(profile_id)
             if profile and not profile.no_depreciation:
                 vals['salvage_value'] = profile.salvage_value
-        # --
+        # Owner info
+        vals.update({
+            'owner_section_id': vals.get('section_id', False),
+            'owner_project_id': vals.get('project_id', False),
+            'owner_invest_asset_id': vals.get('invest_asset_id', False),
+            'owner_invest_construction_phase_id':
+            vals.get('invest_construction_phase_id', False)})
         asset = super(AccountAsset, self).create(vals)
-        # Moved to before create
-        # if asset.profile_id and not asset.profile_id.no_depreciation:
-        #     # This will also trigger new calc of depre base
-        #     asset._write({'salvage_value': asset.profile_id.salvage_value})
-        asset.update_related_dimension(vals)
+        # asset.update_related_dimension(vals)
         return asset
 
     @api.multi
@@ -599,6 +629,12 @@ class AccountAsset(ChartFieldAction, models.Model):
             ], order='id asc')
             if asset_lines:
                 asset_line_dict = asset_lines[0].copy_data(default)[0]
+                asset_line_dict.update({
+                    'analytic_account_id': False,
+                    'activity_group_id': False,
+                    'activity_id': False,
+                    'activity_rpt_id': False,
+                })
                 debit = sum(asset_lines.mapped('debit'))
                 credit = sum(asset_lines.mapped('credit'))
                 if debit > credit:
@@ -618,6 +654,12 @@ class AccountAsset(ChartFieldAction, models.Model):
             ], order='id asc')
             if depre_lines:
                 depre_line_dict = depre_lines[0].copy_data(default)[0]
+                depre_line_dict.update({
+                    'analytic_account_id': False,
+                    'activity_group_id': False,
+                    'activity_id': False,
+                    'activity_rpt_id': False,
+                })
                 debit = sum(depre_lines.mapped('debit'))
                 credit = sum(depre_lines.mapped('credit'))
                 if debit > credit:
@@ -647,14 +689,21 @@ class AccountAsset(ChartFieldAction, models.Model):
         move_line_dict = move_lines_dict[0].copy()
         move_line_dict.update({
             'analytic_account_id': False,  # To refresh dimension
+            'activity_group_id': False,
+            'activity_id': False,
+            'activity_rpt_id': False,
             'credit': debit,
             'debit': credit,
         })
         if new_owner:
-            move_line_dict.update({
+            dimension = {
                 'project_id': new_owner.get('owner_project_id', False),
                 'section_id': new_owner.get('owner_section_id', False),
-            })
+            }
+            Asset = self.env['account.asset']
+            res = Asset.new(dimension)._get_related_dimension(dimension)
+            move_line_dict.update(res)
+            move_line_dict.update(dimension)
         return move_line_dict
 
     @api.multi
@@ -802,9 +851,24 @@ class AccountAssetLine(models.Model):
             _setup_move_line_data(depreciation_date,
                                   period, account, type, move)
         asset = self.asset_id
-        move_line_data.update({'section_id': asset.owner_section_id.id,
-                               'project_id': asset.owner_project_id.id,
-                               'name': asset.code})
+        move_line_data.update({'name': asset.code})
+        # Only update dimension on line with analytic_account_id
+        if move_line_data.get('analytic_account_id', False):
+            dimension = {'section_id': asset.owner_section_id.id,
+                         'project_id': asset.owner_project_id.id,
+                         'invest_asset_id': asset.owner_invest_asset_id.id,
+                         'invest_construction_phase_id':
+                         asset.owner_invest_construction_phase_id.id, }
+            # Mock object to get related dimension
+            Asset = self.env['account.asset']
+            res = Asset.new(dimension)._get_related_dimension(dimension)
+            move_line_data.update(res)
+            move_line_data.update(dimension)
+        # Finalize
+        move_line_data.update({'activity_group_id': False,
+                               'activity_id': False,
+                               'activity_rpt_id': False,
+                               'analytic_account_id': False})
         return move_line_data
 
     @api.multi

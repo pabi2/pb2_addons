@@ -69,6 +69,22 @@ class AccountAssetChangeowner(models.Model):
         required=True,
         help="Asset Journal (No-Budget)",
     )
+    move_ids = fields.Many2many(
+        'account.move',
+        string='Journal Entries',
+        compute='_compute_moves',
+    )
+    move_count = fields.Integer(
+        string='JE Count',
+        compute='_compute_moves',
+    )
+
+    @api.multi
+    def _compute_moves(self):
+        for rec in self:
+            rec.move_ids = rec.changeowner_ids.mapped('move_id')
+            rec.move_count = len(rec.move_ids)
+        return True
 
     @api.model
     def create(self, vals):
@@ -150,7 +166,8 @@ class AccountAssetChangeowner(models.Model):
                     'period_id': period.id,
                     'date': fields.Date.context_today(self),
                     'ref': self.name}
-                AccountMove.with_context(allow_asset=True).create(move_dict)
+                ctx = {'allow_asset': True}
+                line.move_id = AccountMove.with_context(ctx).create(move_dict)
             # Asset Owner Info update
             if line.responsible_user_id:
                 new_owner['responsible_user_id'] = line.responsible_user_id.id
@@ -170,6 +187,21 @@ class AccountAssetChangeowner(models.Model):
                     len(rec.changeowner_ids.mapped('asset_id')):
                 raise ValidationError(_('Duplicate asset in line!'))
 
+    @api.multi
+    def open_entries(self):
+        self.ensure_one()
+        return {
+            'name': _("Journal Entries"),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': self._context,
+            'nodestroy': True,
+            'domain': [('id', 'in', self.move_ids.ids)],
+        }
+
 
 class AccountAssetChangeownerLine(models.Model):
     _name = 'account.asset.changeowner.line'
@@ -186,6 +218,12 @@ class AccountAssetChangeownerLine(models.Model):
         domain=[('state', '=', 'open')],
         required=True,
         ondelete='restrict',
+    )
+    move_id = fields.Many2one(
+        'account.move',
+        string='Journal Entry',
+        readonly=True,
+        copy=False,
     )
     # Target Owner
     section_id = fields.Many2one(

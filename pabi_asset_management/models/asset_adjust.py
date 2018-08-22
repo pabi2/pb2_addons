@@ -274,35 +274,73 @@ class AccountAssetAdjust(models.Model):
 
     @api.multi
     def action_cancel(self):
+        """ Cancel for each case,
+        1) Asset-Asset:
+        2) Asset->Expense:
+        3) Expense->Asset: reverse document + set new asset as removed
+        """
         Status = self.env['account.asset.status']
+        for rec in self:
+            # 1) Asset -> Asset
+            if rec.adjust_type == 'asset_type':
+                adjust_lines = rec.adjust_line_ids
+                for line in adjust_lines:
+                    # Create reverse move
+                    rev_move = self._create_reverse_entry(line.move_id)
+                    line.cancel_move_id = rev_move
+                    # Set back old asset
+                    self._set_asset_as_restored(line.asset_id,
+                                                line.origin_status)
+                    # Remove new asset
+                    target_status = Status.search([
+                        ('code', '=', 'cancel')], limit=1)
+                    self._set_asset_as_removed(line.ref_asset_id,
+                                               target_status)
+            # 2) Expense -> Asset
+            if rec.adjust_type == 'asset_to_expense':
+                adjust_lines = rec.adjust_asset_to_expense_ids
+                for line in adjust_lines:
+                    # Create reverse move
+                    rev_move = self._create_reverse_entry(line.move_id)
+                    line.cancel_move_id = rev_move
+                    # Set back old asset
+                    self._set_asset_as_restored(line.asset_id,
+                                                line.origin_status)
+
+            # 3) Expense -> Asset
+            if rec.adjust_type == 'expense_to_asset':
+                adjust_lines = rec.adjust_expense_to_asset_ids
+                for line in adjust_lines:
+                    # Create reverse move
+                    rev_move = self._create_reverse_entry(line.move_id)
+                    line.cancel_move_id = rev_move
+                    # Remove asset
+                    target_status = Status.search([
+                        ('code', '=', 'cancel')], limit=1)
+                    self._set_asset_as_removed(line.ref_asset_id,
+                                               target_status)
+            # Detach asset adjust from invoice, do it can create again.
+            if rec.invoice_id:
+                rec.invoice_id.write({'asset_adjust_id': False})
+        self.write({'state': 'cancel'})
+
+    @api.model
+    def _create_reverse_entry(self, move):
+        if not move:
+            return False
         AccountMove = self.env['account.move']
         Period = self.env['account.period']
-        for rec in self:
-            adjust_lines = rec.adjust_line_ids or \
-                rec.adjust_asset_to_expense_ids or \
-                rec.adjust_expense_to_asset_ids
-            for line in adjust_lines:
-                move = line.move_id
-                if not move:
-                    continue
-                move_dict = move.copy_data({
-                    'name': move.name + '_VOID',
-                    'ref': move.ref,
-                    'period_id': Period.find().id,
-                    'date': fields.Date.context_today(self),
-                    'reversal_id': move.id})[0]
-                move_dict = AccountMove._switch_move_dict_dr_cr(move_dict)
-                ctx = {'allow_asset': True}  # Allow linking asset, w/o create
-                rev_move = AccountMove.with_context(ctx).create(move_dict)
-                rev_move.button_validate()
-                line.cancel_move_id = rev_move
-                # Just remove asset
-                target_status = Status.search([('map_state', '=', 'draft')],
-                                              limit=1)
-                self._set_asset_as_removed(line.ref_asset_id, target_status)
-            # Detach asset adjust from invoice, do it can create again.
-            rec.invoice_id.asset_adjust_id = False
-        self.write({'state': 'cancel'})
+        move_dict = move.copy_data({
+            'name': move.name + '_VOID',
+            'ref': move.ref,
+            'period_id': Period.find().id,
+            'date': fields.Date.context_today(self),
+            'reversal_id': move.id})[0]
+        move_dict = AccountMove._switch_move_dict_dr_cr(move_dict)
+        ctx = {'allow_asset': True}  # Allow linking asset, w/o create
+        rev_move = AccountMove.with_context(ctx).create(move_dict)
+        rev_move.button_validate()
+        return rev_move
 
     @api.model
     def get_invoice_line_assets(self, invoice):
@@ -410,6 +448,16 @@ class AccountAssetAdjust(models.Model):
         depre_lines.filtered(
             lambda l: not (l.move_check or l.init_entry)).unlink()
 
+    @api.model
+    def _set_asset_as_restored(self, asset, origin_status):
+        self.ensure_one()
+        # Set as removed and inactive
+        asset.write({'status': origin_status.id,
+                     'state': 'open',
+                     'active': True})
+        # Recomput depreciatoin lines
+        asset.compute_depreciation_board()
+
     @api.multi
     def _prepare_asset_dict(self, product, name, analytic):
         profile = product.asset_profile_id
@@ -446,6 +494,9 @@ class AccountAssetAdjust(models.Model):
     def _duplicate_asset(self, asset, product, asset_name, analytic):
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
         new_asset = asset.copy(asset_dict)
+        Analytic = self.env['account.analytic.account']
+        new_asset.account_analytic_id = \
+            Analytic.create_matched_analytic(new_asset)
         asset.target_asset_ids += new_asset
         # Set back to normal
         # new_asset.type = 'normal'
@@ -647,6 +698,13 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
         readonly=True,
         store=True,
     )
+    origin_status = fields.Many2one(
+        'account.asset.status',
+        string='Origin Status',
+        compute='_compute_origin_status',
+        store=True,
+        help="Status before being moved to expense, to be use when revert",
+    )
     product_id = fields.Many2one(
         'product.product',
         string='To Asset Type',
@@ -673,7 +731,7 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
     )
     target_status = fields.Many2one(
         'account.asset.status',
-        string='Asset Status',
+        string='Target Status',
         domain="[('map_state', 'in', ('removed', 'draft'))]",
         required=True,
     )
@@ -699,6 +757,13 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
          'unique(asset_id, adjust_id)',
          'Duplicate assets selected!')
     ]
+
+    @api.multi
+    @api.depends('asset_id')
+    def _compute_origin_status(self):
+        for rec in self:
+            rec.origin_status = rec.asset_id.status
+        return True
 
     @api.model
     def create(self, vals):
@@ -846,9 +911,16 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
         readonly=True,
         store=True,
     )
+    origin_status = fields.Many2one(
+        'account.asset.status',
+        string='Origin Status',
+        compute='_compute_origin_status',
+        store=True,
+        help="Status before being moved to expense, to be use when revert",
+    )
     target_status = fields.Many2one(
         'account.asset.status',
-        string='Asset Status',
+        string='Target Status',
         domain="[('map_state', 'in', ('removed', 'draft'))]",
         required=True,
     )
@@ -879,6 +951,13 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
          'unique(asset_id, adjust_id)',
          'Duplicate assets selected!')
     ]
+
+    @api.multi
+    @api.depends('asset_id')
+    def _compute_origin_status(self):
+        for rec in self:
+            rec.origin_status = rec.asset_id.status
+        return True
 
     @api.model
     def create(self, vals):

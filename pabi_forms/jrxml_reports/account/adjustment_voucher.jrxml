@@ -222,7 +222,7 @@
 					<font fontName="Monospaced" size="34" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{journal_code} == "AJB" ?
-"JV" : "JN"]]></textFieldExpression>
+"JV" : $F{journal_code} == "AJ" ? "AJ" : "JN"]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement positionType="FixRelativeToBottom" x="-1" y="189" width="555" height="1"/>

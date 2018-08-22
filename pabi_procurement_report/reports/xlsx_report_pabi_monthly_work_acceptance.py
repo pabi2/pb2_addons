@@ -140,7 +140,13 @@ class XLSXReportPabiMonthlyWorkAcceptanceResults(models.Model):
         SELECT id from res_org WHERE operating_unit_id = po.operating_unit_id
         LIMIT 1
         ) as org_id,
-        (SELECT value
+        (SELECT
+        (Case when value = 'สำนักงานกลาง'
+        then
+        'สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ'
+        else
+        value
+	    end)
         FROM ir_translation
         WHERE res_id = ro.id AND name LIKE 'res.org,name') ou_code,
         po.name as po_name,
