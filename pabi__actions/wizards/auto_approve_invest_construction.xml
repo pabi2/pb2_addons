@@ -1,9 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="wizard_auto_approved_invest_construction_form" model="ir.ui.view">
+        # Wizard Form
+        <record id="wizard_auto_approve_invest_construction_result_form" model="ir.ui.view">
+            <field name="name">wizard.auto.approve.invest.construction.result.form</field>
+            <field name="model">auto.approve.invest.construction.result.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Result">
+                    <p invisible="context.get('result', False) == 'fail'">
+                        Successful.
+                    </p>
+                    <p invisible="context.get('result', False) == 'pass'">
+                        Fail in some documents, please click confirm to link to the document.
+                    </p>
+                    <footer invisible="context.get('result', False) == 'fail'">
+                        <button string="Cancel" special="cancel" class="oe_link"/>
+                    </footer>
+                    <footer invisible="context.get('result', False) == 'pass'">
+                        <button string="Confirm" name="execute" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" special="cancel" class="oe_link"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="wizard_auto_approve_invest_construction_form" model="ir.ui.view">
             <field name="name">wizard.auto.approve.invest.construction.form</field>
-            <field name="model">auto.approve.invest.construction</field>
+            <field name="model">auto.approve.invest.construction.wizard</field>
             <field name="arch" type="xml">
                 <form string="Auto Approve Invest Construction">
                     <p>
@@ -18,13 +42,30 @@
             </field>
         </record>
 
+        # Action
         <act_window
-            name="Auto Approve"
-            res_model="auto.approve.invest.construction"
+            name="Auto Approve (Draft > Approved)"
+            res_model="auto.approve.invest.construction.wizard"
             src_model="res.invest.construction"
             view_mode="form"
             target="new"
             key2="client_action_multi"
-            id="action_auto_approve_invest_construction"/>
+            id="action_auto_approve_invest_construction_wizard"/>
+
+        <act_window
+            name="Auto Approve (Draft > Approved)"
+            res_model="auto.approve.invest.construction.wizard"
+            src_model="res.invest.construction.phase"
+            view_mode="form"
+            target="new"
+            key2="client_action_multi"
+            id="action_auto_approve_invest_construction_phase_wizard"/>
+
+        <act_window
+            name="Result"
+            res_model="auto.approve.invest.construction.result.wizard"
+            view_mode="form"
+            target="new"
+            id="action_auto_approve_invest_construction_result_wizard"/>
     </data>
 </openerp>
