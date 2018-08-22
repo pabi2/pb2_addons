@@ -52,7 +52,7 @@
             <field name="model">res.building</field>
             <field name="arch" type="xml">
                 <search string="Building">
-                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|',('name','ilike',self),('code','ilike',self)]" string="Name"/>
                     <!-- <group expand="0" string="Group By">
                         <filter name="type" string="Type" context="{'group_by':'type'}"/>
                     </group> -->
