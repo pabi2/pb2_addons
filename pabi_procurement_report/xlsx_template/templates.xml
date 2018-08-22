@@ -22,20 +22,21 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
-                            'B3': 'date_from${value or ""}#{number_format=date}',
-                            'B4': 'date_to${value or ""}#{number_format=date}',
+                            'B7': 'date_from${value or ""}#{number_format=date}',
+                            'B8': 'date_to${value or ""}#{number_format=date}',
                         },
                         'results': {
-                            'K7': 'pd_number${value or ""}',
-                            'B7': 'objective${value or ""}',
-                            'F7': 'rfq_supplier${value or ""}',
-                            'H7': 'rfq_supplier${value or ""}',
-                            'C7': 'amount_standard#{number_format=number}',
-                            'D7': 'amount_total#{number_format=number}',
-                            'E7': 'method${value or ""}',
-                            'G7': 'rfq_amount_total#{number_format=number}',
-                            'J7': 'reason${value or ""}',
-                            'L7': 'po_date${value or ""}#{number_format=date}',
+                            'A11': '${"=ROW()-10"}',
+                            'L11': 'pd_number${value or ""}',
+                            'C11': 'objective${value or ""}',
+                            'G11': 'rfq_supplier${value or ""}',
+                            'I11': 'rfq_supplier${value or ""}',
+                            'E11': 'amount_standard#{number_format=number}',
+                            'J11': 'amount_total#{number_format=number}',
+                            'F11': 'method${value or ""}',
+                            'H11': 'rfq_amount_total#{number_format=number}',
+                            'K11': 'reason${value or ""}',
+                            'M11': 'po_date${value or ""}#{number_format=date}',
                         },
                         '_TAIL_0': {
                         }
@@ -57,21 +58,24 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
-                            'B4': 'method_id.name${value or ""}',
-                            'B5': 'date_from${value or ""}#{number_format=date}',
-                            'B6': 'date_to${value or ""}#{number_format=date}',
+                            'B3': 'method_id.name${value or ""}',
+                            'B8': 'date_from${value or ""}#{number_format=date}',
+                            'B9': 'date_to${value or ""}#{number_format=date}',
                         },
                         'results': {
-                            'D9': 'ou_name${value or ""}',
-                            'E9': 'po_number${value or ""}',
-                            'K9': 'pol_product_name${value or ""}',
-                            'N9': 'prl_price#{number_format=number}',
-                            'O9': 'pol_price#{number_format=number}',
-                            'G9': 'po_date${value or ""}#{number_format=date}',
-                            'T9': 'supplier${value or ""}',
-                            'L9': 'brand${value or ""}',
-                            'F9': 'province${value or ""}',
-                            'U9': 'is_standard${value or ""}',
+                            'A12': '${"=ROW()-11"}',
+                            'B12': '${"กระทรวงวิทยาศาสตร์และเทคโนโลยี"}',
+                            'C12': '${"สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ"}',
+                            'D12': 'ou_name${value or ""}',
+                            'E12': 'po_number${value or ""}',
+                            'K12': 'pol_product_name${value or ""}',
+                            'N12': 'prl_price#{number_format=number}',
+                            'O12': 'pol_price#{number_format=number}',
+                            'G12': 'po_date${value or ""}#{number_format=date}',
+                            'T12': 'supplier${value or ""}',
+                            'L12': 'brand${value or ""}',
+                            'F12': 'province${value or ""}',
+                            'U12': 'is_standard${value or ""}',
                         },
                         '_TAIL_0': {
                         }
@@ -118,29 +122,30 @@
             <field name="datas_fname">xlsx_report_pabi_monthly_work_acceptance.xlsx</field>
             <field name="name">PABI Monthly Work Acceptance</field>
             <field name="parent_id" eval="ref('dir_procurement_reports')"/>
-            <field name="description">
+             <field name="description">
               {
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
-                            'B3': 'date_from${value or ""}#{number_format=date}',
-                            'E3': 'date_to${value or ""}#{number_format=date}',
+                            'B5': 'date_from${value or ""}#{number_format=date}',
+                            'B6': 'date_to${value or ""}#{number_format=date}',
                         },
                         'results': {
-                            'A6': 'ou_name${value or ""}',
-                            'C6': 'po_name${value or ""}',
-                            'D6': 'date_po${value or ""}#{number_format=date}',
-                            'E6': 'pr_text${value or ""}',
-                            'F6': 'budget_code${value or ""}',
-                            'G6': 'budget_name${value or ""}',
-                            'H6': 'approver${value or ""}',
-                            'I6': 'amount_total#{number_format=number}',
-                            'J6': 'currency${value or ""}',
-                            'K6': 'supplier_name${value or ""}',
-                            'L6': 'method${value or ""}',
-                            'M6': 'date_doc_approve${value or ""}#{number_format=date}',
-                            'N6': 'wa_name${value or ""}',
-                            'O6': 'date_accept${value or ""}#{number_format=date}',
+                            'A9': 'ou_name${value or ""}',
+                            'B9': '${"=ROW()-8"}',
+                            'C9': 'po_name${value or ""}',
+                            'D9': 'date_po${value or ""}#{number_format=date}',
+                            'E9': 'pr_text${value or ""}',
+                            'F9': 'budget_code${value or ""}',
+                            'G9': 'budget_name${value or ""}',
+                            'H9': 'approver${value or ""}',
+                            'I9': 'amount_total#{number_format=number}',
+                            'J9': 'currency${value or ""}',
+                            'K9': 'supplier_name${value or ""}',
+                            'L9': 'method${value or ""}',
+                            'M9': 'date_doc_approve${value or ""}#{number_format=date}',
+                            'O9': 'wa_name${value or ""}',
+                            'P9': 'date_accept${value or ""}#{number_format=date}',
                         },
                         '_TAIL_0': {
                         }
@@ -165,16 +170,16 @@
                             'B3': 'date_end${value or ""}#{number_format=date}',
                         },
                         'results': {
-                            'A6': 'sr_name${value or ""}',
-                            'B6': 'requester${value or ""}',
-                            'C6': 'project${value or ""}',
-                            'D6': 'section${value or ""}',
-                            'E6': 'requester_ou_name${value or ""}',
-                            'F6': 'date_request${value or ""}#{number_format=date}',
-                            'G6': 'date_approve${value or ""}#{number_format=date}',
-                            'K6': 'date_receive${value or ""}#{number_format=date}',
-                            'J6': 'date_transfer${value or ""}#{number_format=date}',
-                            'L6': '${"=NETWORKDAYS(?(J6), ?(K6))"}',
+                            'A7': 'sr_name${value or ""}',
+                            'B7': 'requester${value or ""}',
+                            'C7': 'project${value or ""}',
+                            'D7': 'section${value or ""}',
+                            'E7': 'requester_ou_name${value or ""}',
+                            'F7': 'date_request${value or ""}#{number_format=date}',
+                            'G7': 'date_approve${value or ""}#{number_format=date}',
+                            'K7': 'date_receive${value or ""}#{number_format=date}',
+                            'J7': 'date_transfer${value or ""}#{number_format=date}',
+                            'L7': '${"=NETWORKDAYS(?(J7), ?(K7))"}',
                         },
                         '_TAIL_0': {
                         }
@@ -198,16 +203,16 @@
                         '_HEAD_': {
                         },
                         'results': {
-                            'A5': 'id${value or ""}',
-                            'B5': 'category_name${value or ""}',
-                            'C5': 'search_key${value or ""}',
-                            'D5': 'supplier_name${value or ""}',
-                            'E5': 'address${value or ""}',
-                            'F5': 'vat${value or ""}',
-                            'G5': 'taxbranch${value or ""}',
-                            'H5': 'phone${value or ""}',
-                            'I5': 'email${value or ""}',
-                            'J5': 'tag_name${value or ""}',
+                            'A8': '${"=ROW()-7"}',
+                            'B8': 'category_name${value or ""}',
+                            'C8': 'search_key${value or ""}',
+                            'D8': 'supplier_name${value or ""}',
+                            'E8': 'address${value or ""}',
+                            'F8': 'vat${value or ""}',
+                            'G8': 'taxbranch${value or ""}',
+                            'H8': 'phone${value or ""}',
+                            'I8': 'email${value or ""}',
+                            'J8': 'tag_name${value or ""}',
                         },
                         '_TAIL_0': {
                         }
@@ -231,14 +236,13 @@
                         '_HEAD_': {
                         },
                         'results': {
-                            'A6': 'product_code${value or ""}',
-                            'B6': 'product_name${value or ""}',
-                            'C6': 'ou_name${value or ""}',
-                            'D6': 'location_name${value or ""}',
-                            'E6': 'balance${value or ""}',
-                            'F6': 'uom${value or ""}',
-                            'G6': 'balance${value or ""}',
-                            'H6': 'currency${value or ""}',
+                            'A7': 'product_name${value or ""}',
+                            'B7': 'ou_name${value or ""}',
+                            'C7': 'location_name${value or ""}',
+                            'D7': 'balance${value or ""}',
+                            'E7': 'uom${value or ""}',
+                            'F7': 'balance${value or ""}',
+                            'G7': 'currency${value or ""}',
                         },
                         '_TAIL_0': {
                         }
@@ -262,17 +266,16 @@
                         '_HEAD_': {
                         },
                         'results': {
-                            'A5': 'id${value or ""}',
-                            'B5': 'partner_code${value or ""}',
-                            'C5': 'partner_name${value or ""}',
-                            'D5': 'po_no${value or ""}',
-                            'E5': 'wa_no${value or ""}',
-                            'F5': 'date_contract_end${value or ""}#{number_format=date}',
-                            'G5': 'date_receive${value or ""}#{number_format=date}',
-                            'H5': 'delay_day${value or ""}',
-                            'I5': 'eval_receiving${value or ""}',
-                            'J5': 'eval_quality${value or ""}',
-                            'K5': 'eval_service${value or ""}',
+                            'A9': '${"=ROW()-8"}',
+                            'B9': 'partner_code${value or ""}',
+                            'C9': 'partner_name${value or ""}',
+                            'D9': 'po_no${value or ""}',
+                            'E9': 'wa_no${value or ""}',
+                            'F9': 'date_contract_end${value or ""}#{number_format=date}',
+                            'G9': 'date_receive${value or ""}#{number_format=date}',
+                            'H9': 'eval_receiving${value or ""}',
+                            'I9': 'eval_quality${value or ""}',
+                            'J9': 'eval_service${value or ""}',
                         },
                         '_TAIL_0': {
                         }
@@ -328,14 +331,14 @@
                         '_HEAD_': {
                         },
                         'results': {
-                            'A11': '${"=ROW()-10"}',
-                            'B11': 'costcenter_name${value or ""}',
-                            'C11': 'pol_name${value or ""}',
-                            'D11': 'method_name${value or ""}',
-                            'E11': 'pd_date${value or ""}#{number_format=date}',
-                            'F11': 'po_date${value or ""}#{number_format=date}',
-                            'G11': 'wa_date${value or ""}#{number_format=date}',
-                            'H11': 'amount_total#{number_format=number}',
+                            'A7': '${"=ROW()-6"}',
+                            'B7': 'costcenter_name${value or ""}',
+                            'C7': 'pol_name${value or ""}',
+                            'D7': 'method_name${value or ""}',
+                            'E7': 'pd_date${value or ""}#{number_format=date}',
+                            'F7': 'po_date${value or ""}#{number_format=date}',
+                            'G7': 'wa_date${value or ""}#{number_format=date}',
+                            'H7': 'amount_total#{number_format=number}',
                         },
                         '_TAIL_0': {
                         }
@@ -391,15 +394,15 @@
                         '_HEAD_': {
                         },
                         'results': {
-                            'A7': '${"=ROW()-6"}',
-                            'B7': 'po_name${value or ""}',
-                            'C7': 'po_date${value or ""}#{number_format=date}',
-                            'D7': 'pol_name${value or ""}',
-                            'E7': 'product_qty${value or ""}',
-                            'F7': 'uom_name${value or ""}',
-                            'G7': 'amount_total#{number_format=number}',
-                            'H7': '${"=?(G7)*?(E7)"}',
-                            'I7': 'currency#{number_format=number}',
+                            'A8': '${"=ROW()-7"}',
+                            'B8': 'po_name${value or ""}',
+                            'C8': 'po_date${value or ""}#{number_format=date}',
+                            'D8': 'pol_name${value or ""}',
+                            'E8': 'product_qty${value or ""}',
+                            'F8': 'uom_name${value or ""}',
+                            'G8': 'amount_total#{number_format=number}',
+                            'H8': '${"=?(G8)*?(E8)"}',
+                            'I8': 'currency#{number_format=number}',
                         },
                         '_TAIL_0': {
                         }
@@ -455,12 +458,12 @@
                         '_HEAD_': {
                         },
                         'results': {
-                            'A6': '${"=ROW()-5"}',
-                            'B6': 'ou_name${value or ""}',
-                            'C6': 'method${value or ""}',
-                            'D6': 'po_count${value or ""}',
-                            'E6': 'amount_total#{number_format=number}',
-                            'F6': 'currency${value or ""}',
+                            'A8': '${"=ROW()-7"}',
+                            'B8': 'ou_name${value or ""}',
+                            'C8': 'method${value or ""}',
+                            'D8': 'po_count${value or ""}',
+                            'E8': 'amount_total#{number_format=number}',
+                            'F8': 'currency${value or ""}',
                         },
                         '_TAIL_0': {
                         }
