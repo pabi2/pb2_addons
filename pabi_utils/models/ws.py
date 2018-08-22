@@ -56,9 +56,11 @@ class PABIUtilsWS(models.AbstractModel):
                 _('Method update_data() key_field is not valid!'))
         rec = self.env[model].search([(key_field, '=', data_dict[key_field])])
         if not rec:
-            raise ValidationError(_('Search key "%s" not found!'))
+            raise ValidationError(_('Search key "%s" not found!') %
+                                  data_dict[key_field])
         elif len(rec) > 1:
-            raise ValidationError(_('Search key "%s" found mutiple matches!'))
+            raise ValidationError(_('Search key "%s" found mutiple matches!') %
+                                  data_dict[key_field])
         rec_fields = []
         line_fields = []
         for field, model_field in rec._fields.iteritems():
