@@ -108,6 +108,10 @@
                     <field name="create_uid"/>
                     <field name="date_report"/>
                     <field name="report_type"/>
+                    <field name="doctype"/>
+                    <field name="payment_type"/>
+                    <field name="partner_bank_id"/>
+                    <field name="account_id"/>
                     <field name="state"/>
                 </tree>
             </field>

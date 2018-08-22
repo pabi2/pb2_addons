@@ -29,7 +29,8 @@ class PABIUnreconciledReport(models.Model):
             (
                 (select statement_id, 'bank' as source, document,
                     batch_code,
-                    cheque_number, date_value, debit-credit as amount,
+                    cheque_number, date_value, coalesce(debit, 0.0)-
+                    coalesce(credit, 0.0) as amount,
                     null::int as validate_user_id, null as days_outstanding,
                     partner_code, partner_name
                 from pabi_bank_statement_import
@@ -38,7 +39,8 @@ class PABIUnreconciledReport(models.Model):
             union all
                 (select statement_id, 'nstda' as source, document,
                     null as batch_code,
-                    cheque_number, date_value, credit-debit as amount,
+                    cheque_number, date_value, coalesce(credit, 0.0)-
+                    coalesce(debit, 0.0) as amount,
                     validate_user_id, days_outstanding,
                     partner_code, partner_name
                 from pabi_bank_statement_item
