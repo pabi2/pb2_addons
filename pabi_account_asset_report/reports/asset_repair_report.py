@@ -138,8 +138,6 @@ class XLSXReportAssetRepair(models.TransientModel):
         self.ensure_one()
         Result = self.env['asset.repair.view']
         dom = []
-        sections = self.env.user.partner_id.employee_id.section_id
-        print sections
         if self.org_id:
             dom += [('asset_repair_id.asset_id.org_id',
                      '=', self.org_id.ids)]
