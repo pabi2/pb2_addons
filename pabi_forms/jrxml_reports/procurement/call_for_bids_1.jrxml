@@ -184,7 +184,13 @@ ORDER BY prc.sequence]]>
 	<queryString>
 		<![CDATA[SELECT pd.id as pd_id,
 pr.id as pr_id,
-(SELECT code FROM operating_unit
+(SELECT
+(Case when code = 'สำนักงานกลาง'
+then
+'สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ'
+else
+code
+end) FROM operating_unit
 WHERE id = pd.operating_unit_id LIMIT 1) as ou_name,
 (SELECT name FROM operating_unit
 WHERE id = pd.operating_unit_id LIMIT 1) as ou_key,

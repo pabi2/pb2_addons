@@ -105,7 +105,12 @@ class XLSXReportPabiHiringSummaryResults(models.Model):
         cur.name as currency,
         po.date_order as po_date,
         ou.id as operating_unit_id,
-        ou.name as ou_name,
+        (Case when ou.name = 'สำนักงานกลาง'
+        then
+        'สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ'
+        else
+        ou.name
+	    end) as ou_name,
         rp.id as partner_id,
         (
         SELECT prl.name
