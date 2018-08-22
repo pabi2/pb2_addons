@@ -976,7 +976,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
                                 'B3': 'fiscalyear_start_id.name${value or ""}',
                                 'D3': 'fiscalyear_end_id.name${value or ""}',
-                                'B4': 'filter${value and dict(filter_no="No Filters", filter_date="Dates", filter_period="Periods")[value] or ""}',
+                                'B4': 'filter${value and dict(env["xlsx.report.cd.receivable.balance.sheet.summary"]._columns["filter"].selection)[value] or ""}',
                                 'B5': 'period_start_id.name${value or ""}',
                                 'D5': 'period_end_id.name${value or ""}',
                                 'B6': 'date_start${value or ""}#{number_format=date}',
@@ -987,58 +987,26 @@ result = pd.pivot_table(df, index=groupby,
                                 'B10': '${env.user.display_name}',
                                 'B11': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
-                            'balance_sheet_summary_results': {
-                                'A14': 'borrower_partner_id.search_key${value or ""}',
-                                'B14': 'borrower_partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
-                                'C14': 'mou_id.name${value or ""}',
-                                'D14': 'sale_id.name${value or ""}',
-                                'E14': 'bank_id.bank.name${value or ""}',
-                                'F14': 'bank_id.bank_branch.name${value or ""}',
-                                'G14': 'name${value or ""}',
-                                'H14': '${"=IFERROR(VLOOKUP(?(L14),brought_forward_report!A1:B5000,2,0),0)"}#{number_format=number}',
-                                'I14': '${"=IFERROR(VLOOKUP(?(L14),received_report!A1:C5000,2,0),0)"}#{number_format=number}',
-                                'J14': '${"=IFERROR(VLOOKUP(?(L14),received_report!A1:C5000,3,0),0)"}#{number_format=number}',
-                                'K14': '${"=?(H14)+?(I14)-?(J14)"}#{number_format=number}',
-                                'L14': 'id${value or ""}',
+                            'results': {
+                                'A14': 'loan_agreement_id.borrower_partner_id.search_key${value or ""}',
+                                'B14': 'loan_agreement_id.borrower_partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
+                                'C14': 'loan_agreement_id.mou_id.name${value or ""}',
+                                'D14': 'loan_agreement_id.sale_id.name${value or ""}',
+                                'E14': 'loan_agreement_id.bank_id.bank.name${value or ""}',
+                                'F14': 'loan_agreement_id.bank_id.bank_branch.name${value or ""}',
+                                'G14': 'loan_agreement_id.name${value or ""}',
+                                'H14': 'brought_forward${value or ""}#{number_format=number}',
+                                'I14': 'loan${value or ""}#{number_format=number}',
+                                'J14': 'received${value or ""}#{number_format=number}',
+                                'K14': 'outstanding${value or ""}#{number_format=number}',
                             },
                             '_TAIL_0': {
-                                'G14': '${"Total"}#{font=bold;align=right}',
-                                'H14': '@{sum}#{font=bold;number_format=number;align=right}',
-                                'I14': '@{sum}#{font=bold;number_format=number;align=right}',
-                                'J14': '@{sum}#{font=bold;number_format=number;align=right}',
-                                'K14': '@{sum}#{font=bold;number_format=number;align=right}',
+                                'A14': '${"Total"}#{font=bold}',
+                                'H14': '@{sum}#{font=bold;number_format=number}',
+                                'I14': '@{sum}#{font=bold;number_format=number}',
+                                'J14': '@{sum}#{font=bold;number_format=number}',
+                                'K14': '@{sum}#{font=bold;number_format=number}',
                             }
-                        },
-                        'brought_forward_detail_report': {
-                            'brought_forward_results': {
-                                'A2': 'loan_agreement_id.id${value or ""}',
-                                'B2': 'invoice_id${value and (value.type == "in_invoice" and value.amount_total or (-1) * value.amount_total) or 0}#{number_format=number}',
-                            },
-                        },
-                        'brought_forward_report': {
-                            '_BI_': {
-                                'A2': {
-                                    'df': 'brought_forward_detail_report',
-                                    # Group by A. User will have to do subtotal themselves
-                                    'oper_code': 'df[["A", "B"]].groupby(["A"]).sum()',
-                                },
-                            },
-                        },
-                        'received_detail_report': {
-                            'received_results': {
-                                'A2': 'loan_agreement_id.id${value or ""}',
-                                'B2': 'invoice_id${value and (value.type == "in_invoice" and value.amount_total or 0) or 0}#{number_format=number}',
-                                'C2': 'invoice_id${value and (value.type == "out_invoice" and value.amount_total or 0) or 0}#{number_format=number}',
-                            },
-                        },
-                        'received_report': {
-                            '_BI_': {
-                                'A2': {
-                                    'df': 'received_detail_report',
-                                    # Group by A. User will have to do subtotal themselves
-                                    'oper_code': 'df[["A", "B", "C"]].groupby(["A"]).sum()',
-                                },
-                            },
                         },
                     }
                 }
