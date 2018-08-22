@@ -47,7 +47,7 @@ class PABIUtilsWS(models.AbstractModel):
                 'field2': value2,
              }]
             }
-            key_field: identirier field, i.e., number
+            key_field: search field, i.e., number
         """
         res = {}
         # Prepare Header Dict (non o2m)
@@ -55,6 +55,10 @@ class PABIUtilsWS(models.AbstractModel):
             raise ValidationError(
                 _('Method update_data() key_field is not valid!'))
         rec = self.env[model].search([(key_field, '=', data_dict[key_field])])
+        if not rec:
+            raise ValidationError(_('Search key "%s" not found!'))
+        elif len(rec) > 1:
+            raise ValidationError(_('Search key "%s" found mutiple matches!'))
         rec_fields = []
         line_fields = []
         for field, model_field in rec._fields.iteritems():
