@@ -268,6 +268,21 @@ class AccountAsset(ChartFieldAction, models.Model):
         track_visibility='onchange',
         readonly=False,
     )
+    is_standard = fields.Boolean(
+        string='Standard Asset',
+        track_visibility='onchange',
+        readonly=False,
+    )
+    asset_brand = fields.Char(
+        string='Brand',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    asset_model = fields.Char(
+        string='Model',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     # Transfer Asset
     target_asset_ids = fields.Many2many(
         'account.asset',
