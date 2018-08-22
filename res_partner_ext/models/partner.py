@@ -61,6 +61,12 @@ class ResPartner(models.Model):
         store=True,
         help="Name with title",
     )
+    customer_legacy_code = fields.Char(
+        string='Customer Legacy Code',
+    )
+    supplier_legacy_code = fields.Char(
+        string='Supplier Legacy Code',
+    )
 
     @api.onchange('title')
     def _onchange_title(self):
