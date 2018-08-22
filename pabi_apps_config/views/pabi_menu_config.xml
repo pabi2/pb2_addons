@@ -193,6 +193,9 @@
         <menuitem id="account.menu_account_supplier" name="Suppliers"
             parent="account.menu_finance_payables"
             action="base.action_partner_supplier_form" sequence="0"/>
+        <menuitem id="purchase.menu_purchase_supplier" name="Suppliers"
+            parent="purchase.menu_procurement_management"
+            action="base.action_partner_supplier_form" sequence="15"/>
 
     </data>
 </openerp>
