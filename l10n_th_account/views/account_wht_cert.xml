@@ -37,6 +37,7 @@
                             <group string="References">
                                 <field name="date"/>
                                 <field name="voucher_number" attrs="{'invisible': [('voucher_number', '=', False)]}"/>
+                                <field name="calendar_period_id"/>
                             </group>
                         </group>
                         <field name="wht_line">
@@ -94,6 +95,7 @@
                     <group expand="0" string="Group By">
                         <filter name="income_tax_form" string="Tax Form" context="{'group_by':'income_tax_form'}"/>
                         <filter name="tax_payer" string="Tax Payer" context="{'group_by':'tax_payer'}"/>
+                        <filter name="calendar_period_id" string="Carendar Period" context="{'group_by':'calendar_period_id'}"/>
                     </group>
                 </search>
             </field>
