@@ -214,11 +214,10 @@ class AccountWhtCert(models.Model):
                 self._prepare_address(rec.supplier_partner_id)
 
     @api.multi
-    @api.depends('date')
+    @api.depends('period_id')
     def _compute_calendar_period(self):
-        Calendar = self.env['account.period.calendar']
         for cert in self:
-            cert.calendar_period_id = Calendar.find(cert.date)[:1]
+            cert.calendar_period_id = cert.period_id.id
 
     @api.model
     def _prepare_wht_line(self, voucher):
