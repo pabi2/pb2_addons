@@ -160,21 +160,32 @@ class PABIUtilsWS(models.AbstractModel):
 
     @api.model
     def _finalize_data_to_write(self, rec, rec_dict):
-        """ For many2one, use name search to get id """
+        """ For many2one, many2many, use name search to get id """
         final_dict = {}
         for key, value in rec_dict.iteritems():
-            if key in rec_dict.keys() and rec._fields[key].type == 'many2one':
+            ftype = rec._fields[key].type
+            if key in rec_dict.keys() and ftype in ('many2one', 'many2many'):
                 model = rec._fields[key].comodel_name
                 if rec_dict[key] and isinstance(rec_dict[key], basestring):
-                    values = self.env[model].name_search(rec_dict[key],
-                                                         operator='=')
-                    if len(values) > 1:
-                        raise ValidationError(
-                            _('%s matched more than 1 record') % rec_dict[key])
-                    elif not values:
-                        raise ValidationError(
-                            _('%s found no match.') % rec_dict[key])
-                    value = values[0][0]
+                    search_vals = []
+                    if ftype == 'many2one':
+                        search_vals = [rec_dict[key]]
+                    elif ftype == 'many2many':
+                        search_vals = rec_dict[key].split(',')
+                        value = []  # for many2many, result will be tuple
+                    for val in search_vals:
+                        values = self.env[model].name_search(val,
+                                                             operator='=')
+                        if len(values) > 1:
+                            raise ValidationError(
+                                _('%s matched more than 1 record') % val)
+                        elif not values:
+                            raise ValidationError(
+                                _('%s found no match.') % val)
+                        if ftype == 'many2one':
+                            value = values[0][0]
+                        elif ftype == 'many2many':
+                            value.append((4, values[0][0]))
             final_dict.update({key: value})
         return final_dict
 

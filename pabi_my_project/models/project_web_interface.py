@@ -69,6 +69,7 @@ class ResProject(models.Model):
         try:
             res = self.env['pabi.utils.ws'].friendly_create_data(self._name,
                                                                  data_dict)
+            print res
             if res['is_success']:
                 res_id = res['result']['id']
                 document = self.browse(res_id)
