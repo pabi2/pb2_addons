@@ -14,6 +14,7 @@
                           <group>
                               <group>
                                   <field name="calendar_period_id"/>
+                                  <field name="compute_method"/>
                               </group>
                               <group>
                                   <field name="batch_note"/>

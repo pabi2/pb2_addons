@@ -846,10 +846,10 @@ class AccountAssetLine(models.Model):
 
     @api.multi
     def _setup_move_line_data(self, depreciation_date,
-                              period, account, type, move):
+                              period, account, type, move_id):
         move_line_data = super(AccountAssetLine, self).\
             _setup_move_line_data(depreciation_date,
-                                  period, account, type, move)
+                                  period, account, type, move_id)
         asset = self.asset_id
         move_line_data.update({'name': asset.code})
         # Only update dimension on line with analytic_account_id

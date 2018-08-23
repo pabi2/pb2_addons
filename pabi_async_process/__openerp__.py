@@ -13,6 +13,7 @@
         'account_subscription_enhanced',
         'pabi_hr_salary',
         'pabi_budget_plan',
+        'pabi_asset_management',
     ],
     'data': [
         'action_purchase_create_inovice/create_invoice_view.xml',
