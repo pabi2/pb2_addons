@@ -37,8 +37,10 @@ To activate, go to Server Actions menu, and add it to model's menu
         "account_invoice_create_payment",
         "pabi_procurement",
         "pabi_budget_plan",
+        "pabi_invest_construction",
     ],
     "data": [
         "data/server_action.xml",
+        "wizards/auto_approve_invest_construction.xml",
     ],
 }
