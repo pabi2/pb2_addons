@@ -247,7 +247,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Orhter Info (myProject)">
+                            <page string="Other Info (myProject)">
                                 <group>
                                     <group>
                                         <field name="nstda_strategy_id"/>
