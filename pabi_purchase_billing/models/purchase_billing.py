@@ -89,6 +89,7 @@ class PurchaseBilling(models.Model):
         string='Billing Sent Date',
         readonly=True,
         states={'billed': [('readonly', False)]},
+        track_visibility='onchange',
     )
     count_invoice = fields.Integer(
         string='Count Invoice',
@@ -247,3 +248,29 @@ class PurchaseBilling(models.Model):
         dom = [('purchase_billing_id', '=', self.id)]
         result.update({'domain': dom})
         return result
+
+
+class PurchaseBillingDate(models.TransientModel):
+    _name = 'purchase.billing.sent.date'
+
+    date_sent = fields.Date(
+        string='Billing Sent Date',
+        track_visibility='onchange',
+    )
+
+    @api.multi
+    def update_billing_date(self):
+        self.ensure_one()
+        active_ids = self._context.get('active_ids')
+        billing_date = self.env['purchase.billing'].browse(active_ids)
+        for rec in billing_date:
+            rec.write({'date_sent': self.date_sent})
+
+    @api.constrains('date_sent')
+    def _validate_date_sent(self):
+        date_sent = self.date_sent
+        if date_sent and date_sent < time.strftime('%Y-%m-%d'):
+            raise ValidationError(
+                _("You specified wrong billing sent date "
+                  "It must be more than or equal %s"
+                    % (time.strftime('%d/%m/%Y'))))
