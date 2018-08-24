@@ -143,8 +143,6 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                      'invoice_mode': self.invoice_mode,
                      'num_installment': self.num_installment,
                      })
-        print order
-        x = 1/0
         return True
 
     @api.model
