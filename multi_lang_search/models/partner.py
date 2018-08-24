@@ -34,7 +34,7 @@ class ResPartner(models.Model):
                          FROM res_partner
                       {where} ({email} {operator} {percent}
                            OR {display_name} {operator} {percent})
-                     ORDER BY {display_name}
+                     -- ORDER BY {display_name}
                     """.format(where=where_str, operator=operator,
                                email=unaccent('email'),
                                display_name=unaccent('display_name'),

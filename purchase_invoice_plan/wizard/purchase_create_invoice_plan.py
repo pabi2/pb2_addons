@@ -122,7 +122,6 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         # order._check_invoice_mode()
         order.invoice_plan_ids.unlink()
         lines = []
-
         for install in self.installment_ids:
             if install.installment == 0:
                 self._check_deposit_account()
@@ -144,6 +143,9 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                      'invoice_mode': self.invoice_mode,
                      'num_installment': self.num_installment,
                      })
+        print order
+        x = 1/0
+        return True
 
     @api.model
     def _prepare_advance_line(self, order, install):
@@ -248,14 +250,15 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
 
         lines = []
         base_amount = order.amount_untaxed
-
+        date_invoice = fields.Date.context_today(self)
         if self.use_advance:
             lines.append({'installment': 0,
                           'order_amount': base_amount,
                           'amount': 0,
                           'description': 'Advance Amount',
                           'is_advance_installment': True,
-                          'percent': 0})
+                          'percent': 0,
+                          'date_invoice': date_invoice})
 
         if self.use_deposit:
             lines.append({'installment': 0,
@@ -263,13 +266,15 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                           'amount': 0,
                           'description': 'Deposit Amount',
                           'is_deposit_installment': True,
-                          'percent': 0})
+                          'percent': 0,
+                          'date_invoice': date_invoice})
 
         while i <= self.num_installment:
             lines.append({'installment': i,
                           'order_amount': base_amount,
                           'amount': i == 1 and base_amount or 0,
-                          'percent': i == 1 and 100 or 0})
+                          'percent': i == 1 and 100 or 0,
+                          'date_invoice': date_invoice})
             i += 1
 
         self.installment_ids = False

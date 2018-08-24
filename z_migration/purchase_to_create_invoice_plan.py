@@ -6,6 +6,7 @@ Describe this module here...
 import openerplib
 import ConfigParser
 import os
+from datetime import datetime
 
 
 def get_connection(config_file):
@@ -30,8 +31,22 @@ connection.check_login()
 
 # Start your program ...
 
-# Expense = connection.get_model('hr.expense.expense')
-# expense_ids = Expense.search([('number', '=', 'EX18000001')])
+po_names = ['PO18000503X']
+Purchase = connection.get_model('purchase.order')
+purchase_ids = Purchase.search([('name', 'in', po_names)])
+for purchase_id in purchase_ids:
+    install_start_date = datetime.now().strftime('%Y-%m-%d')
+    Purchase.generate_purchase_invoice_plan(purchase_id,
+                                            install_start_date,
+                                            num_installment=5,
+                                            installment_amount=False,
+                                            interval=2, interval_type='month',
+                                            invoice_mode='change_price',
+                                            use_advance=False,
+                                            use_deposit=False,
+                                            use_retention=False)
+    print purchase_id
+    # print 'Set invoice plan flag for: %s' % po_id
 # expense_id = Expense.copy(expense_ids[0], {})
 # Expense.signal_workflow([expense_id], 'confirm')
 # ctx = {'active_model': 'hr.expense.expense', 'active_id': expense_id}

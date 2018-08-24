@@ -6,6 +6,7 @@ from openerp.exceptions import ValidationError
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
+    _order = 'search_key'
 
     id = fields.Integer(
         string='ID',
@@ -19,6 +20,7 @@ class ResPartner(models.Model):
     )
     search_key = fields.Char(
         string='Search Key',
+        index=True,
         compute='_get_search_key',
         store=True,
     )

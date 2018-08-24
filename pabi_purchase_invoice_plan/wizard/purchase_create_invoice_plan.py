@@ -168,7 +168,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         if not self.by_fiscalyear:
             return super(PurchaseCreateInvoicePlan, self).\
                 _compute_installment_details()
-        order = self.env['purchase.order'].browse(self._context['active_id'])
+        # order = self.env['purchase.order'].browse(self._context['active_id'])
         # order._check_invoice_mode()
         fiscalyear_dict = {}
         for f in self.env['account.fiscalyear'].search_read([],
