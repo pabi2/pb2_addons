@@ -197,7 +197,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             installment_date =\
                 datetime.strptime(self.installment_date, "%Y-%m-%d")
             count = 0
-            remaning_installment_amount = self.order_amount
+            remaining_installment_amount = self.order_amount
             last_line = False
             for i in self.installment_ids:
                 if i.is_advance_installment or i.is_deposit_installment:
@@ -217,21 +217,21 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                         installment_date + relativedelta(days=+interval)
                 count += 1
                 i.date_invoice = installment_date
-                if remaning_installment_amount > self.installment_amount:
+                if remaining_installment_amount > self.installment_amount:
                     i.amount = self.installment_amount
-                elif remaning_installment_amount < 0:
+                elif remaining_installment_amount < 0:
                     i.amount = 0
                 else:
-                    i.amount = remaning_installment_amount
-                remaning_installment_amount = (remaning_installment_amount -
-                                               self.installment_amount)
+                    i.amount = remaining_installment_amount
+                remaining_installment_amount = (remaining_installment_amount -
+                                                self.installment_amount)
                 new_val = i.amount / (self.order_amount or 1) * 100
                 if round(new_val, prec) != round(i.percent, prec):
                     i.percent = new_val
                 last_line = i
-            if last_line and remaning_installment_amount > 0:
+            if last_line and remaining_installment_amount > 0:
                 last_line.amount = (last_line.amount +
-                                    remaning_installment_amount)
+                                    remaining_installment_amount)
                 new_val = last_line.amount / self.order_amount * 100
                 if round(new_val, prec) != round(last_line.percent, prec):
                     last_line.percent = new_val
@@ -277,6 +277,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
 
         self.installment_ids = False
         self.installment_ids = lines
+
         self._compute_installment_details()
 
     @api.one

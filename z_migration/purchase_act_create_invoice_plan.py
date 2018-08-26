@@ -1,12 +1,15 @@
 """
-Describe this module here...
- - xxx
- - yyy
+This method recalculate invoice plan of selected PO,
+based on specific wizard params.
+Status: Done
 """
 import openerplib
 import ConfigParser
 import os
 from datetime import datetime
+
+
+conf_file = 'migration.conf'
 
 
 def get_connection(config_file):
@@ -26,28 +29,34 @@ def get_connection(config_file):
     return connection
 
 
-connection = get_connection('migration.conf')
+connection = get_connection(conf_file)
 connection.check_login()
 
 # Start your program ...
-
-po_names = ['PO18000503X']
 Purchase = connection.get_model('purchase.order')
-purchase_ids = Purchase.search([('name', 'in', po_names)])
+
+# Serach by name
+# po_names = ['PO18000518']
+# purchase_ids = Purchase.search([('name', 'in', po_names)])
+
+# serach is_fin_lease, use_invoice_plan
+purchase_ids = Purchase.search([('use_invoice_plan', '=', True),
+                                ('is_fin_lease', '=', True),
+                                ('state', '=', 'draft')])
+
+print '--> number of processing PO: %s' % len(purchase_ids)
+
 for purchase_id in purchase_ids:
     install_start_date = datetime.now().strftime('%Y-%m-%d')
     Purchase.generate_purchase_invoice_plan(purchase_id,
                                             install_start_date,
-                                            num_installment=5,
-                                            installment_amount=False,
+                                            num_installment=3,
+                                            installment_amount=19800,
                                             interval=2, interval_type='month',
                                             invoice_mode='change_price',
                                             use_advance=False,
+                                            advance_percent=False,
                                             use_deposit=False,
+                                            advance_account=False,
                                             use_retention=False)
-    print purchase_id
-    # print 'Set invoice plan flag for: %s' % po_id
-# expense_id = Expense.copy(expense_ids[0], {})
-# Expense.signal_workflow([expense_id], 'confirm')
-# ctx = {'active_model': 'hr.expense.expense', 'active_id': expense_id}
-# Expense.action_accept_to_paid([expense_id], context=ctx)
+    print '--> purchase_id processed: %s' % purchase_id
