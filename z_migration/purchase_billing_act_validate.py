@@ -6,7 +6,7 @@ import openerplib
 import ConfigParser
 import os
 
-conf_file = 'migration_remote'
+conf_file = 'migration_remote.conf'
 
 
 def get_connection(config_file):
@@ -20,15 +20,16 @@ def get_connection(config_file):
     login = config.get('server', 'login')
     password = config.get('server', 'password')
     user_id = int(config.get('server', 'user_id'))
+    protocal = config.get('server', 'protocal')
     connection = openerplib.get_connection(
         hostname=hostname, port=port, database=database, login=login,
-        password=password, protocol="jsonrpc", user_id=user_id)
+        password=password, protocol=protocal, user_id=user_id)
     return connection
 
 
 connection = get_connection(conf_file)
 connection.check_login()
-
+x = 1/0
 # Start your program ...
 
 Billing = connection.get_model('purchase.billing')
