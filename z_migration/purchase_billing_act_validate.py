@@ -29,7 +29,6 @@ def get_connection(config_file):
 
 connection = get_connection(conf_file)
 connection.check_login()
-x = 1/0
 # Start your program ...
 
 Billing = connection.get_model('purchase.billing')
