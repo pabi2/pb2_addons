@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+from openerp import models, fields, api
 
 
 class PurchaseOrder(models.Model):
@@ -7,7 +7,8 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def generate_purchase_invoice_plan(
-            self, purchase_id, installment_date, num_installment=1,
+            self, purchase_id, installment_date=False,
+            num_installment=1,
             installment_amount=False, interval=1, interval_type='month',
             invoice_mode='change_price', use_advance=False,
             advance_percent=0.0, use_deposit=False,
@@ -32,10 +33,12 @@ class PurchaseOrder(models.Model):
         wizard = Wizard.create(res)
         wizard._onchange_plan()
         # Simulate onchange on other params
-        wizard.installment_date = installment_date
-        wizard.interval = interval
-        wizard.interval_type = interval_type
-        wizard.installment_amount = installment_amount
+        wizard.installment_date = installment_date or \
+            fields.Date.context_today(self)
+        wizard.interval = interval or 1
+        wizard.interval_type = interval_type or 'month'
+        if installment_amount:
+            wizard.installment_amount = installment_amount
         wizard._onchange_installment_config()
         # Now, installment is crated as <newID> we need to make it persistant
         installments = []
