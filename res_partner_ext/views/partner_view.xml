@@ -89,6 +89,9 @@
                 <!-- <field name="category_id" position="attributes">
                     <attribute name="domain">[('parent_id','=',False)]</attribute>
                 </field> -->
+                <xpath expr="/form/sheet/notebook/page[@string='Contacts']/field[@name='child_ids']/form//field[@name='category_id']" position="attributes">
+                    <attribute name="widget">False</attribute>
+                </xpath>
                 <xpath expr="/form/sheet/group//field[@name='title']" position="replace"/>
                 <xpath expr="/form/sheet/group//field[@name='email']" position="after">
                   <field name="customer_legacy_code" readonly="True"/>
