@@ -40,11 +40,16 @@ class AccountAgedTrialBalance(orm.TransientModel):
             required=True),
         'period_to': fields.many2one('account.period', 'End Period',
                                      required=True),
+        'period_length': fields.integer(
+            "Period Length (days)",
+            required=True,
+        ),
     }
 
     _defaults = {
         'filter': 'filter_period',
         'fiscalyear_id': _get_current_fiscalyear,
+        'period_length': 30,
     }
 
     def onchange_fiscalyear(self, cr, uid, ids, fiscalyear=False,
@@ -64,6 +69,8 @@ class AccountAgedTrialBalance(orm.TransientModel):
         return res
 
     def _print_report(self, cr, uid, ids, data, context=None):
+        data['form'].update(
+            self.read(cr, uid, ids, ['period_length'], context=context)[0])
         # we update form with display account value
         data = self.pre_print_report(cr, uid, ids, data, context=context)
         return {'type': 'ir.actions.report.xml',
