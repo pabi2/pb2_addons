@@ -277,7 +277,7 @@ class ResPartner(models.Model):
 
     @api.multi
     def write(self, vals):
-        self._pre_category_change(vals)
+        # self._pre_category_change(vals)  # Do not need this
         res = super(ResPartner, self).write(vals)
         self._post_category_change(vals)
         return res
