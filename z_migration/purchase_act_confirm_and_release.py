@@ -1,12 +1,15 @@
 """
-This script will click button Validate on Billing (draft)
-Status: Done
+This method will simulate clicing on Confirm button
+Status:
 """
+from datetime import datetime
 import openerplib
 import ConfigParser
 import os
 
-conf_file = 'migration_remote.conf'
+
+# conf_file = 'migration_remote.conf'
+conf_file = 'migration.conf'
 
 
 def get_connection(config_file):
@@ -29,11 +32,23 @@ def get_connection(config_file):
 
 connection = get_connection(conf_file)
 connection.check_login()
-# Start your program ...
 
-Billing = connection.get_model('purchase.billing')
-billing_ids = Billing.search([('state', '=', 'draft')])
-print '--> Billing Confirm: %s' % len(billing_ids)
-for billing_id in billing_ids:
-    Billing.validate_billing([billing_id])
-    print '--> processed for billing_id: %s' % billing_id
+# Start your program ...
+Purchase = connection.get_model('purchase.order')
+
+# ========================== SEARCH ========================
+# Serach by name
+po_names = ['PO18000535']
+purchase_ids = Purchase.search([('name', 'in', po_names)])
+
+# serach is_fin_lease, use_invoice_plan
+# purchase_ids = Purchase.search([('use_invoice_plan', '=', True),
+#                                 # ('is_fin_lease', '=', True),
+#                                 ('state', '=', 'draft')])
+
+print '--> PO Confirm and Release: %s' % len(purchase_ids)
+
+for purchase_id in purchase_ids:
+    Purchase.mock_trigger_workflow([purchase_id], 'purchase_confirm')
+    Purchase.mock_trigger_workflow([purchase_id], 'purchase_approve')
+    print '--> purchase_id processed: %s' % purchase_id

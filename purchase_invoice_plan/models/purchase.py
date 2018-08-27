@@ -431,13 +431,13 @@ class PurchaseOrder(models.Model):
                         res.get('quantity', 0.0) * line_percent / 100
                     res.update({'price_unit': price_unit,
                                 'quantity': 1.0})
-                    d = decimal.Decimal(str(price_unit))
-                    if d.as_tuple().exponent < -2:
-                        raise ValidationError(
-                            _('Too many decimal places in percent will cause '
-                              'rounding error in invoice unit price, i.e., %s.'
-                              '\nPlease reduce to maximum 2 decimal places') %
-                            price_unit)
+                    # d = decimal.Decimal(str(price_unit))
+                    # if d.as_tuple().exponent < -2:
+                    #     raise ValidationError(
+                    #        _('Too many decimal places in percent will cause '
+                    #         'rounding error in invoice unit price, i.e., %s.'
+                    #          '\nPlease reduce to maximum 2 decimal places') %
+                    #         price_unit)
             else:
                 return {}
         return res

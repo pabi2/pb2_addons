@@ -5,8 +5,20 @@ from openerp import models, fields, api
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
+    @api.multi
+    def mock_trigger_workflow(self, signal):
+        """ Because openerplib can't call workflow directly, we mock it """
+        self.signal_workflow(signal)
+        return True
+
+    @api.multi
+    def mock_action_invoice_create(self):
+        self.ensure_one()
+        self.action_invoice_create()
+        return True
+
     @api.model
-    def generate_purchase_invoice_plan(
+    def mock_prepare_purchase_invoice_plan(
             self, purchase_id, installment_date=False,
             num_installment=1,
             installment_amount=False, interval=1, interval_type='month',
@@ -37,7 +49,7 @@ class PurchaseOrder(models.Model):
             fields.Date.context_today(self)
         wizard.interval = interval or 1
         wizard.interval_type = interval_type or 'month'
-        if installment_amount:
+        if not wizard.installment_amount and installment_amount:
             wizard.installment_amount = installment_amount
         wizard._onchange_installment_config()
         # Now, installment is crated as <newID> we need to make it persistant
@@ -50,5 +62,4 @@ class PurchaseOrder(models.Model):
         wizard.installment_ids = False  # remove it first, and rewrite by line
         wizard.write({'installment_ids': installments})
         wizard.do_create_purchase_invoice_plan()
-        # print wizard.installment_amount
         return True
