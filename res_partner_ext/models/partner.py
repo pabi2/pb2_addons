@@ -405,9 +405,9 @@ class ResPartner(models.Model):
                 return self.name_get(cr, uid, ids, context)
             else:
                 return []
-        return super(ResPartner, self).name_search(
-            cr, uid, name, args, operator=operator,
-            context=context, limit=limit)
+
+        ids = self.search(cr, uid, [], limit=limit)  # Just return all
+        return self.name_get(cr, uid, ids, context)
 
 
 class ResPartnerCategory(models.Model):

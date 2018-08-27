@@ -43,7 +43,7 @@
                         <group>
                             <group>
                                 <field name="adjust_type"/>
-                                <field name="invoice_id" attrs="{'required': True}"/>
+                                <field name="invoice_id" attrs="{'required': [('adjust_type', '=', 'expense_to_asset')]}"/>
                                 <field name="source_document_type" invisible="1"/>
                                 <field name="ship_purchase_id" attrs="{'invisible': ['|', ('source_document_type', '!=', 'expense'),
                                                                                      ('adjust_type', '!=', 'expense_to_asset')]}"/>

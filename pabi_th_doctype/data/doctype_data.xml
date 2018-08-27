@@ -92,6 +92,8 @@
             <field name="name">Asset Adjustment</field>
             <field name="sequence_id" ref="doctype_asset_adjust_seq"/>
             <field name="refer_type">asset_adjust</field>
+            <field name="with_reversal" >True</field>
+            <field name="reversal_sequence_id" ref="doctype_cancel_with_reversal_seq"/>
         </record>
         <!-- Misc -->
         <record id="doctype_loan_installment" model="res.doctype" >
