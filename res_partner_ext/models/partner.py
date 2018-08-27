@@ -2,6 +2,7 @@
 
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from openerp.osv.expression import get_unaccent_wrapper
 
 
 class ResPartner(models.Model):
@@ -358,6 +359,55 @@ class ResPartner(models.Model):
                 name = "%s <%s>" % (name, record.email)
             res.append((record.id, name))
         return res
+
+    def name_search(self, cr, uid, name, args=None,
+                    operator='ilike', context=None, limit=100):
+        """ Overwrite base class, to remove order by display_name """
+        if not args:
+            args = []
+        if name and operator in ('=', 'ilike', '=ilike', 'like', '=like'):
+
+            self.check_access_rights(cr, uid, 'read')
+            where_query = self._where_calc(cr, uid, args, context=context)
+            self._apply_ir_rules(cr, uid, where_query, 'read', context=context)
+            from_clause, where_clause, where_clause_params = \
+                where_query.get_sql()
+            where_str = where_clause and \
+                (" WHERE %s AND " % where_clause) or ' WHERE '
+
+            # search on the name of the contacts and of its company
+            search_name = name
+            if operator in ('ilike', 'like'):
+                search_name = '%%%s%%' % name
+            if operator in ('=ilike', '=like'):
+                operator = operator[1:]
+
+            unaccent = get_unaccent_wrapper(cr)
+
+            query = """SELECT id
+                         FROM res_partner
+                      {where} ({email} {operator} {percent}
+                           OR {display_name} {operator} {percent})
+                     -- ORDER BY {display_name}
+                    """.format(where=where_str, operator=operator,
+                               email=unaccent('email'),
+                               display_name=unaccent('display_name'),
+                               percent=unaccent('%s'))
+
+            where_clause_params += [search_name, search_name]
+            if limit:
+                query += ' limit %s'
+                where_clause_params.append(limit)
+            cr.execute(query, where_clause_params)
+            ids = map(lambda x: x[0], cr.fetchall())
+
+            if ids:
+                return self.name_get(cr, uid, ids, context)
+            else:
+                return []
+        return super(ResPartner, self).name_search(
+            cr, uid, name, args, operator=operator,
+            context=context, limit=limit)
 
 
 class ResPartnerCategory(models.Model):
