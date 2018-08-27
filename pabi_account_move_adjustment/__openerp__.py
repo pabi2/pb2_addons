@@ -35,6 +35,7 @@ Note: following are arequiremen for system to properly create analytic line
         'data/journal_data.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/xlsx_template_wizard.xml',
+        'xlsx_template/load_template.xml',
         'wizard/create_journal_entry_wizard.xml',
         'wizard/edit_desc.xml',
         'wizard/account_move_change_date_due.xml',
