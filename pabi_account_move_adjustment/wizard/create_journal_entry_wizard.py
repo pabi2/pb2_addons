@@ -78,13 +78,13 @@ class CreateJournalEntryWizard(models.TransientModel):
             if self.model_id.fin_debit_account_id:
                 move_lines.append({
                     'account_id': self.model_id.fin_debit_account_id.id,
-                    'debit': 0.0,
+                    'debit': invoice.amount_untaxed,
                     'name': invline and invline.name,
                     'chartfield_id': invline and invline.chartfield_id.id})
             if self.model_id.fin_credit_account_id:
                 move_lines.append({
                     'account_id': self.model_id.fin_credit_account_id.id,
-                    'credit': 0.0,
+                    'credit': invoice.amount_untaxed,
                     'name': invline and invline.name,
                     'chartfield_id': invline and invline.chartfield_id.id})
             ctx.update({'default_line_id': move_lines})
