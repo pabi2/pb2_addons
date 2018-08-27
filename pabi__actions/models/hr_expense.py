@@ -16,6 +16,8 @@ class HRExpense(models.Model):
         # for expense in expenses:
         for expense in expenses:
             try:
+                if expense.state == 'draft':
+                    expense.signal_workflow('confirm')
                 # Accept
                 if expense.state == 'confirm':
                     expense.signal_workflow('validate')
