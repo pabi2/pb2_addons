@@ -61,6 +61,19 @@ class HRExpenseExpese(models.Model):
         string='Amount To Invoice ',
         readonly=True,
     )
+    amount = fields.Float(
+        string='Total Amount',
+        compute='_compute_amount',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('line_ids.tax_ids', 'line_ids.unit_amount',
+                 'line_ids.unit_quantity')
+    def _compute_amount(self):
+        for rec in self:
+            rec.amount = sum(rec.line_ids.mapped('total_amount'))
+        return True
 
     @api.multi
     @api.depends('invoice_ids', 'invoice_ids.state')
@@ -368,17 +381,19 @@ class HRExpenseLine(models.Model):
             expense_line.open_invoiced_qty = min(expense_line.unit_quantity,
                                                  open_invoiced_qty)
 
-    @api.one
+    @api.multi
     @api.depends('unit_amount', 'unit_quantity', 'tax_ids', 'product_id',
                  'expense_id.partner_id', 'expense_id.currency_id')
     def _compute_price(self):
-        taxes = self.tax_ids.compute_all(self.unit_amount, self.unit_quantity,
-                                         product=self.product_id,
-                                         partner=self.expense_id.partner_id)
-        self.total_amount = taxes['total_included']
-        if self.expense_id:
-            currency = self.expense_id.currency_id
-            self.total_amount = currency.round(self.total_amount)
+        for rec in self:
+            taxes = rec.tax_ids.compute_all(
+                rec.unit_amount, rec.unit_quantity,
+                product=rec.product_id, partner=rec.expense_id.partner_id)
+            rec.total_amount = taxes['total_included']
+            if rec.expense_id:
+                currency = rec.expense_id.currency_id
+                rec.total_amount = currency.round(rec.total_amount)
+        return True
 
     @api.multi
     def onchange_product_id(self, product_id):
