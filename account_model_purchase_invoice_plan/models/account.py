@@ -21,22 +21,22 @@ class AccountModel(models.Model):
     debit_account_id = fields.Many2one(
         'account.account',
         string='Debit Account',
-        domain=[('user_type.report_type', 'in', ('asset', 'liability'))],
+        domain=[('type', '!=', 'view')],
     )
     credit_account_id = fields.Many2one(
         'account.account',
         string='Credit Account',
-        domain=[('user_type.report_type', 'in', ('asset', 'liability'))],
+        domain=[('type', '!=', 'view')],
     )
     fin_debit_account_id = fields.Many2one(
         'account.account',
         string='Fin. Debit Account',
-        domain=[('user_type.report_type', 'in', ('asset', 'liability'))],
+        domain=[('type', '!=', 'view')],
     )
     fin_credit_account_id = fields.Many2one(
         'account.account',
         string='Fin. Credit Account',
-        domain=[('user_type.report_type', 'in', ('asset', 'liability'))],
+        domain=[('type', '!=', 'view')],
     )
 
     @api.onchange('special_type')
