@@ -517,6 +517,7 @@ class AccountAssetAdjust(models.Model):
                            'purchase_value': amount,
                            })
         new_asset = Asset.create(asset_dict)
+        new_asset.update_related_dimension(asset_dict)
         new_asset.account_analytic_id = \
             Analytic.create_matched_analytic(new_asset)
         # Set back to normal
