@@ -18,7 +18,9 @@ object=object.with_context(lang='th_TH')
 subject=object.name
 body=u"%s วันที่ %s ขออนุมัติโอนงบประมาณจาก [%s]%s ไปให้ [%s]%s จำนวนเงิน %d บาท เหตุผล %s" % (object.name, object.date_prepare, object.transfer_line_ids.from_budget_id.section_id.code, object.transfer_line_ids.from_budget_id.section_id.name_short, object.transfer_line_ids.to_budget_id.section_id.code, object.transfer_line_ids.to_budget_id.section_id.name_short, object.transfer_line_ids.amount_transfer, object.transfer_line_ids.notes)
 owner=object.preparer_user_id.login
-boss=object.approver_user_id.login
+employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
+supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
+boss = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
 action=False
 is_complete=False
 pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
@@ -38,7 +40,9 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
 object=object.with_context(lang='th_TH')
 subject=object.name
 body=u"%sวันที่ %s อนุมัติโอนงบประมาณ เมื่อวันที่ %s โดยโอนงบประมาณ จาก[%s]%s ไปให้ [%s]%s จำนวนเงิน %d บาท เหตุผล %s" % (object.name, object.date_prepare, object.date_transfer, object.transfer_line_ids.from_budget_id.section_id.code, object.transfer_line_ids.from_budget_id.section_id.code, object.transfer_line_ids.to_budget_id.section_id.name_short, object.transfer_line_ids.to_budget_id.section_id.name_short, object.transfer_line_ids.amount_transfer, object.transfer_line_ids.notes)
-owner=object.transfer_user_id.login
+employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
+supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
+owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
 boss=object.preparer_user_id.login
 action='A'
 is_complete=True
@@ -59,15 +63,17 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
 # - action = 'A'
 # - is_complete = False
 object=object.with_context(lang='th_TH')
+
+subject=object.name
+body=u"%sวันที่ %s ได้รับอนุมัติการโอนงบประมาณแล้ว เมื่อวันที่ %s โดยโอนงบประมาณ จาก[%s]%s ไปให้ [%s]%s จำนวนเงิน %d บาท เหตุผล %s ดังนั้นขอให้ฝ่ายงบประมาณดำเนินการโอนงบประมาณในระบบ" % (object.name, object.date_prepare, object.date_approve, object.transfer_line_ids.from_budget_id.section_id.code, object.transfer_line_ids.from_budget_id.section_id.name_short, object.transfer_line_ids.to_budget_id.section_id.code, object.transfer_line_ids.to_budget_id.section_id.name_short, object.transfer_line_ids.amount_transfer, object.transfer_line_ids.notes)
+employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
+supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
+owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
 ou_group = pool['res.groups'].search(cr, uid, [('name', '=', 'Operating Unit Budget')], context=context)
 ou_user_group = pool['res.groups'].browse(cr, uid, ou_group, context=context).users.filtered(lambda l: l.default_operating_unit_id.id == object.org_id.id)
 boss=[]
 for rec in ou_user_group:
   boss.append(rec.login)
-subject=object.name
-body=u"%sวันที่ %s ได้รับอนุมัติการโอนงบประมาณแล้ว เมื่อวันที่ %s โดยโอนงบประมาณ จาก[%s]%s ไปให้ [%s]%s จำนวนเงิน %d บาท เหตุผล %s ดังนั้นขอให้ฝ่ายงบประมาณดำเนินการโอนงบประมาณในระบบ" % (object.name, object.date_prepare, object.date_approve, object.transfer_line_ids.from_budget_id.section_id.code, object.transfer_line_ids.from_budget_id.section_id.name_short, object.transfer_line_ids.to_budget_id.section_id.code, object.transfer_line_ids.to_budget_id.section_id.name_short, object.transfer_line_ids.amount_transfer, object.transfer_line_ids.notes)
-owner=object.approver_user_id.login
-# boss=object.preparer_user_id.login
 action='A'
 is_complete=False
 pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
