@@ -70,6 +70,7 @@ class HRExpense(models.Model):
             'date_value': fields.Date.context_today(self),
             'journal_id': journal.id,
             'operating_unit_id': self.env.user.default_operating_unit_id.id,
+            'force_pay': True,
         })
         val = voucher.\
             with_context({
