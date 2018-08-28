@@ -93,8 +93,11 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
 object=object.with_context(lang='th_TH')
 subject=object.name
 body=u"%sวันที่ %s ฝ่ายงบประมาณดำเนินการโอนงบประมาณในระบบเรียบร้อยแล้ว เมื่อวันที่ %s โดยโอนงบประมาณ [%s]%s ไปให้ [%s]%s จำนวนเงิน %d บาท เหตุผล %s" % (object.name, object.date_prepare, object.date_transfer, object.transfer_line_ids.from_budget_id.section_id.code, object.transfer_line_ids.from_budget_id.section_id.name_short, object.transfer_line_ids.to_budget_id.section_id.code, object.transfer_line_ids.to_budget_id.section_id.name_short, object.transfer_line_ids.amount_transfer, object.transfer_line_ids.notes)
-owner=object.transfer_user_id.login
-boss=[object.preparer_user_id.login,object.approver_user_id.login]
+owner=object.approver_user_id.login
+employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
+supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
+boss_of_owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
+boss=[object.preparer_user_id.login,boss_of_owner]
 action='A'
 is_complete=True
 pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
