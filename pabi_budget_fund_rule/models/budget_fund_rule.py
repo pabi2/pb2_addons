@@ -252,8 +252,15 @@ class BudgetFundRule(models.Model):
 
     @api.model
     def _get_doc_field_combination(self, doc_lines, args):
+        """ Check only on expense activities, for fund spending """
+        activity_ids = [x.get('activity_rpt_id', False) for x in doc_lines
+                        if x.get('activity_rpt_id', False)]
+        exp_activity_ids = self.env['account.activity'].search([
+            ('budget_method', '=', 'expense'), ('id', 'in', activity_ids)]).ids
         combinations = []
         for l in doc_lines:
+            if l.get('activity_rpt_id', False) not in exp_activity_ids:
+                continue
             val = ()
             for f in args:
                 val += (l[f],)
@@ -270,6 +277,7 @@ class BudgetFundRule(models.Model):
         budget_ok = True  # Initial flag
         messages = []
         # Project / Fund unique (to find matched fund rules)
+        # Only for Expense Activity
         project_fund_vals = self._get_doc_field_combination(doc_lines,
                                                             ['project_id',
                                                              'fund_id'])
