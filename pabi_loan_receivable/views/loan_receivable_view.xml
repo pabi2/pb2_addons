@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <menuitem id="menu_loan_receivable" name="Loan Receivables" parent="account.menu_finance" sequence="3" groups="account.group_account_user,account.group_account_manager"/>
+        <menuitem id="menu_loan_receivable" name="Loan Receivables" parent="account.menu_finance" sequence="4" groups="account.group_account_user,account.group_account_manager"/>
 
         # Bank Loan MOU
         <record id="view_loan_bank_mou_filter" model="ir.ui.view">
