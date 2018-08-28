@@ -13,7 +13,7 @@
 		<fieldDescription><![CDATA[operating_unit_id/name]]></fieldDescription>
 	</field>
 	<field name="invoice_id" class="java.lang.String">
-		<fieldDescription><![CDATA[invoice_id/number]]></fwaieldDescription>
+		<fieldDescription><![CDATA[invoice_id/number]]></fieldDescription>
 	</field>
 	<field name="employee_id" class="java.lang.String">
 		<fieldDescription><![CDATA[employee_id/employee_code]]></fieldDescription>
