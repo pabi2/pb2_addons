@@ -19,7 +19,7 @@
                         'import_ids': {
                             'A2${"Tranfer"}': 'description',
                             'M2': 'date_value${value or False}',
-                            'Y2': 'batch_code',
+                            'AF2': 'batch_code',
                             'N2': 'document${value and value.split("/")[1] or False}',
                             'X2': 'debit${value and float(value) or 0.0}',
                             'AA2': 'partner_code',
@@ -52,7 +52,7 @@
                         'import_ids': {
                             'A2${"Tranfer"}': 'description',
                             'M2': 'date_value${value or False}',
-                            'Y2': 'batch_code',
+                            'AF2': 'batch_code',
                             'N2': 'document${value and value.split("/")[1] or False}',
                             'X2': 'debit${value and float(value) or 0.0}',
                             'AA2': 'partner_code',

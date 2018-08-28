@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="supplier_payment_ktb_cheque" language="groovy" pageWidth="842" pageHeight="380" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
-	<property name="ireport.zoom" value="0.7513148009015795"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="2.3579476910000077"/>
+	<property name="ireport.x" value="244"/>
 	<property name="ireport.y" value="0"/>
 	<style name="payee">
 		<box>
@@ -18,8 +18,11 @@
 	<queryString language="xPath">
 		<![CDATA[/data/recoard]]>
 	</queryString>
+	<field name="title" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/title]]></fieldDescription>
+	</field>
 	<field name="partner_name" class="java.lang.String">
-		<fieldDescription><![CDATA[partner_id/display_name]]></fieldDescription>
+		<fieldDescription><![CDATA[partner_id/name]]></fieldDescription>
 	</field>
 	<field name="amount" class="java.lang.Number">
 		<fieldDescription><![CDATA[amount]]></fieldDescription>
@@ -47,11 +50,11 @@
 	<pageHeader>
 		<band height="380" splitType="Stretch">
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="183" y="105" width="484" height="24" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="183" y="105" width="659" height="24" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="16" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+					<font fontName="Monospaced" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_transdebt} == true ? $F{transferdebt_partner_name} : $F{partner_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_transdebt} == true ? $F{transferdebt_partner_name} : $F{title}+$F{partner_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="236" y="141" width="401" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -137,35 +140,32 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{date}.substring(3,4)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="-78" y="109" width="168" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="-83" y="130" width="168" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="0" y="58" width="149" height="27"/>
+				<reportElement x="0" y="27" width="150" height="27"/>
 				<textElement>
 					<font size="14" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).parse($F{date})]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="0" y="85" width="364" height="24" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_transdebt} == true ?
-$F{transferdebt_partner_name}.substring(0, Math.min(20, $F{transferdebt_partner_name}.length())):
-$F{partner_name}.substring(0, Math.min(20, $F{partner_name}.length()))
-]]></textFieldExpression>
-			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="0" y="11" width="149" height="27"/>
+				<reportElement x="0" y="1" width="150" height="27"/>
 				<textElement>
 					<font size="14" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{number}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="52" width="150" height="58" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_transdebt} == true ? $F{transferdebt_partner_name} : $F{title}+$F{partner_name}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
