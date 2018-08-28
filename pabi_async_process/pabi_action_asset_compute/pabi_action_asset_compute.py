@@ -26,6 +26,11 @@ class PabiActionAssetCompute(models.TransientModel):
         "* Grouping: create 1 JE by grouping depreciation with same "
         "account and costcenter",
     )
+    grouping_date = fields.Date(
+        string='Date',
+        default=lambda self: fields.Date.context_today(self),
+        help="For Grouping method, this date will be used to create JE",
+    )
     categ_ids = fields.Many2many(
         'product.category',
         'pabi_action_asset_compute_product_category_rel',
@@ -157,7 +162,8 @@ class PabiActionAssetCompute(models.TransientModel):
 
     @api.multi
     def asset_compute(self, period_id, categ_ids, profile_ids,
-                      batch_note, compute_method='standard'):
+                      batch_note, compute_method='standard',
+                      grouping_date=False):
         period = self.env['account.period'].browse(period_id)
         # Block future period
         current_period = self.env['account.period'].find()
@@ -182,11 +188,13 @@ class PabiActionAssetCompute(models.TransientModel):
             assets = self.env['account.asset'].browse(asset_ids)
             merge_move = (compute_method == 'grouping') and True or False
             move_ids, error_log = assets._compute_entries(
-                period, check_triggers=True, merge_move=merge_move)
+                period, check_triggers=True,
+                merge_move=merge_move, merge_date=grouping_date)
             moves = self.env['account.move'].browse(move_ids)
             moves.write({'asset_depre_batch_id': depre_batch.id})
             created_move_ids += move_ids
-            error_logs.append(error_log)
+            if error_log and error_log != '':
+                error_logs.append(error_log)
         # Return
         result_msg = '\n'.join(error_logs)
         if not result_msg:
@@ -208,7 +216,8 @@ class PabiActionAssetCompute(models.TransientModel):
                   'categ_ids': self.categ_ids.ids,
                   'profile_ids': self.profile_ids.ids,
                   'batch_note': self.batch_note,
-                  'compute_method': self.compute_method
+                  'compute_method': self.compute_method,
+                  'grouping_date': self.grouping_date,
                   }
         # Call the function
         res = super(PabiActionAssetCompute, self).\

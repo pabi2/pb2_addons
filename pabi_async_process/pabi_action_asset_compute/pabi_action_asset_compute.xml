@@ -17,7 +17,9 @@
                                   <field name="compute_method"/>
                               </group>
                               <group>
-                                  <field name="batch_note"/>
+                                  <field name="batch_note" required="1"/>
+                                  <field name="grouping_date"
+                                    attrs="{'invisible': [('compute_method', '!=', 'grouping')], 'required': [('compute_method', '=', 'grouping')]}"/>
                               </group>
                           </group>
                           <group>
