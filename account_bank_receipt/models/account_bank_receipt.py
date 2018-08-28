@@ -238,13 +238,17 @@ class AccountBankReceipt(models.Model):
 
     @api.model
     def _prepare_account_move_vals(self, receipt):
+        # Validate
+        bank = receipt.partner_bank_id
+        if not bank.journal_id:
+            raise ValidationError(_('Bank Account has no Account Journal!'))
         date = receipt.receipt_date
         Period = self.env['account.period']
         period_ids = Period.find(dt=date)
         # period_ids will always have a value, cf the code of find()
         number = self.env['ir.sequence'].next_by_code('account.bank.receipt')
         move_vals = {
-            'journal_id': receipt.partner_bank_id.journal_id.id,
+            'journal_id': bank.journal_id.id,
             'date': date,
             'period_id': period_ids[0].id,
             'name': number,
