@@ -39,7 +39,7 @@
             <field name="model">account.move.line</field>
             <field name="arch" type="xml">
                 <search string="Search Receivable">
-                    <field name="ref"/>
+                    <field name="ref" filter_domain="['|', ('ref','ilike',self), ('move_id','ilike',self)]"/>
                     <group expand="0" string="Group By...">
                         <filter string="Account" domain="[]" context="{'group_by':'account_id'}"/>
                     </group>
@@ -52,6 +52,7 @@
             <field name="model">account.move.line</field>
             <field name="arch" type="xml">
                 <tree editable="bottom">
+                    <field name="move_id" readonly="1"/>
                     <field name="period_id" readonly="1"/>
                     <field name="date" readonly="1"/>
                     <field name="name" readonly="1"/>
@@ -142,6 +143,7 @@
                                     context="{'tree_view_ref': 'pabi_loan_installment.view_loan_installment_move_line_tree',
                                             'search_view_ref': 'pabi_loan_installment.view_loan_installment_move_line_filter'}">
                                     <tree editable="bottom">
+                                        <field name="move_id" readonly="1"/>
                                         <field name="period_id" readonly="1"/>
                                         <field name="date" readonly="1"/>
                                         <field name="name" readonly="1"/>
