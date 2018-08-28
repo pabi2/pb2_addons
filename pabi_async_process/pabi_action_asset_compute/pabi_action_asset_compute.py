@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import ast
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import Warning as UserError, ValidationError
 
 
 class PabiActionAssetCompute(models.TransientModel):
@@ -160,6 +159,11 @@ class PabiActionAssetCompute(models.TransientModel):
     def asset_compute(self, period_id, categ_ids, profile_ids,
                       batch_note, compute_method='standard'):
         period = self.env['account.period'].browse(period_id)
+        # Block future period
+        current_period = self.env['account.period'].find()
+        if period.date_start > current_period.date_start:
+            raise ValidationError(_('Compute asset depreciation for '
+                                    'future period is not allowed!'))
         # Batch ID
         depre_batch = self.env['pabi.asset.depre.batch'].new_batch(period,
                                                                    batch_note)
