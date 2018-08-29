@@ -365,13 +365,15 @@ class AccountBankReceipt(models.Model):
 
     @api.onchange('line_filter')
     def _onchange_line_filter(self):
-        # Base domain
-        domain = [('reconcile_id', '=', False),
-                  ('debit', '>', 0),
-                  ('currency_id', '=', self.currency_none_same_company_id.id),
-                  ('journal_id', '=', self.journal_id.id),
-                  ('account_id', '=', self.journal_default_account_id.id)]
         if self.line_filter:
+            # Base domain
+            domain = [
+                ('reconcile_id', '=', False),
+                ('debit', '>', 0),
+                ('currency_id', '=', self.currency_none_same_company_id.id),
+                ('journal_id', '=', self.journal_id.id),
+                ('account_id', '=', self.journal_default_account_id.id),
+            ]
             # Must be ilike to use extended search
             domain.append(('ref', 'ilike', self.line_filter))
             move_lines = self.env['account.move.line'].search(domain)
