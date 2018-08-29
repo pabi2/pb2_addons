@@ -375,4 +375,4 @@ class AccountBankReceipt(models.Model):
             # Must be ilike to use extended search
             domain.append(('ref', 'ilike', self.line_filter))
             move_lines = self.env['account.move.line'].search(domain)
-            self.bank_intransit_ids += move_lines
+            self.bank_intransit_ids |= move_lines
