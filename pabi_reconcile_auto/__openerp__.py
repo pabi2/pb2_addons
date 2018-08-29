@@ -20,6 +20,8 @@ Currently we have done for following events,
 * GR/IR -> clearing between Picking and Invoice (SO/PO as auto_id)
 * Cash On Delivery -> Clear when clear prepaid account (PO as auto_id)
 * Recurring -> Clear when Auto Reverse (Original JE as auto_ids)
+* Return Retention on PO -> Clear CV's retention with KV's when KV is validated
+                            (PO as auto_id)
 
     """,
     "website": "https://nstda.or.th/",
@@ -30,6 +32,7 @@ Currently we have done for following events,
         'hr_expense_advance_clearing',
         'pabi_interface',
         'account_subscription_enhanced',
+        'pabi_account_retention',
     ],
     "data": [
         "security/ir.model.access.csv",
