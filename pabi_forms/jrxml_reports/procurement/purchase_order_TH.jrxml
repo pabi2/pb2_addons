@@ -440,14 +440,14 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[จัดทำโดย
 (Buyer)]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="2" y="276" width="84" height="27"/>
 				<textElement textAlignment="Right" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_ref}]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="104" y="277" width="87" height="26"/>
 				<textElement textAlignment="Left" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
