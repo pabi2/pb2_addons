@@ -143,6 +143,12 @@ class AccountBankReceipt(models.Model):
         states={'draft': [('readonly', False)]},
         copy=False,
     )
+    line_filter = fields.Char(
+        string='Filter',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="More filter. You can use complex search with comma and between.",
+    )
 
     @api.multi
     @api.depends('company_id', 'currency_id', 'bank_intransit_ids.debit',
@@ -356,3 +362,18 @@ class AccountBankReceipt(models.Model):
                 self.currency_id = self.journal_id.currency
             else:
                 self.currency_id = self.journal_id.company_id.currency_id
+
+    @api.onchange('line_filter')
+    def _onchange_line_filter(self):
+        # Base domain
+        domain = [('reconcile_id', '=', False),
+                  ('debit', '>', 0),
+                  ('currency_id', '=', self.currency_none_same_company_id.id),
+                  ('journal_id', '=', self.journal_id.id),
+                  ('account_id', '=', self.journal_default_account_id.id)]
+        if self.line_filter:
+            # Must be ilike to use extended search
+            domain.append(('ref', 'ilike', self.line_filter))
+            move_lines = self.env['account.move.line'].search(domain)
+            self.bank_intransit_ids += move_lines
+        return True

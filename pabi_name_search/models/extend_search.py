@@ -107,3 +107,15 @@ class AccounMove(ExtendSearch, models.Model):
         return super(AccounMove, self).search(args, offset=offset,
                                               limit=limit, order=order,
                                               count=count)
+
+
+class AccounMoveLine(ExtendSearch, models.Model):
+    _inherit = 'account.move.line'
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        # if self._context.get('extended_search', False):
+        args = self._extend_search_arg(args)
+        return super(AccounMoveLine, self).search(args, offset=offset,
+                                                  limit=limit, order=order,
+                                                  count=count)

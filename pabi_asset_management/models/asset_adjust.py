@@ -381,11 +381,11 @@ class AccountAssetAdjust(models.Model):
                     values and values[str(asset.product_id.id)] or False
                 adjust_line.asset_name = adjust_line.product_id.name
                 # Budgeting
-                adjust_line.section_id = asset.section_id
-                adjust_line.project_id = asset.project_id
-                adjust_line.invest_asset_id = asset.invest_asset_id
+                adjust_line.section_id = asset.owner_section_id
+                adjust_line.project_id = asset.owner_project_id
+                adjust_line.invest_asset_id = asset.owner_invest_asset_id
                 adjust_line.invest_construction_phase_id = \
-                    asset.invest_construction_phase_id
+                    asset.owner_invest_construction_phase_id
                 # --
                 self.adjust_line_ids += adjust_line
         # Asset => Expense
@@ -404,11 +404,11 @@ class AccountAssetAdjust(models.Model):
                 adjust_line.activity_group_id = vals and vals[1] or False
                 adjust_line.activity_id = vals and vals[2] or False
                 # Budgeting
-                adjust_line.section_id = asset.section_id
-                adjust_line.project_id = asset.project_id
-                adjust_line.invest_asset_id = asset.invest_asset_id
+                adjust_line.section_id = asset.owner_section_id
+                adjust_line.project_id = asset.owner_project_id
+                adjust_line.invest_asset_id = asset.owner_invest_asset_id
                 adjust_line.invest_construction_phase_id = \
-                    asset.invest_construction_phase_id
+                    asset.owner_invest_construction_phase_id
                 # --
                 self.adjust_asset_to_expense_ids += adjust_line
         # Expense => Asset
@@ -759,6 +759,14 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
          'Duplicate assets selected!')
     ]
 
+    @api.onchange('asset_id')
+    def _onchange_asset_id(self):
+        self.section_id = self.asset_id.owner_section_id
+        self.project_id = self.asset_id.owner_project_id
+        self.invest_asset_id = self.asset_id.owner_invest_asset_id
+        self.invest_construction_phase_id = \
+            self.asset_id.owner_invest_construction_phase_id
+
     @api.multi
     @api.depends('asset_id')
     def _compute_origin_status(self):
@@ -952,6 +960,14 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
          'unique(asset_id, adjust_id)',
          'Duplicate assets selected!')
     ]
+
+    @api.onchange('asset_id')
+    def _onchange_asset_id(self):
+        self.section_id = self.asset_id.owner_section_id
+        self.project_id = self.asset_id.owner_project_id
+        self.invest_asset_id = self.asset_id.owner_invest_asset_id
+        self.invest_construction_phase_id = \
+            self.asset_id.owner_invest_construction_phase_id
 
     @api.multi
     @api.depends('asset_id')
