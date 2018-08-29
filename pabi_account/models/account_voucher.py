@@ -245,9 +245,9 @@ class AccountVoucher(models.Model):
     @api.multi
     def proforma_voucher(self):
         result = super(AccountVoucher, self).proforma_voucher()
-        # For NSTDA, not writeoff_amount allowed for Supplier Paymnet
+        # For NSTDA, not writeoff_amount allowed for All Paymnet
         for rec in self:
-            if rec.type == 'payment' and rec.writeoff_amount:
+            if rec.writeoff_amount:
                 raise ValidationError(_('Difference Amount must be 0.0 '
                                         'to validate this document!'))
         self.write({'validate_user_id': self.env.user.id,

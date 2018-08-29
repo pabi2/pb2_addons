@@ -59,6 +59,7 @@ class AccountInvoice(models.Model):
     )
     number_preprint = fields.Char(
         string='Preprint Number',
+        copy=False,
     )
     display_name2 = fields.Char(
         string='Partner Name',
