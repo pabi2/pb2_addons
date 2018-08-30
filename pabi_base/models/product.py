@@ -6,8 +6,8 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
     _order = ''  # Remove name sorting for performance
 
-    sap_code = fields.Char(
-        string='SAP Code',
+    legacy_ref = fields.Char(
+        string='Legacy Ref.',
         size=10,
     )
 
