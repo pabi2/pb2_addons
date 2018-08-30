@@ -568,8 +568,7 @@ class InterfaceAccountEntry(models.Model):
         _logger.info("IA - Input: %s" % data_dict)
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
-            res = self.env['pabi.utils.ws'].\
-                friendly_create_data(self._name, data_dict)
+            res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
             if res['is_success']:
                 res_id = res['result']['id']
                 document = self.browse(res_id)
