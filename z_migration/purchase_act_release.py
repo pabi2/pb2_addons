@@ -40,7 +40,7 @@ po_model = connection.get_model('purchase.order')
 # dom = [('id', 'in', po_ids)]
 
 # domain follow purchase name
-po_names = ['PO18001177']
+po_names = ['PO18001191']
 dom = [('name', 'in', po_names)]
 
 # Search puchase by domain as defined
@@ -53,7 +53,7 @@ print "Total purchase order : %s" % len(pos)
 print "Status  PO Name"
 for po in pos:
     try:
-        po_model.signal_workflow([po['id']], 'purchase_approve')
+        po_model.mock_trigger_workflow([po['id']], 'purchase_approve')
         pass_po_ids.append(po['id'])
         pass_po_names.append(po['name'].encode('utf-8'))
         print "Pass : %s" % po['name']

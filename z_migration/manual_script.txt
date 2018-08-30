@@ -1,0 +1,6 @@
+Purchase Orders >> Confirm Order
+- python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/purchase_act_confirm_order.py
+Purchase Orders >> Release
+- python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/purchase_act_release.py
+Purchase Orders >> Create Work Acceptance
+- python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/purchase_act_create_work_acceptance.py

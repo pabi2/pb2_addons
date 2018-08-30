@@ -34,7 +34,6 @@ po_model = connection.get_model('purchase.order')
 create_acceptance_model = \
     connection.get_model('create.purchase.work.acceptance')
 acceptance_model = connection.get_model('purchase.work.acceptance')
-acceptance_line_model = connection.get_model('purchase.work.acceptance.line')
 
 # domain follow state
 # dom = [('order_type', '=', 'purchase_order'), ('state', '=', 'approved')]
@@ -44,7 +43,7 @@ acceptance_line_model = connection.get_model('purchase.work.acceptance.line')
 # dom = [('id', 'in', po_ids)]
 
 # domain follow purchase name
-po_names = ['PO18001189']
+po_names = ['PO18001191']
 dom = [('name', 'in', po_names)]
 
 # Search puchase by domain as defined
@@ -58,29 +57,21 @@ print "Status  PO Name"
 for po in pos:
     try:
         ctx = {'active_id': po['id'], 'active_ids': [po['id']]}
-        fields = [
-            'acceptance_line_ids', 'date_scheduled_end', 'is_invoice_plan',
-            'select_invoice_plan', 'date_receive', 'order_id',
-            'date_contract_end']
-        create_acceptance = \
-            create_acceptance_model.default_get(fields, context=ctx)
+        # Create purchase work acceptance wizard
         create_acceptance_id = \
-            create_acceptance_model.create(create_acceptance, context=ctx)
+            create_acceptance_model.mork_create_purchase_work_acceptance(
+                context=ctx)
+        # Create acceptance
         create_acceptance_model \
             .mork_action_create_work_acceptance(
                 [create_acceptance_id], context=ctx)
-        acceptance_ids = acceptance_model.search([('order_id', '=', po['id'])])
-        for acceptance_id in acceptance_ids:
-            acceptance_lines = acceptance_line_model.search_read(
-                [('acceptance_id', '=', acceptance_id)])
-            for acceptance_line in acceptance_lines:
-                acceptance_line_model.write(
-                    [acceptance_line['id']],
-                    {'to_receive_qty': acceptance_line['balance_qty']})
+        # Adjust to receive quantity = balance quantity
+        acceptance_model.mork_write_to_receive_qty(context=ctx)
         pass_po_ids.append(po['id'])
         pass_po_names.append(po['name'].encode('utf-8'))
         print "Pass : %s" % po['name']
-    except Exception:
+    except Exception as ex:
+        print ex
         error_po_ids.append(po['id'])
         error_po_names.append(po['name'].encode('utf-8'))
         print "Fail : %s" % po['name']
