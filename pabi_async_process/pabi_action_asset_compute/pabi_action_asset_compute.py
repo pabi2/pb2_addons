@@ -444,7 +444,7 @@ class PabiAssetDepreBatch(models.Model):
         for rec in self:
             moves = AccountMove.search([('id', 'in', rec.move_ids.ids),
                                         ('state', '=', 'draft'),
-                                        ('name', '=', False)])
+                                        ('name', 'in', (False, '/'))])
             moves.with_context(unlink_from_asset=True).unlink()
             rec.write({'state': 'deleted'})
         return True
