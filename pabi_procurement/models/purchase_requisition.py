@@ -311,6 +311,25 @@ class PurchaseRequisition(models.Model):
             # domain = self.env['operating.unit']._ou_domain()
         # return {'domain': {'operating_unit_id': domain}}
 
+    @api.onchange('purchase_condition_id')
+    def onchange_purchase_condition(self):
+        ids = []
+        res = {}
+        self.env.cr.execute(
+            'SELECT condition_detail_id from purchase_condition_rel '
+            'where condition_id = %d'
+            % self.purchase_condition_id.id)
+        recs = self.env.cr.fetchall()
+        if recs:
+            for rec in recs:
+                ids.append(rec[0])
+            res.update({
+                'domain': {
+                    'purchase_condition_detail_id': [('id', 'in', ids)],
+                }
+            })
+        return res
+
     @api.model
     def open_price_comparison(self, ids):
         window_obj = self.env["ir.actions.act_window"]
@@ -708,6 +727,9 @@ class PurchaseRequisitionLine(models.Model):
     )
     is_green_product = fields.Boolean(
         string='Green Product',
+    )
+    is_innovation = fields.Boolean(
+        string='Innovation Product',
     )
 
     @api.multi
