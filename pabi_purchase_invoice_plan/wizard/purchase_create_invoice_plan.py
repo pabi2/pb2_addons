@@ -263,11 +263,11 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                 if round(new_val, prec) != round(i.percent, prec):
                     i.percent = new_val
 
-    @api.one
+    @api.multi
     def do_create_purchase_invoice_plan(self):
+        self.ensure_one()
+        order = self.env['purchase.order'].browse(self._context['active_id'])
         if not self.by_fiscalyear:
-            order =\
-                self.env['purchase.order'].browse(self._context['active_id'])
             order.advance_rounding = self.advance_rounding
             return super(PurchaseCreateInvoicePlan,
                          self).do_create_purchase_invoice_plan()
