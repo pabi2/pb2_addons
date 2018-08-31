@@ -442,7 +442,7 @@ class PurchaseRequestLine(models.Model):
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         'Fiscal Year',
-        readonly=True,
+        readonly=False,
     )
     state = fields.Selection(
         [('open', 'Open'),
