@@ -75,6 +75,10 @@ class CommonReportHeaderWebkit(common_report_header):
         else:
             return val
 
+    def _get_display_period_length(self, data):
+        val = self._get_form_param('period_length', data)
+        return val
+
     def _get_display_reconciled(self, data):
         val = self._get_form_param('reconcile_cond', data)
         if val == 'all':

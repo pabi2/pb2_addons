@@ -342,9 +342,9 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
             # big
             sql = ("SELECT name|| ' ' ||CASE WHEN ref IS NOT NULL \
                                 THEN '('||ref||')' \
-                                ELSE '' END, id, ref, name"
+                                ELSE '' END, id, search_key, name"
                    "  FROM res_partner \
-                      WHERE id IN %s ORDER BY LOWER(name), ref")
+                      WHERE id IN %s ORDER BY LOWER(name), search_key")
             self.cursor.execute(sql, (tuple(set(existing_partner_ids)),))
             res = self.cursor.fetchall()
 

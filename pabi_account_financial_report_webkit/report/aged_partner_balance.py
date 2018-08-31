@@ -57,6 +57,17 @@ class AccountAgedTrialBalanceWebkit(PartnersOpenInvoicesWebkit):
                                                             context=context)
         self.pool = pooler.get_pool(self.cr.dbname)
         self.cursor = self.cr
+        # replace value in global variable
+        active_id = context.get('active_id', False)
+        if active_id:
+            global RANGES, RANGES_TITLES
+            AgedTrialBalance = \
+                self.pool.get('account.aged.trial.balance.webkit')
+            period_length = \
+                AgedTrialBalance.browse(
+                    self.cr, uid, active_id, context=context).period_length
+            RANGES = make_ranges(period_length * 4, period_length)
+            RANGES_TITLES = make_ranges_titles()
         company = self.pool.get('res.users').browse(self.cr, uid, uid,
                                                     context=context).company_id
 
@@ -75,6 +86,7 @@ class AccountAgedTrialBalanceWebkit(PartnersOpenInvoicesWebkit):
             'company': company,
             'ranges': self._get_ranges(),
             'ranges_titles': self._get_ranges_titles(),
+            'display_period_length': self._get_display_period_length,
             'report_name': _('Aged Partner Balance'),
             'additional_args': [
                 ('--header-font-name', 'Helvetica'),

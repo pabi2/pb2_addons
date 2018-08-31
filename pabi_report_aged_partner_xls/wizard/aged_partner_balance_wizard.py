@@ -31,6 +31,8 @@ class aged_partner_balance_webkit_wizard(orm.TransientModel):
     def _print_report(self, cr, uid, ids, data, context=None):
         context = context or {}
         if context.get('xls_export'):
+            data['form'].update(
+                self.read(cr, uid, ids, ['period_length'], context=context)[0])
             data = self.pre_print_report(cr, uid, ids, data, context=context)
             return {
                 'type': 'ir.actions.report.xml',

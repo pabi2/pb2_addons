@@ -59,7 +59,7 @@
                 <div class="act_as_cell">${_('Clearance Date')}</div>
                 <div class="act_as_cell">${_('Accounts Filter')}</div>
                 <div class="act_as_cell">${_('Target Moves')}</div>
-
+                <div class="act_as_cell">${_('Period Length (Days)')}</div>
             </div>
             <div class="act_as_row">
                 <div class="act_as_cell">${ chart_account.name }</div>
@@ -87,6 +87,7 @@
                     %endif
                 </div>
                 <div class="act_as_cell">${ display_target_move(data) }</div>
+                <div class="act_as_cell">${ display_period_length(data) }</div>
             </div>
         </div>
         %for acc in objects:
