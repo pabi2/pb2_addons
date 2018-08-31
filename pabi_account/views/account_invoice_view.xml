@@ -52,6 +52,9 @@
                 <xpath expr="//field[@name='fiscal_position']" position="after">
                     <field name="number_preprint"/>
                 </xpath>
+                <xpath expr="//field[@name='source_document_id']" position="after">
+                    <field name="legacy_ref" attrs="{'invisible': [('legacy_ref', '=', False)]}"/>
+                </xpath>
                 <xpath expr="/form/sheet/notebook/page[@string='Other Info']//field[@name='period_id']" position="after">
                     <field name="validate_user_id"/>
                     <field name="validate_date"/>
@@ -112,6 +115,7 @@
                 </xpath>
                 <xpath expr="/form/sheet/group/group/div" position="after">
                     <field name="payment_type" required="1"/>
+                    <field name="legacy_ref" attrs="{'invisible': [('legacy_ref', '=', False)]}"/>
                     <field name="has_wht" invisible="1"/>
                     <field name="income_tax_form" attrs="{'required': [('type', 'in', ('in_invoice', 'in_refund')), ('has_wht', '=', True)],
                                 'invisible': ['|', ('type', 'not in', ('in_invoice', 'in_refund')), ('has_wht', '!=', True)]}"/>

@@ -216,6 +216,10 @@ class PurchaseRequest(models.Model):
         readonly=True,
         copy=False,
     )
+    legacy_ref = fields.Char(
+        string='Legacy Ref.',
+        readonly=True,
+    )
     _sql_constraints = [
         ('name_uniq', 'unique(name)',
          'PR Numbr must be unique!'),
