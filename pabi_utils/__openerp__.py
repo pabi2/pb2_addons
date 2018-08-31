@@ -19,7 +19,7 @@
     ],
     "data": [
         "security/security_groups.xml",
-        "security/security_rule.xml",
+        # "security/security_rule.xml",
         "security/ir.model.access.csv",
         "data/xls_config.xml",
         "data/pabi_process.xml",
