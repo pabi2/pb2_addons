@@ -20,7 +20,7 @@
         <record model="ir.rule" id="see_non_spool_report_attachment">
             <field name="name">See All Non-Spool Reports for Users</field>
             <field name="model_id" search="[('model','=','ir.attachment')]" model="ir.model"/>
-            <field name="domain_force">[('parent_id.name', '!=', 'SPOOL_REPOR)]</field>
+            <field name="domain_force">[('parent_id.name', '!=', 'SPOOL_REPORT')]</field>
             <field name="groups" eval="[(4,ref('base.group_user'))]"/>
         </record>
     </data>
