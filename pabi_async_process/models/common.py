@@ -18,7 +18,7 @@ class PabiAsync(object):
         if type and type not in ['never', 'always', 'mytask']:
             raise ValidationError(_('Wrong job checking type!'))
 
-        action = self.env.ref('pabi_async_process.action_my_queue_job')
+        action = self.env.ref('pabi_utils.action_my_queue_job')
         if type == 'never':
             self._cr.commit()
         elif type in ['always', 'mytask']:
