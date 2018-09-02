@@ -13,6 +13,7 @@
                         <field name="method_id"/>
                         <field name="is_standard"/>
                         <field name="partner_id"/>
+                        <field name="partner_tag_ids" widget="many2many_tags"/>
                         <field name="order_id"/>
                         <field name="date_from"/>
                         <field name="date_to"/>

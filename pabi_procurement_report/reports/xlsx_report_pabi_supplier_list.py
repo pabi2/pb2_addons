@@ -8,9 +8,17 @@ class XLSXReportPabiSupplierList(models.TransientModel):
     _inherit = 'xlsx.report'
 
     # Search Criteria
-    tag_id = fields.Many2one(
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
+    )
+    categ_ids = fields.Many2many(
+        'res.partner.category',
+        string='Supplier Category',
+    )
+    tag_ids = fields.Many2many(
         'res.partner.tag',
-        string='Tag',
+        string='Supplier Type',
     )
 
     # Report Result
@@ -26,8 +34,8 @@ class XLSXReportPabiSupplierList(models.TransientModel):
         self.ensure_one()
         Result = self.env['xlsx.report.pabi.supplier.list.results']
         dom = []
-        if self.tag_id:
-            dom += [('tag_id', '=', self.tag_id.id)]
+        if self.tag_ids:
+            dom += [('tag_id', 'in', self.tag_ids._ids)]
         self.results = Result.search(dom)
 
 

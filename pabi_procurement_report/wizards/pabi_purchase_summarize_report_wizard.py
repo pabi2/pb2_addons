@@ -11,6 +11,10 @@ class PabiPurchaseSummarizeReportWizard(models.TransientModel, Common):
         'res.org',
         string='Org',
     )
+    partner_tag_ids = fields.Many2many(
+        'res.partner.tag',
+        string='Supplier Type',
+    )
     partner_ids = fields.Many2many(
         'res.partner',
         string='Supplier',
@@ -27,6 +31,7 @@ class PabiPurchaseSummarizeReportWizard(models.TransientModel, Common):
         fields = [
             'org_ids',
             'partner_ids',
+            'partner_tag_ids',
             'method_ids',
             'date_from',
             'date_to',

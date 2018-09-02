@@ -8,9 +8,25 @@ class XLSXReportPabiStockBalance(models.TransientModel):
     _inherit = 'xlsx.report'
 
     # Search Criteria
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
+    )
     location_id = fields.Many2one(
         'stock.location',
         string='Location',
+    )
+    product_ids = fields.Many2many(
+        'product.product',
+        string='Product',
+    )
+    date_from = fields.Date(
+        string='From Date',
+        required=True,
+    )
+    date_to = fields.Date(
+        string='To Date',
+        required=True,
     )
 
     # Report Result
