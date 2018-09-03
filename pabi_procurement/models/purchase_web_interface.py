@@ -354,6 +354,9 @@ class PurchaseWebInterface(models.Model):
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
         else:
+            if result.get('message', False) and \
+                    'PABIWEB_NUMBER_MISMATCHED' in result['message']:
+                _logger.warning(result['message'])
             requisition.sent_pbweb = True
         _logger.info('send_pbweb_requisition(), output: %s' % result)
         return result
@@ -377,6 +380,9 @@ class PurchaseWebInterface(models.Model):
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
+        elif result.get('message', False) and \
+                'PABIWEB_NUMBER_MISMATCHED' in result['message']:
+            _logger.warning(result['message'])
         return result
 
     @api.model
@@ -403,6 +409,9 @@ class PurchaseWebInterface(models.Model):
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
+        elif result.get('message', False) and \
+                'PABIWEB_NUMBER_MISMATCHED' in result['message']:
+            _logger.warning(result['message'])
         _logger.info('send_pbweb_requisition_cancel(), output: %s' % result)
         return result
 
@@ -432,5 +441,8 @@ class PurchaseWebInterface(models.Model):
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
+        elif result.get('message', False) and \
+                'PABIWEB_NUMBER_MISMATCHED' in result['message']:
+            _logger.warning(result['message'])
         _logger.info('send_pbweb_action_request(), output: %s' % result)
         return result

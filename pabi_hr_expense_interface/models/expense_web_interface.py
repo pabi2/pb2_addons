@@ -349,6 +349,9 @@ class HRExpense(models.Model):
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
+        elif result.get('message', False) and \
+                'PABIWEB_NUMBER_MISMATCHED' in result['message']:
+            _logger.warning(result['message'])
         _logger.info('send_signal_to_pabiweb(), output: %s' % result)
         return result
 
@@ -382,6 +385,9 @@ class HRExpense(models.Model):
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
+        elif result.get('message', False) and \
+                'PABIWEB_NUMBER_MISMATCHED' in result['message']:
+            _logger.warning(result['message'])
         _logger.info('send_comment_to_pabiweb(), output: %s' % result)
         return result
 
