@@ -20,7 +20,7 @@
       </record>
 
       <act_window id="action_billing_sent_date"
-          name="Billing Sent Date"
+          name="Update Billing Date"
           res_model="purchase.billing.sent.date"
           src_model="purchase.billing"
           multi="True"

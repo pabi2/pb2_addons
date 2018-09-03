@@ -134,12 +134,13 @@ class PurchaseBilling(models.Model):
 
     @api.constrains('date_sent')
     def _validate_date_sent(self):
-        date_sent = self.date_sent
-        if date_sent and date_sent < time.strftime('%Y-%m-%d'):
-            raise ValidationError(
-                _("You specified wrong billing sent date "
-                  "It must be more than or equal %s"
-                    % (time.strftime('%d/%m/%Y'))))
+        for rec in self:
+            date_sent = rec.date_sent
+            if date_sent and date_sent < time.strftime('%Y-%m-%d'):
+                raise ValidationError(
+                    _("You specified wrong billing sent date "
+                      "It must be more than or equal %s"
+                        % (time.strftime('%d/%m/%Y'))))
 
     @api.multi
     @api.depends('supplier_invoice_ids')
@@ -262,15 +263,5 @@ class PurchaseBillingDate(models.TransientModel):
     def update_billing_date(self):
         self.ensure_one()
         active_ids = self._context.get('active_ids')
-        billing_date = self.env['purchase.billing'].browse(active_ids)
-        for rec in billing_date:
-            rec.write({'date_sent': self.date_sent})
-
-    @api.constrains('date_sent')
-    def _validate_date_sent(self):
-        date_sent = self.date_sent
-        if date_sent and date_sent < time.strftime('%Y-%m-%d'):
-            raise ValidationError(
-                _("You specified wrong billing sent date "
-                  "It must be more than or equal %s"
-                    % (time.strftime('%d/%m/%Y'))))
+        billings = self.env['purchase.billing'].browse(active_ids)
+        billings.write({'date_sent': self.date_sent})
