@@ -605,6 +605,12 @@ class AccountAsset(ChartFieldAction, models.Model):
 
     @api.model
     def _prepare_asset_reverse_moves(self, assets):
+        """"
+        As we are using compund asset depreciation, I am not ver sure
+        we will need to find depre lines to be used in transfer, chane owner.
+        will need a lot more test to find out what to do.
+        Note: depre_lines does not seem to have any value at this moment
+        """
         AccountMoveLine = self.env['account.move.line']
         default = {'move_id': False,
                    'parent_asset_id': False,
@@ -723,6 +729,17 @@ class AccountAsset(ChartFieldAction, models.Model):
                     sorted(key=lambda r: r.line_date):
                 line.previous_id = previous_line
                 previous_line = line
+
+    @api.multi
+    def open_entries(self):
+        """ Ensure we get all move_ids even no asset in move line """
+        self.ensure_one()
+        res = super(AccountAsset, self).open_entries()
+        ex_move_ids = [x.move_id.id for x in self.depreciation_line_ids if x]
+        domain = res.get('domain', False)
+        move_ids = domain and domain[0][2] or []
+        res['domain'] = [('id', 'in', ex_move_ids + move_ids)]
+        return res
 
 
 class AccountAssetProfile(models.Model):

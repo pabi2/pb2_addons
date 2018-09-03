@@ -20,6 +20,7 @@ class PabiActionAssetCompute(models.TransientModel):
         [('standard', 'Standard - 1 JE per Asset (more JEs)'),
          ('grouping', 'Grouping - 1 JE per Asset Profile'), ],
         string='Compute Method',
+        default='grouping',
         required=True,
         help="Method of generating depreciation journal entries\n"
         "* Standard: create 1 JE for each asset depreciation line\n"
