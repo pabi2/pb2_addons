@@ -16,6 +16,10 @@ class XLSXReportPabiPurchaseSummarize(models.TransientModel):
         'res.partner',
         string='Supplier',
     )
+    partner_tag_ids = fields.Many2many(
+        'res.partner.tag',
+        string='Supplier Type',
+    )
     method_ids = fields.Many2many(
         'purchase.method',
         string='Method',

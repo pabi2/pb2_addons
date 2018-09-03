@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voucher" language="groovy" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
-	<property name="ireport.zoom" value="1.1269722013523857"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="1.996500000000035"/>
+	<property name="ireport.x" value="523"/>
+	<property name="ireport.y" value="620"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -172,11 +172,13 @@
 	<field name="bank_branch" class="java.lang.String">
 		<fieldDescription><![CDATA[bank_branch]]></fieldDescription>
 	</field>
+	<field name="payment_amount_untaxed" class="java.lang.Number">
+		<fieldDescription><![CDATA[tax_line_normal/base]]></fieldDescription>
+	</field>
+	<field name="payment_amount_tax" class="java.lang.Number">
+		<fieldDescription><![CDATA[tax_line_normal/amount]]></fieldDescription>
+	</field>
 	<sortField name="invoice_type"/>
-	<variable name="amount_untaxed" class="java.lang.Number" calculation="Sum">
-		<variableExpression><![CDATA[$F{invoice_amount_untaxed} == null ? 0.0 :
-($F{invoice_type} == "out_refund" ? -$F{invoice_amount_untaxed} : $F{invoice_amount_untaxed})]]></variableExpression>
-	</variable>
 	<variable name="amount_total_text" class="java.lang.String">
 		<variableExpression><![CDATA[$P{REPORT_LOCALE}.toString().equals("en_US") ?
 $F{amount_total_text_en} :
@@ -320,8 +322,11 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{invoice_amount_untaxed} == null ? 0.0 :
-($F{invoice_type} == "out_refund" ? -$F{invoice_amount_untaxed} : $F{invoice_amount_untaxed})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{payment_amount_untaxed} == null ?
+($V{amount_tax} == 0?
+ $V{amount_total}:
+$F{invoice_amount_total}-($F{invoice_amount_total}/107)*7):
+$F{payment_amount_untaxed}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="240" y="1" width="150" height="17">
@@ -360,7 +365,11 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_untaxed}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{payment_amount_untaxed} == null ?
+($V{amount_tax} == 0?
+ $V{amount_total}:
+$V{amount_total}-($V{amount_total}/107)*7):
+$F{payment_amount_untaxed}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="63" y="153" width="494" height="18"/>
@@ -475,7 +484,11 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_tax}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{payment_amount_tax} == null ?
+($V{amount_tax} == 0?
+ $V{amount_tax}:
+($V{amount_total}/107)*7):
+$F{payment_amount_tax}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Transparent" x="51" y="178" width="494" height="29" forecolor="#000000" backcolor="#FFFFFF"/>

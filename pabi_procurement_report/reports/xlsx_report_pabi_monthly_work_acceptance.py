@@ -20,6 +20,10 @@ class XLSXReportPabiMonthlyWorkAcceptance(models.TransientModel):
         'res.partner',
         string='Supplier',
     )
+    partner_tag_ids = fields.Many2many(
+        'res.partner.tag',
+        string='Supplier Type',
+    )
     date_from = fields.Date(
         string='Date From',
         required=True,

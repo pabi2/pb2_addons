@@ -126,6 +126,9 @@
 	<field name="origin_invoice" class="java.lang.String">
 		<fieldDescription><![CDATA[document_id/origin_invoice_id/number]]></fieldDescription>
 	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
 	<sortField name="debit" order="Descending"/>
 	<sortField name="credit" order="Descending"/>
 	<variable name="total_debit" class="java.lang.Number" calculation="Sum">
@@ -237,7 +240,7 @@
 					<font fontName="Monospaced" size="34" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{doctype} == "out_invoice" ? "DV" :
-($F{doctype} == "in_invoice" ? "KV" :
+($F{doctype} == "in_invoice" ? $F{name}.substring(0, 2) :
 ($F{doctype} == "out_refund" ? "CN" :
 ($F{doctype} == "in_refund" ? "SN" : "??")))]]></textFieldExpression>
 			</textField>
