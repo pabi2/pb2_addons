@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="payment_voucher" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.210000000000011"/>
-	<property name="ireport.x" value="24"/>
-	<property name="ireport.y" value="325"/>
+	<property name="ireport.x" value="120"/>
+	<property name="ireport.y" value="41"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_id&quot;]"/>
 	<style name="space">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
@@ -175,6 +175,9 @@
 	<field name="bank_account_branch" class="java.lang.String">
 		<fieldDescription><![CDATA[journal_id/bank_account_ids/bank_branch/name]]></fieldDescription>
 	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
 	<sortField name="debit" order="Descending"/>
 	<sortField name="credit" order="Descending"/>
 	<variable name="total_debit" class="java.lang.Number" calculation="Sum">
@@ -292,8 +295,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="34" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{doctype} == "payment" ?
-"PV" : "CV"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doctype} == "payment"? $F{name}.substring(0, 2) : "CV"]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement positionType="FixRelativeToBottom" x="0" y="192" width="555" height="1"/>

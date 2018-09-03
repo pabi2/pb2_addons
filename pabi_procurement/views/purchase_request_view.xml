@@ -28,6 +28,7 @@
                     <field name="prototype_type"/>
                     <field name="total_budget_value"/>
                     <field name="delivery_address"/>
+                    <field name="legacy_ref" attrs="{'invisible': [('legacy_ref', '=', False)]}"/>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='description']" position="before">
                     <field name="purchase_type_id"/>
