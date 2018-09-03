@@ -28,6 +28,10 @@ class PabiStandardAssetReportWizard(models.TransientModel, Common):
         'res.partner',
         string='Supplier',
     )
+    partner_tag_ids = fields.Many2many(
+        'res.partner.tag',
+        string='Supplier Type',
+    )
     order_id = fields.Many2one(
         'purchase.order',
         string='Purchase Order',

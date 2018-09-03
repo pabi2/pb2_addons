@@ -216,6 +216,10 @@ class PurchaseRequest(models.Model):
         readonly=True,
         copy=False,
     )
+    legacy_ref = fields.Char(
+        string='Legacy Ref.',
+        readonly=True,
+    )
     _sql_constraints = [
         ('name_uniq', 'unique(name)',
          'PR Numbr must be unique!'),
@@ -442,7 +446,7 @@ class PurchaseRequestLine(models.Model):
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         'Fiscal Year',
-        readonly=True,
+        readonly=False,
     )
     state = fields.Selection(
         [('open', 'Open'),

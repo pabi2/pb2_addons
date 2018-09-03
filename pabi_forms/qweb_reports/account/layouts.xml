@@ -372,7 +372,12 @@
                             <strong class="pabi-doc-type">DV</strong>
                         </t>
                         <t t-if="o.doctype == 'in_invoice'">
-                            <strong class="pabi-doc-type">KV</strong>
+                            <t t-if="o.name[0:2] == 'TP'">
+                                <strong class="pabi-doc-type">TP</strong>
+                            </t>
+                            <t t-if="o.name[0:2] != 'TP'">
+                                <strong class="pabi-doc-type">KV</strong>
+                            </t>
                         </t>
                         <t t-if="o.doctype == 'out_refund'">
                             <strong class="pabi-doc-type">CN</strong>
@@ -381,7 +386,12 @@
                             <strong class="pabi-doc-type">SN</strong>
                         </t>
                         <t t-if="o.doctype == 'payment'">
-                            <strong class="pabi-doc-type">PV</strong>
+                            <t t-if="o.name[0:2] == 'TT'">
+                                <strong class="pabi-doc-type">TT</strong>
+                            </t>
+                            <t t-if="o.name[0:2] != 'TT'">
+                                <strong class="pabi-doc-type">PV</strong>
+                            </t>
                         </t>
                         <t t-if="o.doctype == 'receipt'">
                             <strong class="pabi-doc-type">RC</strong>

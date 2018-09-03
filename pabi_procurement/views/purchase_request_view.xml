@@ -28,6 +28,7 @@
                     <field name="prototype_type"/>
                     <field name="total_budget_value"/>
                     <field name="delivery_address"/>
+                    <field name="legacy_ref" attrs="{'invisible': [('legacy_ref', '=', False)]}"/>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='description']" position="before">
                     <field name="purchase_type_id"/>
@@ -36,7 +37,7 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='product_id']" position="before">
-                    <field name="fiscalyear_id"/>
+                    <field name="fiscalyear_id" readonly="1"/>
                 </xpath>
                 <!--<xpath expr="//form/sheet/notebook/page/field[@name='line_ids']/tree/field[@name='date_required']" position="attributes">-->
                 <!--<attribute name="invisible">1</attribute>-->
@@ -262,7 +263,7 @@
                     <field name="responsible_uid"/>
                 </xpath>
                 <xpath expr="//field[@name='product_uom_id']" position="after">
-                    <field name="fiscalyear_id"/>
+                    <field name="fiscalyear_id" readonly="1"/>
                     <field name="is_central_purchase"/>
                     <field name="state" string="Line State"/>
                 </xpath>

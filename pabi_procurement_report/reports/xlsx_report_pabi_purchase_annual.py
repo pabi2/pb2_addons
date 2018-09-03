@@ -12,6 +12,18 @@ class XLSXReportPabiPurchaseAnnual(models.TransientModel):
         'res.org',
         string='Org',
     )
+    method_ids = fields.Many2many(
+        'purchase.method',
+        string='Method',
+    )
+    date_from = fields.Date(
+        string='From Date',
+        required=True,
+    )
+    date_to = fields.Date(
+        string='To Date',
+        required=True,
+    )
 
     # Report Result
     results = fields.Many2many(

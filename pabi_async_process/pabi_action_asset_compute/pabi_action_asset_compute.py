@@ -18,13 +18,13 @@ class PabiActionAssetCompute(models.TransientModel):
     )
     compute_method = fields.Selection(
         [('standard', 'Standard - 1 JE per Asset (more JEs)'),
-         ('grouping', 'Grouping - 1 JE per Account/Costcenter'), ],
+         ('grouping', 'Grouping - 1 JE per Asset Profile'), ],
         string='Compute Method',
         required=True,
         help="Method of generating depreciation journal entries\n"
         "* Standard: create 1 JE for each asset depreciation line\n"
         "* Grouping: create 1 JE by grouping depreciation with same "
-        "account and costcenter",
+        "asset profile",
     )
     grouping_date = fields.Date(
         string='Date',
@@ -43,6 +43,7 @@ class PabiActionAssetCompute(models.TransientModel):
         'pabi_action_asset_compute_account_asset_profile_rel',
         'compute_id', 'profile_id',
         string='Profile',
+        domain=[('no_depreciation', '=', False)],
     )
     test_log_ids = fields.One2many(
         'pabi.action.asset.compute.test.log',
@@ -111,16 +112,17 @@ class PabiActionAssetCompute(models.TransientModel):
         groups = []
         if return_as_groups:
             # Compute method grouping, find the group by criterias
-            GROUPBY = ['account_depreciation_id',
-                       'account_expense_depreciation_id',
-                       'owner_section_id',
-                       'owner_project_id',
-                       'owner_invest_asset_id',
-                       'owner_invest_construction_phase_id', ]
+            # By doing this, 1 JE will be created for each asset profile
+            GROUPBY = ['profile_id']
+            # GROUPBY = ['account_depreciation_id',
+            #            'account_expense_depreciation_id',
+            #            'owner_section_id',
+            #            'owner_project_id',
+            #            'owner_invest_asset_id',
+            #            'owner_invest_construction_phase_id', ]
             fields_str = ', '.join(GROUPBY)
-            group_str = 'group by %s' % fields_str
-            self._cr.execute("select %s %s %s" %
-                             (fields_str, from_str, group_str))
+            self._cr.execute("select distinct %s %s" %
+                             (fields_str, from_str))
             groups = self._cr.dictfetchall()  # i.e., [{'x': 1, 'y': 2}, {}]
         else:
             # Compute method standard, 1 group only
@@ -167,7 +169,8 @@ class PabiActionAssetCompute(models.TransientModel):
         period = self.env['account.period'].browse(period_id)
         # Block future period
         current_period = self.env['account.period'].find()
-        if period.date_start > current_period.date_start:
+        if not self._context.get('allow_future_period', False) and \
+                period.date_start > current_period.date_start:
             raise ValidationError(_('Compute asset depreciation for '
                                     'future period is not allowed!'))
         # Batch ID
@@ -183,6 +186,9 @@ class PabiActionAssetCompute(models.TransientModel):
             asset_ids = self._search_asset(period, categ_ids, profile_ids)
             if asset_ids:
                 group_assets['N/A'] = asset_ids
+        if not group_assets:
+            raise ValidationError(
+                _('No more assets to compute for this period!'))
         # Compute for each group (1 group for standard case)
         for grp_name, asset_ids in group_assets.iteritems():
             assets = self.env['account.asset'].browse(asset_ids)
@@ -198,8 +204,8 @@ class PabiActionAssetCompute(models.TransientModel):
         # Return
         result_msg = '\n'.join(error_logs)
         if not result_msg:
-            result_msg = _('Computed depreciation for %s assets') % \
-                len(created_move_ids)
+            result_msg = _('Computed depreciation created %s '
+                           'journal entries') % len(created_move_ids)
         return (depre_batch, result_msg)
 
     @api.multi
@@ -370,7 +376,7 @@ class PabiActionAssetComputeTestLog(models.TransientModel):
 
 class PabiAssetDepreBatch(models.Model):
     _name = 'pabi.asset.depre.batch'
-    _order = 'name desc'
+    _order = 'id desc'
     _description = 'Asset Depreciation Compute Batch'
 
     name = fields.Char(
@@ -418,6 +424,32 @@ class PabiAssetDepreBatch(models.Model):
         string='Depreciation Amount',
         compute='_compute_amount',
     )
+
+    move_count = fields.Integer(
+        string='JE Count',
+        compute='_compute_moves',
+    )
+
+    @api.multi
+    def _compute_moves(self):
+        for rec in self:
+            rec.move_count = len(rec.move_ids)
+        return True
+
+    @api.multi
+    def open_entries(self):
+        self.ensure_one()
+        return {
+            'name': _("Journal Entries"),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': self._context,
+            'nodestroy': True,
+            'domain': [('id', 'in', self.move_ids.ids)],
+        }
 
     @api.model
     def new_batch(self, period, note):

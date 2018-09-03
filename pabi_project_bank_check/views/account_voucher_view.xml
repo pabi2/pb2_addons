@@ -34,11 +34,38 @@
             <field name="arch" type="xml">
                 <field name="journal_id" position="attributes">
                     <attribute name="domain">[('type','in',['bank', 'cash']), ('payment', '=', True), ('project_ids', '=', False), ('intransit', '=', False)]</attribute>
-                    <attribute name="context">{'use_project_journal': use_project_journal, 'project_journal_ids': project_journal_ids}</attribute>
+                    <attribute name="context">{'use_project_journal': use_project_journal, 'project_journal_ids': project_journal_ids, 'tree_view_ref': 'pabi_project_bank_check.voucher_payment_method_tree_view', 'search_view_ref': 'pabi_project_bank_check.voucher_payment_method_search_view'}</attribute>
                 </field>
             </field>
         </record>
 
+        <record id="voucher_payment_method_tree_view" model="ir.ui.view">
+            <field name="name">voucher.payment.method.tree.view</field>
+            <field name="model">account.journal</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="default_debit_account_id" string="Account"/>
+                    <field name="type"/>
+                    <field name="user_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="voucher_payment_method_search_view" model="ir.ui.view">
+            <field name="name">voucher.payment.method.search.view</field>
+            <field name="model">account.journal</field>
+            <field name="arch" type="xml">
+              <search string="Payment">
+                  <field name="name" filter_domain="['|', ('default_debit_account_id','ilike', self), ('name','ilike', self)]"/>
+                  <group expand="0" string="Group By">
+                      <filter string="User" context="{'group_by':'user_id'}"/>
+                      <filter string="Type" context="{'group_by':'type'}"/>
+                  </group>
+              </search>
+            </field>
+        </record>
 
     </data>
 </openerp>

@@ -8,13 +8,25 @@ class XLSXReportPabiHiringSummmary(models.TransientModel):
     _inherit = 'xlsx.report'
 
     # Search Criteria
-    partner_ids = fields.Many2many(
-        'res.partner',
-        string='Partner',
-    )
     org_ids = fields.Many2many(
         'res.org',
         string='Org',
+    )
+    partner_ids = fields.Many2many(
+        'res.partner',
+        string='Supplier',
+    )
+    tag_ids = fields.Many2many(
+        'res.partner.tag',
+        string='Supplier Type',
+    )
+    date_from = fields.Date(
+        string='From Date',
+        required=True,
+    )
+    date_to = fields.Date(
+        string='To Date',
+        required=True,
     )
 
     # Report Result

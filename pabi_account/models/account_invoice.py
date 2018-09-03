@@ -88,6 +88,10 @@ class AccountInvoice(models.Model):
         readonly=True,
         help="New invoice created to replace this cancelled invoice."
     )
+    legacy_ref = fields.Char(
+        string='Legacy Ref.',
+        readonly='True',
+    )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
 
