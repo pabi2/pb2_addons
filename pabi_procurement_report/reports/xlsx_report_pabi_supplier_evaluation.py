@@ -8,9 +8,13 @@ class XLSXReportPabiSupplierEvaluation(models.TransientModel):
     _inherit = 'xlsx.report'
 
     # Search Criteria
-    partner_id = fields.Many2one(
+    tag_ids = fields.Many2many(
+        'res.partner.tag',
+        string='Supplier Type',
+    )
+    partner_ids = fields.Many2many(
         'res.partner',
-        string='Partner',
+        string='Supplier',
     )
     org_ids = fields.Many2many(
         'res.org',
