@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 import StringIO
 import requests
 import ast
@@ -7,12 +8,16 @@ from openerp import models, api, fields, _
 from openerp.exceptions import except_orm, ValidationError
 # from .test_data import TEST_DATA
 
+_logger = logging.getLogger(__name__)
+
 
 class HRSalaryExpense(models.Model):
     _inherit = 'hr.salary.expense'
 
     @api.multi
     def send_signal_to_pabiweb(self, signal, salary_doc=False):
+        _logger.info('send_signal_to_pabiweb(), input: [%s, %s]' %
+                     (signal, salary_doc))
         """ Signal: '1' = Submit, '2' = Resubmit, '3' = Cancel
             For 1, 2, require salary_doc """
         self.ensure_one()
@@ -59,6 +64,10 @@ class HRSalaryExpense(models.Model):
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
+        elif result.get('message', False) and \
+                'PABIWEB_NUMBER_MISMATCHED' in result['message']:
+            _logger.warning(result['message'])
+        _logger.info('send_signal_to_pabiweb(), input: %s' % result)
         return result
 
     @api.model
@@ -75,6 +84,7 @@ class HRSalaryExpense(models.Model):
 
     @api.model
     def done_salary(self, af_info):
+        _logger.info('done_salary(), input: %s' % af_info)
         """ af_info = {
             'name': 'SAL0001',
             'approve_uid': '000377',
@@ -126,6 +136,7 @@ class HRSalaryExpense(models.Model):
                 'result': False,
                 'messages': _(str(e)),
             })
+        _logger.info('done_salary(), output: %s' % res)
         return res
 
     @api.multi

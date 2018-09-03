@@ -26,6 +26,7 @@ Odoo will provide view for other system to call as - pabi_intray_view
         'security/ir.model.access.csv',
         'data/message_subtype.xml',
         'data/stock_request_message.xml',
+        'data/budget_transfer_message.xml',
     ],
     "application": False,
     "installable": True,

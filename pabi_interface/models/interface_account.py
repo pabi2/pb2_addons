@@ -392,13 +392,14 @@ class InterfaceAccountEntry(models.Model):
             # report_type = line.account_id.user_type.report_type
             # if report_type not in ('asset', 'liability'):
             move_line.update_related_dimension(vals)
-            analytic_account = Analytic.create_matched_analytic(move_line)
+            if move_line.taxbranch_id:  # Has dimension
+                analytic_account = Analytic.create_matched_analytic(move_line)
+                move_line.analytic_account_id = analytic_account
             # kittiu: This throw error in some case, so temp remove it.
             # if analytic_account and not journal.analytic_journal_id:
             #     raise ValidationError(
             #         _("You have to define an analytic journal on the "
             #           "'%s' journal!") % (journal.name,))
-            move_line.analytic_account_id = analytic_account
 
             # For Normal Tax Line, also add to account_tax_detail
             if line.tax_id and not line.tax_id.is_wht and \

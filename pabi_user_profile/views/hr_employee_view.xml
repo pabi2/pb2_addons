@@ -22,6 +22,9 @@
                 <field name="category_ids" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
+                <xpath expr="//group[@expand='0']" position="inside">
+                    <filter string="Org" domain="[]" context="{'group_by':'org_id'}"/>                    
+                </xpath>
 	        </field>
 	    </record>
 

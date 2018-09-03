@@ -30,7 +30,7 @@ class AccountWhtCert(models.Model):
         states={'draft': [('readonly', False)]},
     )
     state = fields.Selection(
-        [('draft', 'Darft'),
+        [('draft', 'Draft'),
          ('done', 'Done'),
          ('cancel', 'Cancelled')],
         string='Status',
@@ -94,6 +94,12 @@ class AccountWhtCert(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         copy=False,
+    )
+    calendar_period_id = fields.Many2one(
+        'account.period.calendar',
+        string='Calendar Period',
+        compute='_compute_calendar_period',
+        store=True,
     )
     # Moved from account.voucher
     sequence = fields.Integer(
@@ -164,8 +170,10 @@ class AccountWhtCert(models.Model):
             supplier = rec.supplier_partner_id
             rec.x_voucher_number = rec.voucher_id.number
             rec.x_date_value = rec.date
-            rec.x_company_name = company.display_name
-            rec.x_supplier_name = supplier.display_name
+            rec.x_company_name = company.name
+            rec.x_supplier_name = ' '.join(list(
+                filter(lambda l: l is not False, [supplier.title.name,
+                                                  supplier.name])))
             rec.x_company_taxid = \
                 company.vat and len(company.vat) == 13 and company.vat or ''
             rec.x_supplier_taxid = \
@@ -204,6 +212,12 @@ class AccountWhtCert(models.Model):
                 self._prepare_address(rec.company_partner_id)
             rec.supplier_address = \
                 self._prepare_address(rec.supplier_partner_id)
+
+    @api.multi
+    @api.depends('period_id')
+    def _compute_calendar_period(self):
+        for cert in self:
+            cert.calendar_period_id = cert.period_id.id
 
     @api.model
     def _prepare_wht_line(self, voucher):

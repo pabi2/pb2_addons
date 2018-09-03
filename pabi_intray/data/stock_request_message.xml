@@ -56,7 +56,7 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
 # - owner = login user
 # - boss = Maytinee
 # - action = False
-# - is_complete = True
+# - is_complete = False
 object=object.with_context(lang='th_TH')
 subject=object.name
 body=u"%s พร้อมจ่ายให้กับ %s" % (object.name, object.employee_id.name)

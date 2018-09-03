@@ -680,16 +680,15 @@ class ChartField(object):
                 self.personnel_costcenter_id = False
             self.fund_id = self._get_default_fund()
 
-    @api.multi
-    def update_related_dimension(self, vals):
-        # Find selected dimension that is in CHART_SELECT list
+    @api.model
+    def _get_related_dimension(self, vals):
         selects = list(set(CHART_SELECT) & set(vals.keys()))
+        res = {}
         if selects:
             selects = dict([(x, vals[x]) for x in selects])
             selects_no = {k: v for k, v in selects.items() if not v}
             selects_yes = {k: v for k, v in selects.items() if v}
             # update value = false first, the sequence is important
-            res = {}
             for field, _dummy in selects_no.items():
                 res.update(self._get_chained_dimension(field, clear=True))
             # res.update({'chart_view': self._get_chart_view(selects_yes)})
@@ -697,6 +696,12 @@ class ChartField(object):
                 if field in res:
                     res.pop(field)
                 res.update(self._get_chained_dimension(field))
+        return res
+
+    @api.multi
+    def update_related_dimension(self, vals):
+        res = self._get_related_dimension(vals)
+        if res:
             self.with_context(MyModelLoopBreaker=True).write(res)
             # Fund, assign default if none
             if not vals.get('fund_id', False):
@@ -704,6 +709,7 @@ class ChartField(object):
                     if not rec.fund_id:
                         rec.with_context(MyModelLoopBreaker=True).\
                             write({'fund_id': rec._get_default_fund()})
+        return True
 
     @api.model
     def _record_value_by_type(self, record, key):

@@ -16,6 +16,9 @@
                     <field name="fund_id"/>
                     <field name="template_id"/>
                     <field name="create_uid"/>
+                    <field name="amount_init"/>
+                    <field name="amount"/>
+                    <field name="amount_consumed"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -55,7 +58,7 @@
                             <field name="project_id" required="1"/>
                             <field name="fund_id" domain="[('project_ids', 'in', project_id)]"/>
                             <field name="template" invisible="1"/>
-                            <field name="template_id" required="1"/>
+                            <field name="template_id" required="0"/>
                         </group>
                         <group>
                             <field name="planned_budget"/>
@@ -107,7 +110,7 @@
             <field name="model">budget.fund.rule</field>
             <field name="arch" type="xml">
                 <search string="Fund">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|', '|', ('name','ilike',self), ('project_id.code','ilike',self), ('project_id','ilike',self)]" string="Name"/>
                     <field name="fund_id"/>
                     <field name="project_id"/>
                     <field name="template_id"/>

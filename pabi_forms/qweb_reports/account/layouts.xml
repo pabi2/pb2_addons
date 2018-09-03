@@ -86,7 +86,7 @@
                     </t>
                 </t>
                 <tr>
-                    <td colspan="10" style="border: 0px; padding-left: 0px; padding-right: 0px;">
+                    <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" style="border: 0px; padding-left: 0px; padding-right: 0px;">
                         <table class="pabi-table-doc-header">
                             <tr>
                                 <td class="text-center pabi-col-doc-header">
@@ -127,7 +127,7 @@
         <!-- Narration -->
         <template id="account_naration_header">
             <tr>
-                <td colspan="10" class="pabi-text-header">
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" class="pabi-text-header">
                     <table style="width: 100%;">
                         <tr>
                             <td style="width: 50px;">Text:</td>
@@ -141,7 +141,7 @@
         <!-- Payment Type -->
         <template id="account_payment_type">
             <tr>
-                <td colspan="10" style="border: 0px; padding-left: 0px; padding-right: 0px;">
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" style="border: 0px; padding-left: 0px; padding-right: 0px;">
                     <table class="pabi-table-payment-type-header">
                         <tr>
                             <td style="width: 50%;">
@@ -203,13 +203,16 @@
         <!-- Column Header -->
         <template id="account_column_header">
             <tr>
-                <td colspan="10" class="text-center" style="border: 0px;">AMOUNT (THB)</td>
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" class="text-center" style="border: 0px;">AMOUNT (THB)</td>
             </tr>
             <tr>
                 <td class="text-center pabi-col-header">Activity</td>
                 <td class="text-center pabi-col-header">Partner</td>
                 <td class="text-center pabi-col-header">Account Code</td>
                 <td class="text-center pabi-col-header">Account Name</td>
+                <t t-if="o.line_id.mapped('asset_id')">
+                    <td class="text-center pabi-col-header">Asset Code</td>
+                </t>
                 <td class="text-center pabi-col-header">Dr</td>
                 <td class="text-center pabi-col-header">Cr</td>
                 <td class="text-center pabi-col-header">Tax</td>
@@ -251,6 +254,13 @@
                         <span t-field="line.account_id.name"/>
                     </t>
                 </td>
+                <t t-if="o.line_id.mapped('asset_id')">
+                    <td class="pabi-col-detail">
+                        <t t-if="line.asset_id">
+                            <span t-field="line.asset_id.code"/>
+                        </t>
+                    </td>
+                </t>
                 <td class="text-right pabi-col-detail">
                     <t t-if="line.debit">
                         <span t-field="line.debit"/>
@@ -362,7 +372,12 @@
                             <strong class="pabi-doc-type">DV</strong>
                         </t>
                         <t t-if="o.doctype == 'in_invoice'">
-                            <strong class="pabi-doc-type">KV</strong>
+                            <t t-if="o.name[0:2] == 'TP'">
+                                <strong class="pabi-doc-type">TP</strong>
+                            </t>
+                            <t t-if="o.name[0:2] != 'TP'">
+                                <strong class="pabi-doc-type">KV</strong>
+                            </t>
                         </t>
                         <t t-if="o.doctype == 'out_refund'">
                             <strong class="pabi-doc-type">CN</strong>
@@ -371,7 +386,12 @@
                             <strong class="pabi-doc-type">SN</strong>
                         </t>
                         <t t-if="o.doctype == 'payment'">
-                            <strong class="pabi-doc-type">PV</strong>
+                            <t t-if="o.name[0:2] == 'TT'">
+                                <strong class="pabi-doc-type">TT</strong>
+                            </t>
+                            <t t-if="o.name[0:2] != 'TT'">
+                                <strong class="pabi-doc-type">PV</strong>
+                            </t>
                         </t>
                         <t t-if="o.doctype == 'receipt'">
                             <strong class="pabi-doc-type">RC</strong>
@@ -587,6 +607,9 @@
         <template id="account_summary_footer">
             <tr>
                 <td colspan="3" class="pabi-col-footer"></td>
+                <t t-if="o.line_id.mapped('asset_id')">
+                    <td class="pabi-col-footer"></td>
+                </t>
                 <td class="pabi-col-footer">Total</td>
                 <td class="text-right pabi-col-footer">
                     <span t-esc="'{:,.2f}'.format(sum(o.line_id.mapped('debit')))"/>
@@ -601,7 +624,7 @@
         <!-- Layout Footer 1 -->
         <template id="account_layout_footer_1">
             <tr>
-                <td colspan="10" style="border: 0px; padding-left: 0px; padding-right: 0px;">
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" style="border: 0px; padding-left: 0px; padding-right: 0px;">
                     <div class="pabi-footer">
                         <div class="row">
                             <div class="col-xs-12">
@@ -654,7 +677,7 @@
         <!-- Layout Footer 2 -->
         <template id="account_layout_footer_2">
             <tr>
-                <td colspan="10" style="border: 0px; padding-left: 0px; padding-right: 0px;">
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" style="border: 0px; padding-left: 0px; padding-right: 0px;">
                     <div class="pabi-footer">
                         <div class="row">
                             <div class="col-xs-12">

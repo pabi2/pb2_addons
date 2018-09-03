@@ -65,7 +65,7 @@ class CreateJournalEntryWizard(models.TransientModel):
         # If use fin lease model
         if self.use_finlease_model and self.model_id:
             invline = invoice.invoice_line and invoice.invoice_line[0]
-            ctx.update({'default_line_id': [
+            move_lines = [
                 {'account_id': self.model_id.debit_account_id.id,
                  'debit': invoice.amount_untaxed,
                  'name': invline and invline.name,
@@ -73,7 +73,21 @@ class CreateJournalEntryWizard(models.TransientModel):
                 {'account_id': self.model_id.credit_account_id.id,
                  'credit': invoice.amount_untaxed,
                  'name': invline and invline.name,
-                 'chartfield_id': invline and invline.chartfield_id.id}]})
+                 'chartfield_id': invline and invline.chartfield_id.id},
+            ]
+            if self.model_id.fin_debit_account_id:
+                move_lines.append({
+                    'account_id': self.model_id.fin_debit_account_id.id,
+                    'debit': invoice.amount_untaxed,
+                    'name': invline and invline.name,
+                    'chartfield_id': invline and invline.chartfield_id.id})
+            if self.model_id.fin_credit_account_id:
+                move_lines.append({
+                    'account_id': self.model_id.fin_credit_account_id.id,
+                    'credit': invoice.amount_untaxed,
+                    'name': invline and invline.name,
+                    'chartfield_id': invline and invline.chartfield_id.id})
+            ctx.update({'default_line_id': move_lines})
         # --
         result['context'] = ctx
         return result

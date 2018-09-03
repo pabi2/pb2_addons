@@ -355,6 +355,7 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
             'account_id': self.account_id.id,
             'partner_id': self.partner_id.id,
             'date_maturity': line.date_start,
+            'taxbranch_id': line.loan_install_id.taxbranch_id.id,
         }
         return move_line
 
@@ -371,6 +372,7 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
             'analytic_account_id': False,
             'debit': self.amount_income < 0 and -self.amount_income or 0.0,
             'credit': self.amount_income > 0 and self.amount_income or 0.0,
+            'taxbranch_id': self.taxbranch_id.id,
         }
         return move_line_dict
 
@@ -524,7 +526,9 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
             income_line = rec._prepare_income_move_line()
             MoveLine.create(income_line)
             # Post move
-            move.with_context(direct_create=True).button_validate()
+            move.button_validate()
+            # direct_create = True will recompute dimension, and error
+            # move.with_context(direct_create=True).button_validate()
             # Reconcile receivables
             for rec_ids in rec_pair_ids:
                 MoveLine.browse(rec_ids).reconcile('auto')
@@ -573,7 +577,8 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
             MoveLine.create(force_close_line_dict)
 
             # Post move
-            move.with_context(direct_create=True).button_validate()
+            move.button_validate()
+            # move.with_context(direct_create=True).button_validate()
 
             # Reconcile loan receivable
             # Unreconciled move line from move_id

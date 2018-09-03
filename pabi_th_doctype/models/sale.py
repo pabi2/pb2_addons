@@ -18,5 +18,7 @@ class SaleOrder(models.Model):
                 # --
                 self = self.with_context(doctype_id=doctype.id,
                                          fiscalyear_id=fiscalyear_id)
-                vals['name'] = self.env['ir.sequence'].next_by_doctype()
+                next = self.env['ir.sequence'].next_by_doctype()
+                if next:
+                    vals['name'] = next
         return super(SaleOrder, self).create(vals)

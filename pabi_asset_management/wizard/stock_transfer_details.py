@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+from openerp import models, api, _
+from openerp.exceptions import ValidationError
 
 
 class StockTransferDetails(models.TransientModel):
@@ -34,8 +35,19 @@ class StockTransferDetails(models.TransientModel):
         return res
 
     @api.multi
+    def _validate_asset_line(self):
+        for rec in self:
+            for line in rec.item_ids:
+                if line.product_id.asset and line.quantity and \
+                        not line.quantity.is_integer():
+                    raise ValidationError(_('For asset, quantity '
+                                            'must be whole number.'))
+        return True
+
+    @api.multi
     def do_detailed_transfer(self):
         self.ensure_one()
+        self._validate_asset_line()
         # Pass Installament information to Asset
         wa = self.picking_id.acceptance_id
         if wa:

@@ -77,7 +77,7 @@ class AccountInvoice(models.Model):
             return super(AccountInvoice, self).action_move_create()
         except psycopg2.OperationalError:
             raise ValidationError(
-                _('Multiple client accessing same resource!\n'
+                _('Waiting to get document number.\n'
                   'Please try again!'))
         except Exception:
             raise

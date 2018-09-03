@@ -28,7 +28,7 @@ from openerp.tools.translate import _
 
 
 class aged_partner_balance_xls(report_xls):
-    column_sizes = [17, 17, 17, 17, 17, 17, 17, 17, 17, 17]
+    column_sizes = [17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 25]
 
     def generate_xls_report(self, _p, _xs, data, objects, wb):
 
@@ -80,7 +80,7 @@ class aged_partner_balance_xls(report_xls):
             ('cd', 1, 0, 'text', _('Clearance Date')),
             ('af', 2, 0, 'text', _('Accounts Filter')),
             ('tm', 2, 0, 'text', _('Target Moves')),
-
+            ('pl', 1, 0, 'text', _('Period Length (Days)')),
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(
@@ -108,6 +108,7 @@ class aged_partner_balance_xls(report_xls):
             ('cd', 1, 0, 'text', _p.date_until),
             ('af', 2, 0, 'text', _p.display_partner_account(data)),
             ('tm', 2, 0, 'text', _p.display_target_move(data)),
+            ('pl', 1, 0, 'text', str(_p.display_period_length(data))),
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(
@@ -180,13 +181,13 @@ class aged_partner_balance_xls(report_xls):
                 row_pos = self.xls_write_row(ws, row_pos, c_hdr_data)
                 # row_start = row_pos
 
-                for partner_name, p_id, p_ref, p_name in \
+                for partner_name, p_id, p_code, p_name in \
                         _p.partners_order[acc.id]:
                     if _p.agged_lines_accounts[acc.id].get(p_id):
                         line = _p.agged_lines_accounts[acc.id][p_id]
                         c_specs = [
                             ('partner', 2, 0, 'text', _(partner_name or '')),
-                            ('code', 1, 0, 'text', _(p_ref or '')),
+                            ('code', 1, 0, 'text', _(p_code or '')),
                             ('balance', 1, 0, 'number', line.get('balance'),
                              None, c_init_cell_style_decimal)
                         ]

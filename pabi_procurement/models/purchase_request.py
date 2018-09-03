@@ -91,7 +91,7 @@ class PurchaseRequest(models.Model):
         'purchase.method',
         string='Procurement Method',
         readonly=True,
-        required=True,
+        required=False,
         states={
             'draft': [('readonly', False)],
             'to_approve': [('readonly', False)]
@@ -215,6 +215,10 @@ class PurchaseRequest(models.Model):
         string='Accept Reason',
         readonly=True,
         copy=False,
+    )
+    legacy_ref = fields.Char(
+        string='Legacy Ref.',
+        readonly=True,
     )
     _sql_constraints = [
         ('name_uniq', 'unique(name)',
@@ -442,7 +446,7 @@ class PurchaseRequestLine(models.Model):
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         'Fiscal Year',
-        readonly=True,
+        readonly=False,
     )
     state = fields.Selection(
         [('open', 'Open'),

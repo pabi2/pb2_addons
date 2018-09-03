@@ -57,7 +57,7 @@
                     <attribute name="required">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='ordering_date']" position="after">
-                    <field name="date_end" required="1"/>
+                    <field name="date_end" required="1" widget="date"/>
                 </xpath>
                 <xpath expr="//form/sheet/group/group/field[@name='picking_type_id']"
                        position="after">
@@ -110,18 +110,22 @@
                 </xpath>
                 <xpath expr="//button[@name='purchase_cancel']" position="replace">
                     <button name="by_pass_cancel" type="object" states="draft,confirmed,wait_auth" string="Cancel Purchase Order" icon="gtk-cancel" confirm="Cancel this RfQ?"/>
-                    <button name="by_pass_delete" type="object" states="draft" string="Delete Quotation" icon="gtk-undelete" confirm="Delete this RfQ?"/>
+                    <button name="by_pass_delete" type="object" states="draft" string="Delete Quotation" icon="gtk-undelete" confirm="Delete this RfQ?"
+                      invisible="1"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
                        position="after">
                     <field name="price_unit"/>
                     <field name="price_standard"/>
                     <field name="is_green_product"/>
+                    <field name="is_innovation"/>
                 </xpath>
                 <xpath expr="//form[@string='Products']/group/field[@name='product_uom_id']" position="after">
                     <field name="price_unit"/>
                     <field name="price_standard"/>
                     <field name="is_green_product"/>
+                    <field name="is_innovation"/>
+
                 </xpath>
                 <xpath expr="//form[@string='Products']/group/field[@name='account_analytic_id']" position="after">
                     <field name="product_name"/>

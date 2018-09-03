@@ -400,16 +400,11 @@ class PurchaseWorkAcceptance(models.Model):
             if not acceptance.date_receive:
                 acceptance.date_receive = today
             received = THHoliday.find_next_working_day(acceptance.date_receive)
-            received = datetime.datetime.strptime(
-                received,
-                "%Y-%m-%d",
-            )
+            received = datetime.datetime.strptime(received, '%Y-%m-%d')
             if not acceptance.date_contract_end:
                 acceptance.date_contract_end = today
-            end_date = datetime.datetime.strptime(
-                acceptance.date_contract_end,
-                "%Y-%m-%d",
-            )
+            end_date = datetime.datetime.strptime(acceptance.date_contract_end,
+                                                  '%Y-%m-%d')
             delta = end_date - received
             overdue_day = delta.days
             total_fine_per_day = 0.0
@@ -489,7 +484,7 @@ class PurchaseWorkAcceptance(models.Model):
                 acceptance.fine_per_day = 0
                 acceptance.overdue_day = 0
 
-    @api.model
+    @api.multi
     @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
     def _compute_total_fine(self):
         for acceptance in self:
@@ -516,7 +511,8 @@ class PurchaseWorkAcceptance(models.Model):
     @api.multi
     def write(self, vals):
         res = super(PurchaseWorkAcceptance, self).write(vals)
-        self.change_invoice_detail()
+        # Redmine #2346
+        # self.change_invoice_detail()
         return res
 
     @api.model
@@ -543,25 +539,25 @@ class PurchaseWorkAcceptance(models.Model):
                     wa_line.inv_line_id.price_unit = wa_line.price_unit
                     wa_line.inv_line_id.invoice_id.button_reset_taxes()
 
-    @api.one
-    @api.depends(
-        'acceptance_line_ids.price_subtotal',
-        'acceptance_line_ids.tax_ids',
-    )
+    @api.multi
+    @api.depends('acceptance_line_ids.price_subtotal',
+                 'acceptance_line_ids.tax_ids')
     def _compute_amount(self):
-        amount_untaxed = 0.0
-        amount_tax = 0.0
-        for line in self.acceptance_line_ids:
-            taxes = line.tax_ids.compute_all(
-                line.price_unit,
-                line.to_receive_qty,
-                product=line.product_id
-            )
-            amount_tax += sum([tax['amount'] for tax in taxes['taxes']])
-            amount_untaxed += taxes['total']
-        self.amount_untaxed = amount_untaxed
-        self.amount_tax = amount_tax
-        self.amount_total = amount_untaxed + amount_tax
+        for rec in self:
+            amount_untaxed = 0.0
+            amount_tax = 0.0
+            for line in rec.acceptance_line_ids:
+                taxes = line.tax_ids.compute_all(
+                    line.price_unit,
+                    line.to_receive_qty,
+                    product=line.product_id
+                )
+                amount_tax += sum([tax['amount'] for tax in taxes['taxes']])
+                amount_untaxed += taxes['total']
+            rec.amount_untaxed = amount_untaxed
+            rec.amount_tax = amount_tax
+            rec.amount_total = amount_untaxed + amount_tax
+        return True
 
     @api.multi
     def validate_amount_total_with_order(self):
@@ -583,6 +579,16 @@ class PurchaseWorkAcceptance(models.Model):
                 )
 
     @api.multi
+    def _validate_asset_line(self):
+        for rec in self:
+            for line in rec.acceptance_line_ids:
+                if line.product_id.asset and line.to_receive_qty and \
+                        not line.to_receive_qty.is_integer():
+                    raise ValidationError(_('For asset, receiving quantity '
+                                            'must be whole number.'))
+        return True
+
+    @api.multi
     def action_evaluate(self):
         self.ensure_one()
         if len(self.acceptance_line_ids) == 0:
@@ -595,7 +601,9 @@ class PurchaseWorkAcceptance(models.Model):
             raise ValidationError(
                 _('To Receive Quantity must greater than zero!'))
         self.validate_amount_total_with_order()
+        self._validate_asset_line()
         self.state = 'evaluation'
+        return True
 
     @api.multi
     def validate_evaluation(self):
@@ -604,6 +612,7 @@ class PurchaseWorkAcceptance(models.Model):
             if not eval_line.score_id:
                 raise ValidationError(
                     _('All the scores must have been filled.'))
+
     @api.multi
     def action_done(self):
         self.ensure_one()

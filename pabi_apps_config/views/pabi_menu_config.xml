@@ -193,6 +193,21 @@
         <menuitem id="account.menu_account_supplier" name="Suppliers"
             parent="account.menu_finance_payables"
             action="base.action_partner_supplier_form" sequence="0"/>
+        <menuitem id="purchase.menu_purchase_supplier" name="Suppliers"
+            parent="purchase.menu_procurement_management"
+            action="base.action_partner_supplier_form" sequence="15"/>
+
+        # Move Bank Receipt to under Customers
+        <menuitem id="account.menu_finance_receivables" name="Customers"
+          parent="account.menu_finance" sequence="1"/>
+        <menuitem id="account.menu_finance_payables" name="Suppliers"
+          parent="account.menu_finance" sequence="2"/>
+        <menuitem id="payment_export.menu_payment_export" name="Payment Exports"
+          parent="account.menu_finance" sequence="3"
+          groups="account.group_account_user,account.group_account_manager"/>
+        <menuitem action="account_bank_receipt.action_bank_receipt_tree"
+          id="account_bank_receipt.menu_bank_receipt_tree"
+          parent="account.menu_finance_receivables" sequence="20"/>
 
     </data>
 </openerp>

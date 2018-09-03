@@ -59,6 +59,7 @@
                         </group>
                         <notebook>
                             <page string="Bank Intransit" name="bank_intransit">
+                                <field name="line_filter" placeholder="Extend search with comma and between. e.g., RC170001-RC170010,RC170030,RC170035"/>
                                 <field
                                     name="bank_intransit_ids"
                                     nolabel="1"

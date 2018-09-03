@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import ast
 from openerp import models, fields, api, _
-from openerp.exceptions import Warning as UserError
+from openerp.exceptions import Warning as UserError, ValidationError
 
 
 class PabiActionAssetCompute(models.TransientModel):
@@ -17,6 +16,22 @@ class PabiActionAssetCompute(models.TransientModel):
         default=lambda self: self.env['account.period'].find().id,
         required=True,
     )
+    compute_method = fields.Selection(
+        [('standard', 'Standard - 1 JE per Asset (more JEs)'),
+         ('grouping', 'Grouping - 1 JE per Asset Profile'), ],
+        string='Compute Method',
+        default='grouping',
+        required=True,
+        help="Method of generating depreciation journal entries\n"
+        "* Standard: create 1 JE for each asset depreciation line\n"
+        "* Grouping: create 1 JE by grouping depreciation with same "
+        "asset profile",
+    )
+    grouping_date = fields.Date(
+        string='Date',
+        default=lambda self: fields.Date.context_today(self),
+        help="For Grouping method, this date will be used to create JE",
+    )
     categ_ids = fields.Many2many(
         'product.category',
         'pabi_action_asset_compute_product_category_rel',
@@ -29,6 +44,7 @@ class PabiActionAssetCompute(models.TransientModel):
         'pabi_action_asset_compute_account_asset_profile_rel',
         'compute_id', 'profile_id',
         string='Profile',
+        domain=[('no_depreciation', '=', False)],
     )
     test_log_ids = fields.One2many(
         'pabi.action.asset.compute.test.log',
@@ -36,24 +52,11 @@ class PabiActionAssetCompute(models.TransientModel):
         string='Asset Test Log',
         readonly=True,
     )
-    test_completed = fields.Boolean(
-        string='Test Completed',
-        default=False,
-    )
-    max_asset_test = fields.Integer(
-        string='Max Assets',
-        default=1000,
-    )
     run_state = fields.Selection(
         [('run', 'Run Asset'),
          ('test', 'Test Result')],
         string='Run State',
         default='run',
-    )
-    tested_assets = fields.Char(  # unlimited size
-        string='Tested Assets',
-        default='[]',
-        help="String representative of tested asset_ids, i.e, '[1,2,4]'"
     )
     batch_note = fields.Char(
         string='Batch Note',
@@ -78,13 +81,12 @@ class PabiActionAssetCompute(models.TransientModel):
     @api.multi
     def check_affected_asset(self):
         self.ensure_one()
-        assets = self._search_asset(self.calendar_period_id,
-                                    self.categ_ids.ids,
-                                    self.profile_ids.ids)
+        asset_ids = self._search_asset(self.calendar_period_id,
+                                       self.categ_ids.ids,
+                                       self.profile_ids.ids)
         # Assume 1 depre line for 1 asset always
-        num_asset = len(assets)
         raise UserError(
-            _('%s assets will be computed in this operation') % num_asset)
+            _('%s assets will be computed in this operation') % len(asset_ids))
 
     @api.model
     def _get_categ_domain(self):
@@ -94,59 +96,117 @@ class PabiActionAssetCompute(models.TransientModel):
 
     @api.model
     def _search_asset(self, period, categ_ids, profile_ids,
-                      exclude_asset_ids=[], limit=False):
-        # Serach for matched asset depre lines first
-        domain = [
-            ('asset_id.state', '=', 'open'),
-            ('asset_id.type', '=', 'normal'),
-            ('asset_id.active', '=', True),
-            ('type', '=', 'depreciate'),
-            ('init_entry', '=', False),
-            ('line_date', '<=', period.date_stop),
-            ('line_date', '>=', period.date_start),
-            ('move_check', '=', False)
-        ]
-        if categ_ids:
+                      return_as_groups=False):
+        # SQL to find asset_ids based on search criteria
+        from_sql = """
+            from account_asset a
+            join account_asset_profile p on a.profile_id = p.id
+            join product_category c on c.id = p.product_categ_id
+            where 1 = 1 and p.no_depreciation = false
+            %s -- profile_cond
+            %s -- categ_cond
+        """
+        p = profile_ids and 'and p.id in %s' % (tuple(profile_ids),) or ''
+        c = categ_ids and 'and c.id in %s' % (tuple(categ_ids),) or ''
+        from_str = from_sql % (p, c)
+        # With group by
+        groups = []
+        if return_as_groups:
+            # Compute method grouping, find the group by criterias
+            # By doing this, 1 JE will be created for each asset profile
+            GROUPBY = ['profile_id']
+            # GROUPBY = ['account_depreciation_id',
+            #            'account_expense_depreciation_id',
+            #            'owner_section_id',
+            #            'owner_project_id',
+            #            'owner_invest_asset_id',
+            #            'owner_invest_construction_phase_id', ]
+            fields_str = ', '.join(GROUPBY)
+            self._cr.execute("select distinct %s %s" %
+                             (fields_str, from_str))
+            groups = self._cr.dictfetchall()  # i.e., [{'x': 1, 'y': 2}, {}]
+        else:
+            # Compute method standard, 1 group only
+            groups = [{1: 1}]  # and 1=1, which is no harm
+
+        group_assets = {}  # Return as {'Group1': [1,2,3,4], ...}
+        for g in groups:
+            # Formulate where clause
+            wheres = []
+            for key, val in g.iteritems():
+                if val:
+                    wheres.append('%s = %s' % (key, val))
+                else:
+                    wheres.append('%s is null' % key)
+            where_str = ' and '.join(wheres)
+            # Select assets based on search criteria
+            self._cr.execute("select distinct a.id %s and %s" %
+                             (from_str, where_str))
+            asset_ids = [x[0] for x in self._cr.fetchall()] or [0]
+            # Find valid depreciation line, based on asset_ids
             self._cr.execute("""
-                select a.id from account_asset a
-                join account_asset_profile ap on ap.id = a.profile_id
-                join product_category pc on pc.id = ap.product_categ_id
-                where pc.id in %s
-            """, (tuple(categ_ids), ))
+                select a.id
+                from account_asset_line al
+                    join account_asset a on a.id = al.asset_id
+                where a.state = 'open' and a.type = 'normal'
+                    and a.active = true and al.type = 'depreciate'
+                    and al.init_entry = false and al.move_check = false
+                    and exists (select 1 from account_asset where a.id in %s)
+                    and al.line_date between %s and %s
+            """, (tuple(asset_ids), period.date_start, period.date_stop))
             asset_ids = [x[0] for x in self._cr.fetchall()]
-            domain += [('asset_id', 'in', asset_ids)]
-        if profile_ids:
-            self._cr.execute("""
-                select a.id from account_asset a
-                join account_asset_profile ap on ap.id = a.profile_id
-                where ap.id in %s
-            """, (tuple(profile_ids), ))
-            asset_ids = [x[0] for x in self._cr.fetchall()]
-            domain += [('asset_id', 'in', asset_ids)]
-        if exclude_asset_ids:
-            domain += [('asset_id', 'not in', exclude_asset_ids)]
-        depre_lines = self.env['account.asset.line'].search(domain)
-        # Find Assets
-        domain = [('depreciation_line_ids', 'in', depre_lines.ids)]
-        assets = self.env['account.asset'].search(domain, limit=limit)
-        return assets
+            if asset_ids:
+                group_assets.update({str(g): asset_ids})
+
+        if return_as_groups:  # {group: asset_ids, ...}
+            return group_assets or {}
+        else:  # asset_ids
+            return group_assets and group_assets.values()[0] or []
 
     @api.multi
-    def asset_compute(self, period_id, categ_ids, profile_ids, batch_note):
+    def asset_compute(self, period_id, categ_ids, profile_ids,
+                      batch_note, compute_method='standard',
+                      grouping_date=False):
         period = self.env['account.period'].browse(period_id)
-        assets = self._search_asset(period, categ_ids, profile_ids)
-        created_move_ids, error_log = \
-            assets._compute_entries(period, check_triggers=True)
-        # Return
-        moves = self.env['account.move'].browse(created_move_ids)
-        if not error_log:
-            error_log = _('Computed depreciation for %s assets') % \
-                len(created_move_ids)
-        result_msg = error_log
-        # Assign Batch ID
+        # Block future period
+        current_period = self.env['account.period'].find()
+        if not self._context.get('allow_future_period', False) and \
+                period.date_start > current_period.date_start:
+            raise ValidationError(_('Compute asset depreciation for '
+                                    'future period is not allowed!'))
+        # Batch ID
         depre_batch = self.env['pabi.asset.depre.batch'].new_batch(period,
                                                                    batch_note)
-        moves.write({'asset_depre_batch_id': depre_batch.id})
+        group_assets = {}  # Group of assets from search
+        created_move_ids = []
+        error_logs = []
+        if compute_method == 'grouping':  # Groupby Account, Depre Budget
+            group_assets = self._search_asset(period, categ_ids, profile_ids,
+                                              return_as_groups=True)
+        else:  # standard
+            asset_ids = self._search_asset(period, categ_ids, profile_ids)
+            if asset_ids:
+                group_assets['N/A'] = asset_ids
+        if not group_assets:
+            raise ValidationError(
+                _('No more assets to compute for this period!'))
+        # Compute for each group (1 group for standard case)
+        for grp_name, asset_ids in group_assets.iteritems():
+            assets = self.env['account.asset'].browse(asset_ids)
+            merge_move = (compute_method == 'grouping') and True or False
+            move_ids, error_log = assets._compute_entries(
+                period, check_triggers=True,
+                merge_move=merge_move, merge_date=grouping_date)
+            moves = self.env['account.move'].browse(move_ids)
+            moves.write({'asset_depre_batch_id': depre_batch.id})
+            created_move_ids += move_ids
+            if error_log and error_log != '':
+                error_logs.append(error_log)
+        # Return
+        result_msg = '\n'.join(error_logs)
+        if not result_msg:
+            result_msg = _('Computed depreciation created %s '
+                           'journal entries') % len(created_move_ids)
         return (depre_batch, result_msg)
 
     @api.multi
@@ -162,7 +222,10 @@ class PabiActionAssetCompute(models.TransientModel):
         kwargs = {'period_id': self.calendar_period_id.id,
                   'categ_ids': self.categ_ids.ids,
                   'profile_ids': self.profile_ids.ids,
-                  'batch_note': self.batch_note, }
+                  'batch_note': self.batch_note,
+                  'compute_method': self.compute_method,
+                  'grouping_date': self.grouping_date,
+                  }
         # Call the function
         res = super(PabiActionAssetCompute, self).\
             pabi_action(process_xml_id, job_desc, func_name, **kwargs)
@@ -186,23 +249,18 @@ class PabiActionAssetCompute(models.TransientModel):
     def run_asset_test(self):
         """ Based on matched assets, run through series of test """
         self.ensure_one()
-        # Matched assets exclude tested one
-        tested_asset_ids = ast.literal_eval(self.tested_assets)
-        assets = self._search_asset(
+        self.test_log_ids.unlink()
+        asset_ids = self._search_asset(
             self.calendar_period_id, self.categ_ids.ids,
-            self.profile_ids.ids, exclude_asset_ids=tested_asset_ids,
-            limit=self.max_asset_test
+            self.profile_ids.ids
         )
-        tested_asset_ids += assets.ids
         # TEST
+        assets = self.env['account.asset'].browse(asset_ids)
         self._log_test_period_closed(self.calendar_period_id)
         self._log_test_asset_profile_account(assets)
         self._log_test_prev_depre_posted(self.calendar_period_id, assets)
         self._log_test_active_chartfield(assets)
-        self.write({'run_state': 'test',
-                    'tested_assets': str(tested_asset_ids),
-                    'test_completed': not assets.ids and True or False,
-                    })
+        self.write({'run_state': 'test'})
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'pabi.action.asset.compute',
@@ -227,9 +285,20 @@ class PabiActionAssetCompute(models.TransientModel):
             logs = []
             self._cr.execute("""
                 select id asset_id, section_id, project_id, invest_asset_id,
-                    invest_construction_phase_id, costcenter_id
+                    invest_construction_phase_id
                 from account_asset
-                where id in %s
+                where id in %s and
+                (
+                 section_id in (select res_id from chartfield_view
+                    where model = 'res.section' and active = false) or
+                 project_id in (select res_id from chartfield_view
+                    where model = 'res.project' and active = false) or
+                 invest_asset_id in (select res_id from chartfield_view
+                    where model = 'res.invest.asset' and active = false) or
+                 invest_construction_phase_id in (select res_id from
+                    chartfield_view where model =
+                    'res.invest.construction.phase' and active = false)
+                )
             """, (tuple(assets.ids), ))
             results = self._cr.dictfetchall()
             for res in results:
@@ -262,7 +331,7 @@ class PabiActionAssetCompute(models.TransientModel):
             account_ids = [x[0] for x in self._cr.fetchall()]
             accounts = self.env['account.account'].browse(account_ids)
             for account in accounts:
-                message = _("Profile's account code, %s, is inactive") % \
+                message = _("Inactive asset profile's account code: %s") % \
                     account.code
                 logs.append((0, 0, {'message': message}))
             self.write({'test_log_ids': logs})
@@ -272,13 +341,16 @@ class PabiActionAssetCompute(models.TransientModel):
     def _log_test_prev_depre_posted(self, period, assets):
         self.ensure_one()
         Asset = self.env['account.asset']
-        logs = []
-        for asset in assets:
-            posted, err_message = Asset._test_prev_depre_posted(period, asset)
-            if not posted:
+        if assets:
+            logs = []
+            unposted_asset_ids = assets._test_prev_depre_unposted(period)
+            assets = Asset.browse(unposted_asset_ids)
+            for asset in assets:
+                message = \
+                    _("Unposted lines prior to period: %s")
                 logs.append((0, 0, {'asset_id': asset.id,
-                                    'message': err_message}))
-        self.write({'test_log_ids': logs})
+                                    'message': message % period.name}))
+            self.write({'test_log_ids': logs})
         return True
 
 
@@ -305,7 +377,7 @@ class PabiActionAssetComputeTestLog(models.TransientModel):
 
 class PabiAssetDepreBatch(models.Model):
     _name = 'pabi.asset.depre.batch'
-    _order = 'name desc'
+    _order = 'id desc'
     _description = 'Asset Depreciation Compute Batch'
 
     name = fields.Char(
@@ -354,6 +426,32 @@ class PabiAssetDepreBatch(models.Model):
         compute='_compute_amount',
     )
 
+    move_count = fields.Integer(
+        string='JE Count',
+        compute='_compute_moves',
+    )
+
+    @api.multi
+    def _compute_moves(self):
+        for rec in self:
+            rec.move_count = len(rec.move_ids)
+        return True
+
+    @api.multi
+    def open_entries(self):
+        self.ensure_one()
+        return {
+            'name': _("Journal Entries"),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': self._context,
+            'nodestroy': True,
+            'domain': [('id', 'in', self.move_ids.ids)],
+        }
+
     @api.model
     def new_batch(self, period, note):
         # Get last batch's run_number
@@ -379,7 +477,7 @@ class PabiAssetDepreBatch(models.Model):
         for rec in self:
             moves = AccountMove.search([('id', 'in', rec.move_ids.ids),
                                         ('state', '=', 'draft'),
-                                        ('name', '=', False)])
+                                        ('name', 'in', (False, '/'))])
             moves.with_context(unlink_from_asset=True).unlink()
             rec.write({'state': 'deleted'})
         return True

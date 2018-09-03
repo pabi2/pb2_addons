@@ -10,7 +10,7 @@ Allows to search record in multi language inputs.
     'author': "Kitti U.",
     'website': 'http://ecosoft.co.th',
     'license': 'AGPL-3',
-    "depends": ['base'],
+    "depends": ['base', 'res_partner_ext'],
     "data": [
     ],
     'test': [

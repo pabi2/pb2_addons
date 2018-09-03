@@ -16,6 +16,8 @@ class HRExpense(models.Model):
         # for expense in expenses:
         for expense in expenses:
             try:
+                if expense.state == 'draft':
+                    expense.signal_workflow('confirm')
                 # Accept
                 if expense.state == 'confirm':
                     expense.signal_workflow('validate')
@@ -68,6 +70,7 @@ class HRExpense(models.Model):
             'date_value': fields.Date.context_today(self),
             'journal_id': journal.id,
             'operating_unit_id': self.env.user.default_operating_unit_id.id,
+            'force_pay': True,
         })
         val = voucher.\
             with_context({

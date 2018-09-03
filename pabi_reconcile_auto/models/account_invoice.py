@@ -38,4 +38,18 @@ class AccountInvoice(models.Model):
                     mlines = MoveLine.search([
                         ('auto_reconcile_id', '=', auto_id)])
                     mlines.reconcile_special_account()
+            # For case, Return Retention on PO: KV reconcile with CV
+            # These invoice will be created manually, no source doc
+            if not invoice.source_document_type:
+                # CV / KV
+                object = invoice.retention_purchase_id or \
+                    invoice.retention_return_purchase_id or False
+                if object:
+                    auto_id = Auto.get_auto_reconcile_id(object)
+                    print auto_id
+                    moves = invoice.move_id
+                    moves.write({'auto_reconcile_id': auto_id})
+                    mlines = MoveLine.search([
+                        ('auto_reconcile_id', '=', auto_id)])
+                    mlines.reconcile_special_account()
         return res

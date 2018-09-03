@@ -196,7 +196,7 @@ class ChequeLot(models.Model):
     def write(self, vals):
         res = super(ChequeLot, self).write(vals)
         for cheque_lot in self:
-            if 'cheque_number_form' in vals or 'cheque_number_to' in vals:
+            if 'cheque_number_from' in vals or 'cheque_number_to' in vals:
                 if cheque_lot.line_ids.filtered(lambda l:  # if any is used.
                                                 l.voucher_id or l.void):
                     raise ValidationError(

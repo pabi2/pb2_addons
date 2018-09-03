@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
+import decimal
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, \
@@ -51,7 +52,6 @@ class PurchaseOrder(models.Model):
     plan_invoice_created = fields.Boolean(
         string='Invoice Created',
         compute='_compute_plan_invoice_created',
-        store=True,
         help="Compute whether number of invoices "
         "(not cancelled invoices) are created as planned",
     )
@@ -64,23 +64,24 @@ class PurchaseOrder(models.Model):
         default=0,
     )
 
-    @api.one
-    @api.depends('invoice_ids.state')
+    @api.multi
     def _compute_plan_invoice_created(self):
-        if not self.invoice_ids or not self.use_invoice_plan:
-            self.plan_invoice_created = False
-        else:
-            total_invoice_amt = 0
-            num_valid_invoices = 0
-            for i in self.invoice_ids:
-                if i.state not in ('cancel'):
-                    num_valid_invoices += 1
-                if i.state in ('open', 'paid'):
-                    total_invoice_amt += i.amount_untaxed
-            num_plan_invoice = len(list(set([i.installment
-                                             for i in self.invoice_plan_ids])))
-            self.plan_invoice_created = num_valid_invoices == num_plan_invoice
-            self.total_invoice_amount = total_invoice_amt
+        for rec in self:
+            if not rec.invoice_ids or not rec.use_invoice_plan:
+                rec.plan_invoice_created = False
+            else:
+                total_invoice_amt = 0
+                num_valid_invoices = 0
+                for i in rec.invoice_ids:
+                    if i.state not in ('cancel'):
+                        num_valid_invoices += 1
+                    if i.state in ('open', 'paid'):
+                        total_invoice_amt += i.amount_untaxed
+                plan_invoice = len(list(set([i.installment for i in
+                                             rec.invoice_plan_ids])))
+                rec.plan_invoice_created = num_valid_invoices == plan_invoice
+                rec.total_invoice_amount = total_invoice_amt
+        return True
 
     @api.model
     def _calculate_subtotal(self, vals):
@@ -167,12 +168,7 @@ class PurchaseOrder(models.Model):
     def _check_invoice_plan(self):
         self.ensure_one()
         if self.invoice_method == 'invoice_plan':
-            if self.invoice_mode == 'change_price':
-                for order_line in self.order_line:
-                    if order_line.product_qty != 1:
-                        raise ValidationError(
-                            _('For invoice plan mode "As 1 Job", '
-                              'all line quantity must equal to 1'))
+            # self._check_invoice_mode()
             # kittiu: problem with decimal, so we dicide to test with 0
             # obj_precision = self.env['decimal.precision']
             # prec = obj_precision.precision_get('Account')
@@ -295,6 +291,21 @@ class PurchaseOrder(models.Model):
         self._check_invoice_plan()
         return super(PurchaseOrder, self).wkf_approve_order()
 
+    # @api.multi
+    # def _check_invoice_mode(self):
+    #     # Removed as it conflict between asset must use 1 job, but sometime
+    #     # we PO asset > 1 qty
+    #     # --
+    #     # for order in self:
+    #     #     if order.invoice_method == 'invoice_plan':
+    #     #         if order.invoice_mode == 'change_price':
+    #     #             for order_line in order.order_line:
+    #     #                 if order_line.product_qty != 1:
+    #     #                     raise ValidationError(
+    #     #                         _('For invoice plan mode "As 1 Job", '
+    #     #                           'all line quantity must equal to 1'))
+    #     return True
+
     @api.multi
     def action_invoice_create(self):
         self._check_invoice_plan()
@@ -404,18 +415,29 @@ class PurchaseOrder(models.Model):
         invoice_plan_percent = self._context.get('invoice_plan_percent', False)
         if invoice_plan_percent:
             if order_line in invoice_plan_percent:
+                line_percent = invoice_plan_percent.get(order_line, 0.0)
                 if order_line.order_id.invoice_mode == 'change_quantity':
-                    res.update({'quantity': (res.get('quantity') or 0.0) *
-                                (order_line and
-                                invoice_plan_percent[order_line] or 0.0) /
-                                100})
+                    quantity = res.get('quantity', 0.0) * line_percent / 100
+                    d = decimal.Decimal(str(quantity))
+                    if d.as_tuple().exponent < -2:
+                        raise ValidationError(
+                            _('Too many decimal places in percent will cause '
+                              'rounding error in invoice quantity, i.e., %s.'
+                              '\nPlease reduce to maximum 2 decimal places') %
+                            quantity)
+                    res.update({'quantity': quantity})
                 elif order_line.order_id.invoice_mode == 'change_price':
-                    res.update({'price_unit': (res.get('price_unit') or 0.0) *
-                                (res.get('quantity') or 0.0) *
-                                (order_line and
-                                invoice_plan_percent[order_line] or 0.0) /
-                                100,
+                    price_unit = res.get('price_unit', 0.0) * \
+                        res.get('quantity', 0.0) * line_percent / 100
+                    res.update({'price_unit': price_unit,
                                 'quantity': 1.0})
+                    # d = decimal.Decimal(str(price_unit))
+                    # if d.as_tuple().exponent < -2:
+                    #     raise ValidationError(
+                    #        _('Too many decimal places in percent will cause '
+                    #         'rounding error in invoice unit price, i.e., %s.'
+                    #          '\nPlease reduce to maximum 2 decimal places') %
+                    #         price_unit)
             else:
                 return {}
         return res

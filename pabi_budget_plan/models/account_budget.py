@@ -204,4 +204,6 @@ class AccountBudgetLine(models.Model):
             ag_field = ag_dict.get(rec.budget_id.chart_view, False)
             if ag_field:
                 rec.activity_group_id = company[ag_field]
+        if not rec.fund_id:
+            rec.fund_id = self.env.ref('base.fund_nstda', False)
         return rec

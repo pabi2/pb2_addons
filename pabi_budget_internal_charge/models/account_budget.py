@@ -129,21 +129,23 @@ class AccountBudget(models.Model):
         budget_type_dict = {
             'unit_base': 'section_id',
             'project_base': 'program_id',
-            'personnel': 'personnel_costcenter_id',  # TODO: ???
+            'personnel': False,
             'invest_asset': 'org_id',
             'invest_construction': 'org_id'}
-        dimension = budget_type_dict[self.chart_view]
+        dimension = budget_type_dict.get(self.chart_view, False)
         # Period = self.env['account.period']
         # current_period = Period.find()
         dom = [('fiscalyear_id', '=', self.fiscalyear_id.id),
                ('budget_method', '=', 'expense'),
                ('charge_type', '=', 'internal'),
-               ('chart_view', '=', self.chart_view),
-               (dimension, '=', self[dimension].id), ]
-        self._cr.execute("""
+               ('chart_view', '=', self.chart_view), ]
+        if dimension:
+            dom.append((dimension, '=', self[dimension].id))
+        sql = """
             select coalesce(sum(amount_actual), 0.0) amount_actual
             from budget_consume_report where %s
-        """ % self._domain_to_where_str(dom))
+        """ % self._domain_to_where_str(dom)
+        self._cr.execute(sql)
         amount = self._cr.fetchone()[0]
         return amount
 

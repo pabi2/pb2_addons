@@ -45,8 +45,7 @@ class AccountAnalyticAccount(ChartFieldAction, models.Model):
                     [('id', '=', chartfield_dict[field]),
                      ('active', '=', False)])
                 if obj:
-                    return (False,
-                            _('%s -- is not active!') % obj.display_name_2)
+                    return (False, _('Inactive: %s') % obj.display_name_2)
         return (True, False)
 
     @api.model

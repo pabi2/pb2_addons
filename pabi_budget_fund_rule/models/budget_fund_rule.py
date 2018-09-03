@@ -93,6 +93,29 @@ class BudgetFundRule(models.Model):
         default='draft',
         track_visibility='onchange',
     )
+    amount_init = fields.Float(
+        string='Fund Amount',
+        compute='_compute_amount',
+    )
+    amount = fields.Float(
+        string='Lock Amount',
+        compute='_compute_amount',
+    )
+    amount_consumed = fields.Float(
+        string='Consumed Amount',
+        compute='_compute_amount',
+    )
+
+    @api.multi
+    def _compute_amount(self):
+        for rec in self:
+            rec.amount_init = \
+                sum(rec.fund_rule_line_ids.mapped('amount_init'))
+            rec.amount = \
+                sum(rec.fund_rule_line_ids.mapped('amount'))
+            rec.amount_consumed = \
+                sum(rec.fund_rule_line_ids.mapped('amount_consumed'))
+        return True
 
     @api.multi
     def _compute_total_budget(self):
@@ -151,7 +174,8 @@ class BudgetFundRule(models.Model):
                                     ('project_id', '=', rec.project_id.id),
                                     ('fund_id', '=', rec.fund_id.id),
                                     ('state', '!=', 'cancel')])) > 1:
-                    raise ValidationError(_('Duplicated Fund Rule'))
+                    raise ValidationError(
+                        _('Duplicated Fund Rule with same project/fund'))
 
     @api.one
     @api.constrains('fund_rule_line_ids')
@@ -228,8 +252,15 @@ class BudgetFundRule(models.Model):
 
     @api.model
     def _get_doc_field_combination(self, doc_lines, args):
+        """ Check only on expense activities, for fund spending """
+        activity_ids = [x.get('activity_rpt_id', False) for x in doc_lines
+                        if x.get('activity_rpt_id', False)]
+        exp_activity_ids = self.env['account.activity'].search([
+            ('budget_method', '=', 'expense'), ('id', 'in', activity_ids)]).ids
         combinations = []
         for l in doc_lines:
+            if l.get('activity_rpt_id', False) not in exp_activity_ids:
+                continue
             val = ()
             for f in args:
                 val += (l[f],)
@@ -246,6 +277,7 @@ class BudgetFundRule(models.Model):
         budget_ok = True  # Initial flag
         messages = []
         # Project / Fund unique (to find matched fund rules)
+        # Only for Expense Activity
         project_fund_vals = self._get_doc_field_combination(doc_lines,
                                                             ['project_id',
                                                              'fund_id'])
@@ -465,10 +497,14 @@ class BudgetFundRuleLine(models.Model):
     amount_init = fields.Float(
         string='Fund Amount',
         readonly=True,
+        help="Fund Amount is the budget received from funder, it will "
+        "use lock amount on first save",
     )
     amount = fields.Float(
         string='Lock Amount',
         default=0,
+        help="Lock amount is the amount being used for budget lock, it should "
+        "not exceed fund amount."
     )
     amount_consumed = fields.Float(
         string='Consumed Amount',
@@ -482,6 +518,7 @@ class BudgetFundRuleLine(models.Model):
         string='Max Spending (%)',
         default=100.0,
         required=True,
+        help="กรณียอดที่ใส่ไม่รวม Vat แต่ตอนเบิกจ่าย รวม Vat ให้กรอก 93%",
     )
 
     @api.multi
@@ -503,7 +540,7 @@ class BudgetFundRuleLine(models.Model):
     def _check_amount(self):
         for rec in self:
             if not rec.fund_rule_id.template and not rec.amount:
-                raise ValidationError(_('Funded Amount must not be zero!'))
+                raise ValidationError(_('Lock Amount must not be zero!'))
 
     @api.multi
     def _compute_amount_consumed(self):
@@ -566,6 +603,6 @@ class BudgetAssetRuleLine(models.Model):
         required=True,
     )
     amount_total = fields.Float(
-        string='Max Purhcase Amount / Time',
+        string='Max Purchase Amount / Time',
         required=True,
     )

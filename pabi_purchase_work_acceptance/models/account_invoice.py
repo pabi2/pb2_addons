@@ -13,7 +13,8 @@ class AccountInvoice(models.Model):
         copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
-        help='List Purchase Work Acceptance which has a penalty amount',
+        help="List Purchase Work Acceptance with total_fine > 0.0 "
+        "and not already invoiced",
     )
 
     @api.model

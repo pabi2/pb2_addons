@@ -25,6 +25,8 @@
                     <field name="accrual_account_id" attrs="{'invisible': [('special_type', '!=', 'invoice_plan')], 'required': [('special_type', '=', 'invoice_plan')]}"/>
                     <field name="debit_account_id" attrs="{'invisible': [('special_type', '!=', 'invoice_plan_fin_lease')], 'required': [('special_type', '=', 'invoice_plan_fin_lease')]}"/>
                     <field name="credit_account_id" attrs="{'invisible': [('special_type', '!=', 'invoice_plan_fin_lease')], 'required': [('special_type', '=', 'invoice_plan_fin_lease')]}"/>
+                    <field name="fin_debit_account_id" attrs="{'invisible': [('special_type', '!=', 'invoice_plan_fin_lease')], 'required': [('special_type', '=', 'invoice_plan_fin_lease')]}"/>
+                    <field name="fin_credit_account_id" attrs="{'invisible': [('special_type', '!=', 'invoice_plan_fin_lease')], 'required': [('special_type', '=', 'invoice_plan_fin_lease')]}"/>
                 </field>
                 <field name="lines_id" position="attributes">
                     <attribute name="attrs">{'invisible': [('special_type', 'in', ('invoice_plan', 'invoice_plan_fin_lease'))]}</attribute>

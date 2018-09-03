@@ -264,7 +264,7 @@
             <field name="name">voucher.tax.tree.view</field>
             <field name="model">account.voucher.tax</field>
             <field name="arch" type="xml">
-                <tree editable="bottom" string="Taxes">
+                <tree editable="bottom" string="Taxes" create="0">
                     <field name="invoice_id"/>
                     <field name="name"/>
                     <field name="account_id" groups="account.group_account_user"/>

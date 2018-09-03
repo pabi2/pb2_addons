@@ -55,11 +55,11 @@ def _extend_name_results_translation(self, field_name, name,
         if special_case:  # need to change from res.partner to res.users
             # Partner
             if trans_name == 'res.partner,name':
-                partners = self.env['res.partner'].browse(record_ids)
-                user_ids = []
-                for partner in partners:
-                    user_ids += partner.user_ids.ids
-                record_ids = user_ids
+                if record_ids:  # partners
+                    self._cr.execute("""
+                        select id from res_users where partner_id in %s
+                    """, (tuple(record_ids),))
+                    record_ids = [t[0] for t in self._cr.fetchall()]
             # Tax
             if trans_name == 'account.tax,name':
                 tax_domain = []

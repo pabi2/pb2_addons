@@ -168,8 +168,8 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         if not self.by_fiscalyear:
             return super(PurchaseCreateInvoicePlan, self).\
                 _compute_installment_details()
-        order = self.env['purchase.order'].browse(self._context['active_id'])
-        self._check_invoice_mode(order)
+        # order = self.env['purchase.order'].browse(self._context['active_id'])
+        # order._check_invoice_mode()
         fiscalyear_dict = {}
         for f in self.env['account.fiscalyear'].search_read([],
                                                             ['name', 'id']):
@@ -263,11 +263,11 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                 if round(new_val, prec) != round(i.percent, prec):
                     i.percent = new_val
 
-    @api.one
+    @api.multi
     def do_create_purchase_invoice_plan(self):
+        self.ensure_one()
+        order = self.env['purchase.order'].browse(self._context['active_id'])
         if not self.by_fiscalyear:
-            order =\
-                self.env['purchase.order'].browse(self._context['active_id'])
             order.advance_rounding = self.advance_rounding
             return super(PurchaseCreateInvoicePlan,
                          self).do_create_purchase_invoice_plan()
@@ -276,8 +276,8 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
         self._check_installment_amount()
         self.env['purchase.invoice.plan']._validate_installment_date(
             self.installment_ids)
-        order = self.env['purchase.order'].browse(self._context['active_id'])
-        self._check_invoice_mode(order)
+        # order = self.env['purchase.order'].browse(self._context['active_id'])
+        # order._check_invoice_mode()
         order.invoice_plan_ids.unlink()
         lines = []
 

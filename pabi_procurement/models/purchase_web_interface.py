@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-
+import logging
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 import xmlrpclib
 import base64
 import os
 import inspect
+
+_logger = logging.getLogger(__name__)
 
 
 class PurchaseRequest(models.Model):
@@ -61,6 +63,7 @@ class PurchaseRequest(models.Model):
 
     @api.model
     def generate_purchase_request(self, data_dict, test=False):
+        _logger.info('generate_purchase_request(), input: %s' % data_dict)
         if not test and not self.env.user.company_id.pabiweb_active:
             raise ValidationError(_('Odoo/PABIWeb Disconnected!'))
         ret = {}
@@ -103,6 +106,7 @@ class PurchaseRequest(models.Model):
                 'messages': e,
             }
             self._cr.rollback()
+        _logger.info('generate_purchase_request(), output: %s' % ret)
         return ret
 
 
@@ -111,6 +115,7 @@ class PurchaseRequisition(models.Model):
 
     @api.model
     def done_order(self, af_info):
+        _logger.info('done_order(), input: %s' % af_info)
         # {
         #     'name': 'TE00017',
         #     'approve_uid': '002241',
@@ -210,6 +215,7 @@ class PurchaseRequisition(models.Model):
                 'result': False,
                 'messages': 'Cannot assign done state to Call for Bids.',
             })
+        _logger.info('done_order(), output: %s' % res)
         return res
 
 
@@ -274,6 +280,7 @@ class PurchaseWebInterface(models.Model):
 
     @api.model
     def send_pbweb_requisition(self, requisition):
+        _logger.info('send_pbweb_requisition(), input: %s' % requisition)
         if self.env.user.company_id.pabiweb_pd_inactive:
             return False
         User = self.env['res.users']
@@ -347,7 +354,11 @@ class PurchaseWebInterface(models.Model):
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
         else:
+            if result.get('message', False) and \
+                    'PABIWEB_NUMBER_MISMATCHED' in result['message']:
+                _logger.warning(result['message'])
             requisition.sent_pbweb = True
+        _logger.info('send_pbweb_requisition(), output: %s' % result)
         return result
 
     @api.model
@@ -369,10 +380,15 @@ class PurchaseWebInterface(models.Model):
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
+        elif result.get('message', False) and \
+                'PABIWEB_NUMBER_MISMATCHED' in result['message']:
+            _logger.warning(result['message'])
         return result
 
     @api.model
     def send_pbweb_requisition_cancel(self, requisition):
+        _logger.info('send_pbweb_requisition_cancel(), input: %s' %
+                     requisition)
         if self.env.user.company_id.pabiweb_pd_inactive:
             return False
         alfresco = \
@@ -393,10 +409,16 @@ class PurchaseWebInterface(models.Model):
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
+        elif result.get('message', False) and \
+                'PABIWEB_NUMBER_MISMATCHED' in result['message']:
+            _logger.warning(result['message'])
+        _logger.info('send_pbweb_requisition_cancel(), output: %s' % result)
         return result
 
     @api.model
     def send_pbweb_action_request(self, request, action):
+        _logger.info('send_pbweb_action_request(), input: [%s, %s]' %
+                     (request, action))
         alfresco = \
             self.env['pabi.web.config.settings']._get_alfresco_connect('pcm')
         comment = ''
@@ -419,4 +441,8 @@ class PurchaseWebInterface(models.Model):
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
             )
+        elif result.get('message', False) and \
+                'PABIWEB_NUMBER_MISMATCHED' in result['message']:
+            _logger.warning(result['message'])
+        _logger.info('send_pbweb_action_request(), output: %s' % result)
         return result

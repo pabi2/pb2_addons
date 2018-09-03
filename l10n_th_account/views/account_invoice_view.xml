@@ -17,7 +17,7 @@
                 <xpath expr='/form/sheet/notebook/page' position="after">
                     <page string="Tax">
                         <field name="tax_line">
-                            <tree editable="bottom" string="Taxes">
+                            <tree editable="bottom" string="Taxes" create="0">
                                 <field name="name"/>
                                 <field name="account_id" groups="account.group_account_invoice"/>
                                 <field name="account_analytic_id" domain="[('type','&lt;&gt;','view'), ('company_id', '=', parent.company_id)]" groups="analytic.group_analytic_accounting"/>
@@ -73,7 +73,7 @@
                 <xpath expr='/form/sheet/notebook/page' position="after">
                     <page string="Tax">
                         <field name="tax_line">
-                            <tree editable="bottom" string="Taxes">
+                            <tree editable="bottom" string="Taxes" create="0">
                                 <field name="name"/>
                                 <field name="account_id" groups="account.group_account_invoice"/>
                                 <field name="account_analytic_id" domain="[('type','&lt;&gt;','view'), ('company_id', '=', parent.company_id)]" groups="analytic.group_analytic_accounting"/>

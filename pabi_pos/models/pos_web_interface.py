@@ -25,6 +25,7 @@ class SalesOrder(models.Model):
                     'product_uom': u'หลอด',
                     'price_unit': 100.0,
                     'tax_id': u'S7',
+                    'discount': 10.0,
                 },
                 {
                     'product_id': u'ดินสอดำ',
@@ -33,6 +34,7 @@ class SalesOrder(models.Model):
                     'product_uom': u'หลอด',
                     'price_unit': 200.0,
                     'tax_id': u'S7',
+                    'discount': 0.0,
                 },
             ]
         }
@@ -110,6 +112,8 @@ class ProductProduct(models.Model):
 
     @api.model
     def get_pos_product_count(self, pos_name, product_names=None):
+        _logger.info('get_pos_product_count() - input: [%s, %s]' %
+                     (pos_name, product_names))
         # Always use th_TH
         self = self.with_context(lang='th_TH')
         if product_names is None:
@@ -134,6 +138,7 @@ class ProductProduct(models.Model):
             'result': result,
             'messages': _('List of products on warehouse: %s') % warehouse.name
         }
+        _logger.info('get_pos_product_count() - output: %s' % res)
         return res
 
 
@@ -169,6 +174,7 @@ class StockInventory(models.Model):
 
     @api.model
     def create_inventory_adjustment(self, data_dict):
+        _logger.info('create_inventory_adjustment() - input: %s' % data_dict)
         try:
             data_dict['filter'] = 'partial'
             for row in data_dict['line_ids']:
@@ -184,4 +190,5 @@ class StockInventory(models.Model):
                 'messages': e,
             }
             self._cr.rollback()
+        _logger.info('create_inventory_adjustment() - output: %s' % res)
         return res

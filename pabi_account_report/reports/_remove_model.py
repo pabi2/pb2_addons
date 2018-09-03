@@ -45,3 +45,8 @@ class h(models.Model):
 class i(models.Model):
     _name = 'xlsx.report.partner.list'
     _auto = False
+
+
+class j(models.Model):
+    _name = 'xlsx.report.sla.purchase'
+    _auto = False

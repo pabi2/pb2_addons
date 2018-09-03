@@ -169,7 +169,7 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
                         ON lcav.invoice_id = sip.ref_invoice_id
                        WHERE lcav.id IN %s) ci ON lca.id = ci.loan_agreement_id
             WHERE lca.id IN %s
-            ORDER BY lca.borrower_partner_id, lca.mou_id, lca.sale_id, lca.name
+            ORDER BY lca.borrower_partner_id, lca.id, ci.invoice_plan_id
         """ % (str(tuple(map(int, brought_forward_ids))),
                str(tuple(map(int, supplier_payment_ids))),
                str(tuple(map(int, customer_invoice_ids))),
@@ -182,13 +182,22 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
         Voucher = self.env['account.voucher']
         InvoicePlan = self.env['sale.invoice.plan']
         lines = []
+        total_payment_amount = 0
         total_invoice_amount = 0
         for loan_agreement_id in list(set(map(lambda x: x[0], datas))):
             loan_agreement = LoanAgreement.browse(loan_agreement_id)
             first_rec = True
+            skip_row = False
+            subtotal_payment_amount = 0
             subtotal_invoice_amount = 0
             old_outstanding = 0
             for rec in filter(lambda x: x[0] == loan_agreement_id, datas):
+                # Not have brought forward,
+                # supplier_payment and customer payment
+                if not(rec[1] or rec[2] or rec[3]):
+                    skip_row = True
+                    continue
+                # --
                 supplier_payment = Voucher.browse(rec[2] or 0)
                 invoice_plan = InvoicePlan.browse(rec[3] or 0)
                 lines.append((0, 0, {
@@ -198,9 +207,9 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
                     'partner_name': first_rec and " ".join(
                         list(filter(lambda l: l is not False,
                                     [loan_agreement.borrower_partner_id
-                                        .with_context(lang="th_TH").title.name,
+                                        .title.name,
                                      loan_agreement.borrower_partner_id
-                                        .with_context(lang="th_TH").name])))
+                                        .name])))
                         or False,
                     'mou': first_rec and loan_agreement.mou_id.name or False,
                     'brought_forward': first_rec and rec[1] or False,
@@ -224,22 +233,28 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
                         (old_outstanding -
                          invoice_plan.ref_invoice_id.amount_total) or False,
                 }))
-                first_rec = False
                 old_outstanding = (rec[1] and rec[1] or 0) + \
                     supplier_payment.amount - \
                     invoice_plan.ref_invoice_id.amount_total
+                subtotal_payment_amount += \
+                    first_rec and supplier_payment.amount or 0
                 subtotal_invoice_amount += \
                     invoice_plan.ref_invoice_id.amount_total
+                first_rec = False
+            total_payment_amount += subtotal_payment_amount
             total_invoice_amount += subtotal_invoice_amount
-            # Subtotal
-            lines.append((0, 0, {
-                'partner_code': 'Subtotal',
-                'customer_invoice_amount': subtotal_invoice_amount,
-            }))
+            if not skip_row:
+                # Subtotal
+                lines.append((0, 0, {
+                    'partner_code': 'Subtotal',
+                    'supplier_payment_amount': subtotal_payment_amount or -1,
+                    'customer_invoice_amount': subtotal_invoice_amount or -1,
+                }))
         # Grand Total
         lines.append((0, 0, {
             'partner_code': 'Grand Total',
-            'customer_invoice_amount': total_invoice_amount,
+            'supplier_payment_amount': total_payment_amount or -1,
+            'customer_invoice_amount': total_invoice_amount or -1,
         }))
         return lines
 

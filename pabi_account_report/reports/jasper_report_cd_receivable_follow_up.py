@@ -82,8 +82,7 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
             self.env['pabi.common.loan.agreement.report.view'].search(dom).ids
         date_report = datetime.strptime(self.date_report, '%Y-%m-%d')
         data['parameters']['date_report'] = date_report.strftime('%d/%m/%Y')
-        user = self.env.user.with_context(lang="th_TH").display_name
-        data['parameters']['user'] = user
+        data['parameters']['user'] = self.env.user.display_name
         data['parameters']['date_run'] = time.strftime('%d/%m/%Y')
         return data
 

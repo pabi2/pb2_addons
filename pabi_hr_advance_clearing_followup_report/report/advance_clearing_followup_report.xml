@@ -15,7 +15,7 @@
             <field name="name">view.advance.clearing.followup.report.tree</field>
             <field name="model">advance.clearing.followup.report</field>
             <field name="arch" type="xml">
-                <tree string="Advance Clearing Followup">
+                <tree string="Advance Clearing Followup" create="0" delete="0">
                     <field name="advance_expense_id"/>
                     <field name="date_advance"/>
                     <field name="employee_code"/>

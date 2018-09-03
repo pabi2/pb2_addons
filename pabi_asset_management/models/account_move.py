@@ -104,4 +104,10 @@ class AccountMoveLine(models.Model):
             if move_line.asset_profile_id and move_line.asset_id:
                 vals = self._prepare_asset_vals(move_line)
                 move_line.asset_id.write(vals)
+                # Asset must have account_analytic_id, if not exists
+                if not move_line.asset_id.account_analytic_id:
+                    Analytic = self.env['account.analytic.account']
+                    move_line.asset_id.account_analytic_id = \
+                        Analytic.create_matched_analytic(move_line.asset_id)
+                # --
         return move_line

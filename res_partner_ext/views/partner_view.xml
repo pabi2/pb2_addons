@@ -36,6 +36,11 @@
                 <group position="inside">
                     <filter string="Category" context="{'group_by': 'category_id'}"/>
                 </group>
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="taxbranch" string="Tax Branch ID"/>
+                    <field name="customer_legacy_code" string="Customer Legacy Code"/>
+                    <field name="supplier_legacy_code" string="Supplier Legacy Code"/>
+                </xpath>
             </field>
         </record>
 
@@ -85,7 +90,14 @@
                 <!-- <field name="category_id" position="attributes">
                     <attribute name="domain">[('parent_id','=',False)]</attribute>
                 </field> -->
+                <xpath expr="/form/sheet/notebook/page[@string='Contacts']/field[@name='child_ids']/form//field[@name='category_id']" position="attributes">
+                    <attribute name="widget">False</attribute>
+                </xpath>
                 <xpath expr="/form/sheet/group//field[@name='title']" position="replace"/>
+                <xpath expr="/form/sheet/group//field[@name='email']" position="after">
+                  <field name="customer_legacy_code" readonly="True"/>
+                  <field name="supplier_legacy_code" readonly="True"/>
+                </xpath>
                 <field name="name" position="attributes">
                     <attribute name="style">width: 100%%</attribute>
                 </field>

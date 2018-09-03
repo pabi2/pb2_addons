@@ -143,6 +143,12 @@ class AccountBankReceipt(models.Model):
         states={'draft': [('readonly', False)]},
         copy=False,
     )
+    line_filter = fields.Char(
+        string='Filter',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="More filter. You can use complex search with comma and between.",
+    )
 
     @api.multi
     @api.depends('company_id', 'currency_id', 'bank_intransit_ids.debit',
@@ -238,13 +244,17 @@ class AccountBankReceipt(models.Model):
 
     @api.model
     def _prepare_account_move_vals(self, receipt):
+        # Validate
+        bank = receipt.partner_bank_id
+        if not bank.journal_id:
+            raise ValidationError(_('Bank Account has no Account Journal!'))
         date = receipt.receipt_date
         Period = self.env['account.period']
         period_ids = Period.find(dt=date)
         # period_ids will always have a value, cf the code of find()
         number = self.env['ir.sequence'].next_by_code('account.bank.receipt')
         move_vals = {
-            'journal_id': receipt.partner_bank_id.journal_id.id,
+            'journal_id': bank.journal_id.id,
             'date': date,
             'period_id': period_ids[0].id,
             'name': number,
@@ -352,3 +362,17 @@ class AccountBankReceipt(models.Model):
                 self.currency_id = self.journal_id.currency
             else:
                 self.currency_id = self.journal_id.company_id.currency_id
+
+    @api.onchange('line_filter')
+    def _onchange_line_filter(self):
+        # Base domain
+        domain = [('reconcile_id', '=', False),
+                  ('debit', '>', 0),
+                  ('currency_id', '=', self.currency_none_same_company_id.id),
+                  ('journal_id', '=', self.journal_id.id),
+                  ('account_id', '=', self.journal_default_account_id.id)]
+        if self.line_filter:
+            # Must be ilike to use extended search
+            domain.append(('ref', 'ilike', self.line_filter))
+            move_lines = self.env['account.move.line'].search(domain)
+            self.bank_intransit_ids |= move_lines

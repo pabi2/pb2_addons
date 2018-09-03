@@ -34,7 +34,7 @@ class AccountMove(models.Model):
         Period = self.env['account.period']
         for rec in self:
             valid_period = Period.find(dt=rec.date)
-            if rec.period_id != valid_period:
+            if rec.period_id.date_start != valid_period.date_start:
                 raise ValidationError(
                     _('Period and date conflict on entry, %s') % rec.ref)
 

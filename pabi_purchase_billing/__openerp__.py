@@ -29,5 +29,6 @@ the invoice date and due date be set for all selected documents.
         "views/purchase_billing_view.xml",
         "views/account_invoice_view.xml",
         "views/account_config.xml",
+        "wizard/billing_date.xml",
     ],
 }

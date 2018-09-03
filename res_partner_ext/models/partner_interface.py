@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-
+import logging
 from openerp import models, api, _
 from openerp.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class ResPartner(models.Model):
@@ -101,6 +103,7 @@ class ResPartner(models.Model):
 
     @api.model
     def create_or_update_partner(self, data_dict):
+        _logger.info('create_or_update_partner(), input: %s' % data_dict)
         res = {}
         try:
             # Temp translation fields
@@ -133,4 +136,5 @@ class ResPartner(models.Model):
                 'messages': e,
             }
             self._cr.rollback()
+        _logger.info('create_or_update_partner(), output: %s' % res)
         return res

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+      <record id="purchase_billing_sent_date_view" model="ir.ui.view">
+          <field name="name">purchase.billing.sent.date.form</field>
+          <field name="model">purchase.billing.sent.date</field>
+          <field name="arch" type="xml">
+              <form string="Test">
+                  <group>
+                    <field name="date_sent" />
+                  </group>
+                  <footer>
+                      <button string="Update" name="update_billing_date" type="object" class="oe_highlight"/>
+                      or
+                      <button string="Cancel" class="oe_link" special="cancel"/>
+                  </footer>
+              </form>
+          </field>
+      </record>
+
+      <act_window id="action_billing_sent_date"
+          name="Update Billing Date"
+          res_model="purchase.billing.sent.date"
+          src_model="purchase.billing"
+          multi="True"
+          key2="client_action_multi"
+          view_mode="form"
+          view_type="form"
+          target="new"
+      />
+
+    </data>
+</openerp>
