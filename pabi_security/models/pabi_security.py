@@ -19,6 +19,21 @@ class PABISecurity(models.Model):
         'security_id',
         string='Security Line'
     )
+    method = fields.Selection(
+        [('by_user', 'Apply for each user'),
+         ('all_user', 'Apply to all users'), ],
+        string='Apply Method',
+        required=True,
+        default='by_user',
+    )
+    meta_group_id = fields.Many2one(
+        'access.access',
+        string='Meta Group',
+    )
+    group_id = fields.Many2one(
+        'res.groups',
+        string='User Group',
+    )
     # Meta Groups Label
     mg1_label = fields.Char(string='MG1', compute='_compute_label')
     mg2_label = fields.Char(string='MG2', compute='_compute_label')
@@ -125,16 +140,26 @@ class PABISecurity(models.Model):
     @api.multi
     def apply_security(self):
         for rec in self:
-            for line in rec.line_ids:
-                user_rec = line.user_id
-                user_rec.write({'groups_id': [(5,)]})
-                mg_groups = self._get_groups('access.access', line)
-                group_ids = [(4, x) for x in mg_groups.mapped('groups_id.id')]
-                # Apply Groups
-                res_groups = self._get_groups('res.groups', line)
-                group_ids += [(4, x) for x in res_groups.ids]
-                # Apply all groups to this user
-                user_rec.write({'groups_id': group_ids})
+            if rec.method == 'all_user':  # Apply to all users
+                group_ids = [x.id for x in rec.meta_group_id.groups_id]
+                if rec.group_id:
+                    group_ids.append(rec.group_id.id)
+                group_ids = [(4, x) for x in group_ids]
+                all_users = self.env['res.users'].search([])
+                print all_users.ids
+                all_users.write({'groups_id': group_ids})
+            elif rec.method == 'by_user':
+                for line in rec.line_ids:
+                    user_rec = line.user_id
+                    user_rec.write({'groups_id': [(5,)]})
+                    mg_groups = self._get_groups('access.access', line)
+                    group_ids = \
+                        [(4, x) for x in mg_groups.mapped('groups_id.id')]
+                    # Apply Groups
+                    res_groups = self._get_groups('res.groups', line)
+                    group_ids += [(4, x) for x in res_groups.ids]
+                    # Apply all groups to this user
+                    user_rec.write({'groups_id': group_ids})
             rec.date = fields.Datetime.now()
         return True
 

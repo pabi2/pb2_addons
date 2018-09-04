@@ -106,8 +106,13 @@ class PabiActionAssetCompute(models.TransientModel):
             %s -- profile_cond
             %s -- categ_cond
         """
-        p = profile_ids and 'and p.id in %s' % (tuple(profile_ids),) or ''
-        c = categ_ids and 'and c.id in %s' % (tuple(categ_ids),) or ''
+        p, c = '', ''
+        if profile_ids:
+            profiles = str(profile_ids).replace('[', '(').replace(']', ')')
+            p = 'and p.id in %s' % profiles
+        if categ_ids:
+            categs = str(categ_ids).replace('[', '(').replace(']', ')')
+            c = 'and c.id in %s' % categs
         from_str = from_sql % (p, c)
         # With group by
         groups = []
