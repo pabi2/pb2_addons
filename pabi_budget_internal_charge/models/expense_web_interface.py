@@ -11,8 +11,7 @@ class HRExpense(models.Model):
         if expense.internal_charge:  # Case internal charge, auto confirm
             expense.signal_workflow('confirm')
             if self._context.get('auto_confirm_internal_charge'):
-                # Use sudo as this is called form Alfresco
-                expense.sudo().signal_workflow('internal_charge')
+                expense.signal_workflow('internal_charge')
         else:
             super(HRExpense, self)._post_process_hr_expense(expense)
 
@@ -73,7 +72,7 @@ class HRExpense(models.Model):
                 'operating_unit_id': user.default_operating_unit_id.id,
             })
             WS = self.env['pabi.utils.ws']
-            res = WS.sudo().friendly_create_data(self._name, data_dict)
+            res = WS.friendly_create_data(self._name, data_dict)
             if res['is_success']:
                 expense_id = res['result']['id']
                 expense = self.browse(expense_id)
