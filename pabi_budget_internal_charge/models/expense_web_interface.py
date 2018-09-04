@@ -72,7 +72,7 @@ class HRExpense(models.Model):
                 'operating_unit_id': user.default_operating_unit_id.id,
             })
             WS = self.env['pabi.utils.ws']
-            res = WS.friendly_create_data(self._name, data_dict)
+            res = WS.sudo().friendly_create_data(self._name, data_dict)
             if res['is_success']:
                 expense_id = res['result']['id']
                 expense = self.browse(expense_id)
