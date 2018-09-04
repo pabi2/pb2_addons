@@ -18,6 +18,7 @@
         "pabi_procurement",
         "pabi_budget_plan",
         "pabi_invest_construction",
+        "pabi_asset_management",
     ],
     "data": [
         "views/purchase_requisition_view.xml",
