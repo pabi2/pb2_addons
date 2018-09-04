@@ -769,7 +769,8 @@ class ChartField(object):
                         message += '<b>%s</b><ul>' % xline[res_field].name
                         for key in line[2]:
                             field_name = self._fields[key].string
-                            old_val = self._record_value_by_type(xline, key)
+                            # old_val = self._record_value_by_type(xline, key)
+                            old_val = ''
                             new_val = self._data_value_by_type(line[2], key)
                             message += _(
                                 '<li><b>%s</b>: %s → %s</li>'
