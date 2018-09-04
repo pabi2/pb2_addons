@@ -11,7 +11,8 @@ class HRExpense(models.Model):
         if expense.internal_charge:  # Case internal charge, auto confirm
             expense.signal_workflow('confirm')
             if self._context.get('auto_confirm_internal_charge'):
-                expense.signal_workflow('internal_charge')
+                # Use sudo as this is called form Alfresco
+                expense.sudo().signal_workflow('internal_charge')
         else:
             super(HRExpense, self)._post_process_hr_expense(expense)
 
