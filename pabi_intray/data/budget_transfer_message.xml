@@ -86,37 +86,41 @@ if diff_budget:
 object=object.with_context(lang='th_TH')
 subject=object.name
 diff_budget = False
+in_budget = False
 messages_in_budget = [u"%s วันที่ %s อนุมัติโอนงบประมาณ เมื่อวันที่ %s โดยโอนงบประมาณ" % (object.name, object.date_prepare, object.date_transfer)]
 messages_diff_budget = [u"%s วันที่ %s ฝ่ายงบประมาณดำเนินการโอนงบประมาณในระบบเรียบร้อยแล้ว เมื่อวันที่ %s โดยโอนงบประมาณ" % (object.name, object.date_prepare, object.date_transfer)]
 for transfer in object.transfer_line_ids:
   if transfer.from_budget_id.section_id.division_id == transfer.to_budget_id.section_id.division_id:
-    diff_budget = True
+    in_budget = True
     messages_in_budget.append(u"- จาก %s ไป %s จำนวนเงิน %s บาท เหตุผล %s" %
                              (transfer.from_budget_id.section_id.display_name,
                              transfer.to_budget_id.section_id.display_name,
                              '{:,.2f}'.format(transfer.amount_transfer), transfer.notes))
   else:
-    diff_budget = False
+    diff_budget = True
     messages_diff_budget.append(u"- จาก %s ไป %s จำนวนเงิน %s บาท เหตุผล %s" %
                              (transfer.from_budget_id.section_id.display_name,
                              transfer.to_budget_id.section_id.display_name,
                              '{:,.2f}'.format(transfer.amount_transfer), transfer.notes))
-if diff_budget:
+if in_budget:
   body = "&lt;br/&gt;".join(messages_in_budget)
   employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
   supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
   owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
   boss=object.preparer_user_id.login
-else:
+  action='A'
+  is_complete=True
+  pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
+if diff_budget:
   body = "&lt;br/&gt;".join(messages_diff_budget)
   owner=object.transfer_user_id.login
   employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
   supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
   boss_of_owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
   boss=[object.preparer_user_id.login,boss_of_owner]
-action='A'
-is_complete=True
-pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
+  action='A'
+  is_complete=True
+  pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
           </field>
       </record>
 
