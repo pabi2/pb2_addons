@@ -636,17 +636,19 @@ class AccountBudget(models.Model):
 
 
 class AccountBudgetLinePeriodSplit(models.Model):
-    _name = "account.budget.line.period.split"
+    _name = 'account.budget.line.period.split'
 
     budget_line_id = fields.Many2one(
         'account.budget.line',
         string="Budget Line",
         ondelete='cascade',
         required=True,
+        index=True,
     )
     period_id = fields.Many2one(
         'account.period',
         string="Period",
+        index=True,
     )
     amount = fields.Float(
         string="Amount",
