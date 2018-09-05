@@ -9,3 +9,20 @@ class AccountAssetLine(models.Model):
         string='Days',
         readonly=False,
     )
+
+
+class AccountAsset(models.Model):
+    _inherit = 'account.asset'
+
+    owner_section_id = fields.Many2one(
+        readonly=False,
+    )
+    owner_project_id = fields.Many2one(
+        readonly=False,
+    )
+    owner_invest_asset_id = fields.Many2one(
+        readonly=False,
+    )
+    owner_invest_construction_phase_id = fields.Many2one(
+        readonly=False,
+    )
