@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="186"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="432"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -505,7 +505,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[ศูนย์ : ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="16" width="45" height="25"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="19" width="45" height="25"/>
 				<textElement lineSpacing="Single">
 					<font size="14" isBold="true" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -519,63 +519,63 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="38" y="16" width="119" height="25"/>
+				<reportElement stretchType="RelativeToTallestObject" x="38" y="19" width="119" height="25"/>
 				<textElement lineSpacing="Single">
 					<font size="14" isBold="true" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ข้อมูลของผู้ขอจัดหาพัสดุ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="36" width="100" height="25"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="39" width="100" height="25"/>
 				<textElement lineSpacing="Single">
 					<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[เลขที่เอกสาร]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="58" width="27" height="25"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="61" width="27" height="25"/>
 				<textElement lineSpacing="Single">
 					<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ผู้ขอ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="163" y="58" width="70" height="25"/>
+				<reportElement stretchType="RelativeToTallestObject" x="163" y="61" width="70" height="25"/>
 				<textElement lineSpacing="Single">
 					<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ตำแหน่ง]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="312" y="58" width="60" height="25"/>
+				<reportElement stretchType="RelativeToTallestObject" x="312" y="61" width="60" height="25"/>
 				<textElement lineSpacing="Single">
 					<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[สังกัดงาน]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="60" y="36" width="182" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="60" y="39" width="182" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{pr_sap}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="28" y="58" width="129" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="28" y="61" width="129" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{requested_by}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="209" y="58" width="183" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="209" y="61" width="183" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{position}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="360" y="58" width="199" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="360" y="61" width="199" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -933,7 +933,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				</jr:table>
 			</componentElement>
 			<frame>
-				<reportElement x="1" y="81" width="569" height="28" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="1" y="84" width="569" height="28" isPrintWhenDetailOverflows="true"/>
 				<staticText>
 					<reportElement stretchType="RelativeToTallestObject" x="1" y="1" width="130" height="25"/>
 					<textElement lineSpacing="Single">
@@ -950,7 +950,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				</textField>
 			</frame>
 			<frame>
-				<reportElement isPrintRepeatedValues="false" x="1" y="110" width="568" height="61"/>
+				<reportElement isPrintRepeatedValues="false" x="1" y="113" width="568" height="61"/>
 				<staticText>
 					<reportElement stretchType="RelativeToTallestObject" x="2" y="26" width="62" height="25"/>
 					<textElement lineSpacing="Single">
@@ -1278,7 +1278,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 					<jr:column width="179">
 						<jr:tableHeader height="37" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="152" height="37"/>
+								<reportElement x="0" y="0" width="179" height="37"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -1290,7 +1290,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="179" height="18"/>
+								<reportElement x="41" y="0" width="138" height="18"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
