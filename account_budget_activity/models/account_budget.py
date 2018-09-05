@@ -540,12 +540,15 @@ class AccountBudget(models.Model):
     @api.model
     def _get_budget_monitor(self, fiscal, budget_type,
                             budget_level, resource,
-                            blevel=False):
+                            blevel=False, extra_dom=[]):
         """ For budget check, expenses only """
         # Note: Pass performance test (when compare with Search method)
-        monitors = resource.monitor_ids.\
-            filtered(lambda x: x.fiscalyear_id == fiscal and
-                     x.budget_method == 'expense')
+        comodel = resource._fields['monitor_ids'].comodel_name
+        inverse = resource._fields['monitor_ids'].inverse_name
+        monitors = self.env[comodel].search([(inverse, '=', resource.id),
+                                             ('fiscalyear_id', '=', fiscal.id),
+                                             ('budget_method', '=', 'expense'),
+                                             ] + extra_dom)
         return monitors
 
     @api.model
