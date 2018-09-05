@@ -18,11 +18,12 @@ object=object.with_context(lang='th_TH')
 subject=object.name
 messages = [u"%s วันที่ %s ขออนุมัติโอนงบประมาณ" % (object.name, object.date_prepare)]
 for transfer in object.transfer_line_ids:
-    messages.append(u"- จาก %s ไป %s จำนวนเงิน %d บาท เหตุผล %s" %
+    messages.append(u"- จาก %s ไป %s จำนวนเงิน %s บาท เหตุผล %s" %
                     (transfer.from_budget_id.section_id.display_name,
                      transfer.to_budget_id.section_id.display_name,
-                     transfer.amount_transfer, transfer.notes))
-body = "\n".join(messages)
+                     '{:,.2f}'.format(transfer.amount_transfer), transfer.notes))
+body = "&lt;br/&gt;".join(messages)
+
 owner=object.preparer_user_id.login
 employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
 supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
@@ -51,12 +52,12 @@ diff_budget = False
 for transfer in object.transfer_line_ids:
   if transfer.from_budget_id.section_id.division_id != transfer.to_budget_id.section_id.division_id:
     diff_budget = True
-    messages.append(u"- จาก %s ไป %s จำนวนเงิน %d บาท เหตุผล %s" %
+    messages.append(u"- จาก %s ไป %s จำนวนเงิน %s บาท เหตุผล %s" %
                     (transfer.from_budget_id.section_id.display_name,
                      transfer.to_budget_id.section_id.display_name,
-                     transfer.amount_transfer, transfer.notes))
+                     '{:,.2f}'.format(transfer.amount_transfer), transfer.notes))
 messages.append(u" ดังนั้นขอให้ฝ่ายงบประมาณดำเนินการโอนงบประมาณในระบบ")
-body = "\n".join(messages)
+body = "&lt;br/&gt;".join(messages)
 employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
 supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
 owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
@@ -90,24 +91,24 @@ messages_diff_budget = [u"%s วันที่ %s ฝ่ายงบประ�
 for transfer in object.transfer_line_ids:
   if transfer.from_budget_id.section_id.division_id == transfer.to_budget_id.section_id.division_id:
     diff_budget = True
-    messages_in_budget.append(u"- จาก %s ไป %s จำนวนเงิน %d บาท เหตุผล %s" %
+    messages_in_budget.append(u"- จาก %s ไป %s จำนวนเงิน %s บาท เหตุผล %s" %
                              (transfer.from_budget_id.section_id.display_name,
                              transfer.to_budget_id.section_id.display_name,
-                             transfer.amount_transfer, transfer.notes))
+                             '{:,.2f}'.format(transfer.amount_transfer), transfer.notes))
   else:
     diff_budget = False
-    messages_diff_budget.append(u"- จาก %s ไป %s จำนวนเงิน %d บาท เหตุผล %s" %
+    messages_diff_budget.append(u"- จาก %s ไป %s จำนวนเงิน %s บาท เหตุผล %s" %
                              (transfer.from_budget_id.section_id.display_name,
                              transfer.to_budget_id.section_id.display_name,
-                             transfer.amount_transfer, transfer.notes))
+                             '{:,.2f}'.format(transfer.amount_transfer), transfer.notes))
 if diff_budget:
-  body = "\n".join(messages_in_budget)
+  body = "&lt;br/&gt;".join(messages_in_budget)
   employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
   supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
   owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
   boss=object.preparer_user_id.login
 else:
-  body = "\n".join(messages_diff_budget)
+  body = "&lt;br/&gt;".join(messages_diff_budget)
   owner=object.transfer_user_id.login
   employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
   supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
