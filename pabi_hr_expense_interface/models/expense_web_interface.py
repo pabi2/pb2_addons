@@ -318,7 +318,7 @@ class HRExpense(models.Model):
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': e,
+                'messages': _(str(e)),
             }
             self._cr.rollback()
         _logger.info('generate_hr_expense(), input: %s' % res)

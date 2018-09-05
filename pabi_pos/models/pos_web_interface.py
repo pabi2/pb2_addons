@@ -56,7 +56,7 @@ class SalesOrder(models.Model):
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': e,
+                'messages': _(str(e)),
             }
             self._cr.rollback()
         _logger.info('generate_pos_order() - output: %s' % res)
@@ -187,7 +187,7 @@ class StockInventory(models.Model):
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': e,
+                'messages': _(str(e)),
             }
             self._cr.rollback()
         _logger.info('create_inventory_adjustment() - output: %s' % res)

@@ -79,7 +79,7 @@ class ResProject(models.Model):
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': e,
+                'messages': _(str(e)),
             }
             self._cr.rollback()
         _logger.info('create_project(), output: %s' % res)
@@ -114,7 +114,7 @@ class ResProject(models.Model):
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': e,
+                'messages': _(str(e)),
             }
             self._cr.rollback()
         _logger.info('update_project(), output: %s' % res)
@@ -185,7 +185,7 @@ class ResProject(models.Model):
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': e,
+                'messages': _(str(e)),
             }
             self._cr.rollback()
         _logger.info('change_project_budget_lock_status(), output: %s' % res)
