@@ -467,6 +467,7 @@ class ChartField(object):
         'res.project',
         string='Project',
         ondelete='restrict',
+        index=True,
     )
     fund_id = fields.Many2one(
         'res.fund',
@@ -498,6 +499,7 @@ class ChartField(object):
         'res.section',
         string='Section',
         ondelete='restrict',
+        index=True,
     )
     costcenter_id = fields.Many2one(
         'res.costcenter',
@@ -514,12 +516,14 @@ class ChartField(object):
         'res.personnel.costcenter',
         string='Personnel Budget',
         ondelete='restrict',
+        index=True,
     )
     # Investment - Asset
     invest_asset_id = fields.Many2one(
         'res.invest.asset',
         string='Investment Asset',
         ondelete='restrict',
+        index=True,
     )
     # Investment - Construction
     invest_construction_id = fields.Many2one(
@@ -531,6 +535,7 @@ class ChartField(object):
         'res.invest.construction.phase',
         string='Construction Phase',
         ondelete='restrict',
+        index=True,
     )
     # Non Binding Dimension
     cost_control_id = fields.Many2one(

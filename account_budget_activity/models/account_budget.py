@@ -542,7 +542,6 @@ class AccountBudget(models.Model):
                             budget_level, resource,
                             blevel=False, extra_dom=[]):
         """ For budget check, expenses only """
-        # Note: Pass performance test (when compare with Search method)
         comodel = resource._fields['monitor_ids'].comodel_name
         inverse = resource._fields['monitor_ids'].inverse_name
         monitors = self.env[comodel].search([(inverse, '=', resource.id),
@@ -550,6 +549,45 @@ class AccountBudget(models.Model):
                                              ('budget_method', '=', 'expense'),
                                              ] + extra_dom)
         return monitors
+
+    @api.model
+    def _get_budget_monitor_dict(self, fiscal, budget_type,
+                                 budget_level, resource,
+                                 blevel=False, extra_dom=[]):
+        """ For budget check, expenses only """
+        comodel = resource._fields['monitor_ids'].comodel_name
+        inverse = resource._fields['monitor_ids'].inverse_name
+        domain = [(inverse, '=', resource.id),
+                  ('fiscalyear_id', '=', fiscal.id),
+                  ('budget_method', '=', 'expense')] + extra_dom
+        where_str = self._domain_to_where_str(domain)
+        self._cr.execute("""
+            select count(*) count,
+                coalesce(sum(planned_amount), 0.0) planned_amount,
+                coalesce(sum(released_amount), 0.0) released_amount,
+                coalesce(sum(amount_pr_commit), 0.0) amount_pr_commit,
+                coalesce(sum(amount_po_commit), 0.0) amount_po_commit,
+                coalesce(sum(amount_exp_commit), 0.0) amount_exp_commit,
+                coalesce(sum(amount_actual), 0.0) amount_actual,
+                coalesce(sum(amount_balance), 0.0) amount_balance
+            from """ + self.env[comodel]._table + """
+            where %s
+        """ % where_str)
+        res = self._cr.dictfetchall()
+        is_monitor = False
+        monitor_dict = {}
+        if res[0]['count'] > 0:
+            is_monitor = True
+            monitor_dict.update({
+                'planned_amount': res[0]['planned_amount'],
+                'released_amount': res[0]['released_amount'],
+                'amount_pr_commit': res[0]['amount_pr_commit'],
+                'amount_po_commit': res[0]['amount_po_commit'],
+                'amount_exp_commit': res[0]['amount_exp_commit'],
+                'amount_actual': res[0]['amount_actual'],
+                'amount_balance': res[0]['amount_balance'],
+            })
+        return (is_monitor, monitor_dict)
 
     @api.model
     def check_budget(self, fiscal_id, budget_type,
@@ -584,34 +622,58 @@ class AccountBudget(models.Model):
         resource = self._get_budget_resource(fiscal, budget_type,
                                              budget_level,
                                              budget_level_res_id)
-        monitors = self._get_budget_monitor(fiscal, budget_type,
-                                            budget_level, resource,
-                                            blevel=blevel)
 
+        # ============== OLD METHOD ================
+        # monitors = self._get_budget_monitor(fiscal, budget_type,
+        #                                     budget_level, resource,
+        #                                     blevel=blevel)
+        #
+        # # No plan and no control, do nothing
+        # if not monitors and not blevel.is_budget_control:
+        #     res['budget_ok'] = True
+        #     res['force_no_budget_check'] = True
+        #     return res
+        # # Validation
+        # if not monitors:  # No plan
+        #     res['budget_ok'] = False
+        #     res['message'] = _('%s\n'
+        #                        '[%s] No active budget control.') % \
+        #         (fiscal.name, resource.display_name)
+        #     return res
+        # else:  # Current Budget Status (Performance Tested, faster then SQL)
+        #     res['budget_status'].update({
+        #         'planned_amount': sum(monitors.mapped('planned_amount')),
+        #         'released_amount': sum(monitors.mapped('released_amount')),
+        #         'amount_pr_commit': sum(monitors.mapped('amount_pr_commit')),
+        #         'amount_po_commit': sum(monitors.mapped('amount_po_commit')),
+        #       'amount_exp_commit': sum(monitors.mapped('amount_exp_commit')),
+        #         'amount_actual': sum(monitors.mapped('amount_actual')),
+        #         'amount_balance': sum(monitors.mapped('amount_balance')),
+        #     })
+        # balance = sum(monitors.mapped('amount_balance'))
+        # ================================================================
+
+        # =========== NEW METHOD For performance improve =================
+        is_monitor, monitor_dict = self._get_budget_monitor_dict(
+            fiscal, budget_type, budget_level, resource, blevel=blevel)
         # No plan and no control, do nothing
-        if not monitors and not blevel.is_budget_control:
+        if not is_monitor and not blevel.is_budget_control:
             res['budget_ok'] = True
             res['force_no_budget_check'] = True
             return res
         # Validation
-        if not monitors:  # No plan
+        if not is_monitor:  # No plan
             res['budget_ok'] = False
             res['message'] = _('%s\n'
                                '[%s] No active budget control.') % \
                 (fiscal.name, resource.display_name)
             return res
         else:  # Current Budget Status (Performance Tested, faster then SQL)
-            res['budget_status'].update({
-                'planned_amount': sum(monitors.mapped('planned_amount')),
-                'released_amount': sum(monitors.mapped('released_amount')),
-                'amount_pr_commit': sum(monitors.mapped('amount_pr_commit')),
-                'amount_po_commit': sum(monitors.mapped('amount_po_commit')),
-                'amount_exp_commit': sum(monitors.mapped('amount_exp_commit')),
-                'amount_actual': sum(monitors.mapped('amount_actual')),
-                'amount_balance': sum(monitors.mapped('amount_balance')),
-            })
-        # If amount is False, we don't check.
-        balance = sum(monitors.mapped('amount_balance'))
+            res['budget_status'].update(monitor_dict)
+        balance = monitor_dict.get('amount_balance', 0.0)
+        # =================================================================
+
+        # If amount is False, we don't check
         if amount is not False and amount > balance:
             res['budget_ok'] = False
             if amount == 0.0:  # 0.0 mean post check

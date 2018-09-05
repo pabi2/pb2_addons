@@ -248,6 +248,7 @@ class BPLCommon(ChartField, Common):
         string='Budget Method',
         required=True,
         default='expense',
+        index=True,
         help="Specify whether the budget plan line is of Revenue or Expense. "
         "Revenue is for Unit Based only."
     )
