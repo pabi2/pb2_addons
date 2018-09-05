@@ -3,7 +3,7 @@
     <data>
 
       # Messages for Budget Message
-      <record id="action_budget_message_supervisor_approved" model="ir.actions.server">
+      <record id="action_budget_message_confirm" model="ir.actions.server">
           <field name="name">Budget Confirm</field>
           <field name="model_id" ref="pabi_budget_transfer.model_section_budget_transfer"/>
           <field name="state">code</field>
@@ -16,7 +16,13 @@
 #  - is_complete = False
 object=object.with_context(lang='th_TH')
 subject=object.name
-body=u"%s วันที่ %s ขออนุมัติโอนงบประมาณจาก [%s]%s ไปให้ [%s]%s จำนวนเงิน %d บาท เหตุผล %s" % (object.name, object.date_prepare, object.transfer_line_ids.from_budget_id.section_id.code, object.transfer_line_ids.from_budget_id.section_id.name_short, object.transfer_line_ids.to_budget_id.section_id.code, object.transfer_line_ids.to_budget_id.section_id.name_short, object.transfer_line_ids.amount_transfer, object.transfer_line_ids.notes)
+messages = [u"%s วันที่ %s ขออนุมัติโอนงบประมาณ" % (object.name, object.date_prepare)]
+for transfer in object.transfer_line_ids:
+    messages.append(u"- จาก %s ไป %s จำนวนเงิน %d บาท เหตุผล %s" %
+                    (transfer.from_budget_id.section_id.display_name,
+                     transfer.to_budget_id.section_id.display_name,
+                     transfer.amount_transfer, transfer.notes))
+body = "\n".join(messages)
 owner=object.preparer_user_id.login
 employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
 supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
@@ -26,44 +32,31 @@ is_complete=False
 pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
           </field>
       </record>
-      <record id="action_budget_message_transfer" model="ir.actions.server">
-          <field name="name">Budget Transfer</field>
-          <field name="model_id" ref="pabi_budget_transfer.model_section_budget_transfer"/>
-          <field name="state">code</field>
-          <field name="condition">object.state == 'transfer' and object.transfer_line_ids.from_budget_id.section_id.division_id ==  object.transfer_line_ids.to_budget_id.section_id.division_id</field>
-          <field name="code">
-# Ready to Transfer
-# - owner = Chumchai
-# - boss = Maytinee
-# - action = 'A'
-# - is_complete = True
-object=object.with_context(lang='th_TH')
-subject=object.name
-body=u"%sวันที่ %s อนุมัติโอนงบประมาณ เมื่อวันที่ %s โดยโอนงบประมาณ จาก[%s]%s ไปให้ [%s]%s จำนวนเงิน %d บาท เหตุผล %s" % (object.name, object.date_prepare, object.date_transfer, object.transfer_line_ids.from_budget_id.section_id.code, object.transfer_line_ids.from_budget_id.section_id.code, object.transfer_line_ids.to_budget_id.section_id.name_short, object.transfer_line_ids.to_budget_id.section_id.name_short, object.transfer_line_ids.amount_transfer, object.transfer_line_ids.notes)
-employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
-supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
-owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
-boss=object.preparer_user_id.login
-action='A'
-is_complete=True
-pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
-          </field>
-      </record>
 
-      # different division
-      <record id="action_budget_message_approve_diff_division" model="ir.actions.server">
+      <record id="action_budget_message_approve" model="ir.actions.server">
           <field name="name">Budget Approve</field>
           <field name="model_id" ref="pabi_budget_transfer.model_section_budget_transfer"/>
           <field name="state">code</field>
-          <field name="condition">object.state == 'approve' and object.transfer_line_ids.from_budget_id.section_id.division_id !=  object.transfer_line_ids.to_budget_id.section_id.division_id</field>
+          <field name="condition">object.state == 'approve'</field>
           <field name="code">
 # Ready to Approve
 # - owner = Chumchai
-# - boss = OuBudget
+# - boss = OuBudget (diff_budget) | False (in_budget)
 # - action = 'A'
 # - is_complete = False
 object=object.with_context(lang='th_TH')
 subject=object.name
+messages = [u"%s วันที่ %s ได้รับอนุมัติการโอนงบประมาณแล้ว เมื่อวันที่ %s โดยโอนงบประมาณ" % (object.name, object.date_prepare, object.date_approve)]
+diff_budget = False
+for transfer in object.transfer_line_ids:
+  if transfer.from_budget_id.section_id.division_id != transfer.to_budget_id.section_id.division_id:
+    diff_budget = True
+    messages.append(u"- จาก %s ไป %s จำนวนเงิน %d บาท เหตุผล %s" %
+                    (transfer.from_budget_id.section_id.display_name,
+                     transfer.to_budget_id.section_id.display_name,
+                     transfer.amount_transfer, transfer.notes))
+messages.append(u" ดังนั้นขอให้ฝ่ายงบประมาณดำเนินการโอนงบประมาณในระบบ")
+body = "\n".join(messages)
 employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
 supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
 owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
@@ -71,36 +64,61 @@ ou_group = pool['res.groups'].search(cr, uid, [('name', '=', 'Operating Unit Bud
 org_employee = pool['hr.employee'].search(cr, uid, [('org_id', '=', object.org_id.id)], context=context)
 ou_user_group = pool['res.groups'].browse(cr, uid, ou_group, context=context).users
 boss = pool['hr.employee'].browse(cr, uid, org_employee, context=context).filtered(lambda l: l.user_id.id in ou_user_group.ids).mapped('user_id').mapped('login')
-body=u"%sวันที่ %s ได้รับอนุมัติการโอนงบประมาณแล้ว เมื่อวันที่ %s โดยโอนงบประมาณ จาก[%s]%s ไปให้ [%s]%s จำนวนเงิน %d บาท เหตุผล %s ดังนั้นขอให้ฝ่ายงบประมาณดำเนินการโอนงบประมาณในระบบ" % (object.name, object.date_prepare, object.date_approve, object.transfer_line_ids.from_budget_id.section_id.code, object.transfer_line_ids.from_budget_id.section_id.name_short, object.transfer_line_ids.to_budget_id.section_id.code, object.transfer_line_ids.to_budget_id.section_id.name_short, object.transfer_line_ids.amount_transfer, object.transfer_line_ids.notes)
 action='A'
 is_complete=False
-pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
+if diff_budget:
+  pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
           </field>
       </record>
-      <record id="action_budget_message_transfer_diff_division" model="ir.actions.server">
-          <field name="name">Budget Transfer Diff Division</field>
+
+      <record id="action_budget_message_transfer" model="ir.actions.server">
+          <field name="name">Budget Transfer</field>
           <field name="model_id" ref="pabi_budget_transfer.model_section_budget_transfer"/>
           <field name="state">code</field>
-          <field name="condition">object.state == 'transfer' and object.transfer_line_ids.from_budget_id.section_id.division_id !=  object.transfer_line_ids.to_budget_id.section_id.division_id</field>
+          <field name="condition">object.state == 'transfer'</field>
           <field name="code">
 # Ready to Transfer
-# - owner = OuBudget
-# - boss = Chumchai,Maytinee
+# - owner = OU Budget (diff_budget) | Chumchai (in_budget)
+# - boss = Chumchai, Maytinee (diff_budget) | Maytinee (in_budget)
 # - action = 'A'
 # - is_complete = True
 object=object.with_context(lang='th_TH')
 subject=object.name
-body=u"%s วันที่ %s ฝ่ายงบประมาณดำเนินการโอนงบประมาณในระบบเรียบร้อยแล้ว เมื่อวันที่ %s โดยโอนงบประมาณ [%s]%s ไปให้ [%s]%s จำนวนเงิน %d บาท เหตุผล %s" % (object.name, object.date_prepare, object.date_transfer, object.transfer_line_ids.from_budget_id.section_id.code, object.transfer_line_ids.from_budget_id.section_id.name_short, object.transfer_line_ids.to_budget_id.section_id.code, object.transfer_line_ids.to_budget_id.section_id.name_short, object.transfer_line_ids.amount_transfer, object.transfer_line_ids.notes)
-owner=object.transfer_user_id.login
-employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
-supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
-boss_of_owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
-boss=[object.preparer_user_id.login,boss_of_owner]
+diff_budget = False
+messages_in_budget = [u"%s วันที่ %s อนุมัติโอนงบประมาณ เมื่อวันที่ %s โดยโอนงบประมาณ" % (object.name, object.date_prepare, object.date_transfer)]
+messages_diff_budget = [u"%s วันที่ %s ฝ่ายงบประมาณดำเนินการโอนงบประมาณในระบบเรียบร้อยแล้ว เมื่อวันที่ %s โดยโอนงบประมาณ" % (object.name, object.date_prepare, object.date_transfer)]
+for transfer in object.transfer_line_ids:
+  if transfer.from_budget_id.section_id.division_id == transfer.to_budget_id.section_id.division_id:
+    diff_budget = True
+    messages_in_budget.append(u"- จาก %s ไป %s จำนวนเงิน %d บาท เหตุผล %s" %
+                             (transfer.from_budget_id.section_id.display_name,
+                             transfer.to_budget_id.section_id.display_name,
+                             transfer.amount_transfer, transfer.notes))
+  else:
+    diff_budget = False
+    messages_diff_budget.append(u"- จาก %s ไป %s จำนวนเงิน %d บาท เหตุผล %s" %
+                             (transfer.from_budget_id.section_id.display_name,
+                             transfer.to_budget_id.section_id.display_name,
+                             transfer.amount_transfer, transfer.notes))
+if diff_budget:
+  body = "\n".join(messages_in_budget)
+  employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
+  supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
+  owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
+  boss=object.preparer_user_id.login
+else:
+  body = "\n".join(messages_diff_budget)
+  owner=object.transfer_user_id.login
+  employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
+  supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
+  boss_of_owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
+  boss=[object.preparer_user_id.login,boss_of_owner]
 action='A'
 is_complete=True
 pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
           </field>
       </record>
+
       <!-- Rule -->
       <record id="budget_message_intray_message" model="base.action.rule">
           <field name="name">Budget Message Intray Messages</field>
@@ -108,10 +126,9 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
           <field name="sequence">1</field>
           <field name="kind">on_write</field>
           <field name="server_action_ids"
-            eval="[(6,0,[ref('action_budget_message_supervisor_approved'),
-                         ref('action_budget_message_transfer'),
-                         ref('action_budget_message_approve_diff_division'),
-                         ref('action_budget_message_transfer_diff_division')])]"/>
+            eval="[(6,0,[ref('action_budget_message_confirm'),
+                         ref('action_budget_message_approve'),
+                         ref('action_budget_message_transfer')])]"/>
       </record>
 
     </data>
