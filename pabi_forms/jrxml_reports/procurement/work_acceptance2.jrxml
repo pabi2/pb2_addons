@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
 	<property name="ireport.zoom" value="1.4615378250000255"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="307"/>
+	<property name="ireport.y" value="227"/>
 	<subDataset name="po_committee">
 		<parameter name="ids" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -32,8 +32,14 @@ ORDER BY poc.id]]>
 pwal.name acceptance_line_name,
 pwal.to_receive_qty acceptance_line_qty,
 CONCAT(pwal.to_receive_qty::integer,' ',pu.name) acceptance_line_uom,
-pol.price_unit acceptance_line_unit_price
+pwal.price_unit acceptance_line_unit_price,
+pwal.price_subtotal acceptance_line_price_subtotal,
+pwa.amount_untaxed as amount_untaxed,
+pwa.amount_tax as amount_tax,
+pwa.amount_total as amount_total
 FROM purchase_work_acceptance_line pwal
+LEFT JOIN purchase_work_acceptance pwa
+ON pwa.id = pwal.acceptance_id
 LEFT JOIN product_product pp
 ON pp.id = pwal.product_id
 LEFT JOIN product_uom pu
@@ -46,7 +52,17 @@ ORDER BY pwal.id]]>
 		<field name="acceptance_line_name" class="java.lang.String"/>
 		<field name="acceptance_line_qty" class="java.math.BigDecimal"/>
 		<field name="acceptance_line_uom" class="java.lang.String"/>
-		<field name="acceptance_line_unit_price" class="java.math.BigDecimal"/>
+		<field name="acceptance_line_unit_price" class="java.lang.Double"/>
+		<field name="acceptance_line_price_subtotal" class="java.lang.Double"/>
+		<field name="amount_untaxed" class="java.lang.Double">
+			<fieldDescription><![CDATA[Subtotal]]></fieldDescription>
+		</field>
+		<field name="amount_tax" class="java.lang.Double">
+			<fieldDescription><![CDATA[Tax]]></fieldDescription>
+		</field>
+		<field name="amount_total" class="java.lang.Double">
+			<fieldDescription><![CDATA[Total]]></fieldDescription>
+		</field>
 		<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 			<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 		</variable>
@@ -85,7 +101,7 @@ ou.id ou_id,
 pwa.name gr_no,
 pwa.create_date create_date,
 po.name po_name,
-po.date_order po_date,
+pwa.date_accept po_date,
 pwa.supplier_invoice invoice_no,
 pwa.date_invoice invoice_date,
 pwa.date_contract_start contract_start_date,
@@ -611,7 +627,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Number"><![CDATA[$F{acceptance_line_unit_price}]]></textFieldExpression>
+								<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{acceptance_line_unit_price}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -628,21 +644,21 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Number"><![CDATA[$V{vat}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_tax}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
 								<reportElement x="0" y="0" width="86" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Number"><![CDATA[$V{total}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_untaxed}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
 								<reportElement x="0" y="40" width="86" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Number"><![CDATA[$V{grand_total}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_total}]]></textFieldExpression>
 							</textField>
 						</jr:columnFooter>
 						<jr:detailCell height="21" rowSpan="1">
@@ -655,7 +671,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Number"><![CDATA[$V{subtotal}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Number"><![CDATA[$F{acceptance_line_price_subtotal}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -852,7 +868,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 					<jr:column width="225">
 						<jr:detailCell height="19" rowSpan="1">
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement x="14" y="0" width="195" height="19"/>
+								<reportElement x="14" y="0" width="163" height="19"/>
 								<textElement verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -866,8 +882,8 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
 							</textField>
 							<staticText>
-								<reportElement x="195" y="0" width="30" height="19"/>
-								<textElement lineSpacing="Single">
+								<reportElement x="177" y="0" width="48" height="19"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<text><![CDATA[ลงชื่อ ]]></text>
@@ -884,7 +900,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{position}]]></textFieldExpression>
 							</textField>
 							<staticText>
-								<reportElement x="0" y="0" width="125" height="15"/>
+								<reportElement x="0" y="0" width="131" height="15"/>
 								<textElement verticalAlignment="Bottom" lineSpacing="Single">
 									<font size="10"/>
 								</textElement>
@@ -1178,9 +1194,9 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA["\u2713"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="122" y="127" width="126" height="21"/>
-				<textElement lineSpacing="Single">
-					<font fontName="Serif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				<reportElement mode="Transparent" x="122" y="124" width="200" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="13" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{po_date}]]></textFieldExpression>
 			</textField>

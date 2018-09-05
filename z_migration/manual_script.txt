@@ -1,6 +1,8 @@
-Purchase Orders >> Confirm Order
-- python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/purchase_act_confirm_order.py
-Purchase Orders >> Release
-- python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/purchase_act_release.py
-Purchase Orders >> Create Work Acceptance
-- python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/purchase_act_create_work_acceptance.py
+Purchase Orders
+- Confirm Order >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/purchase_orders/purchase_orders_act_confirm_order.py
+- Release >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/purchase_orders/purchase_orders_act_release.py
+- Create Invoice Plan >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/purchase_orders/purchase_orders_act_prepare_invoice_plan.py
+- Create Invoices >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/purchase_orders/purchase_orders_act_create_invoices.py
+Purchase Requests
+- Request approval >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/purchase_requests/purchase_requests_act_request_approval.py
+- Accept >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/purchase_requests/purchase_requests_act_accept.py

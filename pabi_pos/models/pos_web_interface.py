@@ -25,6 +25,7 @@ class SalesOrder(models.Model):
                     'product_uom': u'หลอด',
                     'price_unit': 100.0,
                     'tax_id': u'S7',
+                    'discount': 10.0,
                 },
                 {
                     'product_id': u'ดินสอดำ',
@@ -33,6 +34,7 @@ class SalesOrder(models.Model):
                     'product_uom': u'หลอด',
                     'price_unit': 200.0,
                     'tax_id': u'S7',
+                    'discount': 0.0,
                 },
             ]
         }

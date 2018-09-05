@@ -110,7 +110,8 @@
                 </xpath>
                 <xpath expr="//button[@name='purchase_cancel']" position="replace">
                     <button name="by_pass_cancel" type="object" states="draft,confirmed,wait_auth" string="Cancel Purchase Order" icon="gtk-cancel" confirm="Cancel this RfQ?"/>
-                    <button name="by_pass_delete" type="object" states="draft" string="Delete Quotation" icon="gtk-undelete" confirm="Delete this RfQ?"/>
+                    <button name="by_pass_delete" type="object" states="draft" string="Delete Quotation" icon="gtk-undelete" confirm="Delete this RfQ?"
+                      invisible="1"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_uom_id']"
                        position="after">

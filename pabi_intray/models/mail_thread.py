@@ -13,6 +13,7 @@ class MailThread(models.AbstractModel):
             Note: boss can be single or multiple (list of string)
         """
         bosses = []
+        boss = boss or []
         if isinstance(boss, list) or isinstance(boss, tuple):
             bosses = boss
         elif isinstance(boss, basestring):

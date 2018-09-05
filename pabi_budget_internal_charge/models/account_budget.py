@@ -113,14 +113,14 @@ class AccountBudget(models.Model):
     @api.model
     def _get_budget_monitor(self, fiscal, budget_type,
                             budget_level, resource,
-                            blevel=False):
+                            blevel=False, extra_dom=[]):
         """ If set to control only external charge """
+        if blevel and fiscal.control_ext_charge_only:
+            extra_dom = [('charge_type', '=', 'external')]
         monitors = super(AccountBudget, self).\
             _get_budget_monitor(fiscal, budget_type,
                                 budget_level, resource,
-                                blevel=blevel)
-        if blevel and fiscal.control_ext_charge_only:
-            monitors = monitors.filtered(lambda l: l.charge_type == 'external')
+                                blevel=blevel, extra_dom=extra_dom)
         return monitors
 
     @api.multi
