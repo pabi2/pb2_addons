@@ -543,12 +543,12 @@ class AccountAsset(ChartFieldAction, models.Model):
         # Case Parent Assets, AIT, AUC, ATM
         type = vals.get('type', False)
         ptype = vals.get('parent_type', False)
-        if ptype and type == 'view':
+        if ptype and type == 'view' and vals.get('code', '/') == '/':
             sequence_code = 'parent.asset.%s' % (ptype)
             vals['code'] = self.env['ir.sequence'].next_by_code(sequence_code)
         # Normal Case
         product_id = vals.get('product_id', False)
-        if product_id:
+        if product_id and vals.get('code', '/') == '/':
             product = self.env['product.product'].browse(product_id)
             sequence = product.sequence_id
             if not sequence:
