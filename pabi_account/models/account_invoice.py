@@ -128,6 +128,9 @@ class AccountInvoice(models.Model):
                 for tax in line.invoice_line_tax_id:
                     if tax.is_wht:
                         rec.has_wht = True
+                        break
+                if rec.has_wht:
+                    break
 
     @api.onchange('has_wht')
     def _onchange_has_wht(self):
@@ -137,10 +140,15 @@ class AccountInvoice(models.Model):
     @api.model
     def create(self, vals):
         """ As invoice created, set default income_tax_form, if needed """
-        rec = super(AccountInvoice, self).create(vals)
-        if rec.has_wht:
-            rec.income_tax_form = rec.partner_id.income_tax_form
-        return rec
+        invoice = super(AccountInvoice, self).create(vals)
+        if invoice.has_wht:
+            # Update invoice's income_tax_form = partner's income_tax_form
+            self._cr.execute("""
+                update account_invoice av set income_tax_form =
+                (select income_tax_form from res_partner p
+                where p.id = av.partner_id) where av.id = %s
+            """, (invoice.id, ))
+        return invoice
 
     @api.multi
     @api.depends('invoice_line')
