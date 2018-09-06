@@ -17,6 +17,7 @@
         'pabi_asset_management',
         'pabi_budget_plan',
         'pabi_purchase_billing',
+        'pabi_invest_construction',
     ],
     "data": [
     ]
