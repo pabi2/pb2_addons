@@ -162,18 +162,18 @@ class HRExpenseExpense(models.Model):
 
     @api.model
     def _create_negative_clearing_line(self, expense, invoice):
-        amount_advance = expense.amount
-        advance_expense = expense.advance_expense_id
-        if expense.amount > advance_expense.amount_to_clearing:
-            amount_advance = advance_expense.amount_to_clearing
         # Use invoice line first
+        advance_expense = expense.advance_expense_id
         if advance_expense.invoice_id.invoice_line:
+            amount_advance = expense.amount
+            if amount_advance > advance_expense.amount_to_clearing:
+                amount_advance = advance_expense.amount_to_clearing
             advance_line = advance_expense.invoice_id.invoice_line[0]
             advance_line.copy({'invoice_id': invoice.id,
                                'price_unit': -amount_advance,
                                'sequence': 1, })
         # If no invoice line, use advance line and change it to invoice line
-        if advance_expense.line_ids:
+        elif advance_expense.line_ids:
             advance_line = advance_expense.line_ids[0]
             advance_account_id = advance_line._get_non_product_account_id()
             line_dict = advance_line.copy_data()
@@ -191,6 +191,12 @@ class HRExpenseExpense(models.Model):
                 for new_key, old_key in inv_exp.iteritems():
                     line[new_key] = line.pop(old_key)
                 # Added fields
+                cleared_ids = advance_expense.advance_clearing_ids
+                max_clear_amount = advance_expense.amount_advanced - \
+                    sum(cleared_ids.mapped('clearing_amount'))
+                amount_advance = expense.amount
+                if amount_advance > max_clear_amount:
+                    amount_advance = max_clear_amount
                 line.update({'account_id': advance_account_id,
                              'invoice_id': invoice.id,
                              'price_unit': -amount_advance,
