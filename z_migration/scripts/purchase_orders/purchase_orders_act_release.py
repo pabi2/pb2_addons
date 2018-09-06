@@ -18,7 +18,7 @@ except Exception:
 PurchaseOrder = connection.get_model('purchase.order')
 
 # Domain
-po_names = ['PO18001191', 'PO18001192', 'PO18001193']
+po_names = ['PO18001217', 'PO18001192', 'PO18001193']
 dom = [('name', 'in', po_names)]
 
 # Search PO
@@ -31,6 +31,9 @@ logger.info('Total purchase order: %s' % len(pos))
 for po in pos:
     try:
         PurchaseOrder.mock_trigger_workflow([po['id']], 'purchase_approve')
+        # For payment term is cash on delivery only!
+        if po['payment_term_id'][1] == 'Cash on Delivery':
+            PurchaseOrder.mork_invoice_paid(po['id'])
         log_po_names[0].append(po['name'].encode('utf-8'))
         logger.info('Pass: %s' % po['name'])
     except Exception as ex:
