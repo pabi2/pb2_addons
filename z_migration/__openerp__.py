@@ -13,8 +13,10 @@
     "installable": True,
     "depends": [
         'pabi_purchase_invoice_plan',
-        'pabi_purchase_work_acceptance',
         'purchase_request',
+        'pabi_asset_management',
+        'pabi_budget_plan',
+        'pabi_purchase_billing',
     ],
     "data": [
     ]
