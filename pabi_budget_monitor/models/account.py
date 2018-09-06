@@ -35,8 +35,16 @@ class AccountMove(models.Model):
 
     @api.multi
     def post(self):
+        """
+        For invoice, analytic line will be created before post, so we want to
+            check for budget before post, to minimize lock of sequence number
+        For non-invoice (JE), we do it after posted.
+        """
+        if self._context.get('invoice', False):
+            self._move_budget_check()
         res = super(AccountMove, self).post()
-        self._move_budget_check()
+        if not self._context.get('invoice', False):
+            self._move_budget_check()
         return res
 
     @api.multi
@@ -44,15 +52,14 @@ class AccountMove(models.Model):
         Budget = self.env['account.budget']
         AnalyticLine = self.env['account.analytic.line']
         for move in self:
-            if move.state == 'posted':
-                analytic_lines = AnalyticLine.search([
-                    ('move_id', 'in', move.line_id._ids)
-                ])
-                if not analytic_lines:
-                    continue
-                doc_date = move.date
-                doc_lines = Budget.convert_lines_to_doc_lines(analytic_lines)
-                res = Budget.post_commit_budget_check(doc_date, doc_lines)
-                if not res['budget_ok']:
-                    raise ValidationError(res['message'])
+            analytic_lines = AnalyticLine.search([
+                ('move_id', 'in', move.line_id._ids)
+            ])
+            if not analytic_lines:
+                continue
+            doc_date = move.date
+            doc_lines = Budget.convert_lines_to_doc_lines(analytic_lines)
+            res = Budget.post_commit_budget_check(doc_date, doc_lines)
+            if not res['budget_ok']:
+                raise ValidationError(res['message'])
         return True

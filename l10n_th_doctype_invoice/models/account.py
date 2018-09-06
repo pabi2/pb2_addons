@@ -21,6 +21,13 @@ class AccountMove(models.Model):
                         fiscalyear_id=move.period_id.fiscalyear_id.id)
                     # Because we have doctype_id, so we can pass False
                     name = self.env['ir.sequence'].next_by_id(False)
-                    move.name = name
-                    invoice.write({'number': name, 'internal_number': name})
+                    # Move number
+                    self._cr.execute("""
+                        update account_move set name = %s where id = %s
+                    """, (name, move.id, ))
+                    # Invoice number
+                    self._cr.execute("""
+                        update account_invoice
+                        set number = %s, internal_number = %s where id = %s
+                    """, (name, name, invoice.id, ))
         return super(AccountMove, self).post()
