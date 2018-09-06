@@ -167,7 +167,7 @@ class HRExpenseExpense(models.Model):
         if expense.amount > advance_expense.amount_to_clearing:
             amount_advance = advance_expense.amount_to_clearing
         # Use invoice line first
-        if not advance_expense.invoice_id.invoice_line:
+        if advance_expense.invoice_id.invoice_line:
             advance_line = advance_expense.invoice_id.invoice_line[0]
             advance_line.copy({'invoice_id': invoice.id,
                                'price_unit': -amount_advance,
