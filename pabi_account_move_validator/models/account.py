@@ -31,12 +31,13 @@ class AccountMove(models.Model):
 
     @api.multi
     def _validate_period_vs_date(self):
-        Period = self.env['account.period']
         for rec in self:
-            valid_period = Period.find(dt=rec.date)
-            if rec.period_id.date_start != valid_period.date_start:
-                raise ValidationError(
-                    _('Period and date conflict on entry, %s') % rec.ref)
+            if rec.period_id:
+                if not (rec.date >= rec.period_id.date_start and
+                        rec.date <= rec.period_id.date_stop):
+                    raise ValidationError(
+                        _('Period and date conflict on entry, %s') % rec.ref)
+        return True
 
     @api.multi
     def _remove_zero_lines(self):
