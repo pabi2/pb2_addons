@@ -9,3 +9,6 @@ class HRExpenseExpense(models.Model):
         string='Advanced Amount',
         readonly=False,
     )
+    state = fields.Selection(
+        readonly=False,
+    )
