@@ -11,3 +11,5 @@ Assets
 - Confirm Asset >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/assets/assets_act_confirm_asset.py
 ฺีBudgets
 - Activate >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/budgets/budgets_act_activate.py
+Purchase Billing
+- Validate >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/purchase_billing/purchase_billing_act_validate.py
