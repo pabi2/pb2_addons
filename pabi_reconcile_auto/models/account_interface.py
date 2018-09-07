@@ -11,7 +11,7 @@ class InterfaceAccountEntry(models.Model):
         auto_reconcile_id is not required """
         res = super(InterfaceAccountEntry, self).execute()
         for interface in self:
-            ml = interface.mapped('line_ids.reconcile_move_line_id')
+            ml = interface.mapped('line_ids.reconcile_move_line_ids')
             ml1 = ml.mapped('move_id.line_id')
             if ml1:
                 ml2 = interface.move_id.line_id

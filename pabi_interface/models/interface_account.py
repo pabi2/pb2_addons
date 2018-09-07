@@ -453,13 +453,13 @@ class InterfaceAccountEntry(models.Model):
             lambda l: l.account_id.type in ('receivable', 'payable'))
         for line in to_reconcile_lines:
             payment_ml = line.ref_move_line_id
-            invoice_ml = line.reconcile_move_line_id
+            invoice_ml = line.reconcile_move_line_ids
             # Validate Account
-            if payment_ml.account_id != invoice_ml.account_id:
-                raise ValidationError(
-                    _("Wrong account to reconcile for line '%s'.\nInvoice "
-                      "move line account not equal to that of payment") %
-                    (line.name,))
+            # if payment_ml.account_id != invoice_ml.account_id:
+            #     raise ValidationError(
+            #         _("Wrong account to reconcile for line '%s'.\nInvoice "
+            #           "move line account not equal to that of payment") %
+            #         (line.name,))
             # Validate Amount Sign
             # NOTE: remove this condition for case Undue Tax
             # psign = (payment_ml.debit - payment_ml.credit) > 0 and 1 or -1
@@ -641,7 +641,7 @@ class InterfaceAccountEntryLine(models.Model):
     partner_id = fields.Many2one(
         'res.partner',
         string='Partner',
-        required=True,
+        required=False,
     )
     date = fields.Date(
         string='Posting Date',
@@ -696,11 +696,11 @@ class InterfaceAccountEntryLine(models.Model):
         "('partner_id', '=', partner_id)]",
         copy=False,
     )
-    reconcile_move_line_id = fields.Many2one(
+    reconcile_move_line_ids = fields.Many2many(
         'account.move.line',
         string='Reconcile with',
-        compute='_compute_reconcile_move_line_id',
-        store=True,
+        compute='_compute_reconcile_move_line_ids',
+        # store=True,
     )
     contract_charge_type = fields.Char(
         string='Contract Charge Type',
@@ -713,7 +713,7 @@ class InterfaceAccountEntryLine(models.Model):
 
     @api.multi
     @api.depends('reconcile_move_id')
-    def _compute_reconcile_move_line_id(self):
+    def _compute_reconcile_move_line_ids(self):
         AccountMoveLine = self.env['account.move.line']
         for rec in self:
             if not rec.reconcile_move_id:
@@ -723,11 +723,11 @@ class InterfaceAccountEntryLine(models.Model):
                  ('state', '=', 'valid'),
                  ('account_id.type', 'in', ['payable', 'receivable']),
                  ('reconcile_id', '=', False)])
-            if len(move_lines) != 1:
+            if not move_lines:
                 raise ValidationError(
                     _('No valid reconcilable move line for %s') %
                     rec.reconcile_move_id.name)
-            rec.reconcile_move_line_id = move_lines[0]
+            rec.reconcile_move_line_ids = move_lines
         return True
 
 
@@ -863,7 +863,7 @@ class InterfaceAccountChecker(models.AbstractModel):
             return
         for line in inf.line_ids:
             if line.account_id.type in ('receivable', 'payable') and \
-                    not line.reconcile_move_line_id:
+                    not line.reconcile_move_line_ids:
                 raise ValidationError(
                     _("Account receivable/payable line '%s' require "
                       "an invoice to reconcile!") % (line.name,))
