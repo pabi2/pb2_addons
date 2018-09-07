@@ -125,7 +125,9 @@ class PurchaseBilling(models.Model):
                     _("""Wrong due date configuration.
                          Please check the due date setting.""")
                 )
-        if day not in date_list:
+        print self._context
+        if day not in date_list and not \
+                self._context.get('bypass_due_date_check', False):
             raise ValidationError(
                 _("""You specified wrong due date.
                      It has to be in %s
