@@ -351,9 +351,20 @@ class AccountBudget(models.Model):
 
     @api.multi
     def _compute_released_amount(self):
+        budget_ids = self.ids
+        budget_amount = {}
+        if budget_ids:
+            self._cr.execute("""
+                select budget_id, coalesce(sum(released_amount), 0.0) amount
+                from account_budget_line
+                where budget_method = 'expense' and budget_id in %s
+                group by budget_id
+            """, (tuple(self.ids), ))
+            budget_amount = dict(self._cr.fetchall())
         for budget in self:
-            budget.released_amount = \
-                sum(budget.budget_expense_line_ids.mapped('released_amount'))
+            budget.released_amount = budget_amount.get(budget.id, 0.0)
+            # sum(budget.budget_expense_line_ids.mapped('released_amount'))
+        return True
 
     @api.multi
     def _compute_commit_amount(self):
