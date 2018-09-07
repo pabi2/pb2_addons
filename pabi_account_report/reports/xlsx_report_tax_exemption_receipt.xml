@@ -7,12 +7,6 @@
             <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <field name="fiscalyear_start_id" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
-                <field name="fiscalyear_end_id" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
                 <field name="period_start_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
@@ -20,7 +14,7 @@
                     <attribute name="invisible">1</attribute>
                 </field>
                 <field name="period_end_id" position="after">
-                    <field name="calendar_period_id" domain="[('company_id', '=', company_id)]"/>
+                    <field name="calendar_period_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end)]"/>
                 </field>
                 <xpath expr="//notebook[@name='additional_criteria']" position="inside">
                     <page string="Taxbranch Filters">

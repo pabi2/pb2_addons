@@ -14,6 +14,7 @@ class XLSXReportOutputTax(models.TransientModel):
         'account.period.calendar',
         string='Calendar Period',
         required=True,
+        default=lambda self: self.env['account.period.calendar'].find(),
     )
     taxbranch_id = fields.Many2one(
         'res.taxbranch',
