@@ -244,7 +244,9 @@ class HRExpenseExpense(models.Model):
             domain = [('is_employee_advance', '=', True),
                       ('state', '=', 'paid'),
                       ('employee_id', '=', ref_employee_id),
-                      ('amount_to_clearing', '>', 0.0)]
+                      '|', ('amount_to_clearing', '>', 0.0),
+                      ('invoice_id', '=', False),  # Case migration, no inv
+                      ]
             args += domain
         return super(HRExpenseExpense, self).\
             name_search(name=name, args=args, operator=operator, limit=limit)

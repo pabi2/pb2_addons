@@ -48,9 +48,10 @@ class AccountInvoice(models.Model):
     @api.onchange('advance_expense_id')
     def _onchange_advance_expense_id(self):
         # This method is called from Customer invoice to return money
-        if self.advance_expense_id:
+        advance = self.advance_expense_id
+        if advance:
             self.invoice_line = False
-            advance_invoice = self.advance_expense_id.invoice_id
+            advance_invoice = advance.invoice_id
             if advance_invoice.invoice_line:
                 advance_line = advance_invoice.invoice_line[0]
                 return_line = self.env['account.invoice.line'].new()
@@ -68,8 +69,32 @@ class AccountInvoice(models.Model):
                     return_line[f] = advance_line[f]
                 return_line['name'] = \
                     (u'รับคืนเงินยืมทดรองจ่ายของ AV เลขที่ %s' %
-                     (self.advance_expense_id.number,))
+                     (advance.number,))
                 self.invoice_line += return_line
+            elif not advance_invoice:  # Case migration, no ref invoice
+                if advance.line_ids:
+                    advance_line = advance.line_ids[0]
+                    advance_account_id = \
+                        advance_line._get_non_product_account_id()
+                    line_dict = advance_line.copy_data()
+                    for line in line_dict:
+                        # Remove some key
+                        keys = ['expense_id', 'inrev_activity_id',
+                                'description', 'ref']
+                        for key in keys:
+                            del line[key]
+                        # Change some key
+                        inv_exp = {'quantity': 'unit_quantity',
+                                   'account_analytic_id': 'analytic_account',
+                                   'price_unit': 'unit_amount',
+                                   'invoice_line_tax_id': 'tax_ids', }
+                        for new_key, old_key in inv_exp.iteritems():
+                            line[new_key] = line.pop(old_key)
+                        # Added fields
+                        line['price_unit'] = False
+                        line['account_id'] = advance_account_id
+                        self.invoice_line += \
+                            self.env['account.invoice.line'].new(line)
 
     # Not use ???
     # @api.model
