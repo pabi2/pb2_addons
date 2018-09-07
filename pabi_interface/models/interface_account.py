@@ -796,8 +796,8 @@ class InterfaceAccountChecker(models.AbstractModel):
         if False in account_ids:
             raise ValidationError(_('Alll lines must have same account code!'))
         # All line must have same partner
-        partner_ids = [x.partner_id.id for x in inf.line_ids]
-        if False in partner_ids:
+        partners = inf.line_ids.mapped('partner_id')
+        if partners and len(partners) > 1:
             raise ValidationError(_('Alll lines must have same partner!'))
 
     # @api.model
