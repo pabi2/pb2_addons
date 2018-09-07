@@ -24,16 +24,18 @@
                           </group>
                           <group>
                               <group>
-                                  <field name="categ_ids" nolabel="1" colspan="2">
+                                  <!-- Do not use for now -->
+                                  <field name="categ_ids" nolabel="1" colspan="2" invisible="1">
                                       <tree>
                                           <field name="name" string="Category"/>
                                       </tree>
                                   </field>
                               </group>
                               <group>
-                                  <field name="profile_ids" nolabel="1" colspan="2"
+                                  <!-- <field name="profile_ids" nolabel="1" colspan="2"
                                         domain="[('no_depreciation', '=', False),
-                                                 ('product_categ_id', 'in', categ_ids and categ_ids[0] and categ_ids[0][2] or [])]">
+                                                 ('product_categ_id', 'in', categ_ids and categ_ids[0] and categ_ids[0][2] or [])]"> -->
+                                  <field name="profile_ids" nolabel="1" colspan="2">
                                       <tree>
                                           <field name="name" string="Profile"/>
                                       </tree>
