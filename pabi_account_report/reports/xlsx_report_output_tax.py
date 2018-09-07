@@ -39,7 +39,7 @@ class XLSXReportOutputTax(models.TransientModel):
         Result = self.env['account.tax.report']
         dom = [('doc_type', '=', 'sale')]
         if self.calendar_period_id:
-            dom += [('period_id', '=', self.calendar_period_id.id)]
+            dom += [('report_period_id', '=', self.calendar_period_id.id)]
         if self.taxbranch_id:
             dom += [('taxbranch_id', '=', self.taxbranch_id.id)]
         self.results = Result.search(dom, order='number_preprint')
