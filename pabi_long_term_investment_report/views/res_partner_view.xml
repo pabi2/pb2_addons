@@ -26,6 +26,7 @@
                                 <field name="price_subtotal" string="Total"/>
                                 <field name="invoice_ids" widget="many2many_tags"/>
                                 <field name="move_line_ids" widget="many2many_tags" invisible="1"/>
+                                <field name="legacy_ref"/>
                             </tree>
                         </field>
                     </page>

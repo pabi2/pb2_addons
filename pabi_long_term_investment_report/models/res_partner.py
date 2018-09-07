@@ -78,6 +78,9 @@ class ResPartnerInvestment(models.Model):
         string='Invoices',
         domain=lambda self: self._get_domain_invoices(),
     )
+    legacy_ref = fields.Char(
+        string='Legacy Ref.',
+    )
     move_line_ids = fields.One2many(
         'account.move.line',
         'investment_id',
