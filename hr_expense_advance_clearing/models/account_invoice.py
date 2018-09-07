@@ -93,6 +93,9 @@ class AccountInvoice(models.Model):
                         # Added fields
                         line['price_unit'] = False
                         line['account_id'] = advance_account_id
+                        line['name'] = \
+                            (u'รับคืนเงินยืมทดรองจ่ายของ AV เลขที่ %s' %
+                             (advance.number,))
                         self.invoice_line += \
                             self.env['account.invoice.line'].new(line)
 
