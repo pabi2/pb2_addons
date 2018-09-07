@@ -218,7 +218,7 @@ class PurchaseRequest(models.Model):
     )
     legacy_ref = fields.Char(
         string='Legacy Ref.',
-        readonly=True,
+        readonly=False,
     )
     _sql_constraints = [
         ('name_uniq', 'unique(name)',

@@ -90,7 +90,7 @@ class AccountInvoice(models.Model):
     )
     legacy_ref = fields.Char(
         string='Legacy Ref.',
-        readonly='True',
+        readonly=False,
     )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
