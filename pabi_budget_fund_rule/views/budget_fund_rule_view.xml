@@ -115,7 +115,12 @@
                     <field name="project_id"/>
                     <field name="template_id"/>
                     <field name="create_uid"/>
+                    <separator/>
+                    <filter domain="[('state', '=', 'draft')]" help="Draft"/>
+                    <filter domain="[('state', '=', 'confirmed')]" help="Confirmed"/>
+                    <filter domain="[('state', '=', 'cancel')]" help="Cancelled"/>
                     <group expand="0" string="Group By">
+                        <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
                         <filter string="Created by" domain="[]" context="{'group_by':'create_uid'}"/>
                         <filter string="Fund" domain="[]" context="{'group_by':'fund_id'}"/>
                         <filter string="Project" domain="[]" context="{'group_by':'project_id'}"/>
