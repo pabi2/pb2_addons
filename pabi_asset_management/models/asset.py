@@ -82,8 +82,8 @@ class AccountAsset(ChartFieldAction, models.Model):
         index=True,
         help="Status vs State\n"
         "Draft → ยกเลิก\n"
-        "Running → ใช้งานปกติ, ส่งมอบ, โอนเป็นครุภัณฑ์, ชำรุด, รอจำหน่าย\n"
-        "Removed → จำหน่าย, สูญหาย\n"
+        "Running → ใช้งานปกติ, โอนเป็นครุภัณฑ์, ชำรุด, รอจำหน่าย\n"
+        "Removed → จำหน่าย, สูญหาย, ส่งมอบ\n"
         "Close → หมดอายุการใช้งาน"
     )
     status_code = fields.Char(
