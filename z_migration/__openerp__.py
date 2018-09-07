@@ -20,5 +20,6 @@
         'pabi_invest_construction',
     ],
     "data": [
+        'views/purchase_view.xml',
     ]
 }
