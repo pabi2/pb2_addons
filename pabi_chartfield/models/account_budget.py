@@ -97,6 +97,10 @@ class AccountBudget(ChartField, models.Model):
     def create(self, vals):
         res = super(AccountBudget, self).create(vals)
         res.update_related_dimension(vals)
+        # For special case, only have org_id and no down the line dimension
+        # It result in setting it to org_id, we need to set it back
+        if vals.get('org_id', False) and not res.org_id:
+            res.org_id = vals['org_id']
         return res
 
     @api.model
