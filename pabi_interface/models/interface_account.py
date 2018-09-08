@@ -64,6 +64,15 @@ class InterfaceAccountEntry(models.Model):
         string='Type',
         readonly=True,
     )
+    charge_type = fields.Selection(  # Prepare for pabi_internal_charge
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        required=True,
+        default='external',
+        help="Specify whether the move line is for Internal Charge or "
+        "External Charge. Only expense internal charge to be set as internal",
+    )
     journal_id = fields.Many2one(
         'account.journal',
         string='Journal',
@@ -385,6 +394,8 @@ class InterfaceAccountEntry(models.Model):
                 'project_id': line.project_id.id,
                 # For Tax
                 'taxbranch_id': line.taxbranch_id.id,
+                # Charge type
+                'charge_type': self.charge_type or 'expense'  # Default to exp
             }
             move_line = AccountMoveLine.with_context(ctx).create(vals)
             line.ref_move_line_id = move_line
