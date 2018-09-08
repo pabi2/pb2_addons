@@ -89,6 +89,28 @@ class AccountTaxReport(models.Model):
     )
 
     def _select(self):
+        # res = """
+        #     doc_type, atd.id, atd.period_id, am.id as move_id,
+        #     am.write_uid as write_uid,
+        #     am.name as move_number, am.ref as move_ref,
+        #     to_char(ap.date_start, 'YYYY') as "year",
+        #     to_char(ap.date_start, 'MM') as "month",
+        #     report_period_id, tax_sequence, tax_id, tax_sequence_display,
+        #     invoice_date, invoice_number, atd.partner_id,
+        #     case when cancel is true then ''
+        #         else rp.name end as partner_name,
+        #     case when cancel is true then ''
+        #         else rpt.name end as partner_title,
+        #     case when cancel is true then ''
+        #         else rp.vat end as vat,
+        #     case when cancel is true then ''
+        #         else rp.taxbranch end as taxbranch,
+        #     case when cancel is true then 0.0
+        #         else base_company end as base,
+        #     case when cancel is true then 0.0
+        #         else amount_company end as amount,
+        #     atd.taxbranch_id, number_preprint
+        # """
         res = """
             doc_type, atd.id, atd.period_id, am.id as move_id,
             am.write_uid as write_uid,
@@ -97,18 +119,12 @@ class AccountTaxReport(models.Model):
             to_char(ap.date_start, 'MM') as "month",
             report_period_id, tax_sequence, tax_id, tax_sequence_display,
             invoice_date, invoice_number, atd.partner_id,
-            case when cancel is true then ''
-                else rp.name end as partner_name,
-            case when cancel is true then ''
-                else rpt.name end as partner_title,
-            case when cancel is true then ''
-                else rp.vat end as vat,
-            case when cancel is true then ''
-                else rp.taxbranch end as taxbranch,
-            case when cancel is true then 0.0
-                else base_company end as base,
-            case when cancel is true then 0.0
-                else amount_company end as amount,
+            rp.name as partner_name,
+            rpt.name as partner_title,
+            rp.vat as vat,
+            rp.taxbranch as taxbranch,
+            base_company as base,
+            amount_company as amount,
             atd.taxbranch_id, number_preprint
         """
         return res
