@@ -46,5 +46,20 @@ context.update({'bypass_due_date_check': True})
 self.action_po_to_invoice(cr, uid, context.get('active_ids', []), context=context)
             </field>
         </record>
+
+        # Budget Control Sync My Project
+        <record id="action_project_budget_sync_myproject" model="ir.actions.server">
+            <field name="name">Sync Budget with myProject Plan + Set Controlled</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="account_budget_activity.model_account_budget" />
+            <field name="state">code</field>
+            <field name="code">
+self.sync_budget_my_project(cr, uid, context.get('active_ids', []), context=context)
+self.budget_done(cr, uid, context.get('active_ids', []), context=context)
+            </field>
+        </record>
+
+
     </data>
 </openerp>
