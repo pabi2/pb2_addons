@@ -69,7 +69,7 @@ class AccountInvoiceTax(models.Model):
 
     @api.model
     def _prepare_invoice_tax_detail(self):
-        currency = self.invoice_id.journal_id.currency
+        currency = self.invoice_id.currency_id
         ttype = self.invoice_id.type
         doc_type = \
             ttype in ('out_invoice', 'out_refund') and 'sale' or 'purchase'
