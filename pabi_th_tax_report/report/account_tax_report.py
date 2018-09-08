@@ -139,6 +139,6 @@ class AccountTaxReport(models.Model):
             left outer join account_period ap on atd.period_id = ap.id
             left outer join account_move am on am.id = atd.ref_move_id
             where report_period_id is not null
-            order by year, month, tax_sequence
+            order by year, month, tax_sequence, id
         )""" % (self._table, self._select(), )
         )
