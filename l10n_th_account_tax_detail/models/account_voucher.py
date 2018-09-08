@@ -57,7 +57,8 @@ class AccountVoucherTax(models.Model):
 
     @api.model
     def _prepare_voucher_tax_detail(self):
-        currency = self.voucher_id.journal_id.currency
+        currency = self.voucher_id.journal_id.currency or \
+                self.env.user.company_id.currency_id
         ttype = self.voucher_id.type
         doc_type = ttype == 'receipt' and 'sale' or 'purchase'
         return {'doc_type': doc_type,
