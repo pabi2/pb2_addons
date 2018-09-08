@@ -30,6 +30,7 @@
         "account_invoice_create_payment",
         "purchase_split_quote2order",
         "account_pettycash",
+        "account_cancel_reversal",
     ],
     "data": [
         "data/default_value.xml",
