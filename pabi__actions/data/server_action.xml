@@ -55,7 +55,8 @@ self.action_po_to_invoice(cr, uid, context.get('active_ids', []), context=contex
             <field name="model_id" ref="account_budget_activity.model_account_budget" />
             <field name="state">code</field>
             <field name="code">
-self.sync_budget_my_project(cr, uid, context.get('active_ids', []), context=context)
+for active_id in context.get('active_ids', []):
+  self.sync_budget_my_project(cr, uid, [active_id], context=context)
 self.budget_done(cr, uid, context.get('active_ids', []), context=context)
             </field>
         </record>
