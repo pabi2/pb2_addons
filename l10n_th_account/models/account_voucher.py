@@ -163,7 +163,8 @@ class AccountVoucher(CommonVoucher, models.Model):
     def cancel_voucher(self):
         for voucher in self:
             if voucher.type == 'payment' and not voucher.auto_recognize_vat:
-                if voucher.recognize_vat_move_id:
+                if voucher.recognize_vat_move_id and \
+                        not voucher.recognize_vat_move_id.reversal_id:
                     raise ValidationError(
                         _('To Unreconcile this payment, you must reverse '
                           'the Recognized VAT Entry first.'))
