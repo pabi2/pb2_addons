@@ -605,6 +605,9 @@ class AccountBudget(models.Model):
                      budget_level, budget_level_res_id, amount
                      # ext_field=False, ext_res_id=False,
                      ):
+        _logger.info('check_budget(), input: [%s, %s, %s, %s, %s]' %
+                     (fiscal_id, budget_type,  budget_level,
+                      budget_level_res_id, amount))
         """ Amount must be in company currency only
         If amount = 0.0, will check current balance from monitor report """
         res = {  # current balance, and result after new amount is applied!
@@ -671,6 +674,7 @@ class AccountBudget(models.Model):
         if not is_monitor and not blevel.is_budget_control:
             res['budget_ok'] = True
             res['force_no_budget_check'] = True
+            _logger.info('check_budget(), output: %s' % res)
             return res
         # Validation
         if not is_monitor:  # No plan
@@ -678,6 +682,7 @@ class AccountBudget(models.Model):
             res['message'] = _('%s\n'
                                '[%s] No active budget control.') % \
                 (fiscal.name, resource.display_name)
+            _logger.info('check_budget(), output: %s' % res)
             return res
         else:  # Current Budget Status (Performance Tested, faster then SQL)
             res['budget_status'].update(monitor_dict)
@@ -705,6 +710,7 @@ class AccountBudget(models.Model):
                 not blevel.is_budget_control:
             res['budget_ok'] = True  # No control, just return information
             res['force_no_budget_check'] = True
+        _logger.info('check_budget(), output: %s' % res)
         return res
 
 
