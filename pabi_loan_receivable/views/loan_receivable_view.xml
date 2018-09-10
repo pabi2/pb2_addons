@@ -223,6 +223,19 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="view_loan_customer_agreement_search">
+            <field name="name">view.loan.customer.agreement.search</field>
+            <field name="model">loan.customer.agreement</field>
+            <field name="arch" type="xml">
+                <search>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                        <filter name="group_by_bank_id" string="Bank" context="{'group_by': 'bank_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
         <record id="action_loan_customer_agreement" model="ir.actions.act_window">
             <field name="name">Loan Agreement</field>
             <field name="res_model">loan.customer.agreement</field>
