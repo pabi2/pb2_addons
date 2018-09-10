@@ -457,10 +457,11 @@ class StockMove(models.Model):
         BudgetTrans = self.env['budget.transition'].sudo()
         # For done moves, create transition and return budget same time
         # Peformance Tuning
-        # moves = self.filtered(lambda l: l.state == 'done' and
-        #                       l.product_id.valuation == 'real_time')
-        moves = self.search([('id', 'in', self.ids), ('state', '=', 'done'),
-                             ('product_id.valuation', '=', 'real_time')])
+        moves = self.filtered(lambda l: l.state == 'done' and
+                              l.product_id.valuation == 'real_time')
+        # Following is very slow... not necessary serach will be fast
+        # moves = self.search([('id', 'in', self.ids), ('state', '=', 'done'),
+        #                      ('product_id.valuation', '=', 'real_time')])
         if not moves:
             return
         for move in moves:
