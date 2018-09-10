@@ -114,7 +114,7 @@ class BudgetMonitorReport(models.Model):
 
     def _get_sql_view(self):
         sql_view = """
-            select row_number() over (order by period_id) as id,
+            select row_number() over (order by %s) as id,
             analytic_line_id, budget_commit_type,
             budget_method, user_id, charge_type, fiscalyear_id,
             -----> doc_ref, doc_id,
@@ -155,6 +155,7 @@ class BudgetMonitorReport(models.Model):
             left outer join product_activity pa2
             on pa2.temp_product_id = a.product_id
         """ % (self._get_dimension(),
+               self._get_dimension(),
                self._get_dimension(),
                self._get_dimension(),
                )
