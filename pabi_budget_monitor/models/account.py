@@ -52,6 +52,10 @@ class AccountMove(models.Model):
         Budget = self.env['account.budget']
         AnalyticLine = self.env['account.analytic.line']
         for move in self:
+            # For revenue, no budget check
+            if move.journal_id.analytic_journal_id.budget_method == 'revenue':
+                continue
+            # --
             analytic_lines = AnalyticLine.search([
                 ('move_id', 'in', move.line_id._ids)
             ])
