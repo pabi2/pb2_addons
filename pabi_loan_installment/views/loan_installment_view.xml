@@ -89,7 +89,8 @@
                             <field name="move_id" invisible="1"/>
                             <field name="force_close_move_id" invisible="1"/>
                             <button string="Journal Entries" class="oe_inline oe_stat_button" type="object" icon="fa-file-text-o" name="open_account_move" attrs="{'invisible': [('move_id', '=', False)]}"/>
-                            <button string="Payments" class="oe_inline oe_stat_button" name="action_open_payments" type="object" icon="fa-file-text-o" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                            <button string="Payments" class="oe_inline oe_stat_button" name="action_open_payments" type="object" icon="fa-file-text-o" attrs="{'invisible': [('move_id', '=', False)]}"
+                              context="{'set_voucher_no_create': True}"/>
                             <button string="Forced Closed" class="oe_inline oe_stat_button" name="open_force_close_move" type="object" icon="fa-file-text" attrs="{'invisible': [('force_close_move_id', '=', False)]}"/>
                         </div>
                         <group>
