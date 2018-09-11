@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Order Line -->
+        <record id="action_sale_order_line_tree" model="ir.actions.act_window">
+            <field name="name">Sale Order Line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <menuitem
+            action="action_sale_order_line_tree"
+            id="menu_sale_order_line"
+            parent="base.menu_sales"
+            sequence="10"/>
+
+        <!-- Invoice Plan -->
+        <record id="view_sale_invoice_plan_tree" model="ir.ui.view">
+            <field name="name">view.sale.invoice.plan.tree</field>
+            <field name="model">sale.invoice.plan</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="sequence"/>
+                    <field name="order_id"/>
+                    <field name="order_line_id"/>
+                    <field name="installment"/>
+                    <field name="date_invoice"/>
+                    <field name="invoice_amount"/>
+                    <field name="invoice_percent"/>
+                    <field name="subtotal"/>
+                    <field name="ref_invoice_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_sale_invoice_plan_search" model="ir.ui.view">
+            <field name="name">view.sale.invoice.plan.search</field>
+            <field name="model">sale.invoice.plan</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="order_id"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_order_id" string="Order Reference" context="{'group_by':'order_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_sale_invoice_plan_tree" model="ir.actions.act_window">
+            <field name="name">Sale Invoice Plan</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.invoice.plan</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <menuitem
+            action="action_sale_invoice_plan_tree"
+            id="menu_sale_invoice_plan"
+            parent="base.menu_sales"
+            sequence="20"/>
+    </data>
+</openerp>
