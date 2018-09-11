@@ -173,7 +173,7 @@
                 </xpath> -->
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//button[@name='compute_depreciation_board']" position="after">
                     <button type="object" name="open_depreciation_lines" string="View Depreciation Lines"
-                      icon="terp-check"
+                      icon="terp-check" class="oe_right"
                       colspan="2" attrs="{'invisible':[('depreciation_line_ids', '=', [])]}"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='line_date']" position="before">

@@ -59,7 +59,6 @@ class HRSalaryExpense(PabiAsync, models.Model):
             # Checking for running task, use the same signature as delay()
             task_name = "%s('%s', %s)" % \
                 ('action_open_hr_salary', self._name, self.id)
-            self._check_queue(task_name, desc=description,
-                              type='always', uuid=uuid)
+            self._check_queue(task_name, desc=description, type='always')
         else:
             return super(HRSalaryExpense, self).action_open()

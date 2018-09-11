@@ -26,6 +26,8 @@
         'action_open_hr_salary/pabi_process.xml',
         'action_generate_budget_plans/generate_budget_plan_wizard.xml',
         'action_generate_budget_plans/pabi_process.xml',
+        'action_asset_depre_line/asset_view.xml',
+        'action_asset_depre_line/pabi_process.xml',
         # Using pabi.asset class as guideline
         'pabi_action_generate_entries/pabi_action_generate_entries.xml',
         'pabi_action_generate_entries/pabi_process.xml',

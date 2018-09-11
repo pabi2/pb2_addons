@@ -117,11 +117,13 @@ class PurchaseOrder(models.Model):
                 Transfer = self.env['stock.transfer_details']
                 transfer = Transfer.browse(res['res_id'])
                 res = transfer.do_detailed_transfer()
-                # Create invoice
-                StockInvoice = self.env['stock.invoice.onshipping']
-                ctx = {'active_ids': [picking.id]}
-                stock_invoice = StockInvoice.with_context(ctx).create({})
-                stock_invoice.open_invoice()
+
+                # # Create invoice
+                # StockInvoice = self.env['stock.invoice.onshipping']
+                # ctx = {'active_ids': [picking.id]}
+                # stock_invoice = StockInvoice.with_context(ctx).create({})
+                # stock_invoice.open_invoice()
+
             else:  # No IN, create invoice from WA
                 WA = self.env['purchase.work.acceptance']
                 LineInvoice = self.env['purchase.order.line_invoice']
@@ -131,9 +133,11 @@ class PurchaseOrder(models.Model):
                 res['context'].update(ctx)
                 line_inv = LineInvoice.with_context(res['context']).create({})
                 line_inv.makeInvoices()
-            # Create Billing
-            Billing = self.env['purchase.billing']
-            billing = Billing.create({'partner_id': po.partner_id.id})
-            billing._onchange_partner_id()
-            billing.supplier_invoice_ids = po.invoice_ids
-            billing.validate_billing()
+
+            # # Create Billing
+            # Billing = self.env['purchase.billing']
+            # billing = Billing.create({'partner_id': po.partner_id.id})
+            # billing._onchange_partner_id()
+            # billing.supplier_invoice_ids = po.invoice_ids
+            # billing.validate_billing()
+        return True
