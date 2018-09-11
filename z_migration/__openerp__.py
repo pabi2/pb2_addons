@@ -18,8 +18,10 @@
         'pabi_budget_plan',
         'pabi_purchase_billing',
         'pabi_invest_construction',
+        'pabi_sale_invoice_plan',
     ],
     "data": [
         'views/purchase_view.xml',
+        'views/sale_view.xml',
     ]
 }
