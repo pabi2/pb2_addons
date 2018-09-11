@@ -11,8 +11,11 @@
             <field name="arch" type="xml">
                 <search string="Search Bank Loan MOU">
                     <field name="name"/>
+                    <field name="bank_id"/>
+                    <field name="partner_id"/>
                     <group expand="0" string="Group By...">
                         <filter string="Bank" domain="[]" context="{'group_by':'bank_id'}"/>
+                        <filter string="Supplier (bank)" domain="[]" context="{'group_by':'partner_id'}"/>
                     </group>
                 </search>
             </field>
@@ -24,6 +27,7 @@
             <field name="arch" type="xml">
                 <tree string="Bank Loan MOU">
                     <field name="name"/>
+                    <field name="partner_id"/>
                     <field name="bank_id"/>
                     <field name="max_installment"/>
                     <field name="loan_ratio"/>
@@ -49,7 +53,7 @@
                             </div>
                         </group>
                         <group>
-                            <field name="product_id"/>
+                            <field name="product_id" readonly="1"/>
                             <field name="max_installment"/>
                             <field name="loan_ratio"/>
                         </group>

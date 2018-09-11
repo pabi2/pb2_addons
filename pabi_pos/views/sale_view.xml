@@ -4,7 +4,6 @@
 
         <menuitem id="menu_pos_root" parent="base.menu_base_partner" name="POS" sequence="2" />
 
-
         <record id="view_sales_order_filter" model="ir.ui.view">
             <field name="name">sale.order.list.select</field>
             <field name="model">sale.order</field>
@@ -13,6 +12,17 @@
                 <xpath expr="//filter[@string='Customer']" position="after">
                     <filter string="Workflow" domain="[]" context="{'group_by':'workflow_process_id'}"/>
                 </xpath>
+            </field>
+        </record>
+
+        <record id="sale_order_view_form" model="ir.ui.view">
+            <field name="name">sale_automatic_workflow.sale_order.view_form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_automatic_workflow.sale_order_view_form" />
+            <field name="arch" type="xml">
+                <page name="automation_information" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </page>
             </field>
         </record>
 
