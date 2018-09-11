@@ -2,12 +2,33 @@
 <openerp>
     <data>
         <!-- Order Line -->
+        <record id="view_order_line_tree" model="ir.ui.view">
+            <field name="name">sale.order.line.tree</field>
+            <field name="model">sale.order.line</field>
+            <field name="priority">2000</field>
+            <field name="arch" type="xml">
+                <tree string="Sales Order Lines">
+                    <field name="product_id"/>
+                    <field name="order_id"/>
+                    <field name="order_partner_id"/>
+                    <field name="name"/>
+                    <field name="product_uom_qty" string="Qty"/>
+                    <field name="product_uom" string="Unit of Measure"/>
+                    <field name="salesman_id"/>
+                    <field name="price_subtotal"/>
+                    <field name="state"/>
+                    <field name="invoiced"/>
+                </tree>
+            </field>
+        </record>
+
         <record id="action_sale_order_line_tree" model="ir.actions.act_window">
             <field name="name">Sale Order Line</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order.line</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_order_line_tree"/>
         </record>
         <menuitem
             action="action_sale_order_line_tree"
