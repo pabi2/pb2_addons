@@ -228,6 +228,11 @@
             <field name="model">loan.customer.agreement</field>
             <field name="arch" type="xml">
                 <search>
+                    <field name="name" string="Loan Agreement" filter_domain="[('name','ilike',self)]"/>
+                    <separator/>
+                    <field name="mou_id"/>
+                    <field name="bank_id"/>
+                    <field name="partner_id"/>
                     <group expand="0" string="Group By">
                         <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
                         <filter name="group_by_bank_id" string="Bank" context="{'group_by': 'bank_id'}"/>
