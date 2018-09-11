@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
+from lxml import etree
 from openerp.exceptions import ValidationError
 
 
@@ -27,12 +28,12 @@ class AccountVoucher(models.Model):
             else:
                 insts = Plan.search([('loan_install_id', 'in', loan_ids),
                                      ('reconcile_id', '=', False)])
-            move_line_ids = insts.mapped('move_line_id').ids
+            move_lines = insts.mapped('move_line_id')
             line_cr_ids = filter(lambda l: isinstance(l, dict) and
-                                 l.get('move_line_id') in move_line_ids,
+                                 l.get('move_line_id') in move_lines.ids,
                                  line_cr_ids)
             line_dr_ids = filter(lambda l: isinstance(l, dict) and
-                                 l.get('move_line_id') in move_line_ids,
+                                 l.get('move_line_id') in move_lines.ids,
                                  line_dr_ids)
             res['value']['line_cr_ids'] = line_cr_ids
             res['value']['line_dr_ids'] = line_dr_ids
@@ -46,16 +47,16 @@ class AccountVoucher(models.Model):
                 activity = company.loan_income_activity_id
                 loans = Loan.browse(loan_ids)
                 loan_number = ', '.join(loans.mapped('name'))
-                res['value']['multiple_reconcile_ids'] = [
-                    {'account_id': defer_income_account.id,
-                     'amount': -income,
-                     'note': loan_number},
-                    {'activity_group_id': activity_group.id,
-                     'activity_id': activity.id,
-                     'account_id': income_account.id,
-                     'amount': income,
-                     'note': loan_number},
-                ]
+                line1 = {'account_id': defer_income_account.id,
+                         'amount': -income, 'note': loan_number}
+                line2 = {'activity_group_id': activity_group.id,
+                         'activity_id': activity.id,
+                         'account_id': income_account.id,
+                         'amount': income, 'note': loan_number}
+                costcenter = self._get_default_costcenter(loans)
+                line1.update(costcenter)
+                line2.update(costcenter)
+                res['value']['multiple_reconcile_ids'] = [line1, line2]
                 # Add write off OU
                 if not self.env.user.default_operating_unit_id.id:
                     raise ValidationError(
@@ -63,6 +64,29 @@ class AccountVoucher(models.Model):
                 res['value']['writeoff_operating_unit_id'] = \
                     self.env.user.default_operating_unit_id.id
         return res
+
+    @api.model
+    def _get_default_costcenter(self, loans):
+        """ Get default costcenter from DV """
+        costcenter = {}
+        receivable_ids = loans.mapped('receivable_ids').ids
+        if receivable_ids:
+            self._cr.execute("""
+                select distinct section_id, project_id,
+                    invest_asset_id, invest_construction_phase_id
+                from account_move_line
+                where move_id in (
+                    select move_id from account_move_line
+                    where id in %s)
+                and not (
+                    section_id is null and project_id is null and
+                    invest_asset_id is null and
+                    invest_construction_phase_id is null)
+            """, (tuple(receivable_ids), ))
+            result = self._cr.dictfetchall()
+            if len(result) == 1:
+                costcenter.update(result[0])
+        return costcenter
 
     @api.model
     def writeoff_move_line_get(self, voucher_id, line_total,
@@ -75,6 +99,17 @@ class AccountVoucher(models.Model):
         return super(AccountVoucher, self).writeoff_move_line_get(
             voucher_id, line_total, move_id, name,
             company_currency, current_currency)
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form',
+                        toolbar=False, submenu=False):
+        res = super(AccountVoucher, self).fields_view_get(
+            view_id, view_type, toolbar=toolbar, submenu=submenu)
+        if self._context.get('set_voucher_no_create', False):
+            root = etree.fromstring(res['arch'])
+            root.set('create', 'false')
+            res['arch'] = etree.tostring(root)
+        return res
 
 
 class AccountVoucherLine(models.Model):
