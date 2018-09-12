@@ -36,7 +36,6 @@ class IrSequence(models.Model):
         except Exception:
             raise
 
-
     @api.model
     def next_by_code(self, sequence_code):
         EXCEPTION = ('account.analytic.account', 'account.reconcile')
