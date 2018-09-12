@@ -40,13 +40,22 @@ class IrSequence(models.Model):
         try:
             return super(IrSequence, self)._next()
         except psycopg2.OperationalError:
-            retry = self._context.get('retry', 1)
-            if retry <= 3:
-                print '-------------> RETRY %s ' % retry
-                retry += 1
+            print '----------> 1'
+            try:
                 time.sleep(1)
-                return self.with_context(retry=retry)._next()
-            raise
+                return super(IrSequence, self)._next()
+            except psycopg2.OperationalError:
+                print '----------> 2'
+                try:
+                    time.sleep(2)
+                    return super(IrSequence, self)._next()
+                except psycopg2.OperationalError:
+                    print '----------> 3'
+                    try:
+                        time.sleep(3)
+                        return super(IrSequence, self)._next()
+                    except Exception:
+                        raise
         except Exception:
             raise
 
