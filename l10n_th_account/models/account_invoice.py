@@ -82,6 +82,7 @@ class AccountInvoice(models.Model):
                 print '--------RETRY--------> %s' % retry
                 retry += 1
                 time.sleep(1)
+                self.invalidate_cache()
                 return self.with_context(retry=retry).action_move_create()
             raise ValidationError(
                 _('Waiting to get document number.\n'
