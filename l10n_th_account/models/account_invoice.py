@@ -77,13 +77,15 @@ class AccountInvoice(models.Model):
             with self._cr.savepoint():
                 return super(AccountInvoice, self).action_move_create()
         except psycopg2.OperationalError:
+
+            self._cr.commit()
             # Let's retry 3 times, each to wait 1 seconds
-            retry = self._context.get('retry', 1)
-            if retry <= 1:
-                self._cr.commit()
-                # time.sleep(0.5)
-                retry += 1
-                return self.with_context(retry=retry).action_move_create()
+            # retry = self._context.get('retry', 1)
+            # if retry <= 1:
+            #     self._cr.commit()
+            #     # time.sleep(0.5)
+            #     retry += 1
+            #     return self.with_context(retry=retry).action_move_create()
             self._cr.rollback()
             raise ValidationError(
                 _('Waiting for next number, please try again!'))
