@@ -3,8 +3,14 @@
     <data>
         <!-- STYLE -->
         <template id="style">
+            .pabi-header, .pabi-page, .pabi-footer, .pabi-logo,  .pabi-title-header-th,
+            .pabi-title-header-en, .pabi-doc-type, .pabi-hidden, .pabi-table-doc-header,
+            .pabi-table-payment-type-header, .pabi-col-doc-header, .pabi-col-doc,
+            .pabi-text-header, .pabi-col-header, .pabi-col-detail, .pabi-col-footer {
+                line-height: 30px !important;
+            }
             .pabi-header, .pabi-page, .pabi-footer {
-                font-size: 16px !important;
+                font-size: 24px !important;
             }
             .pabi-logo {
                 position: absolute !important;
@@ -14,16 +20,16 @@
                 right: 0px !important;
             }
             .pabi-title-header-th {
-                font-size: 26px !important;
+                font-size: 34px !important;
             }
             .pabi-title-header-en {
-                font-size: 20px !important;
-                margin-bottom: 20px !important;
+                font-size: 28px !important;
+                margin-bottom: 10px !important;
             }
             .pabi-doc-type {
-                font-size: 40px !important;
+                font-size: 48px !important;
                 position: absolute !important;
-                bottom: -12px !important;
+                bottom: 5px !important;
             }
             .pabi-hidden {
                 visibility: hidden !important;
@@ -368,48 +374,50 @@
                     </div>
                     <div class="col-xs-5">
                         <span>Doc. Type: </span>
-                        <t t-if="o.doctype == 'out_invoice'">
-                            <strong class="pabi-doc-type">DV</strong>
-                        </t>
-                        <t t-if="o.doctype == 'in_invoice'">
-                            <t t-if="o.name[0:2] == 'TP'">
-                                <strong class="pabi-doc-type">TP</strong>
-                            </t>
-                            <t t-if="o.name[0:2] != 'TP'">
-                                <strong class="pabi-doc-type">KV</strong>
+                        <t t-set="doctype" t-value="''"/>
+                        <t t-if="o.name != '/'">
+                            <!-- If account move posted, doctype is prefix document -->
+                            <t t-set="doctype" t-value="o.name[0:3]"/>
+                            <t t-if="doctype[-1] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '/', '.', '-']">
+                                <t t-set="doctype" t-value="doctype[0:2]"/>
                             </t>
                         </t>
-                        <t t-if="o.doctype == 'out_refund'">
-                            <strong class="pabi-doc-type">CN</strong>
-                        </t>
-                        <t t-if="o.doctype == 'in_refund'">
-                            <strong class="pabi-doc-type">SN</strong>
-                        </t>
-                        <t t-if="o.doctype == 'payment'">
-                            <t t-if="o.name[0:2] == 'TT'">
-                                <strong class="pabi-doc-type">TT</strong>
+                        <t t-if="o.name == '/'">
+                            <!-- If account move not posted, doctype will be default -->
+                            <t t-if="o.doctype == 'out_invoice'">
+                                <t t-set="doctype" t-value="'DV'"/>
                             </t>
-                            <t t-if="o.name[0:2] != 'TT'">
-                                <strong class="pabi-doc-type">PV</strong>
+                            <t t-if="o.doctype == 'in_invoice'">
+                                <t t-set="doctype" t-value="'KV'"/>
+                            </t>
+                            <t t-if="o.doctype == 'out_refund'">
+                                <t t-set="doctype" t-value="'CN'"/>
+                            </t>
+                            <t t-if="o.doctype == 'in_refund'">
+                                <t t-set="doctype" t-value="'SN'"/>
+                            </t>
+                            <t t-if="o.doctype == 'payment'">
+                                <t t-set="doctype" t-value="'PV'"/>
+                            </t>
+                            <t t-if="o.doctype == 'receipt'">
+                                <t t-set="doctype" t-value="'RC'"/>
+                            </t>
+                            <t t-if="o.doctype == 'adjustment'">
+                                <t t-if="o.journal_id and o.journal_id.code == 'AJB'">
+                                    <t t-set="doctype" t-value="'JV'"/>
+                                </t>
+                                <t t-if="not o.journal_id or (o.journal_id and o.journal_id.code != 'AJB')">
+                                    <t t-set="doctype" t-value="'JN'"/>
+                                </t>
+                            </t>
+                            <t t-if="o.doctype in ['bank_receipt']">
+                                <t t-set="doctype" t-value="'RV'"/>
+                            </t>
+                            <t t-if="o.doctype in ['salary_expense']">
+                                <t t-set="doctype" t-value="'SL'"/>
                             </t>
                         </t>
-                        <t t-if="o.doctype == 'receipt'">
-                            <strong class="pabi-doc-type">RC</strong>
-                        </t>
-                        <t t-if="o.doctype == 'adjustment'">
-                            <t t-if="o.journal_id and o.journal_id.code == 'AJB'">
-                                <strong class="pabi-doc-type">JV</strong>
-                            </t>
-                            <t t-if="not o.journal_id or (o.journal_id and o.journal_id.code != 'AJB')">
-                                <strong class="pabi-doc-type">JN</strong>
-                            </t>
-                        </t>
-                        <t t-if="o.doctype in ['bank_receipt']">
-                            <strong class="pabi-doc-type">RV</strong>
-                        </t>
-                        <t t-if="o.doctype in ['salary_expense']">
-                            <strong class="pabi-doc-type">SL</strong>
-                        </t>
+                        <strong class="pabi-doc-type" t-esc="doctype"/>
                     </div>
                 </div>
                 <div class="row">
