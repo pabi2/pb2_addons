@@ -2,6 +2,7 @@
 import psycopg2
 import time
 from openerp import models, fields, api, _
+from openerp import sql_db
 from openerp.exceptions import ValidationError
 
 
@@ -39,7 +40,8 @@ class IrSequence(models.Model):
     @api.multi
     def _next(self):
         try:
-            with self._cr.savepoint():
+            new_cr = sql_db.db_connect(self.env.cr.dbname).cursor()
+            with new_cr.savepoint():
                 return super(IrSequence, self)._next()
         except psycopg2.OperationalError:
             # Let's retry 3 times, each to wait 1 seconds
@@ -47,7 +49,7 @@ class IrSequence(models.Model):
             if retry <= 5:
                 time.sleep(0.5)
                 retry += 1
-                self._cr.rollback()
+                new_cr.commit()
                 return self.with_context(retry=retry)._next()
             raise ValidationError(
                 _('Waiting for next number, please try again!'))
