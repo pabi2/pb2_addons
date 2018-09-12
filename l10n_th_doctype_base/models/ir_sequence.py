@@ -25,6 +25,14 @@ class IrSequence(models.Model):
     @api.model
     def next_by_id(self, sequence_id):
         number = self.next_by_doctype()
+        try:
+            return number or super(IrSequence, self).next_by_id(sequence_id)
+        except psycopg2.OperationalError:
+            pass
+        except Exception:
+            raise
+        print '--------------> 1'
+        time.sleep(3)
         return number or super(IrSequence, self).next_by_id(sequence_id)
 
     @api.model
@@ -34,20 +42,6 @@ class IrSequence(models.Model):
             return super(IrSequence, self).next_by_code(sequence_code)
         number = self.next_by_doctype()
         return number or super(IrSequence, self).next_by_code(sequence_code)
-
-    @api.multi
-    def _next(self):
-        try:
-            return super(IrSequence, self)._next()
-        except psycopg2.OperationalError:
-            pass
-        except Exception:
-            raise
-        print '-----------------> DO AGAIN'
-        time.sleep(3)
-        self._cr.commit()
-        self.invalidate_cache()
-        return super(IrSequence, self)._next()
 
 
 class IrSequenceFiscalyear(models.Model):
