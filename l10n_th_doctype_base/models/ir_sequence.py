@@ -40,9 +40,18 @@ class IrSequence(models.Model):
     def _next(self):
         try:
             # with self._cr.savepoint():
-            self.invalidate_cache()
             return super(IrSequence, self)._next()
+        except ValueError:
+            retry = self._context.get('retry', 1)
+            if retry <= 5:
+                time.sleep(0.5)
+                retry += 1
+                # self._cr.commit()
+                return self.with_context(retry=retry)._next()
         except psycopg2.OperationalError:
+            # kittiu: Still not works, savepoint and commit will cause
+            # account.move created without rollback, even when exception
+            # --
             # Let's retry 3 times, each to wait 0.5 seconds
             retry = self._context.get('retry', 1)
             if retry <= 5:
@@ -51,7 +60,7 @@ class IrSequence(models.Model):
                 # self._cr.commit()
                 return self.with_context(retry=retry)._next()
             raise ValidationError(
-                _('Waiting for next number, please try again!'))
+                _('Waiting for next number, please try again later!'))
         except Exception:
             raise
 
