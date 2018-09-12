@@ -24,7 +24,7 @@ class AccountInvoice(models.Model):
     @api.multi
     def signal_workflow(self, trigger):
         try:
-            # with self._cr.savepoint():
+            #  This part should not exists (but we need to avoid error)
             for inv in self:
                 if not inv.date_invoice:
                     inv.date_invoice = fields.Date.context_today(self)
@@ -33,7 +33,7 @@ class AccountInvoice(models.Model):
             # Let's retry 3 times, each to wait 0.5 seconds
             retry = self._context.get('retry', 1)
             if retry <= 5:
-                time.sleep(0.5)
+                # time.sleep(0.5)
                 retry += 1
                 self._cr.rollback()
                 return self.with_context(retry=retry).signal_workflow(trigger)
