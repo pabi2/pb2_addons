@@ -79,7 +79,7 @@ class AccountInvoice(models.Model):
             self._cr.rollback()
             # Let's retry 3 times, each to wait 1 seconds
             retry = self._context.get('retry', 1)
-            if retry <= 1:
+            if retry <= 5:
                 # self._cr.commit()
                 time.sleep(0.5)
                 retry += 1
