@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import psycopg2
 import time
-from openerp import models, api, _
+from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 
 
@@ -25,6 +25,9 @@ class AccountInvoice(models.Model):
     def signal_workflow(self, trigger):
         try:
             # with self._cr.savepoint():
+            for inv in self:
+                if not inv.date_invoice:
+                    inv.date_invoice = fields.Date.context_today(self)
             return super(AccountInvoice, self).signal_workflow(trigger)
         except psycopg2.OperationalError:
             # Let's retry 3 times, each to wait 0.5 seconds
