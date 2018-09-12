@@ -229,12 +229,12 @@ class ResPartner(models.Model):
     def create_update_partner(self, vals):
         _logger.info('create_update_partner(), input: %s' % vals)
         # Find township_id, district_id, province_id hierarchy
-        self._set_province_district_township(vals)
         # No search key, do create, else try to update.
         if not vals.get('search_key', False):
             return self.create_partner(vals)
         try:  # Update
             WS = self.env['pabi.utils.ws']
+            self._set_province_district_township(vals)
             res = WS.friendly_update_data(self._name, vals, 'search_key')
             if res['is_success']:
                 res_id = res['result']['id']
@@ -257,6 +257,7 @@ class ResPartner(models.Model):
         province = vals.get('province_id', False)
         district = vals.get('district_id', False)
         township = vals.get('township_id', False)
+        print province
         # Find Province
         if province:
             Province = self.env['res.country.province']
