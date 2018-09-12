@@ -257,7 +257,6 @@ class ResPartner(models.Model):
         province = vals.get('province_id', False)
         district = vals.get('district_id', False)
         township = vals.get('township_id', False)
-        print province
         # Find Province
         if province:
             Province = self.env['res.country.province']
