@@ -25,8 +25,9 @@ class IrSequence(models.Model):
     @api.model
     def next_by_id(self, sequence_id):
         try:
-            number = self.next_by_doctype()
-            return number or super(IrSequence, self).next_by_id(sequence_id)
+            with self._cr.savepoint():
+                number = self.next_by_doctype()
+                return number or super(IrSequence, self).next_by_id(sequence_id)
         except psycopg2.OperationalError:
             retry = self._context.get('retry', 1)
             if retry <= 3:
