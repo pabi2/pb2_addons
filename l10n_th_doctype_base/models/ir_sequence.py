@@ -24,16 +24,18 @@ class IrSequence(models.Model):
 
     @api.model
     def next_by_id(self, sequence_id):
-        number = self.next_by_doctype()
         try:
+            number = self.next_by_doctype()
             return number or super(IrSequence, self).next_by_id(sequence_id)
         except psycopg2.OperationalError:
-            pass
+            retry = self._context.get('retry', 1)
+            if retry <= 3:
+                retry += 1
+                time.sleep(1)
+                return self.with_context(retry=retry).next_by_id(sequence_id)
         except Exception:
             raise
-        print '--------------> 1'
-        time.sleep(3)
-        return number or super(IrSequence, self).next_by_id(sequence_id)
+
 
     @api.model
     def next_by_code(self, sequence_code):
