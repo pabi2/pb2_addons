@@ -39,8 +39,8 @@ class IrSequence(models.Model):
     @api.multi
     def _next(self):
         try:
-            with self._cr.savepoint():
-                return super(IrSequence, self)._next()
+            # with self._cr.savepoint():
+            return super(IrSequence, self)._next()
         except psycopg2.OperationalError:
             # Let's retry 3 times, each to wait 1 seconds
             retry = self._context.get('retry', 1)
