@@ -79,9 +79,9 @@ class AccountInvoice(models.Model):
         except psycopg2.OperationalError:
             # Let's retry 3 times, each to wait 1 seconds
             retry = self._context.get('retry', 1)
-            if retry <= 1:
+            if retry <= 5:
                 self._cr.rollback()
-                # time.sleep(0.5)
+                time.sleep(0.2)
                 retry += 1
                 return self.with_context(retry=retry).action_move_create()
             raise ValidationError(
