@@ -123,18 +123,6 @@ class AccountVoucher(CommonVoucher, models.Model):
         }
         return result
 
-    @api.multi
-    def proforma_voucher(self):
-        """ Check for multiple client access at the same time """
-        try:
-            return super(AccountVoucher, self).proforma_voucher()
-        except psycopg2.OperationalError:
-            raise ValidationError(
-                _('Waiting to get document number.\n'
-                  'Please try again!'))
-        except Exception:
-            raise
-
     @api.model
     def _calc_writeoff_amount(self, voucher):
         debit, credit = 0.0, 0.0
