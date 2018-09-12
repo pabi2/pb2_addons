@@ -71,23 +71,23 @@ class AccountInvoice(models.Model):
             res['context']['default_amount'] = 0.0
         return res
 
-    @api.multi
-    def action_move_create(self):
-        try:
-            return super(AccountInvoice, self).action_move_create()
-        except psycopg2.OperationalError:
-            self._cr.rollback()
-            # Let's retry 3 times, each to wait 1 seconds
-            retry = self._context.get('retry', 1)
-            if retry <= 5:
-                # self._cr.commit()
-                time.sleep(0.5)
-                retry += 1
-                return self.with_context(retry=retry).action_move_create()
-            raise ValidationError(
-                _('Waiting for next number, please try again!'))
-        except Exception:
-            raise
+    # @api.multi
+    # def action_move_create(self):
+    #     try:
+    #         return super(AccountInvoice, self).action_move_create()
+    #     except psycopg2.OperationalError:
+    #         self._cr.rollback()
+    #         # Let's retry 3 times, each to wait 1 seconds
+    #         retry = self._context.get('retry', 1)
+    #         if retry <= 5:
+    #             # self._cr.commit()
+    #             time.sleep(0.5)
+    #             retry += 1
+    #             return self.with_context(retry=retry).action_move_create()
+    #         raise ValidationError(
+    #             _('Waiting for next number, please try again!'))
+    #     except Exception:
+    #         raise
 
 
 class AccountInvoiceLine(models.Model):
