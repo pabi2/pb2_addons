@@ -39,22 +39,25 @@ class IrSequence(models.Model):
 
     @api.multi
     def _next(self):
-        try:
-            new_cr = sql_db.db_connect(self.env.cr.dbname).cursor()
-            with new_cr.savepoint():
-                return super(IrSequence, self)._next()
-        except psycopg2.OperationalError:
-            # Let's retry 3 times, each to wait 1 seconds
-            retry = self._context.get('retry', 1)
-            if retry <= 5:
-                time.sleep(0.5)
-                retry += 1
-                new_cr.commit()
-                return self.with_context(retry=retry)._next()
-            raise ValidationError(
-                _('Waiting for next number, please try again!'))
-        except Exception:
-            raise
+        with api.Environment.manage():
+            new_cr = self.pool.cursor()
+            self = self.with_env(self.env(cr=new_cr))
+            try:
+                with self._cr.savepoint():
+                    return super(IrSequence, self)._next()
+            except psycopg2.OperationalError:
+                self._cr.rollback()
+                self._cr.close()
+                # Let's retry 3 times, each to wait 1 seconds
+                retry = self._context.get('retry', 1)
+                if retry <= 5:
+                    time.sleep(0.5)
+                    retry += 1
+                    return self.with_context(retry=retry)._next()
+                raise ValidationError(
+                    _('Waiting for next number, please try again!'))
+            except Exception:
+                raise
 
 
 class IrSequenceFiscalyear(models.Model):
