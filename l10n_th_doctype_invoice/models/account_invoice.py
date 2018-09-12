@@ -24,8 +24,8 @@ class AccountInvoice(models.Model):
     @api.multi
     def signal_workflow(self, trigger):
         try:
-            with self._cr.savepoint():
-                return super(AccountInvoice, self).signal_workflow(trigger)
+            # with self._cr.savepoint():
+            return super(AccountInvoice, self).signal_workflow(trigger)
         except psycopg2.OperationalError:
             # Let's retry 3 times, each to wait 0.5 seconds
             retry = self._context.get('retry', 1)
