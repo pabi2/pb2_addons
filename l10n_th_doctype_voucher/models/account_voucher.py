@@ -29,7 +29,7 @@ class AccountVoucher(models.Model):
             # Let's retry 3 times, each to wait 0.5 seconds
             retry = self._context.get('retry', 1)
             if retry <= 5:
-                # time.sleep(0.5)
+                time.sleep(0.5)
                 retry += 1
                 self._cr.rollback()
                 return self.with_context(retry=retry).signal_workflow(trigger)
