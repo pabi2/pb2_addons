@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import psycopg2
+import time
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 
@@ -41,12 +42,12 @@ class IrSequence(models.Model):
             return super(IrSequence, self)._next()
         except psycopg2.OperationalError:
             # Let's retry 3 times, each to wait 1 seconds
-            # retry = self._context.get('retry', 1)
-            # if retry <= 5:
-            #     time.sleep(0.5)
-            #     retry += 1
-            #     self._cr.commit()
-            #     return self.with_context(retry=retry)._next()
+            retry = self._context.get('retry', 1)
+            if retry <= 5:
+                time.sleep(0.5)
+                retry += 1
+                self._cr.close()
+                return self.with_context(retry=retry)._next()
             raise ValidationError(
                 _('Waiting for next number, please try again!'))
         except Exception:
