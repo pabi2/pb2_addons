@@ -20,3 +20,6 @@ Project Connstruction
 Project Construction Phase
 - Submit >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/project_construction/project_construction_phase_act_submit.py
 - Approve >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/project_construction/project_construction_phase_act_approve.py
+Loan Agreement
+- Sign Document >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/loan_agreement/loan_agreement_act_sign_document.py
+- Create Installment Order >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/loan_agreement/loan_agreement_act_create_installment_order.py
