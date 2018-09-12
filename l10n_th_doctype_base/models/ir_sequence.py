@@ -40,30 +40,12 @@ class IrSequence(models.Model):
         try:
             return super(IrSequence, self)._next()
         except psycopg2.OperationalError:
-            print '----------> 1'
-            try:
-                time.sleep(3)
-                self.invalidate_cache()
-                res = super(IrSequence, self)._next()
-                return res
-            except psycopg2.OperationalError:
-                print '----------> 2'
-                try:
-                    time.sleep(3)
-                    self.invalidate_cache()
-                    res = super(IrSequence, self)._next()
-                    return res
-                except psycopg2.OperationalError:
-                    print '----------> 3'
-                    try:
-                        time.sleep(3)
-                        self.invalidate_cache()
-                        res = super(IrSequence, self)._next()
-                        return res
-                    except Exception:
-                        raise
+            pass
         except Exception:
             raise
+        print '-----------------> DO AGAIN'
+        time.sleep(3)
+        return super(IrSequence, self)._next()
 
 
 class IrSequenceFiscalyear(models.Model):
