@@ -81,7 +81,7 @@ class AccountInvoice(models.Model):
             if retry <= 3:
                 print '--------RETRY--------> %s' % retry
                 retry += 1
-                time.sleep(1)
+                time.sleep(3)
                 self.invalidate_cache()
                 return self.with_context(retry=retry).action_move_create()
             raise ValidationError(
