@@ -46,7 +46,7 @@ class IrSequence(models.Model):
         print '-----------------> DO AGAIN'
         time.sleep(3)
         self._cr.commit()
-        self._cr.invalidate_cache()
+        self.invalidate_cache()
         return super(IrSequence, self)._next()
 
 
