@@ -27,11 +27,12 @@ class IrSequence(models.Model):
         try:
             with self._cr.savepoint():
                 number = self.next_by_doctype()
-                return number or super(IrSequence, self).next_by_id(sequence_id)
+                return number or \
+                    super(IrSequence, self).next_by_id(sequence_id)
         except psycopg2.OperationalError:
             retry = self._context.get('retry', 1)
             if retry <= 3:
-                self._cr.rollback()
+                self._cr.commit()
                 print '----------- RETRY %s' % retry
                 retry += 1
                 time.sleep(1)
