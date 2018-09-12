@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import psycopg2
-import time
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
@@ -73,17 +72,10 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def action_move_create(self):
-        """ Check for multiple client access at the same time, retry 3 time """
+        """ Check for multiple client access at the same time """
         try:
             return super(AccountInvoice, self).action_move_create()
         except psycopg2.OperationalError:
-            retry = self._context.get('retry', 1)
-            if retry <= 3:
-                print '--------RETRY--------> %s' % retry
-                retry += 1
-                time.sleep(3)
-                self.invalidate_cache()
-                return self.with_context(retry=retry).action_move_create()
             raise ValidationError(
                 _('Waiting to get document number.\n'
                   'Please try again!'))

@@ -125,15 +125,10 @@ class AccountVoucher(CommonVoucher, models.Model):
 
     @api.multi
     def proforma_voucher(self):
-        """ Check for multiple client access at the same time, retry 3 time """
+        """ Check for multiple client access at the same time """
         try:
             return super(AccountVoucher, self).proforma_voucher()
         except psycopg2.OperationalError:
-            retry = self._context.get('retry', 1)
-            if retry <= 3:
-                retry += 1
-                time.sleep(1)
-                return self.with_context(retry=retry).proforma_voucher()
             raise ValidationError(
                 _('Waiting to get document number.\n'
                   'Please try again!'))
