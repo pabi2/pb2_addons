@@ -50,7 +50,7 @@ class IrSequence(models.Model):
             if retry <= 5:
                 time.sleep(0.5)
                 retry += 1
-                self._cr.commit()
+                self._cr.execute("ROLLBACK TO SAVEPOINT %s" % savepoint)
                 return self.with_context(retry=retry)._next()
             self._cr.execute("RELEASE SAVEPOINT %s" % savepoint)
             raise ValidationError(
