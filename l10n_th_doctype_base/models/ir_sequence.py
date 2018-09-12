@@ -46,6 +46,7 @@ class IrSequence(models.Model):
             retry = self._context.get('retry', 1)
             if retry <= 5:
                 self._cr.commit()
+                self.invalidate_cache()
                 time.sleep(0.5)
                 retry += 1
                 return self.with_context(retry=retry)._next()
