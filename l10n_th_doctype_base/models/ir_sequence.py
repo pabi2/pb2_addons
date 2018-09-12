@@ -41,6 +41,7 @@ class IrSequence(models.Model):
         try:
             return super(IrSequence, self)._next()
         except psycopg2.OperationalError:
+            pass
             # Let's retry 3 times, each to wait 1 seconds
             retry = self._context.get('retry', 1)
             if retry <= 5:
