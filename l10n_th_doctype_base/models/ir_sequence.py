@@ -47,7 +47,7 @@ class IrSequence(models.Model):
                 if retry <= 5:
                     time.sleep(0.5)
                     retry += 1
-                    self._cr.commit()
+                    self._cr.rollback()
                     return self.with_context(retry=retry)._next()
             raise ValidationError(
                 _('Waiting for next number, please try again!'))
