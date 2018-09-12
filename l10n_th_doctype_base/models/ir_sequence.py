@@ -43,17 +43,20 @@ class IrSequence(models.Model):
             print '----------> 1'
             try:
                 time.sleep(1)
-                return super(IrSequence, self)._next()
+                res = super(IrSequence, self)._next()
+                return res
             except psycopg2.OperationalError:
                 print '----------> 2'
                 try:
                     time.sleep(2)
-                    return super(IrSequence, self)._next()
+                    res = super(IrSequence, self)._next()
+                    return res
                 except psycopg2.OperationalError:
                     print '----------> 3'
                     try:
                         time.sleep(3)
-                        return super(IrSequence, self)._next()
+                        res = super(IrSequence, self)._next()
+                        return res
                     except Exception:
                         raise
         except Exception:
