@@ -45,6 +45,7 @@ class IrSequence(models.Model):
             raise
         print '-----------------> DO AGAIN'
         time.sleep(3)
+        self._cr.commit()
         return super(IrSequence, self)._next()
 
 
