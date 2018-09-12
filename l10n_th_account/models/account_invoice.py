@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import time
 import psycopg2
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
@@ -69,6 +70,25 @@ class AccountInvoice(models.Model):
         if res:
             res['context']['default_amount'] = 0.0
         return res
+
+    @api.multi
+    def action_move_create(self):
+        try:
+            with self._cr.savepoint():
+                return super(AccountInvoice, self).action_move_create()
+        except psycopg2.OperationalError:
+            # Let's retry 3 times, each to wait 1 seconds
+            retry = self._context.get('retry', 1)
+            if retry <= 5:
+                self._cr.commit()
+                time.sleep(0.5)
+                retry += 1
+                return self.with_context(retry=retry).action_move_create()
+            self._cr.rollback()
+            raise ValidationError(
+                _('Waiting for next number, please try again!'))
+        except Exception:
+            raise
 
 
 class AccountInvoiceLine(models.Model):

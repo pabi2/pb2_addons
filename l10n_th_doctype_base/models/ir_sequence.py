@@ -36,26 +36,6 @@ class IrSequence(models.Model):
         number = self.next_by_doctype()
         return number or super(IrSequence, self).next_by_code(sequence_code)
 
-    @api.multi
-    def _next(self):
-        try:
-            # with self._cr.savepoint():
-            return super(IrSequence, self)._next()
-        except psycopg2.OperationalError:
-            # Let's retry 3 times, each to wait 1 seconds
-            retry = self._context.get('retry', 1)
-            if retry <= 5:
-                self._cr.commit()
-                self.invalidate_cache()
-                time.sleep(0.5)
-                retry += 1
-                return self.with_context(retry=retry)._next()
-            self._cr.rollback()
-            raise ValidationError(
-                _('Waiting for next number, please try again!'))
-        except Exception:
-            raise
-
 
 class IrSequenceFiscalyear(models.Model):
     _inherit = 'account.sequence.fiscalyear'
