@@ -42,19 +42,22 @@ class IrSequence(models.Model):
         except psycopg2.OperationalError:
             print '----------> 1'
             try:
-                time.sleep(10)
+                self._cr.commit()
+                time.sleep(3)
                 res = super(IrSequence, self)._next()
                 return res
             except psycopg2.OperationalError:
                 print '----------> 2'
                 try:
-                    time.sleep(10)
+                    self._cr.commit()
+                    time.sleep(3)
                     res = super(IrSequence, self)._next()
                     return res
                 except psycopg2.OperationalError:
                     print '----------> 3'
                     try:
-                        time.sleep(10)
+                        self._cr.commit()
+                        time.sleep(3)
                         res = super(IrSequence, self)._next()
                         return res
                     except Exception:
