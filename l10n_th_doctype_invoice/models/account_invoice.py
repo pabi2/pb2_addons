@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import psycopg2
-import time
+# import time
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 
@@ -23,6 +23,7 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def signal_workflow(self, trigger):
+        """ Ensure that, when sequence is locked, it will repeat again """
         try:
             #  This part should not exists (but we need to avoid error)
             for inv in self:
