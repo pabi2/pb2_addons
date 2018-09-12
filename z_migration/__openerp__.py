@@ -20,6 +20,7 @@
         'pabi_invest_construction',
         'pabi_sale_invoice_plan',
         'pabi_loan_receivable',
+        'pabi_loan_installment',
     ],
     "data": [
         'views/purchase_view.xml',
