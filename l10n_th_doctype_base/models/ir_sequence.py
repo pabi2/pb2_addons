@@ -39,16 +39,16 @@ class IrSequence(models.Model):
     @api.multi
     def _next(self):
         try:
-            return super(IrSequence, self)._next()
-        except psycopg2.OperationalError:
             with self._cr.savepoint():
-                # Let's retry 3 times, each to wait 0.5 seconds
-                retry = self._context.get('retry', 1)
-                if retry <= 5:
-                    time.sleep(0.5)
-                    retry += 1
-                    self._cr.rollback()
-                    return self.with_context(retry=retry)._next()
+                return super(IrSequence, self)._next()
+        except psycopg2.OperationalError:
+            # Let's retry 3 times, each to wait 0.5 seconds
+            retry = self._context.get('retry', 1)
+            if retry <= 5:
+                time.sleep(0.5)
+                retry += 1
+                self._cr.commit()
+                return self.with_context(retry=retry)._next()
             raise ValidationError(
                 _('Waiting for next number, please try again!'))
         except Exception:
