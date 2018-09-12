@@ -44,6 +44,7 @@ class IrSequence(models.Model):
             try:
                 self._cr.commit()
                 time.sleep(3)
+                self.invalidate_cache()
                 res = super(IrSequence, self)._next()
                 return res
             except psycopg2.OperationalError:
@@ -51,6 +52,7 @@ class IrSequence(models.Model):
                 try:
                     self._cr.commit()
                     time.sleep(3)
+                    self.invalidate_cache()
                     res = super(IrSequence, self)._next()
                     return res
                 except psycopg2.OperationalError:
@@ -58,6 +60,7 @@ class IrSequence(models.Model):
                     try:
                         self._cr.commit()
                         time.sleep(3)
+                        self.invalidate_cache()
                         res = super(IrSequence, self)._next()
                         return res
                     except Exception:
