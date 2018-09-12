@@ -166,6 +166,7 @@ class PABIUtilsWS(models.AbstractModel):
             ftype = rec._fields[key].type
             if key in rec_dict.keys() and ftype in ('many2one', 'many2many'):
                 model = rec._fields[key].comodel_name
+                Model = self.env[model]
                 if rec_dict[key] and isinstance(rec_dict[key], basestring):
                     search_vals = []
                     if ftype == 'many2one':
@@ -174,8 +175,14 @@ class PABIUtilsWS(models.AbstractModel):
                         search_vals = rec_dict[key].split(',')
                         value = []  # for many2many, result will be tuple
                     for val in search_vals:
-                        values = self.env[model].name_search(val,
-                                                             operator='=')
+                        values = Model.name_search(val, operator='=')
+                        # If failed, try again by ID
+                        if len(values) != 1:
+                            if val and isinstance(val, int):
+                                rec = Model.search([('id', '=', val)])
+                                if len(rec) == 1:
+                                    values = [(rec.id, )]
+                        # --
                         if len(values) > 1:
                             raise ValidationError(
                                 _('%s matched more than 1 record') % val)
