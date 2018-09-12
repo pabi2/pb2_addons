@@ -30,6 +30,7 @@ class IrSequence(models.Model):
         except psycopg2.OperationalError:
             retry = self._context.get('retry', 1)
             if retry <= 3:
+                self._cr.rollback()
                 print '----------- RETRY %s' % retry
                 retry += 1
                 time.sleep(1)
