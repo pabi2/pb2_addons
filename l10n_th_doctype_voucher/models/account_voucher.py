@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import psycopg2
-# import time
+import time
 from openerp import models, api, _
 from openerp.exceptions import ValidationError
 
