@@ -38,10 +38,11 @@ class IrSequence(models.Model):
 
     @api.multi
     def _next(self):
+        savepoint = 'next_seq_%s' % self.env.user.id
         try:
-            self._cr.execute("SAVEPOINT seq_%s" % self.env.user.id)
+            self._cr.execute("SAVEPOINT %s" % savepoint)
             res = super(IrSequence, self)._next()
-            self._cr.execute("RELEASE SAVEPOINT seq_%s" % self.env.user.id)
+            self._cr.execute("RELEASE SAVEPOINT %s" % savepoint)
             return res
         except psycopg2.OperationalError:
             # Let's retry 3 times, each to wait 0.5 seconds
@@ -51,11 +52,11 @@ class IrSequence(models.Model):
                 retry += 1
                 self._cr.commit()
                 return self.with_context(retry=retry)._next()
-            self._cr.execute("RELEASE SAVEPOINT seq_%s" % self.env.user.id)
+            self._cr.execute("RELEASE SAVEPOINT %s" % savepoint)
             raise ValidationError(
                 _('Waiting for next number, please try again!'))
         except Exception:
-            self._cr.execute("RELEASE SAVEPOINT seq_%s" % self.env.user.id)
+            self._cr.execute("RELEASE SAVEPOINT %s" % savepoint)
             raise
 
 
