@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import time
 import psycopg2
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
@@ -81,7 +80,6 @@ class AccountInvoice(models.Model):
             retry = self._context.get('retry', 1)
             if retry <= 5:
                 self._cr.rollback()
-                time.sleep(0.2)
                 retry += 1
                 return self.with_context(retry=retry).action_move_create()
             raise ValidationError(
