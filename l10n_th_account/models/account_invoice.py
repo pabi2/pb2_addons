@@ -79,6 +79,7 @@ class AccountInvoice(models.Model):
         except psycopg2.OperationalError:
             retry = self._context.get('retry', 1)
             if retry <= 3:
+                print '--------RETRY--------> %s' % retry
                 retry += 1
                 time.sleep(1)
                 return self.with_context(retry=retry).action_move_create()
