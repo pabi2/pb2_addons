@@ -124,6 +124,8 @@ class AccountWhtCert(models.Model):
         string='Tax Payer',
         default='withholding',
         required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         copy=False,
     )
     _sql_constraints = [
@@ -264,6 +266,21 @@ class AccountWhtCert(models.Model):
             res['tax_payer'] = (voucher.tax_payer or False)
             res['wht_line'] = self._prepare_wht_line(voucher)
         return res
+
+    @api.multi
+    def action_draft(self):
+        self.write({'state': 'draft'})
+        return True
+
+    @api.multi
+    def action_done(self):
+        self.write({'state': 'done'})
+        return True
+
+    @api.multi
+    def action_cancel(self):
+        self.write({'state': 'cancel'})
+        return True
 
     @api.multi
     def _assign_number(self):
