@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
+    <!-- Remove account and help menu in right corner button -->
     <t t-extend="UserMenu">
         <t t-jquery="a[data-menu='account'], a[data-menu='help']">
             this.parent().remove();
         </t>
+    </t>
+    <!-- Replace SelectCreatePopup.search.buttons -->
+    <t t-name="SelectCreatePopup.search.buttons">
     </t>
 </templates>
