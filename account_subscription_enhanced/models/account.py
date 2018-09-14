@@ -42,6 +42,7 @@ class AccountSubscription(models.Model):
     )
     rate_err_message = fields.Char(
         string='Error Message',
+        size=500,
     )
     model_type_id = fields.Many2one(
         'account.model.type',
@@ -307,7 +308,8 @@ class AccountModel(models.Model):
           'Define Recurring Entries (account.subscription),\nyou can use '
           'python code to get the dynamic values from the Define Recurring '
           'into the model line using ${object} (account.subscription),\n'
-          'e.g. ${object.name} will get the name of Define Recurring\n')
+          'e.g. ${object.name} will get the name of Define Recurring\n'),
+        size=1000,
     )
 
     @api.multi
@@ -535,6 +537,7 @@ class AccountModelType(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        size=500,
     )
     active = fields.Boolean(
         string='Active',

@@ -23,6 +23,7 @@ class PabiActionGenerateEntries(models.TransientModel):
     message = fields.Text(
         string='Message',
         readonly=True,
+        size=1000,
     )
     model_type_ids = fields.Many2many(
         'account.model.type',

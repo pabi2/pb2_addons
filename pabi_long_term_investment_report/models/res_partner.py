@@ -41,6 +41,7 @@ class ResPartnerInvestment(models.Model):
     name = fields.Char(
         string='Commitee Approval',
         required=True,
+        size=500,
     )
     date_approve = fields.Date(
         string='Approved Date',
@@ -49,6 +50,7 @@ class ResPartnerInvestment(models.Model):
     description = fields.Char(
         string='Description',
         required=True,
+        size=500,
     )
     total_capital = fields.Float(
         string='Registered Captial',
@@ -80,6 +82,7 @@ class ResPartnerInvestment(models.Model):
     )
     legacy_ref = fields.Char(
         string='Legacy Ref.',
+        size=500,
     )
     move_line_ids = fields.One2many(
         'account.move.line',

@@ -34,35 +34,45 @@ class ResCompany(models.Model):
     )
     pabiweb_hr_url = fields.Char(
         string='PABI Web URL for HR Salary',
+        size=500,
     )
     pabiweb_exp_url = fields.Char(
         string='PABI Web URL for Expense',
+        size=500,
     )
     pabiweb_pcm_url = fields.Char(
         string='PABI Web URL for Procurement',
+        size=500,
     )
     pabiweb_file_prefix = fields.Char(
         string='PABI Web URL for attachment prefix',
+        size=500,
     )
     # e-HR
     pabiehr_active = fields.Boolean(
         string='Open Connection to e-HR Webservice',
+        size=500,
     )
     pabiehr_login_url = fields.Char(
         string='e-HR Login URL',
     )
     pabiehr_user = fields.Char(
         string='e-HR Login',
+        size=500,
     )
     pabiehr_password = fields.Char(
         string='e-HR Password',
+        size=500,
     )
     pabiehr_data_url = fields.Char(
         string='e-HR Data Retrival URL',
+        size=500,
     )
     pabiehr_data_mapper = fields.Text(
         string='Odoo & e-HR Mapper Dict',
+        size=100,
     )
     pabiehr_negate_code = fields.Char(
         string='Negate Codes',
+        size=500,
     )

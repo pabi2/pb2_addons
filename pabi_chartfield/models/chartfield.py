@@ -235,6 +235,7 @@ class CostControlType(ResCommon, models.Model):
 
     description = fields.Text(
         string='Description',
+        size=1000,
     )
 
 
@@ -256,6 +257,7 @@ class CostControl(ResCommon, models.Model):
 
     description = fields.Text(
         string='Description',
+        size=1000,
     )
     cost_control_type_id = fields.Many2one(
         'cost.control.type',

@@ -68,9 +68,11 @@ class ResPartner(models.Model):
     )
     customer_legacy_code = fields.Char(
         string='Customer Legacy Code',
+        size=100,
     )
     supplier_legacy_code = fields.Char(
         string='Supplier Legacy Code',
+        size=100,
     )
 
     @api.onchange('title')
@@ -551,12 +553,13 @@ class ResPartnerCategory(models.Model):
 
 
 class ResPartnerTag(models.Model):
-    _description = 'Partner Tags'
     _name = 'res.partner.tag'
+    _description = 'Partner Tags'
 
     name = fields.Char(
         string='Name',
         required=True,
+        size=500,
     )
     parent_id = fields.Many2one(
         'res.partner.tag',

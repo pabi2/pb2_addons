@@ -9,4 +9,5 @@ class PurchaseOrder(models.Model):
     cancel_reason_txt = fields.Char(
         string="Description",
         readonly=True,
+        size=500,
     )

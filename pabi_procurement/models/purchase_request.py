@@ -210,15 +210,18 @@ class PurchaseRequest(models.Model):
         string='Small Amount Reason',
         readonly=True,
         copy=False,
+        size=500,
     )
     accept_reason_txt = fields.Char(
         string='Accept Reason',
         readonly=True,
         copy=False,
+        size=500,
     )
     legacy_ref = fields.Char(
         string='Legacy Ref.',
         readonly=False,
+        size=100,
     )
     _sql_constraints = [
         ('name_uniq', 'unique(name)',
@@ -531,9 +534,11 @@ class PurchaseRequestCommittee(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        size=500,
     )
     position = fields.Char(
         string='Position',
+        size=100,
     )
     committee_type_id = fields.Many2one(
         'purchase.committee.type',

@@ -14,6 +14,7 @@ class PurchaseBilling(models.Model):
     name = fields.Char(
         string='Billing Number',
         readonly=True,
+        size=500,
         copy=False,
     )
     currency_id = fields.Many2one(
@@ -65,6 +66,7 @@ class PurchaseBilling(models.Model):
         string='Notes',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        size=1000,
     )
     supplier_invoice_ids = fields.Many2many(
         'account.invoice',

@@ -10,6 +10,7 @@ class BudgetFundExpenseGroup(models.Model):
 
     name = fields.Char(
         string='Name',
+        size=500,
         copy=False,
     )
 
@@ -25,6 +26,7 @@ class BudgetFundRule(models.Model):
         index=True,
         copy=False,
         readonly=True,
+        size=500,
         states={'draft': [('readonly', False)]},
     )
     template = fields.Boolean(
@@ -599,6 +601,7 @@ class BudgetAssetRuleLine(models.Model):
     )
     asset_name = fields.Char(
         string='Asset Name',
+        size=500,
         required=True,
     )
     amount_total = fields.Float(

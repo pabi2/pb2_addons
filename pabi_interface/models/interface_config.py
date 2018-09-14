@@ -7,26 +7,11 @@ class InterfaceSystem(models.Model):
 
     name = fields.Char(
         string='Name',
+        size=100,
         required=True,
     )
     description = fields.Char(
         string='Decription',
+        size=500,
         required=True,
     )
-
-
-# class InterfaceAction(models.Model):
-#     _name = 'interface.action'
-#
-#     name = fields.Char(
-#         string='Name',
-#         required=True,
-#     )
-#     description = fields.Char(
-#         string='Decription',
-#         required=True,
-#     )
-#     journal_id = fields.Many2one(
-#         'account.journal',
-#         string='Journal',
-#     )

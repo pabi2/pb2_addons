@@ -120,13 +120,14 @@ class PurchaseInvoicePlan(models.Model):
         store=True,
     )
     is_deposit_installment = fields.Boolean(
-        string="Deposit Installment",
+        string='Deposit Installment',
     )
     is_advance_installment = fields.Boolean(
-        string="Advance Installment",
+        string='Advance Installment',
     )
     description = fields.Text(
-        string="Description"
+        string='Description',
+        size=1000,
     )
 
     _sql_constraints = [

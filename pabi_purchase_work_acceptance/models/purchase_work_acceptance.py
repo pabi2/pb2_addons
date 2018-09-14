@@ -23,6 +23,7 @@ class PurchaseWorkAcceptance(models.Model):
         default=lambda self:
         self.env['ir.sequence'].get('purchase.work.acceptance'),
         readonly=True,
+        size=500,
     )
     date_contract_start = fields.Date(
         string='Contract Start Date',
@@ -83,6 +84,7 @@ class PurchaseWorkAcceptance(models.Model):
     supplier_invoice = fields.Char(
         string='Invoice No.',
         required=True,
+        size=100,
     )
     date_invoice = fields.Date(
         string='Invoice Date',
@@ -699,6 +701,7 @@ class PurchaseWorkAcceptanceLine(models.Model):
     name = fields.Char(
         string='Description',
         required=True,
+        size=500,
     )
     balance_qty = fields.Float(
         string='Balance Quantity',
@@ -799,6 +802,7 @@ class PurchaseWorkAcceptanceCase(models.Model):
 
     name = fields.Char(
         string='Case Name',
+        size=500,
     )
 
 
@@ -812,6 +816,7 @@ class PurchaseWorkAcceptanceScore(models.Model):
     )
     name = fields.Char(
         string='Value',
+        size=500,
     )
     score = fields.Integer(
         string='Score',

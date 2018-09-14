@@ -49,6 +49,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         default='/',
         readonly=False,
         states={},  # Always editable
+        size=500,
     )
     parent_id = fields.Many2one(
         readonly=False,
@@ -94,6 +95,7 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     deliver_to = fields.Char(
         string='Deliver to',
+        size=500,
         help="If status is chagned to 'delivery', this field is required",
     )
     deliver_date = fields.Date(
@@ -102,10 +104,12 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     code = fields.Char(
         string='Code',  # Rename
+        size=100,
         default='/',
     )
     code2 = fields.Char(
         string='Code (legacy)',
+        size=100,
         help="Code in Legacy System",
     )
     product_id = fields.Many2one(
@@ -254,6 +258,7 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     serial_number = fields.Char(
         string='Serial Number',
+        size=100,
         readonly=False,
     )
     warranty_start_date = fields.Date(
@@ -275,11 +280,13 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     asset_brand = fields.Char(
         string='Brand',
+        size=100,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
     asset_model = fields.Char(
         string='Model',
+        size=100,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -747,6 +754,7 @@ class AccountAssetProfile(models.Model):
 
     code = fields.Char(
         string='Code',
+        size=100,
         required=True,
     )
     account_depreciation_id = fields.Many2one(
@@ -917,6 +925,7 @@ class AssetRepairNote(models.Model):
     )
     note = fields.Text(
         string='Note',
+        size=1000,
     )
 
 

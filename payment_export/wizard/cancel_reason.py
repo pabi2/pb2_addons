@@ -10,7 +10,9 @@ class PaymentExportCancel(models.TransientModel):
 
     cancel_reason_txt = fields.Char(
         string="Reason",
-        readonly=False)
+        readonly=False,
+        size=500,
+    )
 
     @api.one
     def confirm_cancel(self):

@@ -92,6 +92,7 @@ class ResProject(LogCommon, models.Model):
     )
     external_pm = fields.Char(
         string='External PM',
+        size=500,
     )
     owner_division_id = fields.Many2one(
         'res.division',
@@ -130,9 +131,11 @@ class ResProject(LogCommon, models.Model):
     )
     external_fund_name = fields.Char(
         string='External Fund Name',
+        size=500,
     )
     priority = fields.Char(
         string='Priority',
+        size=10,
     )
     budget_plan_ids = fields.One2many(
         'res.project.budget.plan',
@@ -718,6 +721,7 @@ class ResProjectBudgetPlan(models.Model):
     )
     description = fields.Text(
         string='Description',
+        size=1000,
     )
     m1 = fields.Float(
         string='Oct',

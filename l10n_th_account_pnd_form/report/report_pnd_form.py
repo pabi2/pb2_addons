@@ -18,6 +18,7 @@ class ReportPNDForm(models.Model):
     )
     wht_sequence_display = fields.Char(
         string='WHT Sequence Display',
+        size=10,
     )
     date_value = fields.Date(
         string='Date Value',
@@ -32,39 +33,51 @@ class ReportPNDForm(models.Model):
     )
     supplier_taxid = fields.Char(
         string='Supplier TaxID',
+        size=20,
     )
     supplier_branch_th = fields.Char(
         string='Supplier Branch',
+        size=500,
     )
     supplier_branch = fields.Char(
         string='Supplier Branch',
+        size=500,
     )
     supplier_name_th = fields.Char(
         string='Supplier Name (TH)',
+        size=500,
     )
     supplier_name = fields.Char(
         string='Supplier Name',
+        size=500,
     )
     supplier_street = fields.Char(
         string='Supplier Street',
+        size=500,
     )
     supplier_street2 = fields.Char(
         string='Supplier Street2',
+        size=500,
     )
     supplier_township = fields.Char(
         string='Supplier Township',
+        size=500,
     )
     supplier_district = fields.Char(
         string='Supplier District',
+        size=500,
     )
     supplier_province = fields.Char(
         string='Supplier Province',
+        size=500,
     )
     supplier_zip = fields.Char(
         string='Supplier Zip',
+        size=500,
     )
     supplier_country = fields.Char(
         string='Supplier Country',
+        size=500,
     )
     tax_payer = fields.Selection(
         TAX_PAYER,
@@ -150,6 +163,7 @@ class ReportPNDFormLine(models.Model):
     )
     wht_period = fields.Char(
         string='Period',
+        size=10,
     )
     date_value = fields.Date(
         string='Value Date',
@@ -159,9 +173,11 @@ class ReportPNDFormLine(models.Model):
     )
     wht_cert_income_type = fields.Char(
         string='Type of Income',
+        size=500,
     )
     wht_cert_income_desc = fields.Char(
         string='Income Description',
+        size=500,
     )
     base = fields.Float(
         string='Base',

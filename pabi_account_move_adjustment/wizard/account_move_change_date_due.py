@@ -16,6 +16,7 @@ class AccountMoveChangeDateDue(models.TransientModel):
     )
     reason = fields.Char(
         string='Reason',
+        size=500,
         required=True,
     )
 

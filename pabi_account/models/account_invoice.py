@@ -46,6 +46,7 @@ class AccountInvoice(models.Model):
         string='Invoice Description',
         compute='_compute_invoice_description',
         store=True,
+        size=1000,
         help="Compute summary description of entire invoice lines",
     )
     income_tax_form = fields.Selection(
@@ -59,6 +60,7 @@ class AccountInvoice(models.Model):
     )
     number_preprint = fields.Char(
         string='Preprint Number',
+        size=500,
         copy=False,
     )
     display_name2 = fields.Char(
@@ -91,6 +93,7 @@ class AccountInvoice(models.Model):
     legacy_ref = fields.Char(
         string='Legacy Ref.',
         readonly=False,
+        size=500,
     )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]

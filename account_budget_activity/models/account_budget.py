@@ -39,6 +39,7 @@ class AccountBudget(models.Model):
         string='Name',
         required=True,
         default="/",
+        size=500,
         states={'done': [('readonly', True)]},
     )
     create_date = fields.Datetime(
@@ -203,6 +204,7 @@ class AccountBudget(models.Model):
         string='Remarks',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        size=1000,
     )
 
     @api.model
@@ -844,6 +846,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     )
     description = fields.Char(
         string='Description',
+        size=500,
     )
     m1 = fields.Float(
         string='Oct',

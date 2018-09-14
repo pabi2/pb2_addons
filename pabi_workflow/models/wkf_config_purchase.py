@@ -9,9 +9,11 @@ class WkfConfigPurchaseUnit(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        size=500,
     )
     description = fields.Text(
         string='Description',
+        size=1000,
     )
     org_id = fields.Many2one(
         'res.org',

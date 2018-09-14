@@ -9,9 +9,11 @@ class WkfConfigDocType(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        size=500,
     )
     description = fields.Text(
         string='Description',
+        size=100,
     )
     module = fields.Selection([
         ('purchase', "Purchase & Inventory"),
@@ -35,6 +37,7 @@ class WkfCmdApprovalLevel(models.Model):
     )
     description = fields.Text(
         string='Description',
+        size=1000,
     )
 
 

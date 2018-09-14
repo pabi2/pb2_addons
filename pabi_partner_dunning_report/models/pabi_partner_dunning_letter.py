@@ -9,6 +9,7 @@ class PABIPartnerDunningLetter(models.Model):
 
     number = fields.Char(
         string='Number',
+        size=500,
     )
     create_uid = fields.Many2one(
         'res.users',
@@ -37,6 +38,7 @@ class PABIPartnerDunningLetter(models.Model):
     )
     to_whom_title = fields.Char(
         string='To Whom',
+        size=500,
     )
     partner_id = fields.Many2one(
         'res.partner',

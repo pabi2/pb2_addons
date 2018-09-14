@@ -2,6 +2,7 @@
 from openerp import models, fields, api, tools
 import time
 
+
 class AccountMoveDataMartView(models.Model):
     _name = 'account.move.data.mart.view'
     _description = 'Account Move Data Mart'

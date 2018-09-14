@@ -16,6 +16,7 @@ class AccountAssetTransfer(models.Model):
         required=True,
         readonly=True,
         copy=False,
+        size=500,
     )
     date = fields.Date(
         string='Transfer Date',
@@ -45,6 +46,7 @@ class AccountAssetTransfer(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)],
                 'draft2': [('readonly', False)]},
+        size=500,
     )
     user_id = fields.Many2one(
         'res.users',
@@ -64,6 +66,7 @@ class AccountAssetTransfer(models.Model):
     note = fields.Text(
         string='Note',
         copy=False,
+        size=1000,
     )
     asset_ids = fields.Many2many(
         'account.asset',
@@ -438,6 +441,7 @@ class AccountAssetTransferTarget(models.Model):
     asset_name = fields.Char(
         string='Asset Name',
         required=True,
+        size=500,
     )
     asset_profile_id = fields.Many2one(
         'account.asset.profile',

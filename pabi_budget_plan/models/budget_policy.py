@@ -19,6 +19,7 @@ class BudgetPolicy(models.Model):
         readonly=True,
         default="/",
         copy=False,
+        size=500,
     )
     user_id = fields.Many2one(
         'res.users',
@@ -149,6 +150,7 @@ class BudgetPolicy(models.Model):
     message = fields.Text(
         string='Messages',
         readonly=True,
+        size=1000,
     )
     # Relation to other model
     breakdown_ids = fields.One2many(

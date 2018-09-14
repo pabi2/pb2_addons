@@ -322,13 +322,14 @@ class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
         digits=dp.get_precision('Account'),
     )
     is_deposit_installment = fields.Boolean(
-        string="Deposit Installment",
+        string='Deposit Installment',
     )
     is_advance_installment = fields.Boolean(
-        string="Advance Installment",
+        string='Advance Installment',
     )
     description = fields.Char(
-        string="Description"
+        string='Description',
+        size=500,
     )
 
     @api.onchange('percent')

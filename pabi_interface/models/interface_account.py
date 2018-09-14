@@ -48,6 +48,7 @@ class InterfaceAccountEntry(models.Model):
         states={'draft': [('readonly', False)]},
         default="/",
         copy=False,
+        size=500,
     )
     name = fields.Char(
         string='Document Origin',
@@ -56,6 +57,7 @@ class InterfaceAccountEntry(models.Model):
         states={'draft': [('readonly', False)]},
         default="/",
         copy=False,
+        size=500,
     )
     type = fields.Selection(
         [('invoice', 'Invoice'),
@@ -83,6 +85,7 @@ class InterfaceAccountEntry(models.Model):
     )
     contract_number = fields.Char(
         string='Contract Number',
+        size=500,
     )
     contract_date_start = fields.Date(
         string='Contract Start Date',
@@ -154,10 +157,12 @@ class InterfaceAccountEntry(models.Model):
         help="Remaining amount due.",
     )
     preprint_number = fields.Char(
-        string='Pre-print No.'
+        string='Pre-print No.',
+        size=100,
     )
     cancel_reason = fields.Char(
-        string='Cancel Reason'
+        string='Cancel Reason',
+        size=500,
     )
 
     @api.onchange('to_reverse_entry_id')

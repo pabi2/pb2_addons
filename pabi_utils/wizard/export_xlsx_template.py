@@ -284,6 +284,7 @@ class ExportXlsxTemplate(models.TransientModel):
     name = fields.Char(
         string='File Name',
         readonly=True,
+        size=500,
     )
     data = fields.Binary(
         string='File',
@@ -305,6 +306,7 @@ class ExportXlsxTemplate(models.TransientModel):
         string='Resource Model',
         readonly=True,
         required=True,
+        size=500,
     )
     state = fields.Selection(
         [('choose', 'choose'),

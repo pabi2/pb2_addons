@@ -15,6 +15,7 @@ class AccountAssetRemoval(models.Model):
         required=True,
         readonly=True,
         copy=False,
+        size=500,
     )
     date_remove = fields.Date(
         string='Removal Date',

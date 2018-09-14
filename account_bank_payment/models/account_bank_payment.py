@@ -7,8 +7,8 @@ from openerp.exceptions import Warning as UserError
 
 
 class AccountBankPayment(models.Model):
-    _name = "account.bank.payment"
-    _description = "Account Bank Payment"
+    _name = 'account.bank.payment'
+    _description = 'Account Bank Payment'
     _order = 'payment_date desc'
 
     name = fields.Char(
@@ -131,6 +131,7 @@ class AccountBankPayment(models.Model):
     )
     note = fields.Text(
         string='Notes',
+        size=1000,
     )
     validate_user_id = fields.Many2one(
         'res.users',

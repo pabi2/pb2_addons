@@ -8,4 +8,5 @@ class ResCompany(models.Model):
     date_due_day = fields.Char(
         string="Due Date Configuration",
         default="16,28",
+        size=10,
     )

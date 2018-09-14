@@ -285,4 +285,5 @@ class AccountMoveDueHistory(models.Model):
     )
     reason = fields.Char(
         string='Reason',
+        size=500,
     )

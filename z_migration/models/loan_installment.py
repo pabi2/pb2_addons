@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, fields
+from openerp import models, fields
 
 
 class LoanInstallment(models.Model):
@@ -7,6 +7,7 @@ class LoanInstallment(models.Model):
 
     name = fields.Char(
         readonly=False,
+        size=500,
     )
     move_id = fields.Many2one(
         'account.move',

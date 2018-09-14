@@ -9,4 +9,5 @@ class StockRequest(models.Model):
     reject_reason_txt = fields.Char(
         string="Rejected Reason",
         readonly=True,
+        size=500,
     )

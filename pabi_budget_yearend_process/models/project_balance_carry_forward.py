@@ -9,6 +9,7 @@ class ProjectBalanceCarryForward(models.Model):
     name = fields.Char(
         string='Name',
         readonly=True,
+        size=500,
     )
     from_fiscalyear_id = fields.Many2one(
         'account.fiscalyear',

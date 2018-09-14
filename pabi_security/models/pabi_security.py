@@ -9,6 +9,7 @@ class PABISecurity(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        size=500,
     )
     date = fields.Datetime(
         string='Last Apply Date',

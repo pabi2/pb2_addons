@@ -66,7 +66,8 @@ class AccountBilling(models.Model):
         string='Notes',
         readonly=True,
         states={'draft': [('readonly', False)]},
-        default=lambda self: self._context.get('narration', False))
+        default=lambda self: self._context.get('narration', False),
+        size=1000)
     state = fields.Selection(
         [('draft', 'Draft'),
          ('cancel', 'Cancelled'),

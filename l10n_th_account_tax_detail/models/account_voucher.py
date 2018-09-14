@@ -11,6 +11,7 @@ class AccountVoucher(InvoiceVoucherTaxDetail, models.Model):
     # By default it not used, can be extended from other addons.
     number_preprint = fields.Char(
         string='Preprint Number',
+        size=500,
     )
 
     @api.multi

@@ -21,6 +21,7 @@ class AccountWhtCert(models.Model):
     number = fields.Char(
         string='Number',
         readonly=True,
+        size=500,
     )
     date = fields.Date(
         string='Date',
@@ -426,7 +427,7 @@ class WhtCertTaxLine(models.Model):
     )
     wht_cert_income_desc = fields.Char(
         string='Income Description',
-        size=50,
+        size=500,
         required=False,
     )
     base = fields.Float(

@@ -50,13 +50,6 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
         "('partner_id', '=', partner_id),"
         "('account_id', '!=', account_id)]",
     )
-    # income_ids = fields.One2many(
-    #     'loan.installment.income',
-    #     'loan_install_id',
-    #     string='Additional Income',
-    #     readonly=True,
-    #     states={'draft': [('readonly', False)]},
-    # )
     amount_loan_total = fields.Float(
         string='Loan Amount',
         compute='_compute_amount',
@@ -213,6 +206,7 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
     )
     rate_err_message = fields.Char(
         string='Error Message',
+        size=500,
     )
     installment_ids = fields.One2many(
         'loan.installment.plan',

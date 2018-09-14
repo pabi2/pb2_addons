@@ -10,6 +10,7 @@ class PurchaseOrderForceDone(models.TransientModel):
     force_done_reason = fields.Char(
         string="Force Done Reason",
         required=True,
+        size=500,
     )
 
     @api.one

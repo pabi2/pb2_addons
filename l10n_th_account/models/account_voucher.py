@@ -934,6 +934,7 @@ class AccountVoucherTax(CommonVoucher, models.Model):
     )
     wht_cert_income_desc = fields.Char(
         string='Income Description',
+        size=500,
     )
 
     @api.model

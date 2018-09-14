@@ -148,18 +148,22 @@ class ResInvestConstruction(LogCommon, models.Model):
     approval_info = fields.Text(
         string='Approval Info',
         track_visibility='onchange',
+        size=1000,
     )
     project_readiness = fields.Text(
         string='Project Readiness',
         track_visibility='onchange',
+        size=1000,
     )
     reason = fields.Text(
         string='Reason',
         track_visibility='onchange',
+        size=1000,
     )
     expected_result = fields.Text(
         string='Expected Result',
         track_visibility='onchange',
+        size=1000,
     )
     budget_plan_ids = fields.One2many(
         'res.invest.construction.budget.plan',

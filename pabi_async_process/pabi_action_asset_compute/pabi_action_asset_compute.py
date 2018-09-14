@@ -60,6 +60,7 @@ class PabiActionAssetCompute(models.TransientModel):
     )
     batch_note = fields.Char(
         string='Batch Note',
+        size=500,
         help="Note that will be filled in asset depreciation batch",
     )
 
@@ -377,6 +378,7 @@ class PabiActionAssetComputeTestLog(models.TransientModel):
     message = fields.Char(
         string='Message',
         readonly=True,
+        size=1000,
     )
 
 
@@ -405,6 +407,7 @@ class PabiAssetDepreBatch(models.Model):
     note = fields.Char(
         string='Note',
         readonly=True,
+        size=500,
     )
     state = fields.Selection(
         [('draft', 'Draft'),

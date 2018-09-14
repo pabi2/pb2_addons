@@ -21,6 +21,7 @@ class AccountVoucher(models.Model):
         string='Bank Receipt',
         related='bank_receipt_id.name',
         readonly=True,
+        size=500,
     )
 
     @api.multi

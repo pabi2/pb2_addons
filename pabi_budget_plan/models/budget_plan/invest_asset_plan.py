@@ -17,6 +17,7 @@ class InvestAssetPlan(models.Model):
         required=True,
         default='/',
         readonly=False,
+        size=500,
         states={'approve': [('readonly', True)],
                 'done': [('readonly', True)]},
     )
@@ -421,6 +422,7 @@ class InvestAssetPlanItem(InvestAssetCommon, models.Model):
     # Additional Information to res.invest.asset
     name = fields.Char(
         string='Asset Name',
+        size=500,
     )
     # All Prev FY Amount
     prev_fy_actual = fields.Float(

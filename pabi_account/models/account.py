@@ -10,6 +10,7 @@ class AccountMove(models.Model):
         string='Items Summary',
         compute='_compute_line_item_summary',
         store=True,
+        size=1000,
         help="This field provide summary of items in move line with Qty."
     )
     date = fields.Date(

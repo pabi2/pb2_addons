@@ -104,7 +104,7 @@ class AdvanceClearingFollowupReport(models.Model):
     )
     reason = fields.Char(
         related='expense_id.name',
-        string='Reason'
+        string='Reason',
     )
 
     @api.multi
