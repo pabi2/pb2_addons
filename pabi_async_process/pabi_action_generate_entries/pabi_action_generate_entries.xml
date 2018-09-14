@@ -11,10 +11,15 @@
                     <group>
                         <field name="calendar_period_id"/>
                         <field name="date" invisible="0"/>
-                        <field name="message" nolabel="1" colspan="2"/>
                     </group>
                     <group>
-                        <field name="model_type_ids"/>
+                        <field name="message" nolabel="1" colspan="2"/>
+                    </group>
+                    <group colspan="4" invisible="1">
+                        <field name="model_type_ids" nolabel="1" invisible="1"/>
+                    </group>
+                    <group colspan="4" string="Models">
+                        <field name="model_ids" nolabel="1" />
                     </group>
                 </xpath>
             </field>

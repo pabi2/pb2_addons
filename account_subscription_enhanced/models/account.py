@@ -237,21 +237,29 @@ class AccountSubscriptionLine(models.Model):
         move_ids = []
         # Filtered by Model type, when selected
         model_type_ids = self._context.get('model_type_ids', False)
+        model_ids = self._context.get('model_ids', False)
         context = self._context.copy()
-        subscriptions = self.mapped('subscription_id')
-        for subscription in subscriptions:
-            context.update({'subscription_id': subscription.id,
+        SLine = self.env['account.subscription.line']
+        subscription_ids = []
+        subline_ids = self.ids
+        if subline_ids:
+            self._cr.execute("""
+                select distinct subscription_id from account_subscription_line
+                where id in %s""", (tuple(subline_ids), ))
+            subscription_ids = [r[0] for r in self._cr.fetchall()]
+        # Grouping by subscription and amount/no amount
+        for subscription_id in subscription_ids:
+            context.update({'subscription_id': subscription_id,
                             'subline_amount': False})
-            # Subline for this subscription
-            sublines = self.filtered(lambda l:
-                                     l.subscription_id == subscription)
+            # Subline for this subscription, with filtered and amount
+            domain = [('subscription_id', '=', subscription_id)]
             if model_type_ids:
-                sublines = sublines.filtered(
-                    lambda l: l.subscription_id.model_type_id.id in
-                    model_type_ids)
-            # If no model types specified, generate for all.
-            lines_normal = sublines.filtered(lambda l: not l.amount)
-            lines_with_amount = sublines.filtered(lambda l: l.amount)
+                domain.append(
+                    ('subscription_id.model_type_id', 'in', model_type_ids))
+            if model_ids:
+                domain.append(('subscription_id.model_id', 'in', model_ids))
+            lines_normal = SLine.search(domain + [('amount', '=', False)])
+            lines_with_amount = SLine.search(domain + [('amount', '>', 0.0)])
             # Normal case
             _ids = super(AccountSubscriptionLine,
                          lines_normal.with_context(context)).move_create()
