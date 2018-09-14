@@ -236,7 +236,7 @@ class AccountSubscriptionLine(models.Model):
     def move_create(self):
         move_ids = []
         # Filtered by Model type, when selected
-        model_type_ids = self._context.get('model_type_ids', False)
+        type_ids = self._context.get('model_type_ids', False)
         model_ids = self._context.get('model_ids', False)
         context = self._context.copy()
         SLine = self.env['account.subscription.line']
@@ -252,14 +252,13 @@ class AccountSubscriptionLine(models.Model):
             context.update({'subscription_id': subscription_id,
                             'subline_amount': False})
             # Subline for this subscription, with filtered and amount
-            domain = [('subscription_id', '=', subscription_id)]
-            if model_type_ids:
-                domain.append(
-                    ('subscription_id.model_type_id', 'in', model_type_ids))
+            dom = [('subscription_id', '=', subscription_id)]
+            if type_ids:
+                dom.append(('subscription_id.model_type_id', 'in', type_ids))
             if model_ids:
-                domain.append(('subscription_id.model_id', 'in', model_ids))
-            lines_normal = SLine.search(domain + [('amount', '=', False)])
-            lines_with_amount = SLine.search(domain + [('amount', '>', 0.0)])
+                dom.append(('subscription_id.model_id', 'in', model_ids))
+            lines_normal = SLine.search(dom + [('amount', '=', False)])
+            lines_with_amount = SLine.search(dom + [('amount', '!=', False)])
             # Normal case
             _ids = super(AccountSubscriptionLine,
                          lines_normal.with_context(context)).move_create()
