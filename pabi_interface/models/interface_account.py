@@ -333,6 +333,7 @@ class InterfaceAccountEntry(models.Model):
         Checker._check_posting_date(self)
         Checker._check_invoice_to_reconcile(self)
         Checker._check_amount_currency(self)
+        Checker._check_select_reconcile_with(self)
 
     # == Execution Logics ==
     @api.model
@@ -584,6 +585,19 @@ class InterfaceAccountEntry(models.Model):
         _logger.info("IA - Input: %s" % data_dict)
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
+            # For migration period, payment reconicle can be entry or item
+            # so, we need to manually check it
+            Move = self.env['account.move']
+            for l in data_dict.get('line_ids', []):
+                if not l.get('reconcile_move_id', False):
+                    continue
+                # If reconcile_move_id not found, try reconcile_move_line_id
+                vals = Move.name_search(l['reconcile_move_id'], operator='=')
+                if len(vals) != 1:
+                    # Auto reassign to reconcile_move_line_id
+                    l['reconcile_move_line_id'] = l['reconcile_move_id']
+                    del l['reconcile_move_id']
+            # -
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
             if res['is_success']:
                 res_id = res['result']['id']
@@ -707,10 +721,18 @@ class InterfaceAccountEntryLine(models.Model):
     )
     reconcile_move_id = fields.Many2one(
         'account.move',
-        string='Reconcile with',
+        string='Reconcile Entry',
         domain="[('state','=','posted'),"
         "('partner_id', '=', partner_id)]",
         copy=False,
+    )
+    reconcile_move_line_id = fields.Many2one(
+        'account.move.line',
+        string='Reconcile Item',
+        domain="[('state','=','valid'),"
+        "('partner_id', '=', partner_id)]",
+        copy=False,
+        help="For case migration only, allow direct select account.move.line",
     )
     reconcile_move_line_ids = fields.Many2many(
         'account.move.line',
@@ -728,17 +750,18 @@ class InterfaceAccountEntryLine(models.Model):
     )
 
     @api.multi
-    @api.depends('reconcile_move_id')
+    @api.depends('reconcile_move_id', 'reconcile_move_line_id')
     def _compute_reconcile_move_line_ids(self):
         AccountMoveLine = self.env['account.move.line']
         for rec in self:
             if not rec.reconcile_move_id:
                 continue
             move_lines = AccountMoveLine.search(
-                [('move_id', '=', rec.reconcile_move_id.id),
-                 ('state', '=', 'valid'),
+                [('state', '=', 'valid'),
                  ('account_id.type', 'in', ['payable', 'receivable']),
-                 ('reconcile_id', '=', False)])
+                 ('reconcile_id', '=', False),
+                 '|', ('move_id', '=', rec.reconcile_move_id.id),
+                 ('id', '=', rec.reconcile_move_line_id.id)])
             if not move_lines:
                 raise ValidationError(
                     _('No valid reconcilable move line for %s') %
@@ -917,6 +940,19 @@ class InterfaceAccountChecker(models.AbstractModel):
             if (l.debit or l.credit) and not l.amount_currency:
                 raise ValidationError(
                     _('Amount Currency must not be False '))
+
+    @api.model
+    def _check_select_reconcile_with(self, inf):
+        # Either reconcile_move_id or reconcile_move_line_id can be selected
+        lines = inf.line_ids.filtered(
+            lambda l: l.reconcile_move_id and l.reconcile_move_line_ids)
+        messages = []
+        for l in lines:
+            messages.append('%s-%s' % (l.sequence, l.name))
+        if messages:
+            raise ValidationError(
+                _('Reconcile Entry and Reconcile Item can not coexists!\n%s') %
+                ', '.join(messages))
 
     @api.model
     def _check_balance_entry(self, inf):
