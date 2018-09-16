@@ -42,6 +42,20 @@ class XLSXReportPabiPurchaseSummarize(models.TransientModel):
         string='PO Status',
         select=True,
     )
+    org_name = fields.Char(
+        string='Org',
+    )
+    partner_name = fields.Char(
+        string='Supplier',
+    )
+    partner_category_name = fields.Char(
+        string='Partner',
+    )
+    method_name = fields.Char(
+        string='Method',
+    )
+
+
     # Report Result
     results = fields.Many2many(
         'xlsx.report.pabi.purchase.summarize.results',
@@ -49,6 +63,42 @@ class XLSXReportPabiPurchaseSummarize(models.TransientModel):
         compute='_compute_results',
         help="Use compute fields, so there is nothing store in database",
     )
+
+    @api.onchange('org_ids')
+    def onchange_orgs(self):
+        res = ''
+        for prg in self.org_ids:
+            if res != '':
+                res += ', '
+            res += prg.operating_unit_id.code
+        self.org_name = res
+
+    @api.onchange('partner_ids')
+    def onchange_partners(self):
+        res = ''
+        for partner in self.partner_ids:
+            if res != '':
+                res += ', '
+            res += partner.name
+        self.partner_name = res
+
+    @api.onchange('partner_tag_ids')
+    def onchange_tags(self):
+        res = ''
+        for tag in self.partner_tag_ids:
+            if res != '':
+                res += ', '
+            res += tag.name
+        self.partner_category_name = res
+
+    @api.onchange('method_ids')
+    def onchange_methods(self):
+        res = ''
+        for method in self.method_ids:
+            if res != '':
+                res += ', '
+            res += method.name
+        self.method_name = res
 
     @api.multi
     def _compute_results(self):
@@ -142,6 +192,9 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         string='PR Amount',
         readonly=True,
     )
+    partner_category_name = fields.Char(
+        string='Supplier Cat',
+    )
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -219,7 +272,12 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
             FROM res_partner rp
         LEFT JOIN res_partner_title rpt
         ON rpt.id = rp.title
-        WHERE rp.id = selected_po.partner_id  LIMIT 1) as po_supplier
+        WHERE rp.id = selected_po.partner_id  LIMIT 1) as po_supplier,
+        (SELECT rpc.name 
+        from res_partner_category rpc
+	    LEFT JOIN res_partner rp on rp.category_id = rpc.id
+	    WHERE rp.id = selected_po.partner_id
+        ) as partner_category_name
         FROM purchase_requisition pd
         LEFT JOIN operating_unit ou
         ON ou.id = pd.operating_unit_id
