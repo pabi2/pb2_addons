@@ -20,6 +20,7 @@ class AccuontVoucherMultipleReconcile(models.Model):
     note = fields.Char(
         string='Comment',
         required=True,
+        size=500,
     )
     voucher_id = fields.Many2one(
         'account.voucher',

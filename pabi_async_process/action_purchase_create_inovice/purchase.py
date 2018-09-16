@@ -56,7 +56,6 @@ class PurchaseOrder(PabiAsync, models.Model):
             # Checking for running task, use the same signature as delay()
             task_name = "%s('%s', %s)" % \
                 ('action_purchase_create_invoice', self._name, self.id)
-            self._check_queue(task_name, desc=self.name,
-                              type='always', uuid=uuid)
+            self._check_queue(task_name, desc=self.name, type='always')
         else:
             return super(PurchaseOrder, self).action_invoice_create()

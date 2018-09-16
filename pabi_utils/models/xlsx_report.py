@@ -46,6 +46,7 @@ class XLSXReport(models.AbstractModel):
     name = fields.Char(
         string='File Name',
         readonly=True,
+        size=500,
     )
     data = fields.Binary(
         string='File',
@@ -63,6 +64,7 @@ class XLSXReport(models.AbstractModel):
     uuid = fields.Char(
         string='UUID',
         readonly=True,
+        size=500,
         help="Job queue unique identifier",
     )
     to_csv = fields.Boolean(

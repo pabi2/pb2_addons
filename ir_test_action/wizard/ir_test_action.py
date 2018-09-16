@@ -17,15 +17,18 @@ class IrTestAction(models.TransientModel):
 
     model = fields.Char(
         string='Object',
+        size=500,
         help="Model name on which the method to be called "
         "is located, e.g. 'res.partner'.",
     )
     function = fields.Char(
         string='Method',
+        size=500,
         help="Name of the method to be called.",
     )
     args = fields.Text(
         string='Arguments',
+        size=1000,
         help="Arguments to be passed to the method, e.g. (uid,).",
     )
     state = fields.Selection(
@@ -35,6 +38,7 @@ class IrTestAction(models.TransientModel):
     )
     message = fields.Char(
         string='Message',
+        size=500,
     )
 
     def _check_args(self, cr, uid, ids, context=None):

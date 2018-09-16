@@ -13,7 +13,9 @@ class HRPosition(models.Model):
     )
     code = fields.Char(
         string='Code',
+        size=100,
     )
     description = fields.Text(
         string='Description',
+        size=1000,
     )

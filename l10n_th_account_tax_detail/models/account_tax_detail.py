@@ -143,6 +143,7 @@ class AccountTaxDetail(models.Model):
     )
     invoice_number = fields.Char(
         string='Tax Invoice Number',
+        size=500,
     )
     invoice_date = fields.Date(
         string='Invoice Date',

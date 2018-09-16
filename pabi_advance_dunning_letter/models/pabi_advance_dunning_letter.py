@@ -19,6 +19,7 @@ class PABIAdvanceDunningLetter(models.Model):
         index=True,
         copy=False,
         readonly=True,
+        size=500,
     )
     date_print = fields.Date(
         string='Print Date',
@@ -60,6 +61,7 @@ class PABIAdvanceDunningLetter(models.Model):
     group_email = fields.Char(
         string="Group Email",
         default=lambda self: self.env.user.company_id.group_email,
+        size=500,
     )
     state = fields.Selection(
         [('draft', 'Draft'),

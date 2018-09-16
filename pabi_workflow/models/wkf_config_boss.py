@@ -50,7 +50,7 @@ class WkfCmdBossLevelApproval(models.Model):
 
     @api.model
     def get_supervisor(self, employee_id):
-        """ Given employee, find subordinate """
+        """ Given employee, find supervisor """
         if not employee_id:
             return False
         employee = self.env['hr.employee'].browse(employee_id)
@@ -59,7 +59,7 @@ class WkfCmdBossLevelApproval(models.Model):
         supervisor_id = False
         employee_level = False
         if not levels:
-            return False
+            return employee.id
         else:
             if employee not in levels.mapped('employee_id'):
                 supervisor_id = levels[0].employee_id.id

@@ -133,7 +133,7 @@ class ResPartner(models.Model):
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': e,
+                'messages': _(str(e)),
             }
             self._cr.rollback()
         _logger.info('create_or_update_partner(), output: %s' % res)

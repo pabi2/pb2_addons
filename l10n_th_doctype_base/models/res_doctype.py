@@ -9,6 +9,7 @@ class ResDoctype(models.Model):
     name = fields.Char(
         string='Name',
         readonly=True,
+        size=500,
     )
     refer_type = fields.Selection(
         [],

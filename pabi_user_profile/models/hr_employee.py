@@ -24,17 +24,21 @@ class HREmployee(models.Model):
     first_name = fields.Char(
         string='First Name',
         translate=True,
+        size=500,
     )
     mid_name = fields.Char(
         string='Middle Name',
         translate=True,
+        size=500,
     )
     last_name = fields.Char(
         string='Last Name',
         translate=True,
+        size=500,
     )
     employee_code = fields.Char(
         string='Employee ID.',
+        size=100,
     )
     section_id = fields.Many2one(
         'res.section',

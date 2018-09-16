@@ -10,6 +10,7 @@ class AssetParentDeliver(models.TransientModel):
     deliver_to = fields.Char(
         string='Deliver to',
         required=True,
+        size=500,
     )
     deliver_date = fields.Date(
         string='Delivery date',

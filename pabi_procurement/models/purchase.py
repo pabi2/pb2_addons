@@ -97,6 +97,7 @@ class PurchaseOrder(models.Model):
         string='No.',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        size=500,
     )
     doc_approve_position_id = fields.Many2one(
         'hr.position',
@@ -110,6 +111,7 @@ class PurchaseOrder(models.Model):
     )
     delivery_address = fields.Text(
         string='Delivery Address',
+        size=1000,
     )
     is_central_purchase = fields.Boolean(
         string='Central Purchase',
@@ -531,6 +533,7 @@ class PurchaseType(models.Model):
     name = fields.Char(
         string='Purchase Type',
         required=True,
+        size=500,
     )
     sequence = fields.Integer(
         string='Sequence',
@@ -545,6 +548,7 @@ class PurchaseSelectReason(models.Model):
     name = fields.Char(
         string='Select Reason',
         required=True,
+        size=500,
     )
 
 
@@ -555,6 +559,7 @@ class PurchaseMethod(models.Model):
     name = fields.Char(
         string='Purchase Method',
         required=True,
+        size=500,
     )
     require_rfq = fields.Boolean(
         string='Require for RfQ',
@@ -578,6 +583,7 @@ class PurchaseCommitteeType(models.Model):
     code = fields.Char(
         string='Purchase Committee Type Code',
         required=False,
+        size=100,
     )
     prweb_only = fields.Boolean(
         string='PRWeb Only',
@@ -651,6 +657,7 @@ class PurchasePriceRange(models.Model):
     name = fields.Char(
         string='Purchase Price Range',
         required=True,
+        size=100,
     )
     price_from = fields.Float(
         string='Price From',
@@ -669,6 +676,7 @@ class PurchaseCondition(models.Model):
     name = fields.Char(
         string='Purchase Condition',
         required=True,
+        size=500,
     )
     condition_detail_ids = fields.Many2many(
         string='Purchase Condition Detail',
@@ -686,6 +694,7 @@ class PurchaseConditionDetail(models.Model):
     name = fields.Char(
         string='Purchase Condition Detail',
         required=True,
+        size=500,
     )
 
 
@@ -701,9 +710,11 @@ class PurchaseOrderCommittee(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        size=500,
     )
     position = fields.Char(
         string='Position',
+        size=100,
     )
     committee_type_id = fields.Many2one(
         'purchase.committee.type',

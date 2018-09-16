@@ -10,6 +10,7 @@ class BudgetCarryOver(models.Model):
     name = fields.Char(
         string='Name',
         readonly=True,
+        size=500,
     )
     doctype = fields.Selection(
         [('all', 'All'),
@@ -168,10 +169,12 @@ class BudgetCarryOverLine(models.Model):
     name = fields.Char(
         string='Document',
         readonly=True,
+        size=500,
     )
     description = fields.Char(
         string='Description',
         readonly=True,
+        size=500,
     )
     chartfield_id = fields.Many2one(
         'chartfield.view',
@@ -246,10 +249,12 @@ class BudgetCarryOverLineView(models.Model):
     name = fields.Char(
         string='Name',
         readonly=True,
+        size=500,
     )
     description = fields.Char(
         string='Description',
         readonly=True,
+        size=500,
     )
     chartfield_id = fields.Many2one(
         'chartfield.view',

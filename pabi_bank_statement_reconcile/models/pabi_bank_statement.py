@@ -12,10 +12,12 @@ class PABIBankStatement(models.Model):
         default='/',
         required=True,
         readonly=True,
+        size=100,
         states={'draft': [('readonly', False)]},
     )
     import_file_name = fields.Char(
         string='FileName',
+        size=100,
         copy=False,
     )
     import_file = fields.Binary(
@@ -470,6 +472,7 @@ class PABIBankStatementItem(models.Model):
     )
     document = fields.Char(
         string='Document',
+        size=100,
         readonly=True,
     )
     move_line_id = fields.Many2one(
@@ -484,10 +487,12 @@ class PABIBankStatementItem(models.Model):
     )
     partner_code = fields.Char(
         string='Partner Code',
+        size=100,
         readonly=True,
     )
     partner_name = fields.Char(
         string='Partner Name',
+        size=500,
         readonly=True,
     )
     date_value = fields.Date(
@@ -500,6 +505,7 @@ class PABIBankStatementItem(models.Model):
     )
     cheque_number = fields.Char(
         string='Cheque',
+        size=100,
         readonly=True,
     )
     debit = fields.Float(
@@ -535,22 +541,27 @@ class PABIBankStatementImport(models.Model):
     )
     document = fields.Char(
         string='Document',
+        size=100,
         readonly=True,
     )
     partner_code = fields.Char(
         string='Partner Code',
+        size=100,
         readonly=True,
     )
     partner_name = fields.Char(
         string='Partner Name',
+        size=100,
         readonly=True,
     )
     description = fields.Char(
         string='Description',
+        size=500,
         readonly=True,
     )
     batch_code = fields.Char(
         string='Batch Code',
+        size=100,
         readonly=True,
     )
     date_value = fields.Date(
@@ -559,6 +570,7 @@ class PABIBankStatementImport(models.Model):
     )
     cheque_number = fields.Char(
         string='Cheque',
+        size=100,
         readonly=True,
     )
     debit = fields.Float(

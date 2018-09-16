@@ -8,8 +8,10 @@ class PurchaseRequisitionCancel(models.TransientModel):
     _name = 'purchase.requisition.cancel'
 
     cancel_reason_txt = fields.Char(
-        string="Reason",
-        readonly=False)
+        string='Reason',
+        readonly=False,
+        size=500,
+    )
 
     @api.one
     def confirm_cancel(self):

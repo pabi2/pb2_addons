@@ -8,6 +8,7 @@ class StockPicking(models.Model):
 
     donor = fields.Char(
         string='Donor',
+        size=500,
     )
     asset_ids = fields.One2many(
         'account.asset',

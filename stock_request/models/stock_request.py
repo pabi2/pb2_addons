@@ -31,6 +31,7 @@ class StockRequest(models.Model):
         required=True,
         default='/',
         copy=False,
+        size=500,
     )
     company_id = fields.Many2one(
         'res.company',
@@ -166,6 +167,7 @@ class StockRequest(models.Model):
     )
     note = fields.Text(
         string='Notes',
+        size=1000,
     )
 
     @api.multi

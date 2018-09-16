@@ -3,11 +3,12 @@ from openerp import api, models, fields
 
 
 class EmployeeMessage(models.TransientModel):
-    _name = "employee.message"
+    _name = 'employee.message'
 
     message = fields.Text(
         string='Message',
-        required=True
+        required=True,
+        size=1000,
     )
 
     @api.multi

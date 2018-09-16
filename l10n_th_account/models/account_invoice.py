@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import psycopg2
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
@@ -69,18 +68,6 @@ class AccountInvoice(models.Model):
         if res:
             res['context']['default_amount'] = 0.0
         return res
-
-    @api.multi
-    def action_move_create(self):
-        """ Check for multiple client access at the same time """
-        try:
-            return super(AccountInvoice, self).action_move_create()
-        except psycopg2.OperationalError:
-            raise ValidationError(
-                _('Waiting to get document number.\n'
-                  'Please try again!'))
-        except Exception:
-            raise
 
 
 class AccountInvoiceLine(models.Model):

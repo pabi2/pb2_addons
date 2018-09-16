@@ -10,9 +10,11 @@ class HRStatus(models.Model):
         string='Name',
         required=True,
         translate=True,
+        size=100,
     )
     code = fields.Char(
         string='Code',
+        size=100,
     )
     control_active = fields.Boolean(
         string='Control Active',

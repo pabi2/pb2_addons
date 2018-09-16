@@ -61,7 +61,6 @@ class AccountSubscriptionGenerate(PabiAsync, models.Model):
             # Checking for running task, use the same signature as delay()
             task_name = "%s('%s', %s)" % ('action_generate_recurring_entries',
                                           self._name, self.id)
-            self._check_queue(task_name, desc=description,
-                              type='always', uuid=uuid)
+            self._check_queue(task_name, desc=description, type='always')
         else:
             return super(AccountSubscriptionGenerate, self).action_generate()

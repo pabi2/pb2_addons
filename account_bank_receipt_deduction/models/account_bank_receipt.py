@@ -24,6 +24,7 @@ class AccuontBankReceiptMultipleReconcile(models.Model):
     note = fields.Char(
         string='Comment',
         required=True,
+        size=500,
     )
     bank_receipt_id = fields.Many2one(
         'account.bank.receipt',

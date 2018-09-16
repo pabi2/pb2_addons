@@ -6,15 +6,18 @@ class ResCommon(object):
 
     name = fields.Char(
         string='Name',
+        size=500,
         required=True,
         translate=True,
     )
     name_short = fields.Char(
         string='Short Name',
+        size=100,
         translate=True,
     )
     code = fields.Char(
         string='Code',
+        size=100,
     )
     active = fields.Boolean(
         string='Active',
@@ -31,6 +34,7 @@ class ResCommon(object):
     )
     ehr_id = fields.Char(
         string='EHR-ID',
+        size=100,
     )
 
     @api.multi

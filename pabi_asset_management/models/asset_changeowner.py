@@ -15,6 +15,7 @@ class AccountAssetChangeowner(models.Model):
         required=True,
         readonly=True,
         copy=False,
+        size=500,
     )
     date = fields.Date(
         string='Date',
@@ -42,6 +43,7 @@ class AccountAssetChangeowner(models.Model):
     note = fields.Text(
         string='Note',
         copy=False,
+        size=1000,
     )
     changeowner_ids = fields.One2many(
         'account.asset.changeowner.line',

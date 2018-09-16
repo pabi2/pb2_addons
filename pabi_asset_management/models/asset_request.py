@@ -15,6 +15,7 @@ class AccountAssetRequest(models.Model):
         required=True,
         readonly=True,
         copy=False,
+        size=500,
     )
     date_request = fields.Date(
         string='Request Date',

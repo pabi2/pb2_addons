@@ -16,9 +16,7 @@ class CommonVoucher(object):
         currency = invoice.currency_id.with_context(
             date=invoice.date_invoice or
             datetime.today())
-        company_currency = (journal.currency and
-                            journal.currency.id or
-                            journal.company_id.currency_id)
+        company_currency = (journal.currency or journal.company_id.currency_id)
         amount = currency.compute(float(amount), company_currency, round=False)
         return amount
 
@@ -27,9 +25,7 @@ class CommonVoucher(object):
         currency = invoice.currency_id.with_context(
             date=invoice.date_invoice or
             datetime.today())
-        company_currency = (journal.currency and
-                            journal.currency.id or
-                            journal.company_id.currency_id)
+        company_currency = (journal.currency or journal.company_id.currency_id)
         amount = currency.compute(float(amount), company_currency, round=False)
         return amount
 
@@ -127,17 +123,6 @@ class AccountVoucher(CommonVoucher, models.Model):
         }
         return result
 
-    @api.multi
-    def proforma_voucher(self):
-        try:
-            return super(AccountVoucher, self).proforma_voucher()
-        except psycopg2.OperationalError:
-            raise ValidationError(
-                _('Waiting to get document number.\n'
-                  'Please try again!'))
-        except Exception:
-            raise
-
     @api.model
     def _calc_writeoff_amount(self, voucher):
         debit, credit = 0.0, 0.0
@@ -167,7 +152,8 @@ class AccountVoucher(CommonVoucher, models.Model):
     def cancel_voucher(self):
         for voucher in self:
             if voucher.type == 'payment' and not voucher.auto_recognize_vat:
-                if voucher.recognize_vat_move_id:
+                if voucher.recognize_vat_move_id and \
+                        not voucher.recognize_vat_move_id.reversal_id:
                     raise ValidationError(
                         _('To Unreconcile this payment, you must reverse '
                           'the Recognized VAT Entry first.'))
@@ -948,6 +934,7 @@ class AccountVoucherTax(CommonVoucher, models.Model):
     )
     wht_cert_income_desc = fields.Char(
         string='Income Description',
+        size=500,
     )
 
     @api.model

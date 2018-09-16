@@ -31,6 +31,7 @@ class ResPartnerBankChangeHistory(models.Model):
     bank_account = fields.Char(
         string='Bank Account',
         readonly=True,
+        size=500,
     )
     write_uid = fields.Many2one(
         'res.users',
@@ -53,4 +54,5 @@ class ResPartnerBankChangeHistory(models.Model):
     note = fields.Text(
         string='Note',
         readonly=False,
+        size=1000,
     )

@@ -15,6 +15,7 @@ class ChequeLot(models.Model):
         required=True,
         copy=False,
         track_visibility='onchange',
+        size=500,
     )
     journal_id = fields.Many2one(
         'account.journal',
@@ -272,6 +273,7 @@ class ChequeRegister(models.Model):
     )
     note = fields.Text(
         string='Cancellation Reasons',
+        size=1000,
     )
     payment_export_id = fields.Many2one(
         'payment.export',

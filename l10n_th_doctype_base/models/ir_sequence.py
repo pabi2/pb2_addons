@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+import psycopg2
+import time
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class IrSequence(models.Model):
@@ -32,6 +35,28 @@ class IrSequence(models.Model):
             return super(IrSequence, self).next_by_code(sequence_code)
         number = self.next_by_doctype()
         return number or super(IrSequence, self).next_by_code(sequence_code)
+
+    # @api.multi
+    # def _next(self):
+    #     try:
+    #         # with self._cr.savepoint():
+    #         return super(IrSequence, self)._next()
+    #     except psycopg2.OperationalError:
+    #         # kittiu: Still not works, savepoint and commit will cause
+    #         # account.move created without rollback, even when exception
+    #         # --
+    #         # Let's retry 3 times, each to wait 0.5 seconds
+    #         # --
+    #         # retry = self._context.get('retry', 1)
+    #         # if retry <= 5:
+    #         #     time.sleep(0.5)
+    #         #     retry += 1
+    #         #     # self._cr.commit()
+    #         #     return self.with_context(retry=retry)._next()
+    #         raise ValidationError(
+    #             _('Waiting for next number, please try again later!'))
+    #     except Exception:
+    #         raise
 
 
 class IrSequenceFiscalyear(models.Model):

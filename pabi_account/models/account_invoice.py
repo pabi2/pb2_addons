@@ -46,6 +46,7 @@ class AccountInvoice(models.Model):
         string='Invoice Description',
         compute='_compute_invoice_description',
         store=True,
+        size=1000,
         help="Compute summary description of entire invoice lines",
     )
     income_tax_form = fields.Selection(
@@ -59,6 +60,7 @@ class AccountInvoice(models.Model):
     )
     number_preprint = fields.Char(
         string='Preprint Number',
+        size=500,
         copy=False,
     )
     display_name2 = fields.Char(
@@ -90,7 +92,8 @@ class AccountInvoice(models.Model):
     )
     legacy_ref = fields.Char(
         string='Legacy Ref.',
-        readonly='True',
+        readonly=False,
+        size=500,
     )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
@@ -128,6 +131,9 @@ class AccountInvoice(models.Model):
                 for tax in line.invoice_line_tax_id:
                     if tax.is_wht:
                         rec.has_wht = True
+                        break
+                if rec.has_wht:
+                    break
 
     @api.onchange('has_wht')
     def _onchange_has_wht(self):
@@ -137,10 +143,15 @@ class AccountInvoice(models.Model):
     @api.model
     def create(self, vals):
         """ As invoice created, set default income_tax_form, if needed """
-        rec = super(AccountInvoice, self).create(vals)
-        if rec.has_wht:
-            rec.income_tax_form = rec.partner_id.income_tax_form
-        return rec
+        invoice = super(AccountInvoice, self).create(vals)
+        if invoice.has_wht:
+            # Update invoice's income_tax_form = partner's income_tax_form
+            self._cr.execute("""
+                update account_invoice av set income_tax_form =
+                (select income_tax_form from res_partner p
+                where p.id = av.partner_id) where av.id = %s
+            """, (invoice.id, ))
+        return invoice
 
     @api.multi
     @api.depends('invoice_line')

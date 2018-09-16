@@ -29,11 +29,13 @@ class PABIDataMap(models.Model):
     in_value = fields.Char(
         string='Input Value',
         index=True,
+        size=500,
         help="Odoo's value, searchable by name_search",
     )
     out_value = fields.Char(
         string='Output Value',
         index=True,
+        size=500,
         help="Mapped output value",
     )
     _sql_constraints = [

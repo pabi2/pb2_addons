@@ -1,12 +1,20 @@
+# -*- coding: utf-8 -*-
 """
-This script will click button Validate on Billing (draft)
-Status: Done
+For only connection. You can change config file name from keyword
+"Config file name" in comment line, ex: migration.conf.
+In config file has hostname, port, database, login, password, user_id and
+protocal.
+
+Prepare config file
+1. migration_remote.conf (For server pre-production).
+2. migration.conf (For server localhost).
 """
 import openerplib
 import ConfigParser
 import os
 
-conf_file = 'migration_remote.conf'
+# Config file name
+conf = 'migration.conf'
 
 
 def get_connection(config_file):
@@ -20,20 +28,12 @@ def get_connection(config_file):
     login = config.get('server', 'login')
     password = config.get('server', 'password')
     user_id = int(config.get('server', 'user_id'))
-    protocal = config.get('server', 'protocal')
+    protocol = config.get('server', 'protocol')
     connection = openerplib.get_connection(
         hostname=hostname, port=port, database=database, login=login,
-        password=password, protocol=protocal, user_id=user_id)
+        password=password, protocol=protocol, user_id=user_id)
     return connection
 
 
-connection = get_connection(conf_file)
+connection = get_connection(conf)
 connection.check_login()
-# Start your program ...
-
-Billing = connection.get_model('purchase.billing')
-billing_ids = Billing.search([('state', '=', 'draft')])
-print '--> Billing Confirm: %s' % len(billing_ids)
-for billing_id in billing_ids:
-    Billing.validate_billing([billing_id])
-    print '--> processed for billing_id: %s' % billing_id

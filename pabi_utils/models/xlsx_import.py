@@ -74,16 +74,19 @@ class XLSXImport(models.TransientModel):
     res_ids = fields.Char(
         string='Result IDs',
         readonly=True,
+        size=500,
         help="String representative of id list of record newly created",
     )
     res_names = fields.Char(
         string='Result Records',
         readonly=True,
+        size=500,
         help="String representative of newly created record names",
     )
     res_model = fields.Char(
         string='Result Model',
         readonly=True,
+        size=500,
         help="Model of the imported record",
     )
     attachment_ids = fields.Many2many(
@@ -106,6 +109,7 @@ class XLSXImport(models.TransientModel):
     uuids = fields.Char(
         string='UUIDs',
         readonly=True,
+        size=500,
         help="Job queue unique identifiers",
     )
 

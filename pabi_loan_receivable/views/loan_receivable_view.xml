@@ -11,8 +11,11 @@
             <field name="arch" type="xml">
                 <search string="Search Bank Loan MOU">
                     <field name="name"/>
+                    <field name="bank_id"/>
+                    <field name="partner_id"/>
                     <group expand="0" string="Group By...">
                         <filter string="Bank" domain="[]" context="{'group_by':'bank_id'}"/>
+                        <filter string="Supplier (bank)" domain="[]" context="{'group_by':'partner_id'}"/>
                     </group>
                 </search>
             </field>
@@ -24,6 +27,7 @@
             <field name="arch" type="xml">
                 <tree string="Bank Loan MOU">
                     <field name="name"/>
+                    <field name="partner_id"/>
                     <field name="bank_id"/>
                     <field name="max_installment"/>
                     <field name="loan_ratio"/>
@@ -49,7 +53,7 @@
                             </div>
                         </group>
                         <group>
-                            <field name="product_id"/>
+                            <field name="product_id" readonly="1"/>
                             <field name="max_installment"/>
                             <field name="loan_ratio"/>
                         </group>
@@ -220,6 +224,24 @@
                         <field name="message_ids" widget="mail_thread"/>
                     </div>
                 </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_loan_customer_agreement_search">
+            <field name="name">view.loan.customer.agreement.search</field>
+            <field name="model">loan.customer.agreement</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Loan Agreement" filter_domain="[('name','ilike',self)]"/>
+                    <separator/>
+                    <field name="mou_id"/>
+                    <field name="bank_id"/>
+                    <field name="partner_id"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                        <filter name="group_by_bank_id" string="Bank" context="{'group_by': 'bank_id'}"/>
+                    </group>
+                </search>
             </field>
         </record>
 

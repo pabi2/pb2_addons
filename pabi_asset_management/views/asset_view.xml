@@ -173,7 +173,7 @@
                 </xpath> -->
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//button[@name='compute_depreciation_board']" position="after">
                     <button type="object" name="open_depreciation_lines" string="View Depreciation Lines"
-                      icon="terp-check"
+                      icon="terp-check" class="oe_right"
                       colspan="2" attrs="{'invisible':[('depreciation_line_ids', '=', [])]}"/>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@string='Depreciation Board']//field[@name='line_date']" position="before">
@@ -276,6 +276,34 @@
             <field name="domain">[('type', '=', 'normal')]</field>
             <field name="context">{'type': 'normal'}</field>
             <field name="view_id" ref="account_asset_view_tree2"/>
+        </record>
+
+        <!-- Asset Profile -->
+        <record id="account_asset_profile_view_tree" model="ir.ui.view">
+            <field name="name">account.asset.profile.tree</field>
+            <field name="model">account.asset.profile</field>
+            <field name="inherit_id" ref="account_asset_management.account_asset_profile_view_tree"/>
+            <field name="arch" type="xml">
+                <field name="method" position="after">
+                    <field name="product_categ_id"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="account_asset_profile_view_search" model="ir.ui.view">
+            <field name="name">account.asset.profile.search</field>
+            <field name="model">account.asset.profile</field>
+            <field name="inherit_id" ref="account_asset_management.account_asset_profile_view_search"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="product_categ_id" string="Category"/>
+                </field>
+                <search position="inside">
+                    <group expand="0" string="Group By...">
+                        <filter string="Category" name="category" domain="" context="{'group_by':'product_categ_id'}"/>
+                    </group>
+                </search>
+            </field>
         </record>
 
         <!-- Asset Category -->

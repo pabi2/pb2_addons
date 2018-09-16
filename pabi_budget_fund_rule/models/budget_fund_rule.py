@@ -10,6 +10,7 @@ class BudgetFundExpenseGroup(models.Model):
 
     name = fields.Char(
         string='Name',
+        size=500,
         copy=False,
     )
 
@@ -25,6 +26,7 @@ class BudgetFundRule(models.Model):
         index=True,
         copy=False,
         readonly=True,
+        size=500,
         states={'draft': [('readonly', False)]},
     )
     template = fields.Boolean(
@@ -155,7 +157,6 @@ class BudgetFundRule(models.Model):
         copy_project = self.copy()
         action = self.env.ref('pabi_budget_fund_rule.action_budget_fund_rule')
         result = action.read()[0]
-        result['views'] = [(1860, u'form'), (1859, u'tree')]
         result['domain'] = [('id', '=', copy_project.id)]
         result['res_id'] = copy_project.id
         return result
@@ -600,6 +601,7 @@ class BudgetAssetRuleLine(models.Model):
     )
     asset_name = fields.Char(
         string='Asset Name',
+        size=500,
         required=True,
     )
     amount_total = fields.Float(

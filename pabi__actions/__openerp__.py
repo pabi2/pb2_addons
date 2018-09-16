@@ -38,6 +38,7 @@ To activate, go to Server Actions menu, and add it to model's menu
         "pabi_procurement",
         "pabi_budget_plan",
         "pabi_invest_construction",
+        "pabi_my_project",
     ],
     "data": [
         "data/server_action.xml",

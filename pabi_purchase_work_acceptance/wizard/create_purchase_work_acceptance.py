@@ -37,6 +37,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
 
     name = fields.Char(
         string="Acceptance No.",
+        size=500,
     )
     acceptance_line_ids = fields.One2many(
         'create.purchase.work.acceptance.item',
@@ -280,6 +281,7 @@ class CreatePurchaseWorkAcceptanceItem(models.TransientModel):
         string='Description',
         required=True,
         readonly=True,
+        size=500,
     )
     balance_qty = fields.Float(
         string='Balance Quantity',
@@ -302,6 +304,7 @@ class PurchaseInvoicePlan(models.Model):
 
     name = fields.Char(
         string='Invoice Plan',
+        size=500,
     )
 
     @api.multi

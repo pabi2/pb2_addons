@@ -8,8 +8,10 @@ class StockRequestReject(models.TransientModel):
     _name = 'stock.request.reject'
 
     reject_reason_txt = fields.Char(
-        string="Reason",
-        readonly=False)
+        string='Reason',
+        readonly=False,
+        size=500,
+    )
 
     @api.one
     def confirm_reject(self):

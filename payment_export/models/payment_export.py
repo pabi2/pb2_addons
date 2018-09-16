@@ -14,6 +14,7 @@ class PaymentExport(models.Model):
         copy=False,
         readonly=True,
         default="/",
+        size=500,
     )
     journal_id = fields.Many2one(
         'account.journal',
@@ -151,6 +152,7 @@ class PaymentExport(models.Model):
     cancel_reason_txt = fields.Char(
         string="Description",
         readonly=True,
+        size=500,
     )
     exported = fields.Boolean(
         string='Pack Exported',

@@ -235,6 +235,7 @@ class CostControlType(ResCommon, models.Model):
 
     description = fields.Text(
         string='Description',
+        size=1000,
     )
 
 
@@ -256,6 +257,7 @@ class CostControl(ResCommon, models.Model):
 
     description = fields.Text(
         string='Description',
+        size=1000,
     )
     cost_control_type_id = fields.Many2one(
         'cost.control.type',
@@ -467,6 +469,7 @@ class ChartField(object):
         'res.project',
         string='Project',
         ondelete='restrict',
+        index=True,
     )
     fund_id = fields.Many2one(
         'res.fund',
@@ -498,6 +501,7 @@ class ChartField(object):
         'res.section',
         string='Section',
         ondelete='restrict',
+        index=True,
     )
     costcenter_id = fields.Many2one(
         'res.costcenter',
@@ -514,12 +518,14 @@ class ChartField(object):
         'res.personnel.costcenter',
         string='Personnel Budget',
         ondelete='restrict',
+        index=True,
     )
     # Investment - Asset
     invest_asset_id = fields.Many2one(
         'res.invest.asset',
         string='Investment Asset',
         ondelete='restrict',
+        index=True,
     )
     # Investment - Construction
     invest_construction_id = fields.Many2one(
@@ -531,6 +537,7 @@ class ChartField(object):
         'res.invest.construction.phase',
         string='Construction Phase',
         ondelete='restrict',
+        index=True,
     )
     # Non Binding Dimension
     cost_control_id = fields.Many2one(
@@ -716,9 +723,11 @@ class ChartField(object):
         if self._fields[key].type == 'many2one':
             return record[key] and record[key].name or 'None'
         else:
-            return (str(record[key]).isdigit() and
-                    '{:,.2f}'.format(record[key]) or
-                    record[key])
+            message = record[key] or 'None'  # Can be string or number
+            if not isinstance(message, basestring) and \
+                    str(message).isdigit():
+                message = '{:,.2f}'.format(message)
+            return message
 
     @api.model
     def _data_value_by_type(self, data, key):
@@ -726,9 +735,11 @@ class ChartField(object):
             Model = self.env[self._fields[key].comodel_name]
             return data[key] and Model.browse(data[key]).name or 'None'
         else:
-            return (isinstance(data[key], basestring)
-                    and data[key].isdigit() and
-                    '{:,.2f}'.format(data[key]) or data[key])
+            message = data[key] or 'None'
+            if not isinstance(message, basestring) and \
+                    str(message).isdigit():
+                message = '{:,.2f}'.format(message)
+            return message
 
     @api.model
     def _change_content(self, vals, todos):

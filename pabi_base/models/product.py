@@ -8,6 +8,7 @@ class ProductTemplate(models.Model):
 
     legacy_ref = fields.Char(
         string='Legacy Ref.',
+        readonly=False,
         size=10,
     )
 

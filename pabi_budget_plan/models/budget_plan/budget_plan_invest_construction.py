@@ -164,18 +164,22 @@ class BudgetPlanInvestConstructionLine(BPLMonthCommon, ActivityCommon,
     )
     operation_area = fields.Char(
         string='Operation Area',
+        size=500,
     )
     date_expansion = fields.Date(
         string='Expansion Date',
     )
     project_readiness = fields.Text(
         string='Project Readiness',
+        size=1000,
     )
     reason = fields.Text(
         string='Reason',
+        size=1000,
     )
     expected_result = fields.Text(
         string='Expected Result',
+        size=1000,
     )
     amount_budget = fields.Float(
         string='Overall Budget',

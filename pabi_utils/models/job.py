@@ -13,11 +13,13 @@ class QueueJob(models.Model):
     res_ids = fields.Char(
         string='Result IDs',
         readonly=True,
+        size=500,
         help="String representative of id list of related records",
     )
     res_model = fields.Char(
         string='Result Model',
         readonly=True,
+        size=500,
         help="Model of the related record",
     )
 

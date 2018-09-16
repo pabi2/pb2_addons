@@ -15,6 +15,7 @@ class AccountBudget(models.Model):
     remarks = fields.Text(
         compute='_compute_remarks',
         reaonly=True,
+        size=1000,
     )
 
     @api.multi

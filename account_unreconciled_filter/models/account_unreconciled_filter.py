@@ -9,9 +9,11 @@ class AccountUnreconciledFilter(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        size=500,
     )
     description = fields.Text(
         string='Description',
+        size=1000,
     )
     account_id = fields.Many2one(
         'account.account',

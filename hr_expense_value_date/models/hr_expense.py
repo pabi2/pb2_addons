@@ -39,6 +39,7 @@ class DateValueHistory(models.Model):
     )
     reason = fields.Char(
         string="Reason",
+        size=500,
     )
 
     @api.depends('voucher_id', 'voucher_id.number',

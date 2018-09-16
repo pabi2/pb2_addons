@@ -23,10 +23,16 @@ class PabiActionGenerateEntries(models.TransientModel):
     message = fields.Text(
         string='Message',
         readonly=True,
+        size=1000,
     )
     model_type_ids = fields.Many2many(
         'account.model.type',
         string='Model Types',
+        required=False,
+    )
+    model_ids = fields.Many2many(
+        'account.model',
+        string='Models',
         required=True,
     )
 
@@ -43,13 +49,15 @@ class PabiActionGenerateEntries(models.TransientModel):
             self.message = message
 
     @api.model
-    def action_generate(self, date, end_period_date, model_type_ids):
+    def action_generate(self, date, end_period_date,
+                        model_type_ids, model_ids):
         """ Revised function to be called from pabi.action """
         SLine = self.env['account.subscription.line']
         lines = SLine.search([('date', '<', date),
                               ('move_id', '=', False)])
         ctx = {'end_period_date': end_period_date,
-               'model_type_ids': model_type_ids}
+               'model_type_ids': model_type_ids,
+               'model_ids': model_ids, }
         move_ids = lines.with_context(ctx).move_create()
         records = self.env['account.move'].browse(move_ids)
         result_msg = _('Generated %s account entries!') % len(records)
@@ -66,13 +74,15 @@ class PabiActionGenerateEntries(models.TransientModel):
         func_name = 'action_generate'
         # Prepare kwargs, the params for method action_generate
         model_type_ids = self.model_type_ids.ids
+        model_ids = self.model_ids.ids
         end_period_date = self.date
         date1 = \
             datetime.strptime(self.date, "%Y-%m-%d") + relativedelta(days=1)
         date = date1.strftime('%Y-%m-%d')
         kwargs = {'date': date,
                   'end_period_date': end_period_date,
-                  'model_type_ids': model_type_ids, }
+                  'model_type_ids': model_type_ids,
+                  'model_ids': model_ids, }
         # Call the function
         res = super(PabiActionGenerateEntries, self).\
             pabi_action(process_xml_id, job_desc, func_name, **kwargs)

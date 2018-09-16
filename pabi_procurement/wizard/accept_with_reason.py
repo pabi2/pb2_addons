@@ -7,7 +7,9 @@ class PurchaseRequestAcceptReason(models.TransientModel):
 
     accept_reason_txt = fields.Char(
         string="Reason",
-        readonly=False)
+        size=500,
+        readonly=False,
+    )
 
     @api.multi
     def action_accept_with_reason(self):

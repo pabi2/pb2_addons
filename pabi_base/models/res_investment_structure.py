@@ -14,6 +14,7 @@ CONSTRUCTION_PHASE = {
 class InvestAssetCommon(object):
     name = fields.Char(
         string='Name',
+        size=500,
     )
     org_id = fields.Many2one(
         'res.org',
@@ -74,6 +75,7 @@ class InvestAssetCommon(object):
     )
     location = fields.Char(
         string='Asset Location',
+        size=500,
     )
     quantity = fields.Float(
         string='Quantity',
@@ -92,15 +94,19 @@ class InvestAssetCommon(object):
     )
     reason_purchase_text = fields.Text(
         string='Reason Desc.',
+        size=1000,
     )
     expect_output = fields.Text(
         string='Output',
+        size=1000,
     )
     planned_utilization = fields.Char(
         string='Utilization (Hr/Yr)',
+        size=100,
     )
     specification_summary = fields.Text(
         string='Summary of Specification',
+        size=1000,
     )
     amount_plan_total = fields.Float(
         string='Budget Plan Amount',

@@ -27,7 +27,7 @@ class sale_create_invoice_plan(models.TransientModel):
             (self.num_installment and
              (self.order_amount / self.num_installment) or 0.0)
 
-        i = 1
+        i = 0
         accum_amount = 0.0
         accum_percent = 0.0
         num_install = len(installments)

@@ -10,7 +10,7 @@ from openerp.tools import float_compare
 
 
 class PurchaseRequisition(models.Model):
-    _inherit = "purchase.requisition"
+    _inherit = 'purchase.requisition'
 
     _STATES = [
         ('draft', 'Draft'),
@@ -40,10 +40,12 @@ class PurchaseRequisition(models.Model):
         string='Objective',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        size=1000,
     )
     description = fields.Text(
         readonly=True,
         states={'draft': [('readonly', False)]},
+        size=1000,
     )
     total_budget_value = fields.Float(
         string='Total Budget Value',
@@ -51,12 +53,6 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    # purchase_prototype_id = fields.Many2one(
-    #     'res.project.prototype',
-    #     string='Prototype',
-    #     readonly=True,
-    #     states={'draft': [('readonly', False)]},
-    # )
     prototype_type = fields.Selection(
         [('research', 'Research'),
          ('deliver', 'Deliver')],
@@ -94,6 +90,7 @@ class PurchaseRequisition(models.Model):
         string='Condition Info',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        size=1000,
     )
     standard_price = fields.Float(
         string='Standard Price',
@@ -110,6 +107,7 @@ class PurchaseRequisition(models.Model):
             'draft': [('readonly', False)],
             'in_progress': [('readonly', False)],
         },
+        size=1000,
     )
     currency_id = fields.Many2one(
         'res.currency',
@@ -209,6 +207,7 @@ class PurchaseRequisition(models.Model):
         string='Approval No.',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        size=500,
     )
     doc_header = fields.Text(
         string='Dear,',
@@ -217,6 +216,7 @@ class PurchaseRequisition(models.Model):
             'draft': [('readonly', False)],
             'done': [('readonly', False)],
         },
+        size=1000,
     )
     doc_body = fields.Text(
         string='Body',
@@ -225,6 +225,7 @@ class PurchaseRequisition(models.Model):
             'draft': [('readonly', False)],
             'done': [('readonly', False)],
         },
+        size=1000,
     )
     reject_reason_txt = fields.Char(
         string="Rejected Reason",
@@ -248,6 +249,7 @@ class PurchaseRequisition(models.Model):
         string='Delivery Address',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        size=1000,
     )
     purchase_ids = fields.One2many(
         domain=[('order_type', '=', 'quotation')],
@@ -719,6 +721,7 @@ class PurchaseRequisitionLine(models.Model):
     product_name = fields.Text(
         string='Description',
         required=True,
+        size=1000,
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
@@ -792,9 +795,11 @@ class PurchaseRequisitionCommittee(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        size=500,
     )
     position = fields.Char(
         string='Position',
+        size=100,
     )
     committee_type_id = fields.Many2one(
         'purchase.committee.type',

@@ -99,4 +99,5 @@ class PABIDunningConfigTitle(models.Model):
     new_title = fields.Char(
         string='New Title',
         required=True,
+        size=500,
     )

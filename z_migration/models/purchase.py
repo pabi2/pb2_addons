@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import Warning as UserError
 
 
 class PurchaseOrder(models.Model):
@@ -62,4 +63,53 @@ class PurchaseOrder(models.Model):
         wizard.installment_ids = False  # remove it first, and rewrite by line
         wizard.write({'installment_ids': installments})
         wizard.do_create_purchase_invoice_plan()
+        return True
+
+    @api.multi
+    def mork_invoice_paid(self):
+        self.ensure_one()
+        # Update fully_invoiced = true in purchase order line
+        self._cr.execute("""
+            UPDATE purchase_order_line
+            SET fully_invoiced = true
+            WHERE order_id = %s""" % self.id)
+
+        # Update invoice = paid
+        self._cr.execute("""
+            UPDATE account_invoice
+            SET state = 'paid'
+            WHERE source_document = '%s'""" % self.name)
+        return True
+
+    @api.multi
+    def mork_update_create_uid(self):
+        """
+        Use for update create uid
+        require >> purchase_id, force_done_reason
+        """
+        self.ensure_one()
+        if self.create_uid.login != self.force_done_reason:
+            User = self.env['res.users']
+            user = User.search([('login', '=', self.force_done_reason)])
+            if not user:
+                raise UserError(
+                    _('There are not user code %s in the system'
+                      % self.force_done_reason))
+            if len(user) > 1:
+                raise UserError(
+                    _('There are multiple user code %s in the system'
+                      % self.force_done_reason))
+            self._cr.execute("""
+                UPDATE purchase_order
+                SET create_uid = %s
+                WHERE id = %s""" % (user.id, self.id))
+        return True
+
+    @api.multi
+    def mork_clear_force_done_reason(self):
+        """
+        Use for clear force done reason
+        """
+        self.ensure_one()
+        self.force_done_reason = False
         return True

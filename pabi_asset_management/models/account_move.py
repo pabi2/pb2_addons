@@ -15,7 +15,8 @@ class AccountMove(models.Model):
             if 'journal_id' in vals:
                 picking_id = self._context.get('active_id', False)
                 picking = self.env['stock.picking'].browse(picking_id)
-                vals['journal_id'] = picking.asset_journal_id.id or False
+                if picking.asset_journal_id:  # If asset, use asset journal
+                    vals['journal_id'] = picking.asset_journal_id.id
         # Move name to '/'
         if self._context.get('overwrite_move_name', False):
             vals['name'] = '/'

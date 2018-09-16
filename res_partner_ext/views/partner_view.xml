@@ -125,6 +125,9 @@
                     <field name="vat" string="Tax ID" attrs="{'required': [('require_taxid', '=', True)]}"/>
                     <field name="taxbranch" string="Tax Branch ID" attrs="{'required': [('require_taxbranch', '=', True)]}"/>
                 </field>
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="create">0</attribute>
+                </xpath>
                 <xpath expr="//kanban/field[@name='name']" position="after">
                     <field name="taxbranch"/>
                 </xpath>

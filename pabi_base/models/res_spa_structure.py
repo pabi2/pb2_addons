@@ -39,6 +39,7 @@ class ResSpa(models.Model):
 
     name = fields.Char(
         string='Name',
+        size=500,
         required=True,
     )
     begin_period_id = fields.Many2one(
@@ -90,10 +91,12 @@ class ResMission(models.Model):
 
     name = fields.Char(
         string='Name',
+        size=500,
         required=True,
     )
     description = fields.Text(
         string='Description',
+        size=1000,
     )
 
 
@@ -103,6 +106,7 @@ class ResTagType(models.Model):
 
     name = fields.Char(
         string='Name',
+        size=500,
         required=True,
     )
 
@@ -113,6 +117,7 @@ class ResTag(models.Model):
 
     name = fields.Char(
         string='Name',
+        size=500,
         required=True,
     )
     tag_type_id = fields.Many2one(
@@ -180,6 +185,7 @@ class ResProgram(SpaStructureTag, ResCommon, models.Model):
     )
     reference_code = fields.Char(
         string='Reference Code',
+        size=100,
         required=False,
     )
 

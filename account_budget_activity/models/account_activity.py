@@ -21,6 +21,7 @@ class AccountActivityGroup(models.Model):
     name = fields.Char(
         string='Activity Group',
         required=True,
+        size=500,
     )
     code = fields.Char(
         string='Code',
@@ -29,6 +30,7 @@ class AccountActivityGroup(models.Model):
     )
     description = fields.Char(
         string='Description',
+        size=500,
     )
     parent_id = fields.Many2one(
         'account.activity.group',
@@ -131,6 +133,7 @@ class AccountActivity(models.Model):
     name = fields.Char(
         string='Activity',
         required=True,
+        size=500,
     )
     code = fields.Char(
         string='Code',
@@ -168,6 +171,7 @@ class AccountActivity(models.Model):
     )
     search_keywords = fields.Text(
         string='Search Keywords',
+        size=1000,
     )
     # _sql_constraints = [
     #     ('activity_uniq', 'unique(name, activity_group_id)',
@@ -210,6 +214,7 @@ class AccountActivityTag(models.Model):
 
     name = fields.Char(
         string='Name',
+        size=500,
     )
     _sql_constraints = [
         ('activity_tag_uniq', 'unique(name)',

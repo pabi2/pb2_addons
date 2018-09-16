@@ -129,6 +129,7 @@ class AccountBankReceipt(models.Model):
     )
     note = fields.Text(
         string='Notes',
+        size=1000,
     )
     validate_user_id = fields.Many2one(
         'res.users',
@@ -147,6 +148,7 @@ class AccountBankReceipt(models.Model):
         string='Filter',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        size=500,
         help="More filter. You can use complex search with comma and between.",
     )
 

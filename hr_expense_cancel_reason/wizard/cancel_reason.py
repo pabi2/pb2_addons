@@ -11,6 +11,7 @@ class HRExpenseCancel(models.TransientModel):
 
     cancel_reason_txt = fields.Char(
         string="Reason",
+        size=500,
     )
 
     @api.one

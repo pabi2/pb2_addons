@@ -25,10 +25,12 @@ class AssetPurchaseMethod(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        size=500,
     )
     code = fields.Char(
         string='Code',
         required=True,
+        size=100,
     )
     direct = fields.Boolean(
         string='Direct Receive',

@@ -67,8 +67,9 @@ class HRExpenseLine(CommitLineCommon, ActivityCommon, models.Model):
     #         if aline and rec.budget_commit_bal:
     #             aline.copy({'amount': -rec.budget_commit_bal})
 
-    @api.model
+    @api.multi
     def _get_non_product_account_id(self):
+        self.ensure_one()
         if 'activity_id' in self:
             if not self.activity_id.account_id:
                 raise ValidationError(

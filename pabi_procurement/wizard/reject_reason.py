@@ -9,7 +9,9 @@ class PurchaseRequisitionReject(models.TransientModel):
 
     reject_reason_txt = fields.Char(
         string="Rejected Reason",
-        readonly=False)
+        readonly=False,
+        size=500,
+    )
 
     @api.one
     def confirm_reject(self):

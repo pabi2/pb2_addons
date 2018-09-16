@@ -404,8 +404,9 @@ class HRExpenseLine(models.Model):
             res['value']['tax_ids'] = [(6, 0, taxes)]
         return res
 
-    @api.model
+    @api.multi
     def _get_non_product_account_id(self):
+        self.ensure_one()
         Property = self.env['ir.property']
         return Property.get('property_account_expense_categ',
                             'product.category').id
