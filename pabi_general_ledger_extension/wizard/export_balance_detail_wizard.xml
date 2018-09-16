@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="export_balance_detail_wizard" model="ir.ui.view">
+            <field name="name">export.balance.detail.wizard</field>
+            <field name="model">export.balance.detail.wizard</field>
+            <field name="inherit_id" ref="pabi_utils.export_xlsx_template_wizard"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <field name="res_model" position="before">
+                    <field name="fiscalyear_id" invisible="True"/>
+                    <field name="is_account_balance_detail_template" invisible="True"/>
+                    <field name="period_id" domain="[('fiscalyear_id', '=', fiscalyear_id), ('special', '=', False)]" attrs="{'invisible': [('is_account_balance_detail_template', '=', False)], 'required': [('is_account_balance_detail_template', '=', True)]}"/>
+                </field>
+            </field>
+        </record>
+
+        <act_window id="action_export_balance_detail"
+            name="Export to Excel"
+            res_model="export.balance.detail.wizard"
+            src_model="account.general.ledger.report"
+            view_mode="form"
+            target="new"
+            context="{'lang': 'th_TH'}"/>
+    </data>
+</openerp>
