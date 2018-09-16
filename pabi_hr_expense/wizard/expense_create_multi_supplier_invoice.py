@@ -21,6 +21,7 @@ class ExpenseCreateMultiSupplierInvoiceLine(models.TransientModel):
     partner_name = fields.Char(
         string='Supplier Info.',
         readonly=True,
+        size=500,
     )
     amount = fields.Float(
         string='Amount',

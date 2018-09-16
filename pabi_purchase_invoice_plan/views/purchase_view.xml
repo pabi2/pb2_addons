@@ -30,7 +30,7 @@
                                                  '|',('plan_invoice_created','!=',True)]}</attribute>
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@string='Invoice Plan']/field[@name='invoice_plan_ids']/tree/field[@name='date_invoice']" position="after">
-                    <field name="fiscalyear_id" invisible="1"/>
+                    <field name="fiscalyear_id" invisible="0" readonly="1"/>
                     <button name="%(action_edit_invoice_plan_date)d" string="Edit" type="action" icon="gtk-justify-fill" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                 </xpath>
             </field>

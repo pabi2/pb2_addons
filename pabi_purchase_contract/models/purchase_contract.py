@@ -164,6 +164,7 @@ class PurchaseContract(models.Model):
     )
     collateral_no = fields.Char(
         string='Collateral No.',
+        size=100,
     )
     contractual_amt = fields.Float(
         string='Contractual Amount',
@@ -182,18 +183,22 @@ class PurchaseContract(models.Model):
     )
     bank = fields.Char(
         string='Bank',
+        size=100,
     )
     branch = fields.Char(
         string='Branch',
+        size=100,
     )
     account = fields.Char(
         string='Account',
+        size=100,
     )
     collateral_date = fields.Date(
         string='Collateral Date',
     )
     description = fields.Text(
         string='Description',
+        size=1000,
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -512,6 +517,7 @@ class PurchaseContractCollateral(models.Model):
 
     name = fields.Char(
         string='Name',
+        size=500,
     )
 
 
@@ -521,4 +527,5 @@ class PurchaseContractType(models.Model):
 
     name = fields.Char(
         string='Name',
+        size=500,
     )

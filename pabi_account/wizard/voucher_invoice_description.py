@@ -8,6 +8,7 @@ class VoucherInvoiceDescription(models.TransientModel):
 
     invoice_description = fields.Text(
         string="Invoice Description",
+        size=1000,
         default=lambda self: self._default_invoice_description(),
     )
 

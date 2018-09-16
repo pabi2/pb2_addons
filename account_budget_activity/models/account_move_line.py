@@ -51,6 +51,7 @@ class AccountMoveLine(models.Model):
     def create_analytic_lines(self):
         # Before create, always remove analytic line if exists
         move_lines = self._budget_eligible_move_lines()
+        (self - move_lines).mapped('analytic_lines').unlink()
         return super(AccountMoveLine, move_lines).create_analytic_lines()
 
     @api.multi
@@ -61,13 +62,11 @@ class AccountMoveLine(models.Model):
         * Invoice with realtime stockable product, no budget charge
         """
         BG = self.env['account.budget']
-        invoice = self._context.get('invoice', False)
         move_lines = self.filtered(  # Too complicated to use SQL
-            lambda l: not l.analytic_lines  # If already created, do not create
-            # Must be budge eligible move line (Analytic JOurnal and AG)
-            and BG.budget_eligible_line(l.journal_id.analytic_journal_id, l)
+            lambda l:
+            BG.budget_eligible_line(l.journal_id.analytic_journal_id, l)
             # Invoice with realtime stockable product, no budget charge.
-            and (not invoice or l.product_id.type == 'service' or
+            and (not l.invoice or l.product_id.type == 'service' or
                  l.product_id.valuation != 'real_time')
         )
         return move_lines

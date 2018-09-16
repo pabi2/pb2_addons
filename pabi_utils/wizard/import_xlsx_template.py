@@ -86,6 +86,7 @@ class ImportXlsxTemplate(models.TransientModel):
         string='Resource Model',
         readonly=True,
         required=True,
+        size=500,
     )
     datas = fields.Binary(
         string='Sample',

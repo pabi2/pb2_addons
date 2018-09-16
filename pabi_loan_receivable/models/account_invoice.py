@@ -137,3 +137,12 @@ class AccountInvoice(models.Model):
             self._check_loan_invoice_in_advance(invoice.loan_agreement_id.id,
                                                 invoice.date_due)
         return result
+
+
+class AccountInvoiceLine(models.Model):
+    _inherit = 'account.invoice.line'
+
+    @api.model
+    def create(self, vals):
+        print vals
+        return super(AccountInvoiceLine, self).create(vals)

@@ -15,6 +15,7 @@ class PersonalIncomeTax(models.Model):
     sequence = fields.Char(
         string='Sequence',
         readonly=True,
+        size=500,
     )
     voucher_id = fields.Many2one(
         'account.voucher',
@@ -74,6 +75,7 @@ class PersonalIncomeTax(models.Model):
     )
     wht_cert_income_desc = fields.Char(
         string='Income Description',
+        size=500,
     )
 
     # _sql_constraints = [
@@ -181,6 +183,7 @@ class PersonalIncomeTaxYearly(models.Model):
     calendar_year = fields.Char(
         string='Calendar Year',
         readonly=True,
+        size=4,
     )
     amount_income = fields.Float(
         string='Income',

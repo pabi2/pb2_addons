@@ -36,6 +36,7 @@ class AccountInvoice(models.Model):
     diff_expense_amount_reason = fields.Char(
         string='Amount Diff Reason',
         readonly=True,
+        size=500,
         states={'draft': [('readonly', False)]},
         help="Reason when amount is different from Expense",
     )

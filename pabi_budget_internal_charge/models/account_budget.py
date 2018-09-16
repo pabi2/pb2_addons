@@ -113,15 +113,26 @@ class AccountBudget(models.Model):
     @api.model
     def _get_budget_monitor(self, fiscal, budget_type,
                             budget_level, resource,
-                            blevel=False):
+                            blevel=False, extra_dom=[]):
         """ If set to control only external charge """
-        monitors = super(AccountBudget, self).\
+        if blevel and fiscal.control_ext_charge_only:
+            extra_dom = [('charge_type', '=', 'external')]
+        return super(AccountBudget, self).\
             _get_budget_monitor(fiscal, budget_type,
                                 budget_level, resource,
-                                blevel=blevel)
+                                blevel=blevel, extra_dom=extra_dom)
+
+    @api.model
+    def _get_budget_monitor_dict(self, fiscal, budget_type,
+                                 budget_level, resource,
+                                 blevel=False, extra_dom=[]):
+        """ If set to control only external charge """
         if blevel and fiscal.control_ext_charge_only:
-            monitors = monitors.filtered(lambda l: l.charge_type == 'external')
-        return monitors
+            extra_dom = [('charge_type', '=', 'external')]
+        return super(AccountBudget, self).\
+            _get_budget_monitor_dict(fiscal, budget_type,
+                                     budget_level, resource,
+                                     blevel=blevel, extra_dom=extra_dom)
 
     @api.multi
     def _get_past_actual_amount_internal(self):

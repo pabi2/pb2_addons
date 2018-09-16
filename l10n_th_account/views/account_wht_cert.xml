@@ -7,6 +7,9 @@
             <field name="arch" type="xml">
                 <form string="Withholding Tax Certificate" create="0" edit="1" delete="0">
                     <header attrs="{'invisible': [('number', '=', False)]}">
+                        <button name="action_draft" string="Set to Draft" type="object" states="done,cancel"/>
+                        <button name="action_done" string="Done" type="object" states="draft" class="oe_highlight"/>
+                        <button name="action_cancel" string="Cancel" type="object" states="draft"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done" clickable="True"/>
                     </header>
                     <sheet>
@@ -31,7 +34,7 @@
                             <group string="WHT Cert Options">
                                 <field name="income_tax_form" widget="radio" attrs="{'readonly': [('sequence_display', '!=', False)]}"/>
                                 <field name="period_id" invisible="1"/>
-                                <field name="tax_payer" attrs="{'readonly': [('sequence_display', '!=', False)]}"/>
+                                <field name="tax_payer"/>
                                 <field name="sequence_display" readonly="1"/>
                             </group>
                             <group string="References">

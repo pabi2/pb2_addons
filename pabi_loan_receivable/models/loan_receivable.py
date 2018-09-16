@@ -11,6 +11,7 @@ class LoanBankMOU(models.Model):
         string='MOU Number',
         required=True,
         copy=False,
+        size=500,
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -81,6 +82,7 @@ class LoanCustomerAgreement(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        size=500,
     )
     borrower_partner_id = fields.Many2one(
         'res.partner',
@@ -250,6 +252,7 @@ class LoanCustomerAgreement(models.Model):
     )
     project = fields.Char(
         string='Project CD',
+        size=500,
     )
     _sql_constraints = [
         ('positive_installment', 'check(installment > 0)',

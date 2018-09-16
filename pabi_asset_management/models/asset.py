@@ -49,6 +49,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         default='/',
         readonly=False,
         states={},  # Always editable
+        size=500,
     )
     parent_id = fields.Many2one(
         readonly=False,
@@ -82,8 +83,8 @@ class AccountAsset(ChartFieldAction, models.Model):
         index=True,
         help="Status vs State\n"
         "Draft → ยกเลิก\n"
-        "Running → ใช้งานปกติ, ส่งมอบ, โอนเป็นครุภัณฑ์, ชำรุด, รอจำหน่าย\n"
-        "Removed → จำหน่าย, สูญหาย\n"
+        "Running → ใช้งานปกติ, โอนเป็นครุภัณฑ์, ชำรุด, รอจำหน่าย\n"
+        "Removed → จำหน่าย, สูญหาย, ส่งมอบ\n"
         "Close → หมดอายุการใช้งาน"
     )
     status_code = fields.Char(
@@ -94,6 +95,7 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     deliver_to = fields.Char(
         string='Deliver to',
+        size=500,
         help="If status is chagned to 'delivery', this field is required",
     )
     deliver_date = fields.Date(
@@ -102,10 +104,12 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     code = fields.Char(
         string='Code',  # Rename
+        size=100,
         default='/',
     )
     code2 = fields.Char(
         string='Code (legacy)',
+        size=100,
         help="Code in Legacy System",
     )
     product_id = fields.Many2one(
@@ -254,6 +258,7 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     serial_number = fields.Char(
         string='Serial Number',
+        size=100,
         readonly=False,
     )
     warranty_start_date = fields.Date(
@@ -275,11 +280,13 @@ class AccountAsset(ChartFieldAction, models.Model):
     )
     asset_brand = fields.Char(
         string='Brand',
+        size=100,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
     asset_model = fields.Char(
         string='Model',
+        size=100,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -543,12 +550,12 @@ class AccountAsset(ChartFieldAction, models.Model):
         # Case Parent Assets, AIT, AUC, ATM
         type = vals.get('type', False)
         ptype = vals.get('parent_type', False)
-        if ptype and type == 'view':
+        if ptype and type == 'view' and vals.get('code', '/') == '/':
             sequence_code = 'parent.asset.%s' % (ptype)
             vals['code'] = self.env['ir.sequence'].next_by_code(sequence_code)
         # Normal Case
         product_id = vals.get('product_id', False)
-        if product_id:
+        if product_id and vals.get('code', '/') == '/':
             product = self.env['product.product'].browse(product_id)
             sequence = product.sequence_id
             if not sequence:
@@ -747,6 +754,7 @@ class AccountAssetProfile(models.Model):
 
     code = fields.Char(
         string='Code',
+        size=100,
         required=True,
     )
     account_depreciation_id = fields.Many2one(
@@ -917,6 +925,7 @@ class AssetRepairNote(models.Model):
     )
     note = fields.Text(
         string='Note',
+        size=1000,
     )
 
 

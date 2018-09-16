@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
+from openerp.exceptions import ValidationError
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -16,6 +17,9 @@ class ResPartnerBank(models.Model):
         acc_number = acc_number.replace('-', '')
         acc_number = acc_number.zfill(10)
         acct = self.search([('acc_number', '=', acc_number)])
+        if not acct:
+            raise ValidationError(_('Bank Account : %s not found!') %
+                                  acc_number)
         journal = acct.journal_id.name or ''
         _logger.info('Output journal = %s' % journal)
         return journal

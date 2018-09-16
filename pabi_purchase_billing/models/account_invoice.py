@@ -19,6 +19,7 @@ class AccountInvoice(models.Model):
     date_receipt_billing = fields.Date(
         string='Billing Receipt Date',
         readonly=True,
+        copy=False,
         states={'draft': [('readonly', False)]},
     )
 

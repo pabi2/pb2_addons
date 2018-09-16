@@ -50,13 +50,6 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
         "('partner_id', '=', partner_id),"
         "('account_id', '!=', account_id)]",
     )
-    # income_ids = fields.One2many(
-    #     'loan.installment.income',
-    #     'loan_install_id',
-    #     string='Additional Income',
-    #     readonly=True,
-    #     states={'draft': [('readonly', False)]},
-    # )
     amount_loan_total = fields.Float(
         string='Loan Amount',
         compute='_compute_amount',
@@ -122,21 +115,25 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
         'account.move',
         string='Journal Entry',
         readonly=True,
+        copy=False,
     )
     cancel_move_id = fields.Many2one(
         'account.move',
         string='Cancel Entry',
         readonly=True,
+        copy=False,
     )
     force_close_move_id = fields.Many2one(
         'account.move',
         string='Force Close Entry',
         readonly=True,
+        copy=False,
     )
     sale_id = fields.Many2one(
         'sale.order',
         string='Sales Orer',
         readonly=True,
+        copy=False,
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -209,6 +206,7 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
     )
     rate_err_message = fields.Char(
         string='Error Message',
+        size=500,
     )
     installment_ids = fields.One2many(
         'loan.installment.plan',
@@ -809,7 +807,7 @@ class LoanInstallmentPlan(models.Model):
     )
     income = fields.Float(
         string='Income',
-        # compute='_compute_income',
+        readonly=False,
     )
     amount = fields.Float(
         string='Installment Amount',
@@ -913,13 +911,3 @@ class LoanInstallmentPlan(models.Model):
             date_start = fields.Date.from_string(rec.date_start)
             rec.days = prev_start and (date_start - prev_start).days or 0
             prev_start = date_start
-
-    # @api.multi
-    # def _compute_income(self, rate):
-    #     for rec in self:
-    #         total_income = rec.loan_install_id.amount_income
-    #         total_loan = rec.loan_install_id.amount_loan_total
-    #         if not total_loan:
-    #             rec.income = 0.0
-    #         else:
-    #             rec.income = (total_income / total_loan) * rec.amount

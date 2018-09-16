@@ -10,10 +10,12 @@ class ResBank(models.Model):
     )
     abbrev = fields.Char(
         string='Abbreviation',
+        size=100,
         required=False,
     )
     code = fields.Char(
         string='Code',
+        size=100,
         required=False,
     )
 
@@ -45,11 +47,13 @@ class ResBankBranch(models.Model):
 
     name = fields.Char(
         string='Name',
+        size=500,
         translate=True,
         required=True,
     )
     code = fields.Char(
         string='Code',
+        size=100,
         required=True,
     )
     bank_id = fields.Many2one(

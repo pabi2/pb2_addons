@@ -8,4 +8,5 @@ class PurchaseOrder(models.Model):
 
     force_done_reason = fields.Text(
         string="Force Done Reason",
+        size=1000,
     )

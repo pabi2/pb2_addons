@@ -278,9 +278,11 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     # Extra
     code = fields.Char(
         string='Project Code',
+        size=100,
     )
     name = fields.Char(
         string='Project Name',
+        size=500,
     )
     program_id = fields.Many2one(
         related='plan_id.program_id',
@@ -422,15 +424,19 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     )
     pm_employee = fields.Char(
         string='Project Manager',
+        size=500,
     )
     section = fields.Char(
         string='Section',
+        size=500,
     )
     division = fields.Char(
         string='Division',
+        size=500,
     )
     org = fields.Char(
         string='Org',
+        size=500,
     )
     date_start = fields.Date(
         string='Start Date',
@@ -443,9 +449,11 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     )
     project_status = fields.Char(
         string='Project Status',
+        size=100,
     )
     analyst_employee = fields.Char(
         string='Project Analyst',
+        size=500,
     )
     ref_program_id = fields.Many2one(
         'res.program',
@@ -463,9 +471,11 @@ class BudgetPlanProjectLine(BPLMonthCommon, ActivityCommon, models.Model):
     )
     external_fund_name = fields.Char(
         string='External Fund Name',
+        size=500,
     )
     priority = fields.Char(
         string='Priority',
+        size=10,
     )
     # Project Performance (myPerformance)
     pfm_publications = fields.Integer(

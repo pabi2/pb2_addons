@@ -17,6 +17,7 @@ class AccountInvoice(models.Model):
         string='Source Document Ref.',
         readonly=True,
         copy=False,
+        size=500,
     )
     source_document_type = fields.Selection(
         [('purchase', 'Purchase Order'),

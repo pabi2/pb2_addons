@@ -103,7 +103,7 @@ class PurchaseRequest(models.Model):
             ret = {
                 'is_success': False,
                 'result': False,
-                'messages': e,
+                'messages': _(str(e)),
             }
             self._cr.rollback()
         _logger.info('generate_purchase_request(), output: %s' % ret)

@@ -39,6 +39,7 @@ class AccountFiscalyear(models.Model):
     )
     notes = fields.Text(
         string='Notes',
+        size=1000,
     )
 
     @api.multi

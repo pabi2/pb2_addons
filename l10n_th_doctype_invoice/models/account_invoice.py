@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+import psycopg2
+# import time
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountInvoice(models.Model):
@@ -17,3 +20,25 @@ class AccountInvoice(models.Model):
             invoice = invoice.with_context(doctype_id=doctype.id)
             super(AccountInvoice, invoice).action_move_create()
         return True
+
+    @api.multi
+    def signal_workflow(self, trigger):
+        """ Ensure that, when sequence is locked, it will repeat again """
+        try:
+            #  This part should not exists (but we need to avoid error)
+            for inv in self:
+                if not inv.date_invoice:
+                    inv.date_invoice = fields.Date.context_today(self)
+            return super(AccountInvoice, self).signal_workflow(trigger)
+        except psycopg2.OperationalError:
+            # Let's retry 3 times, each to wait 0.5 seconds
+            retry = self._context.get('retry', 1)
+            if retry <= 5:
+                # time.sleep(0.5)
+                retry += 1
+                self._cr.rollback()
+                return self.with_context(retry=retry).signal_workflow(trigger)
+            raise ValidationError(
+                _('Waiting for next number, please try again later!'))
+        except Exception:
+            raise

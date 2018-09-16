@@ -13,6 +13,7 @@ class PurchaseContractReason(models.TransientModel):
 
     description = fields.Text(
         string='Description',
+        size=1000,
     )
     datas = fields.Binary(
         string='Document',

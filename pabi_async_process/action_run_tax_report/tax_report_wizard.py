@@ -76,7 +76,6 @@ class AccountTaxReportWizard(PabiAsync, models.TransientModel):
             # Checking for running task, use the same signature as delay()
             task_name = "%s(%s, u'%s')" % \
                 ('action_run_tax_report', data, self.print_format)
-            self._check_queue(task_name, desc=description,
-                              type='never', uuid=uuid)
+            self._check_queue(task_name, desc=description, type='never')
         else:
             return super(AccountTaxReportWizard, self).run_report()

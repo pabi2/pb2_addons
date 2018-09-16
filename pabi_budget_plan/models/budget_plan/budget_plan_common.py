@@ -45,6 +45,7 @@ class BPCommon(Common):
         readonly=True,
         default="/",
         copy=False,
+        size=500,
     )
     user_id = fields.Many2one(
         'res.users',
@@ -248,6 +249,7 @@ class BPLCommon(ChartField, Common):
         string='Budget Method',
         required=True,
         default='expense',
+        index=True,
         help="Specify whether the budget plan line is of Revenue or Expense. "
         "Revenue is for Unit Based only."
     )
@@ -259,6 +261,7 @@ class BPLCommon(ChartField, Common):
     )
     name = fields.Char(
         string='Description',
+        size=500,
     )
     state = fields.Selection(
         _STATE,
@@ -267,7 +270,8 @@ class BPLCommon(ChartField, Common):
         store=True,
     )
     description = fields.Text(
-        string="Description",
+        string='Description',
+        size=1000,
     )
     planned_amount = fields.Float(
         string='Planned Amount',

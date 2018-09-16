@@ -13,8 +13,17 @@
     "installable": True,
     "depends": [
         'pabi_purchase_invoice_plan',
-        'pabi_purchase_work_acceptance',
+        'purchase_request',
+        'pabi_asset_management',
+        'pabi_budget_plan',
+        'pabi_purchase_billing',
+        'pabi_invest_construction',
+        'pabi_sale_invoice_plan',
+        'pabi_loan_receivable',
+        'pabi_loan_installment',
     ],
     "data": [
+        'views/purchase_view.xml',
+        'views/sale_view.xml',
     ]
 }

@@ -23,6 +23,7 @@ class AccountAssetAdjust(models.Model):
         required=True,
         readonly=True,
         copy=False,
+        size=500,
     )
     journal_id = fields.Many2one(
         'account.journal',
@@ -66,6 +67,7 @@ class AccountAssetAdjust(models.Model):
     note = fields.Text(
         string='Note',
         copy=False,
+        size=1000,
     )
     adjust_type = fields.Selection(
         [('asset_type', 'Asset => Assset'),
@@ -715,6 +717,7 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
     asset_name = fields.Char(
         string='Asset Name',
         required=True,
+        size=500,
         help="Default with original asset name, but can be chagned.",
     )
     asset_profile_id = fields.Many2one(
@@ -908,6 +911,7 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
     )
     name = fields.Char(
         string='Description',
+        size=500,
         help="Description to be shown in journal entry."
     )
     asset_state = fields.Selection(
@@ -1086,6 +1090,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
     asset_name = fields.Char(
         string='Asset Name',
         required=True,
+        size=500,
         help="Default with original asset name, but can be chagned.",
     )
     asset_date = fields.Date(

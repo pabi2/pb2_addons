@@ -419,6 +419,7 @@ class BudgetPlanUnitLine(BPLMonthCommon, ActivityCommon, models.Model):
     )
     reason = fields.Text(
         string='Reason',
+        size=1000,
     )
     # Converted to equivalant status
     # status = fields.Selection(

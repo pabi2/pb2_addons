@@ -8,10 +8,12 @@ class BCommon(object):
 
     name = fields.Char(
         string='Name',
+        size=500,
         required=True,
     )
     code = fields.Char(
         string='Code',
+        size=100,
         required=True,
     )
     active = fields.Boolean(

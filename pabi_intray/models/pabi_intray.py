@@ -16,10 +16,12 @@ class PABIIntray(models.Model):
     owner = fields.Char(
         string='Owner Emp ID',
         readonly=True,
+        size=100,
     )
     boss = fields.Char(
         string='Boss Emp ID',
         readonly=True,
+        size=100,
     )
     action = fields.Selection(
         [('A', 'Approve'),
@@ -35,7 +37,8 @@ class PABIIntray(models.Model):
     url = fields.Char(
         string='URL',
         readonly=True,
-        help="URL without <server>, will be joining with web.base.url"
+        size=500,
+        help="URL without <server>, will be joining with web.base.url",
     )
 
     def init(self, cr):

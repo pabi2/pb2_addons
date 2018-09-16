@@ -8,6 +8,7 @@ class ResCompany(models.Model):
     group_email = fields.Char(
         string='Group Email',
         default='acf-adv@nstda.or.th',
+        size=500,
     )
     head_account_employee_id = fields.Many2one(
         'hr.employee',

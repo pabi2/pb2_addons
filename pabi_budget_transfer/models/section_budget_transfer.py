@@ -34,6 +34,7 @@ class SectionBudgetTransfer(models.Model):
         required=True,
         readonly=True,
         default='/',
+        size=100,
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
@@ -114,11 +115,12 @@ class SectionBudgetTransfer(models.Model):
         states={'draft': [('readonly', False)]},
     )
     notes = fields.Text(
-        string="Additional Information",
+        string='Additional Information',
+        size=1000,
     )
     total_transfer_amt = fields.Float(
-        string="Transferred Amount",
-        compute="_compute_total_transfer_amt",
+        string='Transferred Amount',
+        compute='_compute_total_transfer_amt',
     )
 
     @api.multi
@@ -290,7 +292,8 @@ class SectionBudgetTransferLine(models.Model):
         readonly=True,
     )
     notes = fields.Text(
-        string="Notes/Reason",
+        string='Notes/Reason',
+        size=1000,
     )
     _sql_constraints = [
         ('no_negative_transfer_amount', 'CHECK(amount_transfer >= 0)',

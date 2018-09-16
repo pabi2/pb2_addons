@@ -10,17 +10,15 @@
                     <p>Please select date for installment order</p>
                     <group>
                         <group>
-                            <field name="date_order"/>
+                            <field name="date_order" readonly="1"/>
                         </group>
                         <group>
                             <field name="amount"/>
-                            <field name="install_amount"/>
+                            <field name="install_amount" readonly="1"/>
                         </group>
                     </group>
                     <footer>
                         <button name="action_create_installment_order" type="object" string="Create Installment Order" class="oe_highlight"/>
-                        or
-                        <button special="cancel" string="Cancel"/>
                     </footer>
                 </form>
             </field>

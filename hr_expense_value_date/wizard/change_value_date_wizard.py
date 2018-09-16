@@ -15,6 +15,7 @@ class ChangeDateValue(models.TransientModel):
     reason = fields.Char(
         string="Reason",
         required=True,
+        size=500,
     )
 
     @api.multi

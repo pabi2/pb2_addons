@@ -57,11 +57,13 @@ class PabiAction(models.AbstractModel):
     res_ids = fields.Char(
         string='Result IDs',
         readonly=True,
+        size=500,
         help="String representative of id list of record newly created",
     )
     res_model = fields.Char(
         string='Result Model',
         readonly=True,
+        size=500,
         help="Model of the imported record",
     )
     state = fields.Selection(
@@ -76,11 +78,13 @@ class PabiAction(models.AbstractModel):
     uuid = fields.Char(
         string='UUID',
         readonly=True,
+        size=500,
         help="Job queue unique identifiers",
     )
     result_msg = fields.Text(
         string='Result',
         readonly=True,
+        size=1000,
         help="Resulting message from the execution (if any)",
     )
 

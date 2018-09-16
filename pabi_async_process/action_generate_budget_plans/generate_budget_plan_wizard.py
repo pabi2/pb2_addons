@@ -47,8 +47,7 @@ class GenerateBudgetPlan(PabiAsync, models.TransientModel):
             # Checking for running task, use the same signature as delay()
             task_name = "%s('%s', %s)" % ('action_generate_budget_plan',
                                           self._name, self.id)
-            self._check_queue(task_name, desc=description,
-                              type='always', uuid=uuid)
+            self._check_queue(task_name, desc=description, type='always')
         else:
             return \
                 super(GenerateBudgetPlan, self).action_generate_budget_plan()

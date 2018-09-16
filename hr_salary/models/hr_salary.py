@@ -16,6 +16,7 @@ class HRSalaryExpense(models.Model):
         readonly=True,
         copy=False,
         track_visibility='onchange',
+        size=500,
     )
     name = fields.Char(
         string='Description',
@@ -29,6 +30,7 @@ class HRSalaryExpense(models.Model):
         readonly=True,
         default=lambda self: self.env.user,
         track_visibility='onchange',
+        size=500,
     )
     date = fields.Date(
         string='Date',
@@ -103,6 +105,7 @@ class HRSalaryExpense(models.Model):
     note = fields.Text(
         string='Notes',
         track_visibility='onchange',
+        size=1000,
     )
     currency_id = fields.Many2one(
         'res.currency',
@@ -351,6 +354,7 @@ class HRSalaryLine(models.Model):
     )
     name = fields.Char(
         string='Description',
+        size=500,
     )
     account_id = fields.Many2one(
         'account.account',

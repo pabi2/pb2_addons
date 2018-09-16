@@ -9,6 +9,7 @@ class IRActionReportXML(models.Model):
         string='Context',
         copy=False,
         default={},
+        size=500,
     )
 
 

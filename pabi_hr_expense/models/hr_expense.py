@@ -8,16 +8,23 @@ class HRExpense(models.Model):
 
     # editable only on draft state
     employee_id = fields.Many2one(
-        readonly=True, states={'draft': [('readonly', False)]},
+        'hr.employee',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     name = fields.Char(
-        readonly=True, states={'draft': [('readonly', False)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     currency_id = fields.Many2one(
-        readonly=True, states={'draft': [('readonly', False)]},
+        'res.currency',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     operating_unit_id = fields.Many2one(
-        readonly=True, states={'draft': [('readonly', False)]},
+        'operating.unit',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     # --
     approver_id = fields.Many2one(
@@ -28,41 +35,50 @@ class HRExpense(models.Model):
     )
     apweb_ref_url = fields.Char(
         string='PABI Web Ref.',
-        readonly=True, states={'draft': [('readonly', False)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     date = fields.Date(
         string='Approved Date',
-        readonly=True, states={'draft': [('readonly', False)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     user_valid = fields.Many2one(
+        'res.users',
         string='Accepted By',
-        readonly=True, states={'draft': [('readonly', False)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     date_back = fields.Date(
         string='Back from seminar',
-        readonly=True, states={'draft': [('readonly', False)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     date_due = fields.Date(
         string='Due Date',
         related='advance_due_history_ids.date_due',
         store=True,
-        readonly=True, states={'draft': [('readonly', False)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     receive_method = fields.Selection(
         [('salary_bank', 'Salary Bank Account'),
          ('other_bank', 'Other Banks')],
         string='Receive Method',
         default='salary_bank',
-        readonly=True, states={'draft': [('readonly', False)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     employee_bank_id = fields.Many2one(
         'res.bank',
         string='Bank',
-        readonly=True, states={'draft': [('readonly', False)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     supplier_text = fields.Char(
         string='Supplier Name',
         readonly=True, states={'draft': [('readonly', False)]},
+        size=500,
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -144,6 +160,7 @@ class HRExpense(models.Model):
     )
     remark = fields.Text(
         string='Note for Advance',
+        size=1000,
     )
     activity_group_ids = fields.Many2many(
         'account.activity.group',
@@ -173,9 +190,7 @@ class HRExpense(models.Model):
     )
 
     @api.multi
-    @api.depends(
-        'line_ids',
-        'line_ids.activity_group_id')
+    @api.depends('line_ids', 'line_ids.activity_group_id')
     def _compute_activity_groups(self):
         for expense in self:
             if expense.line_ids:
@@ -184,6 +199,7 @@ class HRExpense(models.Model):
                     if line.activity_group_id:
                         expense_ids.append(line.activity_group_id.id)
                 expense.activity_group_ids = expense_ids
+        return True
 
     @api.multi
     @api.depends('line_ids', 'line_ids.project_id', 'line_ids.section_id')
@@ -193,18 +209,7 @@ class HRExpense(models.Model):
             sections = rec.line_ids.mapped('section_id')
             rec.project_id = len(projects) == 1 and projects[0] or False
             rec.section_id = len(sections) == 1 and sections[0] or False
-
-    # @api.model
-    # def _prepare_inv_header(self, partner_id, expense):
-    #     res = super(HRExpense, self)._prepare_inv_header(partner_id,
-    #                                                      expense)
-    #     if self._context.get('amount_expense_request', False):
-    #         res.update({'amount_expense_request':
-    #                     self._context.get('amount_expense_request')})
-    #     else:
-    #         res.update({'amount_expense_request':
-    #                     expense.amount})
-    #     return res
+        return True
 
     @api.multi
     def _create_supplier_invoice_from_expense(self):

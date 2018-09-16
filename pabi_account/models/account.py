@@ -10,6 +10,7 @@ class AccountMove(models.Model):
         string='Items Summary',
         compute='_compute_line_item_summary',
         store=True,
+        size=1000,
         help="This field provide summary of items in move line with Qty."
     )
     date = fields.Date(
@@ -25,6 +26,13 @@ class AccountMove(models.Model):
         store=True,
         help="Document date follow original document's document date, "
         "otherwise, use current date",
+    )
+    tax_detail_ids = fields.One2many(
+        'account.tax.detail',
+        'ref_move_id',
+        string='Tax Detail',
+        readonly=False,
+        copy=True,  # Add this, we want to copy it but negate amount
     )
 
     @api.multi
@@ -56,6 +64,17 @@ class AccountMove(models.Model):
             items = list(set(items))
             if items:
                 rec.line_item_summary = ", ".join(items)
+
+    @api.model
+    def _switch_move_dict_dr_cr(self, move_dict):
+        """ If tax detail is copied, also negate amount """
+        move_dict = super(AccountMove, self)._switch_move_dict_dr_cr(move_dict)
+        tax_details = move_dict.get('tax_detail_ids', [])
+        for detail in tax_details:
+            detail[2]['base'] = -detail[2]['base']
+            detail[2]['amount'] = -detail[2]['amount']
+        move_dict['tax_detail_ids'] = tax_details
+        return move_dict
 
 
 class AccountAccount(models.Model):

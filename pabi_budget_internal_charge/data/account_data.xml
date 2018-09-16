@@ -36,5 +36,22 @@
             <field name="entry_posted" >True</field>
         </record>
 
+        # Internal Charge (generic use)
+        <record model="ir.sequence" id="seq_ic_journal">
+            <field name="name">Internal Charge</field>
+            <field name="code"></field>
+            <field name="padding" eval="5"/>
+            <field name="prefix">JIC%(fy)s/</field>
+        </record>
+        <record id="ic_journal" model="account.journal">
+            <field name="name">Internal Charge</field>
+            <field name="code">JIC</field>
+            <field name="type">general</field>
+            <field name="company_id" ref="base.main_company"/>
+            <!-- <field name="analytic_journal_id" eval="ref('account.exp')" /> -->
+            <field name="sequence_id" eval="ref('pabi_budget_internal_charge.seq_ic_journal')" />
+            <field name="entry_posted" >True</field>
+        </record>
+
     </data>
 </openerp>

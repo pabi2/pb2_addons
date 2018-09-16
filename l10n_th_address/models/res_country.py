@@ -8,12 +8,16 @@ class ResCountryProvince(models.Model):
     _name = 'res.country.province'
     _description = 'Provinces'
 
-    name = fields.Char(string='Province', required=True)
+    name = fields.Char(
+        string='Province',
+        required=True,
+        size=500,
+    )
     country_id = fields.Many2one(
         'res.country',
         string='Country',
         required=True,
-        )
+    )
 
 
 class ResCountryDistrict(models.Model):
@@ -21,12 +25,16 @@ class ResCountryDistrict(models.Model):
     _name = 'res.country.district'
     _description = 'Districts'
 
-    name = fields.Char(string='District', required=True)
+    name = fields.Char(
+        string='District',
+        required=True,
+        size=500,
+    )
     province_id = fields.Many2one(
         'res.country.province',
         string='Province',
         required=True,
-        )
+    )
 
 
 class ResCountryTownship(models.Model):
@@ -34,7 +42,11 @@ class ResCountryTownship(models.Model):
     _name = 'res.country.township'
     _description = 'Township'
 
-    name = fields.Char(string='Township', required=True)
+    name = fields.Char(
+        string='Township',
+        required=True,
+        size=500,
+    )
     district_id = fields.Many2one(
         'res.country.district',
         string='District',

@@ -57,6 +57,10 @@ class AccountInvoice(models.Model):
             retention_line.name = \
                 self.env.user.company_id.account_retention_supplier.name
             retention_line.quantity = 1.0
+            chartfields = \
+                self.retention_purchase_id.order_line.mapped('chartfield_id')
+            if len(chartfields) == 1:
+                retention_line.chartfield_id = chartfields[0]
             self.invoice_line += retention_line
 
     @api.onchange('retention_return_purchase_id')

@@ -19,16 +19,20 @@ class AccountTaxReport(models.Model):
     )
     move_number = fields.Char(
         string='JE Number',
+        size=500,
     )
     move_ref = fields.Char(
         string='JE Ref.',
+        size=500,
         help="Original Document",
     )
     year = fields.Char(
         string='Year',
+        size=4,
     )
     month = fields.Char(
         string='Month',
+        size=100,
     )
     report_period_id = fields.Many2one(
         'account.period',
@@ -40,15 +44,19 @@ class AccountTaxReport(models.Model):
     )
     partner_name = fields.Char(
         string='Partner Name',
+        size=500,
     )
     partner_title = fields.Char(
         string='Partner Title',
+        size=500,
     )
     partner_vat = fields.Char(
         string='Partner VAT',
+        size=20,
     )
     partner_taxbranch = fields.Char(
         string='Partner Taxbranch',
+        size=20,
     )
     tax_id = fields.Many2one(
         'account.tax',
@@ -56,15 +64,18 @@ class AccountTaxReport(models.Model):
     )
     tax_sequence = fields.Integer(
         string='Sequence',
+        size=20,
     )
     tax_sequence_display = fields.Char(
         string='Sequence Display',
+        size=20,
     )
     invoice_date = fields.Date(
         string='Invoice Date',
     )
     invoice_number = fields.Char(
         string='Invoice Number',
+        size=20,
     )
     base = fields.Float(
         string='Base',

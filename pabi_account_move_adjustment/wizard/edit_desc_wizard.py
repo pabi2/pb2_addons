@@ -8,6 +8,7 @@ class EditDesc(models.TransientModel):
     name = fields.Char(
         string='Description',
         required=True,
+        size=500,
     )
 
     @api.model

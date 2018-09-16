@@ -48,6 +48,7 @@ class AccountVoucher(models.Model):
     )
     narration = fields.Text(
         readonly=False,
+        size=1000,
     )
     operating_unit_id = fields.Many2one(
         readonly=True, states={'draft': [('readonly', False)]},
@@ -63,6 +64,7 @@ class AccountVoucher(models.Model):
     voucher_description = fields.Text(
         string='Voucher Description',
         compute='_compute_voucher_description',
+        size=1000,
         help="Compute summary description of entire voucher lines",
     )
     income_tax_form = fields.Selection(
@@ -74,6 +76,7 @@ class AccountVoucher(models.Model):
     )
     number_preprint = fields.Char(
         string='Preprint Number',
+        size=500,
     )
     research_type = fields.Selection(
         [('basic', 'Basic Research'),
@@ -83,6 +86,7 @@ class AccountVoucher(models.Model):
     )
     contract_number = fields.Char(
         string='Contract Number',
+        size=500,
     )
     partner_code = fields.Char(
         string='Partner Code',
@@ -287,6 +291,7 @@ class AccountVoucherLine(models.Model):
         related='invoice_id.invoice_description',
         string='Invoice Description',
         readonly=True,
+        size=1000,
     )
     invoice_taxbranch_id = fields.Many2one(
         'res.taxbranch',

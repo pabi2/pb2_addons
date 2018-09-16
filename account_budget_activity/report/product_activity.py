@@ -17,6 +17,7 @@ class ProductActivity(models.Model):
     )
     name = fields.Char(
         string='Name',
+        size=500,
     )
 
     def _get_sql_view(self):

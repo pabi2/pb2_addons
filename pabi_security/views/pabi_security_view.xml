@@ -18,12 +18,21 @@
                             <field name="date"/>
                         </group>
                     </group>
-                    <p>
+                    <group>
+                        <group>
+                            <field name="method"/>
+                        </group>
+                        <group>
+                            <field name="meta_group_id" attrs="{'invisible': [('method', '=', 'by_user')]}"/>
+                            <field name="group_id" attrs="{'invisible': [('method', '=', 'by_user')]}"/>
+                        </group>
+                    </group>
+                    <p attrs="{'invisible': [('method', '=', 'all_user')]}">
                         This window enable mass apply of meta groups and groups.
                         Got to More > Export Template, you can export excel template and import back.<br/>
                         <b>Note:</b> for each selcted users, previous groups will be removed first, and then reapply.
                     </p>
-                    <field name="line_ids" nolabel="1">
+                    <field name="line_ids" nolabel="1" attrs="{'invisible': [('method', '=', 'all_user')]}">
                         <tree editable="bottom">
                             <!-- This section must be change to match SECURITY_DICT -->
                             <field name="user_id"/>

@@ -29,7 +29,7 @@
         <record id="rule_expense_line_non_internal_charge" model="ir.rule">
             <field name="name">Expense Lines Non-Internal Charge</field>
             <field name="model_id" ref="model_hr_expense_line"/>
-            <field name="domain_force">[('expense_id.pay_to', '!=', 'internal')]</field>
+            <field name="domain_force">['|', ('expense_id.pay_to', '!=', 'internal'), ('create_uid', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field eval="1" name="perm_unlink"/>
             <field eval="1" name="perm_write"/>

@@ -42,6 +42,7 @@ class AccountSubscription(models.Model):
     )
     rate_err_message = fields.Char(
         string='Error Message',
+        size=500,
     )
     model_type_id = fields.Many2one(
         'account.model.type',
@@ -236,22 +237,29 @@ class AccountSubscriptionLine(models.Model):
     def move_create(self):
         move_ids = []
         # Filtered by Model type, when selected
-        model_type_ids = self._context.get('model_type_ids', False)
+        type_ids = self._context.get('model_type_ids', False)
+        model_ids = self._context.get('model_ids', False)
         context = self._context.copy()
-        subscriptions = self.mapped('subscription_id')
-        for subscription in subscriptions:
-            context.update({'subscription_id': subscription.id,
+        SLine = self.env['account.subscription.line']
+        subscription_ids = []
+        subline_ids = self.ids
+        if subline_ids:
+            self._cr.execute("""
+                select distinct subscription_id from account_subscription_line
+                where id in %s""", (tuple(subline_ids), ))
+            subscription_ids = [r[0] for r in self._cr.fetchall()]
+        # Grouping by subscription and amount/no amount
+        for subscription_id in subscription_ids:
+            context.update({'subscription_id': subscription_id,
                             'subline_amount': False})
-            # Subline for this subscription
-            sublines = self.filtered(lambda l:
-                                     l.subscription_id == subscription)
-            if model_type_ids:
-                sublines = sublines.filtered(
-                    lambda l: l.subscription_id.model_type_id.id in
-                    model_type_ids)
-            # If no model types specified, generate for all.
-            lines_normal = sublines.filtered(lambda l: not l.amount)
-            lines_with_amount = sublines.filtered(lambda l: l.amount)
+            # Subline for this subscription, with filtered and amount
+            dom = [('subscription_id', '=', subscription_id)]
+            if type_ids:
+                dom.append(('subscription_id.model_type_id', 'in', type_ids))
+            if model_ids:
+                dom.append(('subscription_id.model_id', 'in', model_ids))
+            lines_normal = SLine.search(dom + [('amount', '=', False)])
+            lines_with_amount = SLine.search(dom + [('amount', '!=', False)])
             # Normal case
             _ids = super(AccountSubscriptionLine,
                          lines_normal.with_context(context)).move_create()
@@ -300,7 +308,8 @@ class AccountModel(models.Model):
           'Define Recurring Entries (account.subscription),\nyou can use '
           'python code to get the dynamic values from the Define Recurring '
           'into the model line using ${object} (account.subscription),\n'
-          'e.g. ${object.name} will get the name of Define Recurring\n')
+          'e.g. ${object.name} will get the name of Define Recurring\n'),
+        size=1000,
     )
 
     @api.multi
@@ -528,6 +537,7 @@ class AccountModelType(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        size=500,
     )
     active = fields.Boolean(
         string='Active',

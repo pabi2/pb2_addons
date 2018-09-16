@@ -6,7 +6,7 @@ from openerp.exceptions import RedirectWarning, ValidationError
 class PabiAsync(object):
 
     @api.model
-    def _check_queue(self, task_name, desc=False, type='always', uuid=False):
+    def _check_queue(self, task_name, desc=False, type='always'):
         """ Checking Type
         'never' : No checking on task, simply show the RedirectWarning to myJob
             - no check in any case
@@ -18,15 +18,18 @@ class PabiAsync(object):
         if type and type not in ['never', 'always', 'mytask']:
             raise ValidationError(_('Wrong job checking type!'))
 
-        action = self.env.ref('pabi_utils.action_my_queue_job')
         if type == 'never':
+            jobs = self._get_running_jobs(task_name, type)
             self._cr.commit()
+            uuid = jobs[0].uuid
         elif type in ['always', 'mytask']:
             jobs = self._get_running_jobs(task_name, type)
             if not jobs:
                 raise ValidationError(_('Something wrong, job not created!'))
             if len(jobs) == 1:  # 1 Job ok, we can commit. Else, not create.
                 self._cr.commit()
+            print jobs
+            uuid = jobs[0].uuid
         # Show RedirectWarning Message
         message = False
         if desc:
@@ -35,15 +38,21 @@ class PabiAsync(object):
             message = _('This action is enqueued')
         if uuid:
             message += '\nUUID: %s' % uuid
+        action = self.env.ref('pabi_utils.action_my_queue_job')
         raise RedirectWarning(message, action.id, _('Go to My Jobs'))
 
     @api.model
-    def _get_running_jobs(self, task_name, type):
+    def _get_running_jobs(self, task_name, type=type):
         dom = [('func_string', 'like', task_name),
                ('state', 'not in', ('done', 'failed'))]
+        order = 'id desc'
+        if type == 'never':
+            order = 'id desc'  # For case never, latest first
         if type == 'always':
-            dom = dom  # do nothing
+            dom = dom
+            order = 'id'
         if type == 'mytask':
             dom.append(('user_id', '=', self._uid))  # My job only
-        jobs = self.env['queue.job'].search(dom)
+            order = 'id'
+        jobs = self.env['queue.job'].search(dom, order=order)
         return jobs

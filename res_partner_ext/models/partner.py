@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-
+import logging
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from openerp.osv.expression import get_unaccent_wrapper
+
+_logger = logging.getLogger(__name__)
 
 
 class ResPartner(models.Model):
@@ -66,9 +68,11 @@ class ResPartner(models.Model):
     )
     customer_legacy_code = fields.Char(
         string='Customer Legacy Code',
+        size=100,
     )
     supplier_legacy_code = fields.Char(
         string='Supplier Legacy Code',
+        size=100,
     )
 
     @api.onchange('title')
@@ -192,6 +196,9 @@ class ResPartner(models.Model):
 
     @api.model
     def create_partner(self, vals):
+        _logger.info('create_partner(), input: %s' % vals)
+        # Find township_id, district_id, province_id hierarchy
+        self._set_province_district_township(vals)
         try:
             WS = self.env['pabi.utils.ws']
             res = WS.friendly_create_data(self._name, vals)
@@ -214,18 +221,22 @@ class ResPartner(models.Model):
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': e,
+                'messages': _(str(e)),
             }
             self._cr.rollback()
+        _logger.info('create_partner(), output: %s' % res)
         return res
 
     @api.model
     def create_update_partner(self, vals):
+        _logger.info('create_update_partner(), input: %s' % vals)
+        # Find township_id, district_id, province_id hierarchy
         # No search key, do create, else try to update.
         if not vals.get('search_key', False):
             return self.create_partner(vals)
         try:  # Update
             WS = self.env['pabi.utils.ws']
+            self._set_province_district_township(vals)
             res = WS.friendly_update_data(self._name, vals, 'search_key')
             if res['is_success']:
                 res_id = res['result']['id']
@@ -236,10 +247,49 @@ class ResPartner(models.Model):
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': e,
+                'messages': _(str(e)),
             }
             self._cr.rollback()
+        _logger.info('create_update_partner(), output: %s' % res)
         return res
+
+    @api.model
+    def _set_province_district_township(self, vals):
+        """ Try to get ID of the address for provided parent field """
+        province = vals.get('province_id', False)
+        district = vals.get('district_id', False)
+        township = vals.get('township_id', False)
+        # Find Province
+        if province:
+            Province = self.env['res.country.province']
+            res = Province.name_search(province, operator='=')
+            if len(res) == 1:
+                province_id = res[0][0]
+                vals['province_id'] = province_id
+                # Find District
+                if province_id and district:
+                    District = self.env['res.country.district']
+                    res = District.name_search(district, operator='=')
+                    if len(res) > 0:
+                        district_ids = [x[0] for x in res]
+                        district_id = District.search([
+                            ('id', 'in', district_ids),
+                            ('province_id', '=', province_id)], limit=1).id
+                        vals['district_id'] = district_id or district
+                        # Find townshop
+                        if province_id and district_id and township:
+                            res = self.env['res.country.township'].\
+                                name_search(township, operator='=')
+                            if len(res) > 0:
+                                township_ids = [x[0] for x in res]
+                                Township = self.env['res.country.township']
+                                township_id = Township.search([
+                                    ('id', 'in', township_ids),
+                                    ('province_id', '=', province_id),
+                                    ('district_id', '=', district_id)],
+                                    limit=1).id
+                                vals['township_id'] = township_id or township
+        return True
 
     @api.model
     def _pre_category_change(self, vals):
@@ -503,12 +553,13 @@ class ResPartnerCategory(models.Model):
 
 
 class ResPartnerTag(models.Model):
-    _description = 'Partner Tags'
     _name = 'res.partner.tag'
+    _description = 'Partner Tags'
 
     name = fields.Char(
         string='Name',
         required=True,
+        size=500,
     )
     parent_id = fields.Many2one(
         'res.partner.tag',

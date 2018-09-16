@@ -26,9 +26,13 @@ class AccountMoveLine(models.Model):
                     search(net_args)
                 # Add move_line_ids form the opposite side with OR operator
                 x_args = []
+                num_arg = len(args)
+                i = 1
                 for arg in args:
-                    x_args.append('&')
+                    if i != num_arg:
+                        x_args.append('&')
                     x_args.append(arg)
+                    i += 1
                 args = ['|', ('id', 'in', net_move_line_ids._ids)] + x_args
         return super(AccountMoveLine, self).search(args, offset=offset,
                                                    limit=limit, order=order,

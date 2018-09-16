@@ -27,9 +27,11 @@ class DocumentAuditlogLogLine(models.Model):
 
     status = fields.Char(
         string=u'Status',
+        size=500,
     )
     status_text = fields.Char(
         string=u'Status Text',
+        size=500,
     )
     user_id = fields.Many2one(
         'res.users',

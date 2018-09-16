@@ -11,7 +11,7 @@
             <field name="sequence">2</field>
             <field name="code">deliver</field>
             <field name="name">ส่งมอบ</field>
-            <field name="map_state">open</field>
+            <field name="map_state">removed</field>
         </record>
         <record id="asset_status_transfer" model="account.asset.status">
             <field name="sequence">3</field>

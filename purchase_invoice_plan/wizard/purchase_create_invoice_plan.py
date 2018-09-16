@@ -68,6 +68,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
     )
     installment_amount = fields.Float(
         string='Installment Amount',
+        digits=dp.get_precision('Account'),
     )
 
     @api.onchange('use_advance')
@@ -226,15 +227,15 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                 remaining_installment_amount = (remaining_installment_amount -
                                                 self.installment_amount)
                 new_val = i.amount / (self.order_amount or 1) * 100
-                if round(new_val, prec) != round(i.percent, prec):
-                    i.percent = new_val
+                # if round(new_val, prec) != round(i.percent, prec):
+                i.percent = new_val
                 last_line = i
             if last_line and remaining_installment_amount > 0:
                 last_line.amount = (last_line.amount +
                                     remaining_installment_amount)
                 new_val = last_line.amount / self.order_amount * 100
-                if round(new_val, prec) != round(last_line.percent, prec):
-                    last_line.percent = new_val
+                # if round(new_val, prec) != round(last_line.percent, prec):
+                last_line.percent = new_val
 
     @api.onchange('use_advance', 'num_installment', 'use_deposit')
     def _onchange_plan(self):
@@ -321,13 +322,14 @@ class PurchaseCreateInvoicePlanInstallment(models.TransientModel):
         digits=dp.get_precision('Account'),
     )
     is_deposit_installment = fields.Boolean(
-        string="Deposit Installment",
+        string='Deposit Installment',
     )
     is_advance_installment = fields.Boolean(
-        string="Advance Installment",
+        string='Advance Installment',
     )
     description = fields.Char(
-        string="Description"
+        string='Description',
+        size=500,
     )
 
     @api.onchange('percent')

@@ -38,6 +38,7 @@ class DocumentExportConfigLine(models.Model):
     field_code = fields.Text(
         string='Python Code',
         required=False,
+        size=1000,
     )
     length = fields.Integer(
         string='Length',
@@ -48,9 +49,11 @@ class DocumentExportConfigLine(models.Model):
     )
     notes = fields.Char(
         string='Remarks',
+        size=500,
     )
     default_value = fields.Char(
         string='Default Value',
+        size=500,
     )
     model_id = fields.Many2one(
         'ir.model',
@@ -66,6 +69,7 @@ class DocumentExportConfig(models.Model):
     name = fields.Char(
         string="Name",
         required=True,
+        size=500,
     )
     date = fields.Date(
         string="Date",
@@ -106,6 +110,7 @@ class DocumentExportConfig(models.Model):
     delimiter_symbol = fields.Char(
         string="Joining Delimiter",
         required=False,
+        size=10,
     )
     footer_disabled = fields.Boolean(
         string='Disabled',

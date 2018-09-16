@@ -28,15 +28,18 @@ class ResOrg(ResCommon, models.Model):
     )
     name_print_text = fields.Char(
         string='Print Name',
+        size=500,
         translate=True,
     )
     address_print_text = fields.Text(
         string='Print Address',
         translate=True,
+        size=1000,
     )
     branch_200 = fields.Text(
         string='Branch 200%',
         translate=True,
+        size=1000,
     )
 
     @api.model
@@ -234,18 +237,22 @@ class ResTaxbranch(ResCommon, models.Model):
     )
     street = fields.Char(
         string='Street',
+        size=500,
         translate=True,
     )
     street2 = fields.Char(
         string='Street2',
+        size=500,
         translate=True,
     )
     zip = fields.Char(
         string='Zip',
+        size=20,
     )
     city = fields.Char(
         string='City',
         translate=True,
+        size=100,
     )
     country_id = fields.Many2one(
         'res.country',
@@ -253,15 +260,19 @@ class ResTaxbranch(ResCommon, models.Model):
     )
     email = fields.Char(
         string='Email',
+        size=100,
     )
     phone = fields.Char(
         string='Phone',
+        size=100,
     )
     fax = fields.Char(
         string='Fax',
+        size=100,
     )
     website = fields.Char(
         string='website',
+        size=100,
     )
     taxid = fields.Char(
         string='Tax ID',
@@ -269,14 +280,17 @@ class ResTaxbranch(ResCommon, models.Model):
     address_print_text = fields.Text(
         string='Print Address',
         translate=True,
+        size=1000,
     )
     address_print_text_receipt = fields.Text(
         string='Print Address (Receipt)',
         translate=True,
+        size=1000,
     )
     payment_method_text = fields.Text(
         string='Print Payment Method',
         translate=True,
+        size=1000,
     )
     # org_id = fields.Many2one(
     #     'res.org',

@@ -14,6 +14,7 @@ class PurchaseBilling(models.Model):
     name = fields.Char(
         string='Billing Number',
         readonly=True,
+        size=500,
         copy=False,
     )
     currency_id = fields.Many2one(
@@ -65,6 +66,7 @@ class PurchaseBilling(models.Model):
         string='Notes',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        size=1000,
     )
     supplier_invoice_ids = fields.Many2many(
         'account.invoice',
@@ -125,7 +127,9 @@ class PurchaseBilling(models.Model):
                     _("""Wrong due date configuration.
                          Please check the due date setting.""")
                 )
-        if day not in date_list:
+        print self._context
+        if day not in date_list and not \
+                self._context.get('bypass_due_date_check', False):
             raise ValidationError(
                 _("""You specified wrong due date.
                      It has to be in %s

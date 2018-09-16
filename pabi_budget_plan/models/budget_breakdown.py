@@ -17,6 +17,7 @@ class BudgetBreakdown(models.Model):
         required=True,
         readonly=True,
         default='/',
+        size=500,
         copy=False,
     )
     policy_line_id = fields.Many2one(
@@ -148,6 +149,7 @@ class BudgetBreakdown(models.Model):
     message = fields.Text(
         string='Messages',
         readonly=True,
+        size=1000,
     )
     _sql_constraints = [
         ('uniq_breakdown', 'unique(policy_line_id)',

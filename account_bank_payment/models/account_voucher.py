@@ -21,6 +21,7 @@ class AccountVoucher(models.Model):
         string='Bank Payment',
         related='bank_payment_id.name',
         readonly=True,
+        size=500,
     )
 
     @api.model

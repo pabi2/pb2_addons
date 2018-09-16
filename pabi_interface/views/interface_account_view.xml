@@ -28,10 +28,12 @@
                     <field name="tax_base_amount"/>
                     <field name="date"/>
                     <field name="date_maturity"/>
-                    <field name="reconcile_move_id" />
                     <!-- Job Order -->
                     <field name="cost_control_id"/>
                     <field name="contract_charge_type"/>
+                    <!-- Reconcile with -->
+                    <field name="reconcile_move_id"/>
+                    <field name="reconcile_move_line_id"/>
                 </tree>
             </field>
         </record>
@@ -67,6 +69,7 @@
                                 <field name="to_reverse_entry_id" attrs="{'invisible': [('type', '!=', 'reverse')], 'required': [('type', '=', 'reverse')]}"/>
                                 <field name="reversed_date" attrs="{'invisible': [('type', '!=', 'reverse')], 'required': [('type', '=', 'reverse')]}"/>
                                 <field name="journal_id"/>
+                                <field name="charge_type" attrs="{'invisible': [('type', '!=', 'invoice')]}"/>
                                 <field name="to_reconcile" invisible="1"/>
                                 <field name="move_id" attrs="{'invisible': [('move_id', '=', False)]}"/>
                                 <field name="residual" attrs="{'invisible': [('type', '!=', 'invoice')]}"/>

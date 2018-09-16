@@ -175,18 +175,22 @@ class AccountInvoiceTaxDetailWizard(models.TransientModel):
     vat = fields.Char(
         string='Tax ID',
         readonly=True,
+        size=20,
     )
     vat_readonly = fields.Char(
         string='Tax ID',
         related='vat',
+        size=20,
     )
     taxbranch = fields.Char(
         string='Tax Branch ID',
         readonly=True,
+        size=20,
     )
     taxbranch_readonly = fields.Char(
         string='Tax Branch ID',
         related='taxbranch',
+        size=20,
     )
     invoice_number = fields.Char(
         string='Tax Invoice Number',

@@ -20,11 +20,13 @@ class PrintPITWhtCertWizard(models.TransientModel):
         related='company_partner_id.vat',
         string='Company Tax ID',
         readonly=True,
+        size=20,
     )
     supplier_taxid = fields.Char(
         related='supplier_partner_id.vat',
         string='Supplier Tax ID',
         readonly=True,
+        size=20,
     )
     supplier_address = fields.Char(
         string='Supplier Address',
