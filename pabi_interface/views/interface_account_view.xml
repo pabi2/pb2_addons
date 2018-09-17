@@ -33,7 +33,7 @@
                     <field name="contract_charge_type"/>
                     <!-- Reconcile with -->
                     <field name="reconcile_move_id"/>
-                    <field name="reconcile_move_line_id"/>
+                    <field name="reconcile_move_line_ref"/>
                 </tree>
             </field>
         </record>

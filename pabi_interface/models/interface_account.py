@@ -591,11 +591,11 @@ class InterfaceAccountEntry(models.Model):
             for l in data_dict.get('line_ids', []):
                 if not l.get('reconcile_move_id', False):
                     continue
-                # If reconcile_move_id not found, try reconcile_move_line_id
+                # If reconcile_move_id not found, try reconcile_move_line_ref
                 vals = Move.name_search(l['reconcile_move_id'], operator='=')
                 if len(vals) != 1:
                     # Auto reassign to reconcile_move_line_id
-                    l['reconcile_move_line_id'] = l['reconcile_move_id']
+                    l['reconcile_move_line_ref'] = l['reconcile_move_id']
                     del l['reconcile_move_id']
             # -
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
@@ -726,11 +726,8 @@ class InterfaceAccountEntryLine(models.Model):
         "('partner_id', '=', partner_id)]",
         copy=False,
     )
-    reconcile_move_line_id = fields.Many2one(
-        'account.move.line',
-        string='Reconcile Item',
-        domain="[('state','=','valid'),"
-        "('partner_id', '=', partner_id)]",
+    reconcile_move_line_ref = fields.Char(
+        string='Reconcile Item Ref.',
         copy=False,
         help="For case migration only, allow direct select account.move.line",
     )
@@ -754,18 +751,20 @@ class InterfaceAccountEntryLine(models.Model):
     def _compute_reconcile_move_line_ids(self):
         AccountMoveLine = self.env['account.move.line']
         for rec in self:
-            if not rec.reconcile_move_id:
+            if not rec.reconcile_move_id and not rec.reconcile_move_line_ref:
                 continue
-            move_lines = AccountMoveLine.search(
-                [('state', '=', 'valid'),
-                 ('account_id.type', 'in', ['payable', 'receivable']),
-                 ('reconcile_id', '=', False),
-                 '|', ('move_id', '=', rec.reconcile_move_id.id),
-                 ('id', '=', rec.reconcile_move_line_id.id)])
+            dom = [('state', '=', 'valid'),
+                   ('account_id.type', 'in', ['payable', 'receivable']),
+                   ('reconcile_id', '=', False)]
+            if rec.reconcile_move_id:
+                dom.append(('move_id', '=', rec.reconcile_move_id.id))
+            elif rec.reconcile_move_line_ref:
+                dom.append(('ref', '=', rec.reconcile_move_line_ref))
+            move_lines = AccountMoveLine.search(dom)
             if not move_lines:
                 raise ValidationError(
                     _('No valid reconcilable move line for %s') %
-                    rec.reconcile_move_id.name)
+                    rec.reconcile_move_id.name or rec.reconcile_move_line_ref)
             rec.reconcile_move_line_ids = move_lines
         return True
 
@@ -945,14 +944,14 @@ class InterfaceAccountChecker(models.AbstractModel):
     def _check_select_reconcile_with(self, inf):
         # Either reconcile_move_id or reconcile_move_line_id can be selected
         lines = inf.line_ids.filtered(
-            lambda l: l.reconcile_move_id and l.reconcile_move_line_ids)
+            lambda l: l.reconcile_move_id and l.reconcile_move_line_ref)
         messages = []
         for l in lines:
             messages.append('%s-%s' % (l.sequence, l.name))
         if messages:
-            raise ValidationError(
-                _('Reconcile Entry and Reconcile Item can not coexists!\n%s') %
-                ', '.join(messages))
+            raise ValidationError(_('Reconcile Entry and Reconcile Item Ref.'
+                                    'can not coexists!\n%s') %
+                                  ', '.join(messages))
 
     @api.model
     def _check_balance_entry(self, inf):
