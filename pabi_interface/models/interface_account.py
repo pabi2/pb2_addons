@@ -747,7 +747,7 @@ class InterfaceAccountEntryLine(models.Model):
     )
 
     @api.multi
-    @api.depends('reconcile_move_id', 'reconcile_move_line_id')
+    @api.depends('reconcile_move_id', 'reconcile_move_line_ref')
     def _compute_reconcile_move_line_ids(self):
         AccountMoveLine = self.env['account.move.line']
         for rec in self:
