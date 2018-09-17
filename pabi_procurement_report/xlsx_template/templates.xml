@@ -208,6 +208,9 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B2': 'org_name${value or ""}',
+                            'B3': 'category_name${value or ""}',
+                            'B4': 'tag_name${value or ""}',
                         },
                         'results': {
                             'A8': '${"=ROW()-7"}',

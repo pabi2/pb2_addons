@@ -20,6 +20,43 @@ class XLSXReportPabiSupplierList(models.TransientModel):
         'res.partner.tag',
         string='Supplier Tag',
     )
+    org_name = fields.Char(
+        string='Org',
+    )
+    category_name = fields.Char(
+        string='Category',
+    )
+    tag_name = fields.Char(
+        string='Tag',
+    )
+
+
+    @api.onchange('org_ids')
+    def onchange_orgs(self):
+        res = ''
+        for prg in self.org_ids:
+            if res != '':
+                res += ', '
+            res += prg.operating_unit_id.code
+        self.org_name = res
+
+    @api.onchange('categ_ids')
+    def onchange_categs(self):
+        res = ''
+        for categ in self.categ_ids:
+            if res != '':
+                res += ', '
+            res += categ.name
+        self.category_name = res
+
+    @api.onchange('tag_ids')
+    def onchange_tags(self):
+        res = ''
+        for tag in self.tag_ids:
+            if res != '':
+                res += ', '
+            res += tag.name
+        self.tag_name = res
 
     # Report Result
     results = fields.Many2many(
@@ -36,6 +73,8 @@ class XLSXReportPabiSupplierList(models.TransientModel):
         dom = []
         if self.tag_ids:
             dom += [('tag_id', 'in', self.tag_ids._ids)]
+        if self.categ_ids:
+            dom += [('category_id', 'in', self.categ_ids._ids)]
         self.results = Result.search(dom)
 
 
@@ -94,7 +133,7 @@ class XLSXReportPabiSupplierListResults(models.Model):
         cr.execute("""CREATE or REPLACE VIEW %s as (
         SELECT 
         row_number() over (order by rp.id) as id,
-        rp.id as category_id,
+        rpc.id as category_id,
         rpc.name as category_name,
         rp.name as supplier_name,
         rp.search_key as search_key,
