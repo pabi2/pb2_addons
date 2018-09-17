@@ -18,7 +18,7 @@ class AccountMoveLine(models.Model):
     )
     origin_ref = fields.Char(
         string='Origin Ref.',
-        size='100',
+        size=100,
         help="To be used during migration period to store origin number",
     )
 
