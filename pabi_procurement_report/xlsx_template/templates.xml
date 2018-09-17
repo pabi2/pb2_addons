@@ -22,15 +22,22 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B2': 'org_name${value or ""}',
+                            'B3': 'partner_category_name${value or ""}',
+                            'B4': 'partner_name${value or ""}',
+                            'B5': 'method_name${value or ""}',
+                            'B6': 'doc_state${value or ""}',
                             'B7': 'date_from${value or ""}#{number_format=date}',
                             'B8': 'date_to${value or ""}#{number_format=date}',
                         },
                         'results': {
                             'A11': '${"=ROW()-10"}',
+                            'B11': 'ou_name${value or ""}',
                             'L11': 'pd_number${value or ""}',
                             'C11': 'objective${value or ""}',
+                            'D11': 'pr_amount#{number_format=number}',
                             'G11': 'rfq_supplier${value or ""}',
-                            'I11': 'rfq_supplier${value or ""}',
+                            'I11': 'po_supplier${value or ""}',
                             'E11': 'amount_standard#{number_format=number}',
                             'J11': 'amount_total#{number_format=number}',
                             'F11': 'method${value or ""}',
