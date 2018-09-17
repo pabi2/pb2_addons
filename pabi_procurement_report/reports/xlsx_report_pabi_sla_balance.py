@@ -12,9 +12,16 @@ class XLSXReportPabiSlaBalance(models.TransientModel):
         'res.org',
         string='Org',
     )
+    date_start = fields.Date(
+        string='Date Start',
+        required=True
+    )
     date_end = fields.Date(
         string='Date End',
         required=True
+    )
+    org_name = fields.Char(
+        string='Org Name',
     )
 
     # Report Result
@@ -25,15 +32,25 @@ class XLSXReportPabiSlaBalance(models.TransientModel):
         help="Use compute fields, so there is nothing store in database",
     )
 
+    @api.onchange('org_ids')
+    def onchange_orgs(self):
+        res = ''
+        for prg in self.org_ids:
+            if res != '':
+                res += ', '
+            res += prg.operating_unit_id.code
+        self.org_name = res
+
     @api.multi
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['xlsx.report.pabi.sla.balance.results']
-        dom = []
+        dom = [
+            ('date_transfer', '>=', self.date_start),
+            ('date_transfer', '<=', self.date_end),
+        ]
         if self.org_ids:
             dom += [('org_id', 'in', self.org_ids._ids)]
-        if self.date_end:
-            dom += [('date_transfer', '<=', self.date_end)]
         self.results = Result.search(dom)
 
 
@@ -90,6 +107,14 @@ class XLSXReportPabiSlaBalanceResults(models.Model):
         string='Date Transfer',
         readonly=True,
     )
+    date_confirm = fields.Date(
+        string='Date Confirm',
+        readonly=True,
+    )
+    date_to_approve = fields.Date(
+        string='Date to Approve',
+        readonly=True,
+    )
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -121,19 +146,25 @@ class XLSXReportPabiSlaBalanceResults(models.Model):
         ON ru.login = he.employee_code
         WHERE ru.id = sr.employee_id) AND it.name LIKE 'hr.employee,last_name' LIMIT 1) 
         ) as requester,
-        prj.name as project,
-        sec.name as section,
+         (
+        SELECT value FROM ir_translation it
+        WHERE it.res_id = (SELECT he.id FROM res_users ru
+        LEFT JOIN hr_employee he
+        ON ru.login = he.employee_code
+        LEFT JOIN res_section rs
+        ON  rs.id = he.section_id
+        WHERE ru.id = sr.employee_id  LIMIT 1) AND it.name LIKE 'res.section,name' LIMIT 1
+        ) as project,
+        (SELECT value FROM ir_translation it
+        WHERE it.name LIKE 'res.section,name' AND it.res_id=sec.id LIMIT 1) as section,
         ou.name as requester_ou_name,
         sr.create_date as date_request,
-        sp.create_date as date_approve,
-        sp.date_done as date_receive,
+        sr.date_approve as date_approve,
+        sr.date_prepare as date_receive,
         sr.state as select_status,
-        (CASE WHEN sr.state = 'done'
-        THEN
-        sr.write_date
-        ELSE
-        Null
-        END) as date_transfer
+        sr.date_transfer as date_transfer,
+        sr.date_confirm as date_confirm,
+        sr.date_confirm as date_to_approve
         FROM stock_picking sp
         LEFT JOIN stock_request sr
         ON sr.transfer_picking_id = sp.id
