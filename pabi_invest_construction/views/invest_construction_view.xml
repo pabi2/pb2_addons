@@ -104,7 +104,7 @@
                                 <field name="fund_ids" widget="many2many_tags" required="1"
                                   string="Source of Fund" readonly="1"/>
                                 <field name="mission_id"/>
-                                <field name="legacy_ref" attrs="{'invisible': [('legacy_ref', '=', False)]}"
+                                <field name="legacy_ref" attrs="{'invisible': [('legacy_ref', '=', False)]}"/>
                             </group>
                         </group>
                         <group>
