@@ -14,11 +14,11 @@ class XLSXReportPabiSupplierList(models.TransientModel):
     )
     categ_ids = fields.Many2many(
         'res.partner.category',
-        string='Supplier Category',
+        string='Supplier Type',
     )
     tag_ids = fields.Many2many(
         'res.partner.tag',
-        string='Supplier Type',
+        string='Supplier Tag',
     )
 
     # Report Result
