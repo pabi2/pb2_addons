@@ -16,6 +16,11 @@ class AccountMoveLine(models.Model):
         help="Dated when reconcile_id is set. "
         "Used in determine open items by date",
     )
+    origin_ref = fields.Char(
+        string='Origin Ref.',
+        size='100',
+        help="To be used during migration period to store origin number",
+    )
 
     @api.multi
     @api.depends('reconcile_id')
