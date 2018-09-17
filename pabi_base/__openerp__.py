@@ -32,6 +32,7 @@ org -> sector -> subsector -> division -> section -> costcenter
         "base",
         "account",
         "operating_unit",
+        "l10n_th_account",  # Not necessary, just ensure it will get updated
     ],
     "data": [
         # Data

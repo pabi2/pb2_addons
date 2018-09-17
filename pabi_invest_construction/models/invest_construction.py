@@ -173,6 +173,11 @@ class ResInvestConstruction(LogCommon, models.Model):
     phase_ids = fields.One2many(
         domain=['|', ('active', '=', True), ('active', '=', False)],
     )
+    legacy_ref = fields.Char(
+        string='Legacy Ref.',
+        readonly=False,
+        size=500,
+    )
     _sql_constraints = [
         ('number_uniq', 'unique(code)',
          'Constuction Project Code must be unique!'),
