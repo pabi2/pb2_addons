@@ -36,10 +36,10 @@ for po in pos:
                                          'invoice_method': 'invoice_plan'})
         PurchaseOrder.mock_prepare_purchase_invoice_plan(
             po['id'],
-            installment_date=False,
+            installment_date=po['installment_date'],
             num_installment=po['num_installment'],
             installment_amount=False,
-            interval=1, interval_type='month',
+            interval=po['interval'], interval_type='month',
             invoice_mode=po['invoice_mode'],
             use_advance=False,
             advance_percent=0.0,

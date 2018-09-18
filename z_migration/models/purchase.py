@@ -9,6 +9,9 @@ class PurchaseOrder(models.Model):
     installment_date = fields.Date(
         string='Installment Date',
     )
+    interval = fields.Integer(
+        string='Interval',
+    )
 
     @api.multi
     def mock_trigger_workflow(self, signal):
