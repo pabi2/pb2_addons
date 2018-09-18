@@ -65,7 +65,12 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B3': 'org_name${value or ""}',
                             'B3': 'method_id.name${value or ""}',
+                            'B4': 'is_standard${value or ""}',
+                            'B5': 'category_name${value or ""}',
+                            'B6': 'partner_id.name${value or ""}',
+                            'B7': 'order_name${value or ""}',
                             'B8': 'date_from${value or ""}#{number_format=date}',
                             'B9': 'date_to${value or ""}#{number_format=date}',
                         },

@@ -12,11 +12,16 @@
                         <field name="org_ids" widget="many2many_tags"/>
                         <field name="method_id"/>
                         <field name="is_standard"/>
-                        <field name="partner_id"/>
+                        <field name="partner_category_ids" widget="many2many_tags"/>
                         <field name="partner_tag_ids" widget="many2many_tags"/>
-                        <field name="order_id"/>
+                        <field name="partner_id"/>
+                        <field name="order_ids" widget="many2many_tags"/>
                         <field name="date_from"/>
                         <field name="date_to"/>
+                        <field name="order_name" invisible="1"/>
+                        <field name="org_name" invisible="1"/>
+                        <field name="tag_name" invisible="1"/>
+                        <field name="category_name" invisible="1"/>
                     </group>
                     <group>
                     </group>
