@@ -10,6 +10,10 @@ class XLSXReportPabiSupplierEvaluation(models.TransientModel):
     # Search Criteria
     tag_ids = fields.Many2many(
         'res.partner.tag',
+        string='Supplier Tag',
+    )
+    category_ids = fields.Many2many(
+        'res.partner.category',
         string='Supplier Type',
     )
     partner_ids = fields.Many2many(
@@ -20,6 +24,60 @@ class XLSXReportPabiSupplierEvaluation(models.TransientModel):
         'res.org',
         string='Org',
     )
+    org_name = fields.Char(
+        string='Org Name',
+    )
+    tag_name = fields.Char(
+        string='Tag Name',
+    )
+    category_name = fields.Char(
+        string='Categ Name',
+    )
+    partner_name = fields.Char(
+        string='Partner Name',
+    )
+    date_from = fields.Date(
+        string='From Date',
+    )
+    date_to = fields.Date(
+        string='To Date',
+    )
+
+    @api.onchange('org_ids')
+    def onchange_orgs(self):
+        res = ''
+        for prg in self.org_ids:
+            if res != '':
+                res += ', '
+            res += prg.operating_unit_id.code
+        self.org_name = res
+
+    @api.onchange('partner_ids')
+    def onchange_partners(self):
+        res = ''
+        for partner in self.partner_ids:
+            if res != '':
+                res += ', '
+            res += partner.name
+        self.partner_name = res
+
+    @api.onchange('tag_ids')
+    def onchange_tags(self):
+        res = ''
+        for tag in self.tag_ids:
+            if res != '':
+                res += ', '
+            res += tag.name
+        self.tag_name = res
+
+    @api.onchange('category_ids')
+    def onchange_catgories(self):
+        res = ''
+        for categ in self.category_ids:
+            if res != '':
+                res += ', '
+            res += categ.name
+        self.category_name = res
 
     # Report Result
     results = fields.Many2many(
@@ -34,8 +92,14 @@ class XLSXReportPabiSupplierEvaluation(models.TransientModel):
         self.ensure_one()
         Result = self.env['xlsx.report.pabi.supplier.evaluation.results']
         dom = []
-        if self.partner_id:
-            dom += [('partner_id', '=', self.partner_id.id)]
+        if self.org_ids:
+            dom += [('org_id', 'in', self.org_ids._ids)]
+        if self.partner_ids:
+            dom += [('partner_id', 'in', self.partner_ids._ids)]
+        if self.tag_ids:
+            dom += [('tag_id', 'in', self.tag_ids._ids)]
+        if self.category_ids:
+            dom += [('category_id', 'in', self.tag_ids._ids)]
         self.results = Result.search(dom)
 
 
@@ -74,6 +138,14 @@ class XLSXReportPabiSupplierEvaluationResults(models.Model):
     org_id = fields.Many2one(
         'res.org',
         string='Org',
+    )
+    tag_id = fields.Many2one(
+        'res.partner.tag',
+        string='Partner Tag',
+    )
+    category_id = fields.Many2one(
+        'res.partner.category',
+        string='Categoty',
     )
     eval_service = fields.Char(
         string='Service',
@@ -150,11 +222,18 @@ class XLSXReportPabiSupplierEvaluationResults(models.Model):
         0
         end
         as delay_day,
-        org_id as org_id
+        org_id as org_id,
+        rpt.id as tag_id,
+        rpc.id as category_id
         from purchase_work_acceptance wa
         left join purchase_order po on po.id = wa.order_id
         left join operating_unit ou on ou.id = po.operating_unit_id
         left join res_org org on org.operating_unit_id = ou.id
-        left join res_partner rp on rp.id = po. partner_id
+        left join res_partner rp on rp.id = po.partner_id
+        LEFT JOIN res_partner_res_partner_tag_rel rprptl
+        ON rprptl.res_partner_id = rp.id
+        LEFT JOIN res_partner_tag rptag
+        ON rprptl.res_partner_tag_id = rptag.id
+        left join res_partner_category rpc on rpc.id = rp.category_id
         left join res_partner_title rpt on rpt.id = rp.title
         )""" % (self._table, ))

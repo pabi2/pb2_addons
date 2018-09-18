@@ -20,6 +20,10 @@ class XLSXReportPabiHiringSummmary(models.TransientModel):
         'res.partner.tag',
         string='Supplier Type',
     )
+    category_ids = fields.Many2many(
+        'res.partner.category',
+        string='Supplier Category',
+    )
     date_from = fields.Date(
         string='From Date',
         required=True,
@@ -28,6 +32,42 @@ class XLSXReportPabiHiringSummmary(models.TransientModel):
         string='To Date',
         required=True,
     )
+    org_name = fields.Char(
+        string='Org Name',
+    )
+    partner_name = fields.Char(
+        string='Partner Name',
+    )
+    category_name = fields.Char(
+        string='Category Name',
+    )
+
+    @api.onchange('org_ids')
+    def onchange_orgs(self):
+        res = ''
+        for prg in self.org_ids:
+            if res != '':
+                res += ', '
+            res += prg.operating_unit_id.code
+        self.org_name = res
+
+    @api.onchange('category_ids')
+    def onchange_categs(self):
+        res = ''
+        for categ in self.category_ids:
+            if res != '':
+                res += ', '
+            res += categ.name
+        self.category_name = res
+
+    @api.onchange('partner_ids')
+    def onchange_partners(self):
+        res = ''
+        for partner in self.partner_ids:
+            if res != '':
+                res += ', '
+            res += partner.name
+        self.partner_name = res
 
     # Report Result
     results = fields.Many2many(
@@ -46,6 +86,8 @@ class XLSXReportPabiHiringSummmary(models.TransientModel):
             dom += [('org_id', 'in', self.org_ids._ids)]
         if self.partner_ids:
             dom += [('partner_id', 'in', self.partner_ids._ids)]
+        if self.category_ids:
+            dom += [('category_id', 'in', self.category_ids._ids)]
         self.results = Result.search(dom)
 
 
@@ -57,6 +99,10 @@ class XLSXReportPabiHiringSummaryResults(models.Model):
     partner_id = fields.Many2one(
         'res.partner',
         string='Partner',
+    )
+    category_id = fields.Many2one(
+        'res.partner.category',
+        string='Partner Category',
     )
     operating_unit_id = fields.Many2one(
         'operating.unit',
@@ -132,11 +178,13 @@ class XLSXReportPabiHiringSummaryResults(models.Model):
         ) as prl_name,
         wa.date_contract_start as date_contract_start,
         wa.date_contract_end as date_contract_end,
-        org.id as org_id
+        org.id as org_id,
+        rpc.id as category_id
         FROM purchase_order_line pol
         LEFT JOIN purchase_order po on po.id = pol.order_id
         LEFT JOIN purchase_request_purchase_order_line_rel prpol on prpol.purchase_order_line_id = pol.id
         LEFT JOIN res_partner rp on rp.id = po.partner_id
+        LEFT JOIN res_partner_category rpc on rpc.id = rp.category_id
         LEFT JOIN product_template pt on pt.id = pol.product_id
         LEFT JOIN product_category categ ON categ.id = pt.categ_id
         LEFT JOIN purchase_work_acceptance wa ON wa.order_id = po.id

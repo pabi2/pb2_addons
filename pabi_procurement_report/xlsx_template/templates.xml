@@ -288,6 +288,11 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B2': 'category_name${value or ""}',
+                            'B3': 'partner_name${value or ""}',
+                            'B4': 'tag_name${value or ""}',
+                            'B5': 'date_from${value or ""}#{number_format=date}',
+                            'B6': 'date_to${value or ""}#{number_format=date}',
                         },
                         'results': {
                             'A9': '${"=ROW()-8"}',
@@ -297,9 +302,43 @@
                             'E9': 'wa_no${value or ""}',
                             'F9': 'date_contract_end${value or ""}#{number_format=date}',
                             'G9': 'date_receive${value or ""}#{number_format=date}',
-                            'H9': 'eval_receiving${value or ""}',
-                            'I9': 'eval_quality${value or ""}',
-                            'J9': 'eval_service${value or ""}',
+                            'H9': 'eval_receiving${value or 0}',
+                            'I9': 'eval_quality${value or 0}',
+                            'J9': 'eval_service${value or 0}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+              }
+             </field>
+        </record>
+
+        <!-- PABI Supplier Evaluation Score-->
+        <record id="xlsx_report_pabi_supplier_evaluation_score" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.supplier.evaluation.score</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_supplier_evaluation_score.xlsx</field>
+            <field name="name">PABI Supplier Evaluation Score</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'results': {
+                            'A4': 'partner_code${value or ""}',
+                            'B4': 'partner_name${value or ""}',
+                            'C4': 'po_count${value or 0}',
+                            'D4': 'sum_delivery${value or 0}',
+                            'E4': 'sum_service${value or 0}',
+                            'F4': 'sum_quality${value or 0}',
+                            'G4': '${"=?(D4)/?(C4)"}',
+                            'H4': '${"=?(E4)/?(C4)"}',
+                            'I4': '${"=?(F4)/?(C4)"}',
+                            'J4': '${"=?(G4)+?(H4)+?(I4)"}',
+                            'K4': '${"=IF(?(J4)&ge;3,TRUE,FALSE)"}',
                         },
                         '_TAIL_0': {
                         }
@@ -324,7 +363,7 @@
                         },
                         'results': {
                             'A5': 'pr_name${value or ""}',
-                            'B5': 'pr_header${value or ""}',
+                            'B5': 'ou_name${value or ""}',
                             'C5': 'pr_total#{number_format=number}',
                             'D5': 'po_name${value or ""}',
                             'E5': 'partner_name${value or ""}',
@@ -353,16 +392,25 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B2': 'org_name${value or ""}',
                         },
                         'results': {
                             'A7': '${"=ROW()-6"}',
-                            'B7': 'costcenter_name${value or ""}',
-                            'C7': 'pol_name${value or ""}',
-                            'D7': 'method_name${value or ""}',
-                            'E7': 'pd_date${value or ""}#{number_format=date}',
-                            'F7': 'po_date${value or ""}#{number_format=date}',
-                            'G7': 'wa_date${value or ""}#{number_format=date}',
-                            'H7': 'amount_total#{number_format=number}',
+                            'B7': 'ou_name${value or ""}',
+                            'C7': 'costcenter_name${value or ""}',
+                            'E7': 'pol_name${value or ""}',
+                            'D7': 'objective${value or ""}',
+                            'F7': 'pol_qty${value or ""}',
+                            'G7': 'uom_name${value or ""}',
+                            'H7': 'po_name${value or ""}',
+                            'I7': 'product_name${value or ""}',
+                            'J7': 'asset_value${value or ""}',
+                            'K7': 'amount_total${value or ""}',
+                            'L7': 'method_name${value or ""}',
+                            'M7': 'pd_date${value or ""}#{number_format=date}',
+                            'N7': 'po_date${value or ""}#{number_format=date}',
+                            'O7': 'wa_date${value or ""}#{number_format=date}',
+                            'P7': 'amount_total2#{number_format=number}',
                         },
                         '_TAIL_0': {
                         }
@@ -384,6 +432,9 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B2': 'org_name${value or ""}',
+                            'B3': 'date_from${value or ""}#{number_format=date}',
+                            'B4': 'date_to${value or ""}#{number_format=date}',
                         },
                         'results': {
                             'A7': '${"=ROW()-6"}',
@@ -416,6 +467,10 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B2': 'org_name${value or ""}',
+                            'B3': 'category_name${value or ""}',
+                            'B4': 'date_from${value or ""}#{number_format=date}',
+                            'B5': 'date_to${value or ""}#{number_format=date}',
                         },
                         'results': {
                             'A8': '${"=ROW()-7"}',
@@ -427,38 +482,8 @@
                             'G8': 'amount_total#{number_format=number}',
                             'H8': '${"=?(G8)*?(E8)"}',
                             'I8': 'currency#{number_format=number}',
-                        },
-                        '_TAIL_0': {
-                        }
-                    }
-                }
-              }
-            </field>
-        </record>
-
-        <!-- PABI Green Product Summary -->
-        <record id="xlsx_report_pabi_green_product_summary" model="ir.attachment">
-            <field name="res_model">xlsx.report.pabi.green.product.summary</field>
-            <field name="datas"></field>
-            <field name="datas_fname">xlsx_report_pabi_green_product_summary.xlsx</field>
-            <field name="name">Green Product Summary</field>
-            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
-            <field name="description">
-              {
-                '__EXPORT__': {
-                    1: {
-                        '_HEAD_': {
-                        },
-                        'results': {
-                            'A7': '${"=ROW()-6"}',
-                            'B7': 'po_name${value or ""}',
-                            'C7': 'po_date${value or ""}#{number_format=date}',
-                            'D7': 'pol_name${value or ""}',
-                            'E7': 'product_qty${value or ""}',
-                            'F7': 'uom_name${value or ""}',
-                            'G7': 'amount_total#{number_format=number}',
-                            'H7': '${"=?(G7)*?(E7)"}',
-                            'I7': 'currency#{number_format=number}',
+                            'J8': 'is_green_product${value or ""}',
+                            'K8': 'is_innovation${value or ""}',
                         },
                         '_TAIL_0': {
                         }
@@ -480,6 +505,10 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B2': 'org_name${value or ""}',
+                            'B3': 'method_name${value or ""}',
+                            'B4': 'date_from${value or ""}#{number_format=date}',
+                            'B5': 'date_to${value or ""}#{number_format=date}',
                         },
                         'results': {
                             'A8': '${"=ROW()-7"}',
