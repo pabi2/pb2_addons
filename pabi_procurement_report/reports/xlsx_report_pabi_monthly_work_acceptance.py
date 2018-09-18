@@ -22,6 +22,12 @@ class XLSXReportPabiMonthlyWorkAcceptance(models.TransientModel):
     )
     partner_tag_ids = fields.Many2many(
         'res.partner.tag',
+        string='Supplier Tag',
+    )
+    partner_category_ids = fields.Many2many(
+        'res.partner.category',
+        'monthly_report_categ_rel',
+        'report_id', 'categlory_id',
         string='Supplier Type',
     )
     date_from = fields.Date(
@@ -32,6 +38,15 @@ class XLSXReportPabiMonthlyWorkAcceptance(models.TransientModel):
         string='Date To',
         required=True,
     )
+    category_name = fields.Char(
+        string="Category Name",
+    )
+    org_name = fields.Char(
+        string="Org Name",
+    )
+    partner_name = fields.Char(
+        string="Partner Name",
+    )
 
     # Report Result
     results = fields.Many2many(
@@ -40,6 +55,33 @@ class XLSXReportPabiMonthlyWorkAcceptance(models.TransientModel):
         compute='_compute_results',
         help="Use compute fields, so there is nothing store in database",
     )
+
+    @api.onchange('partner_category_ids')
+    def onchange_categs(self):
+        res = ''
+        for categ in self.partner_category_ids:
+            if res != '':
+                res += ', '
+            res += categ.name
+        self.category_name = res
+
+    @api.onchange('partner_ids')
+    def onchange_partners(self):
+        res = ''
+        for partner in self.partner_ids:
+            if res != '':
+                res += ', '
+            res += partner.name
+        self.partner_name = res
+
+    @api.onchange('org_ids')
+    def onchange_orgs(self):
+        res = ''
+        for org in self.org_ids:
+            if res != '':
+                res += ', '
+            res += org.operating_unit_id.code
+        self.org_name = res
 
     @api.multi
     def _compute_results(self):
@@ -72,6 +114,10 @@ class XLSXReportPabiMonthlyWorkAcceptanceResults(models.Model):
     partner_id = fields.Many2one(
         'res.partner',
         string='Supplier',
+    )
+    category_id = fields.Many2one(
+        'res.partner.category',
+        string='Supplier Category',
     )
     ou_name = fields.Char(
         string='OU name',
@@ -130,6 +176,10 @@ class XLSXReportPabiMonthlyWorkAcceptanceResults(models.Model):
     )
     date_accept = fields.Date(
         string='WA Date',
+        readonly=True,
+    )
+    product_category_name = fields.Char(
+        string='Category name',
         readonly=True,
     )
 
@@ -202,7 +252,17 @@ class XLSXReportPabiMonthlyWorkAcceptanceResults(models.Model):
         po.partner_id,
         pd.date_doc_approve,
         wa.name wa_name,
-        wa.date_receive date_accept
+        wa.date_receive date_accept,
+        rpc.id as category_id,
+        (
+        select pc.name
+        from purchase_order_line pol
+        left join purchase_order po2 on po2.id = pol.order_id
+        left join product_template pt on pt.id = pol.product_id  
+        left join product_category pc on pc.id = pt.categ_id  
+        WHERE po2.id = po.id
+        LIMIT 1
+        ) as  product_category_name
         FROM purchase_order po
         LEFT JOIN operating_unit ou
         ON ou.id = po.operating_unit_id
@@ -214,6 +274,8 @@ class XLSXReportPabiMonthlyWorkAcceptanceResults(models.Model):
         ON po.partner_id = rp.id
         LEFT JOIN res_partner_title rpt
         ON rpt.id = rp.title
+        LEFT JOIN res_partner_category rpc
+        ON rp.category_id = rpc.id
         LEFT JOIN res_currency rc
         ON rc.id = po.currency_id
         LEFT JOIN account_period ap

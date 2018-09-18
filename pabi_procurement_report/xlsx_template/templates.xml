@@ -139,6 +139,9 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B2': 'org_name${value or ""}',
+                            'B3': 'category_name${value or ""}',
+                            'B4': 'partner_name${value or ""}',
                             'B5': 'date_from${value or ""}#{number_format=date}',
                             'B6': 'date_to${value or ""}#{number_format=date}',
                         },
@@ -156,6 +159,7 @@
                             'K9': 'supplier_name${value or ""}',
                             'L9': 'method${value or ""}',
                             'M9': 'date_doc_approve${value or ""}#{number_format=date}',
+                            'N9': 'product_category_name${value or ""}',
                             'O9': 'wa_name${value or ""}',
                             'P9': 'date_accept${value or ""}#{number_format=date}',
                         },
