@@ -312,6 +312,7 @@ class PurchaseOrder(models.Model):
         if self.plan_invoice_created:
             raise ValidationError(_('Create more invoices not allowed!'))
         invoice_ids = []
+        inv_id = False
         # Case use_invoice_plan, create multiple invoice by installment
         for order in self:
             first_time_invoice_plan = not order.invoice_ids and True or False
