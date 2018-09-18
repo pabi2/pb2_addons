@@ -8,6 +8,7 @@
     'depends': [
         'pabi_utils',
         'purchase_invoice_plan',
+        'sale_invoice_plan',
         'pabi_procurement',
         'pabi_th_tax_report',
         'account_subscription_enhanced',
@@ -16,8 +17,10 @@
         'pabi_asset_management',
     ],
     'data': [
-        'action_purchase_create_inovice/create_invoice_view.xml',
-        'action_purchase_create_inovice/pabi_process.xml',
+        'action_sale_create_invoice/sale_view.xml',
+        'action_sale_create_invoice/pabi_process.xml',
+        'action_purchase_create_invoice/purchase_view.xml',
+        'action_purchase_create_invoice/pabi_process.xml',
         'action_run_tax_report/tax_report_wizard.xml',
         'action_run_tax_report/pabi_process.xml',
         'action_generate_entries/account_subscription_generate_view.xml',

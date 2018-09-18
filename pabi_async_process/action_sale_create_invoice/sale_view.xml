@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_order_form">
+            <field name="name">view.order.form2</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <h1 position="before">
+                    <h3>
+                        <field name="job_id" attrs="{'invisible': [('job_id', '=', False)]}"/>
+                    </h3>
+                </h1>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_order_form2">
+            <field name="name">view.order.form2</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_invoice_plan.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="invoice_mode" position="after">
+                    <field name="async_process"/>
+                    <field name="uuid" attrs="{'invisible': [('job_id', '=', False)]}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

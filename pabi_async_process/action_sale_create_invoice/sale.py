@@ -6,12 +6,12 @@ from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import FailedJobError
 
 
-def related_purchase_order(session, thejob):
+def related_sale_order(session, thejob):
     order_id = thejob.args[1]
     action = {
-        'name': _("Purchase Order"),
+        'name': _("Sales Order"),
         'type': 'ir.actions.act_window',
-        'res_model': "purchase.order",
+        'res_model': "sale.order",
         'view_type': 'form',
         'view_mode': 'form',
         'res_id': order_id,
@@ -20,22 +20,21 @@ def related_purchase_order(session, thejob):
 
 
 @job
-@related_action(action=related_purchase_order)
-def action_purchase_create_invoice(session, model_name, res_id):
+@related_action(action=related_sale_order)
+def action_sale_create_invoice(session, model_name, res_id):
     try:
         session.pool[model_name].\
             action_invoice_create(session.cr, session.uid,
                                   [res_id], session.context)
-        purchase = session.pool[model_name].browse(session.cr,
-                                                   session.uid, res_id)
-        invoice_ids = [x.id for x in purchase.invoice_ids]
+        sale = session.pool[model_name].browse(session.cr, session.uid, res_id)
+        invoice_ids = [x.id for x in sale.invoice_ids]
         return {'invoice_ids': invoice_ids}
     except Exception, e:
         raise FailedJobError(e)
 
 
-class PurchaseOrder(models.Model):
-    _inherit = 'purchase.order'
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
 
     async_process = fields.Boolean(
         string='Create invoices in background?',
@@ -55,7 +54,7 @@ class PurchaseOrder(models.Model):
     def _compute_job_uuid(self):
         for rec in self:
             task_name = "%s('%s', %s)" % \
-                ('action_purchase_create_invoice', self._name, rec.id)
+                ('action_sale_create_invoice', self._name, rec.id)
             jobs = self.env['queue.job'].search([
                 ('func_string', 'like', task_name),
                 ('state', '!=', 'done')],
@@ -68,7 +67,7 @@ class PurchaseOrder(models.Model):
     def action_invoice_create(self):
         self.ensure_one()
         if self._context.get('job_uuid', False):  # Called from @job
-            return super(PurchaseOrder, self).action_invoice_create()
+            return super(SaleOrder, self).action_invoice_create()
         # Enqueue
         if self.use_invoice_plan and self.async_process:
             if self.job_id:
@@ -77,11 +76,11 @@ class PurchaseOrder(models.Model):
                 raise RedirectWarning(message, action.id, _('Go to My Jobs'))
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = '%s - Creating Invoice(s)' % self.name
-            uuid = action_purchase_create_invoice.delay(
+            uuid = action_sale_create_invoice.delay(
                 session, self._name, self.id, description=description)
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
             # Process Name
             job.process_id = self.env.ref('pabi_async_process.'
-                                          'purchase_invoice_plan')
+                                          'sale_invoice_plan')
         else:
-            return super(PurchaseOrder, self).action_invoice_create()
+            return super(SaleOrder, self).action_invoice_create()
