@@ -47,16 +47,16 @@ class PurchaseOrder(models.Model):
         res = Wizard.default_get([])
         res['num_installment'] = num_installment
         res['invoice_mode'] = invoice_mode
+        res['installment_date'] = installment_date or \
+            fields.Date.context_today(self)
+        res['interval'] = interval or 1
+        res['interval_type'] = interval_type or 'month'
         res['use_advance'] = use_advance
         res['use_deposit'] = use_deposit
         res['use_retention'] = use_retention
         wizard = Wizard.create(res)
         wizard._onchange_plan()
         # Simulate onchange on other params
-        wizard.installment_date = installment_date or \
-            fields.Date.context_today(self)
-        wizard.interval = interval or 1
-        wizard.interval_type = interval_type or 'month'
         if not wizard.installment_amount and installment_amount:
             wizard.installment_amount = installment_amount
         wizard._onchange_installment_config()
