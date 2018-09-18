@@ -6,6 +6,10 @@ from openerp.exceptions import Warning as UserError
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
+    installment_date = fields.Date(
+        string='Installment Date',
+    )
+
     @api.multi
     def mock_trigger_workflow(self, signal):
         """ Because openerplib can't call workflow directly, we mock it """
