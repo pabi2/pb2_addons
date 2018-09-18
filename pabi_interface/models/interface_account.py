@@ -807,20 +807,23 @@ class InterfaceAccountChecker(models.AbstractModel):
                 raise ValidationError(_('Tax Base should not be zero!'))
             # Sales, tax must be in credit and debit for refund
             # Purchase, tax must be in debit and redit for refund
-            invalid = False
-            if journal_type in SALE_JOURNAL:
-                if journal_type != 'sale_refund':
-                    invalid = line.debit > 0
-                else:
-                    invalid = line.credit > 0
-            if journal_type in PURCHASE_JOURNAL:
-                if journal_type != 'purchase_refund':
-                    invalid = line.credit > 0
-                else:
-                    invalid = line.debit > 0
-            if invalid:
-                raise ValidationError(
-                    _('Tax in wrong side of dr/cr as refer to journal type!'))
+
+            # kittiu: removed by NSTDA request
+            # invalid = False
+            # if journal_type in SALE_JOURNAL:
+            #     if journal_type != 'sale_refund':
+            #         invalid = line.debit > 0
+            #     else:
+            #         invalid = line.credit > 0
+            # if journal_type in PURCHASE_JOURNAL:
+            #     if journal_type != 'purchase_refund':
+            #         invalid = line.credit > 0
+            #     else:
+            #         invalid = line.debit > 0
+            # if invalid:
+            #     raise ValidationError(
+            #        _('Tax in wrong side of dr/cr as refer to journal type!'))
+            # --
 
     @api.model
     def _check_line_normal(self, inf):
