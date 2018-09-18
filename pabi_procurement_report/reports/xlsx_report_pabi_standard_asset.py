@@ -22,17 +22,21 @@ class XLSXReportPabiStandardAsset(models.TransientModel):
             ('yes', 'Yes'),
             ('no', 'No'),
         ],
-        string='Standard',
+        string='Asset',
     )
     partner_id = fields.Many2one(
         'res.partner',
         string='Supplier',
     )
-    partner_tag_ids = fields.Many2many(
-        'res.partner.tag',
+    partner_category_ids = fields.Many2many(
+        'res.partner.category',
         string='Supplier Type',
     )
-    order_id = fields.Many2one(
+    partner_tag_ids = fields.Many2many(
+        'res.partner.tag',
+        string='Supplier Tag',
+    )
+    order_ids = fields.Many2many(
         'purchase.order',
         string='Purchase Order',
     )
@@ -44,6 +48,19 @@ class XLSXReportPabiStandardAsset(models.TransientModel):
         string='To Date',
         required=True,
     )
+    org_name = fields.Char(
+        string="Org Name"
+    )
+    order_name = fields.Char(
+        string="Order Name"
+    )
+    tag_name = fields.Char(
+        string="Tag Name"
+    )
+    category_name = fields.Char(
+        string="Categ Name"
+    )
+
     # Report Result
     results = fields.Many2many(
         'xlsx.report.pabi.standard.asset.results',
@@ -51,6 +68,42 @@ class XLSXReportPabiStandardAsset(models.TransientModel):
         compute='_compute_results',
         help="Use compute fields, so there is nothing store in database",
     )
+
+    @api.onchange('org_ids')
+    def onchange_orgs(self):
+        res = ''
+        for prg in self.org_ids:
+            if res != '':
+                res += ', '
+            res += prg.operating_unit_id.code
+        self.org_name = res
+
+    @api.onchange('order_ids')
+    def onchange_orders(self):
+        res = ''
+        for order in self.order_ids:
+            if res != '':
+                res += ', '
+            res += order.name
+        self.order_name = res
+
+    @api.onchange('partner_category_ids')
+    def onchange_categories(self):
+        res = ''
+        for categ in self.partner_category_ids:
+            if res != '':
+                res += ', '
+            res += categ.name
+        self.category_name = res
+
+    @api.onchange('partner_tag_ids')
+    def onchange_tags(self):
+        res = ''
+        for tag in self.partner_tag_ids:
+            if res != '':
+                res += ', '
+            res += tag.name
+        self.tag_name = res
 
     @api.multi
     def _compute_results(self):
@@ -71,8 +124,12 @@ class XLSXReportPabiStandardAsset(models.TransientModel):
             dom += [('method_id', '=', self.method_id.id)]
         if self.partner_id:
             dom += [('partner_id', '=', self.partner_id.id)]
-        if self.order_id:
-            dom += [('id', '=', self.order_id.id)]
+        if self.order_ids:
+            dom += [('order_id', 'in', self.order_ids._ids)]
+        if self.partner_tag_ids:
+            dom += [('tag_id', 'in', self.partner_tag_ids._ids)]
+        if self.partner_category_ids:
+            dom += [('category_id', 'in', self.partner_category_ids._ids)]
         self.results = Result.search(dom)
 
 
@@ -152,6 +209,14 @@ class XLSXReportPabiStandardAssetResults(models.Model):
         'purchase.order',
         string='Purchase Order',
     )
+    tag_id = fields.Many2one(
+        'res.partner.tag',
+        string='Tag',
+    )
+    category_id = fields.Many2one(
+        'res.partner.category',
+        string='Category',
+    )
 
     def init(self, cr):
         cr.execute("""CREATE or REPLACE VIEW %s as (
@@ -179,7 +244,14 @@ class XLSXReportPabiStandardAssetResults(models.Model):
         (
         SELECT id from res_org WHERE operating_unit_id = po.operating_unit_id
         ) as org_id,
-        ou.name as ou_name
+        ou.name as ou_name,
+        (
+        SELECT rpc.id 
+        from res_partner_category rpc
+	    LEFT JOIN res_partner rp on rp.category_id = rpc.id
+	    WHERE rp.id = po.partner_id
+        ) as category_id,
+        rpt.id as tag_id
         FROM
         account_asset aaa
         LEFT JOIN product_product pp ON pp.id = aaa.product_id
@@ -198,6 +270,10 @@ class XLSXReportPabiStandardAssetResults(models.Model):
         LEFT JOIN purchase_request_line prql
             ON prprl.purchase_request_line_id = prql.id
         LEFT JOIN operating_unit ou ON po.operating_unit_id = ou.id
+        LEFT JOIN res_partner_res_partner_tag_rel rprptl
+        ON rprptl.res_partner_id = rp.id
+        LEFT JOIN res_partner_tag rpt
+        ON rprptl.res_partner_tag_id = rpt.id
         WHERE po.order_type = 'purchase_order'
         ORDER BY id
         )""" % (self._table, ))

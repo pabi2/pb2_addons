@@ -169,6 +169,21 @@ class StockRequest(models.Model):
         string='Notes',
         size=1000,
     )
+    date_request = fields.Date(
+        string='Request Date'
+    )
+    date_confirm = fields.Date(
+        string='Confirm Date'
+    )
+    date_prepare = fields.Date(
+        string='Prepare Date'
+    )
+    date_transfer = fields.Date(
+        string='Transfer Date'
+    )
+    date_approve = fields.Date(
+        string='Approve Date'
+    )
 
     @api.multi
     @api.depends('employee_id')
@@ -244,7 +259,10 @@ class StockRequest(models.Model):
         self.ensure_one()
         if not self.line_ids:
             raise ValidationError(_('No lines!'))
-        self.write({'state': 'wait_confirm'})
+        self.write({
+            'state': 'wait_confirm',
+            'date_request': fields.Date.context_today(self),
+        })
 
     @api.multi
     def action_confirm(self):
@@ -259,7 +277,10 @@ class StockRequest(models.Model):
         if not self.line_ids:
             raise ValidationError(_('No lines!'))
         # self.line_ids._check_future_qty()
-        self.write({'state': 'confirmed'})
+        self.write({
+            'state': 'confirmed',
+            'date_confirm': fields.Date.context_today(self),
+        })
 
     @api.multi
     def action_verify(self):
@@ -275,7 +296,10 @@ class StockRequest(models.Model):
         self.ensure_one()
         self._check_user_from_borrow_location()
         self.line_ids._check_future_qty()
-        self.write({'state': 'approved'})
+        self.write({
+            'state': 'approved',
+            'date_approve': fields.Date.context_today(self),
+        })
 
     @api.multi
     def action_prepare(self):
@@ -291,7 +315,10 @@ class StockRequest(models.Model):
         if self.sudo().transfer_picking_id.state != 'assigned':
             raise ValidationError(
                 _('Requested material(s) not fully available!'))
-        self.write({'state': 'ready'})
+        self.write({
+            'state': 'ready',
+            'date_prepare': fields.Date.context_today(self),
+        })
 
     @api.multi
     def action_transfer(self):
@@ -301,7 +328,10 @@ class StockRequest(models.Model):
                 _('You must be receiver to click "Transfer".'))
         if self.transfer_picking_id:
             self.transfer_picking_id.sudo().action_done()
-        self.write({'state': 'done'})
+        self.write({
+            'state': 'done',
+            'date_transfer': fields.Date.context_today(self),
+        })
         if self.type == 'borrow':  # prepare for return
             self.sudo().create_picking('return')
 

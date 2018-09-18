@@ -65,7 +65,12 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B3': 'org_name${value or ""}',
                             'B3': 'method_id.name${value or ""}',
+                            'B4': 'is_standard${value or ""}',
+                            'B5': 'category_name${value or ""}',
+                            'B6': 'partner_id.name${value or ""}',
+                            'B7': 'order_name${value or ""}',
                             'B8': 'date_from${value or ""}#{number_format=date}',
                             'B9': 'date_to${value or ""}#{number_format=date}',
                         },
@@ -174,7 +179,9 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
-                            'B3': 'date_end${value or ""}#{number_format=date}',
+                            'B2': 'org_name${value or ""}',
+                            'B3': 'date_start${value or ""}#{number_format=date}',
+                            'B4': 'date_end${value or ""}#{number_format=date}',
                         },
                         'results': {
                             'A7': 'sr_name${value or ""}',
@@ -183,10 +190,13 @@
                             'D7': 'section${value or ""}',
                             'E7': 'requester_ou_name${value or ""}',
                             'F7': 'date_request${value or ""}#{number_format=date}',
-                            'G7': 'date_approve${value or ""}#{number_format=date}',
-                            'K7': 'date_receive${value or ""}#{number_format=date}',
-                            'J7': 'date_transfer${value or ""}#{number_format=date}',
+                            'G7': 'date_confirm${value or ""}#{number_format=date}',
+                            'H7': 'date_to_approve${value or ""}#{number_format=date}',
+                            'I7': 'date_approve${value or ""}#{number_format=date}',
+                            'J7': 'date_receive${value or ""}#{number_format=date}',
+                            'K7': 'date_transfer${value or ""}#{number_format=date}',
                             'L7': '${"=NETWORKDAYS(?(J7), ?(K7))"}',
+                            'M7': '${"=IF(?(L7)&lt;3,TRUE,FALSE)"}',
                         },
                         '_TAIL_0': {
                         }
@@ -208,6 +218,9 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B2': 'org_name${value or ""}',
+                            'B3': 'category_name${value or ""}',
+                            'B4': 'tag_name${value or ""}',
                         },
                         'results': {
                             'A8': '${"=ROW()-7"}',
