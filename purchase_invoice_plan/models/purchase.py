@@ -66,11 +66,8 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def _compute_plan_invoice_created(self):
-        print '------------------'
         for rec in self:
             if not rec.invoice_ids or not rec.use_invoice_plan:
-                print rec.invoice_ids
-                print rec.use_invoice_plan
                 rec.plan_invoice_created = False
             else:
                 total_invoice_amt = 0
@@ -82,10 +79,7 @@ class PurchaseOrder(models.Model):
                         total_invoice_amt += i.amount_untaxed
                 plan_invoice = len(list(set([i.installment for i in
                                              rec.invoice_plan_ids])))
-                print '----------> %s' % num_valid_invoices
-                print '--------> %s' % plan_invoice
-                rec.plan_invoice_created = num_valid_invoices >= plan_invoice
-                print '--------> %s' % rec.plan_invoice_created
+                rec.plan_invoice_created = num_valid_invoices == plan_invoice
                 rec.total_invoice_amount = total_invoice_amt
         return True
 
