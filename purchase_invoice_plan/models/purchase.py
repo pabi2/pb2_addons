@@ -79,7 +79,10 @@ class PurchaseOrder(models.Model):
                         total_invoice_amt += i.amount_untaxed
                 plan_invoice = len(list(set([i.installment for i in
                                              rec.invoice_plan_ids])))
+                print '----------> %s' % num_valid_invoices
+                print '--------> %s' % plan_invoice
                 rec.plan_invoice_created = num_valid_invoices >= plan_invoice
+                print '--------> %s' % rec.plan_invoice_created
                 rec.total_invoice_amount = total_invoice_amt
         return True
 
