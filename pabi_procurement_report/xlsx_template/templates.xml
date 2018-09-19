@@ -65,7 +65,7 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
-                            'B3': 'org_name${value or ""}',
+                            'B2': 'org_name${value or ""}',
                             'B3': 'method_id.name${value or ""}',
                             'B4': 'is_standard${value or ""}',
                             'B5': 'category_name${value or ""}',
