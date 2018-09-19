@@ -195,5 +195,5 @@ class XLSXReportPabiHiringSummaryResults(models.Model):
         AND rp.employee = False
         AND wa.state = 'done'
         AND po.state not in ('cancel' ,'draft')
-	    AND categ.name like '%%จ้างเหมา%%'
+	    AND categ.name like '%%จ้าง%%'
         )""" % (self._table, ))
