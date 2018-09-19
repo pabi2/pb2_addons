@@ -28,6 +28,18 @@ class XLSXReportPabiProcurementResult(models.TransientModel):
         string='To Date',
         required=True,
     )
+    org_name = fields.Char(
+        string='Org Name',
+    )
+
+    @api.onchange('org_ids')
+    def onchange_orgs(self):
+        res = ''
+        for prg in self.org_ids:
+            if res != '':
+                res += ', '
+            res += prg.operating_unit_id.code
+        self.org_name = res
 
     # Report Result
     results = fields.Many2many(
@@ -86,6 +98,10 @@ class XLSXReportPabiProcurementResultResults(models.Model):
         string='Amount Total',
         readonly=True,
     )
+    amount_total2 = fields.Float(
+        string='Amount Total',
+        readonly=True,
+    )
     currency = fields.Char(
         string='Currency',
         readonly=True,
@@ -100,6 +116,30 @@ class XLSXReportPabiProcurementResultResults(models.Model):
     )
     wa_date = fields.Date(
         string='WA Date',
+        readonly=True,
+    )
+    uom_name = fields.Char(
+        string='UoM Name',
+        readonly=True,
+    )
+    pol_qty = fields.Float(
+        string='Qty',
+        readonly=True,
+    )
+    objective = fields.Char(
+        string='Objective',
+        readonly=True,
+    )
+    product_name = fields.Char(
+        string='Product',
+        readonly=True,
+    )
+    asset_value = fields.Float(
+        string='Value',
+        readonly=True,
+    )
+    ou_name = fields.Char(
+        string='OU',
         readonly=True,
     )
 
@@ -121,8 +161,19 @@ class XLSXReportPabiProcurementResultResults(models.Model):
         ou.id as operating_unit_id,
         rp.id as partner_id,
         wa.date_accept as wa_date,
-        org.id as org_id
+        org.id as org_id,
+        pd.objective,
+        pol.product_qty as pol_qty,
+        pol.name as product_name,
+        pol.price_unit as asset_value,
+        (SELECT value
+        FROM ir_translation
+        WHERE res_id = uom.id AND name LIKE 'product.uom,name') uom_name,
+        po.amount_total as amount_total2,
+        ou.name as ou_name
         FROM purchase_order_line pol
+        LEFT JOIN product_template pt on pt.id = pol.product_id
+        LEFT JOIN product_uom uom on uom.id = pol.product_uom
         LEFT JOIN purchase_order po on po.id = pol.order_id
         LEFT JOIN res_partner rp on rp.id = po.partner_id
         LEFT JOIN purchase_requisition pd ON pd.id = po.requisition_id
@@ -136,4 +187,5 @@ class XLSXReportPabiProcurementResultResults(models.Model):
         AND rp.employee = False
         AND wa.state = 'done'
         AND po.state not in ('cancel' ,'draft')
+        AND po.amount_total > 100000
         )""" % (self._table, ))

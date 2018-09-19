@@ -24,6 +24,30 @@ class XLSXReportPabiPurchaseAnnual(models.TransientModel):
         string='To Date',
         required=True,
     )
+    org_name = fields.Char(
+        string='Org Name',
+    )
+    method_name = fields.Char(
+        string='Partner Name',
+    )
+
+    @api.onchange('org_ids')
+    def onchange_orgs(self):
+        res = ''
+        for prg in self.org_ids:
+            if res != '':
+                res += ', '
+            res += prg.operating_unit_id.code
+        self.org_name = res
+
+    @api.onchange('method_ids')
+    def onchange_methods(self):
+        res = ''
+        for method in self.method_ids:
+            if res != '':
+                res += ', '
+            res += method.name
+        self.method_name = res
 
     # Report Result
     results = fields.Many2many(
@@ -40,6 +64,8 @@ class XLSXReportPabiPurchaseAnnual(models.TransientModel):
         dom = []
         if self.org_ids:
             dom += [('org_id', 'in', self.org_ids._ids)]
+        if self.method_ids:
+            dom += [('method_id', 'in', self.method_ids._ids)]
         self.results = Result.search(dom)
 
 
@@ -55,6 +81,10 @@ class XLSXReportPabiPurchaseAnnualResults(models.Model):
     org_id = fields.Many2one(
         'res.org',
         string='Org',
+    )
+    method_id = fields.Many2one(
+        'purchase.method',
+        string='Method',
     )
     ou_name = fields.Char(
         string='OU Name',
@@ -88,7 +118,8 @@ class XLSXReportPabiPurchaseAnnualResults(models.Model):
         met.name as method,
         COUNT(po.id) as po_count,
         SUM(po.amount_total) as amount_total,
-        cur.name as currency
+        cur.name as currency,
+        met.id as method_id
         FROM purchase_order_line pol
         LEFT JOIN purchase_order po on po.id = pol.order_id
         LEFT JOIN purchase_requisition_line reql on pol.requisition_line_id = reql.id
@@ -98,6 +129,6 @@ class XLSXReportPabiPurchaseAnnualResults(models.Model):
         LEFT JOIN res_org org on org.operating_unit_id = ou.id
         LEFT JOIN res_currency cur on cur.id = po.currency_id
         WHERE po.state not in ('cancel' ,'draft')
-        GROUP BY ou.id,org.id,ou.name,met.name,cur.name
+        GROUP BY ou.id,org.id,ou.name,met.name,cur.name,met.id
         ORDER BY ou.name
         )""" % (self._table, ))

@@ -23,11 +23,11 @@ class XLSXReportPabiSupplierList(models.TransientModel):
     org_name = fields.Char(
         string='Org',
     )
-    category_name = fields.Char(
-        string='Category',
+    categ_name = fields.Char(
+        string='Supplier',
     )
     tag_name = fields.Char(
-        string='Tag',
+        string='Partner',
     )
 
 
@@ -47,7 +47,7 @@ class XLSXReportPabiSupplierList(models.TransientModel):
             if res != '':
                 res += ', '
             res += categ.name
-        self.category_name = res
+        self.categ_name = res
 
     @api.onchange('tag_ids')
     def onchange_tags(self):

@@ -13,6 +13,8 @@
                         <field name="method_ids" widget="many2many_tags"/>
                         <field name="date_from"/>
                         <field name="date_to"/>
+                        <field name="org_name" invisible="1"/>
+                        <field name="method_name" invisible="1"/>
                     </group>
                     <group>
                     </group>

@@ -20,6 +20,13 @@ class XLSXReportPabiGreenProductSummmary(models.TransientModel):
         'res.partner.tag',
         string='Supplier Type',
     )
+    category_ids = fields.Many2many(
+        'res.partner.category',
+        'green_category_rel',
+        'wizard_id',
+        'category_id',
+        string='Supplier Category',
+    )
     sel_product = fields.Selection(
         [
             ('all', 'All'),
@@ -36,6 +43,42 @@ class XLSXReportPabiGreenProductSummmary(models.TransientModel):
         string='To Date',
         required=True,
     )
+    org_name = fields.Char(
+        string='Org Name',
+    )
+    partner_name = fields.Char(
+        string='Partner Name',
+    )
+    category_name = fields.Char(
+        string='Category Name',
+    )
+
+    @api.onchange('org_ids')
+    def onchange_orgs(self):
+        res = ''
+        for prg in self.org_ids:
+            if res != '':
+                res += ', '
+            res += prg.operating_unit_id.code
+        self.org_name = res
+
+    @api.onchange('partner_ids')
+    def onchange_partners(self):
+        res = ''
+        for partner in self.partner_ids:
+            if res != '':
+                res += ', '
+            res += partner.name
+        self.partner_name = res
+
+    @api.onchange('category_ids')
+    def onchange_categs(self):
+        res = ''
+        for categ in self.category_ids:
+            if res != '':
+                res += ', '
+            res += categ.name
+        self.category_name = res
 
     # Report Result
     results = fields.Many2many(
@@ -106,6 +149,10 @@ class XLSXReportPabiGreenProductSummaryResults(models.Model):
         string='Green Product',
         readonly=True,
     )
+    is_innovation = fields.Boolean(
+        string='Innovation Product',
+        readonly=True,
+    )
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -125,7 +172,8 @@ class XLSXReportPabiGreenProductSummaryResults(models.Model):
         rp.id as partner_id,
         pdl.is_green_product,
         org.id as org_id,
-        pol.product_qty
+        pol.product_qty,
+        pdl.is_innovation as is_innovation
         FROM purchase_order_line pol
         LEFT JOIN purchase_order po on po.id = pol.order_id
         LEFT JOIN purchase_requisition_line pdl on  pdl.id = pol.requisition_line_id
