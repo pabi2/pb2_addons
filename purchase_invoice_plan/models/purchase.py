@@ -453,6 +453,21 @@ class PurchaseOrder(models.Model):
                 invoice.signal_workflow('invoice_cancel')
         return True
 
+    @api.multi
+    def action_cancel_draft(self):
+        """ For normal case, this method will unlink invoices from po, but for
+        invoice plan case, we do not want this to happen. Relink it back """
+        po_inv_rel = {}
+        for po in self:
+            if po.use_invoice_plan:
+                inv_ids = po.invoice_ids.ids
+                po_inv_rel.update({po.id: inv_ids})
+        res = super(PurchaseOrder, self).action_cancel_draft()
+        for po in self:
+            if po.use_invoice_plan:
+                po.write({'invoice_ids': [(6, 0, po_inv_rel[po.id])]})
+        return res
+
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
