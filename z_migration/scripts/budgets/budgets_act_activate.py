@@ -3,6 +3,7 @@ This method will click button activate in budgets
 """
 import sys
 import os
+import datetime
 try:
     budget_path = os.path.dirname(os.path.realpath(__file__))
     script_path = os.path.dirname(budget_path)
@@ -13,6 +14,9 @@ try:
     import log
 except Exception:
     pass
+
+# Start date
+date_start = datetime.datetime.now().replace(microsecond=0)
 
 # Model
 Budget = connection.get_model('account.budget')
@@ -43,4 +47,12 @@ summary = 'Summary: pass %s%s and fail %s%s' \
              log_budget_names[1] and ' %s' % str(tuple(log_budget_names[1]))
              or '')
 logger.info(summary)
+
+# End date
+date_end = datetime.datetime.now().replace(microsecond=0)
+
+# Log for used time
+logger.info('Start time %s' % date_start)
+logger.info('End time %s' % date_end)
+logger.info('Total used time %s' % (date_end - date_start))
 logger.info('End process')

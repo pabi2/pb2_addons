@@ -3,6 +3,7 @@ This method will click button submit in project construction phase.
 """
 import sys
 import os
+import time
 try:
     project_path = os.path.dirname(os.path.realpath(__file__))
     script_path = os.path.dirname(project_path)
@@ -30,9 +31,12 @@ logger.info('Start process')
 logger.info('Total project construction phase: %s' % len(pcps))
 for pcp in pcps:
     try:
+        start = time.time()
         ProjectPhase.mork_action_submit([pcp['id']])
+        end = time.time()
         log_pcp_codes[0].append(pcp['code'].encode('utf-8'))
-        logger.info('Pass: %s' % pcp['code'])
+        logger.info('Pass: %s (Run time: %s seconds)'
+                    % (pcp['code'], (end-start)))
     except Exception as ex:
         log_pcp_codes[1].append(pcp['code'].encode('utf-8'))
         logger.error('Fail: %s (reason: %s)' % (pcp['code'], ex))
