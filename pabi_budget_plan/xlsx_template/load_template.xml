@@ -9,7 +9,8 @@
                         ref('invest_asset_plan_xlsx_template'),
                         ref('budget_plan_project_base_xlsx_template'),
                         ref('budget_plan_invest_construction_xlsx_template'),
-                        ref('budget_plan_personnel_xlsx_template')]"/>
+                        ref('budget_plan_personnel_xlsx_template'),
+                        ref('budget_policy_project_base_xlsx_template')]"/>
             <value>pabi_budget_plan/xlsx_template</value>
         </function>
     </data>
