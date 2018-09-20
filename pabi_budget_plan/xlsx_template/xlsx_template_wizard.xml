@@ -116,5 +116,34 @@
           view_mode="form"
           target="new"/>
 
+    # Budget Policy
+    <!-- Optional: To be specific to some template and context -->
+    <record id="action_budget_policy_project_export_xlsx_template" model="ir.actions.act_window">
+        <field name="name">Export Policy</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">export.xlsx.template</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context"
+            eval="{'template_fname': 'budget_policy_project_base.xlsx',
+                   'template_context': {},
+                   'template_import_states': [],
+                   'lang': 'th_TH'}"/>
+        </record>
+
+        <!-- Optional: To be specific to some template and context -->
+        <record id="action_budget_policy_project_import_xlsx_template" model="ir.actions.act_window">
+            <field name="name">Import Policy</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">import.xlsx.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+         	<field name="context"
+                eval="{'template_fname': 'budget_policy_project_base.xlsx',
+                       'template_context': {},
+                       'template_import_states': []}"/>
+        </record>
     </data>
 </openerp>
