@@ -738,5 +738,58 @@
           </field>
         </record>
 
+        # Budget Policy
+        <!-- Directory Budget Policy Templates -->
+        <record model="document.directory" id="dir_budget_policy_template">
+            <field name="name">Budget Policy Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <!-- Project Based Policy Template -->
+        <record id="budget_policy_project_base_xlsx_template" model="ir.attachment">
+            <field name="res_model">budget.policy</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_policy_project_base.xlsx</field>
+            <field name="name">Project Based Policy Template</field>
+            <field name="parent_id" eval="ref('dir_budget_policy_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B3': 'user_id.display_name',
+                            'B4': 'fiscalyear_id.name',
+                            'B5': 'revision',
+                            'B6': 'planned_amount',
+                            'B7': 'new_policy_amount',
+                        },
+                        'line_ids': {
+                            'A12': 'name',
+                            'B12': 'v0_policy_amount',
+                            'C12': 'latest_policy_amount',
+                            'D12': 'policy_amount',
+                            'F12': 'planned_amount',
+                            'G12': 'program_id.id${value or ""}',
+                        }
+                    },
+                },
+                '__IMPORT__': {
+                    1: {
+                        'line_ids': {
+                            'B12': 'v0_policy_amount',
+                            'C12': 'latest_policy_amount',
+                            'D12': 'policy_amount',
+                            'F12': 'planned_amount',
+                            'G12': 'program_id/.id',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
     </data>
 </openerp>

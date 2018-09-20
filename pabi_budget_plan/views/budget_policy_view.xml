@@ -97,6 +97,10 @@
                                     </tree>
                                 </field>
                                 <!-- Project Based -->
+                                <button name="%(action_budget_policy_project_export_xlsx_template)d"
+                                  type="action" string="Export to Excel" class="oe_highlight oe_right" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}"/>
+                                <button name="%(action_budget_policy_project_import_xlsx_template)d"
+                                  type="action" string="Import to Excel" class="oe_right" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}"/>
                                 <field name="project_base_line_ids" colspan="4" nolabel="1" attrs="{'invisible': ['|', ('chart_view', '!=', 'project_base'), ('revision', '!=', '0')]}">
                                     <tree editable="bottom" create="0" delete="0">
                                         <field name="name" string="Entity"/>
