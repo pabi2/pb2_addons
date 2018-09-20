@@ -19,6 +19,9 @@
                       <div states="choose" groups="pabi_utils.group_see_own_spool_report">
                           <field name="async_process"/><label for="async_process"/>
                           <field name="to_csv"/><label for="to_csv"/>
+                          <field name="csv_delimiter" invisible="1"/>
+                          <field name="csv_extension" invisible="1"/>
+                          <field name="csv_quote" invisible="1"/>
                       </div>
                       <div states="get">
                           <h2 attrs="{'invisible': [('async_process', '=', True)]}">

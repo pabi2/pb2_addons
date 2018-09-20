@@ -259,12 +259,15 @@ def load_workbook_range(range_string, ws):
                         columns=get_column_interval(col_start, col_end))
 
 
-def csv_from_excel(excel_content):
+def csv_from_excel(excel_content, delimiter, quote):
     decoded_data = base64.decodestring(excel_content)
     wb = xlrd.open_workbook(file_contents=decoded_data)
     sh = wb.sheet_by_index(0)
     content = cStringIO.StringIO()
-    wr = csv.writer(content, quoting=csv.QUOTE_ALL)
+    quoting = csv.QUOTE_ALL
+    if not quote:
+        quoting = csv.QUOTE_NONE
+    wr = csv.writer(content, delimiter=delimiter, quoting=quoting)
     for rownum in xrange(sh.nrows):
         row_vals = map(lambda x: isinstance(x, basestring) and
                        x.encode('utf-8') or x,
@@ -719,7 +722,9 @@ class ExportXlsxTemplate(models.TransientModel):
                         st.cell(row=r_idx, column=c_idx, value=value)
 
     @api.model
-    def _export_template(self, template, res_model, res_id, to_csv=False):
+    def _export_template(self, template, res_model, res_id,
+                         to_csv=False, csv_delimiter=',',
+                         csv_extension='csv', csv_quote=True):
         data_dict = literal_eval(template.description.strip())
         export_dict = data_dict.get('__EXPORT__', False)
         out_name = template.name
@@ -760,8 +765,9 @@ class ExportXlsxTemplate(models.TransientModel):
         out_ext = 'xlsx'
         # CSV (convert only 1st sheet)
         if to_csv:
-            out_file = csv_from_excel(out_file)
-            out_ext = 'csv'
+            delimiter = csv_delimiter.encode("utf-8")
+            out_file = csv_from_excel(out_file, delimiter, csv_quote)
+            out_ext = csv_extension
         return (out_file, '%s.%s' % (out_name, out_ext))
 
     @api.multi
