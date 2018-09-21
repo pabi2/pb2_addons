@@ -47,6 +47,17 @@
             sequence="14"/>
 
           # Purchase Order Line
+          <record id="purchase_order_line_tree" model="ir.ui.view">
+              <field name="name">purchase.order.line.tree</field>
+              <field name="model">purchase.order.line</field>
+              <field name="inherit_id" ref="purchase.purchase_order_line_tree"/>
+              <field name="arch" type="xml">
+                  <tree position="attributes">
+                      <attribute name="create">1</attribute>
+                  </tree>
+              </field>
+          </record>
+
           <record id="action_purchase_line_tree" model="ir.actions.act_window">
               <field name="name">Purchase Line</field>
               <field name="type">ir.actions.act_window</field>
