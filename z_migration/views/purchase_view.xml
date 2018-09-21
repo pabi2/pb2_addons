@@ -53,7 +53,7 @@
               <field name="inherit_id" ref="purchase_requisition.purchase_order_line_tree_tender"/>
               <field name="arch" type="xml">
                   <tree position="attributes">
-                      <attribute name="create">True</attribute>
+                      <attribute name="create">1</attribute>
                   </tree>
               </field>
           </record>
