@@ -483,6 +483,9 @@ class PaymentExportLine(models.Model):
         store=True,
         copy=False,
     )
+    nstda_fee = fields.Boolean(
+        string='NSTDA Fee',
+    )
 
     @api.depends('amount', 'amount_fee')
     def _compute_total(self):

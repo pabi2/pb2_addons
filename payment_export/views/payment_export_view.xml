@@ -107,9 +107,11 @@
                                         <field name="voucher_id" context="{'form_view_ref': 'account_voucher.view_vendor_payment_form'}"/>
                                         <field name="invoice_source_documents"/>
                                         <field name="partner_id"/>
+                                        <field name="nstda_fee"/>
                                         <field name="amount"/>
-                                        <field name="amount_fee" attrs="{'readonly': [('payment_type', '=', 'cheque')]}"/>
-                                        <field name="amount_total"/>
+                                        <!-- nstda not use for amount_fee -->
+                                        <field name="amount_fee" attrs="{'readonly': [('payment_type', '=', 'cheque')]}" invisible="1"/>
+                                        <field name="amount_total" invisible="1"/>
                                         <field name="cheque_register_id"/>
                                         <field name="void" invisible="1"/>
                                     </tree>
