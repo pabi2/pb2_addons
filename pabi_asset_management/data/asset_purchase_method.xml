@@ -73,5 +73,13 @@
             <field name="name">อื่นๆ</field>
             <field name="code">17</field>
         </record>
+        <record id="asset_purchase_method_18" model="asset.purchase.method">
+            <field name="name">ประกวดแบบ</field>
+            <field name="code">18</field>
+        </record>
+        <record id="asset_purchase_method_19" model="asset.purchase.method">
+            <field name="name">ประกาศเชิญช่วนทั่วไป</field>
+            <field name="code">19</field>
+        </record>
     </data>
 </openerp>
