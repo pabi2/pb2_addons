@@ -62,7 +62,7 @@ class BudgetPlanPersonnel(BPCommon, models.Model):
         if not plans:  # No plan for selected year has been created
             plan = self.create({'fiscalyear_id': fiscalyear_id,
                                 'user_id': False})
-        plan_ids.append(plan.id)
+            plan_ids.append(plan.id)
         return plan_ids
 
     @api.multi
