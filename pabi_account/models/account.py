@@ -34,6 +34,11 @@ class AccountMove(models.Model):
         readonly=False,
         copy=True,  # Add this, we want to copy it but negate amount
     )
+    validate_user_id = fields.Many2one(
+        'res.users',
+        string='Validated By',
+        compute='_compute_validate_user_id',
+    )
 
     @api.multi
     @api.depends('document_id')
@@ -43,6 +48,16 @@ class AccountMove(models.Model):
                 rec.date_document = rec.document_id.date_document
             else:
                 rec.date_document = fields.Date.context_today(self)
+
+    @api.multi
+    def _compute_validate_user_id(self):
+        for rec in self:
+            validate_user_id = rec.create_uid
+            if rec.document_id and \
+               rec.document_id._name == 'interface.account.entry' and \
+               rec.document_id.validate_user_id:
+                validate_user_id = rec.document_id.validate_user_id
+            rec.validate_user_id = validate_user_id
 
     @api.multi
     def _write(self, vals):
