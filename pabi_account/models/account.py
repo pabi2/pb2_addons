@@ -54,8 +54,7 @@ class AccountMove(models.Model):
         for rec in self:
             validate_user_id = rec.create_uid
             if rec.document_id and \
-               rec.document_id._name == 'interface.account.entry' and \
-               rec.document_id.validate_user_id:
+               rec.document_id._name == 'interface.account.entry':
                 validate_user_id = rec.document_id.validate_user_id
             rec.validate_user_id = validate_user_id
 
