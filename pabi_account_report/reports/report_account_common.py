@@ -349,6 +349,11 @@ class PabiCommonAccountReportView(models.Model):
         string='Invoice Move Write',
         readonly=True,
     )
+    invoice_move_validate_user_id = fields.Many2one(
+        'res.users',
+        related='invoice_move_id.validate_user_id',
+        string='Validated By',
+    )
     system_id = fields.Many2one(
         'interface.system',
         string='System Origin',

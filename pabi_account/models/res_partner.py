@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+from openerp import fields, models, api
 
 
 class ResPartner(models.Model):
@@ -14,6 +14,19 @@ class ResPartner(models.Model):
         string='Change History',
         copy=False,
     )
+    invoiced_count = fields.Integer(
+        string='# Invoiced',
+        compute='_compute_invoiced_count',
+    )
+
+    @api.multi
+    def _compute_invoiced_count(self):
+        Invoice = self.env['account.invoice']
+        for rec in self:
+            dom = [('partner_id', 'child_of', rec.id),
+                   ('type', 'in', ['out_invoice', 'out_refund']),
+                   ('state', 'not in', ['draft', 'cancel'])]
+            rec.invoiced_count = Invoice.search_count(dom)
 
 
 class ResPartnerBankChangeHistory(models.Model):

@@ -30,5 +30,30 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="partner_view_buttons" model="ir.ui.view">
+            <field name="name">partner.view.buttons</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.partner_view_buttons"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@id='invoice_button']/div" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@id='invoice_button']/div" position="after">
+                    <field string="Invoiced" name="invoiced_count" widget="statinfo"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="partner_view_button_contracts_count" model="ir.ui.view">
+            <field name="name">partner.view.button.contracts_count</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.partner_view_button_contracts_count"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(account.action_open_partner_analytic_accounts)d']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </openerp>

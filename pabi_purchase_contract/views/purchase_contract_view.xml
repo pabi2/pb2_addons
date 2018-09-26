@@ -154,8 +154,8 @@
         <field name="groups_id" eval="[(4, ref('group_pabi_purchase_contract_verify'))]"/>
         <field name="arch" type="xml">
             <xpath expr="/form" position="attributes">
-                <attribute name="create">0</attribute>
-                <attribute name="edit">0</attribute>
+                <attribute name="create">1</attribute>
+                <attribute name="edit">1</attribute>
             </xpath>
         </field>
     </record>

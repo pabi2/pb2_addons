@@ -31,6 +31,7 @@
         "purchase_split_quote2order",
         "account_pettycash",
         "account_cancel_reversal",
+        "pabi_interface",
     ],
     "data": [
         "data/default_value.xml",

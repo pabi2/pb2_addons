@@ -23,6 +23,13 @@ class AccountTaxDetail(models.Model):
                 number_preprint = rec.invoice_tax_id.invoice_id.number_preprint
             elif rec.voucher_tax_id:
                 number_preprint = rec.voucher_tax_id.voucher_id.number_preprint
-            elif rec.move_line_id:  # For interface documents
-                number_preprint = rec.move_line_id.move_id.ref
+            elif rec.move_line_id and rec.move_line_id.move_id and \
+                rec.move_line_id.move_id.document_id and \
+                rec.move_line_id.move_id.document_id._name \
+                    == 'interface.account.entry':
+                    # For interface documents
+                    number_preprint = \
+                        rec.move_line_id.move_id.document_id.preprint_number
+            # elif rec.move_line_id:  # For interface documents
+            #     number_preprint = rec.move_line_id.move_id.ref
             rec.number_preprint = number_preprint
