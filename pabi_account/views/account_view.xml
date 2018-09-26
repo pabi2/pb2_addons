@@ -142,8 +142,6 @@
             <field name="inherit_id" ref="account.view_account_journal_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="inside">
-                    <field name="project_ids"/>
-                    <field name="bank_mandate_emp_ids"/>
                     <field name="default_debit_account_id"/>
                     <field name="default_credit_account_id"/>
                 </xpath>
