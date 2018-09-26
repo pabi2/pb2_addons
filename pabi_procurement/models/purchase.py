@@ -56,6 +56,7 @@ class PurchaseOrder(models.Model):
         string='Contract Start Date',
         default=lambda self: fields.Date.context_today(self),
         track_visibility='onchange',
+        required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
