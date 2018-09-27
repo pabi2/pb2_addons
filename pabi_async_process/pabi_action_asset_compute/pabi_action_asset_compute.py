@@ -17,10 +17,11 @@ class PabiActionAssetCompute(models.TransientModel):
         required=True,
     )
     compute_method = fields.Selection(
-        [('standard', 'Standard - 1 JE per Asset (more JEs)'),
+        [('standard', 'Standard - 1 JE per Asset'),
+         ('standard_fast', 'Standard - 1 JE per Asset (Fast Logic)'),
          ('grouping', 'Grouping - 1 JE per Asset Profile'), ],
         string='Compute Method',
-        default='grouping',
+        default='standard_fast',
         required=True,
         help="Method of generating depreciation journal entries\n"
         "* Standard: create 1 JE for each asset depreciation line\n"
@@ -171,7 +172,7 @@ class PabiActionAssetCompute(models.TransientModel):
 
     @api.multi
     def asset_compute(self, period_id, categ_ids, profile_ids,
-                      batch_note, compute_method='standard',
+                      batch_note, compute_method='standard_fast',
                       grouping_date=False):
         period = self.env['account.period'].browse(period_id)
         # Block future period
@@ -186,6 +187,7 @@ class PabiActionAssetCompute(models.TransientModel):
         group_assets = {}  # Group of assets from search
         created_move_ids = []
         error_logs = []
+        fast_create_move = compute_method == 'standard_fast'
         if compute_method == 'grouping':  # Groupby Account, Depre Budget
             group_assets = self._search_asset(period, categ_ids, profile_ids,
                                               return_as_groups=True)
@@ -202,7 +204,8 @@ class PabiActionAssetCompute(models.TransientModel):
             merge_move = (compute_method == 'grouping') and True or False
             move_ids, error_log = assets._compute_entries(
                 period, check_triggers=True,
-                merge_move=merge_move, merge_date=grouping_date)
+                merge_move=merge_move, merge_date=grouping_date,
+                fast_create_move=fast_create_move)
             moves = self.env['account.move'].browse(move_ids)
             moves.write({'asset_depre_batch_id': depre_batch.id})
             created_move_ids += move_ids
