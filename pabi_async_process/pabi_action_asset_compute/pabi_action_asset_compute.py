@@ -510,9 +510,19 @@ class PabiAssetDepreBatch(models.Model):
 
     @api.multi
     def post_entries(self):
-        for rec in self:
-            rec.move_ids.post()
-            rec.write({'state': 'posted'})
+        """ For fasst post, just by pass all other checks """
+        for batch in self:
+            ctx = {'fiscalyear_id': batch.period_id.fiscalyear_id.id}
+            Sequence = self.with_context(ctx).env['ir.sequence']
+            sequence_id = False
+            for move in batch.move_ids:
+                sequence_id = sequence_id or move.journal_id.sequence_id.id
+                new_name = Sequence.next_by_id(sequence_id)
+                self._cr.execute("""
+                    update account_move
+                    set name = %s, state = 'posted' where id = %s
+                """, (new_name, move.id))
+        self.write({'state': 'posted'})
         return True
 
     @api.multi
