@@ -84,7 +84,8 @@ class PurchaseOrder(models.Model):
         # Update invoice = paid
         self._cr.execute("""
             UPDATE account_invoice
-            SET state = 'paid'
+            SET state = 'paid', supplier_invoice_number = 'COD Migration',
+                payment_type = 'transfer'
             WHERE source_document = '%s'""" % self.name)
         return True
 
