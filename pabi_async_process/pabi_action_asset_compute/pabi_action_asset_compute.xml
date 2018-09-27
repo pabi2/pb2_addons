@@ -88,8 +88,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-            <field name="context">{'return_action': 'pabi_async_process.action_pabi_asset_depre_batch',
-                                   'allow_future_period': True}</field>
+            <field name="context">{'return_action': 'pabi_async_process.action_pabi_asset_depre_batch'}</field>
         </record>
 
         # Replace the existing menu

@@ -176,11 +176,12 @@ class PabiActionAssetCompute(models.TransientModel):
                       grouping_date=False):
         period = self.env['account.period'].browse(period_id)
         # Block future period
-        current_period = self.env['account.period'].find()
-        if not self._context.get('allow_future_period', False) and \
-                period.date_start > current_period.date_start:
-            raise ValidationError(_('Compute asset depreciation for '
-                                    'future period is not allowed!'))
+        # current_period = self.env['account.period'].find()
+        # Future period allow?
+        # if not self._context.get('allow_future_period', False) and \
+        #         period.date_start > current_period.date_start:
+        #     raise ValidationError(_('Compute asset depreciation for '
+        #                             'future period is not allowed!'))
         # Batch ID
         depre_batch = self.env['pabi.asset.depre.batch'].new_batch(period,
                                                                    batch_note)
@@ -206,8 +207,10 @@ class PabiActionAssetCompute(models.TransientModel):
                 period, check_triggers=True,
                 merge_move=merge_move, merge_date=grouping_date,
                 fast_create_move=fast_create_move)
-            moves = self.env['account.move'].browse(move_ids)
-            moves.write({'asset_depre_batch_id': depre_batch.id})
+            self._cr.execute("""
+                update account_move
+                set asset_depre_batch_id = %s where id in %s
+            """, (depre_batch.id, tuple(move_ids)))
             created_move_ids += move_ids
             if error_log and error_log != '':
                 error_logs.append(error_log)
@@ -484,13 +487,25 @@ class PabiAssetDepreBatch(models.Model):
 
     @api.multi
     def delete_unposted_entries(self):
-        AccountMove = self.env['account.move']
+        """ For fast removal, we use SQL """
         for rec in self:
-            moves = AccountMove.search([('id', 'in', rec.move_ids.ids),
-                                        ('state', '=', 'draft'),
-                                        ('name', 'in', (False, '/'))])
-            moves.with_context(unlink_from_asset=True).unlink()
-            rec.write({'state': 'deleted'})
+            move_ids = tuple(rec.move_ids.ids)
+            if move_ids:
+                # reset move_check in depre line
+                self._cr.execute("""
+                    update account_asset_line set move_check = false
+                    where move_id in %s
+                """, (move_ids, ))
+                # delete from table
+                self._cr.execute("""
+                    delete from account_move_line where move_id in
+                    (select id from account_move where id in %s
+                    and state = 'draft' and name in (null, '/'))
+                """, (move_ids, ))
+                self._cr.execute("""
+                    delete from account_move where id in %s
+                    and state = 'draft' and name in (null, '/')
+                """, (move_ids, ))
         return True
 
     @api.multi
