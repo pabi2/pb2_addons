@@ -291,36 +291,45 @@ class HRExpense(models.Model):
         _logger.info('generate_hr_expense(), input: %s' % data_dict)
         if not test and not self.env.user.company_id.pabiweb_active:
             raise ValidationError(_('Odoo/PABIWeb Disconnected!'))
-        # try:
-        prepare_code = data_dict.get('preparer_code')
-        data_dict = self._pre_process_hr_expense(data_dict)
-        res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
-        if res['is_success'] is True:
-            expense = self.browse(res['result']['id'])
-            self._post_process_hr_expense(expense)
-            # Replace Admin with Preparer
-            dom = [('employee_code', '=', prepare_code)]
-            employee = self.env['hr.employee'].search(dom)
-            expense_id = res['result']['id']
-            self._cr.execute("""
-                update hr_expense_expense
-                set create_uid = %s, write_uid = %s where id = %s
-            """, (employee.user_id.id, employee.user_id.id, expense_id))
-            self._cr.execute("""
-                update auditlog_log
-                set user_id = %s where res_id = %s
-                and model_id = (select id from ir_model
-                                where model = 'hr.expense.expense')
-            """, (employee.user_id.id, expense_id))
-            # --
-        # self._cr.commit()
-        # except Exception, e:
-        #     res = {
-        #         'is_success': False,
-        #         'result': False,
-        #         'messages': _(str(e)),
-        #     }
-        #     self._cr.rollback()
+        try:
+            print '-----------> 1'
+            prepare_code = data_dict.get('preparer_code')
+            print '-----------> 2'
+            data_dict = self._pre_process_hr_expense(data_dict)
+            print '-----------> 3'
+            res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
+            print '-----------> 4'
+            if res['is_success'] is True:
+                expense = self.browse(res['result']['id'])
+                print '-----------> 5'
+                self._post_process_hr_expense(expense)
+                print '-----------> 6'
+                # Replace Admin with Preparer
+                dom = [('employee_code', '=', prepare_code)]
+                employee = self.env['hr.employee'].search(dom)
+                print '-----------> 7'
+                expense_id = res['result']['id']
+                self._cr.execute("""
+                    update hr_expense_expense
+                    set create_uid = %s, write_uid = %s where id = %s
+                """, (employee.user_id.id, employee.user_id.id, expense_id))
+                print '-----------> 8'
+                self._cr.execute("""
+                    update auditlog_log
+                    set user_id = %s where res_id = %s
+                    and model_id = (select id from ir_model
+                                    where model = 'hr.expense.expense')
+                """, (employee.user_id.id, expense_id))
+                print '-----------> 9'
+                # --
+            self._cr.commit()
+        except Exception, e:
+            res = {
+                'is_success': False,
+                'result': False,
+                'messages': _(str(e)),
+            }
+            self._cr.rollback()
         _logger.info('generate_hr_expense(), input: %s' % res)
         return res
 

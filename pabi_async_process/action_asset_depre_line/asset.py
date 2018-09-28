@@ -85,5 +85,6 @@ class AccountAsset(PabiAsync, models.Model):
             # Process Name
             job.process_id = self.env.ref('pabi_async_process.'
                                           'asset_compute_depreciation_board')
+            return True
         else:
             return super(AccountAsset, self).compute_depreciation_board()
