@@ -110,6 +110,8 @@ def fill_cell_format(field, field_format):
         'number_format': {
             'number': '#,##0.00',
             'date': 'dd/mm/yyyy',
+            'datestamp': 'yyyy-mm-dd',
+            'text': '@',
             'percent': '0.00%',
         },
     }
@@ -270,7 +272,7 @@ def csv_from_excel(excel_content, delimiter, quote):
     wr = csv.writer(content, delimiter=delimiter, quoting=quoting)
     for rownum in xrange(sh.nrows):
         row_vals = map(lambda x: isinstance(x, basestring) and
-                       x.encode('utf-8') or x,
+                       x.encode('utf-8').strip() or x,
                        sh.row_values(rownum))
         wr.writerow(row_vals)
     # content.close()  # Set index to 0, and start reading
