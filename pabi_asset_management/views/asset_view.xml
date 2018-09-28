@@ -140,6 +140,7 @@
                         <group>
                             <field name="depreciation_base" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
                             <field name="no_depreciation" invisible="1"/>
+                            <field name="net_book_value"/>
                         </group>
                         <group>
                             <field name="value_depreciated" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
