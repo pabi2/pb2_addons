@@ -7,3 +7,4 @@ from . import purchase_billing
 from . import invest_construction
 from . import loan_receivable
 from . import loan_installment
+from . import stock

@@ -21,9 +21,11 @@
         'pabi_sale_invoice_plan',
         'pabi_loan_receivable',
         'pabi_loan_installment',
+        'stock_account',
     ],
     "data": [
         'views/purchase_view.xml',
         'views/sale_view.xml',
+        'views/stock_view.xml',
     ]
 }
