@@ -6,6 +6,9 @@ from openerp.exceptions import ValidationError
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
+    ref = fields.Char(index=True)
+    narration = fields.Text(index=True)
+
     @api.model
     def create(self, vals):
         # Case stock picking with force journal_id

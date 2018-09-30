@@ -40,6 +40,7 @@
         'pabi_action_asset_compute/xlsx_template/load_template.xml',
         'pabi_action_asset_compute/xlsx_template/xlsx_template_wizard.xml',
         'pabi_action_asset_compute/pabi_action_asset_compute.xml',
+        'pabi_action_asset_compute/pabi_depre_batch_view.xml',
     ],
     'installable': True,
     'application': False,

@@ -201,16 +201,13 @@ class PabiActionAssetCompute(models.TransientModel):
                 _('No more assets to compute for this period!'))
         # Compute for each group (1 group for standard case)
         for grp_name, asset_ids in group_assets.iteritems():
+            self = self.with_context(batch_id=depre_batch.id)
             assets = self.env['account.asset'].browse(asset_ids)
             merge_move = (compute_method == 'grouping') and True or False
             move_ids, error_log = assets._compute_entries(
                 period, check_triggers=True,
                 merge_move=merge_move, merge_date=grouping_date,
                 fast_create_move=fast_create_move)
-            self._cr.execute("""
-                update account_move
-                set asset_depre_batch_id = %s where id in %s
-            """, (depre_batch.id, tuple(move_ids)))
             created_move_ids += move_ids
             if error_log and error_log != '':
                 error_logs.append(error_log)
@@ -386,154 +383,3 @@ class PabiActionAssetComputeTestLog(models.TransientModel):
         readonly=True,
         size=1000,
     )
-
-
-class PabiAssetDepreBatch(models.Model):
-    _name = 'pabi.asset.depre.batch'
-    _order = 'id desc'
-    _description = 'Asset Depreciation Compute Batch'
-
-    name = fields.Char(
-        string='Name',
-        compute='_compute_name',
-        store=True,
-        help="As <period>-<run number>",
-    )
-    run_number = fields.Integer(
-        string='Run Number',
-        readonly=True,
-        required=True,
-    )
-    period_id = fields.Many2one(
-        'account.period',
-        string='Period',
-        readonly=True,
-        required=True,
-    )
-    note = fields.Char(
-        string='Note',
-        readonly=True,
-        size=500,
-    )
-    state = fields.Selection(
-        [('draft', 'Draft'),
-         ('posted', 'Posted'),
-         ('deleted', 'Deleted')],
-        string='State',
-        default='draft',
-        help="* Draft: first created, user prevew\n"
-        "* Posted: all journal entries posted\n"
-        "* Deleted: user choose to delete and will redo again"
-    )
-    move_ids = fields.One2many(
-        'account.move',
-        'asset_depre_batch_id',
-        string='Journal Entries',
-    )
-    move_line_ids = fields.One2many(
-        'account.move.line',
-        'asset_depre_batch_id',
-        string='Journal Items',
-    )
-    amount = fields.Float(
-        string='Depreciation Amount',
-        compute='_compute_amount',
-    )
-
-    move_count = fields.Integer(
-        string='JE Count',
-        compute='_compute_moves',
-    )
-
-    @api.multi
-    def _compute_moves(self):
-        for rec in self:
-            rec.move_count = len(rec.move_ids)
-        return True
-
-    @api.multi
-    def open_entries(self):
-        self.ensure_one()
-        return {
-            'name': _("Journal Entries"),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'account.move',
-            'view_id': False,
-            'type': 'ir.actions.act_window',
-            'context': self._context,
-            'nodestroy': True,
-            'domain': [('id', 'in', self.move_ids.ids)],
-        }
-
-    @api.model
-    def new_batch(self, period, note):
-        # Get last batch's run_number
-        batch = self.search([('period_id', '=', period.id)],
-                            order='run_number desc', limit=1)
-        next_run = batch and (batch.run_number + 1) or 1
-        new_batch = self.create({'period_id': period.id,
-                                 'run_number': next_run,
-                                 'note': note, })
-        return new_batch
-
-    @api.multi
-    @api.depends('run_number', 'period_id')
-    def _compute_name(self):
-        for rec in self:
-            number = str(rec.run_number)
-            rec.name = '%s-%s' % (rec.period_id.name, number.zfill(2))
-        return True
-
-    @api.multi
-    def delete_unposted_entries(self):
-        """ For fast removal, we use SQL """
-        for rec in self:
-            move_ids = tuple(rec.move_ids.ids)
-            if move_ids:
-                # reset move_check in depre line
-                self._cr.execute("""
-                    update account_asset_line set move_check = false
-                    where move_id in %s
-                """, (move_ids, ))
-                # delete from table
-                self._cr.execute("""
-                    delete from account_move_line where move_id in
-                    (select id from account_move where id in %s
-                    and state = 'draft' and name in (null, '/'))
-                """, (move_ids, ))
-                self._cr.execute("""
-                    delete from account_move where id in %s
-                    and state = 'draft' and name in (null, '/')
-                """, (move_ids, ))
-        return True
-
-    @api.multi
-    def post_entries(self):
-        """ For fasst post, just by pass all other checks """
-        for batch in self:
-            ctx = {'fiscalyear_id': batch.period_id.fiscalyear_id.id}
-            Sequence = self.with_context(ctx).env['ir.sequence']
-            sequence_id = False
-            for move in batch.move_ids:
-                sequence_id = sequence_id or move.journal_id.sequence_id.id
-                new_name = Sequence.next_by_id(sequence_id)
-                self._cr.execute("""
-                    update account_move
-                    set name = %s, state = 'posted' where id = %s
-                """, (new_name, move.id))
-        self.write({'state': 'posted'})
-        return True
-
-    @api.multi
-    def _compute_amount(self):
-        self._cr.execute("""
-            select asset_depre_batch_id, sum(debit) as amount
-            from account_move_line
-            where asset_depre_batch_id in %s
-            group by asset_depre_batch_id
-        """, (tuple(self.ids), ))
-        amount_dict = dict([(x[0], x[1]) for x in self._cr.fetchall()])
-        for rec in self:
-            rec.amount = amount_dict.get(rec.id, 0.0)
-        return True

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
 from openerp import models, fields, api, _
 from openerp import tools
 from openerp.exceptions import ValidationError
@@ -758,49 +757,6 @@ class AccountAsset(ChartFieldAction, models.Model):
         res['domain'] = [('id', 'in', ex_move_ids + move_ids)]
         return res
 
-    @api.model
-    def _get_extend_columns_for_fast_create(self, group_uuid):
-        """ More fields value for record creation """
-        now = fields.Datetime.context_timestamp(self, datetime.now())
-        today = fields.Date.context_today(self)
-        company_id = self.env.user.company_id.id
-        user_id = self.env.user.id
-        ou_id = self.env.user.default_operating_unit_id.id
-        system_id = self.env.ref('pabi_interface.system_pabi2').id
-        return {  # more default value to create the record
-            'account_move': {
-                'create_uid': user_id,
-                'create_date': now,
-                'write_uid': user_id,
-                'write_date': now,
-                'company_id': company_id,
-                'state': 'draft',
-                'to_check': False,
-                'to_be_reversed': False,
-                'cancel_entry': False,
-                'system_id': system_id,
-                'doctype': 'adjustment',
-                'date_value': 'value.date',  # Special value
-                'date_document': today,
-                'narration': group_uuid,
-            },
-            'account_move_line': {
-                'charge_type': 'external',
-                'create_uid': user_id,
-                'create_date': now,
-                'write_uid': user_id,
-                'write_date': now,
-                'company_id': company_id,
-                'blocked': False,
-                'centralisation': 'normal',
-                'date_created': today,
-                'operating_unit_id': ou_id,
-                'doctype': 'adjustment',
-                'date_value': 'value.date',
-                'is_tax_line': False,
-            }
-        }
-
 
 class AccountAssetProfile(models.Model):
     _inherit = 'account.asset.profile'
@@ -885,6 +841,10 @@ class AccountAssetProfile(models.Model):
 class AccountAssetLine(models.Model):
     _inherit = 'account.asset.line'
 
+    asset_id = fields.Many2one(
+        'account.asset',
+        index=True,  # add
+    )
     type = fields.Selection(
         [('create', 'Purchase Value'),
          ('depreciate', 'Depreciation'),

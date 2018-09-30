@@ -148,7 +148,7 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Journal Entries">
+                            <!-- <page string="Journal Entries">
                                 <field name="move_ids">
                                     <tree editable="bottom">
                                         <field name="name"/>
@@ -172,7 +172,7 @@
                                         <field name="chartfield_id"/>
                                     </tree>
                                 </field>
-                            </page>
+                            </page> -->
                         </notebook>
                     </sheet>
                 </form>
