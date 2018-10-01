@@ -22,6 +22,7 @@
         'pabi_loan_receivable',
         'pabi_loan_installment',
         'stock_account',
+        'pabi_my_project',
     ],
     "data": [
         'views/purchase_view.xml',
