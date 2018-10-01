@@ -9,9 +9,9 @@
                     <header>
                         <button name="action_evaluate" type="object" states="draft" string="Evaluate Supplier" class="oe_highlight"/>
                         <button name="action_done" type="object" states="evaluation" string="Done" class="oe_highlight"/>
-                        <button name="action_cancel" type="object" states="draft,evaluation,done" string="Cancel"/>
                         <button name="action_set_draft" type="object" states="cancel" string="Set to draft"/>
                         <button name="open_order_line" type="object" string="Create Invoices" attrs="{'invisible':['|',('order_method', '!=', 'manual'),('invoice_created', '!=', False)]}"/>
+                        <button name="action_cancel" type="object" states="draft,evaluation,done" string="Cancel" confirm="Cancel this Work Acceptance?"/>
                         <field name="state" widget="statusbar" readonly="1" statusbar_visible="draft,evaluation,done"/>
                     </header>
                     <sheet>
