@@ -1,5 +1,35 @@
-
+# -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
+from openerp.exceptions import RedirectWarning
+from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import FailedJobError
+
+
+def related_asset_depre_batch(session, thejob):
+    batch_id = thejob.args[1]
+    action = {
+        'name': _("Asset Depre. Batch"),
+        'type': 'ir.actions.act_window',
+        'res_model': "pabi.asset.depre.batch",
+        'view_type': 'form',
+        'view_mode': 'form',
+        'res_id': batch_id,
+    }
+    return action
+
+
+@job
+@related_action(action=related_asset_depre_batch)
+def action_post_asset_depre_batch(session, model_name, res_id):
+    try:
+        session.pool[model_name].\
+            post_entries(session.cr, session.uid, [res_id], session.context)
+        batch = session.pool[model_name].browse(session.cr,
+                                                session.uid, res_id)
+        return {'batch_id': batch.id}
+    except Exception, e:
+        raise FailedJobError(e)
 
 
 class PabiAssetDepreBatch(models.Model):
@@ -53,11 +83,64 @@ class PabiAssetDepreBatch(models.Model):
         string='Depreciation Amount',
         compute='_compute_amount',
     )
-
     move_count = fields.Integer(
         string='JE Count',
         compute='_compute_moves',
     )
+    posted_move_count = fields.Integer(
+        string='Posted JE Count',
+        compute='_compute_moves',
+    )
+    # Job related fields
+    async_process = fields.Boolean(
+        string='Post JE in background?',
+        default=True,
+    )
+    job_id = fields.Many2one(
+        'queue.job',
+        string='Job',
+        compute='_compute_job_uuid',
+    )
+    uuid = fields.Char(
+        string='Job UUID',
+        compute='_compute_job_uuid',
+    )
+
+    @api.multi
+    def _compute_job_uuid(self):
+        for rec in self:
+            task_name = "%s('%s', %s)" % \
+                ('action_post_asset_depre_batch', self._name, rec.id)
+            jobs = self.env['queue.job'].search([
+                ('func_string', 'like', task_name),
+                ('state', '!=', 'done')],
+                order='id desc', limit=1)
+            rec.job_id = jobs and jobs[0] or False
+            rec.uuid = jobs and jobs[0].uuid or False
+        return True
+
+    @api.multi
+    def post_entries(self):
+        self.ensure_one()
+        if self._context.get('job_uuid', False):  # Called from @job
+            return self.action_post_entries()
+        # Enqueue
+        if self.async_process:
+            if self.job_id:
+                message = _('Post Asset Depre. Batch')
+                action = self.env.ref('pabi_utils.action_my_queue_job')
+                raise RedirectWarning(message, action.id, _('Go to My Jobs'))
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = '%s - Post Asset Depre. Batch' % self.name
+            uuid = action_post_asset_depre_batch.delay(
+                session, self._name, self.id, description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            job.process_id = self.env.ref('pabi_async_process.'
+                                          'post_asset_depre_batch')
+        else:
+            return self.action_post_entries()
+    # --
 
     @api.multi
     def _compute_moves(self):
@@ -65,6 +148,9 @@ class PabiAssetDepreBatch(models.Model):
         for rec in self:
             rec.move_count = \
                 Move.search_count([('asset_depre_batch_id', '=', rec.id)])
+            rec.posted_move_count = \
+                Move.search_count([('asset_depre_batch_id', '=', rec.id),
+                                   ('state', '=', 'posted')])
         return True
 
     @api.multi
@@ -134,7 +220,7 @@ class PabiAssetDepreBatch(models.Model):
         return True
 
     @api.multi
-    def post_entries(self):
+    def action_post_entries(self):
         """ For fasst post, just by pass all other checks """
         for batch in self:
             ctx = {'fiscalyear_id': batch.period_id.fiscalyear_id.id}

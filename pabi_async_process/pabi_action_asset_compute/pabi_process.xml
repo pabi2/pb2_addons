@@ -4,5 +4,8 @@
 				<record id="asset_compute" model="pabi.process">
 						<field name="name">Compute Asset Depreciation</field>
 				</record>
+				<record id="post_asset_depre_batch" model="pabi.process">
+						<field name="name">Post Asset Depre. Batch</field>
+				</record>
 		</data>
 </openerp>
