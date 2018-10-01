@@ -22,7 +22,7 @@
                     </div>
                     <group>
                         <group>
-                            <field name="name"/>
+                            <field name="name" readonly="1"/>
                             <field name="order_id"/>
                             <field name="date_contract_start" readonly="1"/>
                             <field name="date_scheduled_end" string="Contract End Date" readonly="1"/>
