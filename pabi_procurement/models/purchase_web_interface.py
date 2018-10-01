@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import openerp
 import logging
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 import xmlrpclib
+import re
 import base64
 import os
 import inspect
@@ -174,6 +176,48 @@ class PurchaseRequisition(models.Model):
                                     })
                     if requisition.state != 'done':
                         requisition.tender_done()
+
+                    # regenerate new main_form file with signatures
+                    Report = self.env['ir.actions.report.xml']
+                    matching_reports = Report.search([
+                        ('model', '=', self._name),
+                        ('report_type', '=', 'pdf'),
+                        # ('report_name', '=',
+                        #  'purchase.requisition_' + doc_type.name.lower()),
+                        ('report_name', '=', 'purchase.requisition_pd1'),
+
+                    ], )
+                    if matching_reports:
+                        report = matching_reports[0]
+                        result, _x = openerp.report.render_report(
+                            self._cr,
+                            self._uid,
+                            [self.id],
+                            report.report_name,
+                            {
+                                'model': self._name
+                            }
+                        )
+                    Attachment = self.env['ir.attachment']
+                    exist_pd_file = Attachment.search([
+                        ('res_id', '=', self.id),
+                        ('res_model', '=', 'purchase.requisition'),
+                        ('name', 'ilike', '_main_form.pdf'),
+                    ])
+                    if len(exist_pd_file) > 0:
+                        exist_pd_file.sudo().unlink()
+                    result = base64.b64encode(result)
+                    file_name = self.display_name
+                    file_name = re.sub(r'[^a-zA-Z0-9_-]', '_', file_name)
+                    file_name += "_main_form.pdf"
+                    Attachment.create({
+                        'name': file_name,
+                        'datas': result,
+                        'datas_fname': file_name,
+                        'res_model': self._name,
+                        'res_id': self.id,
+                        'type': 'binary'
+                    })
                     attachment = []
                     for pd_att in requisition.attachment_ids:
                         if '_main_form.pdf' in pd_att.name:
