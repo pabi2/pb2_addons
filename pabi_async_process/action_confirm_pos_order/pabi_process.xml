@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="confirm_pos_order" model="pabi.process">
+						<field name="name">Confirm POS Order</field>
+				</record>
+		</data>
+</openerp>

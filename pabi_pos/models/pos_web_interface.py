@@ -50,6 +50,8 @@ class SalesOrder(models.Model):
                                                                  data_dict)
             pos = self.browse(res['result']['id'])
             pos.post_process_pos_order()
+            # auto confirm oder, with async process
+            pos.with_context(pos_async_process=True).action_button_confirm()
             # return more data
             res['result']['name'] = pos.name
         except Exception, e:

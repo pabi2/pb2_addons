@@ -5,6 +5,9 @@ from openerp import models, fields, api
 class QueueJob(models.Model):
     _inherit = 'queue.job'
 
+    func_string = fields.Char(
+        index=True,
+    )
     process_id = fields.Many2one(
         'pabi.process',
         string='Process',

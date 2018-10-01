@@ -15,6 +15,7 @@
         'pabi_hr_salary',
         'pabi_budget_plan',
         'pabi_asset_management',
+        'sale_automatic_workflow',
     ],
     'data': [
         'action_sale_create_invoice/sale_view.xml',
@@ -31,6 +32,8 @@
         'action_generate_budget_plans/pabi_process.xml',
         'action_asset_depre_line/asset_view.xml',
         'action_asset_depre_line/pabi_process.xml',
+        'action_confirm_pos_order/sale_view.xml',
+        'action_confirm_pos_order/pabi_process.xml',
         # Using pabi.asset class as guideline
         'pabi_action_generate_entries/pabi_action_generate_entries.xml',
         'pabi_action_generate_entries/pabi_process.xml',
