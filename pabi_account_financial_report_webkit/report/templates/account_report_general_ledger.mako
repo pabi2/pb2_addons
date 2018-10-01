@@ -238,9 +238,9 @@
                           ## doctype
                           <div class="act_as_cell">${line.get('doctype') or ''}</div>
                           ## activity group
-                          <div class="act_as_cell">${line.get('activity_group_name') or ''}</div>
+                          <div class="act_as_cell">${line.get('activity_group') or ''}</div>
                           ## activity
-                          <div class="act_as_cell">${line.get('activity_name') or ''}</div>
+                          <div class="act_as_cell">${line.get('activity') or ''}</div>
                           ## account code
                           <div class="act_as_cell">${account.code}</div>
                           ## partner
