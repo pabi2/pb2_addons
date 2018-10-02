@@ -32,6 +32,7 @@
                 ref('xlsx_report_expense_ledger'),
                 ref('xlsx_report_gl_allowance_doubtful_accounts'),
                 ref('xlsx_report_gl_expenditure'),
+                ref('xlsx_report_asset_repair'),
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>
