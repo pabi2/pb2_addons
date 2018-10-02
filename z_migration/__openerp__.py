@@ -23,6 +23,7 @@
         'pabi_loan_installment',
         'stock_account',
         'pabi_my_project',
+        'account_voucher',
     ],
     "data": [
         'views/purchase_view.xml',

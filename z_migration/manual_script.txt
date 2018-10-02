@@ -27,3 +27,5 @@ myProjects
 - Release Budget (Current Year) >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/myproject/myproject_act_release_budget.py
 Invoice
 - Validate >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/account_invoice/account_invoice_act_validate.py
+Voucher
+- Validate >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/models/account_voucher.py
