@@ -9,3 +9,4 @@ from . import loan_receivable
 from . import loan_installment
 from . import stock
 from . import res_project
+from . import account_invoice

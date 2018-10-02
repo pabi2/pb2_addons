@@ -23,3 +23,7 @@ Project Construction Phase
 Loan Agreement
 - Sign Document >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/loan_agreement/loan_agreement_act_sign_document.py
 - Create Installment Order >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/loan_agreement/loan_agreement_act_create_installment_order.py
+myProjects
+- Release Budget (Current Year) >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/myproject/myproject_act_release_budget.py
+Invoice
+- Validate >> python /home/podkung/workspaces/pabi2/pb2_addons/z_migration/scripts/account_invoice/account_invoice_act_validate.py
