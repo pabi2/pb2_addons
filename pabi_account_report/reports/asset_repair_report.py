@@ -84,7 +84,7 @@ class AssetRepairView(models.Model):
 
 class XLSXReportAssetRepair(models.TransientModel):
     _name = 'xlsx.report.asset.repair'
-    _inherit = 'xlsx.report'
+    _inherit = 'report.account.common'
 
     org_id = fields.Many2one(
         'res.org',

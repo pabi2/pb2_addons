@@ -22,6 +22,7 @@
         'report',
         'l10n_th_amount_text',
         'pabi_account_move_document_ref',
+        'pabi_asset_management',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -68,6 +69,8 @@
         'reports/xlsx_report_revenue_ledger.xml',
         'reports/xlsx_report_gl_allowance_doubtful_accounts.xml',
         'reports/xlsx_report_gl_expenditure.xml',
+        # Asset Reports
+        'reports/asset_repair_report.xml',
     ],
     'demo': [
     ],

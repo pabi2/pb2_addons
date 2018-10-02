@@ -4,26 +4,27 @@
       <record id="view_xlsx_report_asset_repair_form" model="ir.ui.view">
           <field name="name">view.xlsx.report.asset.repair.form</field>
           <field name="model">xlsx.report.asset.repair</field>
-          <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+          <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
           <field name="mode">primary</field>
           <field name="arch" type="xml">
-              <xpath expr="//group[@name='criteria']" position="inside">
+              <xpath expr="//group[@name='criteria']/group" position="replace">
                   <group>
-                      <group>
-                          <field name="budget"/>
-                          <field name="asset_id"/>
-                          <field name="status_id"/>
-                          <field name="as_of_date"/>
-                      </group>
-                      <group>
-                          <field name="org_id"/>
-                          <field name="sector_id"/>
-                          <field name="subsector_id"/>
-                          <field name="division_id"/>
-                          <field name="section_id"/>
-                          <field name="responsible_by"/>
-                      </group>
+                      <field name="budget"/>
+                      <field name="asset_id"/>
+                      <field name="status_id"/>
+                      <field name="as_of_date"/>
                   </group>
+                  <group>
+                      <field name="org_id"/>
+                      <field name="sector_id"/>
+                      <field name="subsector_id"/>
+                      <field name="division_id"/>
+                      <field name="section_id"/>
+                      <field name="responsible_by"/>
+                  </group>
+              </xpath>
+              <xpath expr="//notebook[@name='additional_criteria']" position="attributes">
+                  <attribute name="invisible">1</attribute>
               </xpath>
           </field>
       </record>
