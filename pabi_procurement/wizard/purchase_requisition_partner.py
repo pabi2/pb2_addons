@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class PurchaseRequisitionPartner(models.TransientModel):
@@ -46,6 +47,14 @@ class PurchaseRequisitionPartner(models.TransientModel):
 
     @api.multi
     def create_order(self):
+        if self._context['active_model'] == 'purchase.requisition':
+            Requisition = self.env['purchase.requisition']
+            requisitions = Requisition.browse(self._context['active_ids'])
+            for req in requisitions:
+                if not req.request_ref_id and req.state == 'in_progress':
+                    raise ValidationError(
+                        _("Allowed for PR Referred CfB only.")
+                    )
         res = super(PurchaseRequisitionPartner, self.with_context(
             sel_operating_unit_id=self.operating_unit_view_id.id,
             sel_picking_type_id=self.sudo().picking_type_id.id,
