@@ -11,9 +11,9 @@ def related_result(session, thejob):
     """ Open up result of this process """
     job = session.env['queue.job'].search([('uuid', '=', thejob._uuid)])
     return_action = thejob.args[3]
-    res_ids = literal_eval(job.res_ids)
-    if not res_ids:
+    if not job.res_ids:
         raise ValidationError(_('No results form this process'))
+    res_ids = literal_eval(job.res_ids)
     # Specified action
     if return_action and job.res_model:
         result = session.env.ref(return_action).read()[0]
