@@ -446,6 +446,12 @@ class PurchaseRequestLine(models.Model):
         related='request_id.is_central_purchase',
         store=True,
     )
+    is_small_amount = fields.Boolean(
+        string='Is Small Amount',
+        readonly=True,
+        related='request_id.is_small_amount',
+        store=True,
+    )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         'Fiscal Year',
