@@ -60,31 +60,15 @@
                             </group>
                         </group>
                         <notebook>
-                            <!-- <page string="Journal Entries">
-                                <field name="move_ids">
-                                    <tree editable="bottom">
-                                        <field name="name"/>
-                                        <field name="ref"/>
-                                        <field name="date"/>
-                                        <field name="journal_id"/>
-                                        <field name="partner_id"/>
-                                        <field name="amount" sum="Total"/>
-                                        <field name="state"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Journal Items">
-                                <field name="move_line_ids">
-                                    <tree editable="bottom">
-                                        <field name="move_id"/>
-                                        <field name="name"/>
+                            <page string="Summary">
+                                <field name="summary_ids">
+                                    <tree>
                                         <field name="account_id"/>
                                         <field name="debit" sum="Total"/>
                                         <field name="credit" sum="Total"/>
-                                        <field name="chartfield_id"/>
                                     </tree>
                                 </field>
-                            </page> -->
+                            </page>
                         </notebook>
                     </sheet>
                 </form>

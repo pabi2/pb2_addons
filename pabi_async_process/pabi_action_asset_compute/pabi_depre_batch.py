@@ -2,6 +2,7 @@
 import time
 import logging
 from openerp import models, fields, api, _
+from openerp import tools
 from openerp.exceptions import RedirectWarning
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
@@ -82,6 +83,11 @@ class PabiAssetDepreBatch(models.Model):
         'account.move.line',
         'asset_depre_batch_id',
         string='Journal Items',
+    )
+    summary_ids = fields.One2many(
+        'pabi.asset.depre.batch.summary',
+        'asset_depre_batch_id',
+        string='Summary',
     )
     amount = fields.Float(
         string='Depreciation Amount',
@@ -277,3 +283,35 @@ class PabiAssetDepreBatch(models.Model):
         for rec in self:
             rec.amount = amount_dict.get(rec.id, 0.0)
         return True
+
+
+class PabiAssetDepreBatchSummary(models.Model):
+    _name = 'pabi.asset.depre.batch.summary'
+    _description = 'Assets Depre. Batch Summary'
+    _auto = False
+    _order = 'account_id, debit, credit'
+
+    asset_depre_batch_id = fields.Many2one(
+        'pabi.asset.depre.batch.summary',
+        string='Asset Depre. Batch',
+    )
+    account_id = fields.Many2one(
+        'account.account',
+        string='Account',
+    )
+    debit = fields.Float(
+        string='Debit',
+    )
+    credit = fields.Float(
+        string='Debit',
+    )
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, 'pabi_asset_depre_batch_summary')
+        cr.execute("""
+            create or replace view pabi_asset_depre_batch_summary as (
+            select min(id) as id, asset_depre_batch_id, account_id,
+                sum(debit) debit, sum(credit) credit
+            from account_move_line
+            group by asset_depre_batch_id, account_id
+        )""")
