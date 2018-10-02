@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+import time
 from openerp import models, fields, api, _
 from openerp.exceptions import RedirectWarning
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import FailedJobError
+
+_logger = logging.getLogger(__name__)
 
 
 def related_asset_depre_batch(session, thejob):
@@ -221,6 +224,8 @@ class PabiAssetDepreBatch(models.Model):
 
     @api.multi
     def action_post_entries(self):
+        _logger.info("Begin action_post_entries()")
+        s = time.time()
         """ For fasst post, just by pass all other checks """
         for batch in self:
             ctx = {'fiscalyear_id': batch.period_id.fiscalyear_id.id}
@@ -255,6 +260,8 @@ class PabiAssetDepreBatch(models.Model):
                 asset._set_close_asset_zero_value()
                 self._cr.commit()
         self.write({'state': 'posted'})
+        _logger.info("Done action_post_entries() in %s secs." %
+                     (time.time()-s))
         return True
 
     @api.multi
