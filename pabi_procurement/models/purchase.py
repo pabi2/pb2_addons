@@ -54,11 +54,16 @@ class PurchaseOrder(models.Model):
     )
     date_contract_start = fields.Date(
         string='Contract Start Date',
-        default=lambda self: fields.Date.context_today(self),
+        # default=lambda self: fields.Date.context_today(self),
         track_visibility='onchange',
         required=True,
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={
+            'draft': [('readonly', False)],
+            'sent': [('readonly', False)],
+            'bid': [('readonly', False)],
+            'confirmed': [('readonly', False)],
+        },
     )
     committee_ids = fields.One2many(
         'purchase.order.committee',
@@ -214,6 +219,17 @@ class PurchaseOrder(models.Model):
                 rec.contract_id = latest_contract_id
 
     @api.multi
+    def wkf_approve_order(self):
+        for order in self:
+            if order.order_type == 'purchase_order' and \
+                    not order.date_contract_start:
+                raise ValidationError(
+                    _("Please specify contract start date.")
+                )
+        res = super(PurchaseOrder, self).wkf_approve_order()
+        return res
+
+    @api.multi
     def check_over_requisition_limit(self):
         self.ensure_one()
         if self.state not in ('done', 'cancel') and self.requisition_id:
@@ -270,10 +286,10 @@ class PurchaseOrder(models.Model):
     def wkf_action_cancel(self):
         res = super(PurchaseOrder, self).wkf_action_cancel()
         for order in self:
-            self.state2 = 'cancel'
-            if order.quote_id:
-                order.quote_id.wkf_action_cancel()
-                order.quote_id.state2 = 'cancel'
+            order.state2 = 'cancel'
+            # if order.quote_id:
+            #     order.quote_id.wkf_action_cancel()
+                # order.quote_id.state2 = 'cancel'
         return res
 
     @api.model

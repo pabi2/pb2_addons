@@ -203,8 +203,8 @@
                             </div>
                         </div>
                     </group>
-                    <!-- Loan Installment -->
-                    <separator string="Loan Installment"/>
+                    <!-- Long Term Investment -->
+                    <separator string="Long Term Investment"/>
                     <group>
                         <label for="id" string="Long Term Investment Account"/>
                         <div>

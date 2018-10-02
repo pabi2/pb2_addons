@@ -183,6 +183,7 @@
                     <field name="amount_total"/>
                     <field name="currency_id"/>
                     <field name="is_central_purchase"/>
+                    <field name="is_small_amount"/>
                 </xpath>
                 <xpath expr="//field[@name='origin']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -265,6 +266,7 @@
                 <xpath expr="//field[@name='product_uom_id']" position="after">
                     <field name="fiscalyear_id" readonly="1"/>
                     <field name="is_central_purchase"/>
+                    <field name="is_small_amount"/>
                     <field name="state" string="Line State"/>
                 </xpath>
                 <xpath expr="//field[@name='supplier_id']" position="attributes">
