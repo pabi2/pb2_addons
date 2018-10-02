@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
+import logging
 from openerp import models, fields, api, _
 from openerp.exceptions import RedirectWarning
 from openerp.addons.connector.queue.job import job, related_action
