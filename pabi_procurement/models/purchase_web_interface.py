@@ -174,9 +174,6 @@ class PurchaseRequisition(models.Model):
                                         'doc_approve_uid': uid.id,
                                         'date_doc_approve': today,
                                     })
-                    if requisition.state != 'done':
-                        requisition.tender_done()
-
                     # regenerate new main_form file with signatures
                     Report = self.env['ir.actions.report.xml']
                     matching_reports = Report.search([
@@ -192,7 +189,7 @@ class PurchaseRequisition(models.Model):
                         result, _x = openerp.report.render_report(
                             self._cr,
                             self._uid,
-                            [self.id],
+                            [requisition.id],
                             report.report_name,
                             {
                                 'model': self._name
@@ -200,14 +197,14 @@ class PurchaseRequisition(models.Model):
                         )
                     Attachment = self.env['ir.attachment']
                     exist_pd_file = Attachment.search([
-                        ('res_id', '=', self.id),
+                        ('res_id', '=', requisition.id),
                         ('res_model', '=', 'purchase.requisition'),
                         ('name', 'ilike', '_main_form.pdf'),
                     ])
                     if len(exist_pd_file) > 0:
                         exist_pd_file.sudo().unlink()
                     result = base64.b64encode(result)
-                    file_name = self.display_name
+                    file_name = requisition.display_name
                     file_name = re.sub(r'[^a-zA-Z0-9_-]', '_', file_name)
                     file_name += "_main_form.pdf"
                     Attachment.create({
@@ -215,7 +212,7 @@ class PurchaseRequisition(models.Model):
                         'datas': result,
                         'datas_fname': file_name,
                         'res_model': self._name,
-                        'res_id': self.id,
+                        'res_id': requisition.id,
                         'type': 'binary'
                     })
                     attachment = []
@@ -226,6 +223,8 @@ class PurchaseRequisition(models.Model):
                                 'content': pd_att.datas or '',
                             }
                             attachment.append(pd_attach)
+                    if requisition.state != 'done':
+                        requisition.tender_done()
                     res.update({
                         'is_success': True,
                         'result': True,
