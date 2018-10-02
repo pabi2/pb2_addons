@@ -1,2 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_asset_repair_view,access_asset_repair_view,model_asset_repair_view,,1,0,0,0
