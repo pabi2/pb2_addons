@@ -29,6 +29,10 @@ logger.info('Start process')
 logger.info('Total invoice: %s' % len(invs))
 for inv in invs:
     try:
+        # Update Tax
+        Invoice.mork_button_reset_taxes([inv['id']])
+
+        # Validate
         Invoice.mock_trigger_workflow([inv['id']], 'invoice_open')
         log_inv_ids[0].append(inv['id'])
         logger.info('Pass ID: %s' % inv['id'])
