@@ -12,6 +12,6 @@ class AccountInvoice(models.Model):
         return True
 
     @api.multi
-    def mork_button_reset_taxes(self):
+    def mock_button_reset_taxes(self):
         self.button_reset_taxes()
         return True

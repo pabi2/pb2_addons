@@ -30,7 +30,7 @@ logger.info('Total invoice: %s' % len(invs))
 for inv in invs:
     try:
         # Update Tax
-        Invoice.mork_button_reset_taxes([inv['id']])
+        Invoice.mock_button_reset_taxes([inv['id']])
 
         # Validate
         Invoice.mock_trigger_workflow([inv['id']], 'invoice_open')
