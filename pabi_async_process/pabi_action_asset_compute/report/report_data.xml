@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="report_asset_depre_batch_qweb" model="ir.actions.report.xml">
+			<field name="string">Asset Depre. Batch</field>
+			<field name="auto">True</field>
+			<field name="model">pabi.asset.depre.batch</field>
+			<field name="name">Asset Depre. Batch</field>
+			<field name="report_type">qweb-pdf</field>
+			<field name="report_name">pabi_async_process.report_asset_depre_batch</field>
+			<field name="report_rml">pabi_async_process.report_asset_depre_batch</field>
+			<field name="report_file">pabi_async_process.report_asset_depre_batch</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="copies">1</field>
+			<field name="download_filename">${o.name}.pdf</field>
+			<field name="paperformat_id" ref="pabi_async_process.asset_depre_batch_paperformat"/>
+		</record>
+
+		<record id="report_asset_depre_batch_qweb_values" model="ir.values">
+			<field name="name">Asset Depre. Batch</field>
+			<field name="model">pabi.asset.depre.batch</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_asset_depre_batch_qweb)"/>
+		</record>
+    </data>
+</openerp>

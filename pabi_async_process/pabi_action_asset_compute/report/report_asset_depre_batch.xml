@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="report_asset_depre_batch">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <!-- Header -->
+                    <div class="header" style="font-size:24px;">
+                        <div class="row">
+                            <div class="col-xs-12 text-center" style="font-size:36px;margin-bottom:10px;">
+                                <strong>Asset Depre. Batch Report</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <span>Name: </span>
+                                <span t-field="o.name"/>
+                            </div>
+                            <div class="col-xs-4">
+                                <span>Period: </span>
+                                <span t-field="o.period_id.name"/>
+                            </div>
+                            <div class="col-xs-4">
+                                <span>Run Number: </span>
+                                <span t-field="o.run_number"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <span>Created by: </span>
+                                <span t-field="o.create_uid.display_name"/>
+                            </div>
+                            <div class="col-xs-4">
+                                <span>Last Updated by: </span>
+                                <span t-field="o.write_uid.display_name"/>
+                            </div>
+                            <div class="col-xs-4">
+                                <span>Note: </span>
+                                <span t-field="o.note"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <span>Depreciation Amount: </span>
+                                <span t-field="o.amount"/>
+                            </div>
+                            <div class="col-xs-4">
+                                <span>Posted JE Count: </span>
+                                <span t-field="o.posted_move_count"/>
+                            </div>
+                            <div class="col-xs-4">
+                                <span>Post JE in background: </span>
+                                <span t-field="o.async_process"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail -->
+                    <div class="page" style="font-size:24px;">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <td class="text-center" style="border-bottom:1px solid black;border-top:1px solid black;"><strong>Account</strong></td>
+                                    <td class="text-center" style="border-bottom:1px solid black;border-top:1px solid black;"><strong>Debit</strong></td>
+                                    <td class="text-center" style="border-bottom:1px solid black;border-top:1px solid black;"><strong>Credit</strong></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.summary_ids" t-as="line">
+                                    <td style="border:0;">
+                                        <span t-field="line.account_id.display_name"/>
+                                    </td>
+                                    <td class="text-right" style="border:0;">
+                                        <span t-esc="'{:,.2f}'.format(line.debit)"/>
+                                    </td>
+                                    <td class="text-right" style="border:0;">
+                                        <span t-esc="'{:,.2f}'.format(line.credit)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td style="border-top:1px solid black;border-bottom:1px solid black;"><strong>Total</strong></td>
+                                    <td class="text-right" style="border-top:1px solid black;border-bottom:1px solid black;">
+                                        <strong t-esc="'{:,.2f}'.format(sum(o.summary_ids.mapped('debit')))"/>
+                                    </td>
+                                    <td class="text-right" style="border-top:1px solid black;border-bottom:1px solid black;">
+                                        <strong t-esc="'{:,.2f}'.format(sum(o.summary_ids.mapped('credit')))"/>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="row footer" style="font-size:24px;">
+                        <div class="col-xs-12 text-right">
+                            <ul class="list-inline">
+                                <li>Page</li>
+                                <li><span class="page"/></li>
+                                <li>/</li>
+                                <li><span class="topage"/></li>
+                            </ul>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</openerp>
