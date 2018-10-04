@@ -303,7 +303,7 @@ class PabiAssetDepreBatchSummary(models.Model):
         string='Debit',
     )
     credit = fields.Float(
-        string='Debit',
+        string='Credit',
     )
 
     def init(self, cr):
