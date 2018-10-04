@@ -20,6 +20,8 @@ In case you want to recalculate all document lines,
         'account',
         'sale',
         'purchase',
+        'hr_expense',
+        'purchase_request',
     ],
     "data": [
         'views/account_invoice_view.xml',

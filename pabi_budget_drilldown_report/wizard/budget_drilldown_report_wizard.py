@@ -13,6 +13,36 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
         required=True,
     )
 
+    # Following onchange is required
+    @api.onchange('charge_type', 'group_by_charge_type',
+                  'activity_id', 'group_by_activity_id',
+                  'activity_group_id', 'group_by_activity_group_id',
+                  'section_id', 'group_by_section_id',
+                  'org_id', 'group_by_org_id',
+                  'project_id', 'group_by_project_id',
+                  'invest_asset_id', 'group_by_invest_asset_id',
+                  'invest_construction_id', 'group_by_invest_construction_id',
+                  )
+    def _onchange_helper(self):
+        """ Ensure sure that, if some field is selected, so do some groupby """
+        if self.charge_type:
+            self.group_by_charge_type = True
+        if self.activity_id:
+            self.group_by_activity_id = True
+        if self.activity_group_id:
+            self.group_by_activity_group_id = True
+        # --
+        if self.section_id:
+            self.group_by_section_id = True
+        if self.org_id:
+            self.group_by_org_id = True
+        if self.project_id:
+            self.group_by_project_id = True
+        if self.invest_asset_id:
+            self.group_by_invest_asset_id = True
+        if self.invest_construction_id:
+            self.group_by_invest_construction_id = True
+
     @api.onchange('report_type')
     def _onchange_report_type(self):
         super(BudgetDrilldownReportWizard, self)._onchange_report_type()

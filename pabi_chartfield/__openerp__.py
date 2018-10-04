@@ -17,6 +17,7 @@
         'stock_request',
         'auditlog',
         # 'account_model_generate_hook',
+        'docline_sequence',
     ],
     'data': [
         'security/security.xml',
