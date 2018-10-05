@@ -275,9 +275,14 @@ def csv_from_excel(excel_content, delimiter, quote):
     wr = csv.writer(content, delimiter=delimiter, quoting=quoting)
     for rownum in xrange(sh.nrows):
         row_vals = map(lambda x: isinstance(x, basestring) and
-                       x.encode('utf-8').strip() or x,
+                       x.encode('utf-8') or x,
                        sh.row_values(rownum))
-        wr.writerow(row_vals)
+        row = []
+        for x in row_vals:
+            if isinstance(x, basestring):
+                x = x.strip()
+            row.append(x)
+        wr.writerow(row)
     # content.close()  # Set index to 0, and start reading
     content.seek(0)  # Set index to 0, and start reading
     out_file = base64.encodestring(content.read())
