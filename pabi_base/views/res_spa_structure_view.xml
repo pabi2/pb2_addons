@@ -180,7 +180,7 @@
             <field name="model">res.program</field>
             <field name="arch" type="xml">
                 <search string="Program">
-                    <field name="name" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('reference_code','ilike',self),('name_short','ilike',self)]" string="Name"/>
+                    <field name="name" filter_domain="['|','|','|',('name','ilike',self),('code','ilike',self),('reference_code','ilike',self),('name_short','ilike',self)]" string="Name"/>
                     <group expand="0" string="Group By">
                         <filter name="program_group_id" string="Program Group" context="{'group_by':'program_group_id'}"/>
                         <filter name="functional_area_id" string="Functional Area" context="{'group_by':'functional_area_id'}"/>
