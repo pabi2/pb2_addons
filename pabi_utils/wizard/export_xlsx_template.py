@@ -131,6 +131,8 @@ def fill_cell_format(field, field_format):
         if key == 'align':
             field.alignment = cell_format
         if key == 'number_format':
+            if value == 'text':
+                field.value = str(field.value)
             field.number_format = cell_format
 
 
@@ -240,14 +242,15 @@ def isdatetime(input):
 
 def str_to_number(input):
     if isinstance(input, basestring):
-        if isdatetime(input):
-            return parse(input)
-        elif isinteger(input):
-            if not (len(input) > 1 and input[:1] == '0'):
-                return int(input)
-        elif isfloat(input):
-            if not (input.find(".") > 2 and input[:1] == '0'):  # i..e, 00.123
-                return float(input)
+        if ' ' not in input:
+            if isdatetime(input):
+                return parse(input)
+            elif isinteger(input):
+                if not (len(input) > 1 and input[:1] == '0'):
+                    return int(input)
+            elif isfloat(input):
+                if not (input.find(".") > 2 and input[:1] == '0'):  # 00.123
+                    return float(input)
     return input
 
 
