@@ -107,6 +107,7 @@ class StockRequest(models.Model):
         states={'draft': [('readonly', False)]},
         ondelete='restrict',
         domain=[('usage', '=', 'internal'), ('for_stock_request', '=', True)],
+        help="This will list all location with For Stock Request = True",
     )
     location_borrow_id = fields.Many2one(
         'stock.location',
