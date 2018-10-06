@@ -258,6 +258,9 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                            'B2': 'ou_name${value or ""}',
+                            'B3': 'location_name${value or ""}',
+                            'B4': '${time.strftime("%d-%m-%Y")}',
                         },
                         'results': {
                             'A7': 'product_name${value or ""}',
@@ -265,7 +268,7 @@
                             'C7': 'location_name${value or ""}',
                             'D7': 'balance${value or ""}',
                             'E7': 'uom${value or ""}',
-                            'F7': 'balance${value or ""}',
+                            'F7': 'price${value or ""}',
                             'G7': 'currency${value or ""}',
                         },
                         '_TAIL_0': {
