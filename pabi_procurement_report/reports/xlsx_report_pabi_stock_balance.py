@@ -20,14 +20,17 @@ class XLSXReportPabiStockBalance(models.TransientModel):
         'product.product',
         string='Product',
     )
-    date_from = fields.Date(
-        string='From Date',
-        required=True,
+    ou_name = fields.Char(
+        string='OU Name',
     )
-    date_to = fields.Date(
-        string='To Date',
-        required=True,
+    location_name = fields.Char(
+        string='Loc Name',
     )
+
+    # date_to = fields.Date(
+    #     string='To Date',
+    #     required=True,
+    # )
 
     # Report Result
     results = fields.Many2many(
@@ -36,6 +39,24 @@ class XLSXReportPabiStockBalance(models.TransientModel):
         compute='_compute_results',
         help="Use compute fields, so there is nothing store in database",
     )
+
+    @api.onchange('org_ids')
+    def onchange_orgs(self):
+        res = ''
+        for prg in self.org_ids:
+            if res != '':
+                res += ', '
+            res += prg.operating_unit_id.code
+        self.ou_name = res
+
+    @api.onchange('location_id')
+    def onchange_loc(self):
+        res = ''
+        for loc in self.location_id:
+            if res != '':
+                res += ', '
+            res += loc.name
+        self.location_name = res
 
     @api.multi
     def _compute_results(self):
@@ -46,6 +67,11 @@ class XLSXReportPabiStockBalance(models.TransientModel):
             ('loc_id', '=', self.location_id.id),
             ('loc_dest_id', '=', self.location_id.id),
         ]
+        # if self.date_to:
+        #     dom = [
+        #         ('date_transfer', '>=', self.date_start),
+        #         ('date_transfer', '<=', self.date_end),
+        #     ]
         self.results = Result.search(dom)
 
 
@@ -105,6 +131,11 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             with uitstock as (
             select t.name product,
             sum(product_qty) sumout,
+            COALESCE(
+            (
+	    select value_float from ir_property where res_id = concat('product.template,',m.product_id) order by id desc limit 1  
+            ) * sum(product_qty)
+            ,0.0) as priceout,
             m.product_id,
             p.default_code,
             m.product_uom,
@@ -130,6 +161,11 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             instock as ( 
             select 
             COALESCE((select price_unit from purchase_order_line where product_id = m.product_id order by id desc limit 1), 00) purchaseprice,
+            COALESCE(
+            (
+	    select value_float from ir_property where res_id = concat('product.template,',m.product_id) order by id desc limit 1  
+            ) * sum(product_qty)
+            ,0.0) as pricein,
             t.name product, 
             sum(product_qty) sumin,
             m.product_id,
@@ -150,7 +186,7 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             where m.state like 'done' and m.location_id not in (
             select id from stock_location where operating_unit_id > 0) 
             and m.location_dest_id in (select id from stock_location where operating_unit_id > 0) 
-            group by product_id,product_uom, t.name, location_dest_id, sl.name, p.default_code, puom.name,rc.name, ou.name order by t.name asc ) 
+            group by product_id,product_uom, t.name, location_dest_id, sl.name, p.default_code, puom.name,rc.name, ou.name order by t.name asc) 
             
             select
             row_number() over (order by i.product) as id,
@@ -162,7 +198,8 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             coalesce(i.loc_name,u.loc_name) as location_name,
             coalesce(i.ou_name,u.ou_name) as ou_name,
             sumin-coalesce(sumout,0) AS balance, 
-            ((sumin-coalesce(sumout,0)) * purchaseprice) as price,
+            pricein-coalesce(priceout,0) AS price, 
+            --((sumin-coalesce(sumout,0)) * purchaseprice) as price,
             coalesce(i.uom_name,u.uom_name) as uom,
             coalesce(i.currency,u.currency) as currency
             from uitstock u 
