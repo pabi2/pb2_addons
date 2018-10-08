@@ -707,8 +707,10 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         return {
             'name': _("Analytic Lines"),
             'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'account.analytic.line',
+            # 'view_mode': 'tree,form',
+            # 'res_model': 'account.analytic.line',
+            'view_mode': 'tree',
+            'res_model': 'account.analytic.line.view',
             'view_id': False,
             'type': 'ir.actions.act_window',
             'context': self._context,

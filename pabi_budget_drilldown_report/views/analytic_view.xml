@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_account_analytic_line_tree" model="ir.ui.view">
+            <field name="name">account.analytic.line.tree</field>
+            <field name="model">account.analytic.line.view</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="fiscalyear_id"/>
+                    <field name="period_id"/>
+                    <field name="charge_type"/>
+                    <field name="document_id"/>
+                    <field name="docline_seq"/>
+                    <field name="document_date"/>
+                    <field name="date"/>
+                    <field name="ref"/>
+                    <field name="contract_id"/>
+                    <field name="budget_code"/>
+                    <field name="budget_name"/>
+                    <field name="amount" sum="Total"/>
+                    <field name="name"/>
+                    <field name="activity_group_code"/>
+                    <field name="activity_group_name"/>
+                    <field name="activity_code"/>
+                    <field name="activity_name"/>
+                    <field name="account_code"/>
+                    <field name="account_name"/>
+                    <field name="categ_id"/>
+                    <field name="product_code"/>
+                    <field name="product_name"/>
+                    <field name="purchase_method_id"/>
+                    <field name="partner_code"/>
+                    <field name="partner_name"/>
+                    <field name="request_emp_id"/>
+                    <field name="prepare_emp_id"/>
+                    <field name="approve_emp_id"/>
+                    <field name="costcenter_code"/>
+                    <field name="costcenter_name"/>
+                    <field name="division_name"/>
+                    <field name="subsector_name"/>
+                    <field name="sector_name"/>
+                    <field name="org_name"/>
+                    <field name="mission_name"/>
+                    <field name="job_order_group_code"/>
+                    <field name="job_order_group_name"/>
+                    <field name="job_order_code"/>
+                    <field name="job_order_name"/>
+                    <field name="section_program_name"/>
+                    <field name="project_group_name"/>
+                    <field name="program_name"/>
+                    <field name="program_group_name"/>
+                    <field name="functional_area_name"/>
+                    <field name="project_manager_code"/>
+                    <field name="project_manager_name"/>
+                    <field name="fund_name"/>
+                    <field name="fund_type"/>
+                    <field name="date_start_project"/>
+                    <field name="date_end_project"/>
+                    <field name="date_start_spending"/>
+                    <field name="date_end_spending"/>
+                    <field name="date_start_contract"/>
+                    <field name="date_end_contract"/>
+                    <field name="reason"/>
+                    <field name="project_c_code"/>
+                    <field name="project_c_name"/>
+                    <field name="date_start_project_c"/>
+                    <field name="date_end_project_c"/>
+                    <field name="date_start_project_phase"/>
+                    <field name="date_end_project_phase"/>
+                    <field name="date_start_contract_project_phase"/>
+                    <field name="date_end_contract_project_phase"/>
+                    <field name="doctype"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</openerp>
