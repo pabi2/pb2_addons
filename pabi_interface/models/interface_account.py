@@ -83,16 +83,17 @@ class InterfaceAccountEntry(models.Model):
         required=True,
         help="Journal to be used in creating Journal Entry",
     )
-    contract_number = fields.Char(
-        string='Contract Number',
-        size=500,
-    )
-    contract_date_start = fields.Date(
-        string='Contract Start Date',
-    )
-    contract_date_end = fields.Date(
-        string='Contract Start End',
-    )
+    # Move to line level
+    # contract_number = fields.Char(
+    #     string='Contract Number',
+    #     size=500,
+    # )
+    # contract_date_start = fields.Date(
+    #     string='Contract Start Date',
+    # )
+    # contract_date_end = fields.Date(
+    #     string='Contract Start End',
+    # )
     to_reconcile = fields.Boolean(
         string='To Reconcile',
         compute='_compute_to_reconcile',
@@ -282,13 +283,26 @@ class InterfaceAccountEntry(models.Model):
             elif interface.type == 'invoice':
                 move = interface._action_invoice_entry()
                 interface.number = move.name
+                self._update_account_move_line_ref(move)
             # 3) Payment Receipt
             elif interface.type == 'voucher':
                 move = interface._action_payment_entry()
                 interface.number = move.name
+                self._update_account_move_line_ref(move)
         return True
 
     # ================== Sub Method by Action ==================
+    @api.model
+    def _update_account_move_line_ref(self, move):
+        self._cr.execute("""
+            update account_move_line ml set ref = (
+                select ref from interface_account_entry_line
+                where ref_move_line_id = ml.id)
+            where move_id = %s
+        """, (move.id, ))
+        return True
+
+
     @api.multi
     def _action_invoice_entry(self):
         self.ensure_one()
@@ -745,6 +759,22 @@ class InterfaceAccountEntryLine(models.Model):
         'cost.control',
         string='Job Order',
     )
+    # Moved from header
+    contract_number = fields.Char(
+        string='Contract Number',
+        size=500,
+    )
+    contract_date_start = fields.Date(
+        string='Contract Start Date',
+    )
+    contract_date_end = fields.Date(
+        string='Contract Start End',
+    )
+    # --
+    ref = fields.Char(
+        string='Reference',
+        size=500,
+    )
 
     @api.multi
     @api.depends('reconcile_move_id', 'reconcile_move_line_ref')
@@ -937,7 +967,7 @@ class InterfaceAccountChecker(models.AbstractModel):
         # For non THB, must have amount_currency
         lines = inf.line_ids.filtered(
             lambda l: l.currency_id and
-            l.currency_id.id != inf.company_id.currency_id)
+            l.currency_id != inf.company_id.currency_id)
         for l in lines:
             if (l.debit or l.credit) and not l.amount_currency:
                 raise ValidationError(
