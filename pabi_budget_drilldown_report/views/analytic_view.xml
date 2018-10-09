@@ -73,5 +73,47 @@
                 </tree>
             </field>
         </record>
+
+        <record id="view_account_analytic_line_search" model="ir.ui.view">
+            <field name="name">account.analytic.line.search</field>
+            <field name="model">account.analytic.line.view</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="ref"/>
+                    <field name="activity_group_id"/>
+                    <field name="activity_id"/>
+                    <field name="general_account_id"/>
+                    <field name="product_id"/>
+                    <field name="costcenter_id"/>
+                    <field name="division_id"/>
+                    <field name="subsector_id"/>
+                    <field name="sector_id"/>
+                    <field name="org_id"/>
+                    <field name="mission_id"/>
+                    <field name="cost_control_id"/>
+                    <field name="invest_construction_id"/>
+                    <field name="doctype"/>
+                    <group string="Group By" expand="0">
+                        <filter string="Fiscal Year" context="{'group_by': 'fiscalyear_id'}"/>
+                        <filter string="Period" context="{'group_by': 'period_id'}"/>
+                        <filter string="Charge Type" context="{'group_by': 'charge_type'}"/>
+                        <filter string="Reference Doc" context="{'group_by': 'ref'}"/>
+                        <filter string="Activity Group" context="{'group_by': 'activity_group_id'}"/>
+                        <filter string="Activity" context="{'group_by': 'activity_id'}"/>
+                        <filter string="Account" context="{'group_by': 'general_account_id'}"/>
+                        <filter string="Product" context="{'group_by': 'product_id'}"/>
+                        <filter string="Costcenter" context="{'group_by': 'costcenter_id'}"/>
+                        <filter string="Division" context="{'group_by': 'division_id'}"/>
+                        <filter string="Subsector" context="{'group_by': 'subsector_id'}"/>
+                        <filter string="Sector" context="{'group_by': 'sector_id'}"/>
+                        <filter string="Org" context="{'group_by': 'org_id'}"/>
+                        <filter string="Mission" context="{'group_by': 'mission_id'}"/>
+                        <filter string="Job Order" context="{'group_by': 'cost_control_id'}"/>
+                        <filter string="Project C" context="{'group_by': 'invest_construction_id'}"/>
+                        <filter string="Doctype" context="{'group_by': 'doctype'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
     </data>
 </openerp>

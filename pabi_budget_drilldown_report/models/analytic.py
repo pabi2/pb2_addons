@@ -51,6 +51,9 @@ class AccountAnalyticLineView(models.Model):
         related='activity_id.name',
         string='Activity Name',
     )
+    general_account_id = fields.Many2one(
+        string='Account',
+    )
     account_code = fields.Char(
         related='general_account_id.code',
         string='Account Code',
@@ -201,6 +204,9 @@ class AccountAnalyticLineView(models.Model):
          ('extra', u'เพิ่มเติม')],
         related='invest_asset_id.reason_purchase',
         string='Reason',
+    )
+    invest_construction_id = fields.Many2one(
+        string='Project C',
     )
     project_c_code = fields.Char(
         related='invest_construction_id.code',
