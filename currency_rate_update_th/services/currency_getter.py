@@ -10,18 +10,13 @@ class CurrencyGetterFactoryTHB(Currency_getter_factory):
     """
 
     def register(self, class_name):
-        allowed = [
-            'THB_getter',
-        ]
+        """ for class_name = 'THB_getter' """
         print '------------------th_register -- %s' % class_name
         if class_name != 'THB_getter':
             return Currency_getter_factory.register(self, class_name)
-
-        if class_name in allowed:
+        else:
             exec "from .update_service_%s import %s" % \
                  (class_name.replace('_getter', ''), class_name)
             class_def = eval(class_name)
+            print class_def
             return class_def()
-        else:
-            print '-----------------------not allowed-'
-            raise UnknowClassError
