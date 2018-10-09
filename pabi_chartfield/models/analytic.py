@@ -2,6 +2,7 @@
 from openerp import api, models, fields, _
 from openerp.exceptions import ValidationError
 from .chartfield import CHART_FIELDS, ChartFieldAction
+from datetime import datetime
 
 
 class AccountAnalyticLine(ChartFieldAction, models.Model):
@@ -59,7 +60,7 @@ class AccountAnalyticLine(ChartFieldAction, models.Model):
                 rec.purchase_line_id.docline_seq or \
                 rec.sale_line_id.docline_seq or \
                 rec.expense_line_id.docline_seq or \
-                rec.purchase_request_line_id.doclien_seq
+                rec.purchase_request_line_id.docline_seq
         return True
 
     @api.multi
@@ -71,8 +72,9 @@ class AccountAnalyticLine(ChartFieldAction, models.Model):
             if res_model in ['sale.order', 'purchase.order']:
                 rec.document_date = rec.document_id.date_order
             if res_model in ['purchase.request']:
-                rec.document_date = \
-                    rec.document_id.create_date.strftime('%Y-%m-%d')
+                create_date = datetime.strptime(
+                    rec.document_id.create_date, '%Y-%m-%d %H:%M:%S')
+                rec.document_date = create_date.strftime('%Y-%m-%d')
             if res_model in ['account.invoice']:
                 rec.document_date = rec.document_id.date_document
             if res_model in ['stock.picking']:
@@ -100,8 +102,8 @@ class AccountAnalyticLine(ChartFieldAction, models.Model):
             # Partner
             res_model = rec.document_id and rec.document_id._name or False
             if res_model in ['hr.expense.expense', 'sale.order',
-                             'purchase.order', 'purchase.request',
-                             'account.invoice', 'stock.picking']:
+                             'purchase.order', 'account.invoice',
+                             'stock.picking']:
                 rec.partner_id = rec.document_id.partner_id
         return True
 
