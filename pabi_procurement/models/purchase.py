@@ -253,6 +253,34 @@ class PurchaseOrder(models.Model):
         return True
 
     @api.multi
+    def check_over_request_limit(self):
+        self.ensure_one()
+        Request = self.env['purchase.request']
+        for po_line in self.order_line:
+            subtotal_value = 0.0
+            list_product = []
+            list_request = []
+            request_lines = po_line.requisition_line_id.purchase_request_lines
+            for req_line in request_lines:
+                subtotal_value += req_line.price_subtotal
+                if req_line.name not in list_product:
+                    list_product.append(req_line.name)
+                if req_line.request_id.id not in list_request:
+                    list_request.append(req_line.request_id.id)
+            ref_requests = Request.search(
+                [('request_ref_id', 'in',list_request)]
+            )
+            for ref_req in ref_requests:
+                for ref_req_line in ref_req.line_ids:
+                    if ref_req_line.name in list_product:
+                        subtotal_value += ref_req_line.price_subtotal
+            if subtotal_value < po_line.product_qty * po_line.price_unit:
+                raise ValidationError(
+                    _("Some order line's price is over than request's price")
+                )
+        return True
+
+    @api.multi
     def _check_request_for_quotation(self):
         self.ensure_one()
         if self.requisition_id.purchase_method_id.require_rfq:
@@ -278,6 +306,7 @@ class PurchaseOrder(models.Model):
                 order.requisition_id.exclusive = 'multiple'
                 order.requisition_id.multiple_rfq_per_supplier = True
             order.check_over_requisition_limit()
+            order.check_over_request_limit()
             res = super(PurchaseOrder, order).wkf_confirm_order()
             return res
 
