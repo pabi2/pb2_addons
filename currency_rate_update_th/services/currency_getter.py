@@ -13,7 +13,7 @@ class CurrencyGetterFactoryTHB(Currency_getter_factory):
         allowed = [
             'THB_getter',
         ]
-
+        print '------------------th_register -- %s' % class_name
         if class_name != 'THB_getter':
             return Currency_getter_factory.register(self, class_name)
 
@@ -23,4 +23,5 @@ class CurrencyGetterFactoryTHB(Currency_getter_factory):
             class_def = eval(class_name)
             return class_def()
         else:
+            print '-----------------------not allowed-'
             raise UnknowClassError
