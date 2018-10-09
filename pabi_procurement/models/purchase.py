@@ -282,13 +282,22 @@ class PurchaseOrder(models.Model):
             return res
 
     @api.multi
+    def action_cancel_draft(self):
+        res = super(PurchaseOrder, self).action_cancel_draft()
+        for order in self:
+            if order.quote_id:
+                order.quote_id.state = 'done'
+                order.quote_id.state2 = 'done'
+        return res
+
+    @api.multi
     def wkf_action_cancel(self):
         res = super(PurchaseOrder, self).wkf_action_cancel()
         for order in self:
             order.state2 = 'cancel'
-            # if order.quote_id:
-            #     order.quote_id.wkf_action_cancel()
-                # order.quote_id.state2 = 'cancel'
+            if order.quote_id:
+                order.quote_id.wkf_action_cancel()
+                order.quote_id.state2 = 'cancel'
         return res
 
     @api.model
