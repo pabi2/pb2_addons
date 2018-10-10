@@ -387,6 +387,7 @@ class PurchaseRequisition(models.Model):
                     'committee_ids': self._prepare_order_committees(order_id),
                     'verify_uid': self.verify_uid.id,
                     'date_verify': self.date_verify,
+                    'currency_id': self.currency_id.id,
                     'doc_no': self.doc_no,
                 })
         return res
