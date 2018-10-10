@@ -149,6 +149,7 @@ class PurchaseRequisition(models.Model):
                         'doc_approve_uid': uid.id,
                         'date_doc_approve': today,
                     })
+                    requisition._cr.commit()
                     for order in requisition.purchase_ids:
                         if order.order_type == 'quotation' \
                                 and order.state not in ('draft', 'cancel'):
