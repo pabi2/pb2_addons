@@ -314,6 +314,7 @@
                             <group>
                                 <field name="amount_phase_approve" readonly="1"/>
                                 <field name="org_id" invisible="1"/>
+                                <field name="legacy_ref" attrs="{'invisible': [('legacy_ref', '=', False)]}"/>
                             </group>
                             <group>
                                 <field name="fund_type_id" required="1"/>

@@ -551,6 +551,11 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
                 'unapprove': [('readonly', False)]},
         track_visibility='onchange',
     )
+    legacy_ref = fields.Char(
+        string='Legacy Ref.',
+        readonly=False,
+        size=500,
+    )
     _sql_constraints = [
         ('number_uniq', 'unique(code)',
          'Constuction Phase Code must be unique!'),
