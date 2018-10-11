@@ -387,7 +387,7 @@ class PurchaseContract(models.Model):
             doc_count = self.env['ir.attachment'].search_count(
                 [('res_model', '=', 'purchase.contract'),
                  ('res_id', '=', rec.id)])
-            if doc_count > 0:
+            if doc_count > 0 or self._context.get('bypass_attachment_check'):
                 rec.write({
                     'send_uid': self.env.user.employee_id.id,
                     'send_date': fields.Date.context_today(self),
