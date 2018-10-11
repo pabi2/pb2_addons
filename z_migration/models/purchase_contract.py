@@ -16,9 +16,6 @@ class PurchaseContract(models.Model):
 
     @api.multi
     def mork_set_write_uid_by_create_uid(self):
-        if self.ids:
-            self._cr.execute("""
-                update purchase_contract set write_uid = create_uid
-                where id in %s
-            """, (tuple(self.ids), ))
+        for rec in self:
+            rec.write_uid = rec.create_emp_id.user_id
         return True
