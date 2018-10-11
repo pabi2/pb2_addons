@@ -17,6 +17,7 @@
         'pabi_asset_management',
         'pabi_budget_plan',
         'pabi_purchase_billing',
+        'pabi_purchase_contract',
         'pabi_invest_construction',
         'pabi_sale_invoice_plan',
         'pabi_loan_receivable',
