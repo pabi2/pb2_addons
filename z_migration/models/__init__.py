@@ -11,3 +11,4 @@ from . import stock
 from . import res_project
 from . import account_invoice
 from . import account_voucher
+from . import purchase_contract
