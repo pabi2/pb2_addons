@@ -123,7 +123,8 @@
                     <field name="name"/>
                     <field name="mou_id"/>
                     <field name="bank_id"/>
-                    <field name="partner_id"/>
+                    <field name="partner_id" invisible="1"/>
+                    <field name="borrower_partner_id"/>
                     <field name="amount_loan_total"/>
                     <field name="amount_receivable"/>
                     <field name="state"/>
