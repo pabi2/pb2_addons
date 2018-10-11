@@ -356,7 +356,8 @@ class PurchaseContract(models.Model):
             operating_unit.org_id.name_short or 'N/A'
         format_code = '%s-%s-%s' % (org_str, fiscalyear.name, str(running))
         vals.update({'poc_rev': rev_no,
-                     'poc_code': format_code,
+                     'poc_code':  # format_code
+                     format_code or vals.get('poc_code'),
                      'fiscalyear_id': fiscalyear.id,
                      'running': running,
                      'state': 'generate'})
