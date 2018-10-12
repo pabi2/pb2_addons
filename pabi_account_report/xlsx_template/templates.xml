@@ -1617,5 +1617,99 @@ result = pd.pivot_table(df, index=groupby,
              }
          </field>
      </record>
+
+     # Assset Register
+     <record id="xlsx_report_asset_register" model="ir.attachment">
+         <field name="res_model">asset.register.report</field>
+         <field name="datas"></field>
+         <field name="datas_fname">xlsx_report_asset_register.xlsx</field>
+         <field name="name">Asset Register Report</field>
+         <field name="parent_id" eval="ref('dir_account_reports')"/>
+         <field name="description">
+             {
+                 '__EXPORT__': {
+                     'Asset Register Report': {
+                         '_HEAD_': {
+                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                             'B3': 'org_id${value and ", ".join([x.name_short for x in value]) or ""}',
+                             'B4': 'fiscalyear_start_id.name${value or ""}',
+                             'D4': 'fiscalyear_end_id.name${value or ""}',
+                             'B5': 'period_start_id.name${value or ""}',
+                             'D5': 'period_end_id.name${value or ""}',
+                             'B6': 'date_start${value or ""}#{number_format=date}',
+                             'D6': 'date_end${value or ""}#{number_format=date}',
+                             'B7': 'account_asset_id${value and ", ".join([x.code for x in value]) or ""}',
+                             'B8': 'asset_profile_id${value and ", ".join([x.name for x in value]) or ""}',
+                             'B9': 'asset_code_id${value and ", ".join([x.name for x in value]) or ""}',
+                             'B10': 'responsible_person_id${value and ", ".join([x.name for x in value]) or ""}',
+                             'B11': 'building_id${value and value.name or ""}',
+                             'B12': 'floor_id${value and value.name or ""}',
+                             'B13': 'room_id${value and value.name or ""}',
+                             'B14': 'asset_status_id${value and dict(env["asset.register.report"]._columns["asset_status_id"].selection)[value] or ""}',
+                             'B15': '${time.strftime("%Y")}#{number_format=text}',
+                             'B16': '${env.user.with_context(lang="th_TH").display_name}',
+                             'B17': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                         },
+                         'results': {
+                             'A20': 'budget${value and value.org_id.name_short or ""}',
+                             'B20': 'asset_profile_id.product_categ_id${value and value.name or ""}',
+                             'C20': 'asset_profile_id.account_asset_id${value and value.code or ""}',
+                             'D20': 'asset_profile_id.account_asset_id${value and value.name or ""}',
+                             'E20': 'asset_profile_id${value and value.code or ""}',
+                             'F20': 'asset_profile_id${value and value.name or ""}',
+                             'G20': 'asset_id${value and value.code or ""}',
+                             'H20': 'asset_id${value and value.name or ""}',
+                             'I20': 'asset_id.parent_id${value and value.name or ""}',
+                             'J20': 'asset_id.product_id${value and value.name or ""}',
+                             'K20': 'asset_id${value and value.code2 or ""}',
+                             'L20': 'asset_id.picking_id${value and value.acceptance_id and value.acceptance_id.date_accept or ""}#{number_format=date}',
+                             'M20': 'asset_id${value and value.date_start or ""}#{number_format=date}',
+                             'N20': 'asset_id.date_picking${value and value.strftime("%d/%m/%Y") or ""}',
+                             'O20': 'asset_id.picking_id${value and value.name or ""}',
+                             'P20': 'budget_type${value or ""}',
+                             'Q20': 'owner_budget${value and value.code or ""}',
+                             'R20': 'owner_budget${value and value.name or ""}',
+                             'S20': 'owner_budget${value and value.costcenter_id.code or ""}',
+                             'T20': 'owner_budget${value and value.costcenter_id.name or ""}',
+                             'U20': '${"No data"}',
+                             'V20': '${"No data."}',
+                             'W20': '${"No data!"}',
+                             'X20': '${"No data.!"}',
+                             'Y20': 'asset_id.building_id${value and value.name or ""}',
+                             'Z20': 'asset_id.floor_id${value and value.name or ""}',
+                             'AA20': 'asset_id.room_id${value and value.name or ""}',
+                             'AB20': 'asset_id.responsible_user_id${value and value.code or ""}',
+                             'AC20': 'asset_id.responsible_user_id${value and value.name or ""}',
+                             'AD20': 'asset_id.partner_id${value and value.search_key or ""}',
+                             'AE20': 'asset_id.partner_id${value and value.name or ""}',
+                             'AF20': 'asset_id.purchase_id${value and value.name or ""}',
+                             'AG20': 'asset_id.purchase_request_id${value and value.name or ""}',
+                             'AH20': 'asset_id.asset_purchase_method_id${value and value.name or ""}',
+                             'AI20': 'asset_id.doc_request_id${value and value.code or ""}',
+                             'AJ20': 'asset_id.doc_request_id${value and value.name or ""}',
+                             'AK20': 'asset_id.pr_requester_id${value and value.login or ""}',
+                             'AL20': 'asset_id.pr_requester_id${value and value.name or ""}',
+                             'AM20': 'asset_id${value and value.date_request or ""}#{number_format=date}',
+                             'AN20': 'asset_id${value and value.serial_number or ""}',
+                             'AO20': 'asset_id${value and value.warranty_start_date or ""}#{number_format=date}',
+                             'AP20': 'asset_id${value and value.warranty_expire_date or ""}#{number_format=date}',
+                             'AQ20': 'asset_id.date_start${value and value.strftime("%Y") or ""}#{number_format=text}',
+                             'AR20': "${'=IF(B15=?(AQ20),0,?(AT20))'}#{number_format=number}",
+                             'AS20': "${'=IF(B15=?(AQ20),?(AT20),0)'}#{number_format=number}",
+                             'AT20': 'asset_id${value and value.purchase_value or ""}#{number_format=number}',
+                             'AU20': 'accumulated_bf${value or 0}#{number_format=number}',
+                             'AV20': 'depreciation${value or 0}#{number_format=number}',
+                             'AW20': 'accumulated_cf${value or 0}#{number_format=number}',
+                             'AX20': "${'=?(AT20)-?(AW20)'}#{number_format=number}",
+                             'AY20': 'asset_id${value and value.method_number or ""}',
+                             'AZ20': 'asset_id.adjust_id${value and value.name or ""}',
+                             'BA20': 'asset_id${value and value.status and value.status.name or ""}',
+                             'BB20': 'asset_id${value and value.date_remove or ""}#{number_format=date}',
+                         }
+                     }
+                 }
+             }
+         </field>
+     </record>
     </data>
 </openerp>
