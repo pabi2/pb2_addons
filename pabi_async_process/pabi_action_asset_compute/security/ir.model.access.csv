@@ -1,2 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_pabi_asset_depre_batch_account,access_pabi_asset_depre_batch_account,model_pabi_asset_depre_batch,account.group_account_user,1,1,0,0
+access_pabi_asset_depre_batch_account,access_pabi_asset_depre_batch_account,model_pabi_asset_depre_batch,account.group_account_user,1,1,1,1
