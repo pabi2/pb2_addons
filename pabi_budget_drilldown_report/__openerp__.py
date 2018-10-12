@@ -15,6 +15,7 @@
     'depends': [
         'pabi_budget_monitor',
         'pabi_utils',
+        'pabi_my_project',
     ],
     'data': [
         'security/ir.model.access.csv',
