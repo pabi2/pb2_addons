@@ -71,6 +71,7 @@
         'reports/xlsx_report_gl_expenditure.xml',
         # Asset Reports
         'reports/asset_repair_report.xml',
+        'reports/asset_register_report.xml',
     ],
     'demo': [
     ],

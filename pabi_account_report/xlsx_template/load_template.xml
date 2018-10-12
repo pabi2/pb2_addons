@@ -33,6 +33,7 @@
                 ref('xlsx_report_gl_allowance_doubtful_accounts'),
                 ref('xlsx_report_gl_expenditure'),
                 ref('xlsx_report_asset_repair'),
+                ref('xlsx_report_asset_register'),
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>
