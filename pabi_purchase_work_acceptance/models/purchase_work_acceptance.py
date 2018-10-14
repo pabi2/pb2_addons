@@ -122,6 +122,27 @@ class PurchaseWorkAcceptance(models.Model):
         store=True,
         related='order_id.invoice_method',
     )
+    fine_notify_name = fields.Char(
+        string='Fine Notification No.',
+    )
+    fine_reserve_name = fields.Char(
+        string='Fine Reservation No.',
+    )
+    text_reference = fields.Char(
+        string='Refer',
+    )
+    text_to = fields.Char(
+        string='To',
+    )
+    text_authorize_person = fields.Char(
+        string='Authorize Person',
+    )
+    text_position = fields.Text(
+        string='Position',
+    )
+    text_contract = fields.Text(
+        string='Contract',
+    )
     # eval_receiving = fields.Selection(
     #     selection=[
     #         ('3', 'On time [3]'),
