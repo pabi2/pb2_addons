@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <field name="active" position="after">
                     <field name="myproject_use"/>
-                </filed>
+                </field>
             </field>
         </record>
 
