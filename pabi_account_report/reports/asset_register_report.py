@@ -12,37 +12,39 @@ REFERENCE_SELECT = [
 
 class AssetRegisterView(models.Model):
     _name = 'asset.register.view'
+    _inherit = 'account.asset'
     _auto = False
 
-    id = fields.Integer(
-        string='ID',
-        readonly=True,
-    )
-    move_date = fields.Date(
-        string='Account Move Line Date',
-    )
-    asset_id = fields.Many2one(
-        'account.asset',
-        string='Asset ID',
-    )
-    method_number = fields.Integer(
-        string='Percent',
-    )
-    name_asset = fields.Char(
-        string='Name Asset Profile',
-    )
-    asset_profile_id = fields.Many2one(
-        'account.asset.profile',
-        string='Asset Profile ID',
-    )
-    budget = fields.Reference(
-        REFERENCE_SELECT,
-        string='Budget',
-    )
-    owner_budget = fields.Reference(
-        REFERENCE_SELECT,
-        string='Owner Budget',
-    )
+    # id = fields.Integer(
+    #     string='ID',
+    #     readonly=True,
+    # )
+    # move_date = fields.Date(
+    #     string='Account Move Line Date',
+    # )
+    # asset_id = fields.Many2one(
+    #     'account.asset',
+    #     string='Asset ID',
+    # )
+    # method_number = fields.Integer(
+    #     string='Percent',
+    # )
+    # name_asset = fields.Char(
+    #     string='Name Asset Profile',
+    # )
+    # asset_profile_id = fields.Many2one(
+    #     'account.asset.profile',
+    #     string='Asset Profile ID',
+    # )
+
+    # budget = fields.Reference(
+    #     REFERENCE_SELECT,
+    #     string='Budget',
+    # )
+    # owner_budget = fields.Reference(
+    #     REFERENCE_SELECT,
+    #     string='Owner Budget',
+    # )
     depreciation = fields.Float(
         compute='_compute_depreciation',
         string='Depreciation',
@@ -55,12 +57,16 @@ class AssetRegisterView(models.Model):
         compute='_compute_accumulated_bf',
         string='Accumulated Depreciation Before',
     )
-    budget_type = fields.Char(
-        string='Budget Type',
-    )
+    # budget_type = fields.Char(
+    #     string='Budget Type',
+    # )
 
     @api.multi
     def _compute_depreciation(self):
+        import time
+        s = time.time()
+        print self
+        print len(self)
         action_id = self._context.get('params', {}).get('action', False)
         if action_id:
             action = self.env['ir.actions.act_window'].browse(action_id)
@@ -76,6 +82,7 @@ class AssetRegisterView(models.Model):
             else:
                 date_start = wizard.fiscalyear_start_id.date_start
                 date_end = wizard.fiscalyear_end_id.date_stop
+            asset_ids = self.ids  # view ids is asset ids
             self._cr.execute("""
                 SELECT asset.id AS id,
                 SUM(move_line.debit - move_line.credit)
@@ -87,18 +94,23 @@ class AssetRegisterView(models.Model):
                 account.user_type = account_type.id
                 WHERE account_type.name = 'Depreciation'
                 AND move_line.date BETWEEN %s AND %s
+                AND asset.id in %s
                 GROUP BY asset.id
-            """, (date_start, date_end))
+            """, (date_start, date_end, tuple(asset_ids)))
             dictall = self._cr.dictfetchall()
             temp = [(x['id'], {'sum': x['depreciation']}) for x in dictall]
             dict_depreciation = dict(temp)
             for rec in self:
                 depre = (dict_depreciation.get(
-                         rec.asset_id.id, {}).get('sum', False))
+                         rec.id, {}).get('sum', False))
                 rec.depreciation = depre
+        print '---------1-- %s' % (time.time()-s)
 
     @api.multi
     def _compute_accumulated_cf(self):
+        import time
+        s = time.time()
+        print len(self)
         action_id = self._context.get('params', {}).get('action', False)
         if action_id:
             action = self.env['ir.actions.act_window'].browse(action_id)
@@ -111,6 +123,7 @@ class AssetRegisterView(models.Model):
                 date_end = wizard.period_end_id.date_stop
             else:
                 date_end = wizard.fiscalyear_end_id.date_stop
+            asset_ids = self.ids
             self._cr.execute("""
                 SELECT asset.id AS id,
                 SUM(move_line.credit - move_line.debit)
@@ -121,19 +134,23 @@ class AssetRegisterView(models.Model):
                 JOIN account_account_type account_type ON
                 account.user_type = account_type.id
                 WHERE account_type.name = 'Accumulated Depreciation'
-                AND move_line.date <= %s
+                AND move_line.date <= %s and asset.id in %s
                 GROUP BY asset.id
-            """, (date_end,))
+            """, (date_end, tuple(asset_ids)))
             dictall = self._cr.dictfetchall()
             temp = [(x['id'], {'sum': x['accumulated_cf']}) for x in dictall]
             dict_accumulated_cf = dict(temp)
             for rec in self:
                 accum = (dict_accumulated_cf.get(
-                         rec.asset_id.id, {}).get('sum', False))
+                         rec.id, {}).get('sum', False))
                 rec.accumulated_cf = accum
+        print '---------2-- %s' % (time.time()-s)
 
     @api.multi
-    def _compute_accumulated_bf(self):
+        def _compute_accumulated_bf(self):
+        import time
+        s = time.time()
+        print len(self)
         action_id = self._context.get('params', {}).get('action', False)
         if action_id:
             action = self.env['ir.actions.act_window'].browse(action_id)
@@ -164,110 +181,117 @@ class AssetRegisterView(models.Model):
             dict_accumulated_bf = dict(temp)
             for rec in self:
                 accum = (dict_accumulated_bf.get(
-                         rec.asset_id.id, {}).get('sum', False))
+                         rec.id, {}).get('sum', False))
                 rec.accumulated_bf = accum
+        print '---------3-- %s' % (time.time()-s)
+    #
+    # def _get_sql_view(self):
+    #     sql_view = """
+    #         SELECT * FROM (
+    #             SELECT min(move_line.id + 100000000000) AS id, move_line.date
+    #                 AS move_date, asset_profile.id AS asset_profile_id,
+    #                 asset_profile.name AS name_asset, asset.id AS asset_id,
+    #                 (100/coalesce(asset.method_number, 0.0)) AS method_number,
+    #                 CASE WHEN asset.section_id IS NOT NULL THEN 'Section'
+    #                 WHEN asset.project_id IS NOT NULL THEN 'Project'
+    #                 WHEN asset.invest_asset_id IS NOT NULL THEN 'Invest Asset'
+    #                 WHEN asset.invest_construction_phase_id IS NOT NULL
+    #                 THEN 'Invest Construction Phase'
+    #                 ELSE NULL END AS budget_type,
+    #                 CASE WHEN asset.section_id IS NOT NULL THEN
+    #                 CONCAT('res.section,', asset.section_id)
+    #                 WHEN asset.project_id IS NOT NULL THEN
+    #                 CONCAT('res.project,', asset.project_id)
+    #                 WHEN asset.invest_asset_id IS NOT NULL THEN
+    #                 CONCAT('res.invest.asset,', asset.invest_asset_id)
+    #                 WHEN asset.invest_construction_phase_id IS NOT NULL THEN
+    #                 CONCAT('res.invest.construction.phase,',
+    #                 asset.invest_construction_phase_id)
+    #                 ELSE NULL END AS budget,
+    #                 CASE WHEN asset.owner_section_id IS NOT NULL THEN
+    #                 CONCAT('res.section,', asset.owner_section_id)
+    #                 WHEN asset.owner_project_id IS NOT NULL THEN
+    #                 CONCAT('res.project,', asset.owner_project_id)
+    #                 WHEN asset.owner_invest_asset_id IS NOT NULL THEN
+    #                 CONCAT('res.invest.asset,', asset.owner_invest_asset_id)
+    #                 WHEN asset.owner_invest_construction_phase_id IS NOT NULL
+    #                 THEN CONCAT('res.invest.construction.phase,',
+    #                 asset.owner_invest_construction_phase_id)
+    #                 ELSE NULL END AS owner_budget
+    #             FROM account_move_line move_line
+    #             JOIN account_asset asset ON move_line.asset_id = asset.id
+    #             JOIN account_account account
+    #             ON move_line.account_id = account.id
+    #             JOIN account_account_type account_type
+    #             ON account.user_type = account_type.id
+    #             JOIN account_asset_profile asset_profile
+    #             ON asset.profile_id = asset_profile.id
+    #             WHERE account_type.name IN
+    #                 ('Depreciation','Accumulated Depreciation')
+    #             GROUP BY asset.id, asset_profile.id, move_line.date
+    #             UNION ALL
+    #             SELECT min(asset.id + coalesce(move_line.id, 0)) AS id,
+    #                 move_line.date AS move_date, asset_profile.id
+    #                 AS asset_profile_id, asset_profile.name AS name_asset,
+    #                 asset.id AS asset_id, CASE WHEN
+    #                 coalesce(asset.method_number, 0.0) != 0.0
+    #                 THEN (100/coalesce(asset.method_number, 0.0))
+    #                 ELSE asset.method_number END AS method_number,
+    #                 CASE WHEN asset.section_id IS NOT NULL THEN 'Section'
+    #                 WHEN asset.project_id IS NOT NULL THEN 'Project'
+    #                 WHEN asset.invest_asset_id IS NOT NULL THEN 'Invest Asset'
+    #                 WHEN asset.invest_construction_phase_id IS NOT NULL
+    #                 THEN 'Invest Construction Phase'
+    #                 ELSE NULL END AS budget_type,
+    #                 CASE WHEN asset.section_id IS NOT NULL THEN
+    #                 CONCAT('res.section,', asset.section_id)
+    #                 WHEN asset.project_id IS NOT NULL THEN
+    #                 CONCAT('res.project,', asset.project_id)
+    #                 WHEN asset.invest_asset_id IS NOT NULL THEN
+    #                 CONCAT('res.invest.asset,', asset.invest_asset_id)
+    #                 WHEN asset.invest_construction_phase_id IS NOT NULL THEN
+    #                 CONCAT('res.invest.construction.phase,',
+    #                 asset.invest_construction_phase_id)
+    #                 ELSE NULL END AS budget,
+    #                 CASE WHEN asset.owner_section_id IS NOT NULL THEN
+    #                 CONCAT('res.section,', asset.owner_section_id)
+    #                 WHEN asset.owner_project_id IS NOT NULL THEN
+    #                 CONCAT('res.project,', asset.owner_project_id)
+    #                 WHEN asset.owner_invest_asset_id IS NOT NULL THEN
+    #                 CONCAT('res.invest.asset,', asset.owner_invest_asset_id)
+    #                 WHEN asset.owner_invest_construction_phase_id IS NOT NULL
+    #                 THEN CONCAT('res.invest.construction.phase,',
+    #                 asset.owner_invest_construction_phase_id)
+    #                 ELSE NULL END AS owner_budget
+    #             FROM account_asset asset
+    #             LEFT JOIN account_move_line move_line
+    #             ON move_line.asset_id = asset.id
+    #             LEFT JOIN account_account account
+    #             ON move_line.account_id = account.id
+    #             LEFT JOIN account_account_type account_type
+    #             ON account.user_type = account_type.id
+    #             LEFT JOIN account_asset_profile asset_profile
+    #             ON asset.profile_id = asset_profile.id
+    #             WHERE asset.id NOT IN (
+    #                 SELECT move_line.asset_id FROM account_move_line move_line
+    #                 JOIN account_asset asset ON move_line.asset_id = asset.id
+    #                 JOIN account_account account ON
+    #                     move_line.account_id = account.id
+    #                 JOIN account_account_type account_type ON
+    #                     account.user_type = account_type.id
+    #                 JOIN account_asset_profile asset_profile ON
+    #                     asset.profile_id = asset_profile.id
+    #                 WHERE account_type.name IN
+    #                 ('Depreciation','Accumulated Depreciation')
+    #                 GROUP BY asset.id, move_line.asset_id)
+    #             GROUP BY asset.id, asset_profile.id, move_line.date
+    #             ) AS aml
+    #     """
+    #     return sql_view
 
     def _get_sql_view(self):
         sql_view = """
-            SELECT * FROM (
-                SELECT min(move_line.id + 100000000000) AS id, move_line.date
-                    AS move_date, asset_profile.id AS asset_profile_id,
-                    asset_profile.name AS name_asset, asset.id AS asset_id,
-                    (100/coalesce(asset.method_number, 0.0)) AS method_number,
-                    CASE WHEN asset.section_id IS NOT NULL THEN 'Section'
-                    WHEN asset.project_id IS NOT NULL THEN 'Project'
-                    WHEN asset.invest_asset_id IS NOT NULL THEN 'Invest Asset'
-                    WHEN asset.invest_construction_phase_id IS NOT NULL
-                    THEN 'Invest Construction Phase'
-                    ELSE NULL END AS budget_type,
-                    CASE WHEN asset.section_id IS NOT NULL THEN
-                    CONCAT('res.section,', asset.section_id)
-                    WHEN asset.project_id IS NOT NULL THEN
-                    CONCAT('res.project,', asset.project_id)
-                    WHEN asset.invest_asset_id IS NOT NULL THEN
-                    CONCAT('res.invest.asset,', asset.invest_asset_id)
-                    WHEN asset.invest_construction_phase_id IS NOT NULL THEN
-                    CONCAT('res.invest.construction.phase,',
-                    asset.invest_construction_phase_id)
-                    ELSE NULL END AS budget,
-                    CASE WHEN asset.owner_section_id IS NOT NULL THEN
-                    CONCAT('res.section,', asset.owner_section_id)
-                    WHEN asset.owner_project_id IS NOT NULL THEN
-                    CONCAT('res.project,', asset.owner_project_id)
-                    WHEN asset.owner_invest_asset_id IS NOT NULL THEN
-                    CONCAT('res.invest.asset,', asset.owner_invest_asset_id)
-                    WHEN asset.owner_invest_construction_phase_id IS NOT NULL
-                    THEN CONCAT('res.invest.construction.phase,',
-                    asset.owner_invest_construction_phase_id)
-                    ELSE NULL END AS owner_budget
-                FROM account_move_line move_line
-                JOIN account_asset asset ON move_line.asset_id = asset.id
-                JOIN account_account account
-                ON move_line.account_id = account.id
-                JOIN account_account_type account_type
-                ON account.user_type = account_type.id
-                JOIN account_asset_profile asset_profile
-                ON asset.profile_id = asset_profile.id
-                WHERE account_type.name IN
-                    ('Depreciation','Accumulated Depreciation')
-                GROUP BY asset.id, asset_profile.id, move_line.date
-                UNION ALL
-                SELECT min(asset.id + coalesce(move_line.id, 0)) AS id,
-                    move_line.date AS move_date, asset_profile.id
-                    AS asset_profile_id, asset_profile.name AS name_asset,
-                    asset.id AS asset_id, CASE WHEN
-                    coalesce(asset.method_number, 0.0) != 0.0
-                    THEN (100/coalesce(asset.method_number, 0.0))
-                    ELSE asset.method_number END AS method_number,
-                    CASE WHEN asset.section_id IS NOT NULL THEN 'Section'
-                    WHEN asset.project_id IS NOT NULL THEN 'Project'
-                    WHEN asset.invest_asset_id IS NOT NULL THEN 'Invest Asset'
-                    WHEN asset.invest_construction_phase_id IS NOT NULL
-                    THEN 'Invest Construction Phase'
-                    ELSE NULL END AS budget_type,
-                    CASE WHEN asset.section_id IS NOT NULL THEN
-                    CONCAT('res.section,', asset.section_id)
-                    WHEN asset.project_id IS NOT NULL THEN
-                    CONCAT('res.project,', asset.project_id)
-                    WHEN asset.invest_asset_id IS NOT NULL THEN
-                    CONCAT('res.invest.asset,', asset.invest_asset_id)
-                    WHEN asset.invest_construction_phase_id IS NOT NULL THEN
-                    CONCAT('res.invest.construction.phase,',
-                    asset.invest_construction_phase_id)
-                    ELSE NULL END AS budget,
-                    CASE WHEN asset.owner_section_id IS NOT NULL THEN
-                    CONCAT('res.section,', asset.owner_section_id)
-                    WHEN asset.owner_project_id IS NOT NULL THEN
-                    CONCAT('res.project,', asset.owner_project_id)
-                    WHEN asset.owner_invest_asset_id IS NOT NULL THEN
-                    CONCAT('res.invest.asset,', asset.owner_invest_asset_id)
-                    WHEN asset.owner_invest_construction_phase_id IS NOT NULL
-                    THEN CONCAT('res.invest.construction.phase,',
-                    asset.owner_invest_construction_phase_id)
-                    ELSE NULL END AS owner_budget
-                FROM account_asset asset
-                LEFT JOIN account_move_line move_line
-                ON move_line.asset_id = asset.id
-                LEFT JOIN account_account account
-                ON move_line.account_id = account.id
-                LEFT JOIN account_account_type account_type
-                ON account.user_type = account_type.id
-                LEFT JOIN account_asset_profile asset_profile
-                ON asset.profile_id = asset_profile.id
-                WHERE asset.id NOT IN (
-                    SELECT move_line.asset_id FROM account_move_line move_line
-                    JOIN account_asset asset ON move_line.asset_id = asset.id
-                    JOIN account_account account ON
-                        move_line.account_id = account.id
-                    JOIN account_account_type account_type ON
-                        account.user_type = account_type.id
-                    JOIN account_asset_profile asset_profile ON
-                        asset.profile_id = asset_profile.id
-                    WHERE account_type.name IN
-                    ('Depreciation','Accumulated Depreciation')
-                    GROUP BY asset.id, move_line.asset_id)
-                GROUP BY asset.id, asset_profile.id, move_line.date
-                ) AS aml
+            select * from account_asset
         """
         return sql_view
 
@@ -281,26 +305,28 @@ class AssetRegisterReport(models.TransientModel):
     _name = 'asset.register.report'
     _inherit = 'report.account.common'
 
-    asset_status_id = fields.Selection(
-        [('draft', 'Draft'),
-         ('open', 'Running'),
-         ('close', 'Close'),
-         ('removed', 'Removed')],
-        string=' Asset Status'
+    filter = fields.Selection(
+        [('filter_date', 'Dates'),
+         ('filter_period', 'Periods')],
+        string='Filter by',
+        required=True,
+        default='filter_period',
     )
-    asset_code_id = fields.Many2many(
+    asset_status_ids = fields.Many2many(
+        'account.asset.status',
+        string='Asset Status',
+        required=True,
+    )
+    asset_ids = fields.Many2many(
         'account.asset',
         string='Asset Code',
     )
-    asset_profile_id = fields.Many2many(
+    asset_profile_ids = fields.Many2many(
         'account.asset.profile',
         string='Asset Profile',
+        required=False,
     )
-    account_asset_id = fields.Many2many(
-        'account.account',
-        string='Account Code',
-    )
-    responsible_person_id = fields.Many2many(
+    responsible_person_ids = fields.Many2many(
         'res.users',
         string='Responsible Person',
     )
@@ -316,9 +342,24 @@ class AssetRegisterReport(models.TransientModel):
         'res.building',
         string='Room',
     )
-    org_id = fields.Many2many(
+    org_ids = fields.Many2many(
         'res.org',
         string='Org',
+    )
+    # Note: report setting
+    accum_depre_account_type = fields.Many2one(
+        'account.account.type',
+        string='Account Type for Accum.Depre.',
+        required=True,
+        help="Define account type for accumulated depreciation account, "
+        "to be used in report query SQL."
+    )
+    depre_account_type = fields.Many2one(
+        'account.account.type',
+        string='Account Type for Depre.',
+        required=True,
+        help="Define account type for depreciation account, "
+        "to be used in report query SQL."
     )
     results = fields.Many2many(
         'asset.register.view',
@@ -327,53 +368,49 @@ class AssetRegisterReport(models.TransientModel):
         help='Use compute fields, so there is nothing store in database',
     )
 
-    @api.onchange('building_id')
-    def _onchange_building_id(self):
-        self.floor_id = False
-        self.room_id = False
-
-    @api.onchange('floor_id')
-    def _onchange_floor_id(self):
-        self.room_id = False
+    # @api.onchange('building_id')
+    # def _onchange_building_id(self):
+    #     self.floor_id = False
+    #     self.room_id = False
+    #
+    # @api.onchange('floor_id')
+    # def _onchange_floor_id(self):
+    #     self.room_id = False
 
     @api.multi
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['asset.register.view']
         dom = []
-        if self.filter == 'filter_date':
-            dom += [('move_date', '>=', self.date_start),
-                    ('move_date', '<=', self.date_end)]
-        if self.filter == 'filter_period':
-            dom += [('move_date', '>=', self.period_start_id.date_start),
-                    ('move_date', '<=', self.period_end_id.date_stop)]
-        if self.asset_code_id:
-            dom += [('asset_id', 'in', self.asset_code_id.ids)]
-        if self.asset_profile_id:
-            dom += [('asset_profile_id', 'in', self.asset_profile_id.ids)]
-        if self.account_asset_id:
-            dom += [('asset_id.move_id.account_id', 'in',
-                     self.account_asset_id.ids)]
-        if self.responsible_person_id:
+        # if self.filter == 'filter_date':
+        #     dom += [('move_date', '>=', self.date_start),
+        #             ('move_date', '<=', self.date_end)]
+        # if self.filter == 'filter_period':
+        #     dom += [('move_date', '>=', self.period_start_id.date_start),
+        #             ('move_date', '<=', self.period_end_id.date_stop)]
+        if self.asset_ids:
+            dom += [('id', 'in', self.asset_ids.ids)]
+        if self.asset_profile_ids:
+            dom += [('profile_id', 'in', self.asset_profile_ids.ids)]
+        if self.responsible_person_ids:
             dom += [('asset_id.responsible_user_id', 'in',
-                     self.responsible_person_id.ids)]
-        if self.org_id:
-            dom += [('budget.org_id', 'in', self.org_id.ids)]
-        if self.asset_status_id:
-            dom += [('asset_id.state', '=', self.asset_status_id)]
+                     self.responsible_person_ids.ids)]
+        if self.org_ids:
+            dom += [('org_id', 'in', self.org_ids.ids)]
+        if self.asset_status_ids:
+            dom += [('status', 'in', self.asset_status_ids.ids)]
         if self.building_id:
-            dom += [('asset_id.building_id', '=', self.building_id)]
+            dom += [('building_id', '=', self.building_id.id)]
         if self.floor_id:
-            dom += [('asset_id.floor_id', '=', self.floor_id)]
+            dom += [('floor_id', '=', self.floor_id.id)]
         if self.room_id:
-            dom += [('asset_id.room_id', '=', self.room_id)]
-        result_id = Result.search(dom)
-        self._cr.execute("""
-            SELECT min(id) AS id, asset_id FROM asset_register_view
-            WHERE id in %s GROUP BY asset_id ORDER BY id
-        """ % (str(tuple(map(int, result_id.ids + [0, 0])))))
-        dict_result = self._cr.dictfetchall()
-        self.results = map(lambda l: l['id'], dict_result)
+            dom += [('room_id', '=', self.room_id.id)]
+        import time
+        s = time.time()
+        self.results = Result.search(dom)
+        print self.results
+        print len(self.results)
+        print '----------search--> %s' % (time.time()-s)
 
     @api.multi
     def action_get_report(self):
