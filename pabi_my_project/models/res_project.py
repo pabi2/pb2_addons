@@ -17,6 +17,15 @@ MY_PROJECT_STATES = [('draft', 'Draft'),
                      ]
 
 
+class ResProgram(models.Model):
+    _inherit = 'res.program'
+
+    myproject_use = fields.Boolean(
+        string='myProject Use',
+        default=False,
+    )
+
+
 class ResProject(LogCommon, models.Model):
     _inherit = 'res.project'
 
