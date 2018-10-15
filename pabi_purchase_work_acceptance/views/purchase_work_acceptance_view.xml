@@ -70,20 +70,38 @@
                                options="{'currency_field': 'currency_id'}"/>
                     </group>
                     <div class="oe_clear"/>
-                    <h2>Supplier Evaluation</h2>
-                    <group colspan="4">
-                        <group>
-                            <field name="eval_line_ids" attrs="{'readonly': [('state','!=','evaluation')]}" nolabel="1">
-                                <tree editable="bottom" edit="1" create="0" delete="0">
-                                    <field name="case_id" invisible="1"/>
-                                    <field name="case_id_readonly" readonly="1"/>
-                                    <field name="score_id" domain="[('case_id','=',case_id)]"/>
-                                    <field name="score" invisible="1"/>
-                                </tree>
-                            </field>
-                        </group>
-                        <group/>
-                    </group>
+                    <notebook>
+                        <page string="Supplier Evaluation">
+                            <h2>Supplier Evaluation</h2>
+                            <group colspan="4">
+                                <group>
+                                    <field name="eval_line_ids" attrs="{'readonly': [('state','!=','evaluation')]}" nolabel="1">
+                                        <tree editable="bottom" edit="1" create="0" delete="0">
+                                            <field name="case_id" invisible="1"/>
+                                            <field name="case_id_readonly" readonly="1"/>
+                                            <field name="score_id" domain="[('case_id','=',case_id)]"/>
+                                            <field name="score" invisible="1"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Fine">
+                            <h2>Fine</h2>
+                            <group colspan="4">
+                                <group>
+                                    <field name="fine_notify_name" />
+                                    <field name="fine_reserve_name" />
+                                    <field name="text_reference" />
+                                    <field name="text_to" />
+                                    <field name="text_authorize_person" />
+                                    <field name="text_position" />
+                                    <field name="text_contract" />
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+
                     </sheet>
                 </form>
             </field>
