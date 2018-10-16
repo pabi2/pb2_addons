@@ -38,7 +38,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
-			<field name="download_filename">${o.name}.pdf</field>
+			<field name="download_filename">แจ้งค่าปรับและเร่งรัดการส่งมอบ.pdf</field>
 		</record>
 
 		<record id="purchase_work_acceptance_values_1" model="ir.values">
@@ -61,7 +61,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">1</field>
-			<field name="download_filename">${o.name}.pdf</field>
+			<field name="download_filename">สงวนสิทธิ์ค่าปรับ.pdf</field>
 		</record>
 
 		<record id="purchase_work_acceptance_values_2" model="ir.values">
