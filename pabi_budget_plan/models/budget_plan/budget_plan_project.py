@@ -214,7 +214,11 @@ class BudgetPlanProject(BPCommon, models.Model):
         programs = self.env['res.program'].search([('id', 'not in', _ids),
                                                    ('special', '=', False)])
         plan_ids = []
+        count = len(programs)
+        i = 0
         for program in programs:
+            i += 1
+            _logger.info("Create plan for %s-%s/%s", (program.code, i, count))
             plan = self.create({'fiscalyear_id': fiscalyear_id,
                                 'program_id': program.id,
                                 'user_id': False})
