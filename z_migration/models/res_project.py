@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
 from openerp.exceptions import Warning as UserError
-import os
-import csv
+# import os
+# import csv
 
 
 class ResProject(models.Model):
     _inherit = 'res.project'
 
     @api.multi
-    def mork_release_budget(self):
+    def mork_release_budget(self, data):
         self.ensure_one()
         # Make sure project code only one
         project = self.search([('code', '=', self.code)])
@@ -25,10 +25,10 @@ class ResProject(models.Model):
 
         # Create project budget release wizard
         Wizard = self.env['res.project.budget.release']
-        path = '%s/data/my_project_release_budget.csv' % \
-            os.path.realpath(__file__).replace('/models/res_project.py', '')
-        reader = csv.reader(open(path))
-        data = filter(lambda l: l[0] == self.code, reader)
+        # path = '%s/data/my_project_release_budget.csv' % \
+        #     os.path.realpath(__file__).replace('/models/res_project.py', '')
+        # reader = csv.reader(open(path))
+        # data = filter(lambda l: l[0] == self.code, reader)
         if not data:
             raise UserError(_('No project code in data file csv'))
         elif len(data) > 1:
