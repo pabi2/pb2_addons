@@ -132,7 +132,6 @@ class AssetRegisterReport(models.TransientModel):
     @api.multi
     def _compute_results(self):
         self.ensure_one()
-        Result = self.env['asset.register.view']
         dom = []
         # Prepare DOM to filter assets
         if self.asset_ids:
@@ -169,7 +168,6 @@ class AssetRegisterReport(models.TransientModel):
             [('user_type', '=', self.accum_depre_account_type.id)]).ids
         depre_account_ids = self.env['account.account'].search(
             [('user_type', '=', self.depre_account_type.id)]).ids
-        self.results = Result.search(dom)
         where_str = self._domain_to_where_str(dom)
         self._cr.execute("""
             select a.*, id asset_id,
