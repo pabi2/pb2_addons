@@ -157,7 +157,12 @@ class AccountBudget(models.Model):
         # Check for all budget types (unit base, project base, etc...)
         for budget_type in dict(self.BUDGET_LEVEL_TYPE).keys():
             budget_level = budget_levels[budget_type]
-            # For document only
+            # For document line within this fiscal_id only
+            doc_lines = filter(lambda x:
+                               not x.get('fiscalyear_id', False) or
+                               x['fiscalyear_id'] == fiscal_id, doc_lines)
+            if not doc_lines:
+                continue
             vals = list(set([x[budget_level] for x in doc_lines]))
             res_ids = list(filter(lambda a: a is not False, vals))
             for res_id in res_ids:

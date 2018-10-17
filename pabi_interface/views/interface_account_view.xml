@@ -33,7 +33,12 @@
                     <field name="contract_charge_type"/>
                     <!-- Reconcile with -->
                     <field name="reconcile_move_id"/>
-                    <field name="reconcile_move_line_id"/>
+                    <field name="reconcile_move_line_ref"/>
+                    <!-- Contract Info -->
+                    <field name="ref"/>
+                    <field name="contract_number"/>
+                    <field name="contract_date_start"/>
+                    <field name="contract_date_end"/>
                 </tree>
             </field>
         </record>
@@ -79,7 +84,7 @@
                             <page string="Entries">
                                 <field name="line_ids" widget="one2many_list" attrs="{'invisible': [('type', '=', 'reverse')]}"/>
                             </page>
-                            <page string="Other Info" attrs="{'invisible': [('type', '!=', 'invoice')]}">
+                            <!-- <page string="Other Info" attrs="{'invisible': [('type', '!=', 'invoice')]}">
                                 <group>
                                     <group name="contract" string="Contract">
                                         <field name="contract_number"/>
@@ -89,7 +94,7 @@
                                     <group>
                                     </group>
                                 </group>
-                            </page>
+                            </page> -->
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">

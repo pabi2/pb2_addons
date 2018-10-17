@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voucher" language="groovy" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
-	<property name="ireport.zoom" value="1.996500000000035"/>
-	<property name="ireport.x" value="523"/>
-	<property name="ireport.y" value="620"/>
+	<property name="ireport.zoom" value="1.5000000000000262"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="384"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -196,14 +196,6 @@ $F{amount_total_text_th}]]></variableExpression>
 		<variableExpression><![CDATA[$F{invoice_amount_tax} == null ? 0.0 :
 ($F{invoice_type} == "out_refund" ? -$F{invoice_amount_tax} : $F{invoice_amount_tax})]]></variableExpression>
 	</variable>
-	<background>
-		<band height="792">
-			<image>
-				<reportElement x="-30" y="0" width="612" height="792"/>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "customer_tax_receipt.jpg"]]></imageExpression>
-			</image>
-		</band>
-	</background>
 	<title>
 		<band height="266">
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
@@ -280,17 +272,17 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 + ($F{taxbranch} == "00000" ? ($P{REPORT_LOCALE}.toString().equals("th_TH") ? "สำนักงานใหญ่" : "Head Office") : $F{taxbranch})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="385" y="248" width="13" height="18">
+				<reportElement x="380" y="248" width="13" height="18">
 					<printWhenExpression><![CDATA[$F{invoice_amount_tax} > 0]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement verticalAlignment="Bottom"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="443" y="248" width="13" height="18">
+				<reportElement x="438" y="248" width="13" height="18">
 					<printWhenExpression><![CDATA[$F{invoice_amount_tax} == null || $F{invoice_amount_tax} == 0]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement verticalAlignment="Bottom"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 		</band>

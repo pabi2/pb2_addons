@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-    <data>
+    <data noupdate="1">
         <record id="asset_status_normal" model="account.asset.status">
             <field name="sequence">1</field>
             <field name="code">normal</field>

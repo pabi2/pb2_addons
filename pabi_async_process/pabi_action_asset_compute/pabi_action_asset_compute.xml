@@ -14,7 +14,7 @@
                           <group>
                               <group>
                                   <field name="calendar_period_id"/>
-                                  <field name="compute_method"/>
+                                  <field name="compute_method" invisible="1"/>
                               </group>
                               <group>
                                   <field name="batch_note" required="1"/>
@@ -88,8 +88,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-            <field name="context">{'return_action': 'pabi_async_process.action_pabi_asset_depre_batch',
-                                   'allow_future_period': True}</field>
+            <field name="context">{'return_action': 'pabi_async_process.action_pabi_asset_depre_batch'}</field>
         </record>
 
         # Replace the existing menu
@@ -149,7 +148,7 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Journal Entries">
+                            <!-- <page string="Journal Entries">
                                 <field name="move_ids">
                                     <tree editable="bottom">
                                         <field name="name"/>
@@ -173,7 +172,7 @@
                                         <field name="chartfield_id"/>
                                     </tree>
                                 </field>
-                            </page>
+                            </page> -->
                         </notebook>
                     </sheet>
                 </form>

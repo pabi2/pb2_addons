@@ -10,7 +10,7 @@ This module will disable for some menu consisted of \n
 2. My Odoo.com account \n
 3. Help \n
 
-And disable select, create button when click search more in many2one
+And disable create button when click search more in many2one
 or many2many field
     """,
     'website': 'http://ecosoft.co.th',

@@ -87,6 +87,11 @@ class AccountTaxReport(models.Model):
         'res.users',
         string='Responsible',
     )
+    validate_user_id = fields.Many2one(
+        'res.users',
+        related='move_id.validate_user_id',
+        string='Validated By',
+    )
 
     def _select(self):
         # res = """

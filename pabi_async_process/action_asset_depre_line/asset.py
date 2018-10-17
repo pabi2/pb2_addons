@@ -58,12 +58,10 @@ class AccountAsset(PabiAsync, models.Model):
         for rec in self:
             task_name = "%s('%s', %s)" % \
                 ('action_compute_depreciation_board', self._name, rec.id)
-            print task_name
             jobs = self.env['queue.job'].search([
                 ('func_string', 'like', task_name),
-                ('state', 'not in', ('done', 'failed'))],
+                ('state', '!=', 'done')],
                 order='id desc', limit=1)
-            print jobs
             rec.job_id = jobs and jobs[0] or False
             rec.uuid = jobs and jobs[0].uuid or False
         return True
@@ -87,5 +85,6 @@ class AccountAsset(PabiAsync, models.Model):
             # Process Name
             job.process_id = self.env.ref('pabi_async_process.'
                                           'asset_compute_depreciation_board')
+            return True
         else:
             return super(AccountAsset, self).compute_depreciation_board()

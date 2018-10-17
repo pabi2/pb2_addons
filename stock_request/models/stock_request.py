@@ -56,8 +56,7 @@ class StockRequest(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         ondelete='restrict',
-        default=lambda self: self.env['hr.employee'].
-        search([('user_id', '=', self._uid)]),
+        default=lambda self: self.env.user.partner_id.employee_id,
     )
     supervisor_emp_id = fields.Many2one(
         'hr.employee',
@@ -71,8 +70,7 @@ class StockRequest(models.Model):
         string='Preparer',
         required=True,
         readonly=True,
-        default=lambda self: self.env['hr.employee'].
-        search([('user_id', '=', self._uid)]),
+        default=lambda self: self.env.user.partner_id.employee_id,
     )
     receive_emp_id = fields.Many2one(
         'hr.employee',
@@ -109,6 +107,7 @@ class StockRequest(models.Model):
         states={'draft': [('readonly', False)]},
         ondelete='restrict',
         domain=[('usage', '=', 'internal'), ('for_stock_request', '=', True)],
+        help="This will list all location with For Stock Request = True",
     )
     location_borrow_id = fields.Many2one(
         'stock.location',

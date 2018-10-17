@@ -11,5 +11,71 @@
                 </field>
             </field>
         </record>
+        <record id="view_purchase_method_tree" model="ir.ui.view">
+            <field name="name">purchase.method.tree</field>
+            <field name="model">purchase.method</field>
+            <field name="inherit_id" ref="pabi_procurement.view_purchase_method_tree"/>
+            <field name="arch" type="xml">
+                <field name="require_rfq" position="after">
+                    <field name="asset_purchase_method_id"/>
+                </field>
+            </field>
+        </record>
+
+        # Asset Purchase Method
+        <record id="view_asset_purchase_method_form" model="ir.ui.view">
+            <field name="name">asset.purchase.method.form</field>
+            <field name="model">asset.purchase.method</field>
+            <field name="arch" type="xml">
+                <form string="Asset Purchase Method">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="direct"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="view_asset_purchase_method_tree" model="ir.ui.view">
+            <field name="name">asset.purchase.method.tree</field>
+            <field name="model">asset.purchase.method</field>
+            <field name="arch" type="xml">
+                <tree string="Asset Purchase Method">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="direct"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_asset_purchase_method_search" model="ir.ui.view">
+            <field name="name">asset.purchase.method.search</field>
+            <field name="model">asset.purchase.method</field>
+            <field name="arch" type="xml">
+                <search string="Search Asset Purchase Method">
+                    <field name="name" string="Asset Purchase Method"/>
+                </search>
+            </field>
+        </record>
+        <record id="action_asset_purchase_method" model="ir.actions.act_window">
+            <field name="name">Asset Purchase Method</field>
+            <field name="res_model">asset.purchase.method</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new Asset Purchase Method.
+              </p>
+            </field>
+        </record>
+        <menuitem action="action_asset_purchase_method"
+                 id="menu_action_asset_purchase_method"
+                 parent="pabi_procurement.menu_purchase_config_pabi_master"
+                 sequence="9"
+                 groups="purchase.group_purchase_manager"/>
+
     </data>
 </openerp>

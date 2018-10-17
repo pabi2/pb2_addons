@@ -81,7 +81,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
     )
 
     @api.model
-    def _get_report_sql(self, fields_str, where_str):
+    def _get_report_sql(self, fields_str, where_str, budget_method='expense'):
         select = ''
         group_by = ''
         if len(fields_str) > 1:
@@ -103,10 +103,10 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
                 sum(amount_consumed) amount_consumed,
                 sum(amount_balance) amount_balance
             from budget_monitor_report
-            where budget_method = 'expense'
+            where budget_method = '%s'
             %s -- more where clause
             %s -- group by
-        """ % (select, where_str, group_by)
+        """ % (select, budget_method, where_str, group_by)
 
     @api.multi
     def _run_overall_report(self):
@@ -132,7 +132,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         for where in where_data:
             where_str = prepare_where_str(where)
             fields_str = ', '.join(where.keys())
-            sql = self._get_report_sql(fields_str, where_str)
+            sql = self._get_report_sql(fields_str, where_str)  # Expense
             self._cr.execute(sql)
             res = self._cr.dictfetchall()
             row = res and res[0] or where  # if res no row use where
@@ -192,6 +192,19 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         self.ensure_one()
         report_lines = []
         # Prepare where and group by clause
+        rows = self._query_report_by_structure(chart_view)
+        for row in rows:
+            # Merge activity_id, activity_rpt_id => activity_id
+            if row.get('activity_rpt_id', False):
+                row['activity_id'] = row['activity_rpt_id']
+                del row['activity_rpt_id']
+            report_lines.append((0, 0, row))
+        view = self.env.ref(view_xml_id)
+        return (report_lines, view.id)
+
+    @api.multi
+    def _query_report_by_structure(self, chart_view, budget_method='expense'):
+        self.ensure_one()
         where = prepare_where_dict(self, ALL_SEARCH_KEYS)
         where.update({'chart_view': chart_view})
         group_by = []
@@ -205,17 +218,10 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         # --
         where_str = prepare_where_str(where)
         fields_str = ', '.join(group_by)
-        sql = self._get_report_sql(fields_str, where_str)
+        sql = self._get_report_sql(fields_str, where_str, budget_method)
         self._cr.execute(sql)
         rows = self._cr.dictfetchall()
-        for row in rows:
-            # Merge activity_id, activity_rpt_id => activity_id
-            if row.get('activity_rpt_id', False):
-                row['activity_id'] = row['activity_rpt_id']
-                del row['activity_rpt_id']
-            report_lines.append((0, 0, row))
-        view = self.env.ref(view_xml_id)
-        return (report_lines, view.id)
+        return rows
 
     @api.multi
     def _run_unit_base_report(self):
@@ -303,6 +309,194 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         reports = self.search([('create_date', '<',
                                 old_date.strftime('%Y-%m-%d'))])
         reports.unlink()
+
+    # A web service method, return result as list of dictionary
+    @api.model
+    def get_project_budget_summary(self, fiscalyear, project_name,
+                                   budget_method, charge_type=False,
+                                   extra_project_fields={}):
+        """ This method query and return result as dictionary
+        required params: fiscalyear, project_name,
+                         budget_method (expense/revenus)
+        params: charge_type (internal/external) - if not specified, run both.
+                extra_project_fields - as list of more fields to show
+        return: [{
+            'fiscalyear': '2018',
+            'code': 'P1001', 'name': 'Project XYZ', 'state': 'approve',
+            # Budget Related Fields
+            'planned_amount': 50000.0,
+            'released_amount': 4939149.54,
+            'amount_so_commit': 0.0,
+            'amount_pr_commit': 0.0,
+            'amount_po_commit': 4507000.0,
+            'amount_exp_commit': 0.0,
+            'amount_total_commit': 4507000.0,
+            'amount_actual': 332149.54,
+            'amount_consumed': 4839149.54,
+            'amount_balance': 100000.00,
+            # More Data from extra_project_fields, i.e.,
+            ...
+            ...
+            }]
+        """
+        # Prepare search criteria
+        if budget_method not in ('expense', 'revenue'):
+            raise ValidationError(
+                _('Budget Method is not specified (expense/revenue)'))
+        Fiscalyear = self.env['account.fiscalyear']
+        Project = self.env['res.project']
+        fiscalyear_id = Fiscalyear.name_search(fiscalyear, operator='=')
+        if len(fiscalyear_id) != 1:
+            raise ValidationError(_('Fiscalyear %s not found') % fiscalyear)
+        project_id = Project.name_search(project_name, operator='=')
+        if len(project_id) != 1:
+            raise ValidationError(_('Project %s not found') % project_name)
+        chart_view = 'project_base'
+        # Create report, with search criteria / group by
+        fiscalyear = Fiscalyear.browse(fiscalyear_id[0][0])
+        project = Project.browse(project_id[0][0])
+        report = self.create({'name': chart_view,  # won't be used anywhere
+                              'report_type': chart_view,
+                              'charge_type': charge_type,
+                              'company_id': self.env.user.company_id.id,
+                              # Serach criteria
+                              'fiscalyear_id': fiscalyear.id,
+                              'project_id': project.id,
+                              })
+        result = report._query_report_by_structure(chart_view, budget_method)
+        # Basic info
+        result[0]['fiscalyear'] = fiscalyear.name
+        result[0]['project_code'] = project.code
+        result[0]['project'] = project.name
+        result[0]['state'] = project.state
+        # More project information
+        extra_project_fields = {
+            'project_group': 'project_group_id.display_name',
+            'program': 'program_id.display_name',
+            'ref_program': 'ref_program_id.display_name',
+            'proposal_program': 'proposal_program_id.display_name',
+            'program_group': 'program_group_id.display_name',
+            'functional_area': 'functional_area_id.display_name',
+            'require_fund_rule': 'require_fund_rule',
+            'pm_employee': 'pm_employee_id.display_name',
+            'analyst_employee': 'analyst_employee_id.display_name',
+            'external_pm': 'external_pm',
+            'costcenter': 'costcenter_id.display_name',
+            'org': 'org_id.display_name',
+            'date_start': 'date_start',
+            'date_approve': 'date_approve',
+            'date_end': 'date_end',
+            'project_date_start': 'project_date_start',
+            'project_ddate_end': 'project_date_end',
+            'contract_date_start': 'contract_date_start',
+            'contract_date_end': 'contract_date_end',
+            'project_date_end_proposal': 'project_date_end_proposal',
+            'project_date_close_cond': 'project_date_close_cond',
+            'project_date_close': 'project_date_close',
+            'project_date_terminate': 'project_date_terminate',
+            'project_status': 'project_status.display_name',
+            'mission': 'mission_id.display_name',
+            'project_type': 'project_type_id.display_name',
+            'fund_type': 'fund_type_id.display_name',
+            'operation': 'operation_id.display_name',
+            'master_plan': 'master_plan_id.display_name',
+            'subprogram': 'subprogram_id.display_name',
+            'nstda_strategy': 'nstda_strategy_id.display_name',
+            'target_program': 'target_program_id.display_name',
+        }.update(extra_project_fields)  # If there are more
+        for key, field in extra_project_fields.iteritems():
+            result[0][key] = self._get_field_data(field, project)
+        return result
+
+    @api.model
+    def get_project_budget_detail(self, fiscalyear, project_name,
+                                  budget_method, charge_type=False):
+        Analytic = self.env['account.analytic.line']
+        # Prepare search criteria
+        if budget_method not in ('expense', 'revenue'):
+            raise ValidationError(
+                _('Budget Method is not specified (expense/revenue)'))
+        Fiscalyear = self.env['account.fiscalyear']
+        Project = self.env['res.project']
+        fiscalyear_id = Fiscalyear.name_search(fiscalyear, operator='=')
+        if len(fiscalyear_id) != 1:
+            raise ValidationError(_('Fiscalyear %s not found') % fiscalyear)
+        project_id = Project.name_search(project_name, operator='=')
+        if len(project_id) != 1:
+            raise ValidationError(_('Project %s not found') % project_name)
+        chart_view = 'project_base'
+        # Create report, with search criteria / group by
+        fiscalyear = Fiscalyear.browse(fiscalyear_id[0][0])
+        project = Project.browse(project_id[0][0])
+        report_line = self.env['budget.drilldown.report.line'].create({
+            'chart_view': chart_view,
+            'charge_type': charge_type,
+            'budget_method': budget_method,
+            'fiscalyear_id': fiscalyear.id,
+            'project_id': project.id,
+            'company_id': self.env.user.company_id.id,
+        })
+        ids = report_line._query_open_items(False, budget_method)
+        analytics = Analytic.search([('id', 'in', list(set(ids)))])
+        results = []
+        for analytic in analytics:
+            result = {}
+            result['fiscalyear'] = fiscalyear.name
+            result['period'] = analytic.period_id.name
+            result['project_code'] = project.code
+            result['project'] = project.name
+            result['state'] = project.state
+            result['document'] = analytic.document
+            result['document_line'] = analytic.document_line
+            result['document_date'] = analytic.document_date
+            result['posting_date'] = analytic.date
+            result['ref'] = analytic.ref
+            result['amount'] = analytic.amount
+            result['activity_group_code'] = analytic.activity_group_id.code
+            result['activity_group'] = analytic.activity_group_id.name
+            result['activity_code'] = analytic.activity_id.code
+            result['activity'] = analytic.activity_id.name
+            result['account_code'] = analytic.general_account_id.code
+            result['account'] = analytic.general_account_id.name
+            result['job_order_code'] = analytic.cost_control_id.code
+            result['job_order'] = analytic.cost_control_id.code
+            result['fund'] = analytic.fund_id.name
+            result['po_contract'] = \
+                analytic.purchase_id.contract_id.display_name
+            result['purchase_method'] = \
+                analytic.purchase_request_id.purchase_method_id.display_name
+            result['partner_code'] = analytic.partner_id.search_key
+            result['partner'] = analytic.partner_id.name
+            result['amount'] = analytic.amount
+            result['requester'] = analytic.request_emp_id.display_name
+            result['preparer'] = analytic.prepare_emp_id.display_name
+            result['approver'] = analytic.approve_emp_id.display_name
+            result['doctype'] = analytic.doctype
+            results.append(result)
+        return results
+
+    @api.model
+    def _get_field_data(self, _field, _record):
+        """ Get field data, and convert data type if needed, i.e.,
+        _field = 'partner_id.address_id.province_id.name'
+        """
+        if not _field:
+            return None
+        line_copy = _record
+        for f in _field.split('.'):
+            data_type = line_copy._fields[f].type
+            line_copy = line_copy[f]
+            if data_type == 'date':
+                if line_copy:
+                    line_copy = datetime.datetime.strptime(line_copy,
+                                                           '%Y-%m-%d')
+            elif data_type == 'datetime':
+                if line_copy:
+                    line_copy = datetime.datetime.strptime(line_copy,
+                                                           '%Y-%m-%d %H:%M:%S')
+        if isinstance(line_copy, basestring):
+            line_copy = line_copy.encode('utf-8')
+        return line_copy
 
 
 class BudgetDrilldownReportLine(ChartField, models.Model):
@@ -509,6 +703,24 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
     @api.multi
     def open_items(self, ttype=False):
         self.ensure_one()
+        analytic_line_ids = self._query_open_items(ttype=ttype)
+        return {
+            'name': _("Analytic Lines"),
+            'view_type': 'form',
+            # 'view_mode': 'tree,form',
+            # 'res_model': 'account.analytic.line',
+            'view_mode': 'tree',
+            'res_model': 'account.analytic.line.view',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': self._context,
+            'nodestroy': True,
+            'domain': [('id', 'in', analytic_line_ids)],
+        }
+
+    @api.multi
+    def _query_open_items(self, ttype=False, budget_method='expense'):
+        self.ensure_one()
         where_dict = prepare_where_dict(self, ALL_SEARCH_KEYS)
         if ttype and ttype not in ('total_commit'):
             where_dict.update({'budget_commit_type': ttype})
@@ -521,20 +733,10 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         sql = """
             select analytic_line_id
             from budget_monitor_report
-            where budget_method = 'expense'
+            where budget_method = '%s'
             %s
-        """ % where_str
+        """ % (budget_method, where_str)
         self._cr.execute(sql)
         res = self._cr.fetchall()
         analytic_line_ids = [x[0] for x in res]
-        return {
-            'name': _("Analytic Lines"),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'account.analytic.line',
-            'view_id': False,
-            'type': 'ir.actions.act_window',
-            'context': self._context,
-            'nodestroy': True,
-            'domain': [('id', 'in', analytic_line_ids)],
-        }
+        return analytic_line_ids

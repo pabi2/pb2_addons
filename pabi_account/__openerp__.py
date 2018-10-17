@@ -31,6 +31,8 @@
         "purchase_split_quote2order",
         "account_pettycash",
         "account_cancel_reversal",
+        "pabi_interface",
+        "account_debitnote",
     ],
     "data": [
         "data/default_value.xml",
@@ -38,6 +40,8 @@
         "security/ir.model.access.csv",
         "wizard/print_wht_cert_wizard.xml",
         "wizard/voucher_invoice_description_view.xml",
+        "wizard/account_invoice_refund_view.xml",
+        "wizard/account_debitnote_view.xml",
         "views/account_view.xml",
         "views/account_config.xml",
         "views/account_voucher_view.xml",

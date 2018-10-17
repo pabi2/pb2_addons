@@ -140,7 +140,7 @@ class HRExpenseExpese(models.Model):
             'origin': expense.number,
             'comment': expense.name,
             'date_invoice': expense.date_invoice,
-            'user_id': expense.user_id.id,
+            # 'user_id': expense.user_id.id,  # So that it will default to uid
             'partner_id': partner_id,
             'account_id': res.get('account_id', False),
             'payment_term': res.get('payment_term', False),

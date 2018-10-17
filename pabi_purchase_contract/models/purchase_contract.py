@@ -57,8 +57,10 @@ class PurchaseContract(models.Model):
     operating_unit_id = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
-        default=lambda self: self.env['res.users'].
-        operating_unit_default_get(self._uid),
+        # default=lambda self: self.env['res.users'].
+        # operating_unit_default_get(self._uid),
+        related='create_uid.default_operating_unit_id',
+        store=True,
         readonly=True,
     )
     contract_type_id = fields.Many2one(
@@ -343,18 +345,23 @@ class PurchaseContract(models.Model):
         rev_no = vals.get('poc_rev', 0)
         # New Contract (CENTRAL-2016-322-R1)
         running = 0
-        if rev_no == 0:
-            running = self.sudo().search_count([
-                ('operating_unit_id', '=', operating_unit.id),
-                ('fiscalyear_id', '=', fiscalyear.id),
-                ('poc_rev', '=', 0)]) + 1
-        else:  # Reversion (CO-51-2016-322-R1)
-            running = vals.get('running', 0)
-        org_str = operating_unit.org_id.code or \
-            operating_unit.org_id.name_short or 'N/A'
-        format_code = '%s-%s-%s' % (org_str, fiscalyear.name, str(running))
+        format_code = False
+        if vals.get('poc_code', False):
+            format_code = vals['poc_code']
+        else:
+            if rev_no == 0 and not vals.get('poc_code', False):
+                running = self.sudo().search_count([
+                    ('operating_unit_id', '=', operating_unit.id),
+                    ('fiscalyear_id', '=', fiscalyear.id),
+                    ('poc_rev', '=', 0)]) + 1
+            else:  # Reversion (CO-51-2016-322-R1)
+                running = vals.get('running', 0)
+            org_str = operating_unit.org_id.code or \
+                operating_unit.org_id.name_short or 'N/A'
+            format_code = '%s-%s-%s' % (org_str, fiscalyear.name, str(running))
         vals.update({'poc_rev': rev_no,
-                     'poc_code': format_code,
+                     'poc_code':  # format_code
+                     vals.get('poc_code', False) or format_code,
                      'fiscalyear_id': fiscalyear.id,
                      'running': running,
                      'state': 'generate'})
@@ -384,7 +391,7 @@ class PurchaseContract(models.Model):
             doc_count = self.env['ir.attachment'].search_count(
                 [('res_model', '=', 'purchase.contract'),
                  ('res_id', '=', rec.id)])
-            if doc_count > 0:
+            if doc_count > 0 or self._context.get('bypass_attachment_check'):
                 rec.write({
                     'send_uid': self.env.user.employee_id.id,
                     'send_date': fields.Date.context_today(self),

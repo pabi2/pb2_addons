@@ -20,10 +20,10 @@ connection = openerplib.get_connection(
 connection.check_login()
 
 PO = connection.get_model('purchase.order')
-po_ids = PO.search([('name', '=', 'PO18001394')])
+po_ids = PO.search([('name', '=', 'PO18001652')])
 count = 1000
 begin = time.time()
-for i in range(1000):
+for i in range(10000):
     start = time.time()
     po_id = PO.copy(po_ids[0], {})
     PO.action_po_to_invoice([po_id], context={'bypass_due_date_check': True,

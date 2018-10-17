@@ -1,53 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-          <record id="asset_purchase_method_1" model="asset.purchase.method">
-              <field name="name">วิธีตกลงราคา</field>
-              <field name="code">1</field>
-          </record>
-          <record id="asset_purchase_method_2" model="asset.purchase.method">
-              <field name="name">วิธีสอบราคา</field>
-              <field name="code">2</field>
-          </record>
-          <record id="asset_purchase_method_3" model="asset.purchase.method">
-              <field name="name">วิธีประกวดราคา</field>
-              <field name="code">3</field>
-          </record>
-          <record id="asset_purchase_method_4" model="asset.purchase.method">
-              <field name="name">วิธีพิเศษ</field>
-              <field name="code">4</field>
-          </record>
-          <record id="asset_purchase_method_5" model="asset.purchase.method">
-              <field name="name">วิธีกรณีพิเศษ</field>
-              <field name="code">5</field>
-          </record>
-          <record id="asset_purchase_method_6" model="asset.purchase.method">
-              <field name="name">วิธีe-Auction</field>
-              <field name="code">6</field>
-          </record>
-          <record id="asset_purchase_method_7" model="asset.purchase.method">
-              <field name="name">วิธีฉุกเฉิน</field>
-              <field name="direct">True</field>
-              <field name="code">7</field>
-          </record>
-          <record id="asset_purchase_method_8" model="asset.purchase.method">
-              <field name="name">รับบริจาค</field>
-              <field name="direct">True</field>
-              <field name="code">8</field>
-          </record>
-          <record id="asset_purchase_method_9" model="asset.purchase.method">
-              <field name="name">ของแถม</field>
-              <field name="direct">True</field>
-              <field name="code">9</field>
-          </record>
-          <record id="asset_purchase_method_10" model="asset.purchase.method">
-              <field name="name">รับโอน</field>
-              <field name="direct">True</field>
-              <field name="code">10</field>
-          </record>
-          <record id="asset_purchase_method_11" model="asset.purchase.method">
-              <field name="name">อื่นๆ</field>
-              <field name="code">11</field>
-          </record>
+        <record id="asset_purchase_method_1" model="asset.purchase.method">
+            <field name="name">วิธีตกลงราคา</field>
+            <field name="code">1</field>
+        </record>
+        <record id="asset_purchase_method_2" model="asset.purchase.method">
+            <field name="name">วิธีสอบราคา</field>
+            <field name="code">2</field>
+        </record>
+        <record id="asset_purchase_method_3" model="asset.purchase.method">
+            <field name="name">วิธีประกวดราคา</field>
+            <field name="code">3</field>
+        </record>
+        <record id="asset_purchase_method_4" model="asset.purchase.method">
+            <field name="name">วิธีพิเศษ</field>
+            <field name="code">4</field>
+        </record>
+        <record id="asset_purchase_method_5" model="asset.purchase.method">
+            <field name="name">วิธีกรณีพิเศษ</field>
+            <field name="code">5</field>
+        </record>
+        <record id="asset_purchase_method_6" model="asset.purchase.method">
+            <field name="name">วิธีe-Auction</field>
+            <field name="code">6</field>
+        </record>
+        <record id="asset_purchase_method_7" model="asset.purchase.method">
+            <field name="name">วิธีฉุกเฉิน</field>
+            <field name="direct">True</field>
+            <field name="code">7</field>
+        </record>
+        <record id="asset_purchase_method_8" model="asset.purchase.method">
+            <field name="name">รับบริจาค</field>
+            <field name="direct">True</field>
+            <field name="code">8</field>
+        </record>
+        <record id="asset_purchase_method_9" model="asset.purchase.method">
+            <field name="name">ของแถม</field>
+            <field name="direct">True</field>
+            <field name="code">9</field>
+        </record>
+        <record id="asset_purchase_method_10" model="asset.purchase.method">
+            <field name="name">รับโอน</field>
+            <field name="direct">True</field>
+            <field name="code">10</field>
+        </record>
+        <record id="asset_purchase_method_11" model="asset.purchase.method">
+            <field name="name">ประกาศเชิญชวน-ตลาดอิเล็กฯ</field>
+            <field name="code">11</field>
+        </record>
+        <record id="asset_purchase_method_12" model="asset.purchase.method">
+            <field name="name">ประกาศเชิญชวน-ประกวดราคา</field>
+            <field name="code">12</field>
+        </record>
+        <record id="asset_purchase_method_13" model="asset.purchase.method">
+            <field name="name">ประกาศเชิญชวน-สอบราคา</field>
+            <field name="code">13</field>
+        </record>
+        <record id="asset_purchase_method_14" model="asset.purchase.method">
+            <field name="name">คัดเลือก</field>
+            <field name="code">14</field>
+        </record>
+        <record id="asset_purchase_method_15" model="asset.purchase.method">
+            <field name="name">เฉพาะเจาะจง</field>
+            <field name="code">15</field>
+        </record>
+        <record id="asset_purchase_method_16" model="asset.purchase.method">
+            <field name="name">เฉพาะเจาะจง  มาตรา56(2)(ข),(ซ)</field>
+            <field name="code">16</field>
+        </record>
+        <record id="asset_purchase_method_17" model="asset.purchase.method">
+            <field name="name">อื่นๆ</field>
+            <field name="code">17</field>
+        </record>
+        <record id="asset_purchase_method_18" model="asset.purchase.method">
+            <field name="name">ประกวดแบบ</field>
+            <field name="code">18</field>
+        </record>
+        <record id="asset_purchase_method_19" model="asset.purchase.method">
+            <field name="name">ประกาศเชิญช่วนทั่วไป</field>
+            <field name="code">19</field>
+        </record>
     </data>
 </openerp>

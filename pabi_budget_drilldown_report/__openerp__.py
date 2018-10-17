@@ -15,6 +15,7 @@
     'depends': [
         'pabi_budget_monitor',
         'pabi_utils',
+        'pabi_my_project',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -27,6 +28,7 @@
         'views/budget_invest_asset_report.xml',
         'views/budget_invest_construction_report.xml',
         'views/budget_personnel_report.xml',
+        'views/analytic_view.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/xlsx_template_wizard.xml',
         'xlsx_template/load_template.xml',

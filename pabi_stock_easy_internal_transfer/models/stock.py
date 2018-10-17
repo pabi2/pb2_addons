@@ -80,7 +80,6 @@ class StockMove(models.Model):
         #     ('location_id', '=', location_id),
         #     ('qty', '>=', 1.0)])
         # product = quant.mapped("product_id")
-        print consign_partner_id
         domain = [('asset', '=', False)]
         if consign_partner_id:
             domain += [('consign_partner_id', '=', consign_partner_id)]

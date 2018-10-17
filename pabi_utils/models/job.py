@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields
+from openerp import models, fields, api
 
 
 class QueueJob(models.Model):
     _inherit = 'queue.job'
 
+    func_string = fields.Char(
+        index=True,
+    )
     process_id = fields.Many2one(
         'pabi.process',
         string='Process',
@@ -22,6 +25,13 @@ class QueueJob(models.Model):
         size=500,
         help="Model of the related record",
     )
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for rec in self:
+            result.append((rec.id, '%s | %s' % (rec.name, rec.state.upper())))
+        return result
 
 
 class PabiProcess(models.Model):

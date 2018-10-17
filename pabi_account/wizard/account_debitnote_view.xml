@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_account_debitnote" model="ir.ui.view">
+            <field name="name">account.debitnote.form</field>
+            <field name="model">account.debitnote</field>
+            <field name="inherit_id" ref="account_debitnote.view_account_debitnote"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="attributes">
+                    <attribute name="widget"></attribute>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

@@ -312,6 +312,7 @@ class PurchaseOrder(models.Model):
         if self.plan_invoice_created:
             raise ValidationError(_('Create more invoices not allowed!'))
         invoice_ids = []
+        inv_id = False
         # Case use_invoice_plan, create multiple invoice by installment
         for order in self:
             first_time_invoice_plan = not order.invoice_ids and True or False
@@ -451,6 +452,21 @@ class PurchaseOrder(models.Model):
             if invoice.state in ('draft',):
                 invoice.signal_workflow('invoice_cancel')
         return True
+
+    @api.multi
+    def action_cancel_draft(self):
+        """ For normal case, this method will unlink invoices from po, but for
+        invoice plan case, we do not want this to happen. Relink it back """
+        po_inv_rel = {}
+        for po in self:
+            if po.use_invoice_plan:
+                inv_ids = po.invoice_ids.ids
+                po_inv_rel.update({po.id: inv_ids})
+        res = super(PurchaseOrder, self).action_cancel_draft()
+        for po in self:
+            if po.use_invoice_plan:
+                po.write({'invoice_ids': [(6, 0, po_inv_rel[po.id])]})
+        return res
 
 
 class PurchaseOrderLine(models.Model):

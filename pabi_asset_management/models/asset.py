@@ -373,6 +373,10 @@ class AccountAsset(ChartFieldAction, models.Model):
         compute='_compute_manual',
         help="True, if any line imported manually by excel."
     )
+    net_book_value = fields.Float(
+        string='Net Book Value',
+        compute='_compute_net_book_value',
+    )
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
 
@@ -430,6 +434,11 @@ class AccountAsset(ChartFieldAction, models.Model):
                 rec.installment_str = '%s/%s' % (rec.installment,
                                                  rec.num_installment)
         return True
+
+    @api.multi
+    def _compute_net_book_value(self):
+        for rec in self:
+            rec.net_book_value = rec.purchase_value - rec.value_depreciated
 
     @api.multi
     def validate_asset_to_request(self):
@@ -832,6 +841,10 @@ class AccountAssetProfile(models.Model):
 class AccountAssetLine(models.Model):
     _inherit = 'account.asset.line'
 
+    asset_id = fields.Many2one(
+        'account.asset',
+        index=True,  # add
+    )
     type = fields.Selection(
         [('create', 'Purchase Value'),
          ('depreciate', 'Depreciation'),

@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_pos_order_form">
+            <field name="name">view.pos.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="pabi_pos.view_pos_order_form"/>
+            <field name="arch" type="xml">
+                <h1 position="before">
+                    <h3>
+                        <field name="pos_job_id" attrs="{'invisible': [('pos_job_id', '=', False)]}"/>
+                    </h3>
+                </h1>
+            </field>
+        </record>
+    </data>
+</openerp>

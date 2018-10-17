@@ -22,7 +22,7 @@ class LoanBankMOU(models.Model):
     bank_id = fields.Many2one(
         'res.partner.bank',
         string='Bank',
-        required=True,
+        # required=True,
         domain="[('partner_id', '=', partner_id)]",
     )
     max_installment = fields.Integer(
@@ -120,7 +120,7 @@ class LoanCustomerAgreement(models.Model):
         readonly=True,
         domain="[('partner_id', '!=', False), ('bank', '=', mou_bank)]",
         states={'draft': [('readonly', False)]},
-        required=True,
+        # required=True,
     )
     amount_loan_total = fields.Float(
         string='Total Loan Amount from Bank',
@@ -449,7 +449,8 @@ class LoanCustomerAgreement(models.Model):
         # Journal
         company_id = self._context.get('company_id',
                                        self.env.user.company_id.id)
-        partner_id = loan.bank_id.partner_id.id
+        # partner_id = loan.bank_id.partner_id.id
+        partner_id = loan.partner_id.id
         currency_id = self.env.user.company_id.currency_id.id
         journal = Journal.search([('type', '=', 'purchase'),
                                   ('company_id', '=', company_id)],

@@ -27,8 +27,8 @@
                                 <field name="date_end"/>
                             </group>
                             <group string="Periods" attrs="{'invisible': [('filter', '!=', 'filter_period')], 'required': [('filter', '=', 'filter_period')]}">
-                                <field name="period_start_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end), ('special', '=', False)]"/>
-                                <field name="period_end_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end), ('special', '=', False)]"/>
+                                <field name="period_start_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end)]"/>
+                                <field name="period_end_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end)]"/>
                             </group>
                         </page>
                     </notebook>
@@ -95,8 +95,8 @@
                                 <field name="date_end"/>
                             </group>
                             <group string="Periods" attrs="{'invisible': [('filter', '!=', 'filter_period')], 'required': [('filter', '=', 'filter_period')]}">
-                                <field name="period_start_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end), ('special', '=', False)]"/>
-                                <field name="period_end_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end), ('special', '=', False)]"/>
+                                <field name="period_start_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end)]"/>
+                                <field name="period_end_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end)]"/>
                             </group>
                         </page>
                     </notebook>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_invest_construction_phase_tree" model="ir.ui.view">
+            <field name="name">view.invest.construction.tree.phase</field>
+            <field name="model">res.invest.construction.phase</field>
+            <field name="inherit_id" ref="pabi_invest_construction.view_invest_construction_phase_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="create">1</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

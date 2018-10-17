@@ -73,43 +73,44 @@
                             'partner_detail_results': {
                                 'A11': 'search_key${value or ""}',
                                 'B11': 'id${value and " ".join(list(filter(lambda l: l != False, [env["res.partner"].browse(value).title.name, env["res.partner"].browse(value).name]))) or ""}',
-                                'C11': 'customer${value and "X" or ""}',
-                                'D11': 'supplier${value and "X" or ""}',
-                                'E11': 'category_id.name${value or ""}',
-                                'F11': 'tag_ids${value and ", ".join([x.name for x in value]) or ""}',
-                                'G11': 'street${value or ""}',
-                                'H11': 'street2${value or ""}',
-                                'I11': 'township_id.name${value or ""}',
-                                'J11': 'district_id.name${value or ""}',
-                                'K11': 'province_id.name${value or ""}',
-                                'L11': 'country_id.name${value or ""}',
-                                'M11': 'zip${value or ""}',
-                                'N11': 'vat${value or ""}',
-                                'O11': 'taxbranch${value or ""}',
-                                'P11': 'mobile${value or ""}',
-                                'Q11': 'fax${value or ""}',
-                                'R11': 'website${value or ""}',
-                                'S11': 'email${value or ""}',
-                                'T11': 'customer_legacy_code${value or ""}',
-                                'U11': 'supplier_legacy_code${value or ""}',
-                                'V11': 'comment${value or ""}',
-                                'W11': 'property_account_payable.code${value or ""}',
-                                'X11': 'property_account_payable.name${value or ""}',
-                                'Y11': 'property_account_receivable.code${value or ""}',
-                                'Z11': 'property_account_receivable.name${value or ""}',
-                                'AA11': 'property_supplier_payment_term.name${value or ""}',
-                                'AB11': 'property_payment_term.name${value or ""}',
-                                'AC11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and value.filtered(lambda l: l.default is True)[0].acc_number or "") or ""}',
-                                'AD11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and " ".join(filter(lambda x: x != False, [value.with_context(lang="th_TH").filtered(lambda l: l.default is True)[0].bank.name, value.with_context(lang="th_TH").filtered(lambda l: l.default is True)[0].bank_branch.name])) or "") or ""}',
-                                'AE11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and " ".join(filter(lambda x: x != False, [value.with_context(lang="th_TH").filtered(lambda l: l.default is True)[0].partner_id.title.name, value.with_context(lang="th_TH").filtered(lambda l: l.default is True)[0].partner_id.name])) or "") or ""}',
-                                'AF11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and (value.filtered(lambda l: l.default is True)[0].active is True and "X" or "") or "") or ""}',
-                                'AG11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and (value.filtered(lambda l: l.default is True)[0].default is True and "X" or "")) or ""}',
-                                'AH11': 'income_tax_form${value and dict(pnd1="PND1", pnd3="PND3", pnd3a="PND3a", pnd53="PND53")[value] or ""}',
-                                'AI11': 'create_date${value or ""}#{number_format=date}',
-                                'AJ11': 'create_uid${value and value.with_context(lang="th_TH").display_name or ""}',
-                                'AK11': 'write_date${value or ""}#{number_format=date}',
-                                'AL11': 'write_uid${value and value.with_context(lang="th_TH").display_name or ""}',
-                                'AM11': 'active${value and "X" or ""}',
+                                'C11': 'is_company${value and "X" or ""}',
+                                'D11': 'customer${value and "X" or ""}',
+                                'E11': 'supplier${value and "X" or ""}',
+                                'F11': 'category_id.name${value or ""}',
+                                'G11': 'tag_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'H11': 'street${value or ""}',
+                                'I11': 'street2${value or ""}',
+                                'J11': 'township_id.name${value or ""}',
+                                'K11': 'district_id.name${value or ""}',
+                                'L11': 'province_id.name${value or ""}',
+                                'M11': 'country_id.name${value or ""}',
+                                'N11': 'zip${value or ""}',
+                                'O11': 'vat${value or ""}',
+                                'P11': 'taxbranch${value or ""}',
+                                'Q11': 'mobile${value or ""}',
+                                'R11': 'fax${value or ""}',
+                                'S11': 'website${value or ""}',
+                                'T11': 'email${value or ""}',
+                                'U11': 'customer_legacy_code${value or ""}',
+                                'V11': 'supplier_legacy_code${value or ""}',
+                                'W11': 'comment${value or ""}',
+                                'X11': 'property_account_payable.code${value or ""}',
+                                'Y11': 'property_account_payable.name${value or ""}',
+                                'Z11': 'property_account_receivable.code${value or ""}',
+                                'AA11': 'property_account_receivable.name${value or ""}',
+                                'AB11': 'property_supplier_payment_term.name${value or ""}',
+                                'AC11': 'property_payment_term.name${value or ""}',
+                                'AD11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and value.filtered(lambda l: l.default is True)[0].acc_number or "") or ""}',
+                                'AE11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and " ".join(filter(lambda x: x != False, [value.with_context(lang="th_TH").filtered(lambda l: l.default is True)[0].bank.name, value.with_context(lang="th_TH").filtered(lambda l: l.default is True)[0].bank_branch.name])) or "") or ""}',
+                                'AF11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and " ".join(filter(lambda x: x != False, [value.with_context(lang="th_TH").filtered(lambda l: l.default is True)[0].partner_id.title.name, value.with_context(lang="th_TH").filtered(lambda l: l.default is True)[0].partner_id.name])) or "") or ""}',
+                                'AG11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and (value.filtered(lambda l: l.default is True)[0].active is True and "X" or "") or "") or ""}',
+                                'AH11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and (value.filtered(lambda l: l.default is True)[0].default is True and "X" or "")) or ""}',
+                                'AI11': 'income_tax_form${value and dict(pnd1="PND1", pnd3="PND3", pnd3a="PND3a", pnd53="PND53")[value] or ""}',
+                                'AJ11': 'create_date${value or ""}#{number_format=date}',
+                                'AK11': 'create_uid${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'AL11': 'write_date${value or ""}#{number_format=date}',
+                                'AM11': 'write_uid${value and value.with_context(lang="th_TH").display_name or ""}',
+                                'AN11': 'active${value and "X" or ""}',
                             },
                         },
                         'Partner Bank Account Detail Report': {
@@ -399,7 +400,7 @@
                                 'Y16': 'number_cheque${value or ""}',
                                 'Z16': 'income_tax_form${value and dict(pnd1="PND1", pnd3="PND3", pnd3a="PND3a", pnd53="PND53")[value] or ""}',
                                 'AA16': 'id${value and env["pabi.common.account.report.view"].browse(value).voucher_move_line_id.move_id.document_id and env["pabi.common.account.report.view"].browse(value).voucher_move_line_id.move_id.document_id._name == "account.voucher" and env["pabi.common.account.report.view"].browse(value).voucher_move_line_id.move_id.document_id.tax_line_wht.filtered(lambda l: l.invoice_id.id == env["account.invoice"].search([("move_id", "=", env["pabi.common.account.report.view"].browse(value).invoice_move_line_id.move_id.id)]).id).amount or ""}',
-                                'AB16': 'invoice_move_write_uid.display_name${value or ""}',
+                                'AB16': 'invoice_move_validate_user_id.display_name${value or ""}',
                                 'AC16': 'invoice_state${value and dict(env["account.invoice"]._columns["state"].selection)[value] or ""}',
                             },
                             '_TAIL_0': {
@@ -751,7 +752,7 @@
                                 'I10': 'move_id.document_id${value and value._name == "account.invoice" and value.source_document_id and value.source_document_id._name == "sale.order" and value.source_document_id.workflow_process_id and value.source_document_id.name or ""}',
                                 'J10': 'move_number${value or ""}',
                                 'K10': 'move_id.document_id${value and value._name == "interface.account.entry" and value.name or ""}',
-                                'L10': 'write_uid.display_name${value or ""}',
+                                'L10': 'validate_user_id.display_name${value or ""}',
                             },
                             '_TAIL_0': {
                                 'A10': '${"Total"}#{font=bold}',
@@ -1132,9 +1133,9 @@ result = pd.pivot_table(df, index=groupby,
                                 'F10': 'move_line_id.move_id.document_id${value and value._name == "interface.account.entry" and value.system_id.name or ""}',
                                 'G10': 'move_line_id.move_id.narration${value or ""}',
                                 'H10': 'move_line_id${value and (value.credit != 0 and (-1) * value.credit or value.debit) or 0}#{number_format=number}',
-                                'I10': 'move_line_id.write_uid.display_name${value or ""}',
-                                'J10': 'move_line_id.write_uid.id${value and env["hr.employee"].search([("user_id", "=", value)]).section_id.code or ""}',
-                                'K10': 'move_line_id.write_uid.id${value and env["hr.employee"].search([("user_id", "=", value)]).section_id.name or ""}',
+                                'I10': 'move_line_id.move_id.validate_user_id.display_name${value or ""}',
+                                'J10': 'move_line_id.move_id.validate_user_id.id${value and env["hr.employee"].search([("user_id", "=", value)]).section_id.code or ""}',
+                                'K10': 'move_line_id.move_id.validate_user_id.id${value and env["hr.employee"].search([("user_id", "=", value)]).section_id.name or ""}',
                             },
                             '_TAIL_0': {
                                 'H10': '@{sum}#{font=bold;align=right;number_format=number}',
@@ -1203,7 +1204,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'T17': 'voucher_move_id.document_id${value and (value._name == "interface.account.entry" and (value.type == "voucher" and value.preprint_number or "") or (value._name == "account.voucher" and value.number_preprint or "")) or ""}',
                                 'U17': 'voucher_move_line_id${value and value.credit - value.debit or ""}#{number_format=number}',
                                 'V17': 'reconcile_id.name${value or ""}',
-                                'W17': 'invoice_move_write_uid.display_name${value or ""}',
+                                'W17': 'invoice_move_validate_user_id.display_name${value or ""}',
                                 'X17': "${'=IF(?(V17)=\"\",\"Open\",\"Paid\")'}",
                             },
                             '_TAIL_0': {
@@ -1263,7 +1264,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'P13': 'voucher_move_line_id${value and value.debit - value.credit or ""}#{number_format=number}',
                                 'Q13': 'voucher_move_line_id.move_id.name${value or ""}',
                                 'R13': 'invoice_move_line_id.reconcile_id.name${value or ""}',
-                                'S13': 'invoice_move_line_id.write_uid.display_name${value or ""}',
+                                'S13': 'invoice_move_line_id.move_id.validate_user_id.display_name${value or ""}',
                                 'T13': "${'=IF(?(R13)=\"\",\"Open\",\"Cleared\")'}",
                             }
                         }
@@ -1566,6 +1567,148 @@ result = pd.pivot_table(df, index=groupby,
                 }
             }
         </field>
+     </record>
+
+     # Assset Repair
+     <record id="xlsx_report_asset_repair" model="ir.attachment">
+         <field name="res_model">xlsx.report.asset.repair</field>
+         <field name="datas"></field>
+         <field name="datas_fname">xlsx_report_asset_repair.xlsx</field>
+         <field name="name">Asset Repair Report</field>
+         <field name="parent_id" eval="ref('dir_account_reports')"/>
+         <field name="description">
+             {
+                 '__EXPORT__': {
+                     'Asset Repair Report': {
+                         '_HEAD_': {
+                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                             'B3': 'org_id${value and value.name_short or ""}',
+                             'B4': 'sector_id${value and value.name or ""}',
+                             'B5': 'subsector_id${value and value.name or ""}',
+                             'B6': 'division_id${value and value.name or ""}',
+                             'B7': 'section_id${value and value.name or ""}',
+                             'B8': 'asset_id${value and value.code or ""}',
+                             'B9': 'responsible_by${value and value.name or ""}',
+                             'B10': 'budget${value and value.name_short or ""}',
+                             'B11': 'status_id${value and value.name or ""}',
+                             'B12': 'as_of_date${value or ""}#{number_format=date}',
+                             'B13': '${env.user.with_context(lang="th_TH").display_name}',
+                             'B14': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                         },
+                         'results': {
+                             'A17': 'asset_id${value and value.code or ""}',
+                             'B17': 'asset_id${value and value.name or ""}',
+                             'C17': 'asset_id${value and value.purchase_value or ""}#{number_format=number}',
+                             'D17': 'asset_repair_id${value and value.date or ""}#{number_format=date}',
+                             'E17': 'purchase_order_id${value and value.name or ""}',
+                             'F17': 'purchase_order_id${value and value.amount_total or ""}#{number_format=number}',
+                             'G17': 'asset_repair_id${value and value.note or ""}',
+                             'H17': 'asset_id${value and value.org_id.name_short or ""}',
+                             'I17': 'budget${value and value.code or ""}',
+                             'J17': 'budget${value and value.name_short or ""}',
+                             'K17': 'costcenter_id${value and value.code or ""}',
+                             'L17': 'costcenter_id${value and value.name or ""}',
+                             'M17': 'responsible_user_id${value and value.login or ""}',
+                             'N17': 'responsible_user_id${value and value.partner_id.with_context(lang="th_TH").display_name or ""}',
+                             'O17': 'asset_id${value and value.status.name or ""}',
+                         }
+                     }
+                 }
+             }
+         </field>
+     </record>
+
+     # Assset Register
+     <record id="xlsx_report_asset_register" model="ir.attachment">
+         <field name="res_model">asset.register.report</field>
+         <field name="datas"></field>
+         <field name="datas_fname">xlsx_report_asset_register.xlsx</field>
+         <field name="name">Asset Register Report</field>
+         <field name="parent_id" eval="ref('dir_account_reports')"/>
+         <field name="description">
+             {
+                 '__EXPORT__': {
+                     'Asset Register Report': {
+                         '_HEAD_': {
+                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                             'B4': 'org_ids${value and ", ".join([x.name_short for x in value]) or ""}',
+                             'B5': 'fiscalyear_start_id.name${value or ""}',
+                             'D5': 'fiscalyear_end_id.name${value or ""}',
+                             'B6': 'period_start_id.name${value or ""}',
+                             'D6': 'period_end_id.name${value or ""}',
+                             'B7': 'date_start${value or ""}#{number_format=date}',
+                             'D7': 'date_end${value or ""}#{number_format=date}',
+                             'B8': 'asset_profile_ids${value and ", ".join([x.name for x in value]) or ""}',
+                             'B9': 'asset_ids${value and ", ".join([x.name for x in value]) or ""}',
+                             'B10': 'responsible_person_ids${value and ", ".join([x.name for x in value]) or ""}',
+                             'B11': 'building_id${value and value.name or ""}',
+                             'B12': 'floor_id${value and value.name or ""}',
+                             'B13': 'room_id${value and value.name or ""}',
+                             'B14': 'asset_status_ids${value and ", ".join([x.name for x in value]) or ""}',
+                             'B15': '${time.strftime("%Y")}#{number_format=text}',
+                             'B16': '${env.user.with_context(lang="th_TH").display_name}',
+                             'B17': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                         },
+                         'results': {
+                             'A20': 'budget${value and value.org_id.name_short or ""}',
+                             'B20': 'profile_id.product_categ_id${value and value.name or ""}',
+                             'C20': 'profile_id.account_asset_id${value and value.code or ""}',
+                             'D20': 'profile_id.account_asset_id${value and value.name or ""}',
+                             'E20': 'profile_id${value and value.code or ""}',
+                             'F20': 'profile_id${value and value.name or ""}',
+                             'G20': 'code${value or ""}',
+                             'H20': 'name${value or ""}',
+                             'I20': 'parent_id${value and value.name or ""}',
+                             'J20': 'product_id${value and value.name or ""}',
+                             'K20': 'code2${value or ""}',
+                             'L20': 'picking_id${value and value.acceptance_id and value.acceptance_id.date_accept or ""}#{number_format=date}',
+                             'M20': 'date_start${value or ""}#{number_format=date}',
+                             'N20': 'date_picking${value or ""}#{number_format=date}',
+                             'O20': 'picking_id${value and value.name or ""}',
+                             'P20': 'budget_type${value or ""}',
+                             'Q20': 'owner_budget${value and value.code or ""}',
+                             'R20': 'owner_budget${value and value.name or ""}',
+                             'S20': 'owner_budget${value and value.costcenter_id.code or ""}',
+                             'T20': 'owner_budget${value and value.costcenter_id.name or ""}',
+                             'U20': '${"NO DATA"}',
+                             'V20': '${"NO DATA"}',
+                             'W20': '${"NO DATA"}',
+                             'X20': '${"NO DATA"}',
+                             'Y20': 'building_id${value and value.name or ""}',
+                             'Z20': 'floor_id${value and value.name or ""}',
+                             'AA20': 'room_id${value and value.name or ""}',
+                             'AB20': 'responsible_user_id${value and value.code or ""}',
+                             'AC20': 'responsible_user_id${value and value.name or ""}',
+                             'AD20': 'partner_id${value and value.search_key or ""}',
+                             'AE20': 'partner_id${value and value.name or ""}',
+                             'AF20': 'purchase_id${value and value.name or ""}',
+                             'AG20': 'purchase_request_id${value and value.name or ""}',
+                             'AH20': 'asset_purchase_method_id${value and value.name or ""}',
+                             'AI20': 'doc_request_id${value and value.code or ""}',
+                             'AJ20': 'doc_request_id${value and value.name or ""}',
+                             'AK20': 'pr_requester_id${value and value.login or ""}',
+                             'AL20': 'pr_requester_id${value and value.name or ""}',
+                             'AM20': 'date_request${value or ""}#{number_format=date}',
+                             'AN20': 'serial_number${value or ""}',
+                             'AO20': 'warranty_start_date${value or ""}#{number_format=date}',
+                             'AP20': 'warranty_expire_date${value or ""}#{number_format=date}',
+                             'AQ20': 'date_start${value and value.strftime("%Y") or ""}#{number_format=text}',
+                             'AR20': "${'=IF(B15=?(AQ20),0,?(AT20))'}#{number_format=number}",
+                             'AS20': "${'=IF(B15=?(AQ20),?(AT20),0)'}#{number_format=number}",
+                             'AT20': 'purchase_value${value or ""}#{number_format=number}',
+                             'AU20': 'accumulated_bf${value or 0}#{number_format=number}',
+                             'AV20': 'depreciation${value or 0}#{number_format=number}',
+                             'AW20': 'accumulated_cf${value or 0}#{number_format=number}',
+                             'AX20': "${'=?(AT20)-?(AW20)'}#{number_format=number}",
+                             'AY20': 'method_number${value or ""}',
+                             'AZ20': 'adjust_id${value and value.name or ""}',
+                             'BA20': 'status${value and value.name or ""}',
+                             'BB20': 'date_remove${value or ""}#{number_format=date}',
+                         }
+                     }
+                 }
+             }
+         </field>
      </record>
     </data>
 </openerp>

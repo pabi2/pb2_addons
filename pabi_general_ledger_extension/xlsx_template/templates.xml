@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory for General Ledger XLSX Reports -->
+        <record model="document.directory" id="dir_general_ledger_template">
+            <field name="name">General Ledger Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        # Account Balance Detail
+        <record id="account_balance_detail_template" model="ir.attachment">
+            <field name="res_model">account.general.ledger.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">account_balance_detail.xlsx</field>
+            <field name="name">Account Balance Detail</field>
+            <field name="parent_id" eval="ref('dir_general_ledger_template')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Sheet2': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'fiscalyear_id.name${value or ""}',
+                                'B4': 'period_id.name${value or ""}',
+                                'B5': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                                'B6': 'target_move${value and dict(env["account.general.ledger.report"]._columns["target_move"].selection)[value] or ""}',
+                                'B7': 'reconcile_cond${value and dict(env["account.general.ledger.report"]._columns["reconcile_cond"].selection)[value] or ""}',
+                                'B8': 'amount_currency${value and "X" or ""}',
+                                'B9': '${env.user.display_name}',
+                                'B10': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'move_line_ids': {
+                                'A13': 'account_id.code${value or ""}',
+                                'B13': 'account_id.name${value or ""}',
+                                'C13': 'debit${value or 0}#{number_format=number}',
+                                'D13': 'credit${value or 0}#{number_format=number}',
+                                'E13': 'id${value and env["account.move.line"].browse(value).debit - env["account.move.line"].browse(value).credit or 0}'
+                            }
+                        },
+                        'Account Balance Detail Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'fiscalyear_id.name${value or ""}',
+                                'B4': 'period_id.name${value or ""}',
+                                'B5': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                                'B6': 'target_move${value and dict(env["account.general.ledger.report"]._columns["target_move"].selection)[value] or ""}',
+                                'B7': 'reconcile_cond${value and dict(env["account.general.ledger.report"]._columns["reconcile_cond"].selection)[value] or ""}',
+                                'B8': 'amount_currency${value and "X" or ""}',
+                                'B9': '${env.user.display_name}',
+                                'B10': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            '_BI_': {
+                                'A13': {
+                                    'df': 'Sheet2',
+                                    # Group by A, B and add Subtotal (so we use pivot)
+                                    # By scripting, we need result = ...
+                                    'oper_code': """
+df = df[["A", "B", "C", "D", "E"]]
+groupby = ["A", "B"]
+sum_cols = ["C", "D", "E"]
+result = pd.pivot_table(df, index=groupby,
+                    values=sum_cols,
+                    aggfunc=np.sum,
+                    fill_value=0,
+                    margins=True,
+                    margins_name="Total")
+                                """,
+                                },
+                            },
+                        },
+                    }
+                }
+            </field>
+        </record>
+
+        # Balance Detail
+        <record id="balance_detail_template" model="ir.attachment">
+            <field name="res_model">account.general.ledger.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">balance_detail.xlsx</field>
+            <field name="name">Balance Detail</field>
+            <field name="parent_id" eval="ref('dir_general_ledger_template')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Balance Detail Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'fiscalyear_id.name${value or ""}',
+                                'B4': 'account_ids${value and ", ".join([x.code for x in value]) or ""}',
+                                'B5': 'target_move${value and dict(env["account.general.ledger.report"]._columns["target_move"].selection)[value] or ""}',
+                                'B6': 'reconcile_cond${value and dict(env["account.general.ledger.report"]._columns["reconcile_cond"].selection)[value] or ""}',
+                                'B7': 'amount_currency${value and "X" or ""}',
+                                'B8': '${env.user.display_name}',
+                                'B9': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'line_ids': {
+                                'A12': 'period_id.name${value or ""}',
+                                'B12': 'debit${value or 0}#{number_format=number}',
+                                'C12': 'credit${value or 0}#{number_format=number}',
+                                'D12': 'balance${value or 0}#{number_format=number}',
+                                'E12': 'accum_balance${value or 0}#{number_format=number}',
+                            },
+                            '_TAIL_0': {
+                                'A12': '${"Total"}#{font=bold}',
+                                'B12': '@{sum}#{font=bold;number_format=number}',
+                                'C12': '@{sum}#{font=bold;number_format=number}',
+                                'D12': '@{sum}#{font=bold;number_format=number}',
+                            }
+                        },
+                    }
+                }
+            </field>
+        </record>
+    </data>
+</openerp>

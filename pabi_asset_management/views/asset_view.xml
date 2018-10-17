@@ -140,6 +140,7 @@
                         <group>
                             <field name="depreciation_base" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
                             <field name="no_depreciation" invisible="1"/>
+                            <field name="net_book_value"/>
                         </group>
                         <group>
                             <field name="value_depreciated" widget="monetary" options="{'currency_field': 'company_currency_id'}" attrs="{'invisible':[('type','=','view')]}"/>
@@ -301,6 +302,7 @@
                 <search position="inside">
                     <group expand="0" string="Group By...">
                         <filter string="Category" name="category" domain="" context="{'group_by':'product_categ_id'}"/>
+                        <filter string="Asset Account" name="account_asset" domain="" context="{'group_by':'account_asset_id'}"/>
                     </group>
                 </search>
             </field>

@@ -83,16 +83,17 @@ class InterfaceAccountEntry(models.Model):
         required=True,
         help="Journal to be used in creating Journal Entry",
     )
-    contract_number = fields.Char(
-        string='Contract Number',
-        size=500,
-    )
-    contract_date_start = fields.Date(
-        string='Contract Start Date',
-    )
-    contract_date_end = fields.Date(
-        string='Contract Start End',
-    )
+    # Move to line level
+    # contract_number = fields.Char(
+    #     string='Contract Number',
+    #     size=500,
+    # )
+    # contract_date_start = fields.Date(
+    #     string='Contract Start Date',
+    # )
+    # contract_date_end = fields.Date(
+    #     string='Contract Start End',
+    # )
     to_reconcile = fields.Boolean(
         string='To Reconcile',
         compute='_compute_to_reconcile',
@@ -282,13 +283,26 @@ class InterfaceAccountEntry(models.Model):
             elif interface.type == 'invoice':
                 move = interface._action_invoice_entry()
                 interface.number = move.name
+                self._update_account_move_line_ref(move)
             # 3) Payment Receipt
             elif interface.type == 'voucher':
                 move = interface._action_payment_entry()
                 interface.number = move.name
+                self._update_account_move_line_ref(move)
         return True
 
     # ================== Sub Method by Action ==================
+    @api.model
+    def _update_account_move_line_ref(self, move):
+        self._cr.execute("""
+            update account_move_line ml set ref = (
+                select ref from interface_account_entry_line
+                where ref_move_line_id = ml.id)
+            where move_id = %s
+        """, (move.id, ))
+        return True
+
+
     @api.multi
     def _action_invoice_entry(self):
         self.ensure_one()
@@ -591,11 +605,11 @@ class InterfaceAccountEntry(models.Model):
             for l in data_dict.get('line_ids', []):
                 if not l.get('reconcile_move_id', False):
                     continue
-                # If reconcile_move_id not found, try reconcile_move_line_id
+                # If reconcile_move_id not found, try reconcile_move_line_ref
                 vals = Move.name_search(l['reconcile_move_id'], operator='=')
                 if len(vals) != 1:
                     # Auto reassign to reconcile_move_line_id
-                    l['reconcile_move_line_id'] = l['reconcile_move_id']
+                    l['reconcile_move_line_ref'] = l['reconcile_move_id']
                     del l['reconcile_move_id']
             # -
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
@@ -726,11 +740,8 @@ class InterfaceAccountEntryLine(models.Model):
         "('partner_id', '=', partner_id)]",
         copy=False,
     )
-    reconcile_move_line_id = fields.Many2one(
-        'account.move.line',
-        string='Reconcile Item',
-        domain="[('state','=','valid'),"
-        "('partner_id', '=', partner_id)]",
+    reconcile_move_line_ref = fields.Char(
+        string='Reconcile Item Ref.',
         copy=False,
         help="For case migration only, allow direct select account.move.line",
     )
@@ -748,24 +759,42 @@ class InterfaceAccountEntryLine(models.Model):
         'cost.control',
         string='Job Order',
     )
+    # Moved from header
+    contract_number = fields.Char(
+        string='Contract Number',
+        size=500,
+    )
+    contract_date_start = fields.Date(
+        string='Contract Start Date',
+    )
+    contract_date_end = fields.Date(
+        string='Contract Start End',
+    )
+    # --
+    ref = fields.Char(
+        string='Reference',
+        size=500,
+    )
 
     @api.multi
-    @api.depends('reconcile_move_id', 'reconcile_move_line_id')
+    @api.depends('reconcile_move_id', 'reconcile_move_line_ref')
     def _compute_reconcile_move_line_ids(self):
         AccountMoveLine = self.env['account.move.line']
         for rec in self:
-            if not rec.reconcile_move_id:
+            if not rec.reconcile_move_id and not rec.reconcile_move_line_ref:
                 continue
-            move_lines = AccountMoveLine.search(
-                [('state', '=', 'valid'),
-                 ('account_id.type', 'in', ['payable', 'receivable']),
-                 ('reconcile_id', '=', False),
-                 '|', ('move_id', '=', rec.reconcile_move_id.id),
-                 ('id', '=', rec.reconcile_move_line_id.id)])
+            dom = [('state', '=', 'valid'),
+                   ('account_id.type', 'in', ['payable', 'receivable']),
+                   ('reconcile_id', '=', False)]
+            if rec.reconcile_move_id:
+                dom.append(('move_id', '=', rec.reconcile_move_id.id))
+            elif rec.reconcile_move_line_ref:
+                dom.append(('ref', '=', rec.reconcile_move_line_ref))
+            move_lines = AccountMoveLine.search(dom)
             if not move_lines:
                 raise ValidationError(
                     _('No valid reconcilable move line for %s') %
-                    rec.reconcile_move_id.name)
+                    rec.reconcile_move_id.name or rec.reconcile_move_line_ref)
             rec.reconcile_move_line_ids = move_lines
         return True
 
@@ -808,20 +837,23 @@ class InterfaceAccountChecker(models.AbstractModel):
                 raise ValidationError(_('Tax Base should not be zero!'))
             # Sales, tax must be in credit and debit for refund
             # Purchase, tax must be in debit and redit for refund
-            invalid = False
-            if journal_type in SALE_JOURNAL:
-                if journal_type != 'sale_refund':
-                    invalid = line.debit > 0
-                else:
-                    invalid = line.credit > 0
-            if journal_type in PURCHASE_JOURNAL:
-                if journal_type != 'purchase_refund':
-                    invalid = line.credit > 0
-                else:
-                    invalid = line.debit > 0
-            if invalid:
-                raise ValidationError(
-                    _('Tax in wrong side of dr/cr as refer to journal type!'))
+
+            # kittiu: removed by NSTDA request
+            # invalid = False
+            # if journal_type in SALE_JOURNAL:
+            #     if journal_type != 'sale_refund':
+            #         invalid = line.debit > 0
+            #     else:
+            #         invalid = line.credit > 0
+            # if journal_type in PURCHASE_JOURNAL:
+            #     if journal_type != 'purchase_refund':
+            #         invalid = line.credit > 0
+            #     else:
+            #         invalid = line.debit > 0
+            # if invalid:
+            #     raise ValidationError(
+            #        _('Tax in wrong side of dr/cr as refer to journal type!'))
+            # --
 
     @api.model
     def _check_line_normal(self, inf):
@@ -935,7 +967,7 @@ class InterfaceAccountChecker(models.AbstractModel):
         # For non THB, must have amount_currency
         lines = inf.line_ids.filtered(
             lambda l: l.currency_id and
-            l.currency_id.id != inf.company_id.currency_id)
+            l.currency_id != inf.company_id.currency_id)
         for l in lines:
             if (l.debit or l.credit) and not l.amount_currency:
                 raise ValidationError(
@@ -945,14 +977,14 @@ class InterfaceAccountChecker(models.AbstractModel):
     def _check_select_reconcile_with(self, inf):
         # Either reconcile_move_id or reconcile_move_line_id can be selected
         lines = inf.line_ids.filtered(
-            lambda l: l.reconcile_move_id and l.reconcile_move_line_ids)
+            lambda l: l.reconcile_move_id and l.reconcile_move_line_ref)
         messages = []
         for l in lines:
             messages.append('%s-%s' % (l.sequence, l.name))
         if messages:
-            raise ValidationError(
-                _('Reconcile Entry and Reconcile Item can not coexists!\n%s') %
-                ', '.join(messages))
+            raise ValidationError(_('Reconcile Entry and Reconcile Item Ref.'
+                                    'can not coexists!\n%s') %
+                                  ', '.join(messages))
 
     @api.model
     def _check_balance_entry(self, inf):

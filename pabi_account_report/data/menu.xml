@@ -21,5 +21,10 @@
             name="General Ledger"
             parent="menu_pabi_account_report"
             sequence="30"/>
+
+        <menuitem id="menu_account_asset_report"
+            name="Reports"
+            parent="pabi_asset_management.menu_asset_main"
+            sequence="80"/>
     </data>
 </openerp>

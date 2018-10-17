@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-import logging
 import logging
 from openerp import models, api, _
-# from openerp.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -50,6 +49,8 @@ class SalesOrder(models.Model):
                                                                  data_dict)
             pos = self.browse(res['result']['id'])
             pos.post_process_pos_order()
+            # auto confirm oder, with async process
+            pos.with_context(pos_async_process=True).action_button_confirm()
             # return more data
             res['result']['name'] = pos.name
         except Exception, e:
@@ -74,23 +75,28 @@ class ProductProduct(models.Model):
         return res
 
     @api.model
-    def _get_product_count_by_loc(self, location_id, product_ids=None):
-        if product_ids is None:
-            product_ids = []
+    def _get_product_count_by_loc(self, location_id, product_names=None):
+        if product_names is None:
+            product_names = []
         """ return dict of product count by location,
         i.e., [{'product_id': 5378, 'product_qty': -24.0}, {'...'}] """
-        domain = ' location_id = %s'
-        args = (location_id, )
-        if product_ids:
-            domain += ' and product_id in %s'
-            args += (tuple(product_ids),)
-
-        self._cr.execute("""
-           SELECT product_id, sum(qty) as product_qty
-           FROM stock_quant WHERE""" + domain + """
-           GROUP BY product_id
-        """, args)
-
+        if product_names:
+            product_ids = self.search(['|',
+                                       ('default_code', 'in', product_names),
+                                       ('name', 'in', product_names)]).ids
+            if not product_ids:
+                product_ids = [0]  # No product found
+            self._cr.execute("""
+               SELECT product_id, sum(qty) as product_qty
+               FROM stock_quant WHERE location_id = %s and product_id in %s
+               GROUP BY product_id
+            """, (location_id, tuple(product_ids)))
+        else:
+            self._cr.execute("""
+               SELECT product_id, sum(qty) as product_qty
+               FROM stock_quant WHERE location_id = %s
+               GROUP BY product_id
+            """, (location_id, ))
         vals = self._cr.dictfetchall()
         # Add list_price and uom
         product_ids = [x['product_id'] for x in vals]
@@ -116,8 +122,6 @@ class ProductProduct(models.Model):
                      (pos_name, product_names))
         # Always use th_TH
         self = self.with_context(lang='th_TH')
-        if product_names is None:
-            product_names = []
         WorkflowProcess = self.env['sale.workflow.process']
         pos = WorkflowProcess.search([('name', '=', pos_name)], limit=1)
         warehouse = pos.warehouse_id
@@ -129,16 +133,37 @@ class ProductProduct(models.Model):
                 'messages': _('No location found for POS %s') % pos_name,
             }
             return res
-        product_ids = self.search(['|',
-                                   ('default_code', 'in', product_names),
-                                   ('name', 'in', product_names)]).ids
-        result = self._get_product_count_by_loc(location_id, product_ids)
+        result = self._get_product_count_by_loc(location_id, product_names)
         res = {
             'is_success': True,
             'result': result,
             'messages': _('List of products on warehouse: %s') % warehouse.name
         }
         _logger.info('get_pos_product_count() - output: %s' % res)
+        return res
+
+    @api.model
+    def get_location_product_count(self, location_name, product_names=None):
+        _logger.info('get_location_product_count() - input: [%s, %s]' %
+                     (location_name, product_names))
+        # Always use th_TH
+        self = self.with_context(lang='th_TH')
+        Location = self.env['stock.location']
+        location = Location.search([('name', '=', location_name)])
+        if len(location) != 1:
+            res = {
+                'is_success': False,
+                'result': False,
+                'messages': _('No unique location name %s') % location_name,
+            }
+            return res
+        result = self._get_product_count_by_loc(location.id, product_names)
+        res = {
+            'is_success': True,
+            'result': result,
+            'messages': _('List of products on location: %s') % location.name
+        }
+        _logger.info('get_location_product_count() - output: %s' % res)
         return res
 
 

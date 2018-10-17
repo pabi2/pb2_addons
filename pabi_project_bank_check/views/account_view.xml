@@ -14,5 +14,17 @@
             </field>
         </record>
 
+        <record id="view_account_journal_tree" model="ir.ui.view">
+            <field name="name">account.journal.tree</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <field name="project_ids"/>
+                    <field name="bank_mandate_emp_ids"/>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </openerp>

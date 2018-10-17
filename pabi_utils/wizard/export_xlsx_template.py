@@ -110,6 +110,8 @@ def fill_cell_format(field, field_format):
         'number_format': {
             'number': '#,##0.00',
             'date': 'dd/mm/yyyy',
+            'datestamp': 'yyyy-mm-dd',
+            'text': '@',
             'percent': '0.00%',
         },
     }
@@ -129,6 +131,8 @@ def fill_cell_format(field, field_format):
         if key == 'align':
             field.alignment = cell_format
         if key == 'number_format':
+            if value == 'text':
+                field.value = str(field.value)
             field.number_format = cell_format
 
 
@@ -238,14 +242,15 @@ def isdatetime(input):
 
 def str_to_number(input):
     if isinstance(input, basestring):
-        if isdatetime(input):
-            return parse(input)
-        elif isinteger(input):
-            if not (len(input) > 1 and input[:1] == '0'):
-                return int(input)
-        elif isfloat(input):
-            if not (input.find(".") > 2 and input[:1] == '0'):  # i..e, 00.123
-                return float(input)
+        if ' ' not in input:
+            if isdatetime(input):
+                return parse(input)
+            elif isinteger(input):
+                if not (len(input) > 1 and input[:1] == '0'):
+                    return int(input)
+            elif isfloat(input):
+                if not (input.find(".") > 2 and input[:1] == '0'):  # 00.123
+                    return float(input)
     return input
 
 
@@ -259,17 +264,25 @@ def load_workbook_range(range_string, ws):
                         columns=get_column_interval(col_start, col_end))
 
 
-def csv_from_excel(excel_content):
+def csv_from_excel(excel_content, delimiter, quote):
     decoded_data = base64.decodestring(excel_content)
     wb = xlrd.open_workbook(file_contents=decoded_data)
     sh = wb.sheet_by_index(0)
     content = cStringIO.StringIO()
-    wr = csv.writer(content, quoting=csv.QUOTE_ALL)
+    quoting = csv.QUOTE_ALL
+    if not quote:
+        quoting = csv.QUOTE_NONE
+    wr = csv.writer(content, delimiter=delimiter, quoting=quoting)
     for rownum in xrange(sh.nrows):
         row_vals = map(lambda x: isinstance(x, basestring) and
                        x.encode('utf-8') or x,
                        sh.row_values(rownum))
-        wr.writerow(row_vals)
+        row = []
+        for x in row_vals:
+            if isinstance(x, basestring):
+                x = x.strip()
+            row.append(x)
+        wr.writerow(row)
     # content.close()  # Set index to 0, and start reading
     content.seek(0)  # Set index to 0, and start reading
     out_file = base64.encodestring(content.read())
@@ -719,7 +732,9 @@ class ExportXlsxTemplate(models.TransientModel):
                         st.cell(row=r_idx, column=c_idx, value=value)
 
     @api.model
-    def _export_template(self, template, res_model, res_id, to_csv=False):
+    def _export_template(self, template, res_model, res_id,
+                         to_csv=False, csv_delimiter=',',
+                         csv_extension='csv', csv_quote=True):
         data_dict = literal_eval(template.description.strip())
         export_dict = data_dict.get('__EXPORT__', False)
         out_name = template.name
@@ -760,8 +775,9 @@ class ExportXlsxTemplate(models.TransientModel):
         out_ext = 'xlsx'
         # CSV (convert only 1st sheet)
         if to_csv:
-            out_file = csv_from_excel(out_file)
-            out_ext = 'csv'
+            delimiter = csv_delimiter.encode("utf-8")
+            out_file = csv_from_excel(out_file, delimiter, csv_quote)
+            out_ext = csv_extension
         return (out_file, '%s.%s' % (out_name, out_ext))
 
     @api.multi
