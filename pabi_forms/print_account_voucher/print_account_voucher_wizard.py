@@ -111,9 +111,9 @@ class PrintAccountVoucherWizard(models.TransientModel):
         if len(doctypes) > 1:
             raise ValidationError(
                 _('Not allow selecting document with > 1 Doctypes'))
-        if doctypes[0] == 'payment':
-            raise ValidationError(
-                _('Print receipt is not available for supplier payment'))
+        # if doctypes[0] == 'payment':
+        #     raise ValidationError(
+        #         _('Print receipt is not available for supplier payment'))
         return doctypes[0]
 
     @api.multi
