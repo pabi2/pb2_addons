@@ -128,12 +128,12 @@ class XLSXReportPabiStockBalanceResults(models.Model):
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
-            with uitstock as (
+with uitstock as (
             select t.name product,
             sum(product_qty) sumout,
             COALESCE(
             (
-	    select value_float from ir_property where res_id = concat('product.template,',m.product_id) order by id desc limit 1  
+	    select value_float from ir_property where res_id = concat('product.template,',t.id) and type='float' order by id desc limit 1  
             ) * sum(product_qty)
             ,0.0) as priceout,
             m.product_id,
@@ -157,13 +157,13 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             where m.state like 'done' 
             and m.location_id in (select id from stock_location where operating_unit_id > 0) 
             and m.location_dest_id not in (select id from stock_location where operating_unit_id > 0) 
-            group by product_id,product_uom, t.name, m.location_id, sl.name, p.default_code, puom.name, rc.name, ou.name order by t.name asc ) ,
+            group by t.id,product_id,product_uom, t.name, m.location_id, sl.name, p.default_code, puom.name, rc.name, ou.name order by t.name asc ) ,
             instock as ( 
             select 
             COALESCE((select price_unit from purchase_order_line where product_id = m.product_id order by id desc limit 1), 00) purchaseprice,
             COALESCE(
             (
-	    select value_float from ir_property where res_id = concat('product.template,',m.product_id) order by id desc limit 1  
+	    select value_float from ir_property where res_id = concat('product.template,',t.id) and type = 'float' order by id desc limit 1  
             ) * sum(product_qty)
             ,0.0) as pricein,
             t.name product, 
@@ -186,7 +186,7 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             where m.state like 'done' and m.location_id not in (
             select id from stock_location where operating_unit_id > 0) 
             and m.location_dest_id in (select id from stock_location where operating_unit_id > 0) 
-            group by product_id,product_uom, t.name, location_dest_id, sl.name, p.default_code, puom.name,rc.name, ou.name order by t.name asc) 
+            group by t.id,product_id,product_uom, t.name, location_dest_id, sl.name, p.default_code, puom.name,rc.name, ou.name order by t.name asc) 
             
             select
             row_number() over (order by i.product) as id,
@@ -198,8 +198,7 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             coalesce(i.loc_name,u.loc_name) as location_name,
             coalesce(i.ou_name,u.ou_name) as ou_name,
             sumin-coalesce(sumout,0) AS balance, 
-            pricein-coalesce(priceout,0) AS price, 
-            --((sumin-coalesce(sumout,0)) * purchaseprice) as price,
+            pricein-coalesce(priceout,0) AS price,
             coalesce(i.uom_name,u.uom_name) as uom,
             coalesce(i.currency,u.currency) as currency
             from uitstock u 
