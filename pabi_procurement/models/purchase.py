@@ -272,13 +272,16 @@ class PurchaseOrder(models.Model):
             ref_requests = Request.search(
                 [('request_ref_id', 'in', list_request)]
             )
+            if not ref_requests:
+                continue
             for ref_req in ref_requests:
                 for ref_req_line in ref_req.line_ids:
                     if ref_req_line.name in list_product:
                         subtotal_value += ref_req_line.price_subtotal
-            if float_compare(subtotal_value,
-                             po_line.product_qty * po_line.price_unit,
-                             2) == -1:
+            # When order amount > pr amount, do not allow.
+            if float_compare(po_line.product_qty * po_line.price_unit,
+                             subtotal_value,
+                             2) == 1:
                 raise ValidationError(
                     _("Some order line's price is over than request's price")
                 )
