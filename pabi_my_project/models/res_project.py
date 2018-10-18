@@ -511,7 +511,9 @@ class ResProject(LogCommon, models.Model):
             planned_amount = sum([x.planned_amount for x in budget_plans])
             if released_amount > planned_amount:
                 raise ValidationError(
-                    _('Releasing budget > planned!'))
+                    _('Releasing budget (%s) > planned (%s)!' %
+                      ('{:,.2f}'.format(released_amount),
+                       '{:,.2f}'.format(planned_amount))))
             budget_plans.write({'released_amount': 0.0})  # Set zero
             remaining = released_amount
             update_vals = []
