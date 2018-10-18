@@ -15,6 +15,7 @@ class XLSXReportPabiStockBalance(models.TransientModel):
     location_id = fields.Many2one(
         'stock.location',
         string='Location',
+        required=True,
     )
     product_ids = fields.Many2many(
         'product.product',
@@ -67,6 +68,10 @@ class XLSXReportPabiStockBalance(models.TransientModel):
             ('loc_id', '=', self.location_id.id),
             ('loc_dest_id', '=', self.location_id.id),
         ]
+        if self.org_ids:
+            dom += [('org_id', 'in', self.org_ids._ids)]
+        if self.product_ids:
+            dom += [('product_id', '=', self.product_ids._ids)]
         # if self.date_to:
         #     dom = [
         #         ('date_transfer', '>=', self.date_start),
