@@ -7,6 +7,7 @@ from openerp.exceptions import ValidationError
 from openerp.addons.document_status_history.models.document_history import \
     LogCommon
 from openerp.addons.pabi_base.models.res_common import ResCommon
+from openerp.tools.float_utils import float_compare
 
 
 MY_PROJECT_STATES = [('draft', 'Draft'),
@@ -509,7 +510,7 @@ class ResProject(LogCommon, models.Model):
                 raise ValidationError(
                     _('Not allow to release budget for project without plan!'))
             planned_amount = sum([x.planned_amount for x in budget_plans])
-            if released_amount > planned_amount:
+            if float_compare(released_amount, planned_amount, 2) == 1:
                 raise ValidationError(
                     _('Releasing budget (%s) > planned (%s)!' %
                       ('{:,.2f}'.format(released_amount),
