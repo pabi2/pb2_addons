@@ -5,6 +5,7 @@ from openerp.exceptions import ValidationError
 import openerp.addons.decimal_precision as dp
 import datetime
 from dateutil.relativedelta import relativedelta
+from openerp.tools.float_utils import float_compare
 
 
 class CreatePurchaseWorkAcceptance(models.TransientModel):
@@ -130,7 +131,8 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             ('order_id', '=', order.id),
         ])
         for order_line in order_lines:
-            if order_line.invoiced_qty >= order_line.product_qty:
+            if float_compare(order_line.invoiced_qty,
+                             order_line.product_qty, 2) >= 0:
                 completed_line += 1
         if completed_line == len(order_lines) and \
                 order.invoice_method == 'picking':

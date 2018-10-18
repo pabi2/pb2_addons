@@ -4,7 +4,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
-from openerp.tools import float_compare
+from openerp.tools.float_utils import float_compare
 from openerp.addons.pabi_chartfield.models.chartfield import HeaderTaxBranch
 from openerp.tools.float_utils import float_round as round
 

@@ -5,6 +5,7 @@ from openerp.exceptions import ValidationError
 import openerp.addons.decimal_precision as dp
 from openerp import tools
 import ast
+from openerp.tools.float_utils import float_compare
 
 
 class HRExpenseExpense(models.Model):
@@ -166,7 +167,8 @@ class HRExpenseExpense(models.Model):
         advance_expense = expense.advance_expense_id
         if advance_expense.invoice_id.invoice_line:
             amount_advance = expense.amount
-            if amount_advance > advance_expense.amount_to_clearing:
+            if float_compare(amount_advance,
+                             advance_expense.amount_to_clearing, 2) == 1:
                 amount_advance = advance_expense.amount_to_clearing
             advance_line = advance_expense.invoice_id.invoice_line[0]
             advance_line.copy({'invoice_id': invoice.id,
@@ -195,7 +197,7 @@ class HRExpenseExpense(models.Model):
                 max_clear_amount = advance_expense.amount_advanced - \
                     sum(cleared_ids.mapped('clearing_amount'))
                 amount_advance = expense.amount
-                if amount_advance > max_clear_amount:
+                if float_compare(amount_advance, max_clear_amount, 2) == 1:
                     amount_advance = max_clear_amount
                 line.update({'account_id': advance_account_id,
                              'invoice_id': invoice.id,

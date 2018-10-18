@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
-from openerp.tools import float_compare
+from openerp.tools.float_utils import float_compare
 from openerp.osv.orm import browse_record_list, browse_record, browse_null
 
 
@@ -245,7 +245,8 @@ class PurchaseOrder(models.Model):
                 po_total_payment += rfq.amount_total
             over_rate = (self.requisition_id.amount_total * 10) / 100
             cfb_total_amount = self.requisition_id.amount_total + over_rate
-            if po_total_payment + self.amount_total > cfb_total_amount:
+            if float_compare(po_total_payment + self.amount_total,
+                             cfb_total_amount, 2) == 1:
                 raise ValidationError(
                     _("""Can't evaluate this acceptance.
                          This RfQ total amount is over
@@ -269,13 +270,15 @@ class PurchaseOrder(models.Model):
                 if req_line.request_id.id not in list_request:
                     list_request.append(req_line.request_id.id)
             ref_requests = Request.search(
-                [('request_ref_id', 'in',list_request)]
+                [('request_ref_id', 'in', list_request)]
             )
             for ref_req in ref_requests:
                 for ref_req_line in ref_req.line_ids:
                     if ref_req_line.name in list_product:
                         subtotal_value += ref_req_line.price_subtotal
-            if subtotal_value < po_line.product_qty * po_line.price_unit:
+            if float_compare(subtotal_value,
+                             po_line.product_qty * po_line.price_unit,
+                             2) == -1:
                 raise ValidationError(
                     _("Some order line's price is over than request's price")
                 )

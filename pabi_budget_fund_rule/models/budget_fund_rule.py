@@ -2,6 +2,7 @@
 from openerp import models, fields, api, _
 from openerp.tools import float_round as round
 from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_compare
 
 
 class BudgetFundExpenseGroup(models.Model):
@@ -371,7 +372,7 @@ class BudgetFundRule(models.Model):
         future_amount = amount == 0.0 and rule_line.amount_consumed or \
             rule_line.amount_consumed + amount
         spending_percent = 100.0 * future_amount / rule_line.amount
-        if spending_percent > max_percent:
+        if float_compare(spending_percent, max_percent, 2) == 1:
             res['budget_ok'] = False
             res['message'] = _('Amount exceeded maximum spending '
                                'for Expense Group %s!\n'
@@ -436,7 +437,7 @@ class BudgetFundRule(models.Model):
             res['message'] = _(
                 'Selected asset: %s is from unconfirmed fund rule!')
             return res
-        elif amount > asset_rule.amount_total:
+        elif float_compare(amount, asset_rule.amount_total, 2) == 1:
             res['budget_ok'] = False
             res['message'] = _(
                 "%s's price (%s) exceed its maximum amount (%s)") % \
@@ -526,7 +527,8 @@ class BudgetFundRuleLine(models.Model):
     def write(self, vals):
         if 'amount' in vals:
             for rec in self:
-                if rec.amount_consumed > vals.get('amount'):
+                if float_compare(rec.amount_consumed,
+                                 vals.get('amount'), 2) == 1:
                     raise ValidationError(
                         _('Amount must not less than consumed amount!'))
         # Track changes

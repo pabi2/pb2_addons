@@ -4,7 +4,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import except_orm
 from openerp.tools.float_utils import float_round as round
 from openerp import workflow
-from openerp.tools import float_compare
+from openerp.tools.float_utils import float_compare
 import time
 import logging
 

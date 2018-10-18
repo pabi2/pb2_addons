@@ -519,7 +519,8 @@ class ResProject(LogCommon, models.Model):
             remaining = released_amount
             update_vals = []
             for budget_plan in budget_plans:
-                if remaining > budget_plan.planned_amount:
+                if float_compare(remaining,
+                                 budget_plan.planned_amount, 2) == 1:
                     update = {'released_amount': budget_plan.planned_amount}
                     remaining -= budget_plan.planned_amount
                     update_vals.append((1, budget_plan.id, update))

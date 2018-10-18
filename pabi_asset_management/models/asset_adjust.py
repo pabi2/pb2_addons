@@ -8,7 +8,7 @@ from openerp.addons.pabi_chartfield_merged.models.chartfield \
 from openerp.addons.pabi_chartfield.models.chartfield \
     import ChartFieldAction
 from openerp.exceptions import ValidationError
-from openerp.tools import float_compare
+from openerp.tools.float_utils import float_compare
 
 
 class AccountAssetAdjust(models.Model):

@@ -2,6 +2,7 @@
 import logging
 from openerp import models, api, _
 from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_compare
 
 _logger = logging.getLogger(__name__)
 
@@ -199,7 +200,7 @@ class ResProjectBudgetPlan(models.Model):
     def release_budget(self, plan_id, amount):
         """ Helper function for webservice call """
         budget_line = self.search([('id', '=', plan_id)])
-        if amount > budget_line.planned_amount:
+        if float_compare(amount, budget_line.planned_amount, 2) == 1:
             raise ValidationError(
                 _('Release amount exceed planned amount!'))
         budget_line.write({'released_amount': amount})

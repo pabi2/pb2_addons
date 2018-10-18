@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import psycopg2
 import time
 from datetime import datetime
 from openerp import models, fields, api, _
@@ -7,6 +6,7 @@ from openerp.exceptions import ValidationError
 import openerp.addons.decimal_precision as dp
 from .res_partner import INCOME_TAX_FORM
 from .account_wht_cert import WHT_CERT_INCOME_TYPE, TAX_PAYER
+from openerp.tools.float_utils import float_compare
 
 
 class CommonVoucher(object):
@@ -997,7 +997,8 @@ class AccountVoucherTax(CommonVoucher, models.Model):
                 base = invoice_cur.compute((revised_price * line.quantity),
                                            company_currency)
                 t = tax_obj.browse(val['tax_id'])
-                if abs(base) and abs(base) < t.threshold_wht:
+                if abs(base) and \
+                        float_compare(abs(base), t.threshold_wht, 2) == -1:
                     continue
                 # For WHT, change sign.
                 val['base'] = -val['base']

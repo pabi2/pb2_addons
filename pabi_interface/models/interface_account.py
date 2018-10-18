@@ -3,7 +3,7 @@ import logging
 from openerp import fields, models, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
-from openerp.tools import float_compare
+from openerp.tools.float_utils import float_compare
 
 SALE_JOURNAL = ['sale', 'sale_refund', 'sale_debitnote']
 PURCHASE_JOURNAL = ['purchase', 'purchase_refund', 'purchase_debitnote']

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
+from openerp.tools.float_utils import float_compare
 
 
 class AccountInvoice(models.Model):
@@ -21,7 +22,7 @@ class AccountInvoice(models.Model):
                 if invoices:
                     total_amount = sum([x.amount_total for x in invoices
                                         if x.state == 'paid'])
-                    if total_amount == expense.amount:
+                    if float_compare(total_amount, expense.amount, 2) == 0:
                         expense.signal_workflow('paid')
                     else:
                         if expense.is_advance_clearing\

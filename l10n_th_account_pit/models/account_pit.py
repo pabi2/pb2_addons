@@ -2,7 +2,7 @@
 import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
-from openerp.tools import float_compare
+from openerp.tools.float_utils import float_compare
 from openerp.addons.l10n_th_account.models.account_voucher \
     import WHT_CERT_INCOME_TYPE
 

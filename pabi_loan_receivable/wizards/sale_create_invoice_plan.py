@@ -3,6 +3,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import api, models
+from openerp.tools.float_utils import float_compare
 
 
 class sale_create_invoice_plan(models.TransientModel):
@@ -35,7 +36,8 @@ class sale_create_invoice_plan(models.TransientModel):
             next_date = first_date + relativedelta(months=i)
             install.date_invoice = next_date.strftime('%Y-%m-%d')
             remain_amount = self.order_amount - accum_amount
-            if i == num_install or remain_amount < avg_amount:  # Final round
+            if i == num_install or \
+                    float_compare(remain_amount, avg_amount, 2) == -1:  # Final
                 install.amount = remain_amount
                 install.percent = 100.0 - accum_percent
             else:

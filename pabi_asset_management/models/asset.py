@@ -4,6 +4,7 @@ from openerp import tools
 from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield \
     import ChartFieldAction
+from openerp.tools.float_utils import float_compare
 
 # Map state vs status
 # 'draft': ['cancel'],
@@ -659,7 +660,7 @@ class AccountAsset(ChartFieldAction, models.Model):
                 })
                 debit = sum(asset_lines.mapped('debit'))
                 credit = sum(asset_lines.mapped('credit'))
-                if debit > credit:
+                if float_compare(debit, credit, 2) == 1:
                     asset_line_dict['credit'] = debit - credit
                     asset_line_dict['debit'] = False
                 else:
@@ -684,7 +685,7 @@ class AccountAsset(ChartFieldAction, models.Model):
                 })
                 debit = sum(depre_lines.mapped('debit'))
                 credit = sum(depre_lines.mapped('credit'))
-                if debit > credit:
+                if float_compare(debit, credit, 2) == 1:
                     asset_line_dict['credit'] = debit - credit
                     asset_line_dict['debit'] = False
                 else:

@@ -4,7 +4,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from .budget_plan_common import BPCommon, BPLMonthCommon
 # , PrevFYCommon
-from openerp.tools import float_compare
+from openerp.tools.float_utils import float_compare
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 
