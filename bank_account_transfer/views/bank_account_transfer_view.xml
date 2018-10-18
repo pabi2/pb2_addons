@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <openerp>
+    <data>
+      <record id="view_bank_account_transfer_form" model="ir.ui.view">
+        <field name="name">view.bank.account.transfer.form</field>
+        <field name="model">bank.account.transfer</field>
+        <field name="arch" type="xml">
+          <form string="Bank Account Transfer">
+            <header>
+                <button name="action_bank_transfer" states="draft" string="Transfer" type="object" class="oe_highlight"/>
+                <button name="action_cancel" states="draft" string="Cancel" type="object"/>
+                <button name="action_draft" states="cancel" string="Set to Draft" type="object"/>
+                <field name="state" widget="statusbar" statusbar_visible="draft,done,cancel"/>
+            </header>
+            <sheet>
+                <h1>
+                    <label string="Bank Account Transfer"/>
+                    <field name="name" class="oe_inline"/>
+                </h1>
+                <group>
+                    <group name="left">
+                        <field name="date"/>
+                        <field name="from_account_id" string="From Account"/>
+                        <field name="to_account_id" string="To Account"/>
+                        <field name="fee_account_id" string="Fee Account"/>
+                    </group>
+                    <group name ="right">
+                        <field name="journal_id"/>
+                        <field name="currency_id" groups="base.group_multi_currency"/>
+                        <field name="move_id"/>
+                        <field name="deduct_account_id" domain="[('id', 'in', [from_account_id, to_account_id])]"/>
+                    </group>
+                </group>
+                <notebook>
+                  <page name="transfer" string="Transfers">
+                    <field name="transfer_line_ids" nolabel="1">
+                        <tree string="Transfer Lines" editable="bottom">
+                            <field name="date_transfer"/>
+                            <field name="transfer_amount" sum="Total transfer"/>
+                            <field name="fee" sum="Total fee"/>
+                        </tree>
+                    </field>
+                    <group class="oe_subtotal_footer oe_right">
+                        <field name="amount_transfer" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <div>
+                            <label for="amount_fee"/>
+                        </div>
+                        <field name="amount_fee" nolabel="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    </group>
+                    <div class="oe_clear">
+                        <label for="note"/>
+                    </div>
+                    <field name="note" class="oe_inline" placeholder="note"/>
+                  </page>
+                  <page string="Journal Items" attrs="{'invisible': [('state','in', ['draft','cancel'])]}">
+                      <field name="move_ids" readonly="1">
+                          <tree string="Journal Items">
+                              <field name="move_id"/>
+                              <field name="ref"/>
+                              <field name="date"/>
+                              <field name="partner_id"/>
+                              <field name="account_id"/>
+                              <field name="name"/>
+                              <field name="debit" sum="Total Debit"/>
+                              <field name="credit" sum="Total Credit"/>
+                              <field name="state"/>
+                              <field name="amount_currency" groups="base.group_multi_currency" invisible="True"/>
+                              <field name="currency_id" groups="base.group_multi_currency" invisible="True"/>
+                          </tree>
+                      </field>
+                  </page>
+                </notebook>
+            </sheet>
+          </form>
+        </field>
+      </record>
+
+      <record id="view_bank_account_transfer_tree" model="ir.ui.view">
+          <field name="name">view.bank.account.transfer.tree</field>
+          <field name="model">bank.account.transfer</field>
+          <field name="arch" type="xml">
+              <tree string="Bank Account Transfer" colors="blue:state=='draft';">
+                  <field name="date"/>
+                  <field name="name"/>
+                  <field name="journal_id"/>
+                  <field name="from_account_id" string="From Account"/>
+                  <field name="to_account_id" string="To Account"/>
+                  <field name="state"/>
+              </tree>
+          </field>
+      </record>
+
+      <record id="view_bank_account_transfer_search" model="ir.ui.view">
+          <field name="name">view.bank.account.transfer.search</field>
+          <field name="model">bank.account.transfer</field>
+          <field name="arch" type="xml">
+              <search string="Bank Account Transfer Search">
+                  <field name="name" string="Bank Account Transfer"/>
+                  <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                  <filter name="done" string="Done" domain="[('state', '=', 'done')]"/>
+                  <filter name="cancel" string="Cancel" domain="[('state', '=', 'cancel')]"/>
+              </search>
+          </field>
+      </record>
+
+      <record id="action_bank_account_transfer" model="ir.actions.act_window">
+          <field name="name">Bank Account Transfer</field>
+          <field name="res_model">bank.account.transfer</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+      </record>
+
+      <menuitem id="menu_bank_account_transfer" name="Bank Account Transfer" parent="account.menu_finance_bank_and_cash" action="action_bank_account_transfer" sequence="30"/>
+
+  </data>
+</openerp>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <function model="ir.attachment" name="load_xlsx_template">
+            <value eval="[
+                ref('xlsx_report_bank_account_transfer'),
+            ]"/>
+            <value>bank_account_transfer/xlsx_template</value>
+        </function>
+    </data>
+</openerp>
