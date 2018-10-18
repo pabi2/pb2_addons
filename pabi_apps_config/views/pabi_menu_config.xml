@@ -209,5 +209,8 @@
           id="account_bank_receipt.menu_bank_receipt_tree"
           parent="account.menu_finance_receivables" sequence="20"/>
 
+        # Event Calendar
+        <menuitem name="Calendar" id="calendar.mail_menu_calendar" parent="calendar.menu_calendar_configuration" sequence="10" action="calendar.action_calendar_event"/>
+
     </data>
 </openerp>
