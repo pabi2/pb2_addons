@@ -3,6 +3,7 @@ This method will click release budget of myproject in current year
 """
 import sys
 import os
+import csv
 try:
     myproject_path = os.path.dirname(os.path.realpath(__file__))
     script_path = os.path.dirname(myproject_path)
@@ -30,7 +31,12 @@ logger.info('Start process')
 logger.info('Total project: %s' % len(pjs))
 for pj in pjs:
     try:
-        Project.mork_release_budget([pj['id']])
+        path = '%s/data/my_project_release_budget.csv' % \
+            os.path.realpath(__file__) \
+            .replace('/scripts/myproject/myproject_act_release_budget.py', '')
+        reader = csv.reader(open(path))
+        data = filter(lambda l: l[0] == pj['code'], reader)
+        Project.mork_release_budget([pj['id']], data)
         log_pj_codes[0].append(pj['code'].encode('utf-8'))
         logger.info('Pass: %s' % pj['code'])
     except Exception as ex:
