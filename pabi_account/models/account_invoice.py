@@ -118,9 +118,9 @@ class AccountInvoice(models.Model):
                     break
         return super(AccountInvoice, self).write(vals)
 
-    @api.multi
-    def confirm_paid(self):
-        return super(AccountInvoice, self.sudo()).confirm_paid()
+    # @api.multi
+    # def confirm_paid(self):
+    #     return super(AccountInvoice, self.sudo()).confirm_paid()
 
     @api.multi
     @api.depends('invoice_line.invoice_line_tax_id')
@@ -210,7 +210,8 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def invoice_validate(self):
-        result = super(AccountInvoice, self.sudo()).invoice_validate()
+        # result = super(AccountInvoice, self.sudo()).invoice_validate()
+        result = super(AccountInvoice, self).invoice_validate()
         for invoice in self:
             invoice.write({'validate_user_id': self.env.user.id,
                            'validate_date': fields.Date.today()})
