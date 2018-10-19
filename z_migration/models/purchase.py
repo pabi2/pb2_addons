@@ -90,6 +90,11 @@ class PurchaseOrder(models.Model):
         return True
 
     @api.multi
+    def mork_purchase_done(self):
+        self.write({'state': 'done'})
+        return True
+
+    @api.multi
     def mork_update_create_uid(self):
         """
         Use for update create uid
