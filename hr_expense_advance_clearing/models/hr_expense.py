@@ -99,12 +99,17 @@ class HRExpenseExpense(models.Model):
         return result
 
     @api.multi
-    @api.depends('clearing_expense_ids.invoice_ids.state',
+    @api.depends('state',
+                 'invoice_id.state',
+                 'clearing_expense_ids.invoice_ids.state',
                  'clearing_invoice_ids.state')
     def _compute_amount_to_clearing(self):
         for expense in self:
             amount_advanced = (expense.invoice_id.state in ('open', 'paid') and
                                expense.amount_advanced or 0.0)
+            # Special case for migration, there is not invoice
+            if not expense.invoice_id:
+                amount_advanced = expense.amount_advanced
             clearing_amount = sum([x.clearing_amount
                                    for x in expense.advance_clearing_ids])
             expense.amount_to_clearing = (amount_advanced -
