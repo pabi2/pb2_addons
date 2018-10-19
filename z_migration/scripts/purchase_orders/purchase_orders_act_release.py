@@ -34,6 +34,7 @@ for po in pos:
         # For payment term is cash on delivery only!
         if po['payment_term_id'][1] == 'Cash on Delivery':
             PurchaseOrder.mork_invoice_paid(po['id'])
+            PurchaseOrder.mork_purchase_done([po['id']])
         log_po_names[0].append(po['name'].encode('utf-8'))
         logger.info('Pass: %s' % po['name'])
     except Exception as ex:
