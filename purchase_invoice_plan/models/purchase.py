@@ -160,8 +160,8 @@ class PurchaseOrder(models.Model):
         res = super(PurchaseOrder, self).write(vals)
         for purchase in self:
             purchase._calculate_subtotal(vals)
-        self.env['purchase.invoice.plan']._validate_installment_date(
-            self.invoice_plan_ids)
+            self.env['purchase.invoice.plan']._validate_installment_date(
+                purchase.invoice_plan_ids)
         return res
 
     @api.multi
