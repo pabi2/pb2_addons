@@ -12,6 +12,9 @@ class PurchaseOrder(models.Model):
     interval = fields.Integer(
         string='Interval',
     )
+    order_type = fields.Selection(
+        readonly=False,
+    )
 
     @api.multi
     def mock_trigger_workflow(self, signal):
