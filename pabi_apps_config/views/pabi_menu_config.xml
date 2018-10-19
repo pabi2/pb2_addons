@@ -200,7 +200,7 @@
         # Move Bank Receipt to under Customers
         <menuitem name="Accounting"
             id="account.menu_finance"
-            groups="account.group_account_manager,account.group_account_invoice"
+            groups="account.group_account_manager,account.group_account_user"
             sequence="50"/>
 
         <menuitem id="account.menu_finance_receivables" name="Customers"
