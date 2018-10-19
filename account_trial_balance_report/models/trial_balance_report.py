@@ -51,16 +51,15 @@ class AccountTrailBalanceReport(models.Model):
         if target_move == 'posted':
             domain.append(('move_id.state', '=', 'posted'))
         moves = Move.search(domain)
-        if moves:
-            if with_movement:
-                self._cr.execute("""
-                    select distinct aa.code, aa.id account_id
-                    from account_move_line aml
-                    join account_account aa on aa.id = aml.account_id
-                    and aml.id in %s
-                    order by aa.code
-                """, (tuple(moves.ids), ))
-                acct_ids = map(lambda x: x[1], self._cr.fetchall())
+        if moves and with_movement:
+            self._cr.execute("""
+                select distinct aa.code, aa.id account_id
+                from account_move_line aml
+                join account_account aa on aa.id = aml.account_id
+                and aml.id in %s
+                order by aa.code
+            """, (tuple(moves.ids), ))
+            acct_ids = map(lambda x: x[1], self._cr.fetchall())
             accounts = Account.search([('id', 'in', acct_ids)], order='code')
         else:
             accounts = Account.search([('type', '!=', 'view')], order='code')
