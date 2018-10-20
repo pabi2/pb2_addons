@@ -410,6 +410,12 @@ class PurchaseRequest(models.Model):
         PWInterface.send_pbweb_action_request(self, 'agree_and_done')
         return True
 
+    @api.multi
+    def _get_currency_rate_hook(self):
+        """ HOOK """
+        self.ensure_one()
+        return [self.currency_rate]
+
 
 class PurchaseRequestLine(models.Model):
     _inherit = "purchase.request.line"
@@ -511,10 +517,12 @@ class PurchaseRequestLine(models.Model):
         return res
 
     @api.multi
-    def _prepare_analytic_line(self, reverse=False, currency=False):
+    def _prepare_analytic_line(self, reverse=False, currency=False,
+                               force_currency_rate=[]):
         # For PABI2, we use manual rate
         res = super(PurchaseRequestLine, self).\
-            _prepare_analytic_line(reverse=reverse, currency=currency)
+            _prepare_analytic_line(reverse=reverse, currency=currency,
+                                   force_currency_rate=force_currency_rate)
         sign = res.get('amount', 0.0) < 0 and -1 or 1
         res['amount'] = \
             sign * self.price_subtotal * self.request_id.currency_rate

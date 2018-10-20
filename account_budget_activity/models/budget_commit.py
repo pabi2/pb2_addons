@@ -186,7 +186,9 @@ class CommitLineCommon(object):
         raise ValidationError(_('_price_subtotal not implemented!'))
 
     @api.multi
-    def _prepare_analytic_line(self, reverse=False, currency=False):
+    def _prepare_analytic_line(self, reverse=False, currency=False,
+                               force_currency_rate=[]):
+        """ If force currency rate is specified, use it without quesiton """
         self.ensure_one()
 
         params = self._CLC[self._name]
@@ -238,7 +240,9 @@ class CommitLineCommon(object):
         sign = reverse and -1 or 1
         company_currency = company.currency_id
         currency = currency or company_currency
-
+        amount = currency.compute(sign * price_subtotal, company_currency)
+        if force_currency_rate:
+            sign * price_subtotal * force_currency_rate[0]
         return {
             'name': 'name' in self and self.name or False,
             'product_id': ('product_id' in self and
@@ -246,8 +250,7 @@ class CommitLineCommon(object):
             'account_id': self[analytic_field].id,
             'unit_amount': line_qty,
             'product_uom_id': self[product_uom].id,
-            'amount': currency.compute(sign * price_subtotal,
-                                       company_currency),
+            'amount': amount,
             'general_account_id': general_account.id,
             'journal_id': analytic_journal.id,
             'ref': self[document_field].name,
@@ -260,7 +263,7 @@ class CommitLineCommon(object):
         }
 
     @api.multi
-    def _create_analytic_line(self, reverse=False):
+    def _create_analytic_line(self, reverse=False, force_currency_rate=[]):
         if self._context.get('no_create_analytic_line', False):
             return
 
@@ -273,6 +276,7 @@ class CommitLineCommon(object):
                     rec[document_field].order_type == 'quotation':
                 continue
             vals = rec._prepare_analytic_line(
-                reverse=reverse, currency=rec[document_field].currency_id)
+                reverse=reverse, currency=rec[document_field].currency_id,
+                force_currency_rate=force_currency_rate)
             if vals:
                 self.env['account.analytic.line'].sudo().create(vals)

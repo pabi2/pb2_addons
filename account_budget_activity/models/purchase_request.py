@@ -34,13 +34,22 @@ class PurchaseRequest(CommitCommon, models.Model):
     def write(self, vals):
         # Create analytic when approved by PRWeb and be come To Accept in PR
         if vals.get('state') in ['to_approve']:
-            self.line_ids.filtered(lambda l:
-                                   l.request_state not in ('to_approve',)).\
-                _create_analytic_line(reverse=True)
+            for pr in self:
+                currency_rate = pr._get_currency_rate_hook()
+                pr.line_ids.filtered(
+                    lambda l: l.request_state not in ('to_approve',)).\
+                    _create_analytic_line(reverse=True,
+                                          force_currency_rate=currency_rate)
         # Clear all budget, if any.
         if vals.get('state') in ('draft', 'done', 'rejected'):
             self.release_all_committed_budget()
         return super(PurchaseRequest, self).write(vals)
+
+    @api.multi
+    def _get_currency_rate_hook(self):
+        """ HOOK """
+        self.ensure_one()
+        return []
 
 
 class PurchaseRequestLine(CommitLineCommon, ActivityCommon, models.Model):
