@@ -11,3 +11,4 @@ from . import action_asset_depre_line
 from . import pabi_action_generate_entries
 from . import pabi_action_asset_compute
 from . import action_confirm_pos_order
+from . import action_stock_transfer

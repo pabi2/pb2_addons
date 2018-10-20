@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_picking_form">
+            <field name="name">view.picking.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <h1 position="before">
+                    <h3>
+                        <field name="job_id" attrs="{'invisible': [('job_id', '=', False)]}"/>
+                    </h3>
+                </h1>
+                <field name="origin" position="after">
+                    <field name="async_process"/>
+                    <field name="uuid" attrs="{'invisible': [('job_id', '=', False)]}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
