@@ -469,10 +469,10 @@ class StockMove(models.Model):
             reverse = move.picking_type_id.code == 'outgoing'
             if move.purchase_line_id:
                 BudgetTrans.create_trans_purchase_to_picking(
-                    move.purchase_line_id, moves, reverse=reverse)
+                    move.purchase_line_id, move, reverse=reverse)
             if move.sale_line_id:
                 BudgetTrans.create_trans_sale_to_picking(
-                    move.sale_line_id, moves, reverse=reverse)
+                    move.sale_line_id, move, reverse=reverse)
         # Do Forward immediately
         BudgetTrans.do_forward(self._name, moves)
 
