@@ -66,23 +66,27 @@ class AccountTrailBalanceReport(models.Model):
         return (accounts, moves)
 
     @api.model
-    def _get_init_moves(self, report, moves, account):
+    def _get_init_moves(self, report, account, target_move):
         MoveLine = self.env['account.move.line']
-        init_moves = MoveLine.search(
-            [('account_id', '=', account.id),
-             '|', ('centralisation', '!=', 'normal'),
-             '&', ('centralisation', '=', 'normal'),
-             ('date', '<', report.date_start), ])
+        domain = [('account_id', '=', account.id),
+                  '|', ('centralisation', '!=', 'normal'),
+                  '&', ('centralisation', '=', 'normal'),
+                  ('date', '<', report.date_start), ]
+        if target_move == 'posted':
+            domain += [('move_id.state', '=', 'posted')]
+        init_moves = MoveLine.search(domain)
         return init_moves
 
     @api.model
-    def _get_focus_moves(self, report, moves, account):
+    def _get_focus_moves(self, report, account, target_move):
         MoveLine = self.env['account.move.line']
-        focus_moves = MoveLine.search(
-            [('account_id', '=', account.id),
-             ('centralisation', '=', 'normal'),
-             ('date', '>=', report.date_start),
-             ('date', '<=', report.date_stop), ])
+        domain = [('account_id', '=', account.id),
+                  ('centralisation', '=', 'normal'),
+                  ('date', '>=', report.date_start),
+                  ('date', '<=', report.date_stop), ]
+        if target_move == 'posted':
+            domain += [('move_id.state', '=', 'posted')]
+        focus_moves = MoveLine.search(domain)
         return focus_moves
 
     @api.model
@@ -110,8 +114,8 @@ class AccountTrailBalanceReport(models.Model):
         report_lines = []
 
         for account in accounts:
-            init_moves = self._get_init_moves(report, moves, account)
-            focus_moves = self._get_focus_moves(report, moves, account)
+            init_moves = self._get_init_moves(report, account, target_move)
+            focus_moves = self._get_focus_moves(report, account, target_move)
             initial = 0.0
             debit = 0.0
             credit = 0.0
@@ -212,22 +216,24 @@ class AccountTrailBalanceLine(models.Model):
                                   rpt.target_move, rpt.with_movement)
         move_ids = []
         if move_type == 'debit':
-            moves = TB._get_focus_moves(rpt, moves, self.account_id)
+            moves = TB._get_focus_moves(rpt, self.account_id, rpt.target_move)
             move_ids = MoveLine.search([('id', 'in', moves.ids),
                                         ('debit', '>', 0.0)]).ids
         if move_type == 'credit':
-            moves = TB._get_focus_moves(rpt, moves, self.account_id)
+            moves = TB._get_focus_moves(rpt, self.account_id, rpt.target_move)
             move_ids = MoveLine.search([('id', 'in', moves.ids),
                                         ('credit', '>', 0.0)]).ids
         if move_type == 'balance':
-            moves = TB._get_focus_moves(rpt, moves, self.account_id)
+            moves = TB._get_focus_moves(rpt, self.account_id, rpt.target_move)
             move_ids = moves.ids
         if move_type == 'initial':
-            moves = TB._get_init_moves(rpt, moves, self.account_id)
+            moves = TB._get_init_moves(rpt, self.account_id, rpt.target_move)
             move_ids = moves.ids
         if move_type == 'final_balance':
-            init_moves = TB._get_init_moves(rpt, moves, self.account_id)
-            blance_moves = TB._get_focus_moves(rpt, moves, self.account_id)
+            init_moves = TB._get_init_moves(
+                rpt, self.account_id, rpt.target_move)
+            blance_moves = TB._get_focus_moves(
+                rpt, self.account_id, rpt.target_move)
             move_ids = init_moves.ids + blance_moves.ids
 
         return {
