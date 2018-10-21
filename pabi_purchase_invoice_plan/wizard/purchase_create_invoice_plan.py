@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from collections import OrderedDict
 from dateutil.relativedelta import relativedelta
 from openerp.tools import float_round as round
 from openerp import models, fields, api, _
@@ -176,7 +177,9 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             fiscalyear_dict[f['id']] = f['name']
 
         line_by_fiscalyear = self._get_total_by_fy()
-        line_by_fiscalyear = dict(sorted(line_by_fiscalyear.iteritems()))
+        # line_by_fiscalyear = dict(sorted(line_by_fiscalyear.iteritems()))
+        line_by_fiscalyear = \
+            OrderedDict(sorted(line_by_fiscalyear.iteritems()))
 
         line_of_fy = {}
         count = 0
