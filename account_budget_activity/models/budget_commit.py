@@ -69,7 +69,8 @@ class CommitCommon(object):
     @api.multi
     def action_technical_closed(self):
         for rec in self:
-            rec.release_all_committed_budget()
+            ctx = {'force_release_budget': True}  # Pass for used in COD
+            rec.with_context(ctx).release_all_committed_budget()
             rec.write({'technical_closed': True})
 
 

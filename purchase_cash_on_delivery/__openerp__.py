@@ -24,6 +24,7 @@ user will go to invoice and click Clear Prepayment.
         'purchase',
         'account',
         'account_invoice_action_move_create_hook',
+        'account_budget_activity',
     ],
     'demo': [],
     'data': [

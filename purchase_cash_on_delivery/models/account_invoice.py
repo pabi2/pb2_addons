@@ -102,6 +102,11 @@ class AccountInvoice(models.Model):
                 raise ValidationError(
                     _('Not all items in related order has been shipped!'))
             invoice.action_move_create()
+            # In addition for COD case, do budget transition
+            if invoice.is_prepaid:
+                ctx = {'force_release_budget': True}
+                invoice.purchase_ids.with_context(ctx).\
+                    release_all_committed_budget()
 
     @api.model
     def line_get_convert(self, line, part, date):

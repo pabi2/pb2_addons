@@ -23,7 +23,8 @@
                     <page string="Budgeting">
                         <separator string="Budget Commitment"/>
                         <button name="recreate_all_budget_commitment" string="Recreate budget commitment" type="object" confirm="This will delete all budget commit lines, and regenerate again, are you sure to continue?"/>
-                        <button name="release_all_committed_budget" string="Release all commited budget" type="object" confirm="This operation can not be undone, are you sure to continue?"/>
+                        <button name="release_all_committed_budget" string="Release all commited budget" type="object" confirm="This operation can not be undone, are you sure to continue?"
+                          context="{'force_release_budget': True}"/>
                         <field name="budget_commit_ids">
                             <tree default_order='id'>
                                 <field name="id"/>

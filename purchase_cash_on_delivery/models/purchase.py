@@ -59,3 +59,12 @@ class PurchaseOrder(models.Model):
     def view_picking(self):
         self._validate_purchase_cod_fully_paid()
         return super(PurchaseOrder, self).view_picking()
+
+    @api.multi
+    def release_all_committed_budget(self):
+        """ For case COD, if PO is done (except forcing done), by pass """
+        print self._context
+        for purchase in self:
+            if not purchase.is_prepaid or \
+                    self._context.get('force_release_budget', False):
+                super(PurchaseOrder, purchase).release_all_committed_budget()
