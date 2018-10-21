@@ -1,6 +1,28 @@
 <?xml version="1.0"?>
 <openerp>
 	<data>
+				<record id="report_customer_dunning_letter_qweb" model="ir.actions.report.xml">
+					<field name="string">Customer Dunning Letter (TH)1</field>
+					<field name="auto">True</field>
+					<field name="model">pabi.partner.dunning.letter</field>
+					<field name="name">Customer Dunning Letter (TH)1</field>
+					<field name="report_type">qweb-pdf</field>
+					<field name="report_name">pabi_partner_dunning_report.report_customer_dunning_letter</field>
+					<field name="report_file">pabi_partner_dunning_report.report_customer_dunning_letter</field>
+					<field name="menu">True</field>
+					<field name="header">False</field>
+					<field name="copies">1</field>
+					<field name="download_filename">CustomerDunningLetter.pdf</field>
+					<field name="context">{'lang': 'th_TH'}</field>
+					<field name="paperformat_id" ref="pabi_partner_dunning_report.paperformat_customer_dunning_letter"/>
+				</record>
+
+				<record id="pabi_customer_dunning_letter_values_1" model="ir.values">
+					<field name="name">QWEB Thai</field>
+					<field name="model">pabi.partner.dunning.letter</field>
+					<field name="key2" eval="'client_print_multi'"/>
+					<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_customer_dunning_letter_qweb)"/>
+				</record>
 
 				<!-- Dunning Letter -->
 				<!-- TH -->
