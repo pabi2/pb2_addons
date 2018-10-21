@@ -16,8 +16,8 @@
     'data': [
         # Partner Dunning Report
         'security/ir.model.access.csv',
-        'data/report_data.xml',
         'data/report_paperformat.xml',
+        'data/report_data.xml',
         'report/qweb_report_customer_dunning_letter_template.xml',
         'report/layouts.xml',
         'views/pabi_partner_dunning_report.xml',
