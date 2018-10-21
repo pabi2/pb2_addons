@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- STYLE -->
+        <template id="style">
+            .pabi-header, .pabi-page, .pabi-footer, .pabi-logo {
+                line-height: 30px !important;
+            }
+            .pabi-header, .pabi-page, .pabi-footer {
+                font-size: 24px !important;
+            }
+            .pabi-logo {
+                position: absolute !important;
+                z-index: -1 !important;
+                width: 150px !important;
+                top: 0px !important;
+                right: 0px !important;
+            }
+            .center_report_customer_dunning_letter {
+                text-align: center !important;
+            }
+            .right_report_customer_dunning_letter {
+                text-align: right !important;
+            }
+            .newline_report_customer_dunning_letter {
+                margin-top: 20px !important;
+            }
+            .text_indent_report_customer_dunning_letter {
+                text-indent: 45px !important;
+            }
+            .line_table {
+                border: 1px solid black;
+            }
+            .right_report_customer_dunning_letter {
+                text-align: right;
+                padding-right: 5px;
+            }
+            .margin_left_half {
+                margin-left: 50%;
+            }
+            .line_height {
+                line-height: 1;
+            }
+            table {
+                width: 100%;
+            }
+        </template>
+
+        <!-- LAYOUT -->
+        <template id="layout" inherit_id="report.layout">
+            <xpath expr="//style" position="inside">
+                <t t-call="pabi_partner_dunning_report.style"/>
+            </xpath>
+        </template>
+
+        <!-- HEADER -->
+        <template id="customer_dunning_letter_layout_header">
+            <div class="header pabi-header">
+                <div class="row">
+                    <img src="/pabi_partner_dunning_report/static/src/img/logo_nstda.gif" class="pabi-logo"/>
+                </div>
+            </div>
+        </template>
+
+        <!-- Column Detail -->
+        <template id="customer_dunning_letter_column_detail">
+            <t t-foreach="docs" t-as="o">
+                <div>
+                    <t t-set="number" t-value="o.number"/>
+                    <t t-set="number" t-value="o.number"/>
+                    <t t-set="report_date" t-value="datetime.datetime.strptime(o.date_run, '%Y-%m-%d')"/>
+                    <t t-set="full_report_date" t-value="report_date.strftime('%d/%m/%Y')"/>
+                    <t t-set="subject" t-value="o.subject"/>
+                    <t t-set="amount_total" t-value="o.amount_total"/>
+                    <t t-if="o.letter_type == 'l3'">
+                        <p class="center_report_customer_dunning_letter" style="font-size:28px;">
+                            บันทึกข้อความ
+                        </p>
+                    </t>
+                    <div>ที่ วท 5401/ <t t-esc="number"/></div>
+                    <div class="center_report_customer_dunning_letter" style="margin-top: 20px;">วันที่ <t t-esc='full_report_date'/></div>
+                    <div class="newline_report_customer_dunning_letter"><t t-esc='subject'/></div>
+                    <div class="row newline_report_customer_dunning_letter">
+                        <div class="col-xs-2" style="width:65px;">
+                            <span>เรียน</span>
+                        </div>
+                        <div class="col-xs-7" style="padding-left:0px;">
+                            <t t-if="o.letter_type == 'l1' or o.letter_type == 'l2'">
+                                <t t-if="o.to_whom_title">
+                                    <span><t t-esc="o.to_whom_title"/><br/></span>
+                                </t>
+                                <span><t t-esc="o.partner_id.name"/><br/></span>
+                                <t t-if="o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip">
+                                    <span>
+                                        <t t-esc="' '.join(list(filter(lambda l: l != False, [o.partner_id.street, o.partner_id.street2, o.partner_id.township_id.name, o.partner_id.district_id.name, o.partner_id.province_id.name, o.partner_id.zip])))"/>
+                                    </span>
+                                </t>
+                            </t>
+                            <t t-if="o.letter_type == 'l3'">
+                                <span>ผศจ. ผ่าน ผอ.ฝ่ายบริหารธุรกิจอุทยานวิทยาศาสตร์ประเทศไทย<br/></span>
+                            </t>
+                        </div>
+                    </div>
+                    <t t-if="o.letter_type == 'l1'">
+                        <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
+                            ตามที่ท่านได้รับบริการจากสำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาตินั้น ปรากฏว่า ท่านมียอดหนี้คงค้าง ณ วันที่ <t t-esc='full_report_date'/> เป็นจำนวนเงินทั้งสิ้น <t t-esc="'{0:,.2f}'.format(int(amount_total))"/> บาท ตามรายละเอียดดังนี้
+                        </p>
+                    </t>
+                    <t t-if="o.letter_type == 'l2'">
+                        <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
+                            ตามที่สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ บอกกล่าวแจ้งเตือนให้ท่านชำระหนี้ ให้เสร็จสิ้นภายในกำหนด 7 วัน นับตั้งแต่วันที่ท่าน ได้รับหนังสือแจ้งเตือนขอให้ชำระหนี้ที่ค้างชำระ ครั้งที่ 1 โดยสำนักงานฯสงวนสิทธิ์ในการเรียกให้ท่านชำระค่าปรับจากการชำระล่าช้าตามอัตราที่กำหนด ไว้ในสัญญาด้วยนั้น โดยมีรายละเอียดยอดค้างชำระดังนี้
+                        </p>
+                    </t>
+                    <t t-if="o.letter_type == 'l3'">
+                        <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
+                            ตามที่ <t t-esc="o.partner_id.name"/> มีหนี้คงค้างชําระกับสํานักงานฯ จํานวนเงิน <t t-esc="'{0:,.2f}'.format(int(amount_total))"/> บาท ซึ่งสํานักงานฯ ได้มีหนังสือติดตามหนี้ทวงถามไปยังบริษัทฯ แล้ว 2 ครั้ง ดังปรากฎในเอกสารแนบท้ายนี้ ขณะนี้สํานักงานฯ ยังมิได้รับชําระหนี้แต่อย่างใด โดยมีรายละเอียดดังนี้
+                        </p>
+                    </t>
+                    <table class="center_report_customer_dunning_letter">
+                        <tr style="font-weight:bold;">
+                            <td class="line_table">ใบแจ้งหนี้เลขที่</td>
+                            <td class="line_table">วันที่ใบแจ้งหนี้</td>
+                            <td class="line_table">วันที่ครบกำหนด</td>
+                            <td class="line_table">จำนวนเงิน (บาท)</td>
+                        </tr>
+                        <t t-foreach="o.line_ids" t-as="ids">
+                            <t t-set="date_invoice" t-value="datetime.datetime.strptime(ids.date_invoice, '%Y-%m-%d')"/>
+                            <t t-set="date_due" t-value="datetime.datetime.strptime(ids.date_due, '%Y-%m-%d')"/>
+                            <t t-set="full_date_invoice" t-value="date_invoice.strftime('%d/%m/%Y')"/>
+                            <t t-set="full_date_due" t-value="date_due.strftime('%d/%m/%Y')"/>
+                            <tr>
+                                <td class="line_table"><t t-esc="ids.move_line_id.ref"/></td>
+                                <td class="line_table"><t t-esc="full_date_invoice"/></td>
+                                <td class="line_table"><t t-esc="full_date_due"/></td>
+                                <td class="line_table right_report_customer_dunning_letter"><t t-esc="'{0:,.2f}'.format(int(ids.amount_residual))"/></td>
+                            </tr>
+                        </t>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td class="line_table" style="font-weight:bold;">ยอดรวมทั้งสิ้น</td>
+                            <td class="line_table right_report_customer_dunning_letter"><t t-esc="'{0:,.2f}'.format(int(amount_total))"/></td>
+                        </tr>
+                    </table>
+                    <t t-if="o.letter_type == 'l1'">
+                        <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
+                            ในการนี้ สำนักงานฯ ขอเรียนให้ท่านทราบว่า ยอดค้างชำระดังกล่าวได้ล่วงเลยมาเป็นเวลา พอสมควรแล้ว ซึ่งสำนักงานฯ ยังไม่ได้รับชำระแต่ประการใด ดังนั้นจึงขอให้ท่านดำเนินการ ชำระหนี้ดังกล่าว จนเสร็จสิ้นภายในกำหนด 7 วัน นับแต่วันที่ท่านได้รับหนังสือฉบับนี้ ทั้งนี้ สำนักงานฯ สงวนสิทธิ์ในการเรียกให้ท่าน ชำระค่าปรับจากการชำระล่าช้าตามอัตราที่กำหนดไว้ในสัญญาด้วย
+                        </p>
+                        <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
+                            อนึ่ง สำนักงานฯ ใคร่ขออภัยมา ณ โอกาสนี้ด้วย หากท่านได้ชำระหนี้ดังกล่าวทั้งหมด ให้แก่สำนักงานฯแล้ว ก่อนที่ท่านได้รับหนังสือฉบับนี้
+                        </p>
+                        <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
+                            จึงเรียนมาเพื่อโปรดพิจารณาดําเนินการ
+                        </p>
+                        <t t-if="o.to_whom_title and (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip)">
+                            <t t-if="(len(o.line_ids.ids) &gt;= 3 and len(o.line_ids.ids) &lt;= 8) or (len(o.line_ids.ids) &gt;= 33 and len(o.line_ids.ids) &lt;= 38)">
+                                <div class="center_report_customer_dunning_letter margin_left_half" style="margin-top: 200px;">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                            <t t-if="len(o.line_ids.ids) &lt; 3 or (len(o.line_ids.ids) &gt; 8 and len(o.line_ids.ids) &lt; 33) or len(o.line_ids.ids) &gt; 38">
+                                <div class="center_report_customer_dunning_letter margin_left_half">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-if="(not o.to_whom_title and (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip))">
+                            <t t-if="(len(o.line_ids.ids) &gt;= 3 and len(o.line_ids.ids) &lt;= 9) or (len(o.line_ids.ids) &gt;= 34 and len(o.line_ids.ids) &lt;= 39)">
+                                <div class="center_report_customer_dunning_letter margin_left_half" style="margin-top: 200px;">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                            <t t-if="len(o.line_ids.ids) &lt; 3 or (len(o.line_ids.ids) &gt; 9 and len(o.line_ids.ids) &lt; 34) or len(o.line_ids.ids) &gt; 39">
+                                <div class="center_report_customer_dunning_letter margin_left_half">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-if="o.to_whom_title and not (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip)">
+                            <t t-if="(len(o.line_ids.ids) &gt;= 4 and len(o.line_ids.ids) &lt;= 9) or (len(o.line_ids.ids) &gt;= 34 and len(o.line_ids.ids) &lt;= 39)">
+                                <div class="center_report_customer_dunning_letter margin_left_half" style="margin-top: 200px;">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                            <t t-if="len(o.line_ids.ids) &lt; 4 or (len(o.line_ids.ids) &gt; 9 and len(o.line_ids.ids) &lt; 34) or len(o.line_ids.ids) &gt; 39">
+                                <div class="center_report_customer_dunning_letter margin_left_half">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-if="not o.to_whom_title and not (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip)">
+                            <t t-if="(len(o.line_ids.ids) &gt;= 5 and len(o.line_ids.ids) &lt;= 10) or (len(o.line_ids.ids) &gt;= 35 and len(o.line_ids.ids) &lt;= 40)">
+                                <div class="center_report_customer_dunning_letter margin_left_half" style="margin-top: 200px;">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                            <t t-if="len(o.line_ids.ids) &lt; 5 or (len(o.line_ids.ids) &gt; 10 and len(o.line_ids.ids) &lt; 35) or len(o.line_ids.ids) &gt; 40">
+                                <div class="center_report_customer_dunning_letter margin_left_half">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                        </t>
+                    </t>
+                    <t t-if="o.letter_type == 'l2'">
+                        <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
+                            ในการนี้ ปรากฎว่าสำนักงานฯ ได้ตรวจสอบยอดคงค้างพบว่า ท่านยังไม่ได้ชำระหนี้ดังกล่าว ทั้งหมดให้แก่สำนักงานฯแต่ประการใด ดังนั้นด้วยหนังสือบอกกล่าวฉบับนี้ สำนักงานฯ จึงขอแจ้งเตือนครั้งสุดท้าย ให้ท่านชำระหนี้ดังกล่าวทั้งหมด ให้แก่สำนักงานฯจนเสร็จสิ้น มิฉะนั้นสำนักงานฯ มีความจำเป็นจะต้องใช้สิทธิ์ตามสัญญา และใช้สิทธิ์ทางศาล ในการบังคับให้ท่านชำระหนี้ดังกล่าวต่อไป
+                        </p>
+                        <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
+                            อนึ่ง สำนักงานฯ ใคร่ขออภัยมา ณ โอกาสนี้ด้วย หากท่านได้ชำระหนี้ดังกล่าวทั้งหมด ให้แก่สำนักงานฯแล้ว ก่อนที่ท่านได้รับหนังสือฉบับนี้
+                        </p>
+                        <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
+                            จึงเรียนมาเพื่อโปรดพิจารณาดําเนินการ
+                        </p>
+                        <t t-if="o.to_whom_title and (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip)">
+                            <t t-if="len(o.line_ids.ids) &lt;= 5 or (len(o.line_ids.ids) &gt;= 31 and len(o.line_ids.ids) &lt;= 36)">
+                                <div class="center_report_customer_dunning_letter margin_left_half" style="margin-top: 200px;">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                            <t t-if="(len(o.line_ids.ids) &gt; 5 and len(o.line_ids.ids) &lt; 31) or (len(o.line_ids.ids) &gt; 36)">
+                                <div class="center_report_customer_dunning_letter margin_left_half">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-if="(not o.to_whom_title and (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip))">
+                            <t t-if="len(o.line_ids.ids) &lt;= 6 or (len(o.line_ids.ids) &gt;= 32 and len(o.line_ids.ids) &lt;= 37)">
+                                <div class="center_report_customer_dunning_letter margin_left_half" style="margin-top: 200px;">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                            <t t-if="(len(o.line_ids.ids) &gt; 6 and len(o.line_ids.ids) &lt; 32) or (len(o.line_ids.ids) &gt; 37)">
+                                <div class="center_report_customer_dunning_letter margin_left_half">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-if="o.to_whom_title and not (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip)">
+                            <t t-if="(len(o.line_ids.ids) &gt;= 2 and len(o.line_ids.ids) &lt;= 7) or (len(o.line_ids.ids) &gt;= 33 and len(o.line_ids.ids) &lt;= 38)">
+                                <div class="center_report_customer_dunning_letter margin_left_half" style="margin-top: 200px;">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                            <t t-if="len(o.line_ids.ids) &lt; 2 or (len(o.line_ids.ids) &gt; 7 and len(o.line_ids.ids) &lt; 33) or len(o.line_ids.ids) &gt; 38">
+                                <div class="center_report_customer_dunning_letter margin_left_half">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-if="not o.to_whom_title and not (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip)">
+                            <t t-if="(len(o.line_ids.ids) &gt;= 3 and len(o.line_ids.ids) &lt;= 8) or (len(o.line_ids.ids) &gt;= 33 and len(o.line_ids.ids) &lt;= 39)">
+                                <div class="center_report_customer_dunning_letter margin_left_half" style="margin-top: 200px;">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                            <t t-if="len(o.line_ids.ids) &lt; 3 or (len(o.line_ids.ids) &gt; 8 and len(o.line_ids.ids) &lt; 33) or len(o.line_ids.ids) &gt; 39">
+                                <div class="center_report_customer_dunning_letter margin_left_half">
+                                    <p>
+                                        ขอแสดงความนับถือ
+                                    </p>
+                                    <p style="margin-top: 80px;">
+                                        (นางสาวศิรินาถ แถบทอง) <br/>
+                                        ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                                        ปฏิบัติการแทนผู้อำนวยการ <br/>
+                                        สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                            </t>
+                        </t>
+                    </t>
+                    <t t-if="o.letter_type == 'l3'">
+                        <t t-if="(len(o.line_ids.ids) &gt;= 13 and len(o.line_ids.ids) &lt;= 16) or (len(o.line_ids.ids) &gt;= 42 and len(o.line_ids.ids) &lt;= 46)">
+                            <p class="text_indent_report_customer_dunning_letter" style="margin-top:200px;">
+                                จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ และ ขอให้ดําเนินการยกเลิกสัญญา (หากมี) เพื่อให้ฝ่ายกฎหมาย ดําเนินการตามขั้นตอนต่อไป
+                            </p>
+                            <p class="center_report_customer_dunning_letter margin_left_half" style="margin-top: 70px;">
+                                (นางสาวศิรินาถ แถบทอง) <br/>
+                                ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                            </p>
+                        </t>
+                        <t t-if="len(o.line_ids.ids) &lt; 13 or (len(o.line_ids.ids) &gt; 16 and len(o.line_ids.ids) &lt; 42) or len(o.line_ids.ids) &gt; 46">
+                            <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
+                                จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ และ ขอให้ดําเนินการยกเลิกสัญญา (หากมี) เพื่อให้ฝ่ายกฎหมาย ดําเนินการตามขั้นตอนต่อไป
+                            </p>
+                            <p class="center_report_customer_dunning_letter margin_left_half" style="margin-top: 70px;">
+                                (นางสาวศิรินาถ แถบทอง) <br/>
+                                ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                            </p>
+                        </t>
+                    </t>
+                </div>
+            </t>
+        </template>
+
+        <!-- Layout Page Footer -->
+        <template id="customer_dunning_letter_layout_footer">
+            <div class="row footer pabi-footer">
+                <div class="last-page line_height">
+                    ฝ่ายการเงินและบัญชี <br/>
+                    โทร. 0 2564 7000 ต่อ 71317<br/>
+                    email: ar@nstda.or.th<br/>
+                </div>
+                <hr style="margin-bottom: 5px; margin-top: 5px;"/>
+                <div class="row">
+                    <div class="col-xs-6 right_report_customer_dunning_letter line_height">
+                        <span style="font-size: 18px;">
+                            สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ<br/>
+                        </span>
+                        <span style="font-size: 16px;">
+                            ๑๑๑ อุทยานวิทยาศาสตร์ประเทศไทย ถ.พหลโยธิน ต.คลองหนึ่ง อ.คลองหลวง<br/>
+                        จ.ปทุมธานี ๑๒๑๒๐ โทรศัพท์ ๐ ๒๕๖๔ ๗๐๐๐ โทรสาร ๐ ๒๕๖๔ ๗๐๐๒-๕
+                        </span>
+                    </div>
+                    <div class="col-xs-6 line_height">
+                        <span style="font-size: 16px;">
+                            National Science and Technology Development Agency<br/>
+                        </span>
+                        <span style="font-size: 14px;">
+                            111 Thailand Science Park, Phahonyothin Road,Khlong Nueng,Khlong Luang, Pathum Thani 12120, Thailand.
+                            Tel. +66 2564 7000 Fax. +66 2564 7002-5 http://www.nstda.or.th
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- CONTAINER -->
+        <template id="customer_dunning_letter_layout">
+            <t t-call="pabi_partner_dunning_report.customer_dunning_letter_layout_header"/>
+            <t t-raw="0"/>
+            <t t-call="pabi_partner_dunning_report.customer_dunning_letter_layout_footer"/>
+        </template>
+    </data>
+</openerp>
