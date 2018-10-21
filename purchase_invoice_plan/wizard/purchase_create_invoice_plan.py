@@ -6,6 +6,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
 from openerp.tools.float_utils import float_round as round
 import openerp.addons.decimal_precision as dp
+from openerp.tools.float_utils import float_compare
 
 
 class PurchaseCreateInvoicePlan(models.TransientModel):
@@ -218,7 +219,8 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                         installment_date + relativedelta(days=+interval)
                 count += 1
                 i.date_invoice = installment_date
-                if remaining_installment_amount > self.installment_amount:
+                if float_compare(remaining_installment_amount,
+                                 self.installment_amount, 2) == 1:
                     i.amount = self.installment_amount
                 elif remaining_installment_amount < 0:
                     i.amount = 0

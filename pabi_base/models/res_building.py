@@ -10,6 +10,7 @@ class BCommon(object):
         string='Name',
         size=500,
         required=True,
+        translate=True,
     )
     code = fields.Char(
         string='Code',

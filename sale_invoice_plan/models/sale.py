@@ -4,7 +4,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import except_orm
 from openerp.tools.float_utils import float_round as round
 from openerp import workflow
-from openerp.tools import float_compare
+from openerp.tools.float_utils import float_compare
 import time
 import logging
 
@@ -132,7 +132,7 @@ class sale_order(models.Model):
             # kittiu: problem with decimal, so we dicide to test with 0
             # obj_precision = self.env['decimal.precision']
             # prec = obj_precision.precision_get('Account')
-            prec = 0
+            prec = 1
             # --
             for order_line in self.order_line:
                 subtotal = self.price_include and \

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="stock_transfer" model="pabi.process">
+						<field name="name">Stock Transfer</field>
+				</record>
+		</data>
+</openerp>

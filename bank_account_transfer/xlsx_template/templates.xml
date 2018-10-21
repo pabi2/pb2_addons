@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="document.directory" id="dir_bank_account_transfer_template">
+            <field name="name">Bank Account Transfer Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        # Bank Account Transfer
+        <record id="xlsx_report_bank_account_transfer" model="ir.attachment">
+            <field name="res_model">bank.account.transfer</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_bank_account_transfer.xlsx</field>
+            <field name="name">Bank Account Transfer</field>
+            <field name="parent_id" eval="ref('dir_bank_account_transfer_template')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Bank Account Transfer': {
+                            '_HEAD_': {
+                                'B3': 'date${value or ""}#{number_format=date}',
+                                'B4': 'from_account_id.name${value or ""}',
+                                'B5': 'to_account_id.name${value or ""}',
+                                'B6': 'fee_account_id.name${value or ""}',
+                                'B7': 'note${value or ""}',
+                                'D3': 'journal_id.name${value or ""}',
+                                'D4': 'currency_id.name${value or ""}',
+                                'D5': 'deduct_account_id.name${value or ""}',
+                            },
+                            'transfer_line_ids': {
+                                'A10': 'date_transfer${value or ""}#{number_format=date}',
+                                'B10': 'transfer_amount${value or ""}#{number_format=number}',
+                                'C10': 'fee${value or ""}#{number_format=number}',
+                            },
+                        }
+                    },
+                    '__IMPORT__': {
+                        'Bank Account Transfer': {
+                            'transfer_line_ids': {
+                                'A10': 'date_transfer${value or ""}',
+                                'B10': 'transfer_amount${value or ""}',
+                                'C10': 'fee${value or ""}',
+                            },
+                        }
+                    }
+                }
+            </field>
+        </record>
+    </data>
+</openerp>

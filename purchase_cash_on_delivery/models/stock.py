@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+from openerp import models, api, _
+from openerp.exceptions import ValidationError
 
 
 class StockMove(models.Model):
@@ -17,3 +18,25 @@ class StockMove(models.Model):
         purchases._validate_purchase_cod_fully_paid()
         # --
         return super(StockMove, self).action_done()
+
+
+class StockPicking(models.Model):
+    _inherit = 'stock.picking'
+
+    @api.multi
+    def do_transfer(self):
+        res = super(StockPicking, self).do_transfer()
+        # Remove any analytic lines in case of COD
+        for picking in self:
+            # Check whether this is prepaid
+            prepaid = picking.move_lines.\
+                mapped('purchase_line_id.order_id.is_prepaid')
+            if len(prepaid) > 1:
+                raise ValidationError(_('Mixing COD and non-COD not allowed.'))
+            # If COD, delete analytic lines previously created by account move.
+            elif prepaid and prepaid[0]:
+                moves = self.env['account.move'].search(
+                    [('document', '=', picking.name)])
+                for move in moves:
+                    move.line_id.mapped('analytic_lines').unlink()
+        return res

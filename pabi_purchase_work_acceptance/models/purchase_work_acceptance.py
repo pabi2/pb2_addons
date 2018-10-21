@@ -5,6 +5,7 @@ import openerp.addons.decimal_precision as dp
 from openerp.addons.l10n_th_amount_text.amount_to_text_th \
     import amount_to_text_th
 from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_compare
 
 
 class PurchaseWorkAcceptance(models.Model):
@@ -595,7 +596,8 @@ class PurchaseWorkAcceptance(models.Model):
             )
             for accpt in paid_accpts:
                 wa_total_payment += accpt.amount_total
-            if wa_total_payment + self.amount_total > order.amount_total:
+            if float_compare(wa_total_payment + self.amount_total,
+                             order.amount_total, 2) == 1:
                 raise ValidationError(
                     _("""Can't evaluate this acceptance.
                          This WA's total amount is over PO's total amount.""")
@@ -775,7 +777,7 @@ class PurchaseWorkAcceptanceLine(models.Model):
                                         'cash_on_delivery_payment_term', False)
             if self.acceptance_id.order_id.payment_term_id == cod_pay_term:
                 return
-        if self.to_receive_qty > self.balance_qty:
+        if float_compare(self.to_receive_qty, self.balance_qty, 2) == 1:
             raise ValidationError(
                 _("To Receive Quantity, %s, can't exceed balance quantity.") %
                 self.product_id.name

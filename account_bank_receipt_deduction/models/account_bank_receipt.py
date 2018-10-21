@@ -2,7 +2,7 @@
 from openerp import models, fields, api, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
-from openerp.tools import float_compare
+from openerp.tools.float_utils import float_compare
 
 
 class AccuontBankReceiptMultipleReconcile(models.Model):

@@ -8,7 +8,7 @@ import itertools
 import cStringIO
 import time
 from datetime import date, datetime as dt
-from openerp.tools import float_compare
+from openerp.tools.float_utils import float_compare
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError, RedirectWarning
 from openerp.tools.safe_eval import safe_eval as eval

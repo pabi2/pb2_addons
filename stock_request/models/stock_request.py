@@ -2,6 +2,7 @@
 from openerp import models, api, fields, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_compare
 
 
 _STATES = [
@@ -550,6 +551,6 @@ class StockRequestLine(models.Model):
     @api.multi
     def _check_future_qty(self):
         for line in self:
-            if line.product_uom_qty > line.future_qty:
+            if float_compare(line.product_uom_qty, line.future_qty, 2) == 1:
                 raise ValidationError(
                     _('%s is not enough!') % line.product_id.name)

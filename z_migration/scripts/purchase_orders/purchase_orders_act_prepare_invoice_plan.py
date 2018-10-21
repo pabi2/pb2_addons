@@ -39,7 +39,7 @@ for po in pos:
             installment_date=po['installment_date'],
             num_installment=po['num_installment'],
             installment_amount=False,
-            interval=po['interval'], interval_type='month',
+            interval=po['interval'], interval_type=po['doc_no'],
             invoice_mode=po['invoice_mode'],
             use_advance=False,
             advance_percent=0.0,

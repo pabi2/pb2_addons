@@ -2,6 +2,7 @@
 from ast import literal_eval
 from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_compare
 
 
 class PurchaseLineInvoice(models.TransientModel):
@@ -42,7 +43,7 @@ class PurchaseLineInvoice(models.TransientModel):
                 if not line.invoiced_qty:
                     raise ValidationError(
                         _("Quantity to invoice can't be zero!"))
-                if line.invoiced_qty > line.wa_line_qty:
+                if float_compare(line.invoiced_qty, line.wa_line_qty, 2) == 1:
                     raise ValidationError(_("Can't receive product's quantity "
                                             "over work acceptance's quantity"))
         # Call super

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_compare
 
 
 class BudgetTransition(models.Model):
@@ -200,7 +201,7 @@ class BudgetTransition(models.Model):
                     ctx = {}
                     if tran.quantity:
                         quantity = self._get_qty(tran[source])
-                        if quantity > tran.quantity:
+                        if float_compare(quantity, tran.quantity, 2) == 1:
                             quantity = tran.quantity
                         ctx = {'diff_qty': quantity}
                     if tran.amount:
@@ -216,7 +217,7 @@ class BudgetTransition(models.Model):
                     ctx = {}
                     if tran.quantity:
                         quantity = self._get_qty(tran[source])
-                        if quantity > tran.quantity:
+                        if float_compare(quantity, tran.quantity, 2) == 1:
                             quantity = tran.quantity
                         ctx = {'diff_qty': quantity}
                     if tran.amount:
@@ -468,10 +469,10 @@ class StockMove(models.Model):
             reverse = move.picking_type_id.code == 'outgoing'
             if move.purchase_line_id:
                 BudgetTrans.create_trans_purchase_to_picking(
-                    move.purchase_line_id, moves, reverse=reverse)
+                    move.purchase_line_id, move, reverse=reverse)
             if move.sale_line_id:
                 BudgetTrans.create_trans_sale_to_picking(
-                    move.sale_line_id, moves, reverse=reverse)
+                    move.sale_line_id, move, reverse=reverse)
         # Do Forward immediately
         BudgetTrans.do_forward(self._name, moves)
 

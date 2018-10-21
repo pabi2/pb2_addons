@@ -4,6 +4,7 @@ from openerp import SUPERUSER_ID
 from openerp.api import Environment
 from openerp.exceptions import except_orm, ValidationError
 from .account_activity import ActivityCommon
+from openerp.tools.float_utils import float_compare
 
 
 import logging
@@ -453,7 +454,8 @@ class AccountBudget(models.Model):
         for budget in self:
             if budget.budget_level_id.check_plan_with_released_amount:
                 budget.invalidate_cache()
-                if budget.rolling > budget.released_amount:
+                if float_compare(budget.rolling,
+                                 budget.released_amount, 2) == 1:
                     raise ValidationError(
                         _('%s: rolling plan (%s) will exceed '
                           'released amount (%s) after this operation!') %
@@ -467,7 +469,8 @@ class AccountBudget(models.Model):
     def _validate_release_vs_policy(self):
         for budget in self:
             if budget.budget_level_id.check_release_with_policy_amount:
-                if budget.released_amount > budget.policy_amount:
+                if float_compare(budget.released_amount,
+                                 budget.policy_amount, 2) == 1:
                     raise ValidationError(
                         _('%s: released amount (%s) will exceed '
                           'policy amount (%s) after this operation!') %
@@ -481,7 +484,8 @@ class AccountBudget(models.Model):
     def _validate_future_with_commit(self):
         for budget in self:
             if budget.budget_level_id.check_future_with_commit:
-                if budget.future_plan < budget.commit_amount:
+                if float_compare(budget.future_plan,
+                                 budget.commit_amount, 2) == -1:
                     raise ValidationError(
                         _('%s:\n Future plan amount (%s) must not less than '
                           'commitment amount (%s)!') %
@@ -692,7 +696,7 @@ class AccountBudget(models.Model):
         # =================================================================
 
         # If amount is False, we don't check
-        if amount is not False and amount > balance:
+        if amount is not False and float_compare(amount, balance, 2) == 1:
             res['budget_ok'] = False
             if amount == 0.0:  # 0.0 mean post check
                 res['message'] = _('%s\n'
@@ -1030,7 +1034,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
     def release_budget_line(self, release_result):
         for rec in self:
             amount_to_release = release_result.get(rec.id, 0.0)
-            if amount_to_release > rec.planned_amount:
+            if float_compare(amount_to_release, rec.planned_amount, 2) == 1:
                 raise ValidationError(
                     _('Release amount exceed planned amount!'))
             rec.write({'released_amount': amount_to_release})

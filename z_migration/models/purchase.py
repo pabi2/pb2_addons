@@ -12,6 +12,9 @@ class PurchaseOrder(models.Model):
     interval = fields.Integer(
         string='Interval',
     )
+    order_type = fields.Selection(
+        readonly=False,
+    )
 
     @api.multi
     def mock_trigger_workflow(self, signal):
@@ -87,6 +90,11 @@ class PurchaseOrder(models.Model):
             SET state = 'paid', supplier_invoice_number = 'COD Migration',
                 payment_type = 'transfer'
             WHERE source_document = '%s'""" % self.name)
+        return True
+
+    @api.multi
+    def mork_purchase_done(self):
+        self.write({'state': 'done'})
         return True
 
     @api.multi

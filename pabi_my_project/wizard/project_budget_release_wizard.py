@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-
 from openerp import api, models, fields, _
 from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_compare
 
 
 class ProjectBudgetReleaseWizard(models.TransientModel):
@@ -43,7 +43,8 @@ class ProjectBudgetReleaseWizard(models.TransientModel):
         active_id = self._context.get('active_id')
         active_model = self._context.get('active_model')
         budget_line = self.env[active_model].browse(active_id)
-        if self.amount_to_release > budget_line.planned_amount:
+        if float_compare(self.amount_to_release,
+                         budget_line.planned_amount, 2) == 1:
             raise ValidationError(
                 _('Release amount exceed planned amount!'))
         budget_line.write({'released_amount': self.amount_to_release})

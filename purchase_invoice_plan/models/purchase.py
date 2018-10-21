@@ -160,8 +160,8 @@ class PurchaseOrder(models.Model):
         res = super(PurchaseOrder, self).write(vals)
         for purchase in self:
             purchase._calculate_subtotal(vals)
-        self.env['purchase.invoice.plan']._validate_installment_date(
-            self.invoice_plan_ids)
+            self.env['purchase.invoice.plan']._validate_installment_date(
+                purchase.invoice_plan_ids)
         return res
 
     @api.multi
@@ -172,7 +172,7 @@ class PurchaseOrder(models.Model):
             # kittiu: problem with decimal, so we dicide to test with 0
             # obj_precision = self.env['decimal.precision']
             # prec = obj_precision.precision_get('Account')
-            prec = 0
+            prec = 1
             # --
             for order_line in self.order_line:
                 subtotal = order_line.price_subtotal

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
-from openerp.tools import float_compare
+from openerp.tools.float_utils import float_compare
 from openerp.exceptions import ValidationError
 
 

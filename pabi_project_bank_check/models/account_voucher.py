@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, fields, _
-from openerp.tools import float_compare
+from openerp.tools.float_utils import float_compare
 from openerp.exceptions import ValidationError
 
 
@@ -144,7 +144,7 @@ class AccountVoucher(models.Model):
             if rec.force_pay:
                 continue
             # A payment, and not force pay, check for balance and throw error
-            if float_compare(rec.amount, rec.journal_balance, 2) > 0:
+            if float_compare(rec.amount, rec.journal_balance, 2) == 1:
                 raise ValidationError(
                     _('Pay amount (%s) exceed balance (%s)!\n') %
                     ('{:,.2f}'.format(rec.amount),

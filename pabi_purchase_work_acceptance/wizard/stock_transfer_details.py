@@ -2,6 +2,7 @@
 
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_compare
 
 
 class StockTransferDetails(models.TransientModel):
@@ -55,7 +56,8 @@ class StockTransferDetails(models.TransientModel):
                                                'to_receive_qty')
             # Check transfer with WA
             for product_id, quantity in transfer_qty.items():
-                if product_id not in wa_qty or quantity > wa_qty[product_id]:
+                if product_id not in wa_qty or \
+                        float_compare(quantity, wa_qty[product_id], 2) == 1:
                     raise ValidationError(
                         _("Can't receive product's quantity over "
                           "work acceptance's quantity.")

@@ -31,8 +31,8 @@
                         <!--<button name="print_quotation" string="Re-Print RFQ" type="object" states="sent" groups="base.group_user"/>-->
                         <button name="purchase_confirm" states="draft" string="Confirm Order" id="draft_confirm"/>
                         <button name="purchase_confirm" states="bid" string="Confirm Order" class="oe_highlight" id="bid_confirm"/>
-                        <button name="picking_ok" states="except_picking" string="Manually Corrected"/>
-                        <button name="invoice_ok" states="except_invoice" string="Manually Corrected"/>
+                        <!-- <button name="picking_ok" states="except_picking" string="Manually Corrected"/>
+                        <button name="invoice_ok" states="except_invoice" string="Manually Corrected"/> -->
                         <button name="purchase_approve" states="confirmed" string="Approve Order" class="oe_highlight" groups="purchase.group_purchase_manager"/>
                         <!--<button name="wkf_send_rfq" states="approved" string="Send PO by Email" type="object" context="{'send_rfq':False}"/>-->
                         <button name="view_picking" string="Receive Products" type="object" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'approved')]}" class="oe_highlight"/>

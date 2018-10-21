@@ -198,6 +198,11 @@
             action="base.action_partner_supplier_form" sequence="15"/>
 
         # Move Bank Receipt to under Customers
+        <menuitem name="Accounting"
+            id="account.menu_finance"
+            groups="account.group_account_manager,account.group_account_user"
+            sequence="50"/>
+
         <menuitem id="account.menu_finance_receivables" name="Customers"
           parent="account.menu_finance" sequence="1"/>
         <menuitem id="account.menu_finance_payables" name="Suppliers"
@@ -208,6 +213,9 @@
         <menuitem action="account_bank_receipt.action_bank_receipt_tree"
           id="account_bank_receipt.menu_bank_receipt_tree"
           parent="account.menu_finance_receivables" sequence="20"/>
+
+        # Event Calendar
+        <menuitem name="Calendar" id="calendar.mail_menu_calendar" parent="calendar.menu_calendar_configuration" sequence="10" action="calendar.action_calendar_event"/>
 
     </data>
 </openerp>

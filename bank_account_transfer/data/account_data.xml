@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="seq_journal_bank_transfer" model="ir.sequence">
+            <field name="name">Bank Transfer Journal</field>
+            <field name="code"></field>
+            <field name="prefix">BT-%(fy)s</field>
+            <field eval="4" name="padding"/>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="journal_bank_transfer" model="account.journal">
+            <field name="name">Bank Transfer Journal</field>
+            <field name="code">BT</field>
+            <field name="type">general</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="sequence_id" ref="seq_journal_bank_transfer"/>
+            <field name="entry_posted">True</field>
+            <field name="update_posted">True</field>
+        </record>
+    </data>
+</openerp>
