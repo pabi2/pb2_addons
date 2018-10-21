@@ -280,11 +280,13 @@ class HRExpenseLine(models.Model):
             return super(HRExpenseLine, self)._get_non_product_account_id()
 
     @api.model
-    def _prepare_analytic_line(self, reverse=False, currency=False):
+    def _prepare_analytic_line(self, reverse=False, currency=False,
+                               force_currency_rate=[]):
         if self.is_advance_product_line:
             return False
         res = super(HRExpenseLine, self).\
-            _prepare_analytic_line(reverse=reverse, currency=currency)
+            _prepare_analytic_line(reverse=reverse, currency=currency,
+                                   force_currency_rate=force_currency_rate)
         return res
 
 
