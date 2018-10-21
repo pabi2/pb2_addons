@@ -39,7 +39,7 @@ class PurchaseOrder(models.Model):
 
     async_process = fields.Boolean(
         string='Create invoices in background?',
-        default=True,
+        default=False,
     )
     job_id = fields.Many2one(
         'queue.job',
