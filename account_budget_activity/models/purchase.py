@@ -25,10 +25,11 @@ class PurchaseOrder(CommitCommon, models.Model):
     def _prepare_inv_line(self, account_id, order_line):
         res = super(PurchaseOrder, self).\
             _prepare_inv_line(account_id, order_line)
-        AnayticAccount = self.env['account.analytic.account']
-        dimensions = AnayticAccount._analytic_dimensions()
-        for d in dimensions:
-            res.update({d: order_line[d].id})
+        if res:
+            AnayticAccount = self.env['account.analytic.account']
+            dimensions = AnayticAccount._analytic_dimensions()
+            for d in dimensions:
+                res.update({d: order_line[d].id})
         return res
 
     @api.model
