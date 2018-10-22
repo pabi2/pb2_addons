@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="4มิยใบรับวางบิล" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="56" bottomMargin="56">
 	<property name="ireport.zoom" value="1.3636363636363635"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="215"/>
+	<property name="ireport.y" value="400"/>
 	<style name="table" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -319,22 +319,22 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				</textElement>
 				<text><![CDATA[บริษัท / ห้าง / ร้าน :]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="4" y="132" width="148" height="16"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="4" y="132" width="249" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{sup_phone} != null ? "โทรศัพท์ : "+$F{sup_phone} : ' ']]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="172" y="132" width="157" height="16"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="172" y="132" width="219" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{sup_fax} != null ? "โทรสาร : "+$F{sup_fax} : ' ']]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="4" y="97" width="48" height="16"/>
+				<reportElement x="4" y="97" width="75" height="16"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -646,9 +646,9 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{biller}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="141">
+		<band height="157">
 			<staticText>
-				<reportElement x="8" y="104" width="20" height="16"/>
+				<reportElement x="8" y="104" width="75" height="16"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -669,7 +669,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{billnumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="27" y="104" width="366" height="16"/>
+				<reportElement x="25" y="104" width="366" height="35" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -703,8 +703,8 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{fax} != null ? "โทรสาร : "+$F{fax} : ' ']]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="8" y="119" width="122" height="16"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="8" y="139" width="225" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -724,8 +724,8 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				</textElement>
 				<text><![CDATA[ส่วนที่ 2 : สำหรับผู้ขาย/ผู้รับจ้าง]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="130" y="120" width="157" height="16"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="172" y="139" width="219" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
