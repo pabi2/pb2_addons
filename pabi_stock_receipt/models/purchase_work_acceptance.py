@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
 from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_compare
 
 
 class PurchaseWorkAcceptance(models.Model):
@@ -18,10 +19,12 @@ class PurchaseWorkAcceptance(models.Model):
             )
             for line in rec.acceptance_line_ids:
                 if line.product_id.id in list_dup_product_ids:
-                    if line.balance_qty != line.to_receive_qty:
-                        raise ValidationError(
-                            _(
-                                "Duplicate product lines must be "
-                                "fully received."
+                    if float_compare(
+                            line.balance_qty, line.to_receive_qty, 2) == 1:
+                        if line.to_receive_qty > 0:
+                            raise ValidationError(
+                                _(
+                                    "Duplicate product lines must be "
+                                    "fully received."
+                                )
                             )
-                        )
