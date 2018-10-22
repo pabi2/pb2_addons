@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
 	<property name="ireport.zoom" value="1.4615378250000255"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1174"/>
+	<property name="ireport.y" value="230"/>
 	<subDataset name="po_committee">
 		<parameter name="ids" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -29,6 +29,7 @@ ORDER BY poc.id]]>
 		</parameter>
 		<queryString>
 			<![CDATA[SELECT
+row_number() over (order by pwal.id) as pwa_count,
 pwal.name acceptance_line_name,
 pwal.to_receive_qty acceptance_line_qty,
 CONCAT(pwal.to_receive_qty::integer,' ',pu.name) acceptance_line_uom,
@@ -49,6 +50,7 @@ ON pol.id = pwal.line_id
 WHERE pwal.acceptance_id = $P{ids}
 ORDER BY pwal.id]]>
 		</queryString>
+		<field name="pwa_count" class="java.lang.Long"/>
 		<field name="acceptance_line_name" class="java.lang.String"/>
 		<field name="acceptance_line_qty" class="java.math.BigDecimal"/>
 		<field name="acceptance_line_uom" class="java.lang.String"/>
@@ -118,7 +120,7 @@ po.id po_id,
 (pwa.date_receive-pwa.date_contract_end) contract,
 pwa.is_manual_fine,
 pwa.manual_fine,
-((po.fine_rate/100)*po.amount_total) fine
+total_fine_cal fine
 FROM purchase_work_acceptance pwa
 LEFT JOIN purchase_order po
 ON po.id = pwa.order_id
@@ -167,7 +169,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	</field>
 	<field name="fine" class="java.lang.Double"/>
 	<field name="wa_date" class="java.util.Date"/>
-	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
+	<variable name="line_count" class="java.lang.Integer" resetType="Column" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
 	<variable name="fine_total" class="java.lang.Number">
@@ -539,7 +541,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Integer"><![CDATA[$V{line_count}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{pwa_count}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -625,7 +627,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="74" height="21"/>
+								<reportElement x="0" y="0" width="79" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
