@@ -629,7 +629,7 @@
         </record>
 
         <menuitem action="action_project_small" id="menu_my_project_small" name="Release Budget" parent="menu_project" sequence="2"
-          groups="pabi_base.group_program_secretary_budget,pabi_base.group_nstda_admin_business"/>
+          groups="pabi_base.group_nstda_admin_business"/>
 
         <!-- Called form web controller -->
         <record id="action_myproject_to_project" model="ir.actions.act_window">
