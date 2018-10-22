@@ -384,6 +384,8 @@ class BudgetTransition(models.Model):
     @api.model
     def do_transit(self, direction, model, objects, obj_line_field=False,
                    undo=False):
+        # Just in case, there
+        self = self.with_context({'force_no_budget_check': False})
         target_model_fields = {'account.invoice': 'invoice_line_id',
                                'sale.order': 'sale_line_id',
                                'purchase.order': 'purchase_line_id',
