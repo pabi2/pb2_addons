@@ -313,7 +313,7 @@
                                     </group>
                                 </group>
                             </page>
-                            <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget">
+                            <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget,pabi_base.group_program_secretary_budget">
                                 <separator string="Expense"/>
                                 <field name="monitor_expense_ids">
                                     <tree string="Monitor" editable="bottom">
@@ -540,7 +540,7 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget">
+                        <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget,pabi_base.group_program_secretary_budget">
                             <separator string="Expense"/>
                             <field name="monitor_expense_ids">
                                 <tree string="Monitor" editable="bottom">
