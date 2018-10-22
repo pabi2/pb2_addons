@@ -71,7 +71,8 @@
         <!-- Projects -->
         <menuitem name="Projects" id="menu_project" parent="menu_main_project" sequence="1" />
         <!-- Interface -->
-        <menuitem name="Interfaces" id="menu_project_interface" parent="menu_main_project" sequence="2" />
+        <!-- Asked by ISSI to remove this menu -->
+        <!-- <menuitem name="Interfaces" id="menu_project_interface" parent="menu_main_project" sequence="2" /> -->
 
 
         <!-- Project -->
@@ -178,8 +179,8 @@
                                         <field name="m11"/>
                                         <field name="m12"/>
                                         <field name="planned_amount" sum="Total Planned"/>
-                                        <button name="%(action_project_budget_release_wizard)d"
-                                          string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                                        <!-- <button name="%(action_project_budget_release_wizard)d"
+                                          string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/> -->
                                         <field name="released_amount" sum="Total Released" readonly="1"/>
                                         <field name="expense_synced"/>
                                     </tree>
@@ -220,8 +221,8 @@
                                         <field name="m11"/>
                                         <field name="m12"/>
                                         <field name="planned_amount" sum="Total Planned"/>
-                                        <button name="%(action_project_budget_release_wizard)d"
-                                          string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/>
+                                        <!-- <button name="%(action_project_budget_release_wizard)d"
+                                          string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/> -->
                                         <field name="released_amount" sum="Total Released" readonly="1"/>
                                         <field name="revenue_synced"/>
                                     </tree>
@@ -313,7 +314,7 @@
                                     </group>
                                 </group>
                             </page>
-                            <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget">
+                            <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget,pabi_base.group_program_secretary_budget">
                                 <separator string="Expense"/>
                                 <field name="monitor_expense_ids">
                                     <tree string="Monitor" editable="bottom">
@@ -496,9 +497,10 @@
             <field name="context">{}</field>
         </record>
 
-        <menuitem action="action_release_project_budget_by_fiscal" id="menu_release_project_budget_by_fiscal"
+        <!-- Asked by ISSI to remove this menu -->
+        <!-- <menuitem action="action_release_project_budget_by_fiscal" id="menu_release_project_budget_by_fiscal"
           name="Release Budget" parent="menu_project_interface" sequence="1"
-          groups="pabi_base.group_program_secretary_budget,pabi_base.group_nstda_admin_business"/>
+          groups="pabi_base.group_program_secretary_budget,pabi_base.group_nstda_admin_business"/> -->
 
         <!-- Mini Project form for release budget -->
         <record id="view_project_small_form" model="ir.ui.view">
@@ -540,7 +542,7 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget">
+                        <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget,pabi_base.group_program_secretary_budget">
                             <separator string="Expense"/>
                             <field name="monitor_expense_ids">
                                 <tree string="Monitor" editable="bottom">
@@ -627,7 +629,7 @@
         </record>
 
         <menuitem action="action_project_small" id="menu_my_project_small" name="Release Budget" parent="menu_project" sequence="2"
-          groups="pabi_base.group_program_secretary_budget,pabi_base.group_nstda_admin_business"/>
+          groups="pabi_base.group_nstda_admin_business"/>
 
         <!-- Called form web controller -->
         <record id="action_myproject_to_project" model="ir.actions.act_window">

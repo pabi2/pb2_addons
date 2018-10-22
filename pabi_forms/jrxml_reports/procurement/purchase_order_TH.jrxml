@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="56" bottomMargin="56">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="75"/>
+	<property name="ireport.y" value="399"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -284,6 +284,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 	</title>
 	<pageHeader>
 		<band height="308">
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}.intValue() == 1? new Boolean(true) : new Boolean(false)]]></printWhenExpression>
 			<rectangle>
 				<reportElement x="0" y="0" width="483" height="236"/>
 			</rectangle>
@@ -576,6 +577,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 	</pageHeader>
 	<columnHeader>
 		<band height="33" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}.intValue() == 1? new Boolean(true) : new Boolean(false)]]></printWhenExpression>
 			<rectangle>
 				<reportElement x="0" y="0" width="483" height="33"/>
 			</rectangle>
@@ -1111,18 +1113,18 @@ WHERE $X{IN, po.id, PIDS}]]>
 		</band>
 	</lastPageFooter>
 	<summary>
-		<band height="96">
+		<band height="84">
 			<rectangle>
-				<reportElement x="384" y="0" width="99" height="96"/>
+				<reportElement x="384" y="0" width="99" height="84"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="299" y="0" width="85" height="96"/>
+				<reportElement x="299" y="0" width="85" height="84"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="0" width="299" height="96"/>
+				<reportElement x="0" y="0" width="299" height="84"/>
 			</rectangle>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="7" y="77" width="339" height="18"/>
+				<reportElement x="7" y="63" width="339" height="18"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -1137,10 +1139,10 @@ WHERE $X{IN, po.id, PIDS}]]>
 ($F{percentvat} == null ? "" : "("+ $F{percentvat} + ")" )]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="64" width="300" height="1"/>
+				<reportElement x="0" y="46" width="300" height="1"/>
 			</line>
 			<staticText>
-				<reportElement x="7" y="64" width="137" height="21"/>
+				<reportElement x="7" y="50" width="137" height="21"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -1189,7 +1191,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{sub_total}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="7" y="13" width="285" height="50" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="7" y="13" width="285" height="29" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>

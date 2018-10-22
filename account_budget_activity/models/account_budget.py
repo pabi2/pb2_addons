@@ -345,11 +345,13 @@ class AccountBudget(models.Model):
                           'Not allow to allocate amount.') % budget.name)
                 if budget.budget_expense_line_ids:
                     # Refresh all line to zero first
-                    budget.budget_expense_line_ids.write(
-                        {'released_amount': 0.0})
+                    budget.budget_expense_line_ids.\
+                        write({'released_amount': 0.0})
                     # Then write to the first line
-                    budget.budget_expense_line_ids[0].write(
-                        {'released_amount': budget.to_release_amount})
+                    lines = budget.budget_expense_line_ids.\
+                        _filter_line_to_release()
+                    lines[0].write({
+                        'released_amount': budget.to_release_amount})
         return res
 
     @api.multi
@@ -1039,6 +1041,11 @@ class AccountBudgetLine(ActivityCommon, models.Model):
                     _('Release amount exceed planned amount!'))
             rec.write({'released_amount': amount_to_release})
         return
+
+    @api.multi
+    def _filter_line_to_release(self):
+        """ HOOK for future use with charge_type = internal/external """
+        return self
 
     # # Messaging
     # Kitti U. We have a more computed one in pabi_chartfield module

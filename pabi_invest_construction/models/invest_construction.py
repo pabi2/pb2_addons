@@ -722,7 +722,12 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
                 plan.calendar_period_id = period.id
                 plan.amount_plan = 0.0
                 self.phase_plan_ids += plan
+                # Next period
                 next_period = Period.next(period, 1)
+                if next_period.special:
+                    next_period = self.env['account.period'].search(
+                        [('date_start', '>', next_period.date_stop)],
+                        order='date_start', limit=1)
                 date = next_period.date_start
                 if not next_period:
                     raise ValidationError(

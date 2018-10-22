@@ -12,6 +12,25 @@
         </record>
 
         # Budget Plan:
+        # Draft -> Submitted
+        <record id="action_draft_to_submit" model="ir.actions.server">
+            <field name="name">Draft -> Submitted</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_budget_plan_unit" />
+            <field name="state">code</field>
+            <field name="code">self.action_draft_to_submit(cr, uid, context.get('active_ids', []), context=context)</field>
+        </record>
+        <record model="ir.values" id="ir_values_draft_to_submit">
+          <field name="name">"Run Draft -> Submitted"</field>
+          <field name="key">action</field>
+          <field name="key2">client_action_multi</field>
+          <field name="value" eval="'ir.actions.server,' +str(ref('action_draft_to_submit'))" />
+          <field name="model">budget.plan.unit</field>
+        </record>
+        <record id="action_draft_to_submit" model="ir.actions.server">
+            <field name="menu_ir_values_id" eval="ref('ir_values_draft_to_submit')" />
+        </record>
         # Submitted -> Approved
         <record id="action_submit_to_approve" model="ir.actions.server">
             <field name="name">Submitted -> Approved</field>
