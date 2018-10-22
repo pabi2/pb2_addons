@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
 	<property name="ireport.zoom" value="1.4615378250000255"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="227"/>
+	<property name="ireport.y" value="230"/>
 	<subDataset name="po_committee">
 		<parameter name="ids" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -101,7 +101,8 @@ ou.id ou_id,
 pwa.name gr_no,
 pwa.create_date create_date,
 po.name po_name,
-pwa.date_accept po_date,
+po.date_order po_date,
+pwa.date_accept wa_date,
 pwa.supplier_invoice invoice_no,
 pwa.date_invoice invoice_date,
 pwa.date_contract_start contract_start_date,
@@ -117,7 +118,7 @@ po.id po_id,
 (pwa.date_receive-pwa.date_contract_end) contract,
 pwa.is_manual_fine,
 pwa.manual_fine,
-((po.fine_rate/100)*po.amount_total) fine
+total_fine_cal fine
 FROM purchase_work_acceptance pwa
 LEFT JOIN purchase_order po
 ON po.id = pwa.order_id
@@ -165,6 +166,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 		<fieldDescription><![CDATA[Manual Fine]]></fieldDescription>
 	</field>
 	<field name="fine" class="java.lang.Double"/>
+	<field name="wa_date" class="java.util.Date"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -1198,7 +1200,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="13" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{po_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{wa_date}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
