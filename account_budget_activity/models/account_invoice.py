@@ -23,13 +23,23 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def action_move_create(self):
+        ctx = {}
+        trans = False
         for inv in self:
             for line in inv.invoice_line:
                 Analytic = self.env['account.analytic.account']
                 line.account_analytic_id = \
                     Analytic.create_matched_analytic(line)
-        res = super(AccountInvoice, self).action_move_create()
-        return res
+            # Checking for transition
+            trans = self.env['budget.transition'].search([
+                ('invoice_line_id', 'in', inv.invoice_line.ids),
+                ('forward', '=', False)])
+        # If there is PO commit to return, force_no_budget_check
+        if trans:
+            self.ensure_one()  # With this, must ensure one
+            ctx['force_no_budget_check'] = True
+        return super(AccountInvoice, self.with_context(ctx)).\
+            action_move_create()
 
 
 class AccountInvoiceLine(ActivityCommon, models.Model):

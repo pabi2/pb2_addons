@@ -262,37 +262,8 @@ class BudgetBreakdown(models.Model):
                 raise ValidationError(
                     _('Before you proceed, please click button to '
                       '"Generate Breakdown Lines".'))
-            # if not breakdown._validate_breakdown():
-            #     continue
             breakdown.generate_budget_control()
             breakdown.write({'state': 'done'})
-
-    # I think no need to check, if no line in control, just create one
-    # @api.multi
-    # def _validate_breakdown(self):
-    #     """ Check relelated budget plan
-    #     - If policy amount is not zero, at least there should be a plan line
-    #     """
-    #     self.ensure_one()
-    #     res = {'valid': True, 'message': ''}
-    #     msg = []
-    #     if self.chart_view == 'unit_base':
-    #         for line in self.unit_base_line_ids:
-    #             if line.policy_amount:
-    #                 plan_unit = line.budget_plan_id
-    #                 if not plan_unit.plan_expense_line_ids:
-    #                     res['valid'] = False
-    #                     msg.append(
-    #                       '%s - %s, do not have any plan line, policy amount'
-    #                         ' is not allowed.' %
-    #                       (plan_unit.name, plan_unit.section_id.name_short))
-    #     res['message'] = '\n'.join(msg)
-    #     if res['valid']:
-    #         self.write({'message': False})
-    #         return True
-    #     else:
-    #         self.write({'message': res['message']})
-    #         return False
 
     @api.multi
     def generate_breakdown_line(self):

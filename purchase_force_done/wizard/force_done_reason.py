@@ -34,7 +34,7 @@ class PurchaseOrderForceDone(models.TransientModel):
             order.write({
                 'force_done_reason': self.force_done_reason,
             })
-            order.with_context.wkf_po_done()
+            order.wkf_po_done()
             ctx = {'force_release_budget': True}
             order.with_context(ctx).release_all_committed_budget()
         return act_close

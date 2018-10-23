@@ -9,6 +9,7 @@
             view_mode="form"
             key2="client_print_multi"
             target="new"
+            context="{'lang': 'th_TH'}"
         />
 
         <record id="print_voucher_wizard" model="ir.ui.view">
