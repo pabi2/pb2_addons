@@ -1084,7 +1084,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="429" y="233" width="16" height="20"/>
+				<reportElement x="429" y="233" width="35" height="20"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
