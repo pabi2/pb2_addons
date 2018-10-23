@@ -20,6 +20,7 @@ This moudule provide standard interface in generice way.
         "pabi_chartfield",
         "l10n_th_account_tax_detail",
         "pabi_utils",
+        "pabi_account_move_adjustment",
     ],
     "data": [
         "data/interface_data.xml",

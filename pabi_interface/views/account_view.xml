@@ -13,6 +13,31 @@
             </field>
         </record>
 
+        <record id="priority_view_move_form" model="ir.ui.view">
+            <field name="name">priority.view.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="pabi_account_move_adjustment.priority_view_move_form"/>
+            <field name="arch" type="xml">
+                <field name="ref" position="before">
+                    <field name="system_id" string="System Origin" attrs="{'readonly': [('state', '=', 'posted')]}"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_account_move_filter" model="ir.ui.view">
+            <field name="name">account.move.select</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_move_filter"/>
+            <field name="arch" type="xml">
+                <field name="period_id" position="after">
+                    <field name="system_id" string="System Origin"/>
+                </field>
+                <xpath expr="//group" position="inside">
+                    <filter string="System Origin" domain="[]" context="{'group_by':'system_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
         <record id="view_account_move_line_tree" model="ir.ui.view">
             <field name="name">view.account.move.line.tree</field>
             <field name="model">account.move.line</field>
