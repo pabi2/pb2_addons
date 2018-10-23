@@ -8,7 +8,7 @@ class AccountInvoice(models.Model):
     type = fields.Selection(
         readonly=False,
     )
-    source_document = fields(
+    source_document = fields.Char(
         readonly=False,
     )
 
