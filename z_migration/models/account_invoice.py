@@ -8,6 +8,9 @@ class AccountInvoice(models.Model):
     type = fields.Selection(
         readonly=False,
     )
+    source_document = fields(
+        readonly=False,
+    )
 
     @api.multi
     def mock_trigger_workflow(self, signal):
