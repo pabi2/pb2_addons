@@ -12,7 +12,7 @@
                 </field>
             </field>
         </record>
-
+<!--
         <record id="priority_view_move_form" model="ir.ui.view">
             <field name="name">priority.view.move.form</field>
             <field name="model">account.move</field>
@@ -36,7 +36,7 @@
                     <filter string="System Origin" domain="[]" context="{'group_by':'system_id'}"/>
                 </xpath>
             </field>
-        </record>
+        </record> -->
 
         <record id="view_account_move_line_tree" model="ir.ui.view">
             <field name="name">view.account.move.line.tree</field>
