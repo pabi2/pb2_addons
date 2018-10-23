@@ -225,6 +225,14 @@ class BudgetPlanUnit(BPCommon, models.Model):
         self.action_approve()
 
     @api.multi
+    def action_draft_to_submit(self):
+        if not self.env.user.has_group('pabi_base.group_budget_user'):
+            raise ValidationError(_('You are not allowed to submit!'))
+        if self.filtered(lambda l: l.state != '1_draft'):
+            raise ValidationError(_('Only draft plan can be selected!'))
+        self.action_submit()
+
+    @api.multi
     def _post_message(self, vals):
         todo = {'plan_expense_line_ids': ('Expense line',
                                           'account.activity.group',

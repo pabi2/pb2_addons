@@ -1,36 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <template id="report_invoice_voucher_document">
-            <t t-call="pabi_forms.account_layout">
-                <div class="page pabi-page">
-                    <table class="table table-condensed">
-                        <thead>
-                            <!-- Naration -->
-                            <t t-call="pabi_forms.account_naration_header"/>
-
-                            <!-- Column Header -->
-                            <t t-call="pabi_forms.account_column_header"/>
-                        </thead>
-                        <tbody>
-                            <!-- Column Detail -->
-                            <t t-call="pabi_forms.account_column_detail"/>
-
-                            <!-- Summary -->
-                            <t t-call="pabi_forms.account_summary_footer"/>
-
-                            <!-- Last Page Footer -->
-                            <t t-call="pabi_forms.account_layout_footer_1"/>
-                        </tbody>
-                    </table>
-                </div>
-            </t>
-        </template>
-
         <template id="report_invoice_voucher">
             <t t-call="report.html_container">
-                <t t-foreach="doc_ids" t-as="doc_id">
-                    <t t-raw="translate_doc(doc_id, doc_model, 'partner_id.lang', 'pabi_forms.report_invoice_voucher_document')"/>
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="pabi_forms.account_layout">
+                        <div class="page pabi-page">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <!-- Naration -->
+                                    <t t-call="pabi_forms.account_naration_header"/>
+
+                                    <!-- Column Header -->
+                                    <t t-call="pabi_forms.account_column_header"/>
+                                </thead>
+                                <tbody>
+                                    <!-- Column Detail -->
+                                    <t t-call="pabi_forms.account_column_detail"/>
+
+                                    <!-- Summary -->
+                                    <t t-call="pabi_forms.account_summary_footer"/>
+
+                                    <!-- Last Page Footer -->
+                                    <t t-call="pabi_forms.account_layout_footer_1"/>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
                 </t>
             </t>
         </template>

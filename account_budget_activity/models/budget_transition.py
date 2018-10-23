@@ -384,6 +384,8 @@ class BudgetTransition(models.Model):
     @api.model
     def do_transit(self, direction, model, objects, obj_line_field=False,
                    undo=False):
+        # Just in case, there
+        self = self.with_context(force_no_budget_check=False)
         target_model_fields = {'account.invoice': 'invoice_line_id',
                                'sale.order': 'sale_line_id',
                                'purchase.order': 'purchase_line_id',
@@ -528,5 +530,6 @@ class AccountInvoice(models.Model):
                 BudgetTrans.do_forward(self._name, invoices, 'invoice_line')
             # Invoice Cancelled, It is time to regain commitment
             if vals['state'] == 'cancel':
+                x = 1/0
                 BudgetTrans.do_backward(self._name, invoices, 'invoice_line')
         return super(AccountInvoice, self).write(vals)
