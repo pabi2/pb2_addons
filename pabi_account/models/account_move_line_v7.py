@@ -46,6 +46,7 @@ class account_move_line(osv.osv):
             partner_id = \
                 (line['partner_id'] and line['partner_id']['id']) or False
         writeoff = debit - credit
+        print writeoff
 
         # Ifdate_p in context => take this date
         if 'date_p' in context and context['date_p']:
