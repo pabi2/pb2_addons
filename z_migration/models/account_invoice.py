@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+from openerp import models, api, fields
 
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
+
+    type = fields.Selection(
+        readonly=False,
+    )
 
     @api.multi
     def mock_trigger_workflow(self, signal):
