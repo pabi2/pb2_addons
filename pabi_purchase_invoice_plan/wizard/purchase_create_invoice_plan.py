@@ -205,6 +205,14 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             period_ids = period_obj.find(dt=installment_date)
             fy_id = period_ids[0].fiscalyear_id
             i.fiscalyear_id = fy_id
+            # Check Fiscal year in invoice plan must not over fiscal year in
+            # purchase order line (By POD)
+            if i.fiscalyear_id.id not in line_by_fiscalyear.keys():
+                raise ValidationError(
+                    _('The number of installment and interval \
+                       that you must yield invoice plan that \
+                       cover all fiscal years.'))
+            # --
             if i.fiscalyear_id.id not in line_of_fy:
                 line_of_fy[i.fiscalyear_id.id] = 1
             else:
@@ -221,8 +229,9 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                 else:
                     if l not in line_of_fy.keys():
                         raise ValidationError(
-                            _('Please enter valid installment \
-                                number and installment date .'))
+                            _('The number of installment and interval \
+                               that you must yield invoice plan that \
+                               cover all fiscal years.'))
                     number_of_lines = line_of_fy[l]
                 remaining_amt = line_by_fiscalyear[l]
                 line_cnt = number_of_lines
