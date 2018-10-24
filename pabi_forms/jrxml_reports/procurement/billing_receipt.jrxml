@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="4มิยใบรับวางบิล" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="56" bottomMargin="56">
 	<property name="ireport.zoom" value="1.3636363636363635"/>
 	<property name="ireport.x" value="83"/>
-	<property name="ireport.y" value="352"/>
+	<property name="ireport.y" value="144"/>
 	<style name="table" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -111,19 +111,20 @@
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT
+ai.id,
 ai.number as name,
 ai.date_invoice,
 ai.origin as reference,
 ai.amount_total as amount_total,
-string_agg(pol.name,',') as product_description
+(
+select objective from purchase_requisition where id = (
+select requisition_id from purchase_order where order_id = split_part(ai.source_document_id, ',', 2)::integer limit 1
+)
+) as product_description
 FROM account_invoice ai
-LEFT JOIN purchase_order_line pol
-ON pol.order_id = (SELECT po.id FROM purchase_order po WHERE po.name = ai.reference)
-WHERE ai.purchase_billing_id = $P{ids}
-GROUP BY ai.number,ai.id,ai.name,ai.date_invoice,
-ai.reference,
-ai.amount_total]]>
+WHERE ai.purchase_billing_id = $P{ids}]]>
 		</queryString>
+		<field name="id" class="java.lang.Integer"/>
 		<field name="name" class="java.lang.String"/>
 		<field name="date_invoice" class="java.sql.Date">
 			<fieldDescription><![CDATA[Invoice Date]]></fieldDescription>
