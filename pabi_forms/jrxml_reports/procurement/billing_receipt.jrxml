@@ -511,7 +511,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 								<textElement textAlignment="Left" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{name} != null ? $F{name} + "/" : ""
+								<textFieldExpression class="java.lang.String"><![CDATA[($F{name} != null ? $F{name} + "/" : "")
 +
 ($F{date_invoice} != null ? new SimpleDateFormat("dd/MM/yyyy").format($F{date_invoice}) : "")]]></textFieldExpression>
 							</textField>
