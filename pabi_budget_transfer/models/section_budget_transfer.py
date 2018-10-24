@@ -207,47 +207,24 @@ class SectionBudgetTransfer(models.Model):
             name = self.env['ir.sequence'].\
                 with_context(fiscalyear_id=fiscalyear_id).\
                 next_by_code('section.budget.transfer')
-            # This got singleton error ?????
-            # record.write({'state': 'confirm',
-            #               'name': name})
-            if record:
-                self._cr.execute("""
-                    update section_budget_transfer
-                    set state = 'confirm', name = %s
-                    where id = %s
-                """, (name, record.id))
+            record.write({'state': 'confirm',
+                          'name': name})
         return True
 
     @api.multi
     def button_approve(self):
-        # Error singleton ???
-        # self.write({'state': 'approve',
-        #             'date_approve': fields.Date.context_today(self),
-        #             'approver_user_id': self._uid})
-        if self:
-            self._cr.execute("""
-                update section_budget_transfer
-                set state = 'approve', date_approve = %s, approver_user_id = %s
-                where id in %s
-            """, (fields.Date.context_today(self),
-                  self._uid, tuple(self.ids)))
+        self.write({'state': 'approve',
+                    'date_approve': fields.Date.context_today(self),
+                    'approver_user_id': self._uid})
         return True
 
     @api.multi
     def button_transfer(self):
         for transfer in self:
             transfer.transfer_line_ids.action_transfer()
-        # Error singleton ???
-        # self.write({'state': 'transfer',
-        #             'date_transfer': fields.Date.today(),
-        #             'transfer_user_id': self._uid})
-        if self:
-            self._cr.execute("""
-                update section_budget_transfer set state = 'transfer',
-                date_approve = %s, transfer_user_id = %s
-                where id in %s
-            """, (fields.Date.context_today(self),
-                  self._uid, tuple(self.ids)))
+        self.write({'state': 'transfer',
+                    'date_transfer': fields.Date.today(),
+                    'transfer_user_id': self._uid})
         return True
 
     @api.multi
