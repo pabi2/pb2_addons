@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.100000000000007"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="453"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -85,6 +85,7 @@ CONCAT((COALESCE((SELECT rpt.name FROM res_partner_title rpt WHERE rpt.id = vali
 taxbranch.name tax_branch_name,
 taxbranch.street tax_branch_street,
 taxbranch.street2 tax_branch_street2,
+taxbranch.city tax_branch_city,
 taxbranch.zip tax_branch_zip,
 taxbranch.phone tax_branch_phone,
 taxbranch.fax tax_branch_fax,
@@ -225,6 +226,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 	<field name="vendor_phone" class="java.lang.String"/>
 	<field name="ou_id" class="java.lang.Integer"/>
 	<field name="currency" class="java.lang.String"/>
+	<field name="tax_branch_city" class="java.lang.String"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -461,7 +463,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 			<rectangle>
 				<reportElement x="0" y="110" width="483" height="49"/>
 			</rectangle>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="3" y="111" width="477" height="36" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single" markup="html">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -471,6 +473,8 @@ WHERE $X{IN,po.id,PIDS}]]>
 ($F{tax_branch_street} == null ? "" : $F{tax_branch_street} + ' ')
 +
 ($F{tax_branch_street2} == null ? "" : $F{tax_branch_street2} + ' ')
++
+($F{tax_branch_city} == null ? "" : $F{tax_branch_city} + ' ')
 +
 ($F{tax_branch_zip} == null ? "" : $F{tax_branch_zip})]]></textFieldExpression>
 			</textField>
@@ -1070,7 +1074,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_total_en} == null ? "" : "( " + $F{amount_total_en} + " )"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="283" y="22" width="146" height="21"/>
+				<reportElement x="283" y="22" width="112" height="21"/>
 				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -1090,19 +1094,19 @@ WHERE $X{IN,po.id,PIDS}]]>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{sub_total}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement x="283" y="1" width="112" height="21"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA["Total (" + $F{currency} + ")"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Total (" + $F{currency} + ")"]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement x="283" y="43" width="112" height="21"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA["Grand Total (" + $F{currency} + ")"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Grand Total (" + $F{currency} + ")"]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
