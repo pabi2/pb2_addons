@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="4มิยใบรับวางบิล" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="56" bottomMargin="56">
 	<property name="ireport.zoom" value="1.3636363636363635"/>
-	<property name="ireport.x" value="83"/>
-	<property name="ireport.y" value="144"/>
+	<property name="ireport.x" value="215"/>
+	<property name="ireport.y" value="496"/>
 	<style name="table" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -264,7 +264,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 	</background>
 	<title>
 		<band height="152" splitType="Stretch">
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="4" y="0" width="277" height="17"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -733,7 +733,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				<text><![CDATA[เลขที่ ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="339" y="38" width="193" height="19"/>
+				<reportElement x="339" y="38" width="317" height="19"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
