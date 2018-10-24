@@ -15,7 +15,8 @@ class AccountInvoice(models.Model):
     def _supplier_invoice_budget_check(self):
         Budget = self.env['account.budget']
         for invoice in self:
-            if invoice.type == 'in_invoice':  # Check only Supplier Invoice
+            if invoice.type == 'in_invoice' and \
+                    not invoice.is_advance:
                 doc_date = invoice.date_invoice
                 doc_lines = Budget.\
                     convert_lines_to_doc_lines(invoice.invoice_line)
