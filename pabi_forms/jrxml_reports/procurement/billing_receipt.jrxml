@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="4มิยใบรับวางบิล" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="56" bottomMargin="56">
 	<property name="ireport.zoom" value="1.3636363636363635"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="264"/>
+	<property name="ireport.y" value="0"/>
 	<style name="table" lineSpacing="Single">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -265,7 +265,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 	<title>
 		<band height="152" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="0" width="277" height="17"/>
+				<reportElement x="4" y="0" width="290" height="17"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -754,7 +754,7 @@ WHERE $X{IN, pb.id, PIDS}]]>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{datebill}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="7" width="277" height="17" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="4" y="7" width="290" height="17" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
