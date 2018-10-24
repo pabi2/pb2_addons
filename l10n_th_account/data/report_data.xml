@@ -14,7 +14,7 @@
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
-			<field name="copies">1</field>
+			<field name="copies">2</field>
 			<field name="force_locale">th_TH</field>
 			<field name="download_filename">WithholdingCert.pdf</field>
 		</record>

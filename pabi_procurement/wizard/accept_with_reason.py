@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class PurchaseRequestAcceptReason(models.TransientModel):
@@ -19,6 +20,8 @@ class PurchaseRequestAcceptReason(models.TransientModel):
         if request_id is None:
             return act_close
         purchase_request = self.env['purchase.request'].browse(request_id)
+        if not purchase_request.purchase_method_id:
+            raise ValidationError(_('Please specify the purchase method.'))
         purchase_request.accept_reason_txt = self.accept_reason_txt
         purchase_request.button_approved()
         return act_close

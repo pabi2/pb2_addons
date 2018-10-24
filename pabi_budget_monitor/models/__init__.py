@@ -9,3 +9,4 @@ from . import purchase_request
 from . import purchase
 from . import account
 from . import res_fund
+from . import stock

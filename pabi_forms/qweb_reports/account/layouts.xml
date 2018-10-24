@@ -191,8 +191,8 @@
                             </td>
                             <td style="width: 50%;">
                                 <span>Value Date: </span>
-                                <t t-if="o.document_id and o.document_id.date_cheque">
-                                    <span t-field="o.document_id.date_cheque"/>
+                                <t t-if="o.document_id and o.document_id.date_value">
+                                    <span t-field="o.document_id.date_value"/>
                                 </t>
                             </td>
                         </tr>
