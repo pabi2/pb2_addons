@@ -119,37 +119,6 @@ class BudgetMonitorReportWizard(models.TransientModel):
         return domain
 
     @api.model
-    def _get_filter_unit_base(self):
-        domain = []
-        if self.org_id:
-            domain.append(('org_id', '=', self.org_id.id))
-        if self.sector_id:
-            domain.append(('sector_id', '=', self.sector_id.id))
-        if self.subsector_id:
-            domain.append(('subsector_id', '=', self.subsector_id.id))
-        if self.division_id:
-            domain.append(('division_id', '=', self.division_id.id))
-        if self.section_id:
-            domain.append(('section_id', '=', self.section_id.id))
-        return domain
-
-    @api.model
-    def _get_filter_project_base(self):
-        domain = []
-        if self.functional_area_id:
-            domain.append(('functional_area_id', '=',
-                           self.functional_area_id.id))
-        if self.program_group_id:
-            domain.append(('program_group_id', '=', self.program_group_id.id))
-        if self.program_id:
-            domain.append(('program_id', '=', self.program_id.id))
-        if self.project_group_id:
-            domain.append(('project_group_id', '=', self.project_group_id.id))
-        if self.project_id:
-            domain.append(('project_id', '=', self.project_id.id))
-        return domain
-
-    @api.model
     def _get_filter_by_chart_view(self):
         chart_view_dict = {
             'unit_base': ['org_id', 'sector_id', 'subsector_id',
