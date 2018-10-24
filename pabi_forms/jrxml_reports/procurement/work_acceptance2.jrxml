@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
 	<property name="ireport.zoom" value="1.4615378250000255"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="544"/>
 	<subDataset name="po_committee">
 		<parameter name="ids" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -16,6 +16,7 @@ FROM purchase_order_committee poc
 LEFT JOIN purchase_committee_type pct
 ON pct.id = poc.committee_type_id
 WHERE poc.order_id = $P{ids}
+AND pct.name like '%พัสดุ%'
 ORDER BY poc.id]]>
 		</queryString>
 		<field name="name" class="java.lang.String"/>
