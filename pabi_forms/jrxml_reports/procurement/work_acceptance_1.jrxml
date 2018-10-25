@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="431" leftMargin="79" rightMargin="85" topMargin="70" bottomMargin="107">
 	<property name="ireport.zoom" value="1.2396694214876034"/>
 	<property name="ireport.x" value="3"/>
-	<property name="ireport.y" value="1478"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
@@ -258,7 +258,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<text><![CDATA[ที่]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="40" y="40" width="178" height="22"/>
+				<reportElement x="40" y="40" width="237" height="22"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
