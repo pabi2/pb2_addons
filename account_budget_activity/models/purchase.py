@@ -8,6 +8,19 @@ from .budget_commit import CommitLineCommon
 class PurchaseOrder(CommitCommon, models.Model):
     _inherit = 'purchase.order'
 
+    READONLY_STATES = {
+        'confirmed': [('readonly', True)],
+        'approved': [('readonly', True)],
+        'done': [('readonly', True)]
+    }
+
+    order_line = fields.One2many(
+        'purchase.order.line',
+        'order_id',
+        states=READONLY_STATES,
+        copy=True,
+    )
+
     # Extension to budget_transition.py
     budget_commit_ids = fields.One2many(inverse_name='purchase_id')
     budget_transition_ids = fields.One2many(inverse_name='purchase_id')
