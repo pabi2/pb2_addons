@@ -23,7 +23,7 @@
                             <field name="doctype"/>
                         </group>
                         <group>
-                            <field name="report_type"/>
+                            <field name="report_type" invisible="1"/>
                         </group>
                     </group>
                     <footer>
