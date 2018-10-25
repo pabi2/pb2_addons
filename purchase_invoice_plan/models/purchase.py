@@ -63,6 +63,10 @@ class PurchaseOrder(models.Model):
         string='Number of Installment',
         default=0,
     )
+    invoice_plan_warning = fields.Text(
+        string='Warning',
+        compute='_compute_check_invoice_plan_warning',
+    )
 
     @api.multi
     def _compute_plan_invoice_created(self):
@@ -164,17 +168,48 @@ class PurchaseOrder(models.Model):
                 purchase.invoice_plan_ids)
         return res
 
+    # @api.multi
+    # def _check_invoice_plan(self):
+    #     self.ensure_one()
+    #     if self.invoice_method == 'invoice_plan':
+    #         # self._check_invoice_mode()
+    #         # kittiu: problem with decimal, so we dicide to test with 0
+    #         # obj_precision = self.env['decimal.precision']
+    #         # prec = obj_precision.precision_get('Account')
+    #         prec = 1
+    #         # --
+    #         for order_line in self.order_line:
+    #             subtotal = order_line.price_subtotal
+    #             invoice_lines = self.env['purchase.invoice.plan'].search(
+    #                 [('order_line_id', '=', order_line.id)])
+    #             total_amount = 0.0
+    #             for line in invoice_lines:
+    #                 total_amount += line.invoice_amount
+    #                 # Validate percent
+    #                 if round(line.invoice_percent / 100 * subtotal, prec) != \
+    #                         round(line.invoice_amount, prec):
+    #                     raise except_orm(
+    #                         _('Invoice Plan Percent Mismatch!'),
+    #                         _("%s on installment %s")
+    #                         % (order_line.name, line.installment))
+    #             if round(total_amount, prec) != round(subtotal, prec):
+    #                 raise except_orm(
+    #                     _('Invoice Plan Amount Mismatch!'),
+    #                     _("%s, plan amount %s not equal to line amount %s!")
+    #                     % (order_line.name,
+    #                        '{:,.2f}'.format(total_amount),
+    #                        '{:,.2f}'.format(subtotal)))
+    #     return True
+
     @api.multi
-    def _check_invoice_plan(self):
-        self.ensure_one()
-        if self.invoice_method == 'invoice_plan':
-            # self._check_invoice_mode()
-            # kittiu: problem with decimal, so we dicide to test with 0
-            # obj_precision = self.env['decimal.precision']
-            # prec = obj_precision.precision_get('Account')
+    @api.depends('invoice_plan_ids')
+    def _compute_check_invoice_plan_warning(self, exception=False):
+        for purchase in self:
+            if not purchase.invoice_method == 'invoice_plan':
+                continue
             prec = 1
-            # --
-            for order_line in self.order_line:
+            warnings = []
+            for order_line in purchase.order_line:
                 subtotal = order_line.price_subtotal
                 invoice_lines = self.env['purchase.invoice.plan'].search(
                     [('order_line_id', '=', order_line.id)])
@@ -182,19 +217,23 @@ class PurchaseOrder(models.Model):
                 for line in invoice_lines:
                     total_amount += line.invoice_amount
                     # Validate percent
+                    # kittiu: Moving this error to show as invoice plan warning
                     if round(line.invoice_percent / 100 * subtotal, prec) != \
                             round(line.invoice_amount, prec):
-                        raise except_orm(
-                            _('Invoice Plan Percent Mismatch!'),
-                            _("%s on installment %s")
+                        warnings.append(
+                            _("- Diff %s -- on installment %s")
                             % (order_line.name, line.installment))
-                if round(total_amount, prec) != round(subtotal, prec):
-                    raise except_orm(
-                        _('Invoice Plan Amount Mismatch!'),
-                        _("%s, plan amount %s not equal to line amount %s!")
+                if invoice_lines and \
+                        round(total_amount, prec) != round(subtotal, prec):
+                    warnings.append(
+                        _("%s, plan amount %s diff with line amount %s!")
                         % (order_line.name,
                            '{:,.2f}'.format(total_amount),
                            '{:,.2f}'.format(subtotal)))
+            purchase.invoice_plan_warning = '\n'.join(warnings)
+            if exception and purchase.invoice_plan_warning:
+                raise except_orm(_('Invoice Plan Percent Mismatch!'),
+                                 purchase.invoice_plan_warning)
         return True
 
     @api.model
@@ -288,7 +327,8 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def wkf_approve_order(self):
-        self._check_invoice_plan()
+        # kittiu: No blocking, but change to display as warning instead
+        self._compute_check_invoice_plan_warning(exception=True)
         return super(PurchaseOrder, self).wkf_approve_order()
 
     # @api.multi
@@ -308,7 +348,8 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def action_invoice_create(self):
-        self._check_invoice_plan()
+        # kittiu: No blocking, but change to display as warning instead
+        self._compute_check_invoice_plan_warning(exception=True)
         if self.plan_invoice_created:
             raise ValidationError(_('Create more invoices not allowed!'))
         invoice_ids = []
