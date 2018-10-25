@@ -32,6 +32,9 @@
                 <field name="date_value" position="attributes">
                     <attribute name="string">Value/Cheque Date</attribute>
                 </field>
+                <field name="operating_unit_id" position="after">
+                    <field name="wa_total_fine" invisible="True"/>
+                </field>
                 <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='move_line_id']" position="after">
                     <field name="invoice_taxbranch_id"/>
                 </xpath>

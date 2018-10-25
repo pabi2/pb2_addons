@@ -108,6 +108,11 @@ class AccountVoucher(models.Model):
          ('received', 'Received')],
         string='Receipt Followup',
     )
+    wa_total_fine = fields.Float(
+        string='Wa Total Fine',
+        compute='_compute_wa_total_fine',
+        store=False,
+    )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
 
@@ -130,6 +135,12 @@ class AccountVoucher(models.Model):
                 if len(taxbranches) > 1:
                     raise ValidationError(_('Mixing invoices for different '
                                             'tax branch is not allowed!'))
+
+    @api.multi
+    def _compute_wa_total_fine(self):
+        amount = sum(self.line_dr_ids.mapped(
+                 'invoice_id.late_delivery_work_acceptance_id.total_fine'))
+        self.wa_total_fine = amount
 
     @api.multi
     @api.depends('line_ids')

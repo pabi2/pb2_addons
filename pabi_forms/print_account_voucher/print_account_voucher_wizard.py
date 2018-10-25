@@ -19,6 +19,20 @@ DOCTYPE_REPORT_MAP = {
             'payment': 'supplier_netpay_form_th',
         }
     },
+    'wa_fine_and_retention': {
+        'en': {
+            'sale': False,
+            'purchase': False,
+            'receipt': False,
+            'payment': 'wa_fine_and_retention_form_en',
+        },
+        'th': {
+            'sale': False,
+            'purchase': False,
+            'receipt': False,
+            'payment': 'wa_fine_and_retention_form_th',
+        }
+    },
     'customer_receipt': {
         'en': {
             'sale': False,
@@ -145,5 +159,6 @@ class PrintAccountVoucherWizard(models.TransientModel):
                        ('customer_tax_receipt', 'Tax Receipt'),
                        ('customer_tax_receipt200', 'Tax Receipt 200%'), ]
             elif voucher.type == 'payment':
-                return [('supplier_net_payment', 'Net Payment')]
+                return [('supplier_net_payment', 'Net Payment'),
+                        ('wa_fine_and_retention', 'Wa Fine and Retention')]
         return []
