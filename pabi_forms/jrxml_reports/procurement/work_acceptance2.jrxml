@@ -2,8 +2,8 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="work_acceptance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
 	<property name="ireport.zoom" value="1.4615378250000255"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="544"/>
+	<property name="ireport.x" value="233"/>
+	<property name="ireport.y" value="186"/>
 	<subDataset name="po_committee">
 		<parameter name="ids" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -126,6 +126,7 @@ total_fine_cal fine,
 pwa.amount_tax,
 pwa.amount_untaxed,
 pwa.amount_total,
+pwa.manual_days,
 con.display_code as contract_name
 FROM purchase_work_acceptance pwa
 LEFT JOIN purchase_order po
@@ -182,6 +183,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	<field name="amount_total" class="java.lang.Double"/>
 	<field name="contract_name" class="java.lang.String"/>
 	<field name="contract_sys_date" class="java.sql.Date"/>
+	<field name="manual_days" class="java.lang.Integer"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="Column" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -472,7 +474,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	<columnHeader>
 		<band height="27" splitType="Stretch">
 			<staticText>
-				<reportElement x="50" y="0" width="240" height="27"/>
+				<reportElement x="50" y="0" width="250" height="27"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -485,7 +487,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<text><![CDATA[รายการ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="290" y="0" width="85" height="27"/>
+				<reportElement x="300" y="0" width="85" height="27"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -524,7 +526,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<text><![CDATA[ลำดับ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="375" y="0" width="90" height="27"/>
+				<reportElement x="385" y="0" width="80" height="27"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -541,7 +543,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	<detail>
 		<band height="21" splitType="Stretch">
 			<componentElement>
-				<reportElement key="table" x="0" y="0" width="550" height="21"/>
+				<reportElement key="table" x="0" y="0" width="555" height="21"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="work_acceptance_line">
 						<datasetParameter name="ids">
@@ -572,7 +574,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="240">
+					<jr:column width="250">
 						<jr:columnFooter height="0" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -587,7 +589,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement x="7" y="0" width="232" height="21"/>
+								<reportElement x="3" y="0" width="247" height="21"/>
 								<textElement verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -610,7 +612,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="81" height="21"/>
+								<reportElement x="0" y="0" width="83" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -618,7 +620,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="90">
+					<jr:column width="80">
 						<jr:columnFooter height="0" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -633,7 +635,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="86" height="21"/>
+								<reportElement x="0" y="0" width="77" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -710,7 +712,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_manual_fine} != true && $F{contract} > 0 ? $F{contract} : "______"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_manual_fine} != true && $F{manual_days} > 0 ? $F{manual_days} : "______"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="187" y="119" width="207" height="21"/>
@@ -920,7 +922,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="375" y="0" width="90" height="62"/>
+				<reportElement x="385" y="0" width="80" height="62"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -953,29 +955,29 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				</textElement>
 				<text><![CDATA[จำนวนเงินรวม]]></text>
 			</staticText>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="465" y="20" width="86" height="21"/>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="449" y="20" width="103" height="21"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_tax}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="465" y="1" width="86" height="21"/>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="449" y="1" width="103" height="21"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_untaxed}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="465" y="41" width="86" height="21"/>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="449" y="41" width="103" height="21"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_total}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="0" width="375" height="1"/>
+				<reportElement x="0" y="0" width="385" height="1"/>
 			</line>
 			<frame>
 				<reportElement positionType="Float" x="1" y="305" width="564" height="115"/>
