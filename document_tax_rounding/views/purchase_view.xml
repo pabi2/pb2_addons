@@ -8,10 +8,9 @@
              <field name="inherit_id" ref="purchase.purchase_order_form"/>
              <field name="arch" type="xml">
                  <field name="order_line" position="after">
-                     <group>
-                         <group>
-                             <field name="rounding_method"></field>
-                         </group>
+                     <group col="4">
+                         <field name="rounding_method"/>
+                         <group col="2"/>
                      </group>
                  </field>
              </field>
