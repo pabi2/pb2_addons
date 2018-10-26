@@ -54,7 +54,7 @@ class PurchaseWorkAcceptance(models.Model):
     )
     manual_days = fields.Integer(
         string='No. of Days',
-        default=1,
+        default=0,
     )
     fine_per_day = fields.Float(
         string='Fine per Day',
