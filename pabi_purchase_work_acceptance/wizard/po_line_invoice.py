@@ -25,7 +25,7 @@ class PurchaseLineInvoice(models.TransientModel):
                     'po_line_id': po_line.id,
                     'product_qty': max_quantity,
                     'invoiced_qty': wa_line.to_receive_qty,
-                    'price_unit': po_line.price_unit,
+                    'price_unit': wa_line.price_unit,
                     'wa_line_qty': wa_line.to_receive_qty,
                 })
             defaults = super(PurchaseLineInvoice, self).default_get(fields)
