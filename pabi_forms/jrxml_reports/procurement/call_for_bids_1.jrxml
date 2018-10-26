@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="16"/>
-	<property name="ireport.y" value="592"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="480"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -87,7 +87,7 @@ LEFT JOIN purchase_requisition_taxes_rel prtr
 ON prtr.requisition_line_id = reql.id
 LEFT JOIN account_tax atax
 ON atax.id = prtr.tax_id
-where req.id = $P{ids}
+where reql.id = pdl.id
 group by reql.price_subtotal, atax.id LIMIT 1) as amount_total,
 pr.name as material_group,
 pdl.product_qty,
@@ -910,7 +910,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<text><![CDATA[จำนวนราคารวม โดยประมาณ (บาท/รวมVat)]]></text>
+								<text><![CDATA[จำนวนราคารวม โดยประมาณ (รวมVat)]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:tableFooter height="8" rowSpan="1">
