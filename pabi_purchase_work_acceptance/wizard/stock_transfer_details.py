@@ -71,6 +71,6 @@ class StockTransferDetails(models.TransientModel):
                           "stock move's quantity.")
                     )
             # Stamp WA accept date
-            picking.acceptance_id.date_accept = fields.Date.context_today(self)
+            # picking.acceptance_id.date_accept = fields.Date.context_today(self)
         res = super(StockTransferDetails, self).do_detailed_transfer()
         return res
