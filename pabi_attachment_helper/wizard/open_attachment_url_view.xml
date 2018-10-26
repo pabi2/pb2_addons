@@ -14,10 +14,10 @@
                             <field name="attachment_id" invisible="True"/>
                             <field name="type" invisible="True"/>
 
-                            <label for="file_name"/>
+                            <label for="file_name" attrs="{'invisible': [('file_name', '=', False)]}"/>
                             <div>
                                 <div>
-                                    <field name="file_name" readonly="1"/>
+                                    <field name="file_name" readonly="1" attrs="{'invisible': [('file_name', '=', False)]}"/>
                                 </div>
                                 <div>
                                     <field name="binary_file" nolabel="1" filename='file_name' attrs="{'invisible': [('type', '=', 'url')]}"/>
