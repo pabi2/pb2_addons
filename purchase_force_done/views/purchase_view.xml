@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-        <record model="ir.ui.view" id="view_purchase_order_form">
+        <record model="ir.ui.view" id="view_purchase_order_form_force_done">
             <field name="name">view.purchase.order.form</field>
             <field name="model">purchase.order</field>
             <field name="inherit_id"
