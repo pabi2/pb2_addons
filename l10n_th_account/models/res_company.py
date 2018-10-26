@@ -9,6 +9,7 @@ class ResCompany(models.Model):
         string='Retention on Payment',
         default=False,
     )
+    # Retention account setup
     account_retention_customer = fields.Many2one(
         'account.account',
         string='Account Retention Customer',
@@ -19,6 +20,17 @@ class ResCompany(models.Model):
         string='Account Retention Supplier',
         domain=[('type', '!=', 'view')],
     )
+    account_retention_customer_ids = fields.Many2many(
+        'account.account',
+        string='Account Retention Customer',
+        domain=[('type', '!=', 'view')],
+    )
+    account_retention_supplier_ids = fields.Many2many(
+        'account.account',
+        string='Account Retention Supplier',
+        domain=[('type', '!=', 'view')],
+    )
+    # --
     auto_recognize_vat = fields.Boolean(
         string='Auto recognize undue VAT on Supplier Payment',
         default=True,

@@ -86,8 +86,16 @@
                                 <field name="account_retention_customer" class="oe_inline"/>
                             </div>
                             <div>
+                                <label string="Customer"/>
+                                <field name="account_retention_customer_ids" widget="many2many_tags" class="oe_inline"/>
+                            </div>
+                            <div>
                                 <label string="Supplier"/>
                                 <field name="account_retention_supplier" class="oe_inline"/>
+                            </div>
+                            <div>
+                                <label string="Supplier"/>
+                                <field name="account_retention_supplier_ids" widget="many2many_tags" class="oe_inline"/>
                             </div>
                             <div>
                                 <field name="retention_on_payment" class="oe_inline"/>
