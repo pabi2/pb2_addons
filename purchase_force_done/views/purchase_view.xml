@@ -5,7 +5,7 @@
             <field name="name">view.purchase.order.form</field>
             <field name="model">purchase.order</field>
             <field name="inherit_id"
-                   ref="purchase.purchase_order_form"/>
+                   ref="account_budget_activity.purchase_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='shipped']" position="after">
                     <field name="force_done_reason"/>
