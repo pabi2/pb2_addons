@@ -11,7 +11,7 @@
             }
             .pabi-header, .pabi-page, .pabi-footer {
                 font-size: 16px !important;
-                font-family: 'Tahoma' !important;
+                /*font-family: 'Tahoma' !important;*/
             }
             .pabi-logo {
                 position: absolute !important;
