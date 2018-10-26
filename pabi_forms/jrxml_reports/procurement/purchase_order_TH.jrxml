@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="608"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -880,7 +880,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<reportElement x="0" y="81" width="483" height="214"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="4" y="87" width="66" height="34"/>
+				<reportElement x="4" y="81" width="66" height="34"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="SansSerif" size="12" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -888,16 +888,16 @@ WHERE $X{IN, po.id, PIDS}]]>
 (Remark)]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="140" y="143" width="58" height="18">
+				<reportElement x="177" y="137" width="92" height="18">
 					<printWhenExpression><![CDATA[$F{fine_condition} == "date"]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{fine_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{fine_date}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="159" y="143" width="34" height="18">
+				<reportElement x="159" y="137" width="34" height="18">
 					<printWhenExpression><![CDATA[$F{fine_condition} == "day"]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single">
@@ -906,28 +906,28 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{fine_days}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="45" y="129" width="430" height="32"/>
+				<reportElement x="45" y="123" width="430" height="32"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[3. กรณีเป็นการจ้าง ผู้รับจ้างจะต้องปิดอากรแสตมป์บนใบสั่งจ้างในอัตรา 1,000 บาท ละ 1 บาท เป็นเงิน ]]></text>
 			</staticText>
 			<textField pattern="#,##0">
-				<reportElement x="344" y="129" width="127" height="18"/>
+				<reportElement x="344" y="123" width="127" height="18"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$V{stamp_vat}.setScale(0, java.math.RoundingMode.CEILING)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="45" y="101" width="485" height="28"/>
+				<reportElement x="45" y="95" width="485" height="28"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[2. หากผู้ขาย/ผู้รับจ้างส่งมอบสินค้า/งานจ้างล่าช้า ผู้ขาย/ผู้รับจ้างจะต้องชำระค่าปรับเป็นรายวันในอัตราร้อยละ ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="45" y="143" width="409" height="18">
+				<reportElement x="45" y="137" width="409" height="18">
 					<printWhenExpression><![CDATA[$F{fine_condition} == "day"]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single">
@@ -936,7 +936,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[4. กำหนดส่งมอบสินค้า/การจ้างภายใน ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="169" y="143" width="361" height="18" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement mode="Transparent" x="169" y="137" width="361" height="18" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$F{fine_condition} == "day"]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -945,28 +945,28 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[วัน  นับถัดจากวันที่ผู้ขาย/ผู้รับจ้างลงลายมือชื่อในใบสั่งซื้อ/จ้าง]]></text>
 			</staticText>
 			<textField pattern="#,##0.00">
-				<reportElement x="361" y="101" width="45" height="18"/>
+				<reportElement x="361" y="95" width="45" height="18"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{fine_rate}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="377" y="101" width="150" height="28"/>
+				<reportElement x="377" y="95" width="150" height="28"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ของสินค้าหรืองานที่ยังไม่ได้รับมอบ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="45" y="115" width="364" height="18"/>
+				<reportElement x="45" y="109" width="364" height="18"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[กรณีงานจ้างค่าปรับจะต้องไม่น้อยกว่าอัตราวันละ 100 บาท]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="247" y="147" width="236" height="148"/>
+				<reportElement x="247" y="155" width="236" height="140"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="306" y="216" width="10" height="20"/>
@@ -1016,7 +1016,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="251" y="151" width="248" height="30"/>
+				<reportElement x="251" y="158" width="248" height="30"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -1069,7 +1069,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[ประทับตราบริษัท (ถ้ามี)]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="0" y="147" width="247" height="148"/>
+				<reportElement x="0" y="155" width="247" height="140"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="83" y="232" width="7" height="16"/>
@@ -1132,21 +1132,21 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[(ลงชื่อ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="376" y="129" width="41" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="376" y="123" width="41" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[บาท]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="45" y="87" width="439" height="18"/>
+				<reportElement x="45" y="81" width="439" height="18"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[1. ใบสั่งซื้อ/จ้าง นี้จะสมบูรณ์ต่อเมื่อมีลายมือชื่อผู้ที่มีอำนาจอนุมัติลงนาม]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="45" y="143" width="355" height="18">
+				<reportElement x="45" y="137" width="355" height="18">
 					<printWhenExpression><![CDATA[$F{fine_condition} == "date"]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single">
