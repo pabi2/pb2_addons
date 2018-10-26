@@ -29,7 +29,6 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def wkf_confirm_order(self):
-        res = super(PurchaseOrder, self).wkf_confirm_order()
         for purchase in self:
             # For case invoice plan only, if By Fiscal Year is selected,
             if purchase.use_invoice_plan and purchase.by_fiscalyear:
@@ -42,7 +41,7 @@ class PurchaseOrder(models.Model):
                 if lines:
                     Fiscal = self.env['account.fiscalyear']
                     lines.write({'fiscalyear_id': Fiscal.find()})
-        return res
+        return super(PurchaseOrder, self).wkf_confirm_order()
 
     # @api.constrains('use_invoice_plan', 'by_fiscalyear', 'order_line')
     # def _check_by_fiscalyear(self):
