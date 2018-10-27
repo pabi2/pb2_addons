@@ -78,34 +78,6 @@ class SaleOrderLine(CommitLineCommon, ActivityCommon, models.Model):
             res.update({d: line[d].id})
         return res
 
-    # @api.multi
-    # def onchange_product_id(
-    #         self, pricelist_id, product_id, qty, uom_id, partner_id,
-    #         date_order=False, fiscal_position_id=False, date_planned=False,
-    #         name=False, price_unit=False, state='draft'):
-    #     res = super(PurchaseOrderLine, self).onchange_product_id(
-    #         pricelist_id, product_id, qty, uom_id, partner_id,
-    #         date_order=date_order, fiscal_position_id=fiscal_position_id,
-    #         date_planned=date_planned, name=name,
-    #         price_unit=price_unit, state=state)
-    #     if not res['value'].get('date_planned', False):
-    #         date_planned = date_planned or fields.Date.context_today(self)
-    #         res['value'].update({'date_planned': date_planned})
-    #     return res
-
-    # ================= Purchase Commitment =====================
-    # DO NOT DELETE, Pending decision on what to use.
-    #     @api.model
-    #     def _get_account_id_from_po_line(self):
-    #         # For PABI, account is always from activity group
-    #         account = self.activity_group_id.account_id
-    #         # If not exist, use the default expense account
-    #         if not account:
-    #             prop = self.env['ir.property'].search(
-    #                 [('name', '=', 'property_account_expense_categ')])
-    #             account = prop.get_by_record(prop)
-    #         return account and account.id or False
-
     @api.model
     def _price_subtotal(self, line_qty):
         line_price = self._calc_line_base_price(self)
@@ -114,74 +86,6 @@ class SaleOrderLine(CommitLineCommon, ActivityCommon, models.Model):
                                         self.order_id.partner_id)
         cur = self.order_id.pricelist_id.currency_id
         return cur.round(taxes['total'])
-
-    # @api.multi
-    # def _prepare_analytic_line(self, reverse=False, currency=False):
-    #     self.ensure_one()
-    #     # general_account_id = self._get_account_id_from_po_line()
-    #     general_journal = self.env['account.journal'].search(
-    #         [('type', '=', 'sale'),
-    #          ('company_id', '=', self.company_id.id)], limit=1)
-    #     if not general_journal:
-    #         raise Warning(_('Define an accounting journal for sale'))
-    #     if not general_journal.is_budget_commit:
-    #         return False
-    #     if not general_journal.so_commitment_analytic_journal_id or \
-    #             not general_journal.so_commitment_account_id:
-    #         raise ValidationError(
-    #             _("No analytic journal for SO commitments defined on the "
-    #               "accounting journal '%s'") % general_journal.name)
-    #     analytic_journal = general_journal.so_commitment_analytic_journal_id
-    #
-    #     # Pre check, is eligible line
-    #     Budget = self.env['account.budget']
-    #     if not Budget.budget_eligible_line(analytic_journal, self):
-    #         return False
-    #
-    #     # Use SO Commitment Account
-    #     general_account_id = general_journal.so_commitment_account_id.id
-    #
-    #     line_qty = False
-    #     line_amount = False
-    #     if 'diff_qty' in self._context:
-    #         line_qty = self._context.get('diff_qty')
-    #     elif 'diff_amount' in self._context:
-    #         line_amount = self._context.get('diff_amount')
-    #     else:
-    #         line_qty = self.product_uos_qty
-    #     if not line_qty and not line_amount:
-    #         return False
-    #     price_subtotal = line_amount or self._price_subtotal(line_qty)
-    #
-    #     sign = reverse and 1 or -1  # opposite of purchase side
-    #     company_currency = self.env.user.company_id.currency_id
-    #     currency = currency or company_currency
-    #     return {
-    #         'name': self.name,
-    #         'product_id': self.product_id.id,
-    #         'account_id': self.account_analytic_id.id,
-    #         'unit_amount': line_qty,
-    #         'product_uom_id': self.product_uom.id,
-    #         'amount': currency.compute(sign * price_subtotal,
-    #                                    company_currency),
-    #         'general_account_id': general_account_id,
-    #         'journal_id': analytic_journal.id,
-    #         'ref': self.order_id.name,
-    #         'user_id': self._uid,
-    #         # SO
-    #         'sale_line_id': self.id,
-    #     }
-    #
-    # @api.multi
-    # def _create_analytic_line(self, reverse=False):
-    #     for rec in self:
-    #         if 'order_type' in rec.order_id and \
-    #                 rec.order_id.order_type == 'quotation':  # Not quotation.
-    #             continue
-    #         vals = rec._prepare_analytic_line(
-    #             reverse=reverse, currency=rec.order_id.currency_id)
-    #         if vals:
-    #             self.env['account.analytic.line'].sudo().create(vals)
 
     # When confirm PO Line, create full analytic lines
     @api.multi
@@ -199,24 +103,3 @@ class SaleOrderLine(CommitLineCommon, ActivityCommon, models.Model):
                                                     'draft', 'cancel')).\
                 _create_analytic_line(reverse=False)
         return super(SaleOrderLine, self).write(vals)
-
-    # # When partial open_invoiced_qty
-    # @api.multi
-    # @api.depends('open_invoiced_qty')
-    # def _compute_temp_invoiced_qty(self):
-    #     # As inoviced_qty increased, release the commitment
-    #     for rec in self:
-    #         # On compute filed of temp_invoiced_qty, ORM is not working
-    #         self._cr.execute("""
-    #             select temp_invoiced_qty
-    #             from sale_order_line where id = %s
-    #         """, (rec.id,))
-    #         result = self._cr.fetchone()
-    #         temp_invoiced_qty = result and result[0] or 0.0
-    #         diff_qty = (rec.open_invoiced_qty - temp_invoiced_qty)
-    #         if rec.state not in ('done', 'draft', 'cancel'):
-    #             rec.with_context(diff_qty=diff_qty).\
-    #                 _create_analytic_line(reverse=False)
-    #         rec.temp_invoiced_qty = rec.open_invoiced_qty
-
-    # ======================================================

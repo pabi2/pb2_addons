@@ -18,8 +18,13 @@ class AccountInvoice(models.Model):
             if invoice.type == 'in_invoice' and \
                     not invoice.is_advance:
                 doc_date = invoice.date_invoice
+                # Only check for budget eligible line
+                analytic_journal = invoice.journal_id.analytic_journal_id
+                invoice_line = invoice.invoice_line.filtered(
+                    lambda l: Budget.budget_eligible_line(analytic_journal, l))
+                # --
                 doc_lines = Budget.\
-                    convert_lines_to_doc_lines(invoice.invoice_line)
+                    convert_lines_to_doc_lines(invoice_line)
                 res = Budget.post_commit_budget_check(doc_date, doc_lines)
                 if not res['budget_ok']:
                     raise ValidationError(res['message'])
