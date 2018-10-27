@@ -4,19 +4,22 @@
     'version': '1.0',
     'author': 'Ecosoft',
     'summary': """
-Rounding float number
+
+Change tax rounding method per document for PO and INV
+
     """,
 
     'category': 'Accounting',
     'website': 'http://www.ecosoft.co.th',
     'images': [],
     'depends': [
-        'account',
         'purchase',
+        'account',
     ],
     'demo': [],
     'data': [
         'views/purchase_view.xml',
+        'views/account_invoice_view.xml',
     ],
 }
 

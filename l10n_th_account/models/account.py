@@ -74,7 +74,7 @@ class AccountTax(models.Model):
             taxes = taxes.filtered(lambda r: not r.is_wht)  # Remove all WHT
         res = super(AccountTax, self).compute_all(
             cr, uid, taxes, price_unit, quantity, product=None,
-            partner=None, force_excluded=False, context=context)
+            partner=None, force_excluded=False)
         return res
 
     @api.v8
@@ -82,8 +82,7 @@ class AccountTax(models.Model):
                     partner=None, force_excluded=False):
         return self._model.compute_all(
             self._cr, self._uid, self, price_unit, quantity,
-            product=product, partner=partner, force_excluded=force_excluded,
-            context=self._context)
+            product=product, partner=partner, force_excluded=force_excluded)
 
     @api.onchange('is_wht')
     def onchange_is_wht(self):

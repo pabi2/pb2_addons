@@ -7,11 +7,12 @@
              <field name="type">form</field>
              <field name="inherit_id" ref="purchase.purchase_order_form"/>
              <field name="arch" type="xml">
-                 <field name="order_line" position="after">
-                     <group col="4">
-                         <field name="rounding_method"/>
-                         <group col="2"/>
-                     </group>
+                 <field name="amount_tax" position="after">
+                    <field name="tax_mismatch" string="Tax Mismatch" invisible="1"/>
+                    <button name="fix_tax_rounding"
+                        attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('tax_mismatch', '=', False)]}"
+                        string="(fix tax rounding)" class="oe_link oe_edit_only"
+                        type="object" help="Fix tax rounding in case mismatch" />
                  </field>
              </field>
          </record>

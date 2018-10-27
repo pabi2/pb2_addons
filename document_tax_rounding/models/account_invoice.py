@@ -3,8 +3,8 @@ from openerp import models, fields, api
 from openerp.tools.float_utils import float_compare
 
 
-class PurchaseOrder(models.Model):
-    _inherit = 'purchase.order'
+class AccountInvoice(models.Model):
+    _inherit = 'account.invoice'
 
     tax_mismatch = fields.Boolean(
         string='Tax Mismatch',
@@ -22,22 +22,22 @@ class PurchaseOrder(models.Model):
                 rec.tax_mismatch = True
         return True
 
-    @api.v7
-    def fix_tax_rounding(self, cr, uid, ids, context=None):
+    @api.multi
+    def fix_tax_rounding(self):
         """ This method will,
             1) Change tax counding method
             2) Calc Tax
             3) Set rounding method back
         """
-        user = self.pool.get('res.users').browse(cr, uid, uid)
-        company_id = user.company_id.id
-        Company = self.pool.get('res.company')
-        old_method = user.company_id.tax_calculation_rounding_method
+        company = self.env.user.company_id
+        old_method = company.tax_calculation_rounding_method
         new_method = (old_method == 'round_per_line') and \
             'round_globally' or 'round_per_line'
         vals = {'tax_calculation_rounding_method': new_method}
-        Company.write(cr, [company_id], vals, context=context)
-        self._amount_all(cr, uid, ids, False, False, context=context)
+        company.write(vals)
+        for invoice in self:
+            invoice.invoice_line._compute_price()
+            invoice._compute_amount()
         vals = {'tax_calculation_rounding_method': old_method}
-        Company.write(cr, [company_id], vals, context=context)
+        company.write(vals)
         return True

@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 from . import purchase
-from . import account
+from . import account_invoice
