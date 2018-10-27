@@ -7,6 +7,10 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="pabi_hr_expense.view_expenses_form_no_create_delete"/>
             <field name="arch" type="xml">
+                <xpath expr="/form" position="attributes">
+                    <attribute name="create">1</attribute>
+                    <attribute name="delete">1</attribute>
+                </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/form" position="attributes">
                     <attribute name="create">1</attribute>
                     <attribute name="delete">1</attribute>
@@ -17,6 +21,7 @@
                 </xpath>
             </field>
         </record>
+        
         <record id="view_expenses_form_advance" model="ir.ui.view">
     			<field name="name">view.expenses.form.advance</field>
     			<field name="model">hr.expense.expense</field>
@@ -28,5 +33,16 @@
     			</field>
     		</record>
 
+        <record id="view_expenses_tree" model="ir.ui.view">
+            <field name="name">hr.expense.form.no.create.delete</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="pabi_hr_expense.view_expenses_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="attributes">
+                    <attribute name="create">1</attribute>
+                    <attribute name="delete">1</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </openerp>
