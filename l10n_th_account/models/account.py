@@ -74,7 +74,7 @@ class AccountTax(models.Model):
             taxes = taxes.filtered(lambda r: not r.is_wht)  # Remove all WHT
         res = super(AccountTax, self).compute_all(
             cr, uid, taxes, price_unit, quantity, product=None,
-            partner=None, force_excluded=False)
+            partner=None, force_excluded=False, context=context)
         return res
 
     @api.v8
