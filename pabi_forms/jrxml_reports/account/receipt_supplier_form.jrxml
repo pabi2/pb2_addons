@@ -132,6 +132,9 @@
 	<field name="amount_retention_supplier" class="java.lang.Number">
 		<fieldDescription><![CDATA[retention_amount]]></fieldDescription>
 	</field>
+	<field name="wa_comment" class="java.lang.String">
+		<fieldDescription><![CDATA[wa_voucher_diff_comment]]></fieldDescription>
+	</field>
 	<variable name="purchase_number" class="java.lang.String">
 		<variableExpression><![CDATA[$F{receivable_type} == "late_work_acceptance" ? $F{late_wa_purchase_number} :
 (($F{amount_retention} != null && $F{amount_retention} > 0) ? $F{source_document} : "")]]></variableExpression>
@@ -149,8 +152,7 @@ $F{amount_wa} :
 ($F{amount_wa} == null &&
 $F{amount_retention_supplier} != null) ?
 $F{amount_retention_supplier} :
-0
-]]></variableExpression>
+0]]></variableExpression>
 	</variable>
 	<variable name="string_total" class="java.lang.String">
 		<variableExpression><![CDATA[(Math.round(
@@ -309,7 +311,9 @@ Description]]></text>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["ค่าปรับตาม " + $F{purchase_order} + " / " + $F{wa_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{wa_comment}?
+"่าปรับตาม / " + $F{wa_comment}:
+"ค่าปรับตาม " + $F{purchase_order} + " / " + $F{wa_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement style="pading_2" stretchType="RelativeToTallestObject" mode="Transparent" x="402" y="302" width="123" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
