@@ -18,6 +18,10 @@ class AccountVoucher(models.Model):
         string='WA Total Fine',
         compute='_compute_wa_total_fine',
     )
+    wa_voucher_diff_comment = fields.Char(
+        string='WA Diff Comment',
+        compute='_compute_wa_total_fine',
+    )
     retention_amount = fields.Float(
         string='Retention Amount',
         compute='_compute_retention_amount',
@@ -83,11 +87,12 @@ class AccountVoucher(models.Model):
                 'invoice_id.late_delivery_work_acceptance_id.total_fine')))
             # form payment diff
             accounts = [company.delivery_penalty_activity_id.account_id.id]
-            amount_from_diff = abs(sum(
-                rec.multiple_reconcile_ids.
-                filtered(lambda l: l.account_id.id in accounts).
-                mapped('amount')))
+            diff_lines = rec.multiple_reconcile_ids.\
+                filtered(lambda l: l.account_id.id in accounts)
+            amount_from_diff = abs(sum(diff_lines.mapped('amount')))
             rec.wa_total_fine = amount_from_invoice + amount_from_diff
+            comment_from_diff = ', '.join(diff_lines.mapped('note'))
+            rec.wa_voucher_diff_comment = comment_from_diff
         return True
 
     @api.multi
