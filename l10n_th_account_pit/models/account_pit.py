@@ -19,10 +19,17 @@ class PersonalIncomeTax(models.Model):
     )
     voucher_id = fields.Many2one(
         'account.voucher',
-        string='Voucher',
+        string='Payment',
         index=True,
         ondelete='cascade',
-        required=True,
+        # required=True,
+    )
+    invoice_id = fields.Many2one(
+        'account.invoice',
+        string='Invoice',
+        index=True,
+        ondelete='cascade',
+        # required=True,
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -44,7 +51,8 @@ class PersonalIncomeTax(models.Model):
     )
     date = fields.Date(
         string='Date',
-        related='voucher_id.date',
+        # related='voucher_id.date',
+        compute='_compute_date',
         store=True,
         readonly=True,
     )
@@ -99,6 +107,13 @@ class PersonalIncomeTax(models.Model):
         return income
 
     @api.multi
+    @api.depends('voucher_id', 'invoice_id')
+    def _compute_date(self):
+        for rec in self:
+            rec.date = rec.voucher_id and rec.voucher_id.date or \
+                rec.invoice_id.date_invoice
+
+    @api.multi
     @api.depends('date')
     def _compute_calendar_year(self):
         for rec in self:
@@ -134,12 +149,24 @@ class PersonalIncomeTax(models.Model):
                 #                                             rec.amount_income)
                 rec.amount_wht = amount_wht
 
-    @api.onchange('amount_income', 'partner_id', 'voucher_id')
+    @api.onchange('amount_income', 'partner_id', 'voucher_id', 'invoice_id')
     def _onchange_partner_income(self):
         ctx = self._context.copy()
-        voucher_date = self.voucher_id.date or ctx.get('voucher_date')
+        date = self.voucher_id.date or ctx.get('voucher_date')
+        if self.invoice_id:
+            date = self.invoice_id.date_invoice
         self.precalc_wht = self._calculate_pit_amount_wht(
-            voucher_date, self.partner_id.id, self.amount_income)
+            date, self.partner_id.id, self.amount_income)
+
+    @api.onchange('voucher_id')
+    def _onchange_voucher(self):
+        if self.voucher_id:
+            self.invoice_id = False
+
+    @api.onchange('invoice_id')
+    def _onchange_invoice(self):
+        if self.invoice_id:
+            self.voucher_id = False
 
     @api.multi
     def write(self, vals):
