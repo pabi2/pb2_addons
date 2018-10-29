@@ -271,7 +271,7 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
                     i.date_invoice = datetime.strptime(date_str, '%m/%d/%Y')
 
                 i.amount = new_line_dict[i.installment][1]
-                new_val = i.amount / f_amount * 100
+                new_val = f_amount and (i.amount / f_amount * 100) or 0.0
                 if round(new_val, prec) != round(i.percent, prec):
                     i.percent = new_val
 
