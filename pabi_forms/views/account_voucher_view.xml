@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <field name="partner_id" position="after">
                     <field name="wa_total_fine" invisible="0"/>
+                    <field name="wa_voucher_diff_comment" invisible="0"/>
                     <field name="retention_amount" invisible="0"/>
                 </field>
             </field>
