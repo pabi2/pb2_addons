@@ -82,7 +82,8 @@ class AccountTax(models.Model):
                     partner=None, force_excluded=False):
         return self._model.compute_all(
             self._cr, self._uid, self, price_unit, quantity,
-            product=product, partner=partner, force_excluded=force_excluded)
+            product=product, partner=partner, force_excluded=force_excluded,
+            context=self._context)
 
     @api.onchange('is_wht')
     def onchange_is_wht(self):
