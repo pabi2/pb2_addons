@@ -23,6 +23,7 @@ class PersonalIncomeTax(models.Model):
         index=True,
         ondelete='cascade',
         # required=True,
+        domain=[('state', 'not in', ['draft', 'cancel'])],
     )
     invoice_id = fields.Many2one(
         'account.invoice',
@@ -30,6 +31,7 @@ class PersonalIncomeTax(models.Model):
         index=True,
         ondelete='cascade',
         # required=True,
+        domain=[('state', 'not in', ['draft', 'cancel'])],
     )
     partner_id = fields.Many2one(
         'res.partner',
