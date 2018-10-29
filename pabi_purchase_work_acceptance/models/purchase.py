@@ -91,3 +91,19 @@ class PurchaseOrder(models.Model):
             'target': 'current',
             'domain': "[('order_id', '=', "+str(self.id)+")]",
         }
+
+    @api.model
+    def _prepare_inv_line(self, acc_id, line):
+        res = super(PurchaseOrder, self)._prepare_inv_line(acc_id, line)
+        if 'active_model' in self._context:
+            if self._context['active_model'] == 'purchase.work.acceptance':
+                active_id = self._context['active_id']
+                WAcceptance = self.env['purchase.work.acceptance']
+                acceptance = WAcceptance.browse(active_id)
+                for wa_line in acceptance.acceptance_line_ids:
+                    po_line_id = wa_line.line_id.id
+                    if po_line_id == line.id:
+                        res.update({
+                            'price_unit': wa_line.price_unit or 0.0
+                        })
+        return res
