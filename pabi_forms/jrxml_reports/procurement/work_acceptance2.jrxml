@@ -2,8 +2,8 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="work_acceptance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true">
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
 	<property name="ireport.zoom" value="1.4615378250000255"/>
-	<property name="ireport.x" value="155"/>
-	<property name="ireport.y" value="576"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="128"/>
 	<subDataset name="po_committee">
 		<parameter name="ids" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -128,12 +128,6 @@ pwa.amount_untaxed,
 pwa.amount_total,
 pwa.manual_days,
 con.display_code as contract_name,
-row_number() over (order by pwal.id) as pwa_count,
-trim(pwal.name) acceptance_line_name,
-pwal.to_receive_qty acceptance_line_qty,
-CONCAT(pwal.to_receive_qty::integer,' ',pu.name) acceptance_line_uom,
-pwal.price_unit acceptance_line_unit_price,
-pwal.price_subtotal acceptance_line_price_subtotal,
 case when cur.name = 'THB' then
 'จำนวนเงิน(บาท)'
 else
@@ -141,10 +135,6 @@ CONCAT('จำนวนเงิน(',cur.name,')')
 end
 as currency
 FROM purchase_work_acceptance pwa
-LEFT JOIN purchase_work_acceptance_line pwal
-ON pwal.acceptance_id = pwa.id
-LEFT JOIN product_uom pu
-ON pu.id = pwal.product_uom
 LEFT JOIN purchase_order po
 ON po.id = pwa.order_id
 LEFT JOIN purchase_contract con
@@ -202,12 +192,6 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	<field name="contract_name" class="java.lang.String"/>
 	<field name="contract_sys_date" class="java.sql.Date"/>
 	<field name="manual_days" class="java.lang.Integer"/>
-	<field name="pwa_count" class="java.lang.Long"/>
-	<field name="acceptance_line_name" class="java.lang.String"/>
-	<field name="acceptance_line_qty" class="java.math.BigDecimal"/>
-	<field name="acceptance_line_uom" class="java.lang.String"/>
-	<field name="acceptance_line_unit_price" class="java.lang.Double"/>
-	<field name="acceptance_line_price_subtotal" class="java.lang.Double"/>
 	<field name="currency" class="java.lang.String"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="Column" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
@@ -580,7 +564,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	<columnHeader>
 		<band height="27" splitType="Stretch">
 			<staticText>
-				<reportElement x="30" y="0" width="232" height="27"/>
+				<reportElement x="35" y="0" width="227" height="27"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -593,7 +577,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<text><![CDATA[รายการ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="30" height="27"/>
+				<reportElement x="0" y="0" width="35" height="27"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -658,7 +642,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:column width="30">
+					<jr:column width="35">
 						<jr:columnFooter height="0" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -673,7 +657,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="30" height="21"/>
+								<reportElement x="0" y="0" width="35" height="21"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -681,7 +665,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="232">
+					<jr:column width="227">
 						<jr:columnFooter height="0" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -696,7 +680,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement x="2" y="0" width="230" height="21" isPrintWhenDetailOverflows="true"/>
+								<reportElement x="2" y="0" width="225" height="21" isPrintWhenDetailOverflows="true"/>
 								<textElement verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -719,9 +703,9 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="83" height="21"/>
+								<reportElement x="0" y="0" width="82" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
-									<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{acceptance_line_uom}]]></textFieldExpression>
 							</textField>
