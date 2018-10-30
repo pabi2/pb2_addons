@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="supplier_payment_ktb_cheque" language="groovy" pageWidth="842" pageHeight="380" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
-	<property name="ireport.zoom" value="0.9090909090909165"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="1.3310000000000113"/>
+	<property name="ireport.x" value="333"/>
+	<property name="ireport.y" value="93"/>
 	<style name="payee">
 		<box>
 			<pen lineWidth="1.0"/>
@@ -39,6 +39,15 @@
 	<field name="number" class="java.lang.String">
 		<fieldDescription><![CDATA[number]]></fieldDescription>
 	</field>
+	<field name="transferdebt_title" class="java.lang.String">
+		<fieldDescription><![CDATA[transdebt_partner_id/title]]></fieldDescription>
+	</field>
+	<field name="transferdebt_name" class="java.lang.String">
+		<fieldDescription><![CDATA[transdebt_partner_id/name]]></fieldDescription>
+	</field>
+	<field name="amount_total_text" class="java.lang.String">
+		<fieldDescription><![CDATA[amount_total_text_th]]></fieldDescription>
+	</field>
 	<pageFooter>
 		<band height="380">
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
@@ -46,14 +55,16 @@
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_transdebt} == true ? $F{transferdebt_partner_name} : $F{title}+$F{partner_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_transdebt} == true ?
+$F{transferdebt_title}+$F{transferdebt_name} :
+$F{title}+$F{partner_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="239" y="320" width="401" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="239" y="320" width="400" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+					<font fontName="Monospaced" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[(new Scriptlet()).getAmtInWords((new BigDecimal((Math.round($F{amount}*100)/100).toString()==""?0:(Math.round($F{amount}*100)/100).toString())).setScale(2).toString(),"THB")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_total_text}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement style="payee" mode="Transparent" x="323" y="264" width="163" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -144,7 +155,8 @@
 					<font fontName="Monospaced" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{is_transdebt} == true ?
-$F{transferdebt_partner_name}:$F{title}+$F{partner_name}]]></textFieldExpression>
+$F{transferdebt_title}+$F{transferdebt_name}
+:$F{title}+$F{partner_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="23" y="318" width="122" height="22" forecolor="#000000" backcolor="#FFFFFF"/>
