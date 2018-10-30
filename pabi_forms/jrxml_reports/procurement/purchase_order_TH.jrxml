@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="608"/>
+	<property name="ireport.x" value="145"/>
+	<property name="ireport.y" value="218"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -66,7 +66,7 @@ ou_partner.fax fax,
 po.name po_number,
 po.date_order + '7 hours'::interval order_date,
 (SELECT rfq.name FROM purchase_order rfq WHERE rfq.id = po.quote_id) rfq,
-(SELECT rfq.date_order FROM purchase_order rfq WHERE rfq.id = po.quote_id) rfq_date,
+date_reference rfq_date,
 (SELECT rpt.name FROM res_partner_title rpt
 WHERE rpt.id = vendor.title limit 1) vendor_title,
 vendor.name vendor_name,
