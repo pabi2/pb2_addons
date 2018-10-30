@@ -92,6 +92,7 @@
                                     <tree colors="blue:state == 'draft';black:state == 'posted'" editable="bottom" string="Journal Items">
                                         <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
                                         <!-- <field name="product_id" invisible="1"/> -->
+                                        <field name="charge_type"/>
                                         <field name="activity_group_id"/>
                                         <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
                                         <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
