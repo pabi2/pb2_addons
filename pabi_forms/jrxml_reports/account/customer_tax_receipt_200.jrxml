@@ -239,7 +239,7 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[(new Scriptlet()).getAddress($F{street},"",$F{township},$F{district},$F{province},$F{zip})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(new Scriptlet()).getAddress($F{street},$F{street2},$F{township},$F{district},$F{province},$F{zip})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="65" y="121" width="329" height="43">
