@@ -180,7 +180,7 @@
                             <group>
                                 <field name="amount_loan_total"/>
                                 <field name="amount_receivable"/>
-                                <field name="installment"/>
+                                <field name="installment" attrs="{'readonly': [('state', 'not in', ['draft', 'sign', 'open'])]}"/>
                                 <field name="fy_penalty_rate"/>
                                 <field name="days_grace_period"/>
                                 <label for="date_begin" string="Duration"/>
