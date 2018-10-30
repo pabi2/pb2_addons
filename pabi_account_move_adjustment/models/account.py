@@ -110,7 +110,7 @@ class AccountMove(models.Model):
                 # JN must not have AG/A
                 if not move.journal_id.analytic_journal_id and ag_lines:
                     raise ValidationError(
-                        _('For JN, No line can have activity gorup!'))
+                        _('For JN, No line can have activity group!'))
             # For case adjustment journal only, create analytic when posted
             Analytic = self.env['account.analytic.account']
             # Only direct creation of account move, we will recompute dimension
