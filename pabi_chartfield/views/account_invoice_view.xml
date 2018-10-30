@@ -185,8 +185,8 @@
                 <xpath expr="/form/sheet/group/group[last()]" position="inside">
                     <field name="taxbranch_id" attrs="{'required': [('len_taxbranch', '>', 0)]}"/>
                     <field name="taxbranch_ids" widget="many2many_tags" invisible="1"/>
-                    <field name="len_taxbranch" invisible="0"/>
-                    <field name="taxbranch_mismatch" invisible="0"/>
+                    <field name="len_taxbranch" invisible="1"/>
+                    <field name="taxbranch_mismatch" invisible="1"/>
                     <div colspan="2" attrs="{'invisible': [('taxbranch_mismatch', '!=', True)]}">
                         <font color="red">Note: taxbranch mismatch with lines'</font>
                     </div>
