@@ -312,7 +312,7 @@ Description]]></text>
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{wa_comment}?
-"่าปรับตาม / " + $F{wa_comment}:
+"ค่าปรับตาม / " + $F{wa_comment}:
 "ค่าปรับตาม " + $F{purchase_order} + " / " + $F{wa_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
