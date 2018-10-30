@@ -8,6 +8,7 @@ from openerp.addons.l10n_th_account.models.res_partner \
 
 class AccountVoucher(models.Model):
     _inherit = 'account.voucher'
+    _rec_name = 'number'
 
     invoices_text = fields.Char(
         size=1000,
