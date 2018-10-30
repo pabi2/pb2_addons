@@ -9,6 +9,7 @@ class AccountTaxDetail(models.Model):
         'res.taxbranch',
         string='Tax Branch',
         index=True,
+        required=True,
     )
     _sql_constraints = [
         ('tax_sequence_uniq',
@@ -64,4 +65,5 @@ class AccountTaxDetailSequence(models.Model):
     taxbranch_id = fields.Many2one(
         'res.taxbranch',
         string='Taxbranch',
+        required=True,
     )
