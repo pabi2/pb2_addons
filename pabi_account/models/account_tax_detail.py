@@ -9,7 +9,6 @@ class AccountTaxDetail(models.Model):
         'res.taxbranch',
         string='Tax Branch',
         index=True,
-        required=True,
     )
     _sql_constraints = [
         ('tax_sequence_uniq',
