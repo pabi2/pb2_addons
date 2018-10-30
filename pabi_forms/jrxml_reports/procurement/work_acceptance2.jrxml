@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
 	<property name="ireport.zoom" value="1.4615378250000255"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="128"/>
+	<property name="ireport.y" value="0"/>
 	<subDataset name="po_committee">
 		<parameter name="ids" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -564,7 +564,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	<columnHeader>
 		<band height="27" splitType="Stretch">
 			<staticText>
-				<reportElement x="35" y="0" width="227" height="27"/>
+				<reportElement x="38" y="0" width="224" height="27"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -577,7 +577,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<text><![CDATA[รายการ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="35" height="27"/>
+				<reportElement x="0" y="0" width="38" height="27"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -642,7 +642,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:column width="35">
+					<jr:column width="38">
 						<jr:columnFooter height="0" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -657,7 +657,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="35" height="21"/>
+								<reportElement x="0" y="0" width="38" height="21"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -665,7 +665,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="227">
+					<jr:column width="220">
 						<jr:columnFooter height="0" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -680,7 +680,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement x="2" y="0" width="225" height="21" isPrintWhenDetailOverflows="true"/>
+								<reportElement x="2" y="0" width="218" height="21" isPrintWhenDetailOverflows="true"/>
 								<textElement verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
@@ -688,7 +688,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="83">
+					<jr:column width="87">
 						<jr:columnFooter height="0" rowSpan="1">
 							<box>
 								<topPen lineWidth="1.0"/>
@@ -703,7 +703,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="82" height="21"/>
+								<reportElement x="0" y="0" width="86" height="21"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
