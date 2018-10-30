@@ -36,8 +36,8 @@ class PurchaseOrder(models.Model):
         new_method = (old_method == 'round_per_line') and \
             'round_globally' or 'round_per_line'
         vals = {'tax_calculation_rounding_method': new_method}
-        Company.write(cr, [company_id], vals, context=context)
+        Company.write(cr, uid, [company_id], vals, context=context)
         self._amount_all(cr, uid, ids, False, False, context=context)
         vals = {'tax_calculation_rounding_method': old_method}
-        Company.write(cr, [company_id], vals, context=context)
+        Company.write(cr, uid, [company_id], vals, context=context)
         return True
