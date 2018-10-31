@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voucher" language="groovy" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
 	<property name="ireport.zoom" value="1.5000000000000262"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="145"/>
 	<property name="ireport.y" value="96"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
@@ -73,7 +73,7 @@
 		<fieldDescription><![CDATA[number]]></fieldDescription>
 	</field>
 	<field name="date_payment" class="java.util.Date">
-		<fieldDescription><![CDATA[date]]></fieldDescription>
+		<fieldDescription><![CDATA[date_document]]></fieldDescription>
 	</field>
 	<field name="street" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/street]]></fieldDescription>
