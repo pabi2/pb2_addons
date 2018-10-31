@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="72"/>
-	<property name="ireport.y" value="1531"/>
+	<property name="ireport.y" value="352"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -15,7 +15,8 @@ SUM(pol.product_qty) product_qty,
 --(SELECT value
 --FROM ir_translation it
 --WHERE it.res_id = pu.id AND it.name = 'product.uom,name') product_uom
-pu.name as product_uom
+(SELECT value FROM ir_translation it WHERE
+res_id = pu.id AND it.name LIKE 'product.uom,name' limit 1) as product_uom
 FROM purchase_order_line pol
 LEFT JOIN product_uom pu
 ON pu.id = pol.product_uom
@@ -820,14 +821,14 @@ WHERE $X{IN, po.id, PIDS}]]>
 								<rightPen lineWidth="1.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" pattern="#,##0">
-								<reportElement x="11" y="0" width="51" height="18"/>
+								<reportElement x="11" y="0" width="51" height="18" isPrintWhenDetailOverflows="true"/>
 								<textElement textAlignment="Left" lineSpacing="Single">
 									<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Number"><![CDATA[$F{product_qty}]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement x="28" y="0" width="34" height="18"/>
+								<reportElement x="28" y="0" width="34" height="18" isPrintWhenDetailOverflows="true"/>
 								<textElement textAlignment="Right" lineSpacing="Single">
 									<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
