@@ -39,6 +39,7 @@ class AccountVoucher(models.Model):
                     'posted': False,
                     'amount_income': -line.amount_income,
                     'amount_wht': -line.amount_wht,
+                    'precalc_wht': -line.precalc_wht,
                 })
                 # Assign sequence and post
                 pit_line.action_post()
