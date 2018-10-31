@@ -417,3 +417,12 @@ class AccountInvoiceTax(models.Model):
             for r in res:
                 r.update({'taxbranch_id': invoice.taxbranch_id.id})
         return res
+
+    @api.multi
+    def _write(self, vals):
+        if 'taxbranch_id' in vals and vals.get('taxbranch_id'):
+            # cascade changes to account_tax_detail
+            for tax_invoice in self:
+                tax_invoice.detail_ids.\
+                    _write({'taxbranch_id': vals['taxbranch_id']})
+        return super(AccountInvoiceTax, self)._write(vals)

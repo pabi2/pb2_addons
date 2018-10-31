@@ -8,13 +8,11 @@ class AccountTaxDetail(models.Model):
     taxbranch_id = fields.Many2one(
         'res.taxbranch',
         string='Tax Branch',
-        compute='_compute_taxbranch_id',
-        store=True,
         index=True,
     )
     _sql_constraints = [
         ('tax_sequence_uniq',
-         'unique(doc_type,tax_sequence,period_id,taxbranch_id,cancel_entry)',
+         'unique(doc_type,tax_sequence,period_id,taxbranch_id)',
          'Tax Detail Sequence has been used by other user, '
          'please validate document again'),
     ]
@@ -31,9 +29,9 @@ class AccountTaxDetail(models.Model):
         return rec
 
     @api.multi
-    @api.depends('invoice_tax_id', 'invoice_tax_id.taxbranch_id',
-                 'voucher_tax_id', 'voucher_tax_id.taxbranch_id')
+    # @api.depends('invoice_tax_id', 'voucher_tax_id')
     def _compute_taxbranch_id(self):
+        """ This can't be compute filed, as it affect IA case """
         for rec in self:
             if rec.invoice_tax_id:
                 rec.taxbranch_id = rec.invoice_tax_id.invoice_id.taxbranch_id
