@@ -292,7 +292,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 	<background>
 		<band height="790">
 			<staticText>
-				<reportElement x="299" y="375" width="85" height="320"/>
+				<reportElement x="299" y="381" width="85" height="314"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -305,7 +305,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="384" y="375" width="99" height="320"/>
+				<reportElement x="384" y="381" width="99" height="314"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -318,7 +318,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="48" y="375" width="186" height="320"/>
+				<reportElement x="48" y="381" width="186" height="314"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -331,7 +331,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="375" width="48" height="320"/>
+				<reportElement x="0" y="381" width="48" height="314"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -344,7 +344,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="234" y="375" width="65" height="320"/>
+				<reportElement x="234" y="381" width="65" height="314"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
