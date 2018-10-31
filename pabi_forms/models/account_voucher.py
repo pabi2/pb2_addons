@@ -26,6 +26,21 @@ class AccountVoucher(models.Model):
         string='Retention Amount',
         compute='_compute_retention_amount',
     )
+    sale_installment_number = fields.Char(
+        string='Installment',
+        compute='_compute_sale_installment',
+    )
+
+    @api.multi
+    def _compute_sale_installment(self):
+        for voucher in self:
+            invoices = voucher.line_ids.mapped('invoice_id')
+            if invoices:
+                plans = self.env['sale.invoice.plan'].search(
+                    [('ref_invoice_id', 'in', invoices.ids)]
+                )
+                installments = ', '.join([str(x.installment) for x in plans])
+                voucher.sale_installment_number = installments
 
     @api.multi
     def _compute_line_ids(self):
