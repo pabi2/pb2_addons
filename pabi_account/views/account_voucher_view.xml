@@ -172,5 +172,17 @@
             </field>
         </record>
 
+        # Set new attribute in create wht cert
+        <record id="view_vendor_payment_form_ext" model="ir.ui.view">
+            <field name="name">view.vendor.payment.form.ext</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="l10n_th_account.view_vendor_payment_form_ext"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(l10n_th_account.action_print_wht_cert)d']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('state', '!=', 'posted'), ('wht_cert_ids', '!=', [])]}</attribute>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </openerp>
