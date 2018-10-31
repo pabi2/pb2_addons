@@ -22,6 +22,8 @@ Currently we have done for following events,
 * Recurring -> Clear when Auto Reverse (Original JE as auto_ids)
 * Return Retention on PO -> Clear CV's retention with KV's when KV is validated
                             (PO as auto_id)
+* Loan Installment -> Reconcile Supplier Payment (loan installment account) w/
+                      Customer Invoice
 
     """,
     "website": "https://nstda.or.th/",
@@ -33,6 +35,7 @@ Currently we have done for following events,
         'pabi_interface',
         'account_subscription_enhanced',
         'pabi_account_retention',
+        'pabi_loan_receivable',
     ],
     "data": [
         "security/ir.model.access.csv",

@@ -528,7 +528,7 @@ class LoanCustomerAgreement(models.Model):
             [('operating_unit_id', '=', loan.operating_unit_id.id)]).ids
         return {
             'operating_unit_id': loan.operating_unit_id.id,
-            'partner_id': loan.partner_id.id,
+            'partner_id': loan.borrower_partner_id.id,
             'date_order': date_order,
             'client_order_ref': loan.name,
             'use_invoice_plan': True,
