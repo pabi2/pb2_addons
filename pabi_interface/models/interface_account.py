@@ -165,6 +165,11 @@ class InterfaceAccountEntry(models.Model):
         string='Cancel Reason',
         size=500,
     )
+    date_document = fields.Date(
+        string='Document Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
 
     @api.onchange('to_reverse_entry_id')
     def _onchange_to_reverse_entry_id(self):

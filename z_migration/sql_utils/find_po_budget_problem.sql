@@ -4,6 +4,7 @@ select number, amount_untaxed, (inv_actual + stock_actual + po_commit) consumed 
 select purchase_id, number, amount_untaxed, coalesce(po_commit, 0.0) po_commit,
 	coalesce(inv_actual, 0.0) inv_actual, coalesce(stock_actual, 0.0) stock_actual
 from (select id purchase_id, name number, amount_untaxed,
+	-- po commit
 	(select sum(-amount)
 	 from account_analytic_line aal
 	 where aal.purchase_id = po.id) po_commit,
@@ -20,9 +21,12 @@ from (select id purchase_id, name number, amount_untaxed,
 		join purchase_order po2 on po2.name = pick.origin
 		where po2.id = po.id)) stock_actual
 
-from purchase_order po where state not in ('draft', 'cancel') and currency_id = 140 and order_type = 'purchase_order'
+from purchase_order po where order_type = 'purchase_order'
 -- Not COD case where its invoice is paid without number
-and po.id not in (select purchase_id from purchase_invoice_rel where invoice_id in (select id from account_invoice where state != 'draft' and number is null))
-
+and po.id not in (select purchase_id from purchase_invoice_rel
+		  where invoice_id in (
+			select id from account_invoice
+			where state != 'draft' and number is null))
+and state not in ('draft', 'cancel') and currency_id = 140
 ) a ) b
 where (inv_actual + po_commit + stock_actual) != amount_untaxed
