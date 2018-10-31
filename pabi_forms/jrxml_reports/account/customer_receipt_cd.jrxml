@@ -169,7 +169,15 @@
 	<field name="bank_branch" class="java.lang.String">
 		<fieldDescription><![CDATA[bank_branch]]></fieldDescription>
 	</field>
-	<field name="field1" class="java.lang.String"/>
+	<field name="client_ref" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/invoice_id/source_document_id/client_order_ref]]></fieldDescription>
+	</field>
+	<field name="customer_cd_name" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/invoice_id/source_document_id/partner_id/display_name2]]></fieldDescription>
+	</field>
+	<field name="sale_installment_number" class="java.lang.String">
+		<fieldDescription><![CDATA[sale_installment_number]]></fieldDescription>
+	</field>
 	<sortField name="invoice_type"/>
 	<variable name="amount_untaxed" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{invoice_amount_untaxed} == null ? 0.0 :
@@ -309,12 +317,15 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 			<printWhenExpression><![CDATA[$F{invoice_description} != null]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="76" y="0" width="305" height="22">
-					<printWhenExpression><![CDATA[$F{invoice_description} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{client_ref} != null &&
+$F{customer_cd_name} != null &&
+$F{sale_installment_number} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_description}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["รับชำระเงินลูกหนี้ CD " + $F{customer_cd_name} + "\n"
++ "สัญญาเลขที่ " + $F{client_ref} + " งวดที่ " + $F{sale_installment_number}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

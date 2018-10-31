@@ -33,6 +33,18 @@ jasper_reports.report_jasper(
 )
 
 jasper_reports.report_jasper(
+    'report.receipt_cd_form_en',
+    'account.voucher',  # Model View name
+    parser=print_account_voucher_parser
+)
+
+jasper_reports.report_jasper(
+    'report.receipt_cd_form_th',
+    'account.voucher',  # Model View name
+    parser=print_account_voucher_parser
+)
+
+jasper_reports.report_jasper(
     'report.customer.receipt.form.en',
     'account.voucher',  # Model View name
     parser=print_account_voucher_parser

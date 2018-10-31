@@ -73,7 +73,7 @@
 		<fieldDescription><![CDATA[number]]></fieldDescription>
 	</field>
 	<field name="date_payment" class="java.util.Date">
-		<fieldDescription><![CDATA[date]]></fieldDescription>
+		<fieldDescription><![CDATA[date_document]]></fieldDescription>
 	</field>
 	<field name="street" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/street]]></fieldDescription>
