@@ -9,7 +9,7 @@ class AccountBankReceipt(models.Model):
     partner_bank_id = fields.Many2one(
         'res.partner.bank',
         domain="[('partner_id', '=', company_partner_id)]",
-        required=True,
+        required=False,
     )
     bank_account_id = fields.Many2one(
         'account.account',
