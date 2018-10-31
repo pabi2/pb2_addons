@@ -307,7 +307,6 @@ class InterfaceAccountEntry(models.Model):
         """, (move.id, ))
         return True
 
-
     @api.multi
     def _action_invoice_entry(self):
         self.ensure_one()
