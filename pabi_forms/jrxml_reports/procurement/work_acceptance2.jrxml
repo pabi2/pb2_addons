@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
 	<property name="ireport.zoom" value="1.4615378250000255"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="112"/>
 	<subDataset name="po_committee">
 		<parameter name="ids" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -33,7 +33,8 @@ ORDER BY poc.id]]>
 row_number() over (order by pwal.id) as pwa_count,
 trim(pwal.name) acceptance_line_name,
 pwal.to_receive_qty acceptance_line_qty,
-CONCAT(pwal.to_receive_qty::integer,' ',pu.name) acceptance_line_uom,
+CONCAT(pwal.to_receive_qty::integer,' ',(SELECT value FROM ir_translation it WHERE
+res_id = pu.id AND it.name LIKE 'product.uom,name' limit 1)) acceptance_line_uom,
 pwal.price_unit acceptance_line_unit_price,
 pwal.price_subtotal acceptance_line_price_subtotal,
 pwa.amount_untaxed as amount_untaxed,
@@ -564,7 +565,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	<columnHeader>
 		<band height="27" splitType="Stretch">
 			<staticText>
-				<reportElement x="38" y="0" width="224" height="27"/>
+				<reportElement x="38" y="0" width="220" height="27"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -603,7 +604,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<text><![CDATA[ราคา/หน่วย]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="262" y="0" width="83" height="27"/>
+				<reportElement x="258" y="0" width="87" height="27"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
