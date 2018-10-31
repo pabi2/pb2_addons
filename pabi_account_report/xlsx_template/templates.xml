@@ -1710,5 +1710,40 @@ result = pd.pivot_table(df, index=groupby,
              }
          </field>
      </record>
+
+     # PND1
+     <record id="xlsx_report_pnd1" model="ir.attachment">
+         <field name="res_model">xlsx.report.pnd1</field>
+         <field name="datas"></field>
+         <field name="datas_fname">xlsx_report_pnd1.xlsx</field>
+         <field name="name">PND1</field>
+         <field name="parent_id" eval="ref('dir_account_reports')"/>
+         <field name="description">
+            {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'results': {
+                            'A1': '${"1"}',
+                            'B1': '${"=ROW()"}',
+                            'C1': 'partner_id.vat${value or ""}',
+                            'D1': '${""}',
+                            'E1': 'partner_id.title${value and value.name or ""}',
+                            'F1': 'partner_id.name${value or ""}',
+                            'G1': '${""}',
+                            'H1': '${""}',
+                            'I1': 'date${value or ""}#{number_format=date}',
+                            'J1': 'amount_income${value or ""}',
+                            'K1': 'amount_wht${value and -value or ""}',
+                            'L1': '${"1"}',
+                            'M1': 'wht_cert_income_type${value and value=="1" and "1" or (value=="2" and "4" or "")}',
+                         },
+                     }
+                 }
+             }
+         </field>
+     </record>
+
     </data>
 </openerp>

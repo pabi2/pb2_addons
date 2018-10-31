@@ -35,6 +35,7 @@
                                     <field name="date" invisible="1"/>
                                     <field name="calendar_year" invisible="1"/>
                                     <field name="partner_id"/>
+                                    <field name="wht_cert_income_type"/>
                                     <field name="amount_income"/>
                                     <field name="precalc_wht" string="Withholding Amount"/>
                                     <field name="amount_wht" invisible="1"/>

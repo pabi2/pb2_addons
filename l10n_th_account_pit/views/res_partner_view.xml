@@ -22,6 +22,7 @@
                                     <field name="manual" invisible="1"/>
                                     <field name="date"/>
                                     <field name="calendar_year"/>
+                                    <field name="wht_cert_income_type"/>
                                     <field name="amount_income" attrs="{'readonly': [('posted', '=', True)]}" sum="Total Income"/>
                                     <field name="precalc_wht" string="WHT Amount" attrs="{'readonly': [('posted', '=', True)]}" sum="Total WHT"/>
                                     <field name="amount_wht" sum="Total WHT" invisible="1"/>
