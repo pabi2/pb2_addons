@@ -59,12 +59,12 @@ class AccountGeneralLedgerReport(models.Model):
         self._cr.execute("""
             SELECT ap.id AS period_id, ap.name
                 FROM account_period ap
-                WHERE ap.special = False AND ap.fiscalyear_id = '%s'
+                WHERE ap.fiscalyear_id = '%s'
                 ORDER BY ap.id
         """ % (fiscalyear.id))
         period_ids = map(lambda x: x[0], self._cr.fetchall())
         periods = period.search(
-            [('id', 'in', period_ids)], order='name')
+            [('id', 'in', period_ids)], order='code')
         return (periods, moves)
 
     @api.model
