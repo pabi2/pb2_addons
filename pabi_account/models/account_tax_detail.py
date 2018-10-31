@@ -8,6 +8,8 @@ class AccountTaxDetail(models.Model):
     taxbranch_id = fields.Many2one(
         'res.taxbranch',
         string='Tax Branch',
+        compute='_compute_taxbranch_id',
+        store=True,
         index=True,
     )
     _sql_constraints = [
@@ -29,13 +31,15 @@ class AccountTaxDetail(models.Model):
         return rec
 
     @api.multi
-    @api.depends('invoice_tax_id', 'voucher_tax_id')
+    @api.depends('invoice_tax_id', 'invoice_tax_id.taxbranch_id',
+                 'voucher_tax_id', 'voucher_tax_id.taxbranch_id')
     def _compute_taxbranch_id(self):
         for rec in self:
             if rec.invoice_tax_id:
                 rec.taxbranch_id = rec.invoice_tax_id.invoice_id.taxbranch_id
             elif rec.voucher_tax_id:
                 rec.taxbranch_id = rec.voucher_tax_id.invoice_id.taxbranch_id
+        return True
 
     @api.model
     def _get_seq_search_domain(self, doc_type, period):
