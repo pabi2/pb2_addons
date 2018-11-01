@@ -170,6 +170,8 @@ class InterfaceAccountEntry(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    _sql_constraints = [('sys_doc_unique', 'unique(name,system_id)',
+                         'Document must be unique per system.')]
 
     @api.onchange('to_reverse_entry_id')
     def _onchange_to_reverse_entry_id(self):
