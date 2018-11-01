@@ -31,30 +31,48 @@ class XLSXReportGlExpenditure(models.TransientModel):
 
     account_ids = fields.Many2many(
         'account.account',
-        string='Accounts',
+        string='Account Code',
     )
-    activity_ids = fields.Many2many(
-        'account.activity',
-        string='Activitys',
+    chart_view = fields.Selection(
+        [('personnel', 'Personnel'),
+         ('invest_asset', 'Investment Asset'),
+         ('unit_base', 'Unit Based'),
+         ('project_base', 'Project Based'),
+         ('invest_construction_phase', 'Investment Construction Phase')],
+        string='Budget View',
+        required=True,
     )
-    activity_group_ids = fields.Many2many(
-        'account.activity.group',
-        string='Activity Groups',
+    org_ids = fields.Many2many(
+        'res.org',
+        string='Org',
     )
-    date_posting = fields.Date(
-        string='Posting Date',
+    invest_asset_ids = fields.Many2many(
+        'res.invest.asset',
+        string='Investment Asset',
     )
-    filter = fields.Selection(
-        default='filter_date',
-        readonly=True,
+    section_ids = fields.Many2many(
+        'res.section',
+        string='Section',
     )
     fund_ids = fields.Many2many(
         'res.fund',
-        string='Fund',
+        string='Source of Fund',
     )
-    costcenter_ids = fields.Many2many(
-        'res.costcenter',
-        string='Costcenter',
+    project_ids = fields.Many2many(
+        'res.project',
+        string='Project',
+    )
+    invest_construction_phase_ids = fields.Many2many(
+        'res.invest.construction.phase',
+        string='Project (C)',
+    )
+    activity_group_ids = fields.Many2many(
+        'account.activity.group',
+        string='Activity Group',
+    )
+    activity_ids = fields.Many2many(
+        'account.activity',
+        string='Activity',
     )
     results = fields.Many2many(
         'pabi.common.account.report.view',
@@ -63,22 +81,69 @@ class XLSXReportGlExpenditure(models.TransientModel):
         help='Use compute fields, so there is nothing store in database',
     )
 
+    @api.onchange('chart_view')
+    def _onchange_chart_view(self):
+        self.org_ids = False
+        self.invest_asset_ids = False
+        self.section_ids = False
+        self.fund_ids = False
+        self.project_ids = False
+        self.invest_construction_phase_ids = False
+
     @api.multi
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['pabi.common.account.report.view']
-        dom = [('account_id.user_type.code', '=', 'Expense'),
-               ('project_id', '!=', False)]
+        dom = []
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
-        if self.activity_ids:
-            dom += [('activity_id', 'in', self.activity_ids.ids)]
         if self.activity_group_ids:
             dom += [('activity_group_id', 'in', self.activity_group_ids.ids)]
-        if self.date_posting:
-            dom += [('invoice_move_line_id.date', '=', self.date_posting)]
+        if self.activity_ids:
+            dom += [('activity_id', 'in', self.activity_ids.ids)]
+        # Filter chart view
+        if self.chart_view == 'personnel':
+            dom += [('invoice_move_line_id.org_id', '!=', False)]
+        elif self.chart_view == 'invest_asset':
+            dom += [('invoice_move_line_id.invest_asset_id', '!=', False)]
+        elif self.chart_view == 'unit_base':
+            dom += [('invoice_move_line_id.section_id', '!=', False)]
+        elif self.chart_view == 'project_base':
+            dom += [('invoice_move_line_id.project_id', '!=', False)]
+        else:
+            dom += [('invoice_move_line_id.invest_construction_phase_id', '!=',
+                     False)]
+        if self.org_ids:
+            dom += [('invoice_move_line_id.org_id', 'in', self.org_ids.ids)]
+        if self.invest_asset_ids:
+            dom += [('invoice_move_line_id.invest_asset_id', 'in',
+                     self.invest_asset_ids.ids)]
+        if self.section_ids:
+            dom += [('invoice_move_line_id.section_id', 'in',
+                     self.section_ids.ids)]
         if self.fund_ids:
-            dom += [('fund_id', 'in', self.fund_ids.ids)]
-        if self.costcenter_ids:
-            dom += [('costcenter_id', 'in', self.costcenter_ids.ids)]
+            dom += [('invoice_move_line_id.fund_id', 'in', self.fund_ids.ids)]
+        if self.project_ids:
+            dom += [('invoice_move_line_id.project_id', 'in',
+                     self.project_ids.ids)]
+        if self.invest_construction_phase_ids:
+            dom += [('invoice_move_line_id.invest_construction_phase_id', 'in',
+                     self.invest_construction_phase_ids.ids)]
+        # Filter date
+        if self.fiscalyear_start_id:
+            dom += [('invoice_move_line_id.date', '>=',
+                     self.fiscalyear_start_id.date_start)]
+        if self.fiscalyear_end_id:
+            dom += [('invoice_move_line_id.date', '<=',
+                     self.fiscalyear_end_id.date_stop)]
+        if self.period_start_id:
+            dom += [('invoice_move_line_id.date', '>=',
+                     self.period_start_id.date_start)]
+        if self.period_end_id:
+            dom += [('invoice_move_line_id.date', '<=',
+                     self.period_end_id.date_stop)]
+        if self.date_start:
+            dom += [('invoice_move_line_id.date', '>=', self.date_start)]
+        if self.date_end:
+            dom += [('invoice_move_line_id.date', '<=', self.date_end)]
         self.results = Result.search(dom)
