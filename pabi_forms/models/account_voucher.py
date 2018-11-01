@@ -26,6 +26,10 @@ class AccountVoucher(models.Model):
         string='Retention Amount',
         compute='_compute_retention_amount',
     )
+    retention_diff_comment = fields.Char(
+        string='Retention Diff Comment',
+        compute='_compute_retention_amount',
+    )
     sale_installment_number = fields.Char(
         string='Installment',
         compute='_compute_sale_installment',
@@ -125,10 +129,11 @@ class AccountVoucher(models.Model):
             # from payment diff
             accounts = company.account_retention_customer_ids.ids + \
                 company.account_retention_supplier_ids.ids
-            amount_from_diff = abs(sum(
-                rec.multiple_reconcile_ids.
-                filtered(lambda l: l.account_id.id in accounts).
-                mapped('amount'))) or 0.0
+            diff_lines = rec.multiple_reconcile_ids.\
+                filtered(lambda l: l.account_id.id in accounts)
+            amount_from_diff = abs(sum(diff_lines.mapped('amount'))) or 0.0
             rec.retention_amount = amount_from_invoice + \
                 amount_from_voucher + amount_from_diff
+            comment_from_diff = ', '.join(diff_lines.mapped('note'))
+            rec.retention_diff_comment = comment_from_diff
         return True
