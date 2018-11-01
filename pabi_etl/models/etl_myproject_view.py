@@ -140,6 +140,6 @@ class EtlMyProjectSummary(models.Model):
              JOIN res_project prj ON ((src.project_id = prj.id)))
              JOIN res_program prg ON ((prj.program_id = prg.id)))
           GROUP BY fis.name, prg.code, prj.code, prj.name, prj.date_start,
-            prj.date_approve, prj.date_end, prj.state;
+            prj.date_approve, prj.date_end, prj.state
         )
         """ % self._table)
