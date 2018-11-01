@@ -37,6 +37,7 @@
                     <filter string="Category" context="{'group_by': 'category_id'}"/>
                 </group>
                 <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="vat" string="Tax ID"/>
                     <field name="taxbranch" string="Tax Branch ID"/>
                     <field name="customer_legacy_code" string="Customer Legacy Code"/>
                     <field name="supplier_legacy_code" string="Supplier Legacy Code"/>
