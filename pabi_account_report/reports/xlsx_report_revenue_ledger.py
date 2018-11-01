@@ -10,6 +10,11 @@ class XLSXReportRevenueLedger(models.TransientModel):
         'account.account',
         string='Accounts',
     )
+    chartfield_ids = fields.Many2many(
+        'chartfield.view',
+        string='Budget',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
     partner_ids = fields.Many2many(
         'res.partner',
         string='Customers',
@@ -33,6 +38,35 @@ class XLSXReportRevenueLedger(models.TransientModel):
         dom = [('account_id.user_type.code', '=', 'Revenue')]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
+        if self.chartfield_ids:
+            budgets = []
+            for chartfield in self.chartfield_ids:
+                if chartfield.type == 'sc:':
+                    chartfield_id = chartfield.id - 1000000
+                elif chartfield.type == 'pj:':
+                    chartfield_id = chartfield.id - 2000000
+                elif chartfield.type == 'cp:':
+                    chartfield_id = \
+                        self.env['res.invest.construction.phase'] \
+                        .browse(chartfield.id - 3000000) \
+                        .invest_construction_id.id
+                    chartfield.model = 'res.invest.construction'
+                elif chartfield.type == 'ia:':
+                    chartfield_id = chartfield.id - 4000000
+                elif chartfield.type == 'pc:':
+                    chartfield_id = chartfield.id - 5000000
+                budgets.append('%s,%s' %
+                               (chartfield.model.encode('utf-8'),
+                                chartfield_id))
+            operator = 'in'
+            budgets = tuple(budgets)
+            if len(budgets) == 1:
+                operator = '='
+                budgets = "\'" + budgets[0] + "\'"
+            self._cr.execute("""
+                select id from pabi_common_account_report_view
+                where budget %s %s""" % (operator, str(budgets)))
+            dom += [('id', 'in', map(lambda x: x[0], self._cr.fetchall()))]
         if self.partner_ids:
             dom += [('partner_id', 'in', self.partner_ids.ids)]
         if self.fiscalyear_start_id:
