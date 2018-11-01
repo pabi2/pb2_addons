@@ -22,11 +22,15 @@ class ResCompany(models.Model):
     )
     account_retention_customer_ids = fields.Many2many(
         'account.account',
+        'company_account_retention_customer_rel',
+        'company_id', 'account_id',
         string='Account Retention Customer',
         domain=[('type', '!=', 'view')],
     )
     account_retention_supplier_ids = fields.Many2many(
         'account.account',
+        'company_account_retention_supplier_rel',
+        'company_id', 'account_id',
         string='Account Retention Supplier',
         domain=[('type', '!=', 'view')],
     )
