@@ -27,7 +27,7 @@
                             <field name="section_ids" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}" widget="many2many_tags"/>
                             <field name="fund_ids" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}" widget="many2many_tags"/>
                             <field name="project_ids" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}" widget="many2many_tags"/>
-                            <field name="invest_construction_phase_ids" attrs="{'invisible': [('chart_view', '!=', 'invest_construction_phase')]}" widget="many2many_tags"/>
+                            <field name="invest_construction_ids" attrs="{'invisible': [('chart_view', '!=', 'invest_construction')]}" widget="many2many_tags"/>
                         </group>
                     </group>
                 </xpath>

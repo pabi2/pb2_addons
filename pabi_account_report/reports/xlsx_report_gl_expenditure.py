@@ -38,7 +38,7 @@ class XLSXReportGlExpenditure(models.TransientModel):
          ('invest_asset', 'Investment Asset'),
          ('unit_base', 'Unit Based'),
          ('project_base', 'Project Based'),
-         ('invest_construction_phase', 'Investment Construction Phase')],
+         ('invest_construction', 'Investment Construction')],
         string='Budget View',
         required=True,
     )
@@ -62,8 +62,8 @@ class XLSXReportGlExpenditure(models.TransientModel):
         'res.project',
         string='Project',
     )
-    invest_construction_phase_ids = fields.Many2many(
-        'res.invest.construction.phase',
+    invest_construction_ids = fields.Many2many(
+        'res.invest.construction',
         string='Project (C)',
     )
     activity_group_ids = fields.Many2many(
@@ -88,7 +88,7 @@ class XLSXReportGlExpenditure(models.TransientModel):
         self.section_ids = False
         self.fund_ids = False
         self.project_ids = False
-        self.invest_construction_phase_ids = False
+        self.invest_construction_ids = False
 
     @api.multi
     def _compute_results(self):
@@ -111,7 +111,7 @@ class XLSXReportGlExpenditure(models.TransientModel):
         elif self.chart_view == 'project_base':
             dom += [('invoice_move_line_id.project_id', '!=', False)]
         else:
-            dom += [('invoice_move_line_id.invest_construction_phase_id', '!=',
+            dom += [('invoice_move_line_id.invest_construction_id', '!=',
                      False)]
         if self.org_ids:
             dom += [('invoice_move_line_id.org_id', 'in', self.org_ids.ids)]
@@ -126,9 +126,9 @@ class XLSXReportGlExpenditure(models.TransientModel):
         if self.project_ids:
             dom += [('invoice_move_line_id.project_id', 'in',
                      self.project_ids.ids)]
-        if self.invest_construction_phase_ids:
-            dom += [('invoice_move_line_id.invest_construction_phase_id', 'in',
-                     self.invest_construction_phase_ids.ids)]
+        if self.invest_construction_ids:
+            dom += [('invoice_move_line_id.invest_construction_id', 'in',
+                     self.invest_construction_ids.ids)]
         # Filter date
         if self.fiscalyear_start_id:
             dom += [('invoice_move_line_id.date', '>=',
