@@ -5,7 +5,7 @@
     'author': 'Ecosoft',
     'summary': """
 
-Change tax rounding method per document for PO and INV
+Simple tax rounding on UI for PO and WA
 
     """,
 
@@ -14,12 +14,12 @@ Change tax rounding method per document for PO and INV
     'images': [],
     'depends': [
         'purchase',
-        'account',
+        'pabi_purchase_work_acceptance',
     ],
     'demo': [],
     'data': [
         'views/purchase_view.xml',
-        'views/account_invoice_view.xml',
+        'views/purchase_work_acceptance.xml',
     ],
 }
 
