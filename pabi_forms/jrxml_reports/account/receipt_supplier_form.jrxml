@@ -328,7 +328,7 @@ Description]]></text>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_wa}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="3" y="334" width="397" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="3" y="325" width="397" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[($F{amount_retention_supplier} != null && $F{amount_retention_supplier} > 0)]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -337,7 +337,7 @@ Description]]></text>
 				<textFieldExpression class="java.lang.String"><![CDATA["ค่าประกัน" + ($F{retention_diff_comment} != null ? " / " + $F{retention_diff_comment} : "")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="pading_2" stretchType="RelativeToTallestObject" mode="Transparent" x="402" y="332" width="123" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement style="pading_2" stretchType="RelativeToTallestObject" mode="Transparent" x="402" y="323" width="123" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
