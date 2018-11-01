@@ -46,8 +46,6 @@ class account_move_line(osv.osv):
             partner_id = \
                 (line['partner_id'] and line['partner_id']['id']) or False
         writeoff = debit - credit
-        print writeoff
-
         # Ifdate_p in context => take this date
         if 'date_p' in context and context['date_p']:
             date = context['date_p']
@@ -218,13 +216,49 @@ class account_move_line(osv.osv):
 
         # HOOK, with this context no partner in new writeoff move line
         # To by pass constraint _check_reconcile_same_partner()
-        # We use SQL to update move lie
-        if context.get('force_no_partner_on_new_move_line', False) and \
-                hook_writeoff_move_id:
-            cr.execute("""
-                update account_move_line set partner_id = null
-                where move_id = %s
-            """, (hook_writeoff_move_id, ))
+        # We use SQL to update move line
+        if hook_writeoff_move_id:
+            if context.get('force_partner_id', False):
+                cr.execute("""
+                    update account_move set partner_id = %s, ref = %s
+                    where id = %s
+                """, (context['force_partner_id'],
+                      context.get('force_comment'),
+                      hook_writeoff_move_id))
+                cr.execute("""
+                    update account_move_line set partner_id = %s, ref = %s
+                    where move_id = %s
+                """, (context['force_partner_id'],
+                      context.get('force_comment'),
+                      hook_writeoff_move_id))
+            else:
+                cr.execute("""
+                    update account_move set partner_id = null, ref = %s
+                    where id = %s
+                """, (context.get('force_comment'), hook_writeoff_move_id, ))
+                cr.execute("""
+                    update account_move_line set partner_id = null, ref = %s
+                    where move_id = %s
+                """, (context.get('force_comment'), hook_writeoff_move_id, ))
+        # Chartifled, write it
+        if hook_writeoff_move_id and context.get('force_chartfield_id', False):
+            chartfield = self.pool.get('chartfield.view').\
+                browse(cr, uid, context['force_chartfield_id'])
+            update_sql = False
+            if chartfield.type == 'sc:':
+                update_sql = 'section_id = %s' % chartfield.res_id
+            if chartfield.type == 'pj:':
+                update_sql = 'project_id = %s' % chartfield.res_id
+            if chartfield.type == 'cp:':
+                update_sql = \
+                    'invest_construction_phase_id = %s' % chartfield.res_id
+            if chartfield.type == 'ia:':
+                update_sql = 'invest_asset_id = %s' % chartfield.res_id
+            if chartfield.type == 'pc:':
+                update_sql = 'personnel_costcenter_id = %s' % chartfield.res_id
+            if update_sql:
+                cr.execute("""
+                    update account_move_line set %s where move_id = %s
+                """ % (update_sql, hook_writeoff_move_id))
         # --
-
         return r_id

@@ -6,12 +6,14 @@ class AccountMoveLineReconcileWriteoff(models.TransientModel):
     _inherit = 'account.move.line.reconcile.writeoff'
 
     @api.model
-    def _open_journal_entry(self, rec_id):
+    def _open_journal_entry(self, rec_id, context=None):
+        context = dict(context or {})
         Reconcile = self.env['account.move.reconcile']
         reconcile = Reconcile.search([('id', '=', rec_id)])
         move_ids = []
         move_ids += reconcile.line_id.mapped('move_id').ids
         move_ids += reconcile.line_partial_ids.mapped('move_id').ids
+        context.update({'direct_create': True})  # Ensure chartfield compute
         return {
             'name': _('Journal Entries'),
             'view_mode': 'tree,form',
@@ -22,11 +24,12 @@ class AccountMoveLineReconcileWriteoff(models.TransientModel):
             'nodestroy': True,
             'target': 'current',
             'domain': unicode([('id', 'in', move_ids)]),
+            'context': context,
         }
 
     @api.v7
     def trans_rec_reconcile(self, cr, uid, ids, context=None):
-        """ Overwrite to rediret to JE """
+        """ Overwrite to redirect to JE """
         context = dict(context or {})
         account_move_line_obj = self.pool.get('account.move.line')
         period_obj = self.pool.get('account.period')
@@ -44,10 +47,7 @@ class AccountMoveLineReconcileWriteoff(models.TransientModel):
         ids = period_obj.find(cr, uid, dt=date, context=context)
         if ids:
             period_id = ids[0]
-        # HOOK, for newly created move line, do not set partner
-        # also, open all related journal entry
-        context['force_no_partner_on_new_move_line'] = True
         rec_id = account_move_line_obj.reconcile(
             cr, uid, context['active_ids'], 'manual', account_id,
             period_id, journal_id, context=context)
-        return self._open_journal_entry(cr, uid, rec_id)
+        return self._open_journal_entry(cr, uid, rec_id, context=context)
