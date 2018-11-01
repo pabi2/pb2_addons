@@ -48,6 +48,7 @@ This module sits on top of other modules whose configuration is moved here.
         'pabi_long_term_investment_report',
     ],
     "data": [
+        'security/security_group.xml',
         'security/ir.model.access.csv',
         'security/model_no_delete.xml',
         'security/model_readonly.xml',
