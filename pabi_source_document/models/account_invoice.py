@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountInvoice(models.Model):
@@ -28,6 +29,17 @@ class AccountInvoice(models.Model):
         compute='_compute_source_document_type',
         store=True,
     )
+
+    def copy(self, cr, uid, id, default=None, context=None):
+        """ kittiu: don't know why it is passing value this way too """
+        if default is None:
+            default = {}
+        invoice = self.browse(cr, uid, id)
+        if invoice.source_document_id:
+            raise ValidationError(
+                _('Duplication of document (with source) not allowed!'))
+        return super(AccountInvoice, self).copy(cr, uid, id, default=default,
+                                                context=context)
 
     @api.multi
     @api.depends('source_document_id', 'reference')
