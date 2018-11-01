@@ -15,7 +15,7 @@ class BudgetTransition(models.Model):
     active = fields.Boolean(
         string='Active',
         default=True,
-        readonly=True,
+        readonly=False,
     )
     expense_line_id = fields.Many2one(
         'hr.expense.line',
