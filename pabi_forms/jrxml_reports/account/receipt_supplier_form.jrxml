@@ -334,7 +334,7 @@ Description]]></text>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["ค่าประกัน " + $F{retention_diff_comment} != null ? + "/ " + $F{retention_diff_comment} : ""]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["ค่าประกัน " + $F{retention_diff_comment} != null ? "/ " + $F{retention_diff_comment} : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement style="pading_2" stretchType="RelativeToTallestObject" mode="Transparent" x="402" y="332" width="123" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
