@@ -172,7 +172,7 @@
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
-			<field name="copies">1</field>
+			<field name="copies">2</field>
 			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_invoice_form_en_values" model="ir.values">
@@ -195,7 +195,7 @@
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
-			<field name="copies">1</field>
+			<field name="copies">2</field>
 			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_invoice_form_th_values" model="ir.values">
