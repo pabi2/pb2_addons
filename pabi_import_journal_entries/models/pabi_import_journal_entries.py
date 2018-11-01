@@ -89,6 +89,7 @@ class PabiImportJournalEntries(models.Model):
     def split_entries(self):
         """ For each repat Ref, do create journal entries """
         self.ensure_one()
+        self.move_ids.unlink()
         moves = {}
         for line in self.line_ids:
             if not moves.get(line.ref, False):
@@ -108,6 +109,7 @@ class PabiImportJournalEntries(models.Model):
                 'credit': line.credit,
                 'chartfield_id': line.chartfield_id.id,
                 'cost_control_id': line.cost_control_id.id,
+                'origin_ref': line.origin_ref,
                 # More data
                 'period_id': self.env['account.period'].find(line.date),
                 'fund_id': line.fund_id or line._get_default_fund(),
@@ -137,6 +139,7 @@ class PabiImportJournalEntries(models.Model):
                     'credit': l['credit'],
                     'chartfield_id': l['chartfield_id'],
                     'cost_control_id': l['cost_control_id'],
+                    'origin_ref': l['origin_ref'],
                     # More data
                     'period_id': period_id,
                     'fund_id': line._get_default_fund(),
@@ -234,4 +237,7 @@ class PabiImportJournalEntriesLine(MergedChartField, models.Model):
     cost_control_id = fields.Many2one(
         'cost.control',
         string='Job Order',
+    )
+    origin_ref = fields.Char(
+        string='Document Ref.',
     )

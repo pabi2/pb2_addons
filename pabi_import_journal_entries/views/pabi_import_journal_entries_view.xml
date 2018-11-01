@@ -62,6 +62,9 @@
                                         <field name="debit" sum="Total"/>
                                         <field name="credit" sum="Total"/>
                                         <field name="chartfield_id"/>
+                                        <field name="fund_id"/>
+                                        <field name="cost_control_id"/>
+                                        <field name="origin_ref"/>
                                     </tree>
                                 </field>
                             </page>
