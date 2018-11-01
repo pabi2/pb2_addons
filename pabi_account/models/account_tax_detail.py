@@ -12,7 +12,7 @@ class AccountTaxDetail(models.Model):
     )
     _sql_constraints = [
         ('tax_sequence_uniq',
-         'unique(doc_type,tax_sequence,period_id,taxbranch_id)',
+         'unique(doc_type,tax_sequence,period_id,taxbranch_id,ref_move_id)',
          'Tax Detail Sequence has been used by other user, '
          'please validate document again'),
     ]
