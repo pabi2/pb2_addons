@@ -23,6 +23,7 @@
         'views/res_other_structure_view.xml',
         'views/account_budget_view.xml',
         'views/purchase_view.xml',
+        'views/purchase_request_view.xml',
         'report/budget_consume_report_view.xml',
         'report/budget_plan_report_view.xml',
         'report/budget_monitor_report_view.xml',

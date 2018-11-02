@@ -9,18 +9,10 @@
                 <xpath expr="//filter[@name='message_unread']" position="after">
                     <filter name="budget_error" string="Budget Problem"
                       domain="[('budget_error','=',True)]" help="Show POs with possible of budget problem"/>
+                    <filter name="budget_over_return" string="Budget Over Return"
+                      domain="[('budget_over_return','=',True)]" help="Show POs that return budget amount more than its commit."/>
                 </xpath>
             </field>
-        </record>
-        <record model="ir.ui.view" id="purchase_order_tree">
-            <field name="name">purchase.order.tree</field>
-            <field name="model">purchase.order</field>
-            <field name="inherit_id" ref="purchase.purchase_order_tree"/>
-                <field name="arch" type="xml">
-                    <xpath expr="//field[@name='amount_total']" position="after">
-                        <field name="budget_error" invisible="1"/>
-                    </xpath>
-                </field>
         </record>
     </data>
 </openerp>

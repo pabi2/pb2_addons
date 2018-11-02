@@ -29,6 +29,12 @@ class PurchaseOrder(models.Model):
         search='_search_budget_error',
         help="Show PO that invoice/picking do not return actual properly",
     )
+    budget_over_return = fields.Boolean(
+        string='Budget Over Return',
+        compute='_compute_budget_over_return',
+        search='_search_budget_over_return',
+        help="Show POs that return budget amount more than its commit",
+    )
 
     @api.model
     def _get_budget_error_sql(self):
@@ -102,3 +108,35 @@ class PurchaseOrder(models.Model):
             self._cr.execute(self._get_budget_error_sql())
             budget_error_po_ids = [row[0] for row in self._cr.fetchall()]
         return [('id', 'in', budget_error_po_ids)]
+
+    @api.model
+    def _get_budget_over_return_sql(self):
+        return """
+            select a.purchase_id, a.amount from
+            (select purchase_id, sum(amount) amount from account_analytic_line
+             where purchase_id is not null
+            group by purchase_id) a
+            where a.amount > 0
+        """
+
+    @api.multi
+    def _compute_budget_over_return(self):
+        if self.ids:
+            sql = self._get_budget_over_return_sql()
+            self._cr.execute(
+                sql + " and purchase_id in %s", (tuple(self.ids),))
+        purchase_ids = [row[0] for row in self._cr.fetchall()]
+        for po in self:
+            if po.id in purchase_ids:
+                po.budget_over_return = True
+            else:
+                po.budget_over_return = False
+        return True
+
+    @api.model
+    def _search_budget_over_return(self, operator, value):
+        budget_over_return_po_ids = []
+        if operator == '=' and value:
+            self._cr.execute(self._get_budget_over_return_sql())
+            budget_over_return_po_ids = [row[0] for row in self._cr.fetchall()]
+        return [('id', 'in', budget_over_return_po_ids)]
