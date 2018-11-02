@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="account_report_general_ledger_view_webkit" model="ir.ui.view">
+            <field name="name">General Ledger</field>
+            <field name="model">general.ledger.webkit</field>
+            <field name="inherit_id" ref="pabi_account_financial_report_webkit.account_report_general_ledger_view_webkit"/>
+            <field name="arch" type="xml">
+                <field name="chart_account_id" position="attributes">
+                    <attribute name="context">{'show_account_view': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="account_trial_balance_view_webkit" model="ir.ui.view">
+            <field name="name">Trial Balance</field>
+            <field name="model">trial.balance.webkit</field>
+            <field name="inherit_id" ref="pabi_account_financial_report_webkit.account_trial_balance_view_webkit"/>
+            <field name="arch" type="xml">
+                <field name="chart_account_id" position="attributes">
+                    <attribute name="context">{'show_account_view': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="accounting_report_view" model="ir.ui.view">
+            <field name="name">Accounting Report</field>
+            <field name="model">accounting.report</field>
+            <field name="inherit_id" ref="account.accounting_report_view"/>
+            <field name="arch" type="xml">
+                <field name="chart_account_id" position="attributes">
+                    <attribute name="context">{'show_account_view': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_print_journal_xls" model="ir.ui.view">
+            <field name="name">Print/Export Journals</field>
+            <field name="model">account.print.journal.xls</field>
+            <field name="inherit_id" ref="account_journal_report_xls.view_print_journal_xls"/>
+            <field name="arch" type="xml">
+                <field name="chart_account_id" position="attributes">
+                    <attribute name="context">{'show_account_view': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="account_report_print_journal" model="ir.ui.view">
+            <field name="name">Account Print Journal</field>
+            <field name="model">account.print.journal</field>
+            <field name="inherit_id" ref="account.account_report_print_journal" />
+            <field name="arch" type="xml">
+                <field name="chart_account_id" position="attributes">
+                    <attribute name="context">{'show_account_view': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="account_report_print_journal_view_webkit" model="ir.ui.view">
+            <field name="name">Journals</field>
+            <field name="model">print.journal.webkit</field>
+            <field name="inherit_id" ref="pabi_account_financial_report_webkit.account_report_print_journal_view_webkit"/>
+            <field name="arch" type="xml">
+                <field name="chart_account_id" position="attributes">
+                    <attribute name="context">{'show_account_view': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="account_report_general_journal_view" model="ir.ui.view">
+            <field name="name">Account General Journal</field>
+            <field name="model">account.general.journal</field>
+            <field name="inherit_id" ref="account.account_report_general_journal_view"/>
+            <field name="arch" type="xml">
+                <field name="chart_account_id" position="attributes">
+                    <attribute name="context">{'show_account_view': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_account_central_journal" model="ir.ui.view">
+            <field name="name">Account central Journal</field>
+            <field name="model">account.central.journal</field>
+            <field name="inherit_id" ref="account.view_account_central_journal"/>
+            <field name="arch" type="xml">
+                <field name="chart_account_id" position="attributes">
+                    <attribute name="context">{'show_account_view': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="account_partner_balance_view_webkit" model="ir.ui.view">
+            <field name="name">Partner Balance</field>
+            <field name="model">partner.balance.webkit</field>
+            <field name="inherit_id" ref="pabi_account_financial_report_webkit.account_partner_balance_view_webkit"/>
+            <field name="arch" type="xml">
+                <field name="chart_account_id" position="attributes">
+                    <attribute name="context">{'show_account_view': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="account_aged_trial_balance_webkit" model="ir.ui.view">
+            <field name="name">Aged Partner Balance Report</field>
+            <field name="model">account.aged.trial.balance.webkit</field>
+            <field name="inherit_id" ref="pabi_account_financial_report_webkit.account_aged_trial_balance_webkit"/>
+            <field name="arch" type="xml">
+                <field name="chart_account_id" position="attributes">
+                    <attribute name="context">{'show_account_view': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="account_partner_ledger_view_webkit" model="ir.ui.view">
+            <field name="name">Partner Ledger</field>
+            <field name="model">partners.ledger.webkit</field>
+            <field name="inherit_id" ref="pabi_account_financial_report_webkit.account_partner_ledger_view_webkit"/>
+            <field name="arch" type="xml">
+                <field name="chart_account_id" position="attributes">
+                    <attribute name="context">{'show_account_view': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="account_open_invoices_view_webkit" model="ir.ui.view">
+            <field name="name">Open Invoices Report</field>
+            <field name="model">open.invoices.webkit</field>
+            <field name="inherit_id" ref="pabi_account_financial_report_webkit.account_open_invoices_view_webkit"/>
+            <field name="arch" type="xml">
+                <field name="chart_account_id" position="attributes">
+                    <attribute name="context">{'show_account_view': True}</attribute>
+                </field>                
+            </field>
+        </record>
+    </data>
+</openerp>
