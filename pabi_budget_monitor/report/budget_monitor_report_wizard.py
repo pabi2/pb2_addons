@@ -22,6 +22,11 @@ class BudgetMonitorReportWizard(models.TransientModel):
         CHART_VIEW_LIST,
         string='Budget View',
     )
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+    )
     # Unit Base
     org_id = fields.Many2one(
         'res.org',
@@ -110,6 +115,8 @@ class BudgetMonitorReportWizard(models.TransientModel):
         domain = []
         if self.chart_view:
             domain.append(('chart_view', '=', self.chart_view))
+        if self.budget_method:
+            domain.append(('budget_method', '=', self.budget_method))
         if self.fiscalyear_id:
             domain.append(('fiscalyear_id', '=', self.fiscalyear_id.id))
         if self.from_period_id:
