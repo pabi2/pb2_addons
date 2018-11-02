@@ -492,7 +492,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 ($F{vendor_name} == null ? "" : $F{vendor_name})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="203" width="222" height="50" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="4" y="202" width="222" height="50" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -507,7 +507,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 ($F{vendor_zip} == null ? "" : $F{vendor_zip})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="240" width="222" height="22" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="4" y="239" width="222" height="22" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -688,7 +688,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{buyer_email} == null ? "" : $F{buyer_email})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="252" width="222" height="22" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="4" y="251" width="222" height="22" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
