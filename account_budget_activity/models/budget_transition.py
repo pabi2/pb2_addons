@@ -398,11 +398,11 @@ class BudgetTransition(models.Model):
         else:
             line_ids = objects.ids
         if not undo:  # Normal case
-            trans = self.search([
+            trans = self.with_context(active_test=False).search([
                 (trans_target_field, 'in', line_ids), (direction, '=', False)])
             trans.with_context(trigger=model).write({direction: True})
         else:
-            trans = self.search([
+            trans = self.with_context(active_test=False).search([
                 (trans_target_field, 'in', line_ids), (direction, '=', True)])
             trans.with_context(trigger=model).write({direction: False})
 
