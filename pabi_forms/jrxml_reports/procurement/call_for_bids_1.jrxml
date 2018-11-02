@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="496"/>
+	<property name="ireport.y" value="416"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -269,7 +269,7 @@ WHERE ru.id = pr.requested_by  LIMIT 1
 ) AND it.name LIKE 'res.section,name') as department,
 pcht.name as purchase_type_name,
 pd.description as objective,
-pr.amount_total,
+pd.standard_price,
 pd.delivery_address as deliver_to,
 pm.name as method,
 ppr.name as price_range,
@@ -423,7 +423,7 @@ ON reqtaxes.request_line_id = requestline.id
 LEFT JOIN account_tax atax
 ON atax.id = reqtaxes.tax_id
 where requisition.id = pd.id
-group by requisition.id) as standard_price
+group by requisition.id) as amount_total
 FROM purchase_requisition pd
 LEFT JOIN operating_unit ou
 ON ou.id = pd.operating_unit_id
