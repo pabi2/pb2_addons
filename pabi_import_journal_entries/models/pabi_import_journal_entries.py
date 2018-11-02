@@ -15,6 +15,7 @@ class PabiImportJournalEntries(models.Model):
         string='Name',
         default='/',
         readonly=True,
+        copy=False,
     )
     note = fields.Char(
         string='Note',
@@ -38,6 +39,7 @@ class PabiImportJournalEntries(models.Model):
         string='Lines',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        copy=True,
     )
     move_count = fields.Integer(
         string='JE Count',
@@ -47,6 +49,7 @@ class PabiImportJournalEntries(models.Model):
         'account.move',
         string='Entries',
         readonly=True,
+        copy=False,
     )
 
     @api.multi
@@ -111,7 +114,7 @@ class PabiImportJournalEntries(models.Model):
                 'cost_control_id': line.cost_control_id.id,
                 'origin_ref': line.origin_ref,
                 # More data
-                'period_id': self.env['account.period'].find(line.date),
+                'period_id': self.env['account.period'].find(line.date).id,
                 'fund_id': line.fund_id or line._get_default_fund(),
             }
             moves[line.ref].append(vals)
@@ -121,13 +124,15 @@ class PabiImportJournalEntries(models.Model):
             move_lines = []
             i = 0
             for l in lines:
-                if i == 0:  # First loop
-                    move_dict.update({'journal_id': l['journal_id'],
-                                      'date': l['date'],
-                                      'to_be_reversed': l['to_be_reversed'],
-                                      })
-                i += 1
                 period_id = self.env['account.period'].find(dt=line['date']).id
+                if i == 0:  # First loop
+                    move_dict.update({
+                        'journal_id': l['journal_id'],
+                        'date': l['date'],
+                        'to_be_reversed': l['to_be_reversed'],
+                        'period_id': period_id,
+                    })
+                i += 1
                 move_lines.append((0, 0, {
                     'docline_seq': l['docline_seq'],
                     'partner_id': l['partner_id'],
@@ -146,6 +151,7 @@ class PabiImportJournalEntries(models.Model):
                     }))
             move_dict['line_id'] = move_lines
             new_move = self.env['account.move'].create(move_dict)
+            new_move.date_document = new_move.date  # Reset date
             self._validate_new_move(new_move)
             self.move_ids += new_move
         self.write({'state': 'done'})
