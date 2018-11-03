@@ -132,7 +132,11 @@ def fill_cell_format(field, field_format):
             field.alignment = cell_format
         if key == 'number_format':
             if value == 'text':
-                field.value = str(field.value)
+                try:
+                    # In case value can't be encoded as utf, we do normal str()
+                    field.value = field.value.encode('utf-8')
+                except Exception:
+                    field.value = str(field.value)
             field.number_format = cell_format
 
 
