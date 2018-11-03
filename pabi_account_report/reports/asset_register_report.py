@@ -135,7 +135,7 @@ class AssetRegisterReport(models.TransientModel):
         dom = []
         # Prepare DOM to filter assets
         if self.asset_ids:
-            dom += [('id', 'in', tuple(self.asset_ids.ids))]
+            dom += [('id', 'in', tuple(self.asset_ids.ids + [0]))]
         if self.asset_profile_ids:
             dom += [('profile_id', 'in',
                     tuple(self.asset_profile_ids.ids + [0]))]
