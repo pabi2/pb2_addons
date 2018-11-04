@@ -192,6 +192,7 @@ class BudgetMonitorReportWizard(models.TransientModel):
         # domain += self._get_filter_unit_base()
         # domain += self._get_filter_project_base()
         result.update({'domain': domain})
+        print result['domain']
         # Group by
         result['context'] = {}
         result['context'].update(self._get_groupby_unit_base())
