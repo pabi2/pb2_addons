@@ -790,13 +790,14 @@ class InterfaceAccountEntryLine(models.Model):
             if not rec.reconcile_move_id and not rec.reconcile_move_line_ref:
                 continue
             dom = [('state', '=', 'valid'),
-                   ('account_id.type', 'in', ['payable', 'receivable']),
+                   ('account_id.reconcile', '=', True),
                    ('reconcile_id', '=', False)]
             if rec.reconcile_move_id:
                 dom.append(('move_id', '=', rec.reconcile_move_id.id))
             elif rec.reconcile_move_line_ref:
                 dom.append(('ref', '=', rec.reconcile_move_line_ref))
             move_lines = AccountMoveLine.search(dom)
+            print dom
             if not move_lines:
                 raise ValidationError(
                     _('No valid reconcilable move line for %s') %
