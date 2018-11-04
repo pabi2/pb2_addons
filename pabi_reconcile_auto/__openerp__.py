@@ -8,7 +8,7 @@
 By Odoo standard, only receivable/payable is reconciled when invoice->payment,
 reconcilation also extened for all reconcilable account,
 * Invoice -> Payment
-* Interface Account for Invoice -> Payment
+* Interface Account for Invoice -> Payment (NO USE, moved to pabi_interface)
 
 For more specific reconcilation event, we are using new auto_reconcile_id,
 in which, if documents are deemed to be related they will be marked with same
