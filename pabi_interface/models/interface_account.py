@@ -797,7 +797,6 @@ class InterfaceAccountEntryLine(models.Model):
             elif rec.reconcile_move_line_ref:
                 dom.append(('ref', '=', rec.reconcile_move_line_ref))
             move_lines = AccountMoveLine.search(dom)
-            print dom
             if not move_lines:
                 raise ValidationError(
                     _('No valid reconcilable move line for %s') %
