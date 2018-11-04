@@ -791,7 +791,6 @@ class InterfaceAccountEntryLine(models.Model):
                 continue
             dom = [('state', '=', 'valid'),
                    ('account_id.reconcile', '=', True),
-                   ('account_id', '=', rec.account_id.id),
                    ('reconcile_id', '=', False)]
             if rec.reconcile_move_id:
                 dom.append(('move_id', '=', rec.reconcile_move_id.id))
