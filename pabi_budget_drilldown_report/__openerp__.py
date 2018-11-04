@@ -18,6 +18,7 @@
         'pabi_my_project',
     ],
     'data': [
+        'security/pabi_budget_drilldown_report_security.xml',
         'security/ir.model.access.csv',
         'data/report_auto_vacumm.xml',
         'wizard/budget_drilldown_report_wizard.xml',

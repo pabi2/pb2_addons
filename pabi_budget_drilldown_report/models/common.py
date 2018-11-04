@@ -44,7 +44,7 @@ class SearchCommon(ChartField, object):
         string='Budget Method',
     )
     report_type = fields.Selection(
-        REPORT_TYPES,
+        lambda self: self._get_report_type(),
         string='Report Type',
         required=True,
     )
@@ -159,9 +159,99 @@ class SearchCommon(ChartField, object):
     #     string='Group By - Personnel Budget',
     #     default=False,
     # )
+    # For my budget report
+    section_ids = fields.Many2many(
+        'res.section',
+        string='Section',
+        domain=lambda self: self._get_domain_section(),
+    )
+    project_ids = fields.Many2many(
+        'res.project',
+        string='Project',
+        domain=lambda self: self._get_domain_project(),
+    )
+
+    @api.model
+    def _get_report_type(self):
+        report_types = REPORT_TYPES
+        if self._context.get('action', False) == 'my_budget_report':
+            report_types = [('unit_base', 'Section'),
+                            ('project_base', 'Project')]
+        return report_types
+
+    @api.model
+    def _get_domain_section(self):
+        section_ids = []
+        Section = self.env['res.section']
+        # Group
+        module = 'pabi_budget_drilldown_report'
+        see_own_section = '%s.%s' % (module, 'group_unit_base_see_own_section')
+        see_own_division = \
+            '%s.%s' % (module, 'group_unit_base_see_own_division')
+        see_own_subsector = \
+            '%s.%s' % (module, 'group_unit_base_see_own_subsector')
+        see_own_sector = '%s.%s' % (module, 'group_unit_base_see_own_sector')
+        see_own_org = '%s.%s' % (module, 'group_unit_base_see_own_org')
+        see_all_org = '%s.%s' % (module, 'group_unit_base_see_all_org')
+        # Domain
+        user = self.env.user
+        if user.has_group(see_own_section):
+            section_ids.extend([user.employee_id.section_id.id])
+        if user.has_group(see_own_division):
+            division_id = user.employee_id.section_id.division_id.id
+            section = Section.search([('division_id', '=', division_id)])
+            section_ids.extend(section.ids)
+        if user.has_group(see_own_subsector):
+            subsector_id = user.employee_id.section_id.subsector_id.id
+            section = Section.search([('subsector_id', '=', subsector_id)])
+            section_ids.extend(section.ids)
+        if user.has_group(see_own_sector):
+            sector_id = user.employee_id.section_id.sector_id.id
+            section = Section.search([('sector_id', '=', sector_id)])
+            section_ids.extend(section.ids)
+        if user.has_group(see_own_org):
+            org_id = user.employee_id.section_id.org_id.id
+            section = Section.search([('org_id', '=', org_id)])
+            section_ids.extend(section.ids)
+        if user.has_group(see_all_org):
+            section = Section.search([])
+            section_ids.extend(section.ids)
+        section_ids = list(set(filter(lambda l: l is not False, section_ids)))
+        return [('id', 'in', section_ids)]
+
+    @api.model
+    def _get_domain_project(self):
+        Member = self.env['res.project.member']
+        Project = self.env['res.project']
+        # Group
+        module = 'pabi_budget_drilldown_report'
+        see_own_project_division = \
+            '%s.%s' % (module, 'group_project_base_see_own_project_division')
+        see_own_report_project_member = \
+            '%s.%s' % (module,
+                       'group_project_base_see_own_report_project_member')
+        # Domain
+        user = self.env.user
+        employee_id = user.employee_id.id
+        member = Member.search([('employee_id', '=', employee_id)])
+        analyst_project = \
+            Project.search([('analyst_employee_id', '=', employee_id)])
+        pm_project = Project.search([('pm_employee_id', '=', employee_id)])
+        project_ids = \
+            [x.project_id.id for x in member] + analyst_project.ids + \
+            pm_project.ids
+        if user.has_group(see_own_project_division):
+            division_id = user.employee_id.section_id.division_id.id
+            project = Project.search([('owner_division_id', '=', division_id)])
+            project_ids.extend(project.ids)
+        if user.has_group(see_own_report_project_member):
+            pass
+        project_ids = list(set(filter(lambda l: l is not False, project_ids)))
+        return [('id', 'in', project_ids)]
 
     @api.onchange('report_type')
     def _onchange_report_type(self):
+        # For budget overview report
         self.charge_type = False
         self.org_id = False
         self.sector_id = False
@@ -177,6 +267,9 @@ class SearchCommon(ChartField, object):
         self.project_group_id = False
         self.project_id = False
         self.invest_construction_id = False
+        # For my budget report
+        self.section_ids = False
+        self.project_ids = False
 
     @api.onchange('org_id')
     def _onchange_org_id(self):

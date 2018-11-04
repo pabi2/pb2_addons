@@ -2,6 +2,7 @@
 <openerp>
     <data>
 
+        <!-- Budget Overview Report -->
         <record id="view_budget_drilldown_report_wizard" model="ir.ui.view">
             <field name="name">view.budget.drilldown.report.wizard</field>
             <field name="model">budget.drilldown.report.wizard</field>
@@ -66,11 +67,62 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_budget_drilldown_report_wizard"/>
             <field name="target">new</field>
+            <field name="context">{'action': 'budget_overview_report'}</field>
         </record>
 
         <menuitem action="action_budget_drilldown_report_wizard" sequence="100"
           id="menu_budget_drilldown_report_report"
           parent="pabi_budget_report.menu_budget_report"/>
 
+        <!-- My Budget Report -->
+        <record id="view_my_budget_drilldown_report_wizard" model="ir.ui.view">
+            <field name="name">view.my.budget.drilldown.report.wizard</field>
+            <field name="model">budget.drilldown.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Report Options">
+                    <group name="report_type">
+                        <group>
+                            <field name="report_type"/>
+                        </group>
+                        <group>
+                            <field name="fiscalyear_id"/>
+                        </group>
+                    </group>
+                    <group name="filter" string="Filter / Group By">
+                        <group>
+                            <field name="section_ids" widget="many2many_tags" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                            <field name="project_ids" widget="many2many_tags" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
+                        </group>
+                        <group>
+                            <field name="group_by_section_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
+                            <field name="group_by_project_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
+                            <field name="group_by_charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
+                            <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
+                            <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="run_report" string="View Report" type="object" default_focus="1" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_my_budget_drilldown_report_wizard" model="ir.actions.act_window">
+            <field name="name">My Budget Report</field>
+            <field name="res_model">budget.drilldown.report.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_my_budget_drilldown_report_wizard"/>
+            <field name="target">new</field>
+            <field name="context">{'action': 'my_budget_report'}</field>
+        </record>
+
+        <menuitem action="action_my_budget_drilldown_report_wizard" sequence="110"
+          id="menu_my_budget_drilldown_report"
+          parent="pabi_budget_report.menu_budget_report"/>
     </data>
 </openerp>

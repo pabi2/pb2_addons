@@ -7,11 +7,17 @@ class AccountAnalyticLineView(models.Model):
     _inherit = 'account.analytic.line'
     _auto = False
 
-    document_id = fields.Reference(
+    document = fields.Char(
         string='Document Number',
     )
-    docline_seq = fields.Integer(
+    # document_id = fields.Reference(
+    #     string='Document Number',
+    # )
+    docline_sequence = fields.Integer(
         string='Item',
+    )
+    date_document = fields.Date(
+        string='Document Date',
     )
     date = fields.Date(
         string='Posting Date',
@@ -267,10 +273,56 @@ class AccountAnalyticLineView(models.Model):
             rec.fund_type = \
                 ', '.join([fund_type[fund.type] for fund in fund_ids])
 
+    def _get_sql_select(self):
+        sql_select = """
+            aal.*,
+            CASE WHEN aal.doctype = 'purchase_order' AND pol.id IS NOT NULL
+                    THEN pol.docline_seq
+                 WHEN aal.doctype = 'sale_order' AND sol.id IS NOT NULL
+                    THEN sol.docline_seq
+                 WHEN aal.doctype = 'employee_expense' AND hel.id IS NOT NULL
+                    THEN hel.docline_seq
+                 WHEN aal.doctype = 'purchase_request' AND prl.id IS NOT NULL
+                    THEN prl.docline_seq
+                 ELSE NULL END AS docline_sequence,
+            CASE WHEN SPLIT_PART(document_id, ',', 1) = 'hr.expense.expense'
+                    THEN (SELECT create_date :: DATE
+                          FROM hr_expense_expense
+                          WHERE id = SPLIT_PART(document_id, ',', 2) :: INT)
+                 WHEN SPLIT_PART(document_id, ',', 1) = 'sale.order'
+                    THEN (SELECT date_order :: DATE
+                          FROM sale_order
+                          WHERE id = SPLIT_PART(document_id, ',', 2) :: INT)
+                 WHEN SPLIT_PART(document_id, ',', 1) = 'purchase.order'
+                    THEN (SELECT date_order :: DATE
+                          FROM purchase_order
+                          WHERE id = SPLIT_PART(document_id, ',', 2) :: INT)
+                 WHEN SPLIT_PART(document_id, ',', 1) = 'purchase.request'
+                    THEN (SELECT create_date :: DATE
+                          FROM purchase_request
+                          WHERE id = SPLIT_PART(document_id, ',', 2) :: INT)
+                 WHEN SPLIT_PART(document_id, ',', 1) = 'account.invoice'
+                    THEN (SELECT date_document :: DATE
+                          FROM account_invoice
+                          WHERE id = SPLIT_PART(document_id, ',', 2) :: INT)
+                 WHEN SPLIT_PART(document_id, ',', 1) = 'stock.picking'
+                    THEN (SELECT date :: date
+                          FROM stock_picking
+                          WHERE id = SPLIT_PART(document_id, ',', 2) :: INT)
+                 ELSE NULL END AS date_document
+        """
+        return sql_select
+
     def _get_sql_view(self):
         sql_view = """
-            SELECT * FROM account_analytic_line
-        """
+            SELECT %s
+            FROM account_analytic_line aal
+            LEFT JOIN purchase_order_line pol ON aal.purchase_line_id = pol.id
+            LEFT JOIN sale_order_line sol ON aal.sale_line_id = sol.id
+            LEFT JOIN hr_expense_line hel ON aal.expense_line_id = hel.id
+            LEFT JOIN purchase_request_line prl ON
+                aal.purchase_request_line_id = prl.id
+        """ % (self._get_sql_select())
         return sql_view
 
     def init(self, cr):
