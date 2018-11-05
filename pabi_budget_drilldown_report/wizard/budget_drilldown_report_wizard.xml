@@ -72,7 +72,7 @@
 
         <menuitem action="action_budget_drilldown_report_wizard" sequence="100"
           id="menu_budget_drilldown_report_report"
-          parent="pabi_budget_report.menu_budget_report"/>
+          parent="account_budget_activity.menu_action_budget_report"/>
 
         <!-- My Budget Report -->
         <record id="view_my_budget_drilldown_report_wizard" model="ir.ui.view">
@@ -90,8 +90,8 @@
                     </group>
                     <group name="filter" string="Filter / Group By">
                         <group>
-                            <field name="section_ids" widget="many2many_tags" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
-                            <field name="project_ids" widget="many2many_tags" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
+                            <field name="section_ids" widget="many2many_tags" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))], 'required': [('report_type', '=', 'unit_base')]}"/>
+                            <field name="project_ids" widget="many2many_tags" attrs="{'invisible': [('report_type', 'not in', ('project_base'))], 'required': [('report_type', '=', 'project_base')]}"/>
                         </group>
                         <group>
                             <field name="group_by_section_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>

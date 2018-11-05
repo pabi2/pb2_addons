@@ -36,13 +36,14 @@
             sequence="115"
             />
 
-        <menuitem
+        <!-- Not use now -->
+        <!-- <menuitem
             id="menu_budget_summary_report"
             name="Budget Summary (Overview)"
-            parent="menu_budget_report"
+            parent="account_budget_activity.menu_action_budget_report"
             action="action_budget_summary_report"
             sequence="10"
             icon="STOCK_PRINT"
-            />
+            /> -->
     </data>
 </openerp>
