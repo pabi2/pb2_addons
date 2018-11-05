@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from lxml import etree
 import datetime
 from openerp import models, api, fields, _
 
@@ -225,4 +226,26 @@ class AccountGeneralLedgerLine(models.Model):
                         'amount_currency': rpt.amount_currency},
             'nodestroy': True,
             'domain': [('id', 'in', move_ids)],
+
         }
+
+
+class AccountMoveLine(models.Model):
+    _inherit = "account.move.line"
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type=False,
+                        toolbar=False, submenu=False):
+        res = super(AccountMoveLine, self).\
+            fields_view_get(view_id=view_id, view_type=view_type,
+                            toolbar=toolbar, submenu=submenu)
+        model = self._context.get('active_model', False)
+        if model == 'account.general.ledger.line' and view_type == 'tree':
+            doc = etree.XML(res['arch'])
+            nodes = doc.xpath("/tree")
+            for node in nodes:
+                node.set('create', 'false')
+                node.set('edit', 'false')
+                node.set('delete', 'false')
+            res['arch'] = etree.tostring(doc)
+        return res
