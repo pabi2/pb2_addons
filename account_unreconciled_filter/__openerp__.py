@@ -13,6 +13,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/account_unreconciled_filter.xml',
+        'wizard/move_open_unreconciled_items.xml',
     ],
     'installable': True,
     'application': False,

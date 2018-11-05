@@ -51,3 +51,13 @@ class AccountMoveLineReconcileWriteoff(models.TransientModel):
             cr, uid, context['active_ids'], 'manual', account_id,
             period_id, journal_id, context=context)
         return self._open_journal_entry(cr, uid, rec_id, context=context)
+
+    @api.v7
+    def trans_rec_reconcile_partial(self, cr, uid, ids, context=None):
+        """ Overwrite to redirect to JE """
+        account_move_line_obj = self.pool.get('account.move.line')
+        if context is None:
+            context = {}
+        rec_id = account_move_line_obj.reconcile_partial(
+            cr, uid, context['active_ids'], 'manual', context=context)
+        return self._open_journal_entry(cr, uid, rec_id, context=context)
