@@ -119,3 +119,15 @@ class AccounMoveLine(ExtendSearch, models.Model):
         return super(AccounMoveLine, self).search(args, offset=offset,
                                                   limit=limit, order=order,
                                                   count=count)
+
+
+class ChartfieldView(ExtendSearch, models.Model):
+    _inherit = 'chartfield.view'
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        # if self._context.get('extended_search', False):
+        args = self._extend_search_arg(args)
+        return super(ChartfieldView, self).search(args, offset=offset,
+                                                  limit=limit, order=order,
+                                                  count=count)

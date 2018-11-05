@@ -10,6 +10,10 @@ class XLSXReportExpenseLedger(models.TransientModel):
         'account.account',
         string='Accounts',
     )
+    line_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
     chartfield_ids = fields.Many2many(
         'chartfield.view',
         string='Budget',
@@ -39,34 +43,10 @@ class XLSXReportExpenseLedger(models.TransientModel):
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
         if self.chartfield_ids:
-            budgets = []
-            for chartfield in self.chartfield_ids:
-                if chartfield.type == 'sc:':
-                    chartfield_id = chartfield.id - 1000000
-                elif chartfield.type == 'pj:':
-                    chartfield_id = chartfield.id - 2000000
-                elif chartfield.type == 'cp:':
-                    chartfield_id = \
-                        self.env['res.invest.construction.phase'] \
-                        .browse(chartfield.id - 3000000) \
-                        .invest_construction_id.id
-                    chartfield.model = 'res.invest.construction'
-                elif chartfield.type == 'ia:':
-                    chartfield_id = chartfield.id - 4000000
-                elif chartfield.type == 'pc:':
-                    chartfield_id = chartfield.id - 5000000
-                budgets.append('%s,%s' %
-                               (chartfield.model.encode('utf-8'),
-                                chartfield_id))
-            operator = 'in'
-            budgets = tuple(budgets)
-            if len(budgets) == 1:
-                operator = '='
-                budgets = "\'" + budgets[0] + "\'"
-            self._cr.execute("""
-                select id from pabi_common_account_report_view
-                where budget %s %s""" % (operator, str(budgets)))
-            dom += [('id', 'in', map(lambda x: x[0], self._cr.fetchall()))]
+            ChartfieldView = self.env['chartfield.view']
+            chartfields = ChartfieldView.browse(self.chartfield_ids.ids)
+            budgets = ['%s,%s' % (x.model, x.res_id) for x in chartfields]
+            dom += [('budget', 'in', budgets)]
         if self.partner_ids:
             dom += [('partner_id', 'in', self.partner_ids.ids)]
         if self.fiscalyear_start_id:
@@ -92,3 +72,15 @@ class XLSXReportExpenseLedger(models.TransientModel):
                                       l.activity_id.code,
                                       l.period_id.fiscalyear_id.name,
                                       l.period_id.name))
+
+    @api.onchange('line_filter')
+    def _onchange_line_filter(self):
+        self.chartfield_ids = []
+        Chartfield = self.env['chartfield.view']
+        dom = []
+        if self.line_filter:
+            codes = self.line_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.chartfield_ids = Chartfield.search(dom, order='id', limit=100)

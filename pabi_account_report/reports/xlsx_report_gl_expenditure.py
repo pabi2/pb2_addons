@@ -33,6 +33,15 @@ class XLSXReportGlExpenditure(models.TransientModel):
         'account.account',
         string='Account Code',
     )
+    line_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    chartfield_ids = fields.Many2many(
+        'chartfield.view',
+        string='Budget',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
     chart_view = fields.Selection(
         [('personnel', 'Personnel'),
          ('invest_asset', 'Investment Asset'),
@@ -40,7 +49,7 @@ class XLSXReportGlExpenditure(models.TransientModel):
          ('project_base', 'Project Based'),
          ('invest_construction', 'Investment Construction')],
         string='Budget View',
-        required=True,
+        required=False,
     )
     org_ids = fields.Many2many(
         'res.org',
@@ -129,6 +138,12 @@ class XLSXReportGlExpenditure(models.TransientModel):
         if self.invest_construction_ids:
             dom += [('invoice_move_line_id.invest_construction_id', 'in',
                      self.invest_construction_ids.ids)]
+        # Budgets
+        if self.chartfield_ids:
+            ChartfieldView = self.env['chartfield.view']
+            chartfields = ChartfieldView.browse(self.chartfield_ids.ids)
+            budgets = ['%s,%s' % (x.model, x.res_id) for x in chartfields]
+            dom += [('budget', 'in', budgets)]
         # Filter date
         if self.fiscalyear_start_id:
             dom += [('invoice_move_line_id.date', '>=',
@@ -147,3 +162,15 @@ class XLSXReportGlExpenditure(models.TransientModel):
         if self.date_end:
             dom += [('invoice_move_line_id.date', '<=', self.date_end)]
         self.results = Result.search(dom)
+
+    @api.onchange('line_filter')
+    def _onchange_line_filter(self):
+        self.chartfield_ids = []
+        Chartfield = self.env['chartfield.view']
+        dom = []
+        if self.line_filter:
+            codes = self.line_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.chartfield_ids = Chartfield.search(dom, order='id', limit=100)

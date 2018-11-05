@@ -31,7 +31,19 @@
                         </group>
                     </group>
                 </xpath>
-          </field>
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Budget Filters" name="budget_filters">
+                        <group>
+                            <group string="Paste list of code to search">
+                                <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                            </group>
+                            <group string="Print only">
+                                <field name="chartfield_ids" nolabel="1"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
         </record>
 
         <record id="action_xlsx_report_gl_expenditure_form" model="ir.actions.act_window">

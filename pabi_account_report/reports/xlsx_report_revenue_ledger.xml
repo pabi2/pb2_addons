@@ -13,9 +13,15 @@
                         <field name="account_ids" domain="[('company_id', '=', company_id), ('user_type.code', '=', 'Revenue')]"/>
                     </page>
                     <page string="Budget Filters" name="budget_filters">
-                        <separator string="Print only" colspan="4"/>
-                        <field name="chartfield_ids"/>
-                    </page>                    
+                        <group>
+                            <group string="Paste list of code to search">
+                                <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                            </group>
+                            <group string="Print only">
+                                <field name="chartfield_ids" nolabel="1"/>
+                            </group>
+                        </group>
+                    </page>               
                     <page string="Partner Filters">
                         <separator string="Print only" colspan="4"/>
                         <field name="partner_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id), ('customer', '=', True)]"/>
