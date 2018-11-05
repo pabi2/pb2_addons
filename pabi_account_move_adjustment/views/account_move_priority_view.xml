@@ -64,6 +64,7 @@
                             <page string="Journal Items">
                                 <field name="line_id" widget="one2many_list" context="{'line_id': line_id , 'journal_id': journal_id, 'default_doctype': context.get('default_doctype')}">
                                     <tree colors="blue:state == 'draft';black:state == 'posted'" editable="top" string="Journal Items">
+                                        <field name="ref"/>
                                         <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
                                         <field name="product_id" invisible="1"/>
                                         <field name="activity_group_id"/>
