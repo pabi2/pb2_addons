@@ -23,5 +23,18 @@
             <field name="group_id" ref="base.group_user"/>
         </record>
 
+        <record id="t24" model="workflow.transition">
+            <field name="act_from" ref="hr_expense.act_confirm"/>
+            <field name="act_to" ref="hr_expense.act_refused"/>
+            <field name="signal">refuse</field>
+            <field name="group_id" ref="pabi_budget_internal_charge.group_approve_ic_activity"/>
+        </record>
+
+        <record id="t25" model="workflow.transition">
+            <field name="act_from" ref="hr_expense.act_accepted"/>
+            <field name="act_to" ref="hr_expense.act_refused"/>
+            <field name="signal">refuse</field>
+            <field name="group_id" ref="pabi_budget_internal_charge.group_approve_ic_activity"/>
+        </record>
     </data>
 </openerp>
