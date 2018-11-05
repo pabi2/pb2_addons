@@ -135,6 +135,12 @@ class AccountAccount(models.Model):
 class AccountJournal(models.Model):
     _inherit = 'account.journal'
 
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+        help="If the active field is set to False, "
+             "it will allow you to hide the journal without removing it.",
+    )
     receipt = fields.Boolean(
         string='Use for Receipt',
         default=True,

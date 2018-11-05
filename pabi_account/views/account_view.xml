@@ -63,6 +63,9 @@
                     <field name="receipt"/>
                     <field name="payment"/>
                 </field>
+                <xpath expr="//form/group/group" position="inside">
+                    <field name="active"/>
+                </xpath>
             </field>
         </record>
 
