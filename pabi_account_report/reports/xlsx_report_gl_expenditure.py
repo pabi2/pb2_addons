@@ -173,4 +173,4 @@ class XLSXReportGlExpenditure(models.TransientModel):
             codes = [x.strip() for x in codes]
             codes = ','.join(codes)
             dom.append(('code', 'ilike', codes))
-            self.chartfield_ids = Chartfield.search(dom, order='id', limit=100)
+            self.chartfield_ids = Chartfield.search(dom, order='id')
