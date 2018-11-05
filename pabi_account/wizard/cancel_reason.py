@@ -68,3 +68,37 @@ class AccountVoucherCancel(models.TransientModel):
         voucher.write({'cancel_date_document': self.cancel_date_document,
                        'cancel_date': self.cancel_date})
         return super(AccountVoucherCancel, self).confirm_cancel()
+
+
+class AccountBankReceiptCancel(models.TransientModel):
+    _inherit = 'account.bank.receipt.cancel'
+
+    cancel_date_document = fields.Date(
+        string='Cancel Document Date',
+        required=True,
+    )
+    cancel_date = fields.Date(
+        string='Cancel Posting Date',
+        required=True,
+    )
+
+    @api.model
+    def default_get(self, field_list):
+        res = super(AccountBankReceiptCancel, self).default_get(field_list)
+        BankReceipt = self.env['account.bank.receipt']
+        receipt = BankReceipt.browse(self._context.get('active_id'))
+        res['cancel_date_document'] = receipt.move_id and \
+            receipt.move_id.date_document or receipt.date_document
+        res['cancel_date'] = receipt.move_id and \
+            receipt.move_id.date or receipt.receipt_date
+        return res
+
+    @api.multi
+    def confirm_cancel(self):
+        self.ensure_one()
+        receipt_ids = self._context.get('active_ids')
+        assert len(receipt_ids) == 1, "Only 1 bank receipt expected"
+        receipt = self.env['account.bank.receipt'].browse(receipt_ids)
+        receipt.write({'cancel_date_document': self.cancel_date_document,
+                       'cancel_date': self.cancel_date})
+        return super(AccountBankReceiptCancel, self).confirm_cancel()

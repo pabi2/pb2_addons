@@ -33,6 +33,7 @@
         "account_cancel_reversal",
         "account_invoice_cancel_reason",
         "account_voucher_cancel_reason",
+        "account_bank_receipt_cancel_reason",
         "pabi_interface",
         "account_debitnote",
         "account_unreconciled_filter",

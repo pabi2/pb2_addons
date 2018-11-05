@@ -39,5 +39,23 @@
             </field>
         </record>
 
+        # BANK RECEIPT
+        <record id="view_account_bank_receipt_cancel" model="ir.ui.view">
+            <field name="name">Reason for the cancellation</field>
+            <field name="model">account.bank.receipt.cancel</field>
+            <field name="inherit_id" ref="account_bank_receipt_cancel_reason.view_account_bank_receipt_cancel"/>
+            <field name="arch" type="xml">
+                <p position="after">
+                    <group>
+                        <group>
+                            <field name="cancel_date_document"/>
+                        </group>
+                        <group>
+                            <field name="cancel_date"/>
+                        </group>
+                    </group>
+                </p>
+            </field>
+        </record>
     </data>
 </openerp>
