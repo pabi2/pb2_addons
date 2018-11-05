@@ -487,6 +487,11 @@
                             <t t-if="o.document_id and o.document_id.invoice_line and o.document_id.invoice_line[0].fund_id">
                                 <span t-field="o.document_id.invoice_line[0].fund_id.name"/>
                             </t>
+                            <t t-if="not o.document_id">
+                                <span t-field="o.source_of_fund"/>
+                                <br/><span>Charge Type: </span>
+                                <span t-field="o.charge_type"/>
+                            </t>
                         </t>
                         <t t-if="o.doctype in ['payment', 'receipt']">
                             <t t-if="o.document_id and o.document_id.line_ids and o.document_id.line_ids[0].move_line_id and o.document_id.line_ids[0].move_line_id.invoice and o.document_id.line_ids[0].move_line_id.invoice.invoice_line and o.document_id.line_ids[0].move_line_id.invoice.invoice_line[0].fund_id">
