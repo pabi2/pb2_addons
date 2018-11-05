@@ -89,6 +89,9 @@
             <field name="model">account.move.line</field>
             <field name="inherit_id" ref="account.view_move_line_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="ref"/>
+                </xpath>
                 <xpath expr="//field[@name='company_id']" position="after">
 
                     <field name="taxbranch_id"/>
