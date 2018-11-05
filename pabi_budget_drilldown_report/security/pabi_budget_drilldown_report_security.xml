@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <!-- Category -->
+        <record id="module_category_my_budget_report" model="ir.module.category">
+            <field name="name">My Budget Report</field>
+            <field name="description">my_budget_report</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <!-- Section Group -->
+        <record id="group_unit_base_see_own_section" model="res.groups">
+            <field name="name">Unit Base - See Own Section</field>
+            <field name="category_id" ref="pabi_budget_drilldown_report.module_category_my_budget_report"/>
+        </record>
+
+        <record id="group_unit_base_see_own_division" model="res.groups">
+            <field name="name">Unit Base - See Own Division</field>
+            <field name="category_id" ref="pabi_budget_drilldown_report.module_category_my_budget_report"/>
+        </record>
+
+        <record id="group_unit_base_see_own_subsector" model="res.groups">
+            <field name="name">Unit Base - See Own Subsector</field>
+            <field name="category_id" ref="pabi_budget_drilldown_report.module_category_my_budget_report"/>
+        </record>
+
+        <record id="group_unit_base_see_own_sector" model="res.groups">
+            <field name="name">Unit Base - See Own Sector</field>
+            <field name="category_id" ref="pabi_budget_drilldown_report.module_category_my_budget_report"/>
+        </record>
+
+        <record id="group_unit_base_see_own_org" model="res.groups">
+            <field name="name">Unit Base - See Own Org</field>
+            <field name="category_id" ref="pabi_budget_drilldown_report.module_category_my_budget_report"/>
+        </record>
+
+        <record id="group_unit_base_see_all_org" model="res.groups">
+            <field name="name">Unit Base - See All Org</field>
+            <field name="category_id" ref="pabi_budget_drilldown_report.module_category_my_budget_report"/>
+        </record>
+
+        <!-- Project Group -->
+        <record id="group_project_base_see_own_project_division" model="res.groups">
+            <field name="name">Project Base - See Own Project Division</field>
+            <field name="category_id" ref="pabi_budget_drilldown_report.module_category_my_budget_report"/>
+        </record>
+        <record id="group_project_base_see_own_report_project_member" model="res.groups">
+            <field name="name">Project Base - See Own Report Project Member</field>
+            <field name="category_id" ref="pabi_budget_drilldown_report.module_category_my_budget_report"/>
+        </record>
+    </data>
+</openerp>

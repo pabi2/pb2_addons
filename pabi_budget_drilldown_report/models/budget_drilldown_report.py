@@ -10,14 +10,21 @@ from .common import SearchCommon, REPORT_TYPES, REPORT_GROUPBY
 
 SEARCH_KEYS = dict(CHART_FIELDS).keys() + ['fiscalyear_id']
 ALL_SEARCH_KEYS = SEARCH_KEYS + ['chart_view', 'charge_type',
-                                 'activity_group_id', 'activity_id']
+                                 'activity_group_id', 'activity_id',
+                                 'section_ids', 'project_ids']
 CHART_VIEWS = CHART_VIEW.keys()
 
 
 def get_field_value(record, field):
     """ For many2one, return id, otherwise raw value """
     try:
-        value = record[field] and record[field].id or False
+        value = False
+        if record[field]:
+            if record._context.get('action', False) == 'my_budget_report' and \
+               field in ['section_ids', 'project_ids']:
+                value = [x.id for x in record[field]]
+            else:
+                value = record[field].id
         return value
     except Exception:
         return record[field]
@@ -41,10 +48,18 @@ def prepare_where_str(where):
     extra_where = []
     for k in where.keys():
         if where.get(k):
-            if isinstance(where[k], basestring):
-                extra_where.append("and %s = '%s'" % (k, where[k]))
+            if k in ['section_ids', 'project_ids']:
+                if len(where[k]) > 1:
+                    extra_where.append("and %s in %s" %
+                                       (k[0:10], str(tuple(where[k]))))
+                else:
+                    extra_where.append("and %s = %s" %
+                                       (k[0:10], str(where[k][0])))
             else:
-                extra_where.append("and %s = %s" % (k, where[k]))
+                if isinstance(where[k], basestring):
+                    extra_where.append("and %s = '%s'" % (k, where[k]))
+                else:
+                    extra_where.append("and %s = %s" % (k, where[k]))
     where_clause = ' '.join(extra_where)
     return where_clause
 
@@ -229,6 +244,9 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         chart_view = 'unit_base'
         view_xml_id = 'pabi_budget_drilldown_report.' \
                       'view_budget_unit_base_report_form'
+        if self._context.get('action', False) == 'my_budget_report':
+            view_xml_id = 'pabi_budget_drilldown_report.' \
+                          'view_my_budget_unit_base_report_form'
         return self._prepare_report_by_structure(chart_view, view_xml_id)
 
     @api.multi
@@ -237,6 +255,9 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         chart_view = 'project_base'
         view_xml_id = 'pabi_budget_drilldown_report.' \
                       'view_budget_project_base_report_form'
+        if self._context.get('action', False) == 'my_budget_report':
+            view_xml_id = 'pabi_budget_drilldown_report.' \
+                          'view_my_budget_project_base_report_form'
         return self._prepare_report_by_structure(chart_view, view_xml_id)
 
     @api.multi
@@ -272,6 +293,8 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         # Create report
         RPT = dict(REPORT_TYPES)
         name = _('Budget Overview Report - %s') % RPT[wizard.report_type]
+        if self._context.get('action', False) == 'my_budget_report':
+            name = _('My Budget Report - %s') % RPT[wizard.report_type]
         # Fill provided search values to report head (used to execute report)
         report_dict = {'name': name}
         groupby_fields = []
@@ -281,6 +304,12 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         groupby_fields = list(set(groupby_fields))  # remove duplicates
         search_keys = ALL_SEARCH_KEYS + groupby_fields + ['report_type']
         report_dict.update(prepare_where_dict(wizard, search_keys))
+        if report_dict.get('section_ids', False):
+            report_dict.update({'section_ids':
+                                [(6, 0, report_dict['section_ids'])]})
+        if report_dict.get('project_ids', False):
+            report_dict.update({'project_ids':
+                                [(6, 0, report_dict['project_ids'])]})
         report = self.create(report_dict)
         # Compute report lines, by report type
         report_lines = []
@@ -651,6 +680,14 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         'account.activity',
         string='Activity Rpt',
         readonly=True,
+    )
+    section_ids = fields.Many2many(
+        'res.section',
+        string='Section',
+    )
+    project_ids = fields.Many2many(
+        'res.project',
+        string='Project',
     )
 
     # @api.multi
