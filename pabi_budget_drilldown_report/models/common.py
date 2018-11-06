@@ -227,25 +227,26 @@ class SearchCommon(ChartField, object):
         module = 'pabi_budget_drilldown_report'
         see_own_project_division = \
             '%s.%s' % (module, 'group_project_base_see_own_project_division')
-        see_own_report_project_member = \
-            '%s.%s' % (module,
-                       'group_project_base_see_own_report_project_member')
         # Domain
         user = self.env.user
         employee_id = user.employee_id.id
+
+        # --
         member = Member.search([('employee_id', '=', employee_id)])
-        analyst_project = \
-            Project.search([('analyst_employee_id', '=', employee_id)])
-        pm_project = Project.search([('pm_employee_id', '=', employee_id)])
+        self._cr.execute("""
+            select project_id from project_res_users_rel where user_id = %s
+        """ % (user.id, ))
         project_ids = \
-            [x.project_id.id for x in member] + analyst_project.ids + \
-            pm_project.ids
+            Project.browse(map(lambda l: l[0], self._cr.fetchall())).ids + \
+            Project.search([('analyst_employee_id', '=', employee_id)]).ids + \
+            Project.search([('pm_employee_id', '=', employee_id)]).ids + \
+            [x.project_id.id for x in member]
+
+        # --
         if user.has_group(see_own_project_division):
             division_id = user.employee_id.section_id.division_id.id
             project = Project.search([('owner_division_id', '=', division_id)])
             project_ids.extend(project.ids)
-        if user.has_group(see_own_report_project_member):
-            pass
         project_ids = list(set(filter(lambda l: l is not False, project_ids)))
         return [('id', 'in', project_ids)]
 
