@@ -20,6 +20,7 @@ Simple tax rounding on UI for PO and WA
     'data': [
         'views/purchase_view.xml',
         'views/purchase_work_acceptance.xml',
+        'views/purchase_requisition_view.xml',
     ],
 }
 
