@@ -218,5 +218,10 @@
         # Event Calendar
         <menuitem name="Calendar" id="calendar.mail_menu_calendar" parent="calendar.menu_calendar_configuration" sequence="10" action="calendar.action_calendar_event"/>
 
+        # Additional Invest Asset menu for Cooperate Budget
+        <menuitem name="Investment Asset" id="menu_res_invest_asset_for_cooperate_budget"
+          action="pabi_base.action_res_invest_asset"
+          parent="pabi_budget_plan.menu_action_budget_plan_invest_asset" sequence="1"  groups="pabi_base.group_cooperate_budget"/>
+
     </data>
 </openerp>
