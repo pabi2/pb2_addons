@@ -79,6 +79,7 @@
                                 <field name="to_reconcile" invisible="1"/>
                                 <field name="move_id" attrs="{'invisible': [('move_id', '=', False)]}"/>
                                 <field name="residual" attrs="{'invisible': [('type', '!=', 'invoice')]}"/>
+                                <field name="to_payment" attrs="{'invisible': [('type', '!=', 'invoice')]}"/>
                             </group>
                         </group>
                         <notebook>

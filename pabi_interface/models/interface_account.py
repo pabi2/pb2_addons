@@ -165,6 +165,10 @@ class InterfaceAccountEntry(models.Model):
         string='Cancel Reason',
         size=500,
     )
+    to_payment = fields.Char(
+        string='Payment Entries',
+        compute='_compute_to_payment',
+    )
     date_document = fields.Date(
         string='Document Date',
         readonly=True,
@@ -172,6 +176,25 @@ class InterfaceAccountEntry(models.Model):
     )
     _sql_constraints = [('sys_doc_unique', 'unique(name,system_id)',
                          'Document must be unique per system.')]
+
+    @api.multi
+    @api.depends('journal_id')
+    def _compute_to_payment(self):
+        for rec in self:
+            reconcile_ids = rec.move_id.line_id.mapped('reconcile_id').ids
+            inteface_reconcile_ids = rec.env['account.move.line'].search(
+                [('reconcile_id', 'in', reconcile_ids)]
+            )
+            move_line_diff = set(inteface_reconcile_ids) \
+                .difference(rec.move_id.line_id)
+            diff_ids = []
+            payment_name = False
+            for x in move_line_diff:
+                if x.move_id.name not in diff_ids:
+                    diff_ids.append(x.move_id.name.encode('utf-8'))
+            payment_name = ",".join(diff_ids)
+            if payment_name:
+                rec.to_payment = payment_name
 
     @api.onchange('to_reverse_entry_id')
     def _onchange_to_reverse_entry_id(self):
