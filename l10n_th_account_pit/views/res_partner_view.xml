@@ -17,10 +17,12 @@
                         <group name="pit" attrs="{'invisible': [('supplier', '=', False)]}" string="PIT">
                             <field name="pit_line" nolabel="1" context="{'default_manual': True}">
                                 <tree editable="bottom" string="PIT" create="1" delete="0">
-                                    <field name="voucher_id" attrs="{'readonly': [('posted', '=', True)]}"/>
+                                    <field name="voucher_id" attrs="{'readonly': [('posted', '=', True)], 'required': [('invoice_id', '=', False)]}"/>
+                                    <field name="invoice_id" attrs="{'readonly': [('posted', '=', True)], 'required': [('voucher_id', '=', False)]}"/>
                                     <field name="manual" invisible="1"/>
                                     <field name="date"/>
                                     <field name="calendar_year"/>
+                                    <field name="wht_cert_income_type"/>
                                     <field name="amount_income" attrs="{'readonly': [('posted', '=', True)]}" sum="Total Income"/>
                                     <field name="precalc_wht" string="WHT Amount" attrs="{'readonly': [('posted', '=', True)]}" sum="Total WHT"/>
                                     <field name="amount_wht" sum="Total WHT" invisible="1"/>

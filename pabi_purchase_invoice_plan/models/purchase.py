@@ -27,6 +27,41 @@ class PurchaseOrder(models.Model):
         "invoice plan. You can change it."
     )
 
+    @api.multi
+    def wkf_confirm_order(self):
+        for purchase in self:
+            # For case invoice plan only, if By Fiscal Year is selected,
+            if purchase.use_invoice_plan and purchase.by_fiscalyear:
+                if False in [x.fiscalyear_id.id for x in purchase.order_line]:
+                    raise ValidationError(_('Some lines missing Fiscal Year'))
+            else:
+                # all line must have fiscalyear_id
+                lines = purchase.order_line.filtered(lambda l:
+                                                     not l.fiscalyear_id)
+                if lines:
+                    Fiscal = self.env['account.fiscalyear']
+                    lines.write({'fiscalyear_id': Fiscal.find()})
+        return super(PurchaseOrder, self).wkf_confirm_order()
+
+    # @api.constrains('use_invoice_plan', 'by_fiscalyear', 'order_line')
+    # def _check_by_fiscalyear(self):
+    #     for order in self:
+    #         if not order.use_invoice_plan:
+    #             continue
+    #         count_order_line = len(order.order_line)
+    #         count_fiscalyear_order_line = 0
+    #         for line in order.order_line:
+    #             if not line.fiscalyear_id:
+    #                 continue
+    #             count_fiscalyear_order_line += 1
+    #         if order.by_fiscalyear and \
+    #            count_order_line != count_fiscalyear_order_line:
+    #             raise ValidationError(
+    #                 _('All order line must specify fiscal year'))
+    #         if not order.by_fiscalyear and count_fiscalyear_order_line:
+    #             raise ValidationError(
+    #                 _('All order line must not specify fiscal year'))
+
     @api.model
     def _action_invoice_create_hook(self, invoice_ids):
         # For Hook

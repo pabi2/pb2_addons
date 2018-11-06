@@ -8,6 +8,7 @@ from openerp.addons.l10n_th_account.models.res_partner \
 
 class AccountVoucher(models.Model):
     _inherit = 'account.voucher'
+    _rec_name = 'number'
 
     invoices_text = fields.Char(
         size=1000,
@@ -107,6 +108,13 @@ class AccountVoucher(models.Model):
         [('following', 'Following'),
          ('received', 'Received')],
         string='Receipt Followup',
+    )
+    # For cancel invoice case
+    cancel_date_document = fields.Date(
+        string='Cancel Document Date',
+    )
+    cancel_date = fields.Date(
+        string='Cancel Posting Date',
     )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
@@ -281,6 +289,20 @@ class AccountVoucher(models.Model):
                 line_ids.append(l)
             value[vtype] = line_ids
         res['value'] = value
+        return res
+
+    @api.multi
+    def _prepare_reverse_move_data(self):
+        self.ensure_one()
+        res = super(AccountVoucher, self)._prepare_reverse_move_data()
+        # If cancel data available, use it.
+        if self.cancel_date_document:
+            res.update({'date_document': self.cancel_date_document})
+        if self.cancel_date:
+            periods = self.env['account.period'].find(self.cancel_date)
+            period = periods and periods[0] or False
+            res.update({'date': self.cancel_date,
+                        'period_id': period.id})
         return res
 
 

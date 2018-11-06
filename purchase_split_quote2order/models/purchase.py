@@ -61,7 +61,8 @@ class PurchaseOrder(models.Model):
         assert len(self) == 1, \
             'This option should only be used for a single id at a time.'
         order = self.copy({
-            'name': self.env['ir.sequence'].get('purchase.order') or '/',
+            # 'name': self.env['ir.sequence'].get('purchase.order') or '/',
+            'name': '/',  # As we will use doctype order
             'order_type': 'purchase_order',
             'quote_id': self.id,
             'partner_ref': self.partner_ref,

@@ -5,18 +5,46 @@ from openerp.exceptions import ValidationError
 #     import INVOICE_DOCTYPE
 
 DOCTYPE_REPORT_MAP = {
-    'supplier_net_payment': {
+    'receipt_customer': {
+        'en': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'receipt_customer_form_en',
+            'payment': False,
+        },
+        'th': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'receipt_customer_form_th',
+            'payment': False,
+        }
+    },
+    'receipt_supplier': {
         'en': {
             'sale': False,
             'purchase': False,
             'receipt': False,
-            'payment': 'supplier_netpay_form_en',
+            'payment': 'receipt_supplier_form_en',
         },
         'th': {
             'sale': False,
             'purchase': False,
             'receipt': False,
-            'payment': 'supplier_netpay_form_th',
+            'payment': 'receipt_supplier_form_th',
+        }
+    },
+    'receipt_cd': {
+        'en': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'receipt_cd_form_en',
+            'payment': False,
+        },
+        'th': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'receipt_cd_form_th',
+            'payment': False,
         }
     },
     'customer_receipt': {
@@ -143,7 +171,9 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 return[('customer_receipt', 'Receipt'),
                        ('customer_receipt_voucher', 'Receipt Voucher'),
                        ('customer_tax_receipt', 'Tax Receipt'),
-                       ('customer_tax_receipt200', 'Tax Receipt 200%'), ]
+                       ('customer_tax_receipt200', 'Tax Receipt 200%'),
+                       ('receipt_customer', 'Receipt For Customer'),
+                       ('receipt_cd', 'Receipt CD')]
             elif voucher.type == 'payment':
-                return [('supplier_net_payment', 'Net Payment')]
+                return [('receipt_supplier', 'Receipt For Supplier')]
         return []

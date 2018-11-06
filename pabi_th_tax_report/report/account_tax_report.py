@@ -128,8 +128,8 @@ class AccountTaxReport(models.Model):
             rpt.name as partner_title,
             rp.vat as vat,
             rp.taxbranch as taxbranch,
-            base_company as base,
-            amount_company as amount,
+            atd.base as base,
+            atd.amount as amount,
             atd.taxbranch_id, number_preprint
         """
         return res

@@ -37,7 +37,13 @@ class AccountMove(models.Model):
                                     ('move_id', 'in', move_ids)])
         # Make sure to remove reconicle_id if any (case GR/IR)
         reconciles = move_lines.mapped('reconcile_id')
-        reconciles.unlink()
+        # reconciles.unlink() throw "no document" error, so use this instead
+        # reconciles.unlink()
+        if reconciles.ids:
+            self._cr.execute("""
+                delete from account_move_reconcile where id in %s
+            """, (tuple(reconciles.ids),))
+        # --
         move_lines.refresh()  # clear cache
         if move_lines:
             move_lines.reconcile('manual')

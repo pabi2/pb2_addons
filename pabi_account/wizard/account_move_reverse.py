@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountMoveReverse(models.TransientModel):
@@ -8,6 +9,17 @@ class AccountMoveReverse(models.TransientModel):
     move_prefix = fields.Char(
         default=lambda self: self._default_move_prefix(),
     )
+
+    @api.model
+    def view_init(self, fields_list):
+        """ Allow only Adjustment Journal to be reversed """
+        res_model = self._context.get('active_model', False)
+        res_id = self._context.get('active_id', False)
+        move = self.env[res_model].browse(res_id)
+        if move.doctype != 'adjustment':
+            raise ValidationError(
+                _('No direct reverse allowed for non adjustment doctype!\n'
+                  'You should make reverse on source document.'))
 
     @api.model
     def _default_move_prefix(self):

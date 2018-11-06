@@ -2,7 +2,7 @@
 from openerp import models, fields, api
 
 
-class AccountTrialBalanceWizard(models.TransientModel):
+class AccountGeneralLedgerWizard(models.TransientModel):
     _name = 'account.general.ledger.wizard'
 
     fiscalyear_id = fields.Many2one(

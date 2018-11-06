@@ -32,13 +32,14 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem
+        <!-- Not Use Now -->
+        <!-- <menuitem
             id="menu_budget_detail_report"
             name="Budget Detail By Cost Centre"
-            parent="menu_budget_report"
+            parent="account_budget_activity.menu_action_budget_report"
             action="action_budget_detail_report"
             sequence="30"
             icon="STOCK_PRINT"
-            />
+            /> -->
     </data>
 </openerp>

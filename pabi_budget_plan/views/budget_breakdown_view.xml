@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <form string="Budget Breakdown" create="0" delete="0">
                     <header>
-                        <button name="action_draft" type="object" states="done" string="Set to Draft"/>
+                        <button name="action_draft" type="object" states="done" string="Set to Draft" invisible="1"/>
                         <button name="action_done" states="draft" type="object" string="Set New Budget Policy" class="oe_highlight"
                             confirm="This action will assign the new policy amount to all sections' budget. On the new fiscal year, it will also create new budget control for every sections."/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>

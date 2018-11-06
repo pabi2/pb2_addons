@@ -59,8 +59,11 @@ class AccountMoveLine(models.Model):
 
     @api.multi
     def _write_invoice_narration_to_payment(self):
+        narration_written = False
         for rec in self:
-            if rec.doctype in ('payment', 'receipt') and not rec.narration:
+            # if rec.doctype in ('payment', 'receipt') and \
+            #         not rec.move_id.narration:
+            if rec.doctype in ('payment', 'receipt') and not narration_written:
                 reconcile = rec.reconcile_id or rec.reconcile_partial_id
                 move_lines = reconcile.line_id + reconcile.line_partial_ids
                 inv_types = ('out_invoice', 'out_refund',
@@ -69,5 +72,6 @@ class AccountMoveLine(models.Model):
                              'in_invoice', 'in_refund')
                 invoice_moves = move_lines.filtered(lambda l:
                                                     l.doctype in inv_types)
-                rec.narration = invoice_moves and \
+                rec.move_id.narration = invoice_moves and \
                     invoice_moves[0].move_id.narration
+                narration_written = True

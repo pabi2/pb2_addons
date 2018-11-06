@@ -68,6 +68,16 @@
                 </xpath>
             </field>
         </record>
+        <record id="view_expenses_form5" model="ir.ui.view">
+            <field name="name">view.expense.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense_cancel_reason.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(hr_expense_cancel_reason.action_hr_expense_cancel)d']" position="attributes">
+                    <attribute name="groups">base.group_hr_user,pabi_budget_internal_charge.group_approve_ic_activity</attribute>
+                </xpath>
+            </field>
+        </record>
 
         <!-- Accept Internal Charge Line -->
         <record id="view_internal_charge_line_filter" model="ir.ui.view">

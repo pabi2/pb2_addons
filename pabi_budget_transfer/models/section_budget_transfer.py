@@ -214,7 +214,7 @@ class SectionBudgetTransfer(models.Model):
     @api.multi
     def button_approve(self):
         self.write({'state': 'approve',
-                    'date_approve': fields.Date.today(),
+                    'date_approve': fields.Date.context_today(self),
                     'approver_user_id': self._uid})
         return True
 

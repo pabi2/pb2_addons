@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pabi_import_journal_entries,access_pabi_import_journal_entries,model_pabi_import_journal_entries,account.group_account_user,1,1,1,1
+access_pabi_import_journal_entries_line,access_pabi_import_journal_entries_line,model_pabi_import_journal_entries_line,account.group_account_user,1,1,1,1

@@ -7,6 +7,7 @@ from openerp.exceptions import ValidationError
 
 class BankAccountTransfer(models.Model):
     _name = 'bank.account.transfer'
+    _inherit = ['mail.thread']
 
     name = fields.Char(
         string='Name',
@@ -27,26 +28,29 @@ class BankAccountTransfer(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     from_account_id = fields.Many2one(
         'account.account',
-        string='Bank Account',
+        string='From Account',
         domain="[('type', '=', 'liquidity')]",
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     to_account_id = fields.Many2one(
         'account.account',
-        string='Bank Account',
+        string='To Account',
         domain="[('type', '=', 'liquidity')]",
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     fee_account_id = fields.Many2one(
         'account.account',
-        string='Bank Account',
+        string='Fee Account',
         domain="[('type', '!=', 'view')]",
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -55,6 +59,7 @@ class BankAccountTransfer(models.Model):
         string='Notes',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -63,6 +68,7 @@ class BankAccountTransfer(models.Model):
         string='Status',
         default='draft',
         readonly=True,
+        track_visibility='onchange',
     )
     journal_id = fields.Many2one(
         'account.journal',
@@ -71,6 +77,7 @@ class BankAccountTransfer(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     currency_id = fields.Many2one(
         'res.currency',
@@ -78,12 +85,14 @@ class BankAccountTransfer(models.Model):
         required=True,
         readonly=True,
         default=lambda self: self.env.user.company_id.currency_id,
+        track_visibility='onchange',
     )
     move_id = fields.Many2one(
         'account.move',
         string='Journal Entry',
         readonly=True,
         copy=False,
+        track_visibility='onchange',
     )
     deduct_account_id = fields.Many2one(
         'account.account',

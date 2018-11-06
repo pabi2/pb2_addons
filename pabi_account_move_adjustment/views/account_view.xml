@@ -92,6 +92,7 @@
                                     <tree colors="blue:state == 'draft';black:state == 'posted'" editable="bottom" string="Journal Items">
                                         <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
                                         <!-- <field name="product_id" invisible="1"/> -->
+                                        <field name="charge_type"/>
                                         <field name="activity_group_id"/>
                                         <field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
                                         <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
@@ -244,12 +245,12 @@
                                         <field name="analytic_account_id" groups="analytic.group_analytic_accounting" invisible="1"/>
                                         <field name="org_id" readonly="1"/>
                                         <field name="chartfield_id" string="Section/Project"/>
-                                        <!-- <field name="project_id" invisible="1"/>
+                                        <field name="project_id" invisible="1"/>
                                         <field name="section_id" invisible="1"/>
                                         <field name="invest_asset_id" invisible="1"/>
                                         <field name="invest_construction_phase_id" invisible="1"/>
-                                        <field name="personnel_costcenter_id" invisible="1"/> -->
-                                        <!-- <field name="fund_id" required="1"/> -->
+                                        <field name="personnel_costcenter_id" invisible="1"/>
+                                        <field name="fund_id" attrs="{'required': [('chartfield_id', '!=', False)], 'readonly': [('chartfield_id', '=', False)]}"/>
                                         <field name="cost_control_id" invisible="0"/>
                                         <field name="state"/>
                                         <field name="reconcile_id"/>

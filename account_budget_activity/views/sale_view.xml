@@ -26,8 +26,10 @@
                 <xpath expr="/form/sheet/notebook" position="inside">
                     <page string="Budgeting">
                         <separator string="Budget Commitment"/>
-                        <button name="recreate_all_budget_commitment" string="Recreate budget commitment" type="object" confirm="This will delete all budget commit lines, and regenerate again, are you sure to continue?"/>
-                        <button name="release_all_committed_budget" string="Release all commited budget" type="object" confirm="This operation can not be undone, are you sure to continue?"/>
+                        <button name="recreate_all_budget_commitment" string="Recreate budget commitment" type="object" confirm="This will delete all budget commit lines, and regenerate again, are you sure to continue?"
+                          groups="account_budget_activity.group_budget_trans_manager"/>
+                        <button name="release_all_committed_budget" string="Release all commited budget" type="object" confirm="This operation can not be undone, are you sure to continue?"
+                          groups="account_budget_activity.group_budget_trans_manager"/>
                         <field name="budget_commit_ids">
                             <tree default_order='id'>
                                 <field name="id"/>
@@ -37,9 +39,9 @@
                                 <field name="amount" string="Committed Amount" sum="Total Amount"/>
                             </tree>
                         </field>
-                        <separator string="Budget Transition"/>
-                        <field name="budget_transition_ids">
-                            <tree default_order='id'>
+                        <separator string="Budget Transition" groups="account_budget_activity.group_budget_trans_manager"/>
+                        <field name="budget_transition_ids" groups="account_budget_activity.group_budget_trans_manager">
+                            <tree default_order='id' editable="bottom">
                                 <field name="id"/>
                                 <field name="source"/>
                                 <field name="target"/>

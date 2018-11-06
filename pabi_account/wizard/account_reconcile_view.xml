@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="account_move_line_reconcile_writeoff" model="ir.ui.view">
+            <field name="name">account.move.line.reconcile.writeoff.form</field>
+            <field name="model">account.move.line.reconcile.writeoff</field>
+            <field name="inherit_id" ref="account.account_move_line_reconcile_writeoff"/>
+            <field name="arch" type="xml">
+                <field name="analytic_id" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </field>
+                <field name="comment" position="after">
+                    <field name="partner_id"/>
+                    <field name="chartfield_id"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

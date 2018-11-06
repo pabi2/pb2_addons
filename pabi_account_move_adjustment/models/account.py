@@ -35,6 +35,34 @@ class AccountMove(models.Model):
         compute='_compute_date_due',
         readonly=True,
     )
+    charge_type = fields.Char(
+        compute='_compute_charge_type'
+    )
+    source_of_fund = fields.Char(
+        compute='_compute_source_of_fund'
+    )
+
+    @api.multi
+    def _compute_charge_type(self):
+        for rec in self:
+            _charge_type = rec.line_id.mapped('charge_type')
+            if _charge_type:
+                type_all = list(set(_charge_type))
+                charge_type = ",".join(type_all)
+                rec.charge_type = charge_type
+            else:
+                rec.charge_type = False
+
+    @api.multi
+    def _compute_source_of_fund(self):
+        for rec in self:
+            _fund_id = rec.line_id.mapped('fund_id.name')
+            if _fund_id:
+                fund = list(set(_fund_id))
+                source_of_fund = ",".join(fund)
+                rec.source_of_fund = source_of_fund
+            else:
+                rec.source_of_fund = False
 
     @api.multi
     def button_delete(self):
@@ -110,7 +138,7 @@ class AccountMove(models.Model):
                 # JN must not have AG/A
                 if not move.journal_id.analytic_journal_id and ag_lines:
                     raise ValidationError(
-                        _('For JN, No line can have activity gorup!'))
+                        _('For JN, No line can have activity group!'))
             # For case adjustment journal only, create analytic when posted
             Analytic = self.env['account.analytic.account']
             # Only direct creation of account move, we will recompute dimension

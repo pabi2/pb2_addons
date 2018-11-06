@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
 	<property name="ireport.zoom" value="1.0000000000000016"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="96"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -173,6 +173,9 @@
 	<field name="vat_included" class="java.lang.Boolean">
 		<fieldDescription><![CDATA[invoice_line/invoice_line_tax_id/price_include]]></fieldDescription>
 	</field>
+	<field name="date_document" class="java.util.Date">
+		<fieldDescription><![CDATA[date_document]]></fieldDescription>
+	</field>
 	<variable name="discount_amt" class="java.lang.Number">
 		<variableExpression><![CDATA[($F{discount} == null ? 0.0 : $F{discount}) / 100 * $F{quantity} * $F{price_unit}]]></variableExpression>
 	</variable>
@@ -294,14 +297,14 @@ $F{amount_total_text_th}]]></variableExpression>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_invoice}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_document}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Transparent" x="40" y="272" width="254" height="35" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[(new Scriptlet()).getAddress($F{street},"",$F{township},$F{district},$F{province},$F{zip})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(new Scriptlet()).getAddress($F{street},$F{street2},$F{township},$F{district},$F{province},$F{zip})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="137" y="312" width="250" height="15" forecolor="#000000" backcolor="#FFFFFF"/>

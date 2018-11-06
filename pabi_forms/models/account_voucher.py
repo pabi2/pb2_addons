@@ -13,6 +13,38 @@ class AccountVoucher(models.Model):
         compute='_compute_line_ids',
     )
     # --
+    # For Receipt for Supplier forms
+    wa_total_fine = fields.Float(
+        string='WA Total Fine',
+        compute='_compute_wa_total_fine',
+    )
+    wa_voucher_diff_comment = fields.Char(
+        string='WA Diff Comment',
+        compute='_compute_wa_total_fine',
+    )
+    retention_amount = fields.Float(
+        string='Retention Amount',
+        compute='_compute_retention_amount',
+    )
+    retention_diff_comment = fields.Char(
+        string='Retention Diff Comment',
+        compute='_compute_retention_amount',
+    )
+    sale_installment_number = fields.Char(
+        string='Installment',
+        compute='_compute_sale_installment',
+    )
+
+    @api.multi
+    def _compute_sale_installment(self):
+        for voucher in self:
+            invoices = voucher.line_ids.mapped('invoice_id')
+            if invoices:
+                plans = self.env['sale.invoice.plan'].search(
+                    [('ref_invoice_id', 'in', invoices.ids)]
+                )
+                installments = ', '.join([str(x.installment) for x in plans])
+                voucher.sale_installment_number = installments
 
     @api.multi
     def _compute_line_ids(self):
@@ -63,3 +95,45 @@ class AccountVoucher(models.Model):
             reports = []
             self.filter_print_report(res, reports)
         return res
+
+    # For customer/supplier receipt report
+    @api.multi
+    def _compute_wa_total_fine(self):
+        company = self.env.user.company_id
+        for rec in self:
+            # from invoice
+            amount_from_invoice = abs(sum(rec.line_ids.mapped(
+                'invoice_id.late_delivery_work_acceptance_id.total_fine')))
+            # form payment diff
+            accounts = [company.delivery_penalty_activity_id.account_id.id]
+            diff_lines = rec.multiple_reconcile_ids.\
+                filtered(lambda l: l.account_id.id in accounts)
+            amount_from_diff = abs(sum(diff_lines.mapped('amount')))
+            rec.wa_total_fine = amount_from_invoice + amount_from_diff
+            comment_from_diff = ', '.join(diff_lines.mapped('note'))
+            rec.wa_voucher_diff_comment = comment_from_diff
+        return True
+
+    @api.multi
+    def _compute_retention_amount(self):
+        company = self.env.user.company_id
+        for rec in self:
+            # from invoice
+            amount_from_invoice = abs(sum(
+                rec.line_ids.mapped('invoice_id').
+                filtered('is_retention_return').  # Get only with PO retention
+                mapped('amount_total'))) or 0.0
+            # from voucher line retention
+            amount_from_voucher = \
+                abs(sum(rec.line_ids.mapped('amount_retention'))) or 0.0
+            # from payment diff
+            accounts = company.account_retention_customer_ids.ids + \
+                company.account_retention_supplier_ids.ids
+            diff_lines = rec.multiple_reconcile_ids.\
+                filtered(lambda l: l.account_id.id in accounts)
+            amount_from_diff = abs(sum(diff_lines.mapped('amount'))) or 0.0
+            rec.retention_amount = amount_from_invoice + \
+                amount_from_voucher + amount_from_diff
+            comment_from_diff = ', '.join(diff_lines.mapped('note'))
+            rec.retention_diff_comment = comment_from_diff
+        return True

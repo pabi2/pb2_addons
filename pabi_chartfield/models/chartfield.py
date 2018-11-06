@@ -829,37 +829,6 @@ class ChartFieldAction(ChartField):
                         raise ValidationError(
                             _('More than 1 dimension selected'))
 
-    # @api.multi
-    # @api.depends('activity_id', 'account_id')
-    # def _compute_require_chartfield(self):
-    #     for rec in self:
-    #         account = False
-    #         is_alyt_line = rec._name in ('account.analytic.line')  # Special
-    #         if not is_alyt_line and 'account_id' in rec and rec.account_id:
-    #             account = rec.account_id
-    #         elif is_alyt_line and 'general_account_id' in rec \
-    #                 and rec.general_account_id:
-    #             account = rec.general_account_id
-    #         elif 'activity_id' in rec and rec.activity_id:
-    #             account = rec.activity_id.account_id
-    #         if account:
-    #             report_type = account.user_type.report_type
-    #             rec.require_chartfield = report_type not in ('asset',
-    #                                                          'liability')
-    #       # kittiu: I found AV-Expense case no account and must not required.
-    #         # Not sure it comply to all case ?
-    #         elif 'is_advance_product_line' in rec and \
-    #                 rec.is_advance_product_line:  # Case product always
-    #             rec.require_chartfield = False
-    #         else:
-    #             rec.require_chartfield = True
-    #         if not rec.require_chartfield:
-    #             rec.section_id = False
-    #             rec.project_id = False
-    #             rec.personnel_costcenter_id = False
-    #             rec.invest_asset_id = False
-    #             rec.invest_construction_phase_id = False
-    #     return
     @api.multi
     @api.depends('activity_id', 'product_id')
     def _compute_require_chartfield(self):

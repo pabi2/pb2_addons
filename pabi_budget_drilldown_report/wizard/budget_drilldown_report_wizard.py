@@ -22,9 +22,11 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
                   'project_id', 'group_by_project_id',
                   'invest_asset_id', 'group_by_invest_asset_id',
                   'invest_construction_id', 'group_by_invest_construction_id',
+                  'section_ids', 'project_ids'
                   )
     def _onchange_helper(self):
         """ Ensure sure that, if some field is selected, so do some groupby """
+        # For budget overview report
         if self.charge_type:
             self.group_by_charge_type = True
         if self.activity_id:
@@ -42,6 +44,11 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
             self.group_by_invest_asset_id = True
         if self.invest_construction_id:
             self.group_by_invest_construction_id = True
+        # For my budget report
+        if self.section_ids:
+            self.group_by_section_id = True
+        if self.project_ids:
+            self.group_by_project_id = True
 
     @api.onchange('report_type')
     def _onchange_report_type(self):
@@ -65,6 +72,10 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
         report_id, view_id = RPT.generate_report(self)
         action = self.env.ref('pabi_budget_drilldown_report.'
                               'action_budget_drilldown_report')
+        # For my budget report
+        if self._context.get('action', False) == 'my_budget_report':
+            action = self.env.ref('pabi_budget_drilldown_report.'
+                                  'action_my_budget_drilldown_report')
         result = action.read()[0]
         result.update({
             'res_id': report_id,

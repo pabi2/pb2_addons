@@ -47,7 +47,15 @@ class AccountMove(models.Model):
             if rec.document_id and 'date_document' in rec.document_id:
                 rec.date_document = rec.document_id.date_document
             else:
-                rec.date_document = fields.Date.context_today(self)
+                if not self._context.get('direct_create'):
+                    rec.date_document = fields.Date.context_today(self)
+
+    @api.model
+    def create(self, vals):
+        res = super(AccountMove, self).create(vals)
+        if self._context.get('direct_create'):
+            res.date_document = vals.get('date_document', False)
+        return res
 
     @api.multi
     def _compute_validate_user_id(self):
@@ -90,6 +98,27 @@ class AccountMove(models.Model):
         move_dict['tax_detail_ids'] = tax_details
         return move_dict
 
+    @api.multi
+    def _move_reversal(self, reversal_date,
+                       reversal_period_id=False, reversal_journal_id=False,
+                       move_prefix=False, move_line_prefix=False):
+        """ This ensure that for manual reversal, negate amount """
+        self.ensure_one()
+        reversal_move_id = super(AccountMove, self)._move_reversal(
+            reversal_date, reversal_period_id=reversal_period_id,
+            reversal_journal_id=reversal_journal_id, move_prefix=move_prefix,
+            move_line_prefix=move_line_prefix
+        )
+        reversal_move = self.browse(reversal_move_id)
+        # Negat base and amount in Tax Detail
+        for tax_detail in reversal_move.tax_detail_ids:
+            tax_detail.write({'base': -tax_detail.base,
+                              'base_company': -tax_detail.base_company,
+                              'amount': -tax_detail.amount,
+                              'amount_company': -tax_detail.amount_company,
+                              })
+        return reversal_move_id
+
 
 class AccountAccount(models.Model):
     _inherit = 'account.account'
@@ -114,6 +143,12 @@ class AccountAccount(models.Model):
 class AccountJournal(models.Model):
     _inherit = 'account.journal'
 
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+        help="If the active field is set to False, "
+             "it will allow you to hide the journal without removing it.",
+    )
     receipt = fields.Boolean(
         string='Use for Receipt',
         default=True,

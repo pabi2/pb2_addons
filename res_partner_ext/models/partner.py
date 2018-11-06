@@ -50,11 +50,13 @@ class ResPartner(models.Model):
     )
     require_receivable_account = fields.Boolean(
         string='Require Receivable Account',
-        related='category_id.require_receivable_account',
+        # related='category_id.require_receivable_account',
+        compute='_compute_require_receivable_payable_account',
     )
     require_payable_account = fields.Boolean(
         string='Require Payable Account',
-        related='category_id.require_payable_account',
+        # related='category_id.require_payable_account',
+        compute='_compute_require_receivable_payable_account',
     )
     title_lang = fields.Char(
         string='Title (lang)',
@@ -91,6 +93,15 @@ class ResPartner(models.Model):
             name = [rec.title.name, rec.name]
             name = filter(lambda a: a is not False, name)
             rec.display_name2 = ' '.join(name)
+
+    @api.multi
+    @api.depends('category_id')
+    def _compute_require_receivable_payable_account(self):
+        for rec in self:
+            rec.require_receivable_account = \
+                rec.category_id.require_receivable_account
+            rec.require_payable_account = \
+                rec.category_id.require_payable_account
 
     @api.multi
     def _compute_title_lang(self):

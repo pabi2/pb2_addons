@@ -42,7 +42,7 @@ class AccountInvoice(models.Model):
         # Stamp Billing to this invoice
         self.recreated_invoice_id.write({
             'purchase_billing_id': self.purchase_billing_id.id,
-            'date_receipt_billing': self.date_receipt_billing,
+            # 'date_receipt_billing': self.date_receipt_billing,
         })
         # Stamp Invoice to this billing
         self.purchase_billing_id.write({

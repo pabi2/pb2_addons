@@ -10,6 +10,15 @@ class XLSXReportRevenueLedger(models.TransientModel):
         'account.account',
         string='Accounts',
     )
+    line_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    chartfield_ids = fields.Many2many(
+        'chartfield.view',
+        string='Budget',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
     partner_ids = fields.Many2many(
         'res.partner',
         string='Customers',
@@ -33,6 +42,11 @@ class XLSXReportRevenueLedger(models.TransientModel):
         dom = [('account_id.user_type.code', '=', 'Revenue')]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
+        if self.chartfield_ids:
+            ChartfieldView = self.env['chartfield.view']
+            chartfields = ChartfieldView.browse(self.chartfield_ids.ids)
+            budgets = ['%s,%s' % (x.model, x.res_id) for x in chartfields]
+            dom += [('budget', 'in', budgets)]
         if self.partner_ids:
             dom += [('partner_id', 'in', self.partner_ids.ids)]
         if self.fiscalyear_start_id:
@@ -58,3 +72,15 @@ class XLSXReportRevenueLedger(models.TransientModel):
                                       l.activity_id.code,
                                       l.period_id.fiscalyear_id.name,
                                       l.period_id.name))
+
+    @api.onchange('line_filter')
+    def _onchange_line_filter(self):
+        self.chartfield_ids = []
+        Chartfield = self.env['chartfield.view']
+        dom = []
+        if self.line_filter:
+            codes = self.line_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.chartfield_ids = Chartfield.search(dom, order='id')

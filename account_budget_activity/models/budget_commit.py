@@ -29,7 +29,7 @@ class CommitCommon(object):
         'budget.transition',  # inverse_name will be in each extension
         string='Budget Transition',
         domain=_trans_id_domain,
-        readonly=True,
+        readonly=False,
     )
     technical_closed = fields.Boolean(
         string='Closed',
