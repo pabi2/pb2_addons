@@ -119,7 +119,7 @@ class XLSXReportGlExpenditure(models.TransientModel):
             dom += [('invoice_move_line_id.section_id', '!=', False)]
         elif self.chart_view == 'project_base':
             dom += [('invoice_move_line_id.project_id', '!=', False)]
-        else:
+        elif self.chart_view == 'invest_construction':
             dom += [('invoice_move_line_id.invest_construction_id', '!=',
                      False)]
         if self.org_ids:
