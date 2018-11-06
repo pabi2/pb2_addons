@@ -44,9 +44,5 @@
             <field name="name">Project Base - See Own Project Division</field>
             <field name="category_id" ref="pabi_budget_drilldown_report.module_category_my_budget_report"/>
         </record>
-        <record id="group_project_base_see_own_report_project_member" model="res.groups">
-            <field name="name">Project Base - See Own Report Project Member</field>
-            <field name="category_id" ref="pabi_budget_drilldown_report.module_category_my_budget_report"/>
-        </record>
     </data>
 </openerp>
