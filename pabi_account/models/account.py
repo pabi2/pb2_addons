@@ -47,7 +47,15 @@ class AccountMove(models.Model):
             if rec.document_id and 'date_document' in rec.document_id:
                 rec.date_document = rec.document_id.date_document
             else:
-                rec.date_document = fields.Date.context_today(self)
+                if not self._context.get('direct_create'):
+                    rec.date_document = fields.Date.context_today(self)
+
+    @api.model
+    def create(self, vals):
+        res = super(AccountMove, self).create(vals)
+        if self._context.get('direct_create'):
+            res.date_document = vals.get('date_document', False)
+        return res
 
     @api.multi
     def _compute_validate_user_id(self):
