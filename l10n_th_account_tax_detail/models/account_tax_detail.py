@@ -231,10 +231,10 @@ class AccountTaxDetail(models.Model):
             invoice_date = datetime.strptime(rec.invoice_date,
                                              '%Y-%m-%d').date()
             period = False
-            if date_doc:
-                period = self.env['account.period'].find(date_doc)[:1]
-            elif rec.invoice_date:  # Invoice date take priority
+            if rec.invoice_date:  # Invoice date take priority
                 period = self.env['account.period'].find(rec.invoice_date)[:1]
+            elif date_doc:
+                period = self.env['account.period'].find(date_doc)[:1]
             if not period:
                 raise ValidationError(_('Period not found for tax detail seq'))
             ref_move_id = rec.ref_move_id.id or \
