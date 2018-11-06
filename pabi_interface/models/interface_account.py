@@ -165,6 +165,36 @@ class InterfaceAccountEntry(models.Model):
         string='Cancel Reason',
         size=500,
     )
+    to_payment = fields.Char(
+        string='Payment Entries',
+        compute='_compute_to_payment',
+    )
+    date_document = fields.Date(
+        string='Document Date',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    _sql_constraints = [('sys_doc_unique', 'unique(name,system_id)',
+                         'Document must be unique per system.')]
+
+    @api.multi
+    @api.depends('journal_id')
+    def _compute_to_payment(self):
+        for rec in self:
+            reconcile_ids = rec.move_id.line_id.mapped('reconcile_id').ids
+            inteface_reconcile_ids = rec.env['account.move.line'].search(
+                [('reconcile_id', 'in', reconcile_ids)]
+            )
+            move_line_diff = set(inteface_reconcile_ids) \
+                .difference(rec.move_id.line_id)
+            diff_ids = []
+            payment_name = False
+            for x in move_line_diff:
+                if x.move_id.name not in diff_ids:
+                    diff_ids.append(x.move_id.name.encode('utf-8'))
+            payment_name = ', '.join(diff_ids)
+            if payment_name:
+                rec.to_payment = payment_name
 
     @api.onchange('to_reverse_entry_id')
     def _onchange_to_reverse_entry_id(self):
@@ -301,7 +331,6 @@ class InterfaceAccountEntry(models.Model):
             where move_id = %s
         """, (move.id, ))
         return True
-
 
     @api.multi
     def _action_invoice_entry(self):
@@ -480,8 +509,8 @@ class InterfaceAccountEntry(models.Model):
     def _reconcile_payment(self):
         self.ensure_one()
         # To reconcile each reciable/payable line
-        to_reconcile_lines = self.line_ids.filtered(
-            lambda l: l.account_id.type in ('receivable', 'payable'))
+        to_reconcile_lines = self.line_ids.filtered('account_id.reconcile')
+        #  .filtered(lambda l: l.account_id.type in ('receivable', 'payable'))
         for line in to_reconcile_lines:
             payment_ml = line.ref_move_line_id
             invoice_ml = line.reconcile_move_line_ids
@@ -500,13 +529,28 @@ class InterfaceAccountEntry(models.Model):
             #         _("To reconcile, amount should be in opposite Dr/Cr "
             #           "for line '%s'") % (line.name,))
             # Full or Partial reconcile
-            lines = payment_ml | invoice_ml
-            residual = sum([x.debit - x.credit for x in lines])
-            # Reconcile Full or Partial
-            if not residual:
-                lines.reconcile('manual')
-            else:
-                lines.reconcile_partial('manual')
+
+            # lines = payment_ml | invoice_ml
+            # residual = sum([x.debit - x.credit for x in lines])
+            # # Reconcile Full or Partial
+            # if not residual:
+            #     lines.reconcile('manual')
+            # else:
+            #     lines.reconcile_partial('manual')
+
+            # to_rec = move_lines.filtered(lambda l: l.account_id == account)
+            to_rec = payment_ml | invoice_ml
+            # If nohting to reconcile
+            debit = sum(to_rec.mapped('debit'))
+            credit = sum(to_rec.mapped('credit'))
+            if debit == 0.0 or credit == 0.0:
+                continue
+            # --
+            if len(to_rec) >= 2:
+                if debit != credit:
+                    to_rec.reconcile_partial('auto')
+                else:
+                    to_rec.reconcile('auto')
 
     # ==========================================================
     #                  INTERFACE OTHER SYSEM
@@ -736,7 +780,7 @@ class InterfaceAccountEntryLine(models.Model):
     reconcile_move_id = fields.Many2one(
         'account.move',
         string='Reconcile Entry',
-        domain="[('state','=','posted'),"
+        domain="[('state', '=', 'posted'),"
         "('partner_id', '=', partner_id)]",
         copy=False,
     )
@@ -784,7 +828,8 @@ class InterfaceAccountEntryLine(models.Model):
             if not rec.reconcile_move_id and not rec.reconcile_move_line_ref:
                 continue
             dom = [('state', '=', 'valid'),
-                   ('account_id.type', 'in', ['payable', 'receivable']),
+                   ('account_id', '=', rec.account_id.id),
+                   ('account_id.reconcile', '=', True),
                    ('reconcile_id', '=', False)]
             if rec.reconcile_move_id:
                 dom.append(('move_id', '=', rec.reconcile_move_id.id))
@@ -794,7 +839,7 @@ class InterfaceAccountEntryLine(models.Model):
             if not move_lines:
                 raise ValidationError(
                     _('No valid reconcilable move line for %s') %
-                    rec.reconcile_move_id.name or rec.reconcile_move_line_ref)
+                    rec.reconcile_move_line_ref or rec.reconcile_move_id.name)
             rec.reconcile_move_line_ids = move_lines
         return True
 
@@ -821,7 +866,7 @@ class InterfaceAccountChecker(models.AbstractModel):
 
     @api.model
     def _check_tax_line(self, inf):
-        journal_type = inf.journal_id.type
+        # journal_type = inf.journal_id.type
         tax_lines = inf.line_ids.filtered('tax_id')
         for line in tax_lines:
             if line.tax_id.account_collected_id != line.account_id:

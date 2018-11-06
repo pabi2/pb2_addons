@@ -15,7 +15,7 @@ class BudgetTransition(models.Model):
     active = fields.Boolean(
         string='Active',
         default=True,
-        readonly=True,
+        readonly=False,
     )
     expense_line_id = fields.Many2one(
         'hr.expense.line',
@@ -384,8 +384,6 @@ class BudgetTransition(models.Model):
     @api.model
     def do_transit(self, direction, model, objects, obj_line_field=False,
                    undo=False):
-        # Just in case, there
-        self = self.with_context(force_no_budget_check=False)
         target_model_fields = {'account.invoice': 'invoice_line_id',
                                'sale.order': 'sale_line_id',
                                'purchase.order': 'purchase_line_id',
@@ -400,11 +398,11 @@ class BudgetTransition(models.Model):
         else:
             line_ids = objects.ids
         if not undo:  # Normal case
-            trans = self.search([
+            trans = self.with_context(active_test=False).search([
                 (trans_target_field, 'in', line_ids), (direction, '=', False)])
             trans.with_context(trigger=model).write({direction: True})
         else:
-            trans = self.search([
+            trans = self.with_context(active_test=False).search([
                 (trans_target_field, 'in', line_ids), (direction, '=', True)])
             trans.with_context(trigger=model).write({direction: False})
 
@@ -530,6 +528,5 @@ class AccountInvoice(models.Model):
                 BudgetTrans.do_forward(self._name, invoices, 'invoice_line')
             # Invoice Cancelled, It is time to regain commitment
             if vals['state'] == 'cancel':
-                x = 1/0
                 BudgetTrans.do_backward(self._name, invoices, 'invoice_line')
         return super(AccountInvoice, self).write(vals)

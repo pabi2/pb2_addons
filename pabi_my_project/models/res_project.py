@@ -352,6 +352,13 @@ class ResProject(LogCommon, models.Model):
         store=True,
         readonly=True,
     )
+    more_project_member_ids = fields.Many2many(
+        'res.users',
+        'project_res_users_rel',
+        'project_id',
+        'user_id',
+        string='More Project Member',
+    )
     _sql_constraints = [
         ('code_unique', 'unique(code)',
          'Project Code must be unique!'),

@@ -36,118 +36,125 @@
                           attrs="{'invisible': [('name', '=', False), ('state', '=', 'draft')]}"/>
                         <field name="state" widget="statusbar"/>
                     </header>
-                    <label for="name" class="oe_edit_only" attrs="{'invisible':[('name','=','/')]}"/>
-                    <h1>
-                        <field name="name" readonly="True" attrs="{'invisible':[('name','=','/')]}"/>
-                    </h1>
-                    <group>
+                    <sheet>
+                        <label for="name" class="oe_edit_only" attrs="{'invisible':[('name','=','/')]}"/>
+                        <h1>
+                            <field name="name" readonly="True" attrs="{'invisible':[('name','=','/')]}"/>
+                        </h1>
                         <group>
-                            <field name="journal_id" domain="[('type', '=', 'adjust_budget')]"/>
-                            <field name="period_id"/>
-                            <field name="company_id" required="1" groups="base.group_multi_company"/>
-                            <field name="partner_id" invisible="1"/>
-                            <field name="to_be_reversed"/>
-                            <field name="reversal_id" attrs="{'invisible': [('to_be_reversed', '=', False), ('reversal_id', '=', False)]}"/>
-                            <field name="doctype"/>
-                            <field name="document_id"/>
-                        </group>
-                        <group>
-                            <field name="ref"/>
-                            <field name="date_document"/>
-                            <field name="date"/>
-                            <field name="to_check"/>
-                            <field name="amount" invisible="1"/>
-                        </group>
-                    </group>
-                    <notebook>
-                        <page string="Journal Items">
-                            <field name="line_id" widget="one2many_list" context="{'line_id': line_id , 'journal_id': journal_id, 'default_doctype': context.get('default_doctype')}">
-                                <tree colors="blue:state == 'draft';black:state == 'posted'" editable="top" string="Journal Items">
-                                    <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
-                                    <field name="product_id" invisible="1"/>
-                                    <field name="activity_group_id"/>
-                                    <field name="activity_id" domain="[('activity_group_ids', 'in', activity_group_id)]"/>
-                                    <field name="activity_rpt_id" readonly="1"/>
-                                    <field name="name" string="Description"/>
-                                    <button name="%(action_edit_desc)d" string="Edit" type="action" icon="gtk-justify-fill"/>
-                                    <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
-                                    <field name="is_tax_line" invisible="1"/>
-                                    <field name="tax_code_id" attrs="{'required': [('is_tax_line', '=', True)]}" invisible="1"/>
-                                    <field name="taxbranch_id" readonly="1"/>
-                                    <field name="debit" sum="Total Debit"/>
-                                    <field name="credit" sum="Total Credit"/>
-                                    <field name="costcenter_id" readonly="1"/>
-                                    <field name="analytic_account_id" groups="analytic.group_analytic_accounting" invisible="1"/>
-                                    <field name="org_id" readonly="1"/>
-                                    <field name="chartfield_id" required="0"/>
-                                    <field name="project_id" invisible="1"/>
-                                    <field name="section_id" invisible="1"/>
-                                    <field name="invest_asset_id" invisible="1"/>
-                                    <field name="invest_construction_phase_id" invisible="1"/>
-                                    <field name="personnel_costcenter_id" invisible="1"/>
-                                    <field name="fund_id" required="0"/>
-                                    <field name="cost_control_id" invisible="1"/>
-                                    <field name="state"/>
-                                    <field name="reconcile_id"/>
-                                    <field name="reconcile_partial_id"/>
-                                    <field name="asset_id"/>
-                                    <field name="asset_profile_id"/>
-                                </tree>
-                            </field>
-                            <button name="reset_desc" string="(reset desc.)" type="object" class="oe_link"/>
-                            <field name="narration" colspan="4" placeholder="Add an internal note..." nolabel="1" height="50"/>
-                            <!-- <field name="line_item_summary" colspan="4" nolabel="1"/> -->
-                        </page>
-                        <page string="Tax Detail">
-                            <button name="action_set_tax_sequence" string="Run Sequence" type="object" states="posted"/>
-                            <field name="tax_detail_ids">
-                                <tree editable="bottom">
-                                    <field name="doc_type"/>
-                                    <field name="partner_id"/>
-                                    <field name="period_id"/>
-                                    <field name="invoice_number" required="1"/>
-                                    <field name="invoice_date" required="1"/>
-                                    <field name="tax_id" string="Tax Type" required="1"/>
-                                    <field name="taxbranch_id" string="Tax Branch" required="1"/>
-                                    <field name="base" sum="Base" required="1"/>
-                                    <field name="amount" sum="Tax" required="1"/>
-                                    <field name="tax_sequence_display"/>
-                                    <field name="addition"/>
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="Due History" attrs="{'invisible': [('date_due', '=', False)]}">
                             <group>
-                                <group>
-                                    <field name="date_due"/>
-                                </group>
-                                <group>
-                                    <button name="%(action_account_move_change_date_due)d" string="⇒ Update Due Date" type="action" class="oe_link"/>
-                                </group>
+                                <field name="journal_id" domain="[('type', '=', 'adjust_budget')]"/>
+                                <field name="period_id"/>
+                                <field name="company_id" required="1" groups="base.group_multi_company"/>
+                                <field name="partner_id" invisible="1"/>
+                                <field name="to_be_reversed"/>
+                                <field name="reversal_id" attrs="{'invisible': [('to_be_reversed', '=', False), ('reversal_id', '=', False)]}"/>
+                                <field name="doctype"/>
+                                <field name="document_id"/>
                             </group>
-                            <field name="due_history_ids">
-                                <tree>
-                                    <field name="date_old_due"/>
-                                    <field name="date_due"/>
-                                    <field name="write_uid"/>
-                                    <field name="write_date"/>
-                                    <field name="reason"/>
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="Budgeting">
-                            <separator string="Budget Actual"/>
-                            <field name="budget_commit_ids">
-                                <tree default_order='id'>
-                                    <field name="id"/>
-                                    <field name="fiscalyear_id"/>
-                                    <field name="move_id"/>
-                                    <field name="create_date"/>
-                                    <field name="amount" string="Actual Amount" sum="Total Amount"/>
-                                </tree>
-                            </field>
-                        </page>
-                    </notebook>
+                            <group>
+                                <field name="ref"/>
+                                <field name="date_document"/>
+                                <field name="date"/>
+                                <field name="to_check"/>
+                                <field name="amount" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Journal Items">
+                                <field name="line_id" widget="one2many_list" context="{'line_id': line_id , 'journal_id': journal_id, 'default_doctype': context.get('default_doctype')}">
+                                    <tree colors="blue:state == 'draft';black:state == 'posted'" editable="top" string="Journal Items">
+                                        <field name="ref"/>
+                                        <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
+                                        <field name="product_id" invisible="1"/>
+                                        <field name="activity_group_id"/>
+                                        <field name="activity_id" domain="[('activity_group_ids', 'in', activity_group_id)]"/>
+                                        <field name="activity_rpt_id" readonly="1"/>
+                                        <field name="name" string="Description"/>
+                                        <button name="%(action_edit_desc)d" string="Edit" type="action" icon="gtk-justify-fill"/>
+                                        <field name="account_id" domain="[('journal_id','=',parent.journal_id),('company_id', '=', parent.company_id)]"/>
+                                        <field name="is_tax_line" invisible="1"/>
+                                        <field name="tax_code_id" attrs="{'required': [('is_tax_line', '=', True)]}" invisible="1"/>
+                                        <field name="taxbranch_id" readonly="1"/>
+                                        <field name="debit" sum="Total Debit"/>
+                                        <field name="credit" sum="Total Credit"/>
+                                        <field name="costcenter_id" readonly="1"/>
+                                        <field name="analytic_account_id" groups="analytic.group_analytic_accounting" invisible="1"/>
+                                        <field name="org_id" readonly="1"/>
+                                        <field name="chartfield_id" required="0"/>
+                                        <field name="project_id" invisible="1"/>
+                                        <field name="section_id" invisible="1"/>
+                                        <field name="invest_asset_id" invisible="1"/>
+                                        <field name="invest_construction_phase_id" invisible="1"/>
+                                        <field name="personnel_costcenter_id" invisible="1"/>
+                                        <field name="fund_id" required="0"/>
+                                        <field name="cost_control_id" invisible="1"/>
+                                        <field name="state"/>
+                                        <field name="reconcile_id"/>
+                                        <field name="reconcile_partial_id"/>
+                                        <field name="asset_id"/>
+                                        <field name="asset_profile_id"/>
+                                    </tree>
+                                </field>
+                                <button name="reset_desc" string="(reset desc.)" type="object" class="oe_link"/>
+                                <field name="narration" colspan="4" placeholder="Add an internal note..." nolabel="1" height="50"/>
+                                <!-- <field name="line_item_summary" colspan="4" nolabel="1"/> -->
+                            </page>
+                            <page string="Tax Detail">
+                                <button name="action_set_tax_sequence" string="Run Sequence" type="object" states="posted"/>
+                                <field name="tax_detail_ids">
+                                    <tree editable="bottom">
+                                        <field name="doc_type"/>
+                                        <field name="partner_id"/>
+                                        <field name="period_id"/>
+                                        <field name="invoice_number" required="1"/>
+                                        <field name="invoice_date" required="1"/>
+                                        <field name="tax_id" string="Tax Type" required="1"/>
+                                        <field name="taxbranch_id" string="Tax Branch" required="1"/>
+                                        <field name="base" sum="Base" required="1"/>
+                                        <field name="amount" sum="Tax" required="1"/>
+                                        <field name="tax_sequence_display"/>
+                                        <field name="addition"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Due History" attrs="{'invisible': [('date_due', '=', False)]}">
+                                <group>
+                                    <group>
+                                        <field name="date_due"/>
+                                    </group>
+                                    <group>
+                                        <button name="%(action_account_move_change_date_due)d" string="⇒ Update Due Date" type="action" class="oe_link"/>
+                                    </group>
+                                </group>
+                                <field name="due_history_ids">
+                                    <tree>
+                                        <field name="date_old_due"/>
+                                        <field name="date_due"/>
+                                        <field name="write_uid"/>
+                                        <field name="write_date"/>
+                                        <field name="reason"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Budgeting">
+                                <separator string="Budget Actual"/>
+                                <field name="budget_commit_ids">
+                                    <tree default_order='id'>
+                                        <field name="id"/>
+                                        <field name="fiscalyear_id"/>
+                                        <field name="move_id"/>
+                                        <field name="create_date"/>
+                                        <field name="amount" string="Actual Amount" sum="Total Amount"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>

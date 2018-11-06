@@ -41,8 +41,8 @@
                             <field name="supplier_invoice" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="date_invoice" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="date_receive" attrs="{'readonly': [('state','!=','draft')]}"/>
-                            <field name="date_accept" attrs="{'readonly': ['|', ('order_method', '=', 'picking'), ('state','in',('done','cancel'))],
-                                                              'required': [('order_method', '!=', 'picking'), ('state','=',('evaluation'))]}"/>
+                            <field name="date_accept" attrs="{'readonly': [('state','in',('done','cancel'))],
+                                                              'required': [('state','=',('evaluation'))]}"/>
                         </group>
                     </group>
                     <field name="acceptance_line_ids" attrs="{'readonly': [('state','!=','draft')]}">

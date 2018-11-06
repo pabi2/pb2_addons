@@ -13,6 +13,7 @@
                     <field name="section_id" attrs="{'required': [('project_id', '=', False)]}" />
                 		<field name="project_id" attrs="{'required': [('section_id', '=', False)]}" />
                     <field name="fund_id" required="1"/>
+                    <field name="partner_id"/>
                 </xpath>
             </field>
         </record>

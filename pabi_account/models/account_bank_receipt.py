@@ -9,7 +9,7 @@ class AccountBankReceipt(models.Model):
     partner_bank_id = fields.Many2one(
         'res.partner.bank',
         domain="[('partner_id', '=', company_partner_id)]",
-        required=True,
+        required=False,
     )
     bank_account_id = fields.Many2one(
         'account.account',
@@ -33,6 +33,13 @@ class AccountBankReceipt(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    # For cancel invoice case
+    cancel_date_document = fields.Date(
+        string='Cancel Document Date',
+    )
+    cancel_date = fields.Date(
+        string='Cancel Posting Date',
+    )
 
     @api.multi
     def write(self, vals):
@@ -55,3 +62,17 @@ class AccountBankReceipt(models.Model):
             banks = BankAcct.search([('journal_id', 'in', journals.ids),
                                      ('state', '=', 'SA')])
             self.partner_bank_id = banks and banks[0] or False
+
+    @api.multi
+    def _prepare_reverse_move_data(self):
+        self.ensure_one()
+        res = super(AccountBankReceipt, self)._prepare_reverse_move_data()
+        # If cancel data available, use it.
+        if self.cancel_date_document:
+            res.update({'date_document': self.cancel_date_document})
+        if self.cancel_date:
+            periods = self.env['account.period'].find(self.cancel_date)
+            period = periods and periods[0] or False
+            res.update({'date': self.cancel_date,
+                        'period_id': period.id})
+        return res

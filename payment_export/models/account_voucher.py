@@ -87,6 +87,8 @@ class AccountVoucher(models.Model):
     def _onchange_transfer_type(self):
         if self.transfer_type:
             default_bank = self.partner_id.bank_ids.filtered('default')
+            if len(default_bank) > 1:
+                raise ValidationError(_('Partner has > 1 default bank.'))
             self.supplier_bank_id = default_bank
         else:
             self.supplier_bank_id = False

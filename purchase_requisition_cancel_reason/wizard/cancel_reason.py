@@ -23,5 +23,5 @@ class PurchaseRequisitionCancel(models.TransientModel):
         requisition = self.env['purchase.requisition'].browse(requisition_ids)
         requisition.cancel_reason_txt = self.cancel_reason_txt
         requisition.signal_workflow('cancel_requisition')
-        requisition.state = 'cancel'
+        # requisition.state = 'cancel'
         return act_close

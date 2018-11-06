@@ -12,6 +12,15 @@
                     <xpath expr="//field[@name='wht_cert_income_desc']" position="attributes">
                         <attribute name="invisible">True</attribute>
                     </xpath>
+                    <xpath expr="//field[@name='wht_line']/tree" position="attributes">
+                        <attribute name="create">1</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='wht_line']/tree/field[@name='base']" position="attributes">
+                        <attribute name="readonly">0</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='wht_line']/tree/field[@name='amount']" position="attributes">
+                        <attribute name="readonly">0</attribute>
+                    </xpath>
                 </data>
             </field>
         </record>

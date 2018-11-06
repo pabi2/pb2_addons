@@ -3,5 +3,5 @@ from . import account
 from . import account_move_line
 from . import account_voucher
 from . import account_invoice
-from . import account_interface
+# from . import account_interface
 from . import stock

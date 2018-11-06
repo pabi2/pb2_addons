@@ -22,6 +22,7 @@ Purchase - Purchase Order Force Done
     "installable": True,
     "depends": [
         "purchase",
+        "account_budget_activity",
     ],
     "data": [
         "wizard/force_done_reason_view.xml",

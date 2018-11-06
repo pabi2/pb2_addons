@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="pabi_base.group_nstda_account_admin" model="res.groups">
+            <field name="name">Accounting Admin</field>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="category_id" ref="pabi_base.module_category_nstda_admin"/>
+        </record>
+
+    </data>
+</openerp>

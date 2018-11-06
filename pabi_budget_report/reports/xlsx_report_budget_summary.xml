@@ -25,7 +25,8 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_budget_summary" name="Budget Summary (TEST)" parent="menu_budget_report" action="action_xlsx_report_budget_summary" sequence="100"/>
+        <!-- Not use now -->
+        <!-- <menuitem id="menu_xlsx_report_budget_summary" name="Budget Summary (TEST)" parent="account_budget_activity.menu_action_budget_report" action="action_xlsx_report_budget_summary" sequence="100"/> -->
 
 
     </data>

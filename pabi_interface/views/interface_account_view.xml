@@ -71,6 +71,7 @@
                             </group>
                             <group>
                                 <field name="system_id"/>
+                                <field name="date_document"/>
                                 <field name="to_reverse_entry_id" attrs="{'invisible': [('type', '!=', 'reverse')], 'required': [('type', '=', 'reverse')]}"/>
                                 <field name="reversed_date" attrs="{'invisible': [('type', '!=', 'reverse')], 'required': [('type', '=', 'reverse')]}"/>
                                 <field name="journal_id"/>
@@ -78,6 +79,7 @@
                                 <field name="to_reconcile" invisible="1"/>
                                 <field name="move_id" attrs="{'invisible': [('move_id', '=', False)]}"/>
                                 <field name="residual" attrs="{'invisible': [('type', '!=', 'invoice')]}"/>
+                                <field name="to_payment" attrs="{'invisible': [('type', '!=', 'invoice')]}"/>
                             </group>
                         </group>
                         <notebook>
@@ -110,6 +112,7 @@
                 <tree string="Journal Entry Model" colors="blue:(state == 'draft')">
                     <field name="system_id"/>
                     <field name="name"/>
+                    <field name="date_document"/>
                     <field name="journal_id"/>
                     <field name="move_id"/>
                     <field name="company_id" groups="base.group_multi_company"/>

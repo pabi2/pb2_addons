@@ -226,10 +226,11 @@
                             'C12': 'planned_amount',
                             'D12': 'past_consumed',
                             'E12': 'rolling',
-                            'F12': 'latest_policy_amount',
-                            'G12': 'policy_amount',
-                            'I12': 'budget_id.id${value or ""}',
-                            'J12': 'budget_plan_id.id${value or ""}',
+                            'F12': 'released_amount',
+                            'G12': 'latest_policy_amount',
+                            'H12': 'policy_amount',
+                            'J12': 'budget_id.id${value or ""}',
+                            'K12': 'budget_plan_id.id${value or ""}',
                         }
                     },
                 },
@@ -237,9 +238,9 @@
                     1: {
                         'unit_base_line_ids': {
                             'A12': 'section_id',
-                            'G12': 'policy_amount',
-                            'I12': 'budget_id/.id',
-                            'J12': ['budget_plan_id${value and "budget.plan.unit,%s" % int(value) or False}'],
+                            'H12': 'policy_amount',
+                            'J12': 'budget_id/.id',
+                            'K12': ['budget_plan_id${value and "budget.plan.unit,%s" % int(value) or False}'],
                         }
                     }
                 }

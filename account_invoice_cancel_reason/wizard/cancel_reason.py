@@ -40,7 +40,7 @@ class AccountInvoiceCancel(models.TransientModel):
         invoice_ids = self._context.get('active_ids')
         if invoice_ids is None:
             return act_close
-        assert len(invoice_ids) == 1, "Only 1 sale ID expected"
+        assert len(invoice_ids) == 1, "Only 1 invoice expected"
         invoice = self.env['account.invoice'].browse(invoice_ids)
         invoice.cancel_reason_txt = self.cancel_reason_txt
         invoice.signal_workflow('invoice_cancel')

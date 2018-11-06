@@ -29,9 +29,11 @@
                             'F2': 'activity_id',
                             'G2': 'account_id',
                             'H2': 'personnel_costcenter_id',
-                            'I2': 'amount',
-                            'J2': 'name',
-                            'K2': 'partner_id',
+                            'I2': 'project_id',
+                            'J2': 'section_id',
+                            'K2': 'amount',
+                            'L2': 'name',
+                            'M2': 'partner_id',
                         }
                     }
                 }

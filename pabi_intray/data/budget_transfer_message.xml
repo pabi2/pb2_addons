@@ -25,12 +25,14 @@ for transfer in object.transfer_line_ids:
 body = "&lt;br/&gt;".join(messages)
 
 owner=object.preparer_user_id.login
-employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
-supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
-boss = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
-action=False
-is_complete=False
-pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
+employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)
+if employee_id:
+  employee_id = employee_id[0]
+  supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
+  boss = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
+  action=False
+  is_complete=False
+  pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
           </field>
       </record>
 
@@ -58,17 +60,19 @@ for transfer in object.transfer_line_ids:
                      '{:,.2f}'.format(transfer.amount_transfer), transfer.notes))
 messages.append(u" ดังนั้นขอให้ฝ่ายงบประมาณดำเนินการโอนงบประมาณในระบบ")
 body = "&lt;br/&gt;".join(messages)
-employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
-supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
-owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
-ou_group = pool['res.groups'].search(cr, uid, [('name', '=', 'Operating Unit Budget')], context=context)
-org_employee = pool['hr.employee'].search(cr, uid, [('org_id', '=', object.org_id.id)], context=context)
-ou_user_group = pool['res.groups'].browse(cr, uid, ou_group, context=context).users
-boss = pool['hr.employee'].browse(cr, uid, org_employee, context=context).filtered(lambda l: l.user_id.id in ou_user_group.ids).mapped('user_id').mapped('login')
-action='A'
-is_complete=False
-if diff_budget:
-  pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
+employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)
+if employee_id:
+  employee_id = employee_id[0]
+  supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
+  owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
+  ou_group = pool['res.groups'].search(cr, uid, [('name', '=', 'Operating Unit Budget')], context=context)
+  org_employee = pool['hr.employee'].search(cr, uid, [('org_id', '=', object.org_id.id)], context=context)
+  ou_user_group = pool['res.groups'].browse(cr, uid, ou_group, context=context).users
+  boss = pool['hr.employee'].browse(cr, uid, org_employee, context=context).filtered(lambda l: l.user_id.id in ou_user_group.ids).mapped('user_id').mapped('login')
+  action='A'
+  is_complete=False
+  if diff_budget:
+    pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
           </field>
       </record>
 
@@ -104,23 +108,28 @@ for transfer in object.transfer_line_ids:
                              '{:,.2f}'.format(transfer.amount_transfer), transfer.notes))
 if in_budget:
   body = "&lt;br/&gt;".join(messages_in_budget)
-  employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
-  supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
-  owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
-  boss=object.preparer_user_id.login
-  action='A'
-  is_complete=True
-  pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
+  employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)
+  if employee_id:
+    employee_id = employee_id[0]
+    supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
+    owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
+    boss=object.preparer_user_id.login
+    action='A'
+    is_complete=True
+    pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
 if diff_budget:
   body = "&lt;br/&gt;".join(messages_diff_budget)
   owner=object.transfer_user_id.login
-  employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)[0]
-  supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
-  boss_of_owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
-  boss=[object.preparer_user_id.login,boss_of_owner]
-  action='A'
-  is_complete=True
-  pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
+  employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)
+  if employee_id:
+    employee_id = employee_id[0]
+  else:
+    supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
+    boss_of_owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
+    boss=[object.preparer_user_id.login,boss_of_owner]
+    action='A'
+    is_complete=True
+    pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
           </field>
       </record>
 

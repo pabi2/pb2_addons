@@ -31,6 +31,9 @@
             <field name="model">account.move.line</field>
             <field name="inherit_id" ref="account.view_move_line_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="charge_type"/>
+                </xpath>
                 <xpath expr="//field[@name='account_id']" position="after">
                     <field name="activity_group_id"/>
                     <field name="activity_id"/>

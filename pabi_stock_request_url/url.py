@@ -6,7 +6,7 @@ import werkzeug.utils
 
 
 class StockRequestURL(http.Controller):
-    @http.route('/stock_request/', type='http', auth='public')
+    @http.route('/stock_request/', type='http', auth='user')
     def pabiweb_to_stock_request(self, **kw):
         Action = request.registry.get('ir.model.data')
         action_id = Action.search(request.cr, SUPERUSER_ID,

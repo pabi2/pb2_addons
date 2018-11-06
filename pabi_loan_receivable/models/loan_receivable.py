@@ -265,6 +265,7 @@ class LoanCustomerAgreement(models.Model):
     def _onchange_mou_id(self):
         self.partner_id = self.mou_id.partner_id
         self.bank_id = self.mou_id.bank_id
+        self.installment = self.mou_id.max_installment
 
     @api.multi
     def _compute_invoice_count(self):
@@ -323,13 +324,13 @@ class LoanCustomerAgreement(models.Model):
                 raise ValidationError(
                     _('Specified date must be between 1 - 28'))
 
-    @api.multi
-    @api.constrains('installment')
-    def _check_installment(self):
-        for rec in self:
-            if rec.installment > rec.mou_id.max_installment:
-                raise ValidationError(
-                    _('Number of Installment exceed limit in MOU'))
+    # @api.multi
+    # @api.constrains('installment')
+    # def _check_installment(self):
+    #     for rec in self:
+    #         if rec.installment > rec.mou_id.max_installment:
+    #             raise ValidationError(
+    #                 _('Number of Installment exceed limit in MOU'))
 
     @api.multi
     @api.constrains('state', 'amount_receivable', 'amount_loan_total',
@@ -527,7 +528,7 @@ class LoanCustomerAgreement(models.Model):
             [('operating_unit_id', '=', loan.operating_unit_id.id)]).ids
         return {
             'operating_unit_id': loan.operating_unit_id.id,
-            'partner_id': loan.partner_id.id,
+            'partner_id': loan.borrower_partner_id.id,
             'date_order': date_order,
             'client_order_ref': loan.name,
             'use_invoice_plan': True,

@@ -92,7 +92,7 @@
                 <xpath expr="//field[@name='company_id']" position="after">
 
                     <field name="taxbranch_id"/>
-                    
+
                     <field name="spa_id"/>
                     <field name="mission_id"/>
                     <field name="tag_type_id"/>

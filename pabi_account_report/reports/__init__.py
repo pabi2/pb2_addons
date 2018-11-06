@@ -38,3 +38,5 @@ from . import xlsx_report_gl_expenditure
 # Asset Reports
 from . import asset_repair_report
 from . import asset_register_report
+# PND Reports
+from . import xlsx_report_pnd1

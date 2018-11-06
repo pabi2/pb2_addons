@@ -8,6 +8,19 @@ from .budget_commit import CommitLineCommon
 class PurchaseOrder(CommitCommon, models.Model):
     _inherit = 'purchase.order'
 
+    READONLY_STATES = {
+        'confirmed': [('readonly', True)],
+        'approved': [('readonly', True)],
+        'done': [('readonly', True)]
+    }
+
+    order_line = fields.One2many(
+        'purchase.order.line',
+        'order_id',
+        states=READONLY_STATES,
+        copy=True,
+    )
+
     # Extension to budget_transition.py
     budget_commit_ids = fields.One2many(inverse_name='purchase_id')
     budget_transition_ids = fields.One2many(inverse_name='purchase_id')
@@ -48,7 +61,12 @@ class PurchaseOrder(CommitCommon, models.Model):
     # When draft, cancel or set done, clear all budget
     @api.multi
     def write(self, vals):
-        if vals.get('state') in ('draft', 'done', 'cancel'):
+        if vals.get('state') in ('draft', 'cancel'):
+            # Alwasy force to release
+            ctx = {'force_release_budget': True}
+            self.with_context(ctx).release_all_committed_budget()
+        if vals.get('state') == 'done':
+            # Don't mark force, as for case COD it may not release now
             self.release_all_committed_budget()
         return super(PurchaseOrder, self).write(vals)
 
