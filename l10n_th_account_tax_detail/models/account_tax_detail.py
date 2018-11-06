@@ -228,9 +228,12 @@ class AccountTaxDetail(models.Model):
             months = rec.env.user.company_id.number_month_tax_addition
             tax_months = months and int(months) or 6
             date_start, date_stop = rec._get_valid_date_range(tax_months)
-            period = self.env['account.period'].find(date_doc)[:1]
             invoice_date = datetime.strptime(rec.invoice_date,
                                              '%Y-%m-%d').date()
+            # Should use invoice_date?
+            # period = self.env['account.period'].find(date_doc)[:1]
+            period = self.env['account.period'].find(rec.invoice_date)[:1]
+            # --
             ref_move_id = rec.ref_move_id.id or \
                 rec.invoice_tax_id.invoice_id.move_id.id or \
                 rec.voucher_tax_id.voucher_id.move_id.id or \
