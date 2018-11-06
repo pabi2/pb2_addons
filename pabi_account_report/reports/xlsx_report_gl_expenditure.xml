@@ -13,6 +13,7 @@
                             <field name="chart_account_id" widget="selection" context="{'show_account_view': True}"/>
                             <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]"/>
                             <field name="fiscalyear_date_start" invisible="1"/>
+                            <field name="account_type_id"/>
                             <field name="account_ids" domain="[('company_id', '=', company_id), ('type', '!=', 'view')]" widget="many2many_tags"/>
                             <field name="activity_group_ids" widget="many2many_tags"/>
                             <field name="activity_ids" widget="many2many_tags"/>

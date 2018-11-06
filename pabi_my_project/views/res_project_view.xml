@@ -347,6 +347,14 @@
                             <page string="Status History">
                                 <field name="auditlog_line_ids"/>
                             </page>
+                            <page string="More Member">
+                                <field name="more_project_member_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="login"/>
+                                    </tree>
+                                </field>
+                            </page>
                         </notebook>
                     </sheet>
                 </form>

@@ -29,6 +29,10 @@ class XLSXReportGlExpenditure(models.TransientModel):
     _name = 'xlsx.report.gl.expenditure'
     _inherit = 'report.account.common'
 
+    account_type_id = fields.Many2one(
+        'account.account.type',
+        string='Account Type',
+    )
     account_ids = fields.Many2many(
         'account.account',
         string='Account Code',
@@ -104,6 +108,9 @@ class XLSXReportGlExpenditure(models.TransientModel):
         self.ensure_one()
         Result = self.env['pabi.common.account.report.view']
         dom = []
+        if self.account_type_id:
+            dom += [('invoice_move_line_id.account_id.user_type', '=',
+                     self.account_type_id.id)]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
         if self.activity_group_ids:
@@ -174,3 +181,12 @@ class XLSXReportGlExpenditure(models.TransientModel):
             codes = ','.join(codes)
             dom.append(('code', 'ilike', codes))
             self.chartfield_ids = Chartfield.search(dom, order='id')
+
+    @api.onchange('account_type_id')
+    def _onchange_account_type(self):
+        self.account_ids = False
+        account_type_id = self.account_type_id.id
+        domain = [('type', '!=', 'view')]
+        if account_type_id:
+            domain = [('user_type', '=', account_type_id)]
+        return {'domain': {'account_ids': domain}}
