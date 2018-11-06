@@ -7,6 +7,12 @@ class AccountAnalyticLineView(models.Model):
     _inherit = 'account.analytic.line'
     _auto = False
 
+    # This part just to ensure no write occue in this view
+    purchase_request_id = fields.Many2one('purchase.request', store=False)
+    purchase_id = fields.Many2one('purchase.order', store=False)
+    sale_id = fields.Many2one('sale.order', store=False)
+    expense_id = fields.Many2one('sale.order', store=False)
+    # --
     document = fields.Char(
         string='Document Number',
     )

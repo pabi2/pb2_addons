@@ -13,6 +13,7 @@
     'application': False,
     'installable': True,
     'depends': [
+        'account_budget_activity',
         'pabi_budget_monitor',
         'pabi_utils',
         'pabi_my_project',
