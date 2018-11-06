@@ -21,7 +21,7 @@
                               <field name="amount_pr_commit" sum="Total"/>
                               <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
                               <field name="amount_po_commit" sum="Total"/>
-                              <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
+                              <button name="open_po_commit_items" string="PO Commit Items" icon="gtk-add" type="object"/>
                               <field name="amount_exp_commit" sum="Total"/>
                               <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
                               <field name="amount_total_commit" sum="Total"/>
