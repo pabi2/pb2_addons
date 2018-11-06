@@ -12,6 +12,9 @@ class SaleOrder(models.Model):
         if not workflow:
             return invoice_vals
         invoice_vals['number_preprint'] = order.origin
+        invoice_vals['date_invoice'] = order.date_order
+        invoice_vals['date_document'] = order.date_order
+        invoice_vals['date_due'] = order.date_order
         return invoice_vals
 
     @api.onchange('workflow_process_id')
@@ -65,15 +68,18 @@ class SaleOrder(models.Model):
 
     @api.model
     def _auto_validate_payment(self, invoice, journal):
+        current_period = self.env['account.period'].find(invoice.date_invoice)
         # Create Payment and Validate It!
         voucher = self.env['account.voucher'].create({
-            'date': fields.Date.context_today(self),
+            'date': invoice.date_invoice,
             'amount': invoice.amount_total,
             'account_id': journal.default_debit_account_id.id,
             'partner_id': invoice.partner_id.id,
             'type': 'receipt',
             'receipt_type': 'cash',
-            'date_value': fields.Date.context_today(self),
+            'date_value': invoice.date_due,
+            'period_id': current_period.id,
+            'date_document': invoice.date_document,
             'journal_id': journal.id,
             'operating_unit_id': invoice.operating_unit_id.id,
         })
