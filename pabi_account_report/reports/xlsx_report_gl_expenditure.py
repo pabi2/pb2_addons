@@ -184,6 +184,7 @@ class XLSXReportGlExpenditure(models.TransientModel):
 
     @api.onchange('account_type_id')
     def _onchange_account_type(self):
+        self.account_ids = False
         account_type_id = self.account_type_id.id
         domain = [('type', '!=', 'view')]
         if account_type_id:
