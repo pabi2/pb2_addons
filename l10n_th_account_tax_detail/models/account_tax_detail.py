@@ -230,13 +230,16 @@ class AccountTaxDetail(models.Model):
             date_start, date_stop = rec._get_valid_date_range(tax_months)
             invoice_date = datetime.strptime(rec.invoice_date,
                                              '%Y-%m-%d').date()
-            period = False
+            sequence_date = False
             if date_doc:  # Date from document, take priority
-                period = self.env['account.period'].find(date_doc)[:1]
-            elif rec.invoice_date:  # If no document, use detail invoice date
-                period = self.env['account.period'].find(rec.invoice_date)[:1]
-            if not period:
-                raise ValidationError(_('Period not found for tax detail seq'))
+                sequence_date = date_doc
+            elif rec.ref_move_id.date:  # For JV/JN, use move date
+                sequence_date = rec.ref_move_id.date
+            elif rec.invoice_date:  # Else use tax detail's invoice date
+                sequence_date = rec.invoice_date
+            if not sequence_date:
+                raise ValidationError(_('Date not found for tax detail seq'))
+            period = self.env['account.period'].find(sequence_date)[:1]
             ref_move_id = rec.ref_move_id.id or \
                 rec.invoice_tax_id.invoice_id.move_id.id or \
                 rec.voucher_tax_id.voucher_id.move_id.id or \
