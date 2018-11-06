@@ -192,7 +192,7 @@ class InterfaceAccountEntry(models.Model):
             for x in move_line_diff:
                 if x.move_id.name not in diff_ids:
                     diff_ids.append(x.move_id.name.encode('utf-8'))
-            payment_name = ",".join(diff_ids)
+            payment_name = ', '.join(diff_ids)
             if payment_name:
                 rec.to_payment = payment_name
 
@@ -780,7 +780,7 @@ class InterfaceAccountEntryLine(models.Model):
     reconcile_move_id = fields.Many2one(
         'account.move',
         string='Reconcile Entry',
-        domain="[('state','=','posted'),"
+        domain="[('state', '=', 'posted'),"
         "('partner_id', '=', partner_id)]",
         copy=False,
     )
