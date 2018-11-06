@@ -13,15 +13,15 @@
                 <field name="fiscalyear_end_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <field name="date_start" position="attributes">
+                <!-- <field name="date_start" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
                 <field name="date_end" position="attributes">
                     <attribute name="invisible">1</attribute>
-                </field>
-                <field name="date_end" position="after">
+                </field> -->
+                <!-- <field name="date_end" position="after">
                     <field name="date_cheque_received"/>
-                </field>
+                </field> -->
                 <xpath expr="//notebook[@name='additional_criteria']" position="inside">
                     <page string="Account Filters">
                         <separator string="Print only" colspan="4"/>
