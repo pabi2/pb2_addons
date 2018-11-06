@@ -24,7 +24,7 @@
                     'Budget Overall Report': {
                         '_HEAD_': {
                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                            'B3': 'report_type${value and dict(env["budget.drilldown.report"]._columns["report_type"].selection)[value] or ""}',
+                            'B3': 'report_type${value and dict(overall="Overall", unit_base="Section", project_base="Project", invest_asset="Asset", invest_construction="Construction", personnel="Personnel")[value] or ""}',
                             'B4': 'fiscalyear_id${value and value.name or ""}',
                             'B5': 'org_id${value and value.name_short or ""}',
                             'B6': '${env.user.with_context(lang="th_TH").display_name}',
@@ -120,7 +120,7 @@
                     'Budget Section Report': {
                         '_HEAD_': {
                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                            'B3': 'report_type${value and dict(env["budget.drilldown.report"]._columns["report_type"].selection)[value] or ""}',
+                            'B3': 'report_type${value and dict(overall="Overall", unit_base="Section", project_base="Project", invest_asset="Asset", invest_construction="Construction", personnel="Personnel")[value] or ""}',
                             'B4': 'fiscalyear_id${value and value.name or ""}',
                             'B5': 'charge_type${value and dict(env["budget.drilldown.report.line"]._columns["charge_type"].selection)[value] or ""}',
                             'B6': 'org_id${value and value.name_short or ""}',
@@ -186,7 +186,7 @@
                     'Budget Project Report': {
                         '_HEAD_': {
                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                            'B3': 'report_type${value and dict(env["budget.drilldown.report"]._columns["report_type"].selection)[value] or ""}',
+                            'B3': 'report_type${value and dict(overall="Overall", unit_base="Section", project_base="Project", invest_asset="Asset", invest_construction="Construction", personnel="Personnel")[value] or ""}',
                             'B4': 'fiscalyear_id${value and value.name or ""}',
                             'B5': 'functional_area_id${value and value.name or ""}',
                             'B6': 'program_group_id${value and value.name or ""}',
@@ -245,7 +245,7 @@
                     'Budget Asset Report': {
                         '_HEAD_': {
                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                            'B3': 'report_type${value and dict(env["budget.drilldown.report"]._columns["report_type"].selection)[value] or ""}',
+                            'B3': 'report_type${value and dict(overall="Overall", unit_base="Section", project_base="Project", invest_asset="Asset", invest_construction="Construction", personnel="Personnel")[value] or ""}',
                             'B4': 'activity_group_id${value and value.name or ""}',
                             'B5': 'activity_id${value and value.name or ""}',
                             'B6': '${env.user.with_context(lang="th_TH").display_name}',
@@ -303,7 +303,7 @@
                     'Budget Construction Report': {
                         '_HEAD_': {
                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                            'B3': 'report_type${value and dict(env["budget.drilldown.report"]._columns["report_type"].selection)[value] or ""}',
+                            'B3': 'report_type${value and dict(overall="Overall", unit_base="Section", project_base="Project", invest_asset="Asset", invest_construction="Construction", personnel="Personnel")[value] or ""}',
                             'B4': 'invest_construction_id${value and value.name or ""}',
                             'B5': '${env.user.with_context(lang="th_TH").display_name}',
                             'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
@@ -361,7 +361,7 @@
                     'Budget Personnel Report': {
                         '_HEAD_': {
                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                            'B3': 'report_type${value and dict(env["budget.drilldown.report"]._columns["report_type"].selection)[value] or ""}',
+                            'B3': 'report_type${value and dict(overall="Overall", unit_base="Section", project_base="Project", invest_asset="Asset", invest_construction="Construction", personnel="Personnel")[value] or ""}',
                             'B4': 'fiscalyear_id${value and value.name or ""}',
                             'B5': 'org_id${value and value.name_short or ""}',
                             'B6': 'sector_id${value and value.name or ""}',
