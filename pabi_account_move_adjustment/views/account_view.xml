@@ -80,7 +80,7 @@
                             </group>
                             <group>
                                 <field name="ref" required="1"/>
-                                <field name="date_document"/>
+                                <field name="date_document" required="1"/>
                                 <field name="date"/>
                                 <field name="to_check"/>
                                 <field name="amount" invisible="1"/>
@@ -219,7 +219,7 @@
                             </group>
                             <group>
                                 <field name="ref" required="1"/>
-                                <field name="date_document"/>
+                                <field name="date_document" required="1"/>
                                 <field name="date"/>
                                 <field name="to_check"/>
                                 <field name="amount" invisible="1"/>
