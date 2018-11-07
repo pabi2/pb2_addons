@@ -131,3 +131,52 @@ class ChartfieldView(ExtendSearch, models.Model):
         return super(ChartfieldView, self).search(args, offset=offset,
                                                   limit=limit, order=order,
                                                   count=count)
+
+
+class ResSection(ExtendSearch, models.Model):
+    _inherit = 'res.section'
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        # if self._context.get('extended_search', False):
+        args = self._extend_search_arg(args)
+        return super(ResSection, self).search(args, offset=offset,
+                                              limit=limit, order=order,
+                                              count=count)
+
+
+class ResInvestAsset(ExtendSearch, models.Model):
+    _inherit = 'res.invest.asset'
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        # if self._context.get('extended_search', False):
+        args = self._extend_search_arg(args)
+        return super(ResInvestAsset, self).search(args, offset=offset,
+                                                  limit=limit, order=order,
+                                                  count=count)
+
+
+class ResProject(ExtendSearch, models.Model):
+    _inherit = 'res.project'
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        # if self._context.get('extended_search', False):
+        args = self._extend_search_arg(args)
+        return super(ResProject, self).search(args, offset=offset,
+                                              limit=limit, order=order,
+                                              count=count)
+
+
+class ResInvesetConstruction(ExtendSearch, models.Model):
+    _inherit = 'res.invest.construction'
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        # if self._context.get('extended_search', False):
+        args = self._extend_search_arg(args)
+        return super(ResInvesetConstruction, self).search(args, offset=offset,
+                                                          limit=limit,
+                                                          order=order,
+                                                          count=count)
