@@ -11,7 +11,8 @@ from .common import SearchCommon, REPORT_TYPES, REPORT_GROUPBY
 SEARCH_KEYS = dict(CHART_FIELDS).keys() + ['fiscalyear_id']
 ALL_SEARCH_KEYS = SEARCH_KEYS + ['chart_view', 'charge_type',
                                  'activity_group_id', 'activity_id',
-                                 'section_ids', 'project_ids']
+                                 'section_ids', 'project_ids', 'chartfield_id',
+                                 'chartfield_ids']
 CHART_VIEWS = CHART_VIEW.keys()
 
 
@@ -20,8 +21,7 @@ def get_field_value(record, field):
     try:
         value = False
         if record[field]:
-            if record._context.get('action', False) == 'my_budget_report' and \
-               field in ['section_ids', 'project_ids']:
+            if field in ['section_ids', 'project_ids', 'chartfield_ids']:
                 value = [x.id for x in record[field]]
             else:
                 value = record[field].id
@@ -58,6 +58,8 @@ def prepare_where_str(where):
             else:
                 if isinstance(where[k], basestring):
                     extra_where.append("and %s = '%s'" % (k, where[k]))
+                elif type(where[k]) == tuple and len(where[k]) > 1:
+                    extra_where.append("and %s in %s" % (k, str(where[k])))
                 else:
                     extra_where.append("and %s = %s" % (k, where[k]))
     where_clause = ' '.join(extra_where)
@@ -230,13 +232,85 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
 
         if chart_view == 'invest_construction':
             group_by.append('invest_construction_phase_id')
+
+        # -- Remove chart field
+        if where.get('chartfield_id', False):
+            where.pop('chartfield_id')
+        if where.get('chartfield_ids', False):
+            where.pop('chartfield_ids')
+        group_by = filter(lambda x: x not in ['chartfield_id',
+                                              'chartfield_ids'], group_by)
         # --
         where_str = prepare_where_str(where)
         fields_str = ', '.join(group_by)
+
+        # ================ Search chart field ========================
+        # chartfield_ids
+        section_ids = \
+            self.chartfield_ids.filtered(lambda x: x.model == 'res.section') \
+            .mapped('res_id')
+        project_ids = \
+            self.chartfield_ids.filtered(lambda x: x.model == 'res.project') \
+            .mapped('res_id')
+        invest_asset_ids = \
+            self.chartfield_ids.filtered(
+                lambda x: x.model == 'res.invest.asset').mapped('res_id')
+        personnel_costcenter_ids = \
+            self.chartfield_ids.filtered(
+                lambda x: x.model == 'res.personnel.costcenter') \
+            .mapped('res_id')
+        invest_construction_phase_ids = \
+            self.chartfield_ids.filtered(
+                lambda x: x.model == 'res.invest.construction.phase') \
+            .mapped('res_id')
+        # chartfield_id
+        if self.chartfield_id.model == 'res.section':
+            section_ids.append(self.chartfield_id.res_id)
+        if self.chartfield_id.model == 'res.project':
+            project_ids.append(self.chartfield_id.res_id)
+        if self.chartfield_id.model == 'res.invest.asset':
+            invest_asset_ids.append(self.chartfield_id.res_id)
+        if self.chartfield_id.model == 'res.personnel.costcenter':
+            personnel_costcenter_ids.append(self.chartfield_id.res_id)
+        if self.chartfield_id.model == 'res.invest.construction.phase':
+            invest_construction_phase_ids.append(self.chartfield_id.res_id)
+        # Condition in where
+        where_list = []
+        if section_ids:
+            where_list.append('section_id in %s' % str(tuple(section_ids+[0])))
+        if project_ids:
+            where_list.append('project_id in %s' % str(tuple(project_ids+[0])))
+        if invest_asset_ids:
+            where_list.append('invest_asset_id in %s' %
+                              str(tuple(invest_asset_ids+[0])))
+        if personnel_costcenter_ids:
+            where_list.append('personnel_costcenter_id in %s'
+                              % str(tuple(personnel_costcenter_ids+[0])))
+        if invest_construction_phase_ids:
+            where_list.append('invest_construction_phase_id in %s' %
+                              str(tuple(invest_construction_phase_ids+[0])))
+        if where_list:
+            where_str += ' and (' + ' or '.join(where_list) + ')'
+        if self['group_by_chartfield_id']:
+            fields_str += ' , section_id, project_id, invest_asset_id, \
+                           personnel_costcenter_id, \
+                           invest_construction_phase_id'
+        # ==========================================================
+
+        # SQL
         sql = self._get_report_sql(fields_str, where_str, budget_method)
         self._cr.execute(sql)
         rows = self._cr.dictfetchall()
         return rows
+
+    @api.multi
+    def _run_all_report(self):
+        self.ensure_one()
+        chart_view = ('invest_asset', 'unit_base', 'personnel',
+                      'invest_construction', 'project_base')
+        view_xml_id = 'pabi_budget_drilldown_report.' \
+                      'view_budget_all_report_form'
+        return self._prepare_report_by_structure(chart_view, view_xml_id)
 
     @api.multi
     def _run_unit_base_report(self):
@@ -310,11 +384,16 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         if report_dict.get('project_ids', False):
             report_dict.update({'project_ids':
                                 [(6, 0, report_dict['project_ids'])]})
+        if report_dict.get('chartfield_ids', False):
+            report_dict.update({'chartfield_ids':
+                                [(6, 0, report_dict['chartfield_ids'])]})
         report = self.create(report_dict)
         # Compute report lines, by report type
         report_lines = []
         view_id = False
-        if report.report_type == 'overall':
+        if report.report_type == 'all':
+            report_lines, view_id = report._run_all_report()
+        elif report.report_type == 'overall':
             report_lines, view_id = report._run_overall_report()
         elif report.report_type == 'unit_base':
             report_lines, view_id = report._run_unit_base_report()
@@ -689,6 +768,42 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         'res.project',
         string='Project',
     )
+    chartfield_ids = fields.Many2many(
+        'chartfield.view',
+        string='Budgets',
+    )
+    chartfield_id = fields.Many2one(
+        'chartfield.view',
+        string='Budget',
+        compute='_compute_chartfield',
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('section_id', 'project_id', 'invest_asset_id',
+                 'personnel_costcenter_id', 'invest_construction_phase_id')
+    def _compute_chartfield(self):
+        ChartField = self.env['chartfield.view']
+        for rec in self:
+            model = False
+            res_id = False
+            if rec.section_id:
+                model = 'res.section'
+                res_id = rec.section_id.id
+            elif rec.project_id:
+                model = 'res.project'
+                res_id = rec.project_id.id
+            elif rec.invest_asset_id:
+                model = 'res.invest.asset'
+                res_id = rec.invest_asset_id.id
+            elif rec.personnel_costcenter_id:
+                model = 'res.personnel.costcenter'
+                res_id = rec.personnel_costcenter_id.id
+            elif rec.invest_construction_phase_id:
+                model = 'res.invest.construction.phase'
+                res_id = rec.invest_construction_phase_id.id
+            rec.chartfield_id = ChartField.search(
+                [('model', '=', model), ('res_id', '=', res_id)])
 
     # @api.multi
     # def _compute_name(self):
@@ -759,6 +874,8 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
     def _query_open_items(self, ttype=False, budget_method='expense'):
         self.ensure_one()
         where_dict = prepare_where_dict(self, ALL_SEARCH_KEYS)
+        if where_dict.get('chartfield_id', False):
+            where_dict.pop('chartfield_id')
         if ttype and ttype not in ('total_commit'):
             where_dict.update({'budget_commit_type': ttype})
         where_str = prepare_where_str(where_dict)

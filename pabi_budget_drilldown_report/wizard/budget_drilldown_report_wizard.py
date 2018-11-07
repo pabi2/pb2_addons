@@ -12,6 +12,27 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
         default=lambda self: self.env['account.fiscalyear'].find(),
         required=True,
     )
+    line_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    chartfield_ids = fields.Many2many(
+        'chartfield.view',
+        string='Budget',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
+
+    @api.onchange('line_filter')
+    def _onchange_line_filter(self):
+        self.chartfield_ids = []
+        Chartfield = self.env['chartfield.view']
+        dom = []
+        if self.line_filter:
+            codes = self.line_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.chartfield_ids = Chartfield.search(dom, order='id')
 
     # Following onchange is required
     @api.onchange('charge_type', 'group_by_charge_type',
@@ -22,6 +43,7 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
                   'project_id', 'group_by_project_id',
                   'invest_asset_id', 'group_by_invest_asset_id',
                   'invest_construction_id', 'group_by_invest_construction_id',
+                  'chartfield_id', 'group_by_chartfield_id',
                   'section_ids', 'project_ids'
                   )
     def _onchange_helper(self):
@@ -44,6 +66,8 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
             self.group_by_invest_asset_id = True
         if self.invest_construction_id:
             self.group_by_invest_construction_id = True
+        if self.chartfield_id:
+            self.group_by_chartfield_id = True
         # For my budget report
         if self.section_ids:
             self.group_by_section_id = True
@@ -54,8 +78,10 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
     def _onchange_report_type(self):
         super(BudgetDrilldownReportWizard, self)._onchange_report_type()
         # Clear Data
-        for field in ['section_id', 'project_id', 'activity_group_id',
-                      'charge_type', 'activity_id']:
+        for field in ['org_id', 'section_id', 'project_id', 'invest_asset_id',
+                      'invest_construction_id', 'personnel_costcenter_id',
+                      'activity_group_id', 'charge_type', 'activity_id',
+                      'chartfield_id']:
             self['group_by_%s' % field] = False
 
         """ Default Group By to True - by Report Type """
