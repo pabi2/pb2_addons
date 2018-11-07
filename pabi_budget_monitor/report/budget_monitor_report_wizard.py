@@ -22,6 +22,11 @@ class BudgetMonitorReportWizard(models.TransientModel):
         CHART_VIEW_LIST,
         string='Budget View',
     )
+    budget_method = fields.Selection(
+        [('revenue', 'Revenue'),
+         ('expense', 'Expense')],
+        string='Budget Method',
+    )
     # Unit Base
     org_id = fields.Many2one(
         'res.org',
@@ -39,7 +44,7 @@ class BudgetMonitorReportWizard(models.TransientModel):
         'res.division',
         string='Division',
     )
-    section_id = fields.Many2one(
+    section_id = fields.Many2many(
         'res.section',
         string='Section',
     )
@@ -80,7 +85,7 @@ class BudgetMonitorReportWizard(models.TransientModel):
         'res.project.group',
         string='Project Group',
     )
-    project_id = fields.Many2one(
+    project_id = fields.Many2many(
         'res.project',
         string='Project',
     )
@@ -104,12 +109,29 @@ class BudgetMonitorReportWizard(models.TransientModel):
         string='Project',
         default=False,
     )
+    # Personnel Costcenter
+    personnel_costcenter_id = fields.Many2many(
+        'res.personnel.costcenter',
+        string='Personnel Costcenter',
+    )
+    # Investment Asset
+    invest_asset_id = fields.Many2many(
+        'res.invest.asset',
+        string='Investment Asset',
+    )
+    # Investment Construction
+    invest_construction_id = fields.Many2many(
+        'res.invest.construction',
+        string='Investment Construction',
+    )
 
     @api.model
     def _get_filter_header(self):
         domain = []
         if self.chart_view:
             domain.append(('chart_view', '=', self.chart_view))
+        if self.budget_method:
+            domain.append(('budget_method', '=', self.budget_method))
         if self.fiscalyear_id:
             domain.append(('fiscalyear_id', '=', self.fiscalyear_id.id))
         if self.from_period_id:
@@ -125,9 +147,9 @@ class BudgetMonitorReportWizard(models.TransientModel):
                           'division_id', 'section_id'],
             'project_base': ['functional_area_id', 'program_group_id',
                              'program_id', 'project_group_id', 'project_id'],
-            'invest_asset': [],
-            'invest_construction': [],
-            'personnel': [],
+            'invest_asset': ['invest_asset_id'],
+            'invest_construction': ['invest_construction_id'],
+            'personnel': ['personnel_costcenter_id'],
         }
         domain = []
         if not self.chart_view:
@@ -135,7 +157,12 @@ class BudgetMonitorReportWizard(models.TransientModel):
         todos = chart_view_dict[self.chart_view]
         for field in todos:
             if self[field]:
-                domain.append((field, '=', self[field].id))
+                if field in ['section_id', 'project_id',
+                             'personnel_costcenter_id', 'invest_asset_id',
+                             'invest_construction_id']:
+                    domain.append((field, 'in', self[field].ids))
+                else:
+                    domain.append((field, '=', self[field].id))
         return domain
 
     @api.model

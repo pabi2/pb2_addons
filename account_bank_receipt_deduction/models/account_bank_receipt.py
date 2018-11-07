@@ -11,9 +11,8 @@ class AccuontBankReceiptMultipleReconcile(models.Model):
 
     account_id = fields.Many2one(
         'account.account',
-        string='Reconcile Account',
-        domain=[('type', 'not in', ['view', 'closed']),
-                ('reconcile', '!=', True)],
+        string='Account',
+        domain=[('type', 'not in', ['view', 'closed'])],
         required=True,
     )
     amount = fields.Float(

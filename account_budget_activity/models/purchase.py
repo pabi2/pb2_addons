@@ -61,7 +61,12 @@ class PurchaseOrder(CommitCommon, models.Model):
     # When draft, cancel or set done, clear all budget
     @api.multi
     def write(self, vals):
-        if vals.get('state') in ('draft', 'done', 'cancel'):
+        if vals.get('state') in ('draft', 'cancel'):
+            # Alwasy force to release
+            ctx = {'force_release_budget': True}
+            self.with_context(ctx).release_all_committed_budget()
+        if vals.get('state') == 'done':
+            # Don't mark force, as for case COD it may not release now
             self.release_all_committed_budget()
         return super(PurchaseOrder, self).write(vals)
 

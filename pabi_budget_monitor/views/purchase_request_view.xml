@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_purchase_request_search">
+            <field name="name">purchase.request.search</field>
+            <field name="model">purchase.request</field>
+            <field name="inherit_id" ref="purchase_request.view_purchase_request_search"/>
+            <field name="arch" type="xml">
+              <group position="after">
+                  <filter name="budget_over_return" string="Budget Over Return"
+                    domain="[('budget_over_return','=',True)]" help="Show PRs that return budget amount more than its commit."/>
+              </group>
+            </field>
+        </record>
+    </data>
+</openerp>

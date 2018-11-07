@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="account_budget_activity.invoice_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="after">
-                    <field name="activity_rpt_id" invisible="0" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'revenue')]"/>
+                    <field name="activity_rpt_id" invisible="0" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
                 </xpath>
             </field>
         </record>
@@ -19,7 +19,7 @@
             <field name="inherit_id" ref="account_budget_activity.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='activity_id']" position="after">
-                    <field name="activity_rpt_id"  invisible="0" domain="[('activity_group_ids', 'in', [activity_group_id or -1]), ('budget_method', '=', 'expense'')]"/>
+                    <field name="activity_rpt_id"  invisible="0" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
                 </xpath>
             </field>
         </record>

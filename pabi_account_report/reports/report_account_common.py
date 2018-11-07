@@ -155,12 +155,14 @@ class ReportAccountCommon(models.AbstractModel):
             period_start = Period.search(
                 [('company_id', '=', company.id),
                  ('fiscalyear_id', '=', fiscalyear.id),
-                 ('special', '=', False)], order="date_start", limit=1)
+                 # ('special', '=', False)
+                 ], order="code", limit=1)
             period_end = Period.search(
                 [('company_id', '=', company.id),
                  ('fiscalyear_id', '=', fiscalyear.id),
                  ('date_start', '<=', now), ('date_stop', '>=', now),
-                 ('special', '=', False)], limit=1)
+                 # ('special', '=', False)
+                 ], limit=1)
             self.period_start_id = period_start
             self.period_end_id = period_end
         elif self.filter == "filter_date":
@@ -179,18 +181,25 @@ class ReportAccountCommon(models.AbstractModel):
             company_id=self.company_id.id)
         if fiscalyear_date_start and fiscalyear_date_end and \
            fiscalyear_date_end >= fiscalyear_date_start:
+            ctx = {'account_period_prefer_normal': False}
             if now >= fiscalyear_date_start and now <= fiscalyear_date_end:
-                period_start = Period.find(dt=fiscalyear_date_start)[0]
+                period_start = \
+                    Period.with_context(ctx).find(dt=fiscalyear_date_start) \
+                    .sorted(key=lambda l: l.code)[0]
                 period_end = Period.find(dt=now)[0]
                 date_start = fiscalyear_date_start
                 date_end = now
             elif fiscalyear_date_end < now:
-                period_start = Period.find(dt=fiscalyear_date_start)[0]
+                period_start = \
+                    Period.with_context(ctx).find(dt=fiscalyear_date_start) \
+                    .sorted(key=lambda l: l.code)[0]
                 period_end = Period.find(dt=fiscalyear_date_end)[0]
                 date_start = fiscalyear_date_start
                 date_end = fiscalyear_date_end
             elif fiscalyear_date_start > now:
-                period_start = Period.find(dt=fiscalyear_date_start)[0]
+                period_start = \
+                    Period.with_context(ctx).find(dt=fiscalyear_date_start) \
+                    .sorted(key=lambda l: l.code)[0]
                 period_end = Period.find(dt=fiscalyear_date_start)[0]
                 date_start = fiscalyear_date_start
                 date_end = fiscalyear_date_start

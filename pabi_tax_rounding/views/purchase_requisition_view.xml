@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_purchase_requisition_form">
+            <field name="name">purchase.requisition.form</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id" ref="pabi_procurement.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                 <field name="amount_total" position="after">
+                    <field name="round_total" string="Round Total" class="oe_link oe_edit_only"
+                      attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                 </field>
+            </field>
+        </record>
+    </data>
+</openerp>

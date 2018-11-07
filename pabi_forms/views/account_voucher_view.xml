@@ -10,6 +10,7 @@
                     <field name="wa_total_fine" invisible="1"/>
                     <field name="wa_voucher_diff_comment" invisible="1"/>
                     <field name="retention_amount" invisible="1"/>
+                    <field name="retention_diff_comment" invisible="1"/>
                 </field>
             </field>
         </record>

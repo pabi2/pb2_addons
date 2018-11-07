@@ -95,6 +95,13 @@ class AccountInvoice(models.Model):
         readonly=False,
         size=500,
     )
+    # For cancel invoice case
+    cancel_date_document = fields.Date(
+        string='Cancel Document Date',
+    )
+    cancel_date = fields.Date(
+        string='Cancel Posting Date',
+    )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
 
@@ -367,6 +374,20 @@ class AccountInvoice(models.Model):
                 return result
         return True
 
+    @api.multi
+    def _prepare_reverse_move_data(self):
+        self.ensure_one()
+        res = super(AccountInvoice, self)._prepare_reverse_move_data()
+        # If cancel data available, use it.
+        if self.cancel_date_document:
+            res.update({'date_document': self.cancel_date_document})
+        if self.cancel_date:
+            periods = self.env['account.period'].find(self.cancel_date)
+            period = periods and periods[0] or False
+            res.update({'date': self.cancel_date,
+                        'period_id': period.id})
+        return res
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
@@ -417,3 +438,12 @@ class AccountInvoiceTax(models.Model):
             for r in res:
                 r.update({'taxbranch_id': invoice.taxbranch_id.id})
         return res
+
+    @api.multi
+    def _write(self, vals):
+        if 'taxbranch_id' in vals and vals.get('taxbranch_id'):
+            # cascade changes to account_tax_detail
+            for tax_invoice in self:
+                tax_invoice.detail_ids.\
+                    _write({'taxbranch_id': vals['taxbranch_id']})
+        return super(AccountInvoiceTax, self)._write(vals)

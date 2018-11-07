@@ -35,11 +35,39 @@ class AccountMove(models.Model):
         compute='_compute_date_due',
         readonly=True,
     )
+    charge_type = fields.Char(
+        compute='_compute_charge_type'
+    )
+    source_of_fund = fields.Char(
+        compute='_compute_source_of_fund'
+    )
+
+    @api.multi
+    def _compute_charge_type(self):
+        for rec in self:
+            _charge_type = rec.line_id.mapped('charge_type')
+            if _charge_type:
+                type_all = list(set(_charge_type))
+                charge_type = ",".join(type_all)
+                rec.charge_type = charge_type
+            else:
+                rec.charge_type = False
+
+    @api.multi
+    def _compute_source_of_fund(self):
+        for rec in self:
+            _fund_id = rec.line_id.mapped('fund_id.name')
+            if _fund_id:
+                fund = list(set(_fund_id))
+                source_of_fund = ",".join(fund)
+                rec.source_of_fund = source_of_fund
+            else:
+                rec.source_of_fund = False
 
     @api.multi
     def button_delete(self):
         self.ensure_one()
-        if self.state == 'posted' or self.name:
+        if self.state == 'posted' or (self.name and self.name != '/'):
             raise ValidationError(
                 _('Posted document is not allowed to be deleted'))
         self.unlink()

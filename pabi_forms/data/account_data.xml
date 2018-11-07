@@ -70,7 +70,7 @@
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
 			<field name="copies">2</field>
-			<field name="force_locale">en_US</field>
+			<field name="force_locale">th_TH</field>
 			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 
@@ -106,6 +106,57 @@
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(receipt_supplier_form_en)"/>
 		</record>
 
+		<!-- Customer CD Loan -->
+		# TH
+		<record id="receipt_cd_form_th" model="ir.actions.report.xml">
+			<field name="string">Receipt CD Form (TH)</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="name">Receipt CD Form (TH)</field>
+			<field name="report_name">receipt_cd_form_th</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/customer_receipt_cd.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">2</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename">${o.number}.pdf</field>
+		</record>
+
+		<record id="receipt_cd_form_th_values" model="ir.values">
+			<field name="name">Receipt CD Form (TH)</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(receipt_cd_form_th)"/>
+		</record>
+
+		# EN
+		<record id="receipt_cd_form_en" model="ir.actions.report.xml">
+			<field name="string">Receipt CD Form (EN)</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="name">Receipt CD Form (EN)</field>
+			<field name="report_name">receipt_cd_form_en</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/customer_receipt_cd.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">2</field>
+			<field name="force_locale">en_US</field>
+			<field name="download_filename">${o.number}.pdf</field>
+		</record>
+
+		<record id="receipt_cd_form_en_values" model="ir.values">
+			<field name="name">Receipt CD Form (EN)</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(receipt_cd_form_en)"/>
+		</record>
+
 		<!-- Customer Invoice -->
 		<!-- EN -->
 		<record id="customer_invoice_form_en" model="ir.actions.report.xml">
@@ -121,7 +172,7 @@
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
-			<field name="copies">1</field>
+			<field name="copies">2</field>
 			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_invoice_form_en_values" model="ir.values">
@@ -144,7 +195,7 @@
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
-			<field name="copies">1</field>
+			<field name="copies">2</field>
 			<field name="download_filename">${o.number}.pdf</field>
 		</record>
 		<record id="customer_invoice_form_th_values" model="ir.values">

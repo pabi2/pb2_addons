@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.100000000000007"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="338"/>
+	<property name="ireport.y" value="5"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -240,7 +240,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 	<background>
 		<band height="790">
 			<staticText>
-				<reportElement x="237" y="346" width="83" height="409"/>
+				<reportElement x="237" y="383" width="83" height="370"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -253,10 +253,10 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="0" y="346" width="483" height="409"/>
+				<reportElement x="0" y="383" width="483" height="370"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="320" y="346" width="84" height="409"/>
+				<reportElement x="320" y="383" width="84" height="370"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -269,7 +269,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="48" y="346" width="189" height="409"/>
+				<reportElement x="48" y="383" width="189" height="370"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -282,7 +282,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="346" width="48" height="409"/>
+				<reportElement x="0" y="383" width="48" height="370"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -295,7 +295,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="404" y="346" width="79" height="409"/>
+				<reportElement x="404" y="383" width="79" height="370"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -308,7 +308,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="237" y="346" width="83" height="409"/>
+				<reportElement x="237" y="383" width="83" height="370"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -348,6 +348,9 @@ WHERE $X{IN,po.id,PIDS}]]>
 		<band height="323">
 			<rectangle>
 				<reportElement x="0" y="1" width="483" height="171"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="110" width="483" height="49"/>
 			</rectangle>
 			<rectangle>
 				<reportElement x="0" y="159" width="241" height="84"/>
@@ -395,12 +398,12 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font size="16" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{order_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{order_date}.year-543, $F{order_date}.month, $F{order_date}.date)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3" y="10" width="280" height="31"/>
-				<textElement lineSpacing="Single">
-					<font size="18" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				<reportElement x="3" y="21" width="280" height="31"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
+					<font size="15" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{tax_branch_name}]]></textFieldExpression>
 			</textField>
@@ -480,7 +483,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textElement textAlignment="Left" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{rfq_date}.year+543, $F{rfq_date}.month, $F{rfq_date}.date)]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{rfq_date}.year-543, $F{rfq_date}.month, $F{rfq_date}.date)]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="49" y="281" width="17" height="21"/>
@@ -511,7 +514,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer_mail}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="2" y="52" width="257" height="64" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="2" y="44" width="257" height="64" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -524,7 +527,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 ($F{partner_zip} == null ? "" : $F{partner_zip})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2" y="81" width="320" height="22" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="2" y="73" width="320" height="22" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -563,9 +566,6 @@ WHERE $X{IN,po.id,PIDS}]]>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{incoterm}]]></textFieldExpression>
 			</textField>
-			<rectangle>
-				<reportElement x="0" y="110" width="483" height="49"/>
-			</rectangle>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="3" y="111" width="477" height="36" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single" markup="html">
@@ -593,7 +593,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 ($F{taxbranch_code} != null ? "branch " + $F{taxbranch_code} : "")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2" y="94" width="320" height="22" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="2" y="86" width="320" height="22" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -848,6 +848,9 @@ WHERE $X{IN,po.id,PIDS}]]>
 			</componentElement>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="47"/>
+	</pageFooter>
 	<lastPageFooter>
 		<band height="316">
 			<rectangle>

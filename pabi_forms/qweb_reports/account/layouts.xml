@@ -427,6 +427,14 @@
                             <t t-if="o.doctype in ['receipt']">
                                 <span t-field="o.document_id.number_preprint"/>
                             </t>
+                            <t t-if="o.doctype in ['interface_account']">
+                                <t t-if="o.document_id.type in ['invoice', 'reverse']">
+                                    <span t-field="o.ref"/>
+                                </t>
+                                <t t-if="o.document_id.type in ['voucher']">
+                                    <span t-field="o.document_id.preprint_number"/>
+                                </t>
+                            </t>
                         </t>
                     </div>
                     <div class="col-xs-3">
@@ -462,6 +470,9 @@
                                 <span t-field="o.ref"/>
                             </t>
                         </t>
+                        <t t-if="o.doctype in ['interface_account']">
+                            <span t-field="o.document_id.name"/>
+                        </t>
                     </div>
                 </div>
                 <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']">
@@ -486,6 +497,11 @@
                         <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'adjustment']">
                             <t t-if="o.document_id and o.document_id.invoice_line and o.document_id.invoice_line[0].fund_id">
                                 <span t-field="o.document_id.invoice_line[0].fund_id.name"/>
+                            </t>
+                            <t t-if="not o.document_id">
+                                <span t-field="o.source_of_fund"/>
+                                <br/><span>Charge Type: </span>
+                                <span t-field="o.charge_type"/>
                             </t>
                         </t>
                         <t t-if="o.doctype in ['payment', 'receipt']">
@@ -518,6 +534,14 @@
                         </t>
                     </div>
                 </div>
+                <t t-if="o.doctype in ['interface_account']">
+                    <div class="row">
+                        <div class="col-xs-7">
+                            <span>Original system: </span>
+                            <t t-esc="o.system_id.name"/>
+                        </div>
+                    </div>
+                </t>
                 <t t-if="o.doctype in ['payment', 'receipt']">
                     <div class="row">
                         <div class="col-xs-7">

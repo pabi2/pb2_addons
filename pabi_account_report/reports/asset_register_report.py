@@ -135,7 +135,7 @@ class AssetRegisterReport(models.TransientModel):
         dom = []
         # Prepare DOM to filter assets
         if self.asset_ids:
-            dom += [('id', 'in', tuple(self.asset_ids.ids))]
+            dom += [('id', 'in', tuple(self.asset_ids.ids + [0]))]
         if self.asset_profile_ids:
             dom += [('profile_id', 'in',
                     tuple(self.asset_profile_ids.ids + [0]))]
@@ -191,14 +191,14 @@ class AssetRegisterReport(models.TransientModel):
                      else null end as budget,
                 -- owner_budget
                 case when a.owner_section_id is not null then
-                        concat('res.section,', a.section_id)
+                        concat('res.section,', a.owner_section_id)
                      when a.owner_project_id is not null then
-                        concat('res.project,', a.project_id)
+                        concat('res.project,', a.owner_project_id)
                      when a.owner_invest_asset_id is not null then
-                        concat('res.invest.asset,', a.invest_asset_id)
+                        concat('res.invest.asset,', a.owner_invest_asset_id)
                      when a.owner_invest_construction_phase_id is not null
                         then concat('res.invest.construction.phase,',
-                                     a.invest_construction_phase_id)
+                                     a.owner_invest_construction_phase_id)
                      else null end as owner_budget,
                 -- depreciation
                 (select coalesce(sum(debit-credit), 0.0)

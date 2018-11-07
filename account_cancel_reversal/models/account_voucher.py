@@ -17,13 +17,9 @@ class AccountVoucher(models.Model):
     @api.model
     def voucher_move_cancel_hook(self, voucher):
         move = voucher.move_id
-        period = self.env['account.period'].find()
         AccountMove = self.env['account.move']
-        move_dict = move.copy_data({
-            'name': move.name + '_VOID',
-            'ref': move.ref,
-            'period_id': period.id,
-            'date': fields.Date.context_today(self), })[0]
+        move_data = voucher._prepare_reverse_move_data()
+        move_dict = move.copy_data(move_data)[0]
         move_dict = AccountMove._switch_move_dict_dr_cr(move_dict)
         rev_move = AccountMove.create(move_dict)
 
@@ -47,4 +43,16 @@ class AccountVoucher(models.Model):
         })
         return
 
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+    @api.multi
+    def _prepare_reverse_move_data(self):
+        self.ensure_one()
+        move = self.move_id
+        date = fields.Date.context_today(self)
+        periods = self.env['account.period'].find(date)
+        period = periods and periods[0] or False
+        return {
+            'name': move.name + '_VOID',
+            'ref': move.ref,
+            'period_id': period.id,
+            'date': date,
+        }

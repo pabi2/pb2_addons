@@ -80,7 +80,7 @@
                             </group>
                             <group>
                                 <field name="ref" required="1"/>
-                                <field name="date_document"/>
+                                <field name="date_document" required="1"/>
                                 <field name="date"/>
                                 <field name="to_check"/>
                                 <field name="amount" invisible="1"/>
@@ -219,7 +219,7 @@
                             </group>
                             <group>
                                 <field name="ref" required="1"/>
-                                <field name="date_document"/>
+                                <field name="date_document" required="1"/>
                                 <field name="date"/>
                                 <field name="to_check"/>
                                 <field name="amount" invisible="1"/>
@@ -245,11 +245,11 @@
                                         <field name="analytic_account_id" groups="analytic.group_analytic_accounting" invisible="1"/>
                                         <field name="org_id" readonly="1"/>
                                         <field name="chartfield_id" string="Section/Project"/>
-                                        <!-- <field name="project_id" invisible="1"/>
+                                        <field name="project_id" invisible="1"/>
                                         <field name="section_id" invisible="1"/>
                                         <field name="invest_asset_id" invisible="1"/>
                                         <field name="invest_construction_phase_id" invisible="1"/>
-                                        <field name="personnel_costcenter_id" invisible="1"/> -->
+                                        <field name="personnel_costcenter_id" invisible="1"/>
                                         <field name="fund_id" attrs="{'required': [('chartfield_id', '!=', False)], 'readonly': [('chartfield_id', '=', False)]}"/>
                                         <field name="cost_control_id" invisible="0"/>
                                         <field name="state"/>

@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
 	<property name="ireport.zoom" value="0.9313819845887523"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="644"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -249,6 +249,9 @@
 	<field name="type" class="java.lang.String">
 		<fieldDescription><![CDATA[type]]></fieldDescription>
 	</field>
+	<field name="date_document" class="java.util.Date">
+		<fieldDescription><![CDATA[date_document]]></fieldDescription>
+	</field>
 	<variable name="discount_amt" class="java.lang.Number">
 		<variableExpression><![CDATA[($F{discount} == null ? 0.0 : $F{discount}) / 100 * $F{quantity} * $F{price_unit}]]></variableExpression>
 	</variable>
@@ -443,7 +446,7 @@ $F{validate_user_lname}]]></variableExpression>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[(new java.text.SimpleDateFormat("dd/MM/yyyy",new Locale("en", "US"))).format($F{date_invoice})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(new java.text.SimpleDateFormat("dd/MM/yyyy",new Locale("en", "US"))).format($F{date_document})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="4" y="158" width="367" height="28" forecolor="#000000" backcolor="#FFFFFF"/>

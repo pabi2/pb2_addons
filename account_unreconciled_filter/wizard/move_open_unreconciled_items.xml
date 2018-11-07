@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Invoice's Create Adjustment Asset -->
+        <act_window
+          id="action_move_open_unreconciled_items"
+          name="Open Unreconciled Items"
+          src_model="account.move"
+          res_model="move.open.unreconciled.items"
+          view_type="form"
+          view_mode="form"
+          key2="client_action_multi"
+          target="new"
+          />
+
+        <record id="wizard_move_open_unreconciled_items" model="ir.ui.view">
+            <field name="name">wizard.create.asset.adjust</field>
+            <field name="model">move.open.unreconciled.items</field>
+            <field name="arch" type="xml">
+                <form string="Open Unreconciled Item">
+                    <p>Open Unreconciled Items from this Journal Entry, and also target Unreconciled Items to reconcile with, as below...</p>
+                    <group>
+                        <group name="type">
+                            <field name="move_line_ref"/>
+                            or
+                            <field name="account_move_name"/>
+                            or
+                            <field name="account_id"/>
+                        </group>
+                        <group name="extra">
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_open_unreconciled_items" type="object"
+                          string="Open Items to Reconcile" class="oe_highlight"/>
+                        or
+                        <button special="cancel" class="oe_link" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_account_move_open_items" model="ir.actions.act_window">
+            <field name="name">Journal Items</field>
+            <field name="res_model">account.move.line</field>
+        </record>
+
+    </data>
+</openerp>

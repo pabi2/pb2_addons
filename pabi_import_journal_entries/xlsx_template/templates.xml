@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <!-- Adjust Budget -->
+        <record id="import_journal_entries_template" model="ir.attachment">
+            <field name="res_model">pabi.import.journal.entries</field>
+            <field name="datas"></field>
+            <field name="datas_fname">import_journal_entries.xlsx</field>
+            <field name="name">Import Journal Entries</field>
+            <field name="parent_id"
+              eval="ref('pabi_account_move_adjustment.dir_journal_adjustment_template')"/>
+            <field name="description">
+              {
+                '__IMPORT__': {
+                    1: {
+                        '_HEAD_': {
+                        },
+                        'line_ids': {
+                            'A3': 'ref',
+                            'B3': 'journal_id',
+                            'C3': 'date',
+                            'D3': 'to_be_reversed',
+                            'E3': 'docline_seq',
+                            'F3': 'account_id',
+                            'G3': 'origin_ref',
+                            'H3': 'name',
+                            'I3': 'debit',
+                            'J3': 'credit',
+                            'K3': 'chartfield_id',
+                            'L3': 'fund_id',
+                            'M3': 'cost_control_id',
+                            'N3': 'partner_id',
+                            'O3': 'activity_group_id',
+                            'P3': 'activity_id',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+    </data>
+</openerp>

@@ -45,9 +45,15 @@ class XLSXReportChequeRegisterReport(models.TransientModel):
         self.ensure_one()
         Result = self.env['cheque.register']
         dom = []
-        if self.date_cheque_received:
-            dom += [('voucher_id.date_cheque_received', '=',
-                     self.date_cheque_received)]
+        # if self.date_cheque_received:
+        #     dom += [('voucher_id.date_cheque_received', '=',
+        #              self.date_cheque_received)]
+        if self.date_start:
+            dom += [('voucher_id.date_cheque_received', '>=',
+                     self.date_start)]
+        if self.date_end:
+            dom += [('voucher_id.date_cheque_received', '<=',
+                     self.date_end)]
         if self.journal_ids:
             dom += [('journal_id', 'in', self.journal_ids.ids)]
         if self.cheque_lot_ids:
