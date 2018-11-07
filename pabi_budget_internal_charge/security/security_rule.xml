@@ -37,6 +37,18 @@
             <field eval="1" name="perm_create"/>
         </record>
 
+        <record id="rule_expense_line_biz_admin_all" model="ir.rule">
+            <field name="name">Expense Lines Internal Charge for Biz Admin</field>
+            <field name="model_id" ref="model_hr_expense_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('pabi_base.group_nstda_admin_business'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+
+
         <!-- For Project IC, only project manager is allowed to accept, -->
 
         <record id="rule_expense_allow_project_internal_charge" model="ir.rule">
