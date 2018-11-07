@@ -67,7 +67,7 @@ class AccountMove(models.Model):
     @api.multi
     def button_delete(self):
         self.ensure_one()
-        if self.state == 'posted' or self.name:
+        if self.state == 'posted' or (self.name and self.name != '/'):
             raise ValidationError(
                 _('Posted document is not allowed to be deleted'))
         self.unlink()
