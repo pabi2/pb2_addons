@@ -23,12 +23,22 @@ class XLSXReportExpenseLedger(models.TransientModel):
         'res.partner',
         string='Partners',
     )
+    count_chartfield = fields.Integer(
+        compute='_compute_count_chartfield',
+        string='Budget Count',
+    )
     results = fields.Many2many(
         'pabi.common.account.report.view',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
+
+    @api.multi
+    @api.depends('chartfield_ids')
+    def _compute_count_chartfield(self):
+        for rec in self:
+            rec.count_chartfield = len(rec.chartfield_ids)
 
     @api.multi
     def _compute_results(self):
