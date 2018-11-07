@@ -44,7 +44,7 @@ class BudgetMonitorReportWizard(models.TransientModel):
         'res.division',
         string='Division',
     )
-    section_id = fields.Many2many(
+    section_id = fields.Many2one(
         'res.section',
         string='Section',
     )
@@ -85,7 +85,7 @@ class BudgetMonitorReportWizard(models.TransientModel):
         'res.project.group',
         string='Project Group',
     )
-    project_id = fields.Many2many(
+    project_id = fields.Many2one(
         'res.project',
         string='Project',
     )
@@ -110,20 +110,41 @@ class BudgetMonitorReportWizard(models.TransientModel):
         default=False,
     )
     # Personnel Costcenter
-    personnel_costcenter_id = fields.Many2many(
+    personnel_costcenter_id = fields.Many2one(
         'res.personnel.costcenter',
         string='Personnel Costcenter',
     )
     # Investment Asset
-    invest_asset_id = fields.Many2many(
+    invest_asset_id = fields.Many2one(
         'res.invest.asset',
         string='Investment Asset',
     )
     # Investment Construction
-    invest_construction_id = fields.Many2many(
-        'res.invest.construction',
+    invest_construction_phase_id = fields.Many2one(
+        'res.invest.construction.phase',
         string='Investment Construction',
     )
+    line_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    chartfield_ids = fields.Many2many(
+        'chartfield.view',
+        string='Budget',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
+
+    @api.onchange('line_filter')
+    def _onchange_line_filter(self):
+        self.chartfield_ids = []
+        Chartfield = self.env['chartfield.view']
+        dom = []
+        if self.line_filter:
+            codes = self.line_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.chartfield_ids = Chartfield.search(dom, order='id')
 
     @api.model
     def _get_filter_header(self):
@@ -138,6 +159,37 @@ class BudgetMonitorReportWizard(models.TransientModel):
             domain.append(('from_period_id', '=', self.from_period_id.id))
         if self.to_period_id:
             domain.append(('to_period_id', '=', self.to_period_id.id))
+        # Budgets
+        chartfield = self.chartfield_ids
+        if chartfield:
+            section_ids = chartfield.filtered(lambda l: l.type == 'sc:').ids
+            project_ids = chartfield.filtered(lambda l: l.type == 'pj:').ids
+            invest_construction_phase_ids = \
+                chartfield.filtered(lambda l: l.type == 'cp:').ids
+            invest_asset_ids = \
+                chartfield.filtered(lambda l: l.type == 'ia:').ids
+            personnel_costcenter_ids = \
+                chartfield.filtered(lambda l: l.type == 'pc:').ids
+            # --
+            null_value = [0, 0]
+            section_ids.extend(null_value)
+            project_ids.extend(null_value)
+            invest_construction_phase_ids.extend(null_value)
+            invest_asset_ids.extend(null_value)
+            personnel_costcenter_ids.extend(null_value)
+            self._cr.execute("""
+                select id
+                from budget_monitor_report
+                where section_id + 1000000 in %s or project_id + 2000000 in %s
+                    or invest_construction_phase_id + 3000000 in %s or
+                    invest_asset_id + 4000000 in %s or
+                    personnel_costcenter_id + 5000000 in %s
+            """ % (str(tuple(section_ids)), str(tuple(project_ids)),
+                   str(tuple(invest_construction_phase_ids)),
+                   str(tuple(invest_asset_ids)),
+                   str(tuple(personnel_costcenter_ids))))
+            ids = map(lambda l: l[0], self._cr.fetchall())
+            domain.append(('id', 'in', ids))
         return domain
 
     @api.model
@@ -148,7 +200,7 @@ class BudgetMonitorReportWizard(models.TransientModel):
             'project_base': ['functional_area_id', 'program_group_id',
                              'program_id', 'project_group_id', 'project_id'],
             'invest_asset': ['invest_asset_id'],
-            'invest_construction': ['invest_construction_id'],
+            'invest_construction': ['invest_construction_phase_id'],
             'personnel': ['personnel_costcenter_id'],
         }
         domain = []
@@ -157,12 +209,7 @@ class BudgetMonitorReportWizard(models.TransientModel):
         todos = chart_view_dict[self.chart_view]
         for field in todos:
             if self[field]:
-                if field in ['section_id', 'project_id',
-                             'personnel_costcenter_id', 'invest_asset_id',
-                             'invest_construction_id']:
-                    domain.append((field, 'in', self[field].ids))
-                else:
-                    domain.append((field, '=', self[field].id))
+                domain.append((field, '=', self[field].id))
         return domain
 
     @api.model
