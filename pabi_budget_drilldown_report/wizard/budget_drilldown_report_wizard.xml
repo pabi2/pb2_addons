@@ -18,6 +18,7 @@
                     </group>
                     <group name="filter" string="Filter / Group By">
                         <group>
+                            <field name="chartfield_id" attrs="{'invisible': [('report_type', 'not in', ('all'))]}"/>
                             <field name="charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="org_id" attrs="{'invisible': [('report_type', 'not in', ('overall', 'unit_base', 'personnel'))]}"/>
                             <!-- filter unit_base -->
@@ -39,17 +40,30 @@
                             <field name="invest_construction_id" attrs="{'invisible': [('report_type', 'not in', ('invest_construction'))]}"/>
                         </group>
                         <group>
+                            <field name="group_by_chartfield_id" attrs="{'invisible': [('report_type', 'not in', ('all'))]}"/>
                             <field name="group_by_org_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset', 'invest_construction', 'personnel'))]}"/>
                             <field name="group_by_section_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="group_by_invest_construction_id" attrs="{'invisible': [('report_type', 'not in', ('invest_construction'))]}"/>
                             <field name="group_by_project_id" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}"/>
-                            <field name="group_by_charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
+                            <field name="group_by_charge_type" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'all'))]}"/>
                             <field name="group_by_personnel_costcenter_id" attrs="{'invisible': [('report_type', 'not in', ('personnel'))]}"/>
-                            <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel'))]}"/>
-                            <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel'))]}"/>
+                            <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel', 'all'))]}"/>
+                            <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel', 'all'))]}"/>
                             <field name="group_by_invest_asset_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset'))]}"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Budget Filters" name="budget_filters">
+                            <group>
+                                <group string="Paste list of code to search">
+                                    <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                                </group>
+                                <group string="Print only">
+                                    <field name="chartfield_ids" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
                     <footer>
                         <button name="run_report" string="View Report" type="object" default_focus="1" class="oe_highlight"/>
                         or

@@ -22,13 +22,31 @@
                             </div>
                         </group>
                     </group>
+                    <group attrs="{'invisible': [('chart_view', '!=', 'personnel')]}">
+                        <group name="filter_personnel" string="Filters - Personnel">
+                            <field name="personnel_costcenter_id"/>
+                        </group>
+                        <group name="groupby_personnel" />
+                    </group>
+                    <group attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}">
+                        <group name="filter_invest_asset" string="Filters - Investment Asset">
+                            <field name="invest_asset_id" />
+                        </group>
+                        <group name="groupby_invest_asset" />
+                    </group>
+                    <group attrs="{'invisible': [('chart_view', '!=', 'invest_construction')]}">
+                        <group name="filter_invest_construction" string="Filters - Investment Construction">
+                            <field name="invest_construction_phase_id" />
+                        </group>
+                        <group name="groupby_invest_construction" />
+                    </group>
                     <group attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
                         <group name="filter_unit_base" string="Filters - Unit Base">
                             <field name="org_id"/>
                             <field name="sector_id"/>
                             <field name="subsector_id"/>
                             <field name="division_id"/>
-                            <field name="section_id"/>
+                            <field name="section_id" />
                         </group>
                         <group name="groupby_unit_base" string="Group by - Unit Base">
                             <field name="groupby_org"/>
@@ -44,7 +62,7 @@
                             <field name="program_group_id"/>
                             <field name="program_id"/>
                             <field name="project_group_id"/>
-                            <field name="project_id"/>
+                            <field name="project_id" />
                         </group>
                         <group name="groupby_project_base" string="Group by - Project Base">
                             <field name="groupby_functional_area"/>
@@ -54,6 +72,18 @@
                             <field name="groupby_project"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Budget Filters" name="budget_filters">
+                            <group>
+                                <group string="Paste list of code to search">
+                                    <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                                </group>
+                                <group string="Print only">
+                                    <field name="chartfield_ids" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
                     <footer>
                         <button name="open_report" string="Open Report" type="object" class="oe_highlight"/>
                         or
