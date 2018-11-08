@@ -907,7 +907,7 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
                 .mapped('res_id') + [0, 0]
             invest_construction_phase_ids = \
                 chartfields.filtered(
-                    lambda l: l.model == 'res.invest.construction') \
+                    lambda l: l.model == 'res.invest.construction.phase') \
                 .mapped('res_id') + [0, 0]
             where_str += \
                 ' and (section_id in %s or project_id in %s or \
