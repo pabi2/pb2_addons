@@ -83,7 +83,7 @@
                 </xpath>
                 <field name="journal_id" position="after" >
                     <field name="receipt_type" required="1"/>
-                    <field name="number_preprint" required="1" />
+                    <field name="number_preprint" required="0" />
                 </field>
                 <field name="journal_id" position="attributes">
                 	<attribute name="domain">[('type', 'in', ['bank', 'cash']), ('receipt', '=', True)]</attribute>
