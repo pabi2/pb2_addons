@@ -199,7 +199,12 @@
                         <tr>
                             <td style="width: 50%; border-bottom: 1px solid; padding-bottom: 0px;">
                                 <span>Amount: </span>
-                                <span t-field="o.amount"/>
+                                <t t-if="o.doctype in ['payment']">
+                                    <span t-field="o.document_id.amount"/>
+                                </t>
+                                <t t-if="not o.doctype in ['payment']">
+                                    <span t-field="o.amount"/>
+                                </t>
                             </td>
                             <td style="width: 50%; border-bottom: 1px solid; padding-bottom: 0px;">
                                 <span>PE Number: </span>
