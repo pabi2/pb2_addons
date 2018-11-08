@@ -235,8 +235,8 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             if self[groupby_field]:
                 group_by.append(field)
 
-        if chart_view == 'invest_construction':
-            group_by.append('invest_construction_phase_id')
+        # if chart_view == 'invest_construction':
+        #     group_by.append('invest_construction_phase_id')
 
         # -- Remove chart field
         if where.get('chartfield_id', False):
