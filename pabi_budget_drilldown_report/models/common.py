@@ -2,7 +2,8 @@
 from openerp import api, fields
 from openerp.addons.pabi_chartfield.models.chartfield import ChartField
 
-REPORT_TYPES = [('overall', 'Overall'),
+REPORT_TYPES = [('all', 'All'),
+                ('overall', 'Overall'),
                 ('unit_base', 'Section'),
                 ('project_base', 'Project'),
                 ('invest_asset', 'Asset'),
@@ -10,6 +11,8 @@ REPORT_TYPES = [('overall', 'Overall'),
                 ('personnel', 'Personnel')]
 
 REPORT_GROUPBY = {
+    'all': ['chartfield_id', 'activity_group_id',
+            'charge_type', 'activity_id'],
     'unit_base': ['section_id', 'activity_group_id',
                   'charge_type', 'activity_id'],
     'project_base': ['project_id', 'activity_group_id',
@@ -44,7 +47,7 @@ class SearchCommon(ChartField, object):
         string='Budget Method',
     )
     report_type = fields.Selection(
-        lambda self: self._get_report_type(),
+        selection=lambda self: self._get_report_type(),
         string='Report Type',
         required=True,
     )
@@ -54,7 +57,16 @@ class SearchCommon(ChartField, object):
         required=True,  # Overwrite as requried field.
     )
     # ------------ SEARCH ------------
-    # For: All report types
+    # For All
+    chartfield_id = fields.Many2one(
+        'chartfield.view',
+        string='Budget',
+    )
+    chartfield_ids = fields.Many2many(
+        'chartfield.view',
+        string='Budgets',
+    )
+    # For: Overall
     org_id = fields.Many2one(
         'res.org',
         string='Orgs',
@@ -119,6 +131,10 @@ class SearchCommon(ChartField, object):
         'res.personnel.costcenter'
     )
     # Group By
+    group_by_chartfield_id = fields.Boolean(
+        string='Group By - Budget',
+        default=False,
+    )
     group_by_section_id = fields.Boolean(
         string='Group By - Section',
         default=False,
@@ -268,6 +284,7 @@ class SearchCommon(ChartField, object):
         self.project_group_id = False
         self.project_id = False
         self.invest_construction_id = False
+        self.chartfield_id = False
         # For my budget report
         self.section_ids = False
         self.project_ids = False
