@@ -516,9 +516,10 @@ class BudgetPolicy(models.Model):
             breakdown = Breakdown.create({'policy_line_id': policy_line.id})
             breakdown.generate_breakdown_line()
             # After breakdown created, if not change in amount, done it.
-            if float_compare(breakdown.new_policy_amount,
-                             breakdown.policy_amount, 2) == 0:
-                breakdown.action_done()
+            # kittiu: no one need it.
+            # if float_compare(breakdown.new_policy_amount,
+            #                  breakdown.policy_amount, 2) == 0:
+            #     breakdown.action_done()
 
 
 class BudgetPolicyLine(ChartField, models.Model):
