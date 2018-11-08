@@ -394,6 +394,11 @@ class PurchaseOrder(models.Model):
                 'committee_ids': self._prepare_order_committees(order.id),
                 'requisition_id': order.quote_id.requisition_id.id,
             })
+            # recalculate first order line to trigger amount text function
+            for line in order.order_line:
+                line.price_unit += 0.00001
+                line.price_unit -= 0.00001
+                break
         return res
 
     @api.multi

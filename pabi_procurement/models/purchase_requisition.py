@@ -463,10 +463,10 @@ class PurchaseRequisition(models.Model):
         types = [(l.product_id.type in ('product', 'consu') and
                   'stock' or
                   l.product_id.type) for l in self.line_ids]
-        if len(list(set(types))) > 1:
-            raise ValidationError(
-                _('All products must be of the same type')
-            )
+        # if len(list(set(types))) > 1:
+        #     raise ValidationError(
+        #         _('All products must be of the same type')
+        #     )
         return True
 
     @api.multi
