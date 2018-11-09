@@ -52,11 +52,13 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_invoice_create(self):
-        try:
-            res = super(SaleOrder, self).action_invoice_create()
-        except Exception:
+        invoice_preprint = self.env['account.invoice'].search([
+            ('number_preprint', '=', self.origin)
+        ])
+        if invoice_preprint:
             raise ValidationError(
                 _('Source Document/Number Preprint must be unique!'))
+        res = super(SaleOrder, self).action_invoice_create()
         invoices = self.env['account.invoice'].browse(res)
         for invoice in invoices:
             if invoice.workflow_process_id.validate_invoice:
