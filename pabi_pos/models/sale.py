@@ -80,6 +80,7 @@ class SaleOrder(models.Model):
             'date_value': invoice.date_due,
             'period_id': current_period.id,
             'date_document': invoice.date_document,
+            'number_preprint': invoice.number_preprint,
             'journal_id': journal.id,
             'operating_unit_id': invoice.operating_unit_id.id,
         })
