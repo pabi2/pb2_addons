@@ -736,10 +736,10 @@
                         'Output Tax Report': {
                             '_HEAD_': {
                                 'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                                'B3': 'calendar_period_id.calendar_name${value or ""}',
-                                'B4': 'taxbranch_id.name${value or ""}',
-                                'B5': '${env.user.display_name}',
-                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                                'D3': 'calendar_period_id.calendar_name${value or ""}',
+                                'D4': 'taxbranch_id.name${value or ""}',
+                                'D5': '${env.user.display_name}',
+                                'D6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
                             'results': {
                                 'A10': 'invoice_date${value or ""}#{number_format=date}',
