@@ -205,12 +205,12 @@
                             </group>
                         </group>
                     </page>
-                    <page string="eGP Dates" name="egp" attrs="{'invisible': [('amount_total', '&lt;=', 100000)]}">
+                    <page string="eGP Dates" name="egp" attrs="{'invisible': [('amount_company', '&lt;=', 100000)]}">
                         <group>
                             <group>
-                                <field name="egp_date1" attrs="{'required': [('amount_total', '&gt;', 100000)]}"/>
-                                <field name="egp_date2" attrs="{'required': [('amount_total', '&gt;', 100000)]}"/>
-                                <field name="egp_date3" attrs="{'required': [('amount_total', '&gt;', 100000)]}"/>
+                                <field name="egp_date1" attrs="{'required': [('amount_company', '&gt;', 100000)]}"/>
+                                <field name="egp_date2" attrs="{'required': [('amount_company', '&gt;', 100000)]}"/>
+                                <field name="egp_date3" attrs="{'required': [('amount_company', '&gt;', 100000)]}"/>
                             </group>
                             <group>
                             </group>
