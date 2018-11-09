@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <act_window
+          id="action_asset_reverse"
+          name="Void/Remove Asset"
+          src_model="account.asset"
+          res_model="account.asset.reverse"
+          view_type="form"
+          view_mode="form"
+          key2="client_action_multi"
+          target="new"
+          />
+
+        <record id="account_asset_reverse_view_form" model="ir.ui.view">
+          <field name="name">account.asset.reverse.form</field>
+          <field name="model">account.asset.reverse</field>
+          <field name="arch" type="xml">
+              <form string="Reverse Asset (from wrong move)">
+                  <p>
+                      This action is used for wrong move asset (without running depreciation only).
+                      It will reverse accounting entry, and set this asset to removed and inactive.
+                  </p>
+                  <group>
+                      <group>
+                          <field name="target_status"/>
+                      </group>
+                      <group>
+                          <field name="note" nolabel="1" placeholder="Reson for remove..."/>
+                      </group>
+                  </group>
+                  <newline/>
+                  <separator colspan="4"/>
+                  <footer>
+                      <button string="Void/Remove Asset" name="reverse" type="object" class="oe_highlight"/>
+                      or
+                      <button string="Cancel" class="oe_link" special="cancel"/>
+                  </footer>
+              </form>
+          </field>
+        </record>
+    </data>
+</openerp>
