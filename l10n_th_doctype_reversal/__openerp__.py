@@ -17,6 +17,7 @@ Extension for case Cancel with Reversal (account_cancel_reversal)
     "depends": [
         'l10n_th_doctype_invoice',
         'l10n_th_doctype_voucher',
+        'l10n_th_doctype_bank_receipt',
         'account_cancel_reversal',
     ],
     "data": [
