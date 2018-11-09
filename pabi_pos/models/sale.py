@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class SaleOrder(models.Model):
@@ -51,7 +52,11 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_invoice_create(self):
-        res = super(SaleOrder, self).action_invoice_create()
+        try:
+            res = super(SaleOrder, self).action_invoice_create()
+        except Exception:
+            raise ValidationError(
+                _('Source Document/Number Preprint must be unique!'))
         invoices = self.env['account.invoice'].browse(res)
         for invoice in invoices:
             if invoice.workflow_process_id.validate_invoice:
