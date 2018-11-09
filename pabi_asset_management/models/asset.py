@@ -55,6 +55,7 @@ class AccountAsset(ChartFieldAction, models.Model):
     parent_id = fields.Many2one(
         readonly=False,
         states={},  # Procurement team want it to always editable.
+        index=True,
     )
     type = fields.Selection(
         # Need this way of doing default, because default_type in context will
@@ -132,6 +133,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         related='move_id.picking_id',
         store=True,
         readonly=True,
+        index=True,
     )
     adjust_id = fields.Many2one(
         'account.asset.adjust',
@@ -757,6 +759,21 @@ class AccountAsset(ChartFieldAction, models.Model):
         move_ids = domain and domain[0][2] or []
         res['domain'] = [('id', 'in', ex_move_ids + move_ids)]
         return res
+
+    @api.multi
+    def reverse(self):
+        self.ensure_one()
+        ctx = dict(self._context, active_ids=self.ids, active_id=self.id)
+        return {
+            'name': _("Reverse Asset (for wrong move)"),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.asset.reverse',
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+            'context': ctx,
+            'nodestroy': True,
+        }
 
 
 class AccountAssetProfile(models.Model):
