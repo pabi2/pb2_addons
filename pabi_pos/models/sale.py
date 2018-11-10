@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class SaleOrder(models.Model):
@@ -51,6 +52,12 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_invoice_create(self):
+        invoice_preprint = self.env['account.invoice'].search([
+            ('number_preprint', '=', self.origin)
+        ])
+        if invoice_preprint:
+            raise ValidationError(
+                _('Source Document/Number Preprint must be unique!'))
         res = super(SaleOrder, self).action_invoice_create()
         invoices = self.env['account.invoice'].browse(res)
         for invoice in invoices:
@@ -80,6 +87,7 @@ class SaleOrder(models.Model):
             'date_value': invoice.date_due,
             'period_id': current_period.id,
             'date_document': invoice.date_document,
+            'number_preprint': invoice.number_preprint,
             'journal_id': journal.id,
             'operating_unit_id': invoice.operating_unit_id.id,
         })
