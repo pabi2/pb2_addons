@@ -903,10 +903,11 @@ class InterfaceAccountChecker(models.AbstractModel):
     @api.model
     def _check_line_normal(self, inf):
         # All line must have same OU
-        operating_unit = list(set(inf.line_ids.mapped('operating_unit_id')))
-        if len(operating_unit) != 1:
-            raise ValidationError(
-                _('Same operating Unit must be set for all lines!'))
+        # operating_unit = list(set(inf.line_ids.mapped('operating_unit_id')))
+        # if len(operating_unit) != 1:
+        #     raise ValidationError(
+        #         _('Same operating Unit must be set for all lines!'))
+        # --
         # All line must have account id
         account_ids = [x.account_id.id for x in inf.line_ids]
         if False in account_ids:
