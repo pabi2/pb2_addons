@@ -137,7 +137,10 @@ class AccountAssetChangeowner(models.Model):
                 raise ValidationError(
                     _('Asset %s changes to the same owner!') % (asset.code))
             new_owner = {'owner_project_id': project.id,
-                         'owner_section_id': section.id}
+                         'owner_section_id': section.id,
+                         #  We now have no option to change owner to..
+                         'owner_invest_asset_id': False,
+                         'owner_invest_construction_phase_id': False}
             # Moving to new owner Project/Section
             if new_owner.get('owner_project_id') or \
                     new_owner.get('owner_section_id'):
@@ -160,16 +163,18 @@ class AccountAssetChangeowner(models.Model):
                     move_lines.append(new_depre_move_lines_dict)
                 # Finalize all moves before create it.
                 final_move_lines = [(0, 0, x) for x in move_lines]
-                move_dict = {
-                    # Force using AN
-                    'journal_id': self.journal_id.id,
-                    # 'journal_id': asset.profile_id.journal_id.id,
-                    'line_id': final_move_lines,
-                    'period_id': period.id,
-                    'date': fields.Date.context_today(self),
-                    'ref': self.name}
-                ctx = {'allow_asset': True}
-                line.move_id = AccountMove.with_context(ctx).create(move_dict)
+                if final_move_lines:
+                    move_dict = {
+                        # Force using AN
+                        'journal_id': self.journal_id.id,
+                        # 'journal_id': asset.profile_id.journal_id.id,
+                        'line_id': final_move_lines,
+                        'period_id': period.id,
+                        'date': fields.Date.context_today(self),
+                        'ref': self.name}
+                    ctx = {'allow_asset': True}
+                    line.move_id = \
+                        AccountMove.with_context(ctx).create(move_dict)
             # Asset Owner Info update
             if line.responsible_user_id:
                 new_owner['responsible_user_id'] = line.responsible_user_id.id
