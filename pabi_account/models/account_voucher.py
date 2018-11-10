@@ -189,7 +189,7 @@ class AccountVoucher(models.Model):
     @api.constrains('date_value')
     def _check_date_value_same_period(self):
         for voucher in self:
-            if voucher.type == 'receipt' and voucher.date_value:
+            if voucher.type == 'payment' and voucher.date_value:
                 Period = self.env['account.period']
                 period = Period.find(voucher.date_value)[:1]
                 if voucher.period_id != period:
