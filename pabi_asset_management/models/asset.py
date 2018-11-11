@@ -531,11 +531,13 @@ class AccountAsset(ChartFieldAction, models.Model):
         """
         DepreLine = self.env['account.asset.line']
         for asset in self:
-            depre_line = DepreLine.search([('type', '=', 'depreciate'),
+            depre_lines = DepreLine.search([('type', '=', 'depreciate'),
                                            ('init_entry', '=', True),
                                            ('move_check', '=', False),
                                            ('asset_id', '=', asset.id)])
-            depre_line.create_move()
+            for depre in depre_lines:
+                if depre.asset_id.profile_type == 'normal':
+                    depre.create_move()
         return True
 
     @api.multi
