@@ -524,6 +524,21 @@ class AccountAsset(ChartFieldAction, models.Model):
         return result
 
     @api.multi
+    def create_depre_init_entry_on_migration(self):
+        """ This function is used for migrated data only.
+        It will create depre JE for the second line (type = depre, init = true)
+        only if it is not created before (one time only)
+        """
+        DepreLine = self.env['account.asset.line']
+        for asset in self:
+            depre_line = DepreLine.search([('type', '=', 'depreciate'),
+                                           ('init_entry', '=', True),
+                                           ('move_check', '=', False),
+                                           ('asset_id', '=', asset.id)])
+            depre_line.create_move()
+        return True
+
+    @api.multi
     def open_depreciation_lines(self):
         self.ensure_one()
         action = self.env.ref('pabi_asset_management.'

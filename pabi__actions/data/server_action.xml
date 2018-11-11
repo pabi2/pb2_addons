@@ -61,6 +61,14 @@ self.budget_done(cr, uid, context.get('active_ids', []), context=context)
             </field>
         </record>
 
-
+        # Asset Fix Init JE (for migration)
+        <record id="action_create_depre_init_entry_on_migration" model="ir.actions.server">
+            <field name="name">Fix Init Depre JE</field>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_hr_expense_expense" />
+            <field name="state">code</field>
+            <field name="code">self.create_depre_init_entry_on_migration(cr, uid, context.get('active_ids', []), context=context)</field>
+        </record>
     </data>
 </openerp>
