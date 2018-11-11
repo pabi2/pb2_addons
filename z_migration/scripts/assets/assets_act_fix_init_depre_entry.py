@@ -25,7 +25,6 @@ dom = [('type', '=', 'depreciate'),
 
 # Search Asset
 depre_lines = AssetLine.search_read(dom, limit=1)
-print depre_lines
 log_asset_codes = [[], []]
 logger = log.setup_custom_logger('assets_act_fix_init_depre_entry')
 logger.info('Start process')
