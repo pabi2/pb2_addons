@@ -14,6 +14,8 @@
                   <attribute name="required">True</attribute>
               </field>
               <xpath expr="/form//group[@name='criteria']/group" position="inside">
+                  <field name="account_ids" widget="many2many_tags"/>
+                  <field name="asset_state"/>
                   <field name="asset_profile_ids" widget="many2many_tags"/>
                   <field name="asset_status_ids" widget="many2many_tags"/>
                   <field name="asset_ids" widget="many2many_tags"/>
@@ -23,6 +25,11 @@
                   <field name="floor_id" context="{'building_id': building_id}"/>
                   <field name="org_ids" widget="many2many_tags"/>
                   <field name="room_id" context="{'building_id': building_id, 'floor_id': floor_id}"/>
+                  <field name="costcenter_ids" widget="many2many_tags"/>
+                  <field name="division_ids" widget="many2many_tags"/>
+                  <field name="sector_ids" widget="many2many_tags"/>
+                  <field name="subsector_ids" widget="many2many_tags"/>
+                  <field name="group_by_account_id"/>
               </xpath>
               <page name="time_filters" position="after">
                   <page string="Report Setting">

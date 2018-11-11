@@ -50,16 +50,12 @@ class AssetRegisterReport(models.TransientModel):
     _inherit = 'report.account.common'
 
     filter = fields.Selection(
-        [('filter_date', 'Dates'),
-         ('filter_period', 'Periods')],
-        string='Filter by',
-        required=True,
-        default='filter_period',
+        readonly=True,
+        default='filter_date',
     )
     asset_status_ids = fields.Many2many(
         'account.asset.status',
         string='Asset Status',
-        required=True,
     )
     asset_ids = fields.Many2many(
         'account.asset',
@@ -89,6 +85,38 @@ class AssetRegisterReport(models.TransientModel):
     org_ids = fields.Many2many(
         'res.org',
         string='Org',
+    )
+    asset_state = fields.Selection(
+        [('draft', 'Draft'),
+         ('open', 'Running'),
+         ('close', 'Close'),
+         ('removed', 'Removed')],
+        string='Asset State',
+    )
+    account_ids = fields.Many2many(
+        'account.account',
+        string='Account Code',
+    )
+    costcenter_ids = fields.Many2many(
+        'res.costcenter',
+        string='Cost Center',
+    )
+    division_ids = fields.Many2many(
+        'res.division',
+        string='Division',
+    )
+    sector_ids = fields.Many2many(
+        'res.sector',
+        string='Sector',
+    )
+    subsector_ids = fields.Many2many(
+        'res.subsector',
+        string='Subsector',
+    )
+    # group by
+    group_by_account_id = fields.Boolean(
+        string='Group By - Account Code',
+        default=False,
     )
     # Note: report setting
     accum_depre_account_type = fields.Many2one(
@@ -147,6 +175,15 @@ class AssetRegisterReport(models.TransientModel):
         if self.asset_status_ids:
             dom += [('status', 'in',
                     tuple(self.asset_status_ids.ids + [0]))]
+        if self.account_ids:
+            dom += [('account_asset_id', 'in',
+                    tuple(self.account_ids.ids + [0]))]
+        # if self.group_by_account_id:
+        #     ...
+        # if self.costcenter_ids:
+        #     dom += []
+        if self.asset_state:
+            dom += [('state', '=', self.asset_state)]
         if self.building_id:
             dom += [('building_id', '=', self.building_id.id)]
         if self.floor_id:
@@ -169,8 +206,10 @@ class AssetRegisterReport(models.TransientModel):
         depre_account_ids = self.env['account.account'].search(
             [('user_type', '=', self.depre_account_type.id)]).ids
         where_str = self._domain_to_where_str(dom)
+        if where_str:
+            where_str = 'where ' + where_str
         self._cr.execute("""
-            select a.*, id asset_id,
+            select a.*, a.id asset_id, aap.account_asset_id,
                 -- budget_type
                 case when a.section_id is not null then 'Section'
                      when a.project_id is not null then 'Project'
@@ -219,7 +258,8 @@ class AssetRegisterReport(models.TransientModel):
                  and ml.date <= %s -- date start
                  and asset_id = a.id) accumulated_bf
             from
-            account_asset a where
+            account_asset a
+            left join account_asset_profile aap on a.profile_id = aap.id
         """ + where_str, (tuple(depre_account_ids), date_start, date_end,
                           tuple(accum_depre_account_ids), date_end,
                           tuple(accum_depre_account_ids), date_start))
