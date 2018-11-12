@@ -838,8 +838,9 @@ class InterfaceAccountEntryLine(models.Model):
             move_lines = AccountMoveLine.search(dom)
             if not move_lines:
                 raise ValidationError(
-                    _('No valid reconcilable move line for %s') %
-                    rec.reconcile_move_line_ref or rec.reconcile_move_id.name)
+                    _('No valid reconcilable move line for %s, %s') %
+                    ((rec.reconcile_move_line_ref or
+                      rec.reconcile_move_id.name), rec.account_id.code))
             rec.reconcile_move_line_ids = move_lines
         return True
 
