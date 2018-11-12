@@ -126,6 +126,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         'stock.move',
         string='Move',
         readonly=True,
+        index=True,
     )
     picking_id = fields.Many2one(
         'stock.picking',
