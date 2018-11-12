@@ -113,6 +113,10 @@ class XLSXReportPabiStockBalanceResults(models.Model):
         'stock.location',
         string='Location',
     )
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+    )
     loc_dest_id = fields.Many2one(
         'stock.location',
         string='Location',
@@ -133,7 +137,7 @@ class XLSXReportPabiStockBalanceResults(models.Model):
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
-with uitstock as (
+        with uitstock as (
             select t.name product,
             sum(product_qty) sumout,
             COALESCE(
@@ -148,7 +152,10 @@ with uitstock as (
             puom.name as uom_name,
             m.location_id as loc,
             sl.name as loc_name,
-            rc.name as currency
+            rc.name as currency,
+            (
+                SELECT id from res_org WHERE operating_unit_id = ou.id
+            ) as org_id
             from stock_move m 
             left join stock_location sl on m.location_id = sl.id
             left join operating_unit ou on sl.operating_unit_id = ou.id 
@@ -162,7 +169,7 @@ with uitstock as (
             where m.state like 'done' 
             and m.location_id in (select id from stock_location where operating_unit_id > 0) 
             and m.location_dest_id not in (select id from stock_location where operating_unit_id > 0) 
-            group by t.id,product_id,product_uom, t.name, m.location_id, sl.name, p.default_code, puom.name, rc.name, ou.name order by t.name asc ) ,
+            group by t.id,product_id,product_uom, t.name, m.location_id, sl.name, p.default_code, puom.name, rc.name, ou.name, ou.id order by t.name asc ) ,
             instock as ( 
             select 
             COALESCE((select price_unit from purchase_order_line where product_id = m.product_id order by id desc limit 1), 00) purchaseprice,
@@ -179,7 +186,10 @@ with uitstock as (
             ou.name as ou_name,
             m.location_dest_id as loc,
             rc.name as currency,
-            sl.name as loc_name
+            sl.name as loc_name,
+            (
+                SELECT id from res_org WHERE operating_unit_id = ou.id
+            ) as org_id
             from stock_move m 
             left join stock_location sl on m.location_dest_id = sl.id 
             left join operating_unit ou on sl.operating_unit_id = ou.id 
@@ -191,7 +201,7 @@ with uitstock as (
             where m.state like 'done' and m.location_id not in (
             select id from stock_location where operating_unit_id > 0) 
             and m.location_dest_id in (select id from stock_location where operating_unit_id > 0) 
-            group by t.id,product_id,product_uom, t.name, location_dest_id, sl.name, p.default_code, puom.name,rc.name, ou.name order by t.name asc) 
+            group by t.id,product_id,product_uom, t.name, location_dest_id, sl.name, p.default_code, puom.name,rc.name, ou.name, ou.id order by t.name asc) 
             
             select
             row_number() over (order by i.product) as id,
@@ -205,7 +215,8 @@ with uitstock as (
             sumin-coalesce(sumout,0) AS balance, 
             pricein-coalesce(priceout,0) AS price,
             coalesce(i.uom_name,u.uom_name) as uom,
-            coalesce(i.currency,u.currency) as currency
+            coalesce(i.currency,u.currency) as currency,
+            coalesce(i.org_id,u.org_id) as org_id
             from uitstock u 
             full outer join instock i on u.product = i.product AND u.loc = i.loc
             order by product_code,product_name
