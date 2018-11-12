@@ -31,6 +31,11 @@ class AccountAssetReverse(models.TransientModel):
         AccountMove = self.env['account.move']
         MoveLine = self.env['account.move.line']
         for asset in Asset.browse(asset_ids):
+            if not asset.picking_id.invoice_state == '2binvoiced':
+                raise ValidationError(
+                    _('This action is not allowed for this asset %s.\n'
+                      'Note asset from IN with invoice state = 2binvoied') %
+                    asset.display_name)
             if asset.state == 'removed':
                 raise ValidationError(
                     _('Asset %s already been removed!') % (asset.code, ))
@@ -45,6 +50,7 @@ class AccountAssetReverse(models.TransientModel):
                     (asset.code, ))
             # Reverse entry
             move_dict = move.copy_data({})[0]
+            move_dict['ref'] = _(u'ยกเลิกเลขครุภัณฑ์: %s') % asset.display_name
             for line in move_dict.get('line_id', []):
                 line[2]['asset_profile_id'] = False
             move_dict = AccountMove._switch_move_dict_dr_cr(move_dict)
@@ -54,7 +60,6 @@ class AccountAssetReverse(models.TransientModel):
             rev_move.button_validate()
             # Set asset removed
             asset.write({'status': self.target_status.id,
-                         'state': 'removed',
-                         'active': False})
+                         'state': 'removed'})
             asset.message_post(body=_('-- Void/Removed --\n%s') % self.note)
         return True
