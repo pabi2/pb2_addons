@@ -73,6 +73,8 @@ class BalanceSheetParser(report_sxw.rml_parse, common_report_header):
                                         context=data['used_context']):
             vals = {
                 'name': report.name,
+                'account_code': False,
+                'account_name': False,
                 'balance': report.balance * report.sign or 0.0,
                 'type': 'report',
                 'level': bool(report.style_overwrite) and
@@ -107,6 +109,8 @@ class BalanceSheetParser(report_sxw.rml_parse, common_report_header):
                     flag = False
                     vals = {
                         'name': account.code + ' ' + account.name,
+                        'account_code': account.code,
+                        'account_name': account.name,
                         'balance': account.balance != 0 and
                         account.balance * report.sign or account.balance,
                         'type': 'account',
@@ -319,16 +323,12 @@ class BalanceSheetXLS(report_xls):
                     cell_style_decimal_detail = xlwt.easyxf(
                         cell_format + _xs['bold'],
                         num_format_str=report_xls.decimal_format)
-                account_code = line.get('name', None)
-                account_name = None
-                if len(line['name'].split(' ')) > 1:
-                    account_code = line['name'].split(' ')[0]
-                    account_name = line['name'].split(' ')[1]
                 c_specs += [
-                    ('account_code', 1, 0, 'text', account_code,
-                        None, cell_style_detail),
-                    ('account_name', account_span, 0, 'text', account_name,
-                        None, cell_style_detail),
+                    ('account_code', 1, 0, 'text',
+                        line['account_code'] and line['account_code'] or
+                        line['name'], None, cell_style_detail),
+                    ('account_name', account_span, 0, 'text',
+                        line['account_name'] or None, None, cell_style_detail),
                 ]
                 if data['form']['debit_credit'] == 1:
                     c_specs += [
