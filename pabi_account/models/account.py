@@ -44,6 +44,12 @@ class AccountMove(models.Model):
     @api.depends('document_id')
     def _compute_date_document(self):
         for rec in self:
+            # Special case, clear undue VAT only
+            if self._context.get('recognize_vat', False):
+                date_clear_undue = self._context.get('date_clear_undue')
+                rec.date_document = date_clear_undue
+                continue
+            # Normal case
             if rec.document_id and 'date_document' in rec.document_id:
                 rec.date_document = rec.document_id.date_document
             else:

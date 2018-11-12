@@ -16,7 +16,6 @@ class SaleOrder(models.Model):
     @api.model
     def _prepare_invoice(self, order, lines):
         res = super(SaleOrder, self)._prepare_invoice(order, lines)
-        print self._context
         if order.loan_agreement_id:
             account_id = order.loan_agreement_id.account_receivable_id
             installment = self._context.get('installment')

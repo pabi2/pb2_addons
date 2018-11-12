@@ -32,4 +32,3 @@ class XLSXReportPND1(models.TransientModel):
             dom += [('date', '>=', self.calendar_period_id.date_start),
                     ('date', '<=', self.calendar_period_id.date_stop)]
         self.results = Result.search(dom, order='date, id')
-        print len(self.results)

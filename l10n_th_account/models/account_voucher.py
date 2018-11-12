@@ -664,13 +664,9 @@ class AccountVoucher(CommonVoucher, models.Model):
                 move_dict = \
                     self.with_context(context).account_move_get(voucher.id)
                 journal = self.env.user.company_id.recognize_vat_journal_id
-                today = fields.Date.context_today(self)
-                period_id = self.env['account.period'].find(self.date)[:1]
                 move_dict.update({
                     'name': '/',
                     'journal_id': journal.id,
-                    'date': today,
-                    'period_id': period_id.id,
                 })
                 move = move_pool.with_context(context).\
                     create(move_dict)
@@ -688,6 +684,16 @@ class AccountVoucher(CommonVoucher, models.Model):
         else:
             super(AccountVoucher, self).action_move_line_create()
         return True
+
+    @api.model
+    def account_move_get(self, voucher_id):
+        move = super(AccountVoucher, self).account_move_get(voucher_id)
+        if self._context.get('recognize_vat', False):
+            date_clear_undue = self._context.get('date_clear_undue')
+            period = self.env['account.period'].find(date_clear_undue)[:1]
+            move.update({'date': date_clear_undue,
+                         'period_id': period.id})
+        return move
 
 
 class AccountVoucherLine(CommonVoucher, models.Model):

@@ -231,7 +231,10 @@ class AccountTaxDetail(models.Model):
             invoice_date = datetime.strptime(rec.invoice_date,
                                              '%Y-%m-%d').date()
             sequence_date = False
-            if date_doc:  # Date from document, take priority
+            # If this is clear undue VAT case
+            if self._context.get('recognize_vat', False):
+                sequence_date = self._context.get('date_clear_undue')
+            elif date_doc:  # Date from document, take priority
                 sequence_date = date_doc
             elif rec.ref_move_id.date:  # For JV/JN, use move date
                 sequence_date = rec.ref_move_id.date

@@ -86,7 +86,6 @@ class StockPicking(models.Model):
 
     @api.cr_uid_ids_context
     def do_enter_transfer_details(self, cr, uid, picking, context=None):
-        print uid
         pick_obj = self.browse(cr, uid, picking)
         if pick_obj.async_process and pick_obj.job_id:
             raise ValidationError(_('Transfer job is running.\n'
