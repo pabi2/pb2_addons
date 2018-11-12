@@ -205,6 +205,11 @@ class PABIAppsConfigSettings(models.TransientModel):
         string='Default Invest Construction Activity Group',
         related="company_id.default_ag_invest_construction_id",
     )
+    prepaid_account_ids = fields.Many2many(
+        'account.account',
+        string='Prepaid Accounts (COD)',
+        related="company_id.prepaid_account_ids",
+    )
 
     @api.onchange('loan_income_activity_id')
     def _onchange_loan_income_activity_id(self):
