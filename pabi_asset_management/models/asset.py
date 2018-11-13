@@ -210,24 +210,28 @@ class AccountAsset(ChartFieldAction, models.Model):
         'res.project',
         string='Project',
         readonly=True,
+        index=True,
         help="Owner project of the budget structure",
     )
     owner_section_id = fields.Many2one(
         'res.section',
         string='Section',
         readonly=True,
+        index=True,
         help="Owner section of the budget structure",
     )
     owner_invest_asset_id = fields.Many2one(
         'res.invest.asset',
         string='Investment Asset',
         readonly=True,
+        index=True,
         help="Owner invest asset of the budget structure",
     )
     owner_invest_construction_phase_id = fields.Many2one(
         'res.invest.construction.phase',
         string='Construction Phase',
         readonly=True,
+        index=True,
         help="Owner construction phase of the budget structure",
     )
     # --

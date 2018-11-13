@@ -904,6 +904,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         string='Status',
         related='budget_id.state',
         store=True,
+        index=True,
     )
     period_split_line_ids = fields.One2many(
         'account.budget.line.period.split',

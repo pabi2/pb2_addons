@@ -65,6 +65,7 @@ class InterfaceAccountEntry(models.Model):
          ('reverse', 'Reverse')],
         string='Type',
         readonly=True,
+        index=True,
     )
     charge_type = fields.Selection(  # Prepare for pabi_internal_charge
         [('internal', 'Internal'),
@@ -125,6 +126,7 @@ class InterfaceAccountEntry(models.Model):
         string='Journal Entry',
         readonly=True,
         copy=False,
+        index=True,
     )
     to_reverse_entry_id = fields.Many2one(
         'interface.account.entry',
