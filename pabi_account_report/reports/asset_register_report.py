@@ -185,13 +185,14 @@ class AssetRegisterReport(models.TransientModel):
                     tuple(self.account_ids.ids + [0]))]
         if self.budget:
             dom_budget = \
-                [str(x.model) + ',' + str(x.res_id) for x in self.budget]
-            dom += [('budget', 'in', tuple(dom_budget + ['res.section,0']))]
+                ["%s,%s" % ((x.model).encode('utf-8'), x.res_id)
+                 for x in self.budget]
+            dom += [('budget', 'in', tuple(dom_budget + ['0']))]
         if self.owner_budget:
             dom_owner = \
-                [str(x.model) + ',' + str(x.res_id) for x in self.owner_budget]
-            dom += [('owner_budget', 'in',
-                    tuple(dom_owner + ['res.section,0']))]
+                ["%s,%s" % ((x.model).encode('utf-8'), x.res_id)
+                 for x in self.owner_budget]
+            dom += [('owner_budget', 'in', tuple(dom_owner + ['0']))]
         if self.costcenter_ids:
             dom += [('owner_costcenter_id', 'in',
                     tuple(self.costcenter_ids.ids + [0]))]
