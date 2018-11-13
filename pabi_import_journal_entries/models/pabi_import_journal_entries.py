@@ -247,3 +247,7 @@ class PabiImportJournalEntriesLine(MergedChartField, models.Model):
     origin_ref = fields.Char(
         string='Document Ref.',
     )
+    chartfield_id = fields.Many2one(
+        'chartfield.view',
+        domain=[],  # Remove domain
+    )
