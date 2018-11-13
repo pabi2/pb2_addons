@@ -179,6 +179,7 @@ class CommitLineCommon(object):
         for rec in self:
             aline = Analytic.search([(line_field, '=', rec.id)],
                                     order='create_date desc', limit=1)
+            rec.refresh()  # Clear cache
             if aline and rec.budget_commit_bal:
                 aline.copy({'amount': -rec.budget_commit_bal})
 
