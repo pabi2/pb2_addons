@@ -43,7 +43,8 @@ class BCommon(object):
         domain = []
         ctx = self._context.copy()
         for i in self._building_name_search_list:
-            domain += [(i, '=', ctx.get(i))]
+            if ctx.get(i, False):
+                domain += [(i, '=', ctx.get(i))]
         return domain
 
     @api.model

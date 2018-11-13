@@ -14,15 +14,23 @@
                   <attribute name="required">True</attribute>
               </field>
               <xpath expr="/form//group[@name='criteria']/group" position="inside">
+                  <field name="account_ids" widget="many2many_tags"/>
+                  <field name="asset_state"/>
                   <field name="asset_profile_ids" widget="many2many_tags"/>
                   <field name="asset_status_ids" widget="many2many_tags"/>
                   <field name="asset_ids" widget="many2many_tags"/>
-                  <field name="building_id"/>
+                  <field name="building_ids" widget="many2many_tags"/>
                   <!-- <field name="account_asset_id" widget="many2many_tags"/> -->
                   <field name="responsible_person_ids" widget="many2many_tags"/>
-                  <field name="floor_id" context="{'building_id': building_id}"/>
+                  <field name="floor_ids" widget="many2many_tags"/>
                   <field name="org_ids" widget="many2many_tags"/>
-                  <field name="room_id" context="{'building_id': building_id, 'floor_id': floor_id}"/>
+                  <field name="room_ids" widget="many2many_tags"/>
+                  <field name="budget" widget="many2many_tags"/>
+                  <field name="owner_budget" widget="many2many_tags"/>
+                  <field name="costcenter_ids" widget="many2many_tags"/>
+                  <field name="division_ids" widget="many2many_tags"/>
+                  <field name="sector_ids" widget="many2many_tags"/>
+                  <field name="subsector_ids" widget="many2many_tags"/>
               </xpath>
               <page name="time_filters" position="after">
                   <page string="Report Setting">
