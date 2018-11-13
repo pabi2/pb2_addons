@@ -279,6 +279,7 @@
                                         <field name="external_fund_type"/>
                                         <field name="external_fund_name"/>
                                         <field name="priority"/>
+                                        <field name="conversion_project"/>
                                     </group>
                                 </group>
                                 <group>
