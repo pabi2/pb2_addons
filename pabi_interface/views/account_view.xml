@@ -44,6 +44,7 @@
             <field name="inherit_id" ref="account_bank_receipt.view_account_move_line_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='reconcile_id']" position="after">
+                    <field name="origin" readonly="1"/>
                     <field name="move_id" readonly="1"/>
                     <field name="system_id" string="System Origin" readonly="1"/>
                 </xpath>

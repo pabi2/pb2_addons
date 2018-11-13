@@ -11,6 +11,12 @@ class AccountMoveLine(models.Model):
         readonly=True,
         help="Note: still preserve related field funciton (can't remove yet)"
     )
+    origin = fields.Char(
+        string='Doc Origin',
+        size=50,
+        readonly=True,
+        help="Document Origin, used only for case Interface Account Etnry"
+    )
     reconcile_move_line_ref = fields.Char(
         string='To Reconcile Ref.',
         readonly=True,

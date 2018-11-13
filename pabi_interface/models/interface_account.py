@@ -314,11 +314,13 @@ class InterfaceAccountEntry(models.Model):
                 move = interface._action_invoice_entry()
                 interface.number = move.name
                 self._update_account_move_line_ref(move)
+                self._update_account_move_line_origin(move)
             # 3) Payment Receipt
             elif interface.type == 'voucher':
                 move = interface._action_payment_entry()
                 interface.number = move.name
                 self._update_account_move_line_ref(move)
+                self._update_account_move_line_origin(move)
         return True
 
     # ================== Sub Method by Action ==================
@@ -328,6 +330,16 @@ class InterfaceAccountEntry(models.Model):
             update account_move_line ml set ref = (
                 select ref from interface_account_entry_line
                 where ref_move_line_id = ml.id)
+            where move_id = %s
+        """, (move.id, ))
+        return True
+
+    @api.model
+    def _update_account_move_line_origin(self, move):
+        self._cr.execute("""
+            update account_move_line ml set origin = (
+                select name from interface_account_entry
+                where move_id = ml.move_id)
             where move_id = %s
         """, (move.id, ))
         return True
