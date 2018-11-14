@@ -40,6 +40,9 @@ class AccountMove(models.Model):
         string='Validated By',
         compute='_compute_validate_user_id',
     )
+    state = fields.Selection(
+        index=True,  # performance tuning
+    )
 
     @api.multi
     @api.depends('document_id')
@@ -129,6 +132,10 @@ class AccountMove(models.Model):
 
 class AccountAccount(models.Model):
     _inherit = 'account.account'
+
+    type = fields.Selection(
+        index=True,
+    )
 
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=80):
