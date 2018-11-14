@@ -16,7 +16,7 @@ class AccountMoveReverse(models.TransientModel):
         res_model = self._context.get('active_model', False)
         res_id = self._context.get('active_id', False)
         move = self.env[res_model].browse(res_id)
-        if move.doctype != 'adjustment':
+        if move.doctype not in ('adjustment', 'interface_account'):
             raise ValidationError(
                 _('No direct reverse allowed for non adjustment doctype!\n'
                   'You should make reverse on source document.'))

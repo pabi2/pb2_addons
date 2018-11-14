@@ -14,6 +14,9 @@
                     </page>
                     <page string="Budget Filters" name="budget_filters">
                         <group>
+                            <field name="count_chartfield"/>
+                        </group>
+                        <group>
                             <group string="Paste list of code to search">
                                 <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
                             </group>

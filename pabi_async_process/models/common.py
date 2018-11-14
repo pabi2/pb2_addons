@@ -28,7 +28,6 @@ class PabiAsync(object):
                 raise ValidationError(_('Something wrong, job not created!'))
             if len(jobs) == 1:  # 1 Job ok, we can commit. Else, not create.
                 self._cr.commit()
-            print jobs
             uuid = jobs[0].uuid
         # Show RedirectWarning Message
         message = False

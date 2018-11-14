@@ -27,6 +27,7 @@
                             'A2': 'asset_id.code',
                             'B2': 'asset_id.name',
                             'C2': 'message',
+                            'D2': 'asset_id${value and value.owner_section_id.code or value.owner_project_id.code or value.owner_invest_asset_id.code or value.owner_invest_construction_phase_id.code or ""}',
                         },
                     },
                 },

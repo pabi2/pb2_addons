@@ -146,11 +146,10 @@
                         <field name="auto_recognize_vat" invisible="1"/>
                         <field name="wht_cert_ids" invisible="1"/>
                         <button
-                            name="proforma_voucher"
+                            name="%(action_clear_undue_vat)d"
                             string="Clear Undue VAT"
-                            type="object"
+                            type="action"
                             class="oe_highlight"
-                            context="{'recognize_vat': True}"
                             attrs="{'invisible': ['|', '|', '|', ('state', '!=', 'posted'), ('auto_recognize_vat', '=', True),
                    						('recognize_vat_move_id', '!=', False), ('tax_line_normal', '=', [])]}"/>
                         <button name="%(action_print_wht_cert)d" type="action" string="Create WHT Cert." class="oe_highlight" attrs="{'invisible': ['|', '|', ('state', '!=', 'posted'), ('tax_line_wht', '=', []), ('wht_cert_ids', '!=', [])]}"/>

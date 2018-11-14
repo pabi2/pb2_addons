@@ -359,6 +359,10 @@ class ResProject(LogCommon, models.Model):
         'user_id',
         string='More Project Member',
     )
+    conversion_project = fields.Boolean(
+        string='Conversion Project',
+        default=False,
+    )
     _sql_constraints = [
         ('code_unique', 'unique(code)',
          'Project Code must be unique!'),

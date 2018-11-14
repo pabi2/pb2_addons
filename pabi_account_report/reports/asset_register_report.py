@@ -50,16 +50,12 @@ class AssetRegisterReport(models.TransientModel):
     _inherit = 'report.account.common'
 
     filter = fields.Selection(
-        [('filter_date', 'Dates'),
-         ('filter_period', 'Periods')],
-        string='Filter by',
-        required=True,
-        default='filter_period',
+        readonly=True,
+        default='filter_date',
     )
     asset_status_ids = fields.Many2many(
         'account.asset.status',
         string='Asset Status',
-        required=True,
     )
     asset_ids = fields.Many2many(
         'account.asset',
@@ -74,21 +70,48 @@ class AssetRegisterReport(models.TransientModel):
         'res.users',
         string='Responsible Person',
     )
-    building_id = fields.Many2one(
+    building_ids = fields.Many2many(
         'res.building',
         string='Building',
     )
-    floor_id = fields.Many2one(
+    floor_ids = fields.Many2many(
         'res.floor',
         string='Floor',
     )
-    room_id = fields.Many2one(
-        'res.building',
+    room_ids = fields.Many2many(
+        'res.room',
         string='Room',
     )
     org_ids = fields.Many2many(
         'res.org',
         string='Org',
+    )
+    asset_state = fields.Selection(
+        [('draft', 'Draft'),
+         ('open', 'Running'),
+         ('close', 'Close'),
+         ('removed', 'Removed')],
+        string='Asset State',
+    )
+    account_ids = fields.Many2many(
+        'account.account',
+        string='Account Code',
+    )
+    costcenter_ids = fields.Many2many(
+        'res.costcenter',
+        string='Cost Center',
+    )
+    division_ids = fields.Many2many(
+        'res.division',
+        string='Division',
+    )
+    sector_ids = fields.Many2many(
+        'res.sector',
+        string='Sector',
+    )
+    subsector_ids = fields.Many2many(
+        'res.subsector',
+        string='Subsector',
     )
     # Note: report setting
     accum_depre_account_type = fields.Many2one(
@@ -111,6 +134,44 @@ class AssetRegisterReport(models.TransientModel):
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
+    # More fileter
+    budget_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    budget = fields.Many2many(
+        'chartfield.view',
+        'asset_register_chartfield_rel',
+        'wizard_id', 'chartfield_id',
+        string='Source Budget',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
+    count_budget = fields.Integer(
+        compute='_compute_count_budget',
+        string='Budget Count',
+    )
+    owner_budget_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    owner_budget = fields.Many2many(
+        'chartfield.view',
+        'asset_register_owner_chartfield_rel',
+        'wizard_id', 'chartfield_id',
+        string='Owner Budget',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
+    count_owner_budget = fields.Integer(
+        compute='_compute_count_budget',
+        string='Budget Count',
+    )
+
+    @api.multi
+    @api.depends('budget', 'owner_budget')
+    def _compute_count_budget(self):
+        for rec in self:
+            rec.count_budget = len(rec.budget)
+            rec.count_owner_budget = len(rec.owner_budget)
 
     # @api.onchange('building_id')
     # def _onchange_building_id(self):
@@ -147,12 +208,39 @@ class AssetRegisterReport(models.TransientModel):
         if self.asset_status_ids:
             dom += [('status', 'in',
                     tuple(self.asset_status_ids.ids + [0]))]
-        if self.building_id:
-            dom += [('building_id', '=', self.building_id.id)]
-        if self.floor_id:
-            dom += [('floor_id', '=', self.floor_id.id)]
-        if self.room_id:
-            dom += [('room_id', '=', self.room_id.id)]
+        if self.account_ids:
+            dom += [('account_asset_id', 'in',
+                    tuple(self.account_ids.ids + [0]))]
+        if self.budget:
+            dom_budget = \
+                ["%s,%s" % ((x.model).encode('utf-8'), x.res_id)
+                 for x in self.budget]
+            dom += [('budget', 'in', tuple(dom_budget + ['0']))]
+        if self.owner_budget:
+            dom_owner = \
+                ["%s,%s" % ((x.model).encode('utf-8'), x.res_id)
+                 for x in self.owner_budget]
+            dom += [('owner_budget', 'in', tuple(dom_owner + ['0']))]
+        if self.costcenter_ids:
+            dom += [('owner_costcenter_id', 'in',
+                    tuple(self.costcenter_ids.ids + [0]))]
+        if self.division_ids:
+            dom += [('owner_division_id', 'in',
+                    tuple(self.division_ids.ids + [0]))]
+        if self.sector_ids:
+            dom += [('owner_sector_id', 'in',
+                    tuple(self.sector_ids.ids + [0]))]
+        if self.subsector_ids:
+            dom += [('owner_subsector_id', 'in',
+                    tuple(self.subsector_ids.ids + [0]))]
+        if self.asset_state:
+            dom += [('state', '=', self.asset_state)]
+        if self.building_ids:
+            dom += [('building_id', 'in', tuple(self.building_ids.ids + [0]))]
+        if self.floor_ids:
+            dom += [('floor_id', 'in', tuple(self.floor_ids.ids + [0]))]
+        if self.room_ids:
+            dom += [('room_id', 'in', tuple(self.room_ids.ids + [0]))]
         # Prepare fixed params
         date_start = False
         date_end = False
@@ -169,8 +257,12 @@ class AssetRegisterReport(models.TransientModel):
         depre_account_ids = self.env['account.account'].search(
             [('user_type', '=', self.depre_account_type.id)]).ids
         where_str = self._domain_to_where_str(dom)
+        if where_str:
+            where_str = 'where ' + where_str
         self._cr.execute("""
-            select a.*, id asset_id,
+            select *
+            from (
+                select a.*, a.id asset_id, aap.account_asset_id,
                 -- budget_type
                 case when a.section_id is not null then 'Section'
                      when a.project_id is not null then 'Project'
@@ -200,6 +292,28 @@ class AssetRegisterReport(models.TransientModel):
                         then concat('res.invest.construction.phase,',
                                      a.owner_invest_construction_phase_id)
                      else null end as owner_budget,
+                -- owner_costcenter
+                case when a.owner_section_id is not null then
+                        rs.costcenter_id
+                     when a.owner_project_id is not null then
+                        rp.costcenter_id
+                     when a.owner_invest_asset_id is not null then
+                        ria.costcenter_id
+                     when a.owner_invest_construction_phase_id is not null then
+                        ricp.costcenter_id
+                     else null end as owner_costcenter_id,
+                -- owner_division
+                case when a.owner_section_id is not null then
+                        rs.division_id
+                     else null end as owner_division_id,
+                -- owner_sector
+                case when a.owner_section_id is not null then
+                        rs.sector_id
+                     else null end as owner_sector_id,
+                -- owner_subsector
+                case when a.owner_section_id is not null then
+                        rs.subsector_id
+                     else null end as owner_subsector_id,
                 -- depreciation
                 (select coalesce(sum(debit-credit), 0.0)
                  from account_move_line ml
@@ -219,7 +333,14 @@ class AssetRegisterReport(models.TransientModel):
                  and ml.date <= %s -- date start
                  and asset_id = a.id) accumulated_bf
             from
-            account_asset a where
+            account_asset a
+            left join account_asset_profile aap on a.profile_id = aap.id
+            left join res_section rs on a.owner_section_id = rs.id
+            left join res_project rp on a.owner_project_id = rp.id
+            left join res_invest_asset ria on a.owner_invest_asset_id = ria.id
+            left join res_invest_construction_phase ricp on
+            a.owner_invest_construction_phase_id = ricp.id
+            ) asset
         """ + where_str, (tuple(depre_account_ids), date_start, date_end,
                           tuple(accum_depre_account_ids), date_end,
                           tuple(accum_depre_account_ids), date_start))
@@ -234,3 +355,27 @@ class AssetRegisterReport(models.TransientModel):
             'pabi_account_report.action_asset_register_report_form')
         action.write({'context': {'wizard_id': self.id}})
         return super(AssetRegisterReport, self).action_get_report()
+
+    @api.onchange('budget_filter')
+    def _onchange_budget_filter(self):
+        self.budget = []
+        Chartfield = self.env['chartfield.view']
+        dom = []
+        if self.budget_filter:
+            codes = self.budget_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.budget = Chartfield.search(dom, order='id')
+
+    @api.onchange('owner_budget_filter')
+    def _onchange_owner_budget_filter(self):
+        self.budget = []
+        Chartfield = self.env['chartfield.view']
+        dom = []
+        if self.owner_budget_filter:
+            codes = self.owner_budget_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.owner_budget = Chartfield.search(dom, order='id')

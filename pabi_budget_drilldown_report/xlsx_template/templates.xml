@@ -107,6 +107,61 @@
           </field>
         </record>
 
+        # Budget All Report
+        <record id="budget_all_report_xlsx_template" model="ir.attachment">
+            <field name="res_model">budget.drilldown.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_all_report.xlsx</field>
+            <field name="name">Budget All Report</field>
+            <field name="parent_id" eval="ref('dir_budget_drilldown_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Budget All Report': {
+                        '_HEAD_': {
+                            'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                            'B3': 'report_type${value and dict(overall="Overall", all="All Budget", unit_base="Section", project_base="Project", invest_asset="Asset", invest_construction="Construction", personnel="Personnel")[value] or ""}',
+                            'B4': 'fiscalyear_id${value and value.name or ""}',
+                            'B5': 'chartfield_ids${value and ", ".join([x.code for x in value]) or ""}',
+                            'B6': '${env.user.with_context(lang="th_TH").display_name}',
+                            'B7': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                        },
+                        'line_ids': {
+                            'A10': 'chartfield_id${value and value.code or ""}',
+                            'B10': 'chartfield_id${value and value.name or ""}',
+                            'C10': 'activity_group_id${value and value.name or ""}',
+                            'D10': 'charge_type${value and dict(env["budget.drilldown.report.line"]._columns["charge_type"].selection)[value] or ""}',
+                            'E10': 'activity_id${value and value.name or ""}',
+                            'F10': 'planned_amount${value or 0}#{number_format=number}',
+                            'G10': 'released_amount${value or 0}#{number_format=number}',
+                            'H10': 'amount_pr_commit${value or 0}#{number_format=number}',
+                            'I10': 'amount_po_commit${value or 0}#{number_format=number}',
+                            'J10': 'amount_exp_commit${value or 0}#{number_format=number}',
+                            'K10': 'amount_total_commit${value or 0}#{number_format=number}',
+                            'L10': 'amount_actual${value or 0}#{number_format=number}',
+                            'M10': 'amount_consumed${value or 0}#{number_format=number}',
+                            'N10': 'amount_balance${value or 0}#{number_format=number}',
+                            'O10': "${'=IF(OR(?(G10)=0,?(K10)=0),0,?(K10)/?(G10))'}#{number_format=percent}",
+                            'P10': "${'=IF(OR(?(G10)=0,?(L10)=0),0,?(L10)/?(G10))'}#{number_format=percent}",
+                            'Q10': "${'=IF(OR(?(G10)=0,?(M10)=0),0,?(M10)/?(G10))'}#{number_format=percent}",
+                        },
+                        '_TAIL_0': {
+                            'F10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'G10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'H10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'I10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'J10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'K10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'L10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'M10': '@{sum}#{font=bold;align=right;number_format=number}',
+                            'N10': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
+                    }
+                }
+              }
+          </field>
+        </record>
+
         # Budget Unit Base Report
         <record id="budget_unit_base_report_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.drilldown.report</field>

@@ -11,6 +11,14 @@ class AccountInvoice(models.Model):
         compute='_compute_is_prepaid',
         store=True,
     )
+    prepaid_account_id = fields.Many2one(
+        'account.account',
+        string='Prepaid Account',
+        domain=lambda self:
+        [('id', 'in', self.env.user.company_id.prepaid_account_ids.ids)],
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     clear_prepaid_move_id = fields.Many2one(
         'account.move',
         string='Clear Prepaid Journal Entry',
@@ -42,14 +50,17 @@ class AccountInvoice(models.Model):
                                     'cash_on_delivery_payment_term')
         # For prepaid only
         if self.payment_term == cod_pay_term:
-            journal = self.env.ref('purchase_cash_on_delivery.'
-                                   'clear_prepaid_journal')
-            if not journal.default_debit_account_id or \
-                    not journal.default_credit_account_id:
-                raise ValidationError(
-                    _('Clear Prepaid Journal has not been setup properly!\n'
-                      'Make sure default accounts are Prepaid account'))
-            account = journal.default_debit_account_id
+            # journal = self.env.ref('purchase_cash_on_delivery.'
+            #                        'clear_prepaid_journal')
+            # if not journal.default_debit_account_id or \
+            #         not journal.default_credit_account_id:
+            #     raise ValidationError(
+            #         _('Clear Prepaid Journal has not been setup properly!\n'
+            #           'Make sure default accounts are Prepaid account'))
+            # account = journal.default_debit_account_id
+            if not self.prepaid_account_id:
+                raise ValidationError(_('No prepaid account selected!'))
+            account = self.prepaid_account_id
             # Find lines to merge
             ml = filter(lambda x: x[2]['account_id'] == account.id,
                         move_lines)
@@ -113,9 +124,9 @@ class AccountInvoice(models.Model):
         res = super(AccountInvoice, self).line_get_convert(line, part, date)
         if self._context.get('is_clear_prepaid', False) and \
                 line['type'] == 'dest':
-            journal = self.env.ref('purchase_cash_on_delivery.'
-                                   'clear_prepaid_journal')
-            res.update({'account_id': journal.default_credit_account_id.id})
+            # journal = self.env.ref('purchase_cash_on_delivery.'
+            #                        'clear_prepaid_journal')
+            res.update({'account_id': self.prepaid_account_id.id})
         return res
 
     @api.multi
@@ -151,14 +162,16 @@ class AccountInvoiceLine(models.Model):
                                     'cash_on_delivery_payment_term')
         if line.invoice_id.payment_term == cod_pay_term and \
                 not self._context.get('is_clear_prepaid', False):
-            journal = self.env.ref('purchase_cash_on_delivery.'
-                                   'clear_prepaid_journal')
-            if not journal.default_debit_account_id or \
-                    not journal.default_credit_account_id:
-                raise ValidationError(
-                    _('Clear Prepaid Journal has not been setup properly!\n'
-                      'Make sure default accounts are Prepaid account'))
-            res.update({'account_id': journal.default_debit_account_id.id})
+            # journal = self.env.ref('purchase_cash_on_delivery.'
+            #                        'clear_prepaid_journal')
+            # if not journal.default_debit_account_id or \
+            #         not journal.default_credit_account_id:
+            #     raise ValidationError(
+            #         _('Clear Prepaid Journal has not been setup properly!\n'
+            #           'Make sure default accounts are Prepaid account'))
+            if not line.invoice_id.prepaid_account_id:
+                raise ValidationError(_('No prepaid account selected!'))
+            res.update({'account_id': line.invoice_id.prepaid_account_id.id})
         return res
 
 

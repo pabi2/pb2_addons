@@ -14,6 +14,16 @@
         <record id="base.menu_reporting" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('show_unuse_feature')]), ]"/>
         </record>
+        <!-- Journal Items (no one should see it) -->
+        <record id="account.menu_action_account_moves_all" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('show_unuse_feature')]), ]"/>
+        </record>
+        <record id="account.menu_manual_reconcile" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('show_unuse_feature')]), ]"/>
+        </record>
+        <record id="account.menu_automatic_reconcile" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('show_unuse_feature')]), ]"/>
+        </record>
 
         # Delete unused menu permanently
         <delete model="ir.ui.menu" id="account_voucher.menu_action_sale_receipt"/>

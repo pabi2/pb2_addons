@@ -64,11 +64,12 @@ class HRExpense(models.Model):
             user_id = User.name_search(data_dict.get('user_id'))[0][0]
             user = User.browse(user_id)
             # Set internal charge related info header
+            number = data_dict.get('number', u'/')
             data_dict.update({
                 'pay_to': 'internal',
                 'is_advance_clearing': False,
                 'is_employee_advance': False,
-                'number': u'/',  # expense number
+                'number': number,  # expense number
                 'operating_unit_id': user.default_operating_unit_id.id,
             })
             WS = self.env['pabi.utils.ws']

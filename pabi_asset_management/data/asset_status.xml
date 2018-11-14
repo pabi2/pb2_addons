@@ -55,5 +55,11 @@
             <field name="name">ยกเลิก</field>
             <field name="map_state">draft</field>
         </record>
+        <record id="asset_status_reverse" model="account.asset.status">
+            <field name="sequence">10</field>
+            <field name="code">reverse</field>
+            <field name="name">ยกเลิกเลขครุภันฑ์</field>
+            <field name="map_state">removed</field>
+        </record>
     </data>
 </openerp>

@@ -121,15 +121,13 @@ class AccountBankReceipt(models.Model):
     @api.model
     def _create_writeoff_move_line_hook(self, move):
         super(AccountBankReceipt, self)._create_writeoff_move_line_hook(move)
-        if self.payment_difference_amount != 0.0:
-            MoveLine = self.env['account.move.line']
-            if self.payment_difference_amount != 0.0 and \
-                    self.multiple_reconcile_ids:
-                for writeofline in self.multiple_reconcile_ids:
-                    move_line_val = \
-                        self._prepare_writeoff_move_line(writeofline)
-                    move_line_val['move_id'] = move.id
-                    MoveLine.create(move_line_val)
+        MoveLine = self.env['account.move.line']
+        if self.multiple_reconcile_ids:
+            for writeofline in self.multiple_reconcile_ids:
+                move_line_val = \
+                    self._prepare_writeoff_move_line(writeofline)
+                move_line_val['move_id'] = move.id
+                MoveLine.create(move_line_val)
         return True
 
     @api.model

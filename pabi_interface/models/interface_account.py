@@ -65,6 +65,7 @@ class InterfaceAccountEntry(models.Model):
          ('reverse', 'Reverse')],
         string='Type',
         readonly=True,
+        index=True,
     )
     charge_type = fields.Selection(  # Prepare for pabi_internal_charge
         [('internal', 'Internal'),
@@ -125,6 +126,7 @@ class InterfaceAccountEntry(models.Model):
         string='Journal Entry',
         readonly=True,
         copy=False,
+        index=True,
     )
     to_reverse_entry_id = fields.Many2one(
         'interface.account.entry',
@@ -314,11 +316,13 @@ class InterfaceAccountEntry(models.Model):
                 move = interface._action_invoice_entry()
                 interface.number = move.name
                 self._update_account_move_line_ref(move)
+                self._update_account_move_line_origin(move)
             # 3) Payment Receipt
             elif interface.type == 'voucher':
                 move = interface._action_payment_entry()
                 interface.number = move.name
                 self._update_account_move_line_ref(move)
+                self._update_account_move_line_origin(move)
         return True
 
     # ================== Sub Method by Action ==================
@@ -328,6 +332,16 @@ class InterfaceAccountEntry(models.Model):
             update account_move_line ml set ref = (
                 select ref from interface_account_entry_line
                 where ref_move_line_id = ml.id)
+            where move_id = %s
+        """, (move.id, ))
+        return True
+
+    @api.model
+    def _update_account_move_line_origin(self, move):
+        self._cr.execute("""
+            update account_move_line ml set origin = (
+                select name from interface_account_entry
+                where move_id = ml.move_id)
             where move_id = %s
         """, (move.id, ))
         return True
@@ -821,7 +835,7 @@ class InterfaceAccountEntryLine(models.Model):
     )
 
     @api.multi
-    @api.depends('reconcile_move_id', 'reconcile_move_line_ref')
+    # @api.depends('reconcile_move_id', 'reconcile_move_line_ref')
     def _compute_reconcile_move_line_ids(self):
         AccountMoveLine = self.env['account.move.line']
         for rec in self:
@@ -838,8 +852,9 @@ class InterfaceAccountEntryLine(models.Model):
             move_lines = AccountMoveLine.search(dom)
             if not move_lines:
                 raise ValidationError(
-                    _('No valid reconcilable move line for %s') %
-                    rec.reconcile_move_line_ref or rec.reconcile_move_id.name)
+                    _('No valid reconcilable move line for %s, %s') %
+                    ((rec.reconcile_move_line_ref or
+                      rec.reconcile_move_id.name), rec.account_id.code))
             rec.reconcile_move_line_ids = move_lines
         return True
 
@@ -903,10 +918,11 @@ class InterfaceAccountChecker(models.AbstractModel):
     @api.model
     def _check_line_normal(self, inf):
         # All line must have same OU
-        operating_unit = list(set(inf.line_ids.mapped('operating_unit_id')))
-        if len(operating_unit) != 1:
-            raise ValidationError(
-                _('Same operating Unit must be set for all lines!'))
+        # operating_unit = list(set(inf.line_ids.mapped('operating_unit_id')))
+        # if len(operating_unit) != 1:
+        #     raise ValidationError(
+        #         _('Same operating Unit must be set for all lines!'))
+        # --
         # All line must have account id
         account_ids = [x.account_id.id for x in inf.line_ids]
         if False in account_ids:

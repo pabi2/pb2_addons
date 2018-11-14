@@ -3,35 +3,39 @@
     <data noupdate="1">
 
         <!--Additional Reversal Data-->
-        <record id="l10n_th_doctype_invoice.doctype_customer_invoice" model="res.doctype" >
+        <record id="l10n_th_doctype_invoice.doctype_customer_invoice" model="res.doctype">
             <field name="with_reversal" >True</field>
             <field name="reversal_sequence_id" ref="doctype_cancel_with_reversal_seq"/>
         </record>
-        <record id="l10n_th_doctype_invoice.doctype_customer_refund" model="res.doctype" >
+        <record id="l10n_th_doctype_invoice.doctype_customer_refund" model="res.doctype">
             <field name="with_reversal" >True</field>
             <field name="reversal_sequence_id" ref="doctype_cancel_with_reversal_seq"/>
         </record>
-        <record id="l10n_th_doctype_invoice.doctype_customer_debitnote" model="res.doctype" >
+        <record id="l10n_th_doctype_invoice.doctype_customer_debitnote" model="res.doctype">
             <field name="with_reversal" >True</field>
             <field name="reversal_sequence_id" ref="doctype_cancel_with_reversal_seq"/>
         </record>
-        <record id="l10n_th_doctype_invoice.doctype_supplier_invoice" model="res.doctype" >
+        <record id="l10n_th_doctype_invoice.doctype_supplier_invoice" model="res.doctype">
             <field name="with_reversal" >True</field>
             <field name="reversal_sequence_id" ref="doctype_cancel_with_reversal_seq"/>
         </record>
-        <record id="l10n_th_doctype_invoice.doctype_supplier_refund" model="res.doctype" >
+        <record id="l10n_th_doctype_invoice.doctype_supplier_refund" model="res.doctype">
             <field name="with_reversal" >True</field>
             <field name="reversal_sequence_id" ref="doctype_cancel_with_reversal_seq"/>
         </record>
-        <record id="l10n_th_doctype_invoice.doctype_supplier_debitnote" model="res.doctype" >
+        <record id="l10n_th_doctype_invoice.doctype_supplier_debitnote" model="res.doctype">
             <field name="with_reversal" >True</field>
             <field name="reversal_sequence_id" ref="doctype_cancel_with_reversal_seq"/>
         </record>
-        <record id="l10n_th_doctype_voucher.doctype_customer_payment" model="res.doctype" >
+        <record id="l10n_th_doctype_voucher.doctype_customer_payment" model="res.doctype">
             <field name="with_reversal" >True</field>
             <field name="reversal_sequence_id" ref="doctype_cancel_with_reversal_seq"/>
         </record>
-        <record id="l10n_th_doctype_voucher.doctype_supplier_payment" model="res.doctype" >
+        <record id="l10n_th_doctype_voucher.doctype_supplier_payment" model="res.doctype">
+            <field name="with_reversal" >True</field>
+            <field name="reversal_sequence_id" ref="doctype_cancel_with_reversal_seq"/>
+        </record>
+        <record id="l10n_th_doctype_bank_receipt.doctype_bank_receipt" model="res.doctype">
             <field name="with_reversal" >True</field>
             <field name="reversal_sequence_id" ref="doctype_cancel_with_reversal_seq"/>
         </record>

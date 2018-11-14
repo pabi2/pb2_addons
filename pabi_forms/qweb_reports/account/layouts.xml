@@ -118,8 +118,8 @@
                                     <t t-if="o.doctype in ['payment', 'receipt'] and line.invoice_id">
                                         <span t-field="line.invoice_id.number"/>
                                     </t>
-                                    <t t-if="o.doctype in ['bank_receipt']">
-                                        <span t-field="line.ref"/>
+                                    <t t-if="o.doctype in ['bank_receipt'] and line.document_id">
+                                        <span t-esc="line.document_id.display_name.split(' ')[0]"/>
                                     </t>
                                 </td>
                                 <td class="text-right pabi-col-doc">
@@ -199,7 +199,12 @@
                         <tr>
                             <td style="width: 50%; border-bottom: 1px solid; padding-bottom: 0px;">
                                 <span>Amount: </span>
-                                <span t-field="o.amount"/>
+                                <t t-if="o.doctype in ['payment']">
+                                    <span t-field="o.document_id.amount"/>
+                                </t>
+                                <t t-if="not o.doctype in ['payment']">
+                                    <span t-field="o.amount"/>
+                                </t>
                             </td>
                             <td style="width: 50%; border-bottom: 1px solid; padding-bottom: 0px;">
                                 <span>PE Number: </span>

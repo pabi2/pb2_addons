@@ -87,6 +87,10 @@ class XLSXReportGlExpenditure(models.TransientModel):
         'account.activity',
         string='Activity',
     )
+    count_chartfield = fields.Integer(
+        compute='_compute_count_chartfield',
+        string='Budget Count',
+    )
     results = fields.Many2many(
         'pabi.common.account.report.view',
         string='Results',
@@ -102,6 +106,12 @@ class XLSXReportGlExpenditure(models.TransientModel):
         self.fund_ids = False
         self.project_ids = False
         self.invest_construction_ids = False
+
+    @api.multi
+    @api.depends('chartfield_ids')
+    def _compute_count_chartfield(self):
+        for rec in self:
+            rec.count_chartfield = len(rec.chartfield_ids)
 
     @api.multi
     def _compute_results(self):
@@ -184,6 +194,7 @@ class XLSXReportGlExpenditure(models.TransientModel):
 
     @api.onchange('account_type_id')
     def _onchange_account_type(self):
+        self.account_ids = False
         account_type_id = self.account_type_id.id
         domain = [('type', '!=', 'view')]
         if account_type_id:

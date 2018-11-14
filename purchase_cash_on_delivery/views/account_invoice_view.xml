@@ -18,7 +18,14 @@
                             attrs="{'invisible': ['|', '|', ('state', 'not in', ['paid']), ('is_prepaid', '=', False), ('clear_prepaid_move_id', '!=', False)]}"/>
                     </button> <!-- If  -->
                     <xpath expr="/form/sheet/group//field[@name='currency_id']" position="after">
-                        <field name="is_prepaid" attrs="{'invisible': [('is_prepaid', '=', False)]}"/>
+                        <label for="is_prepaid" attrs="{'invisible': [('is_prepaid', '=', False)]}"/>
+                        <div attrs="{'invisible': [('is_prepaid', '=', False)]}">
+                            <div>
+                                <field name="is_prepaid"/>
+                                <field name="prepaid_account_id" placeholder="Select prepaid account..." widget="selection"
+                                  attrs="{'invisible': [('is_prepaid', '=', False)], 'required': [('is_prepaid', '=', True)]}" class="oe_inline"/>
+                            </div>
+                        </div>
                     </xpath>
                     <xpath expr="/form/sheet/notebook//group//field[@name='move_id']" position="after">
                         <field name="clear_prepaid_move_id" attrs="{'invisible': [('clear_prepaid_move_id', '=', False)]}"/>

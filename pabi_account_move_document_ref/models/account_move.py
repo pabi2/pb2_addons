@@ -74,6 +74,7 @@ class AccountMove(models.Model):
         string='Doctype',
         compute='_compute_document',
         store=True,
+        index=True,
         help="Use selection as refer_type in res_doctype",
     )
     date_value = fields.Date(

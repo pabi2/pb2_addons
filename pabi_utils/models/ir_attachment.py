@@ -41,7 +41,6 @@ class IrAttachment(models.Model):
                 # with this pabi_utils
                 file_dir = file_dir.replace('/pabi_utils/models', '')
                 file_path = '%s/%s/%s' % (file_dir, folder, att.datas_fname)
-                print file_path
                 att.datas = open(file_path, 'rb').read().encode('base64')
             except ValueError, e:
                 _logger.exception(e.message)

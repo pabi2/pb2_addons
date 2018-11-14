@@ -19,7 +19,6 @@ class UpdateDateChequeReceived(models.TransientModel):
         # Payment type must be cheque
         vouchers = records.filtered(
             lambda l: l.payment_type != 'cheque' and l.number).mapped('number')
-        print vouchers
         if vouchers:
             raise ValidationError(
                 _('Following payments is not of type "Cheque"\n%s') %

@@ -10,7 +10,6 @@ class StockTransferDetails(models.TransientModel):
     @api.model
     def default_get(self, field_list):
         res = super(StockTransferDetails, self).default_get(field_list)
-        print res
         # if context is None: context = {}
         # res = super(stock_transfer_details, self).default_get(cr, uid, fields, context=context)
         # picking_ids = context.get('active_ids', [])
