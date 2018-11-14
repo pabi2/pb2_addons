@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="28" bottomMargin="141">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="141">
 	<property name="ireport.zoom" value="1.2100000000000009"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="211"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
@@ -145,21 +145,21 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				<text><![CDATA[โทรสาร :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="234" y="120" width="61" height="16"/>
+				<reportElement x="270" y="120" width="61" height="16"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="13" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ผู้ติดต่อ :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="234" y="93" width="61" height="16"/>
+				<reportElement x="270" y="93" width="61" height="16"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="13" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ผู้ส่ง : ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="234" y="136" width="61" height="16"/>
+				<reportElement x="270" y="136" width="61" height="16"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -173,28 +173,28 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				<text><![CDATA[วันที่ :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="234" y="168" width="61" height="16"/>
+				<reportElement x="270" y="168" width="61" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[จำนวน :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="268" y="168" width="201" height="16"/>
+				<reportElement x="304" y="168" width="201" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[       ..............................   หน้า]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="234" y="152" width="61" height="16"/>
+				<reportElement x="270" y="152" width="61" height="16"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[โทรสาร :]]></text>
 			</staticText>
-			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="63" y="168" width="145" height="16"/>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement x="63" y="168" width="207" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -207,50 +207,50 @@ where $X{IN,po.id,PIDS} and po.name not like '-']]>
 				</textElement>
 				<text><![CDATA[โทรศัพท์ :]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="62" y="120" width="147" height="16"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="62" y="120" width="208" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{phonesup} == null ? '-' : $F{phonesup}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="63" y="93" width="153" height="16"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="63" y="93" width="207" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier} == null ? '-' : $F{supplier}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="62" y="136" width="146" height="16"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="62" y="136" width="208" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{fax} == null ? '-' : $F{fax}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="295" y="93" width="208" height="16"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="331" y="93" width="208" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{ouname} == null ? '-' : $F{ouname}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="295" y="120" width="189" height="16"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="331" y="120" width="208" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{validated} == null ? '-' : $F{validated}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="295" y="136" width="189" height="16"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="331" y="136" width="208" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{phonevali} == null ? '-' : $F{phonevali}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="295" y="152" width="189" height="16"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="331" y="152" width="208" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
