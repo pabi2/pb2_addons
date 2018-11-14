@@ -790,15 +790,21 @@ class AccountAsset(ChartFieldAction, models.Model):
         This is a temporary used during migration period
         """
         asset = self.env['account.asset'].browse(asset_id)
+        print '----------------------------'
+        print asset
         vals = {'section_id': asset.section_id.id,
                 'project_id': asset.project_id.id,
                 'invest_asset_id': asset.invest_asset_id.id,
                 'invest_construction_phase_id':
                 asset.invest_construction_phase_id.id}
+        print vals
         asset.update_related_dimension(vals)
+        print asset
         analytic = self.env['account.analytic.account'].\
             create_matched_analytic(asset)
         asset.account_analytic_id = analytic
+        print analytic
+        print '----------------------------'
         return analytic.id
 
 
