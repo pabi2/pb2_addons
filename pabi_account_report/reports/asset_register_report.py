@@ -113,16 +113,6 @@ class AssetRegisterReport(models.TransientModel):
         'res.subsector',
         string='Subsector',
     )
-    budget = fields.Many2many(
-        'chartfield.view',
-        'budget_rel',
-        'budget_id', 'chartfield_id',
-        string='Source of Budget',
-    )
-    owner_budget = fields.Many2many(
-        'chartfield.view',
-        string='Owner Budget',
-    )
     # Note: report setting
     accum_depre_account_type = fields.Many2one(
         'account.account.type',
@@ -144,6 +134,44 @@ class AssetRegisterReport(models.TransientModel):
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
+    # More fileter
+    budget_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    budget = fields.Many2many(
+        'chartfield.view',
+        'asset_register_chartfield_rel',
+        'wizard_id', 'chartfield_id',
+        string='Source Budget',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
+    count_budget = fields.Integer(
+        compute='_compute_count_budget',
+        string='Budget Count',
+    )
+    owner_budget_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    owner_budget = fields.Many2many(
+        'chartfield.view',
+        'asset_register_owner_chartfield_rel',
+        'wizard_id', 'chartfield_id',
+        string='Owner Budget',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
+    count_owner_budget = fields.Integer(
+        compute='_compute_count_budget',
+        string='Budget Count',
+    )
+
+    @api.multi
+    @api.depends('budget', 'owner_budget')
+    def _compute_count_budget(self):
+        for rec in self:
+            rec.count_budget = len(rec.budget)
+            rec.count_owner_budget = len(rec.owner_budget)
 
     # @api.onchange('building_id')
     # def _onchange_building_id(self):
@@ -327,3 +355,27 @@ class AssetRegisterReport(models.TransientModel):
             'pabi_account_report.action_asset_register_report_form')
         action.write({'context': {'wizard_id': self.id}})
         return super(AssetRegisterReport, self).action_get_report()
+
+    @api.onchange('budget_filter')
+    def _onchange_budget_filter(self):
+        self.budget = []
+        Chartfield = self.env['chartfield.view']
+        dom = []
+        if self.budget_filter:
+            codes = self.budget_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.budget = Chartfield.search(dom, order='id')
+
+    @api.onchange('owner_budget_filter')
+    def _onchange_owner_budget_filter(self):
+        self.budget = []
+        Chartfield = self.env['chartfield.view']
+        dom = []
+        if self.owner_budget_filter:
+            codes = self.owner_budget_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.owner_budget = Chartfield.search(dom, order='id')
