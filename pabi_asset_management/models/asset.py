@@ -799,7 +799,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         # analytic = self.env['account.analytic.account'].\
         #     create_matched_analytic(asset)
         # asset.account_analytic_id = analytic
-        return analytic.id
+        return
 
 
 class AccountAssetProfile(models.Model):
