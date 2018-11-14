@@ -708,11 +708,11 @@ class AccountAsset(ChartFieldAction, models.Model):
                 debit = sum(depre_lines.mapped('debit'))
                 credit = sum(depre_lines.mapped('credit'))
                 if float_compare(debit, credit, 2) == 1:
-                    asset_line_dict['credit'] = debit - credit
-                    asset_line_dict['debit'] = False
+                    depre_line_dict['credit'] = debit - credit
+                    depre_line_dict['debit'] = False
                 else:
-                    asset_line_dict['credit'] = False
-                    asset_line_dict['debit'] = credit - debit
+                    depre_line_dict['credit'] = False
+                    depre_line_dict['debit'] = credit - debit
                 depre_move_lines_dict.append(depre_line_dict)
             # Validation
             # if not asset_move_lines_dict:
