@@ -11,8 +11,7 @@ REPORT_TYPES = [('all', 'All'),
                 ('personnel', 'Personnel')]
 
 REPORT_GROUPBY = {
-    'all': ['chartfield_id', 'activity_group_id',
-            'charge_type', 'activity_id'],
+    'all': [],
     'unit_base': ['section_id', 'activity_group_id',
                   'charge_type', 'activity_id'],
     'project_base': ['project_id', 'activity_group_id',
@@ -65,6 +64,7 @@ class SearchCommon(ChartField, object):
     chartfield_ids = fields.Many2many(
         'chartfield.view',
         string='Budgets',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
     )
     # For: Overall
     org_id = fields.Many2one(
@@ -186,11 +186,16 @@ class SearchCommon(ChartField, object):
         string='Project',
         domain=lambda self: self._get_domain_project(),
     )
+    action_type = fields.Selection(
+        [('budget_overview_report', 'Budget Overview Report'),
+         ('my_budget_report', 'My Budget Report')],
+        string='Action Type',
+    )
 
     @api.model
     def _get_report_type(self):
         report_types = REPORT_TYPES
-        if self._context.get('action', False) == 'my_budget_report':
+        if self._context.get('action_type', False) == 'my_budget_report':
             report_types = [('unit_base', 'Section'),
                             ('project_base', 'Project')]
         return report_types
@@ -250,8 +255,8 @@ class SearchCommon(ChartField, object):
         # --
         member = Member.search([('employee_id', '=', employee_id)])
         self._cr.execute("""
-            select project_id from project_res_users_rel where user_id = %s
-        """ % (user.id, ))
+            select project_id from project_hr_employee_rel where employee_id =
+            %s""" % (employee_id, ))
         project_ids = \
             Project.browse(map(lambda l: l[0], self._cr.fetchall())).ids + \
             Project.search([('analyst_employee_id', '=', employee_id)]).ids + \
@@ -285,6 +290,7 @@ class SearchCommon(ChartField, object):
         self.project_id = False
         self.invest_construction_id = False
         self.chartfield_id = False
+        self.chartfield_ids = False
         # For my budget report
         self.section_ids = False
         self.project_ids = False

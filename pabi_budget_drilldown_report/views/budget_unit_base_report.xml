@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-        <!-- Budget Overview Report -->
         <record model="ir.ui.view" id="view_budget_unit_base_report_form">
             <field name="name">view.budget.unit.base.report.form</field>
             <field name="model">budget.drilldown.report</field>
@@ -22,43 +21,6 @@
                                 <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_po_commit" sum="Total"/>
                                 <button name="open_po_commit_items" string="PO Commit Items" icon="gtk-add" type="object"/>
-                                <field name="amount_exp_commit" sum="Total"/>
-                                <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
-                                <field name="amount_total_commit" sum="Total"/>
-                                <button name="open_total_commit_items" string="Total Commit Items" icon="gtk-add" type="object"/>
-                                <field name="amount_actual" sum="Total"/>
-                                <button name="open_actual_items" string="Actual Items" icon="gtk-add" type="object"/>
-                                <field name="amount_consumed" sum="Total"/>
-                                <button name="open_consumed_items" string="Consumed Items" icon="gtk-add" type="object"/>
-                                <field name="amount_balance" sum="Total"/>
-                            </tree>
-                        </field>
-                    </group>
-                </group>
-            </field>
-        </record>
-
-        <!-- My Budget Report -->
-        <record model="ir.ui.view" id="view_my_budget_unit_base_report_form">
-            <field name="name">view.my.budget.unit.base.report.form</field>
-            <field name="model">budget.drilldown.report</field>
-            <field name="inherit_id" ref="view_my_budget_drilldown_common_form"/>
-            <field name="mode">primary</field>
-            <field name="arch" type="xml">
-                <group name="filter" position="after">
-                    <group>
-                        <field name="line_ids" nolabel="1">
-                            <tree editable="bottom">
-                                <field name="section_id"/>
-                                <field name="activity_group_id"/>
-                                <field name="charge_type"/>
-                                <field name="activity_id"/>
-                                <field name="planned_amount" sum="Total"/>
-                                <field name="released_amount" sum="Total"/>
-                                <field name="amount_pr_commit" sum="Total"/>
-                                <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
-                                <field name="amount_po_commit" sum="Total"/>
-                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_exp_commit" sum="Total"/>
                                 <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_total_commit" sum="Total"/>
