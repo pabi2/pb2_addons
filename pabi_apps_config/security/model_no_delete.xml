@@ -19,6 +19,7 @@
                   ref('pabi_asset_management.model_account_asset_transfer'),
                   ref('pabi_asset_management.model_account_asset_adjust'),
                   ref('pabi_asset_management.model_account_asset_removal'),
+                  ref('stock_request.model_stock_request'),
                 ))]]" />
             <value eval="{'perm_unlink': False}" />
         </function>
