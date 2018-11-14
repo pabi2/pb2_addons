@@ -31,7 +31,6 @@
                   <field name="subsector_ids" widget="many2many_tags"/>
               </xpath>
               <page name="time_filters" position="after">
-                  # More Filters
                   <page string="Budget Filters" name="budget_filters">
                       <group>
                           <field name="count_budget"/>
@@ -56,7 +55,6 @@
                           </group>
                       </group>
                   </page>
-                  # Report Setting
                   <page string="Report Setting">
                       <group>
                           <p class="oe_grey" colspan="4">
