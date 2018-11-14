@@ -385,6 +385,10 @@ class AccountAsset(ChartFieldAction, models.Model):
         string='Net Book Value',
         compute='_compute_net_book_value',
     )
+    account_analytic_id = fields.Many2one(
+        'account.analytic.account',
+        index=True,
+    )
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
 
@@ -779,6 +783,23 @@ class AccountAsset(ChartFieldAction, models.Model):
         move_ids = domain and domain[0][2] or []
         res['domain'] = [('id', 'in', ex_move_ids + move_ids)]
         return res
+
+    @api.model
+    def fix_asset_account_analytic_id(self, asset_id):
+        """ Given that, the asset already have dimension, but missing analytic
+        This is a temporary used during migration period
+        """
+        asset = self.env['account.asset'].browse(asset_id)
+        vals = {'section_id': asset.section_id.id,
+                'project_id': asset.project_id.id,
+                'invest_asset_id': asset.invest_asset_id.id,
+                'invest_construction_phase_id':
+                asset.invest_construction_phase_id.id}
+        asset.update_related_dimension(vals)
+        analytic = self.env['account.analytic.account'].\
+            create_matched_analytic(asset)
+        asset.account_analytic_id = analytic
+        return analytic.id
 
 
 class AccountAssetProfile(models.Model):
