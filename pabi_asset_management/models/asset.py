@@ -796,10 +796,10 @@ class AccountAsset(ChartFieldAction, models.Model):
                 'invest_construction_phase_id':
                 asset.invest_construction_phase_id.id}
         asset.update_related_dimension(vals)
-        # analytic = self.env['account.analytic.account'].\
-        #     create_matched_analytic(asset)
-        # asset.account_analytic_id = analytic
-        return True
+        analytic = self.env['account.analytic.account'].\
+            create_matched_analytic(asset)
+        asset.account_analytic_id = analytic
+        return analytic.id
 
 
 class AccountAssetProfile(models.Model):
