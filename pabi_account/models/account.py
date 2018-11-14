@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from lxml import etree
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountMove(models.Model):
@@ -144,6 +145,32 @@ class AccountAccount(models.Model):
                                                        args=args,
                                                        operator=operator,
                                                        limit=limit)
+
+    @api.multi
+    def _check_moves(self, method):
+        """ Overwrite, to remove check on inactive """
+        line_obj = self.env['account.move.line']
+        account_ids = self.search([('id', 'child_of', self.ids)]).ids
+
+        if line_obj.search([('account_id', 'in', account_ids)]):
+            # Overwrite, remove this check
+            # if method == 'write':
+            #     raise ValidationError(_('You cannot deactivate an account '
+            #                             'that contains journal items.'))
+            if method == 'unlink':
+                raise ValidationError(_('You cannot remove an account that '
+                                        'contains journal items.'))
+        # Checking whether the account is set as
+        # a property to any Partner or not
+        values = ['account.account,%s' % (account_id,)
+                  for account_id in self.ids]
+        partner_prop_acc = self.env['ir.property'].search(
+            [('value_reference', 'in', values)])
+        if partner_prop_acc:
+            raise ValidationError(_(
+                'You cannot remove/deactivate an account which '
+                'is set on a customer or supplier.'))
+        return True
 
 
 class AccountJournal(models.Model):
