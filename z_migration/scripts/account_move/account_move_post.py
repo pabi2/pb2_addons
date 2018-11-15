@@ -21,7 +21,7 @@ Move = connection.get_model('account.move')
 dom = [('journal_id', '=', 11), ('state', '=', 'draft')]
 
 # Search Invoice
-moves = Move.search_read(dom, ['id'])
+moves = Move.search_read(dom, ['id'], order='id asc')
 
 log_inv_ids = [[], []]
 logger = log.setup_custom_logger('account_move_post')
