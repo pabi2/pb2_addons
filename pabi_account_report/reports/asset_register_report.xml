@@ -18,7 +18,6 @@
                   <field name="asset_state"/>
                   <field name="asset_profile_ids" widget="many2many_tags"/>
                   <field name="asset_status_ids" widget="many2many_tags"/>
-                  <field name="asset_ids" widget="many2many_tags"/>
                   <field name="building_ids" widget="many2many_tags"/>
                   <!-- <field name="account_asset_id" widget="many2many_tags"/> -->
                   <field name="responsible_person_ids" widget="many2many_tags"/>
@@ -31,6 +30,26 @@
                   <field name="subsector_ids" widget="many2many_tags"/>
               </xpath>
               <page name="time_filters" position="after">
+                  <page string="Asset Filters" name="asset_filters">
+                      <group>
+                          <field name="count_asset"/>
+                      </group>
+                      <group>
+                          <group string="Paste list of code to search">
+                              <field name="asset_filter" placeholder="Paste list of asset codes" nolabel="1"/>
+                          </group>
+                          <group string="Assets">
+                              <field name="asset_ids" nolabel="1">
+                                  <tree editable="bottom">
+                                      <field name="code" readonly="1"/>
+                                      <field name="name" readonly="1"/>
+                                      <field name="status" readonly="1"/>
+                                      <field name="state" readonly="1"/>
+                                  </tree>
+                              </field>
+                          </group>
+                      </group>
+                  </page>
                   <page string="Budget Filters" name="budget_filters">
                       <group>
                           <field name="count_budget"/>

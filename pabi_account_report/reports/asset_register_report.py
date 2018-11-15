@@ -57,9 +57,17 @@ class AssetRegisterReport(models.TransientModel):
         'account.asset.status',
         string='Asset Status',
     )
+    asset_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
     asset_ids = fields.Many2many(
         'account.asset',
         string='Asset Code',
+    )
+    count_asset = fields.Integer(
+        compute='_compute_count_asset',
+        string='Asset Count',
     )
     asset_profile_ids = fields.Many2many(
         'account.asset.profile',
@@ -167,12 +175,17 @@ class AssetRegisterReport(models.TransientModel):
     )
 
     @api.multi
+    @api.depends('asset_ids')
+    def _compute_count_asset(self):
+        for rec in self:
+            rec.count_asset = len(rec.asset_ids)
+
+    @api.multi
     @api.depends('budget', 'owner_budget')
     def _compute_count_budget(self):
         for rec in self:
             rec.count_budget = len(rec.budget)
             rec.count_owner_budget = len(rec.owner_budget)
-
     # @api.onchange('building_id')
     # def _onchange_building_id(self):
     #     self.floor_id = False
@@ -355,6 +368,18 @@ class AssetRegisterReport(models.TransientModel):
             'pabi_account_report.action_asset_register_report_form')
         action.write({'context': {'wizard_id': self.id}})
         return super(AssetRegisterReport, self).action_get_report()
+
+    @api.onchange('asset_filter')
+    def _onchange_asset_filter(self):
+        self.asset_ids = []
+        Asset = self.env['account.asset']
+        dom = []
+        if self.asset_filter:
+            codes = self.asset_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.asset_ids = Asset.search(dom, order='id')
 
     @api.onchange('budget_filter')
     def _onchange_budget_filter(self):
