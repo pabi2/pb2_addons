@@ -60,6 +60,10 @@ class AccountMove(models.Model):
             ])
             if not analytic_lines:
                 continue
+            # If none of analytic line is budget
+            if analytic_lines.filtered(  # If line contain revenue
+                    lambda l: l.activity_id.budget_method == 'revenue'):
+                continue
             doc_date = move.date
             doc_lines = Budget.convert_lines_to_doc_lines(analytic_lines)
             res = Budget.post_commit_budget_check(doc_date, doc_lines)
