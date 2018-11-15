@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="view_purchase_type_form" model="ir.ui.view">
+            <field name="name">purchase.type.form</field>
+            <field name="model">purchase.type</field>
+            <field name="inherit_id" ref="pabi_procurement.view_purchase_type_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="to_receive"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
