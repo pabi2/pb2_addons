@@ -10,6 +10,7 @@
     "author": "Kitti U.",
     "license": "AGPL-3",
     "depends": [
+        "hr",
         "pabi_base",
         "pabi_chartfield",
         "pabi_budget_plan_monitor",  # Get prev fy from monitor report
@@ -23,6 +24,7 @@
         "wizard/project_budget_release_wizard.xml",
         "views/account_budget_view.xml",
         "views/res_project_view.xml",
+        "views/hr_view.xml",
     ],
     "application": False,
     "installable": True,

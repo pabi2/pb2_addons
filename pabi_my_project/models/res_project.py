@@ -353,10 +353,10 @@ class ResProject(LogCommon, models.Model):
         readonly=True,
     )
     more_project_member_ids = fields.Many2many(
-        'res.users',
-        'project_res_users_rel',
+        'hr.employee',
+        'project_hr_employee_rel',
         'project_id',
-        'user_id',
+        'employee_id',
         string='More Project Member',
     )
     conversion_project = fields.Boolean(
