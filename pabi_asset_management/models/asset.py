@@ -789,6 +789,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         """ Given that, the asset already have dimension, but missing analytic
         This is a temporary used during migration period
         """
+        self = self.with_context(no_test_chartfield_active=True)
         asset = self.env['account.asset'].browse(asset_id)
         vals = {'section_id': asset.section_id.id,
                 'project_id': asset.project_id.id,
