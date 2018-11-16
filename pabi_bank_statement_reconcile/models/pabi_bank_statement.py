@@ -5,6 +5,7 @@ from openerp.exceptions import ValidationError
 
 class PABIBankStatement(models.Model):
     _name = 'pabi.bank.statement'
+    _inherit = ['mail.thread']
     _description = 'This model hold bank statement generated within Odoo'
 
     name = fields.Char(
