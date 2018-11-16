@@ -1,0 +1,374 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        # SPA
+        <record id="view_res_spa_form" model="ir.ui.view">
+            <field name="name">view.res.spa.form</field>
+            <field name="model">res.spa</field>
+            <field name="inherit_id" ref="pabi_base.view_res_spa_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Budget Monitor">
+                        <separator string="Expense"/>
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Revenue"/>
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        # Mission
+        <record id="view_res_mission_form" model="ir.ui.view">
+            <field name="name">view.res.mission.form</field>
+            <field name="model">res.mission</field>
+            <field name="inherit_id" ref="pabi_base.view_res_mission_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Budget Monitor">
+                        <separator string="Expense"/>
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Revenue"/>
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        # Tag Type
+        <record id="view_res_tag_type_form" model="ir.ui.view">
+            <field name="name">view.res.tag.type.form</field>
+            <field name="model">res.tag.type</field>
+            <field name="inherit_id" ref="pabi_base.view_res_tag_type_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Budget Monitor">
+                        <separator string="Expense"/>
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Revenue"/>
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        # Tag
+        <record id="view_res_tag_form" model="ir.ui.view">
+            <field name="name">view.res.tag.form</field>
+            <field name="model">res.tag</field>
+            <field name="inherit_id" ref="pabi_base.view_res_tag_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Budget Monitor">
+                        <separator string="Expense"/>
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Revenue"/>
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        # Functional Area
+        <record id="view_res_functional_area_form" model="ir.ui.view">
+            <field name="name">view.res.functional.area.form</field>
+            <field name="model">res.functional.area</field>
+            <field name="inherit_id" ref="pabi_base.view_res_functional_area_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Budget Monitor">
+                        <separator string="Expense"/>
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Revenue"/>
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        # Program Group
+        <record id="view_res_program_group_form" model="ir.ui.view">
+            <field name="name">view.res.program.group.form</field>
+            <field name="model">res.program.group</field>
+            <field name="inherit_id" ref="pabi_base.view_res_program_group_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Budget Monitor">
+                        <separator string="Expense"/>
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Revenue"/>
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        # Program
+        <record id="view_res_program_form" model="ir.ui.view">
+            <field name="name">view.res.program.form</field>
+            <field name="model">res.program</field>
+            <field name="inherit_id" ref="pabi_base.view_res_program_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Budget Monitor">
+                        <separator string="Expense"/>
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Revenue"/>
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        # Project Group
+        <record id="view_res_project_group_form" model="ir.ui.view">
+            <field name="name">view.res.project.group.form</field>
+            <field name="model">res.project.group</field>
+            <field name="inherit_id" ref="pabi_base.view_res_project_group_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Budget Monitor">
+                        <separator string="Expense"/>
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Revenue"/>
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        # Project
+        <record id="view_res_project_form" model="ir.ui.view">
+            <field name="name">view.res.project.form</field>
+            <field name="model">res.project</field>
+            <field name="inherit_id" ref="pabi_base.view_res_project_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Budget Monitor">
+                        <separator string="Expense"/>
+                        <field name="monitor_expense_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_pr_commit"/>
+                                <field name="amount_po_commit"/>
+                                <field name="amount_exp_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                        <separator string="Revenue"/>
+                        <field name="monitor_revenue_ids">
+                            <tree string="Monitor" editable="bottom">
+                                <field name="fiscalyear_id"/>
+                                <field name="charge_type"/>
+                                <field name="planned_amount"/>
+                                <field name="released_amount"/>
+                                <field name="amount_so_commit"/>
+                                <field name="amount_actual"/>
+                                <field name="amount_consumed"/>
+                                <field name="amount_balance"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

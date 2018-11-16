@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="stock_inventory" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
+	<property name="ireport.zoom" value="1.2100000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1" isDefault="true" fill="Solid" lineSpacing="Single" fontSize="13" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+	<style name="table" lineSpacing="Single">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF" lineSpacing="Single">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF" lineSpacing="Single">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1">
+		<parameter name="ids" class="java.lang.Integer"/>
+		<queryString>
+			<![CDATA[select
+sil.product_name,
+sil.location_name,
+sil.product_qty,
+pu.name unit
+from stock_inventory_line sil
+left join product_uom pu on sil.product_uom_id  = pu.id
+WHERE sil.inventory_id = $P{ids}]]>
+		</queryString>
+		<field name="product_name" class="java.lang.String">
+			<fieldDescription><![CDATA[Supplier Product Name]]></fieldDescription>
+		</field>
+		<field name="location_name" class="java.lang.String">
+			<fieldDescription><![CDATA[Location Name]]></fieldDescription>
+		</field>
+		<field name="product_qty" class="java.math.BigDecimal"/>
+		<field name="unit" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="IDS" class="java.lang.Object"/>
+	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/jan/workspace/ERP/PABI2/odoo/customised_module/pb2_pabi/pabi_forms/jrxml_reports/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+si.id si_id,
+si.name,
+si.date
+
+from stock_inventory si
+WHERE $X{IN, si.id, PIDS}]]>
+	</queryString>
+	<field name="si_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[SIN No]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String"/>
+	<field name="date" class="java.util.Date">
+		<fieldDescription><![CDATA[Expiration Date]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="32" splitType="Stretch">
+			<staticText>
+				<reportElement style="style1" x="191" y="0" width="155" height="32"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font fontName="SansSerif" size="18" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ใบปรับสต็อค]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="31" width="555" height="1"/>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="117" splitType="Stretch">
+			<staticText>
+				<reportElement style="style1" x="0" y="96" width="130" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ชื่อเอกสารปรับสต็อค]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="357" y="96" width="130" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[วันที่ดำเนินการ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement style="style1" x="0" y="40" width="156" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[สถานที่เก็บ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="177" y="40" width="130" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ชื่อสินค้า]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="60" width="555" height="1"/>
+			</line>
+			<staticText>
+				<reportElement style="style1" x="326" y="40" width="130" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[จำนวนที่จะปรับสต็อค]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="456" y="40" width="130" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun Bold.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[จำนวนที่มีในระบบ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="15" y="0" width="266" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1"/>
+			</line>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="376" y="0" width="179" height="20"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="44" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table" x="0" y="0" width="555" height="44"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Table Dataset 1">
+						<datasetParameter name="ids">
+							<datasetParameterExpression><![CDATA[$F{si_id}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="167">
+						<jr:detailCell style="table_TD" height="40" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="167" height="40"/>
+								<textElement lineSpacing="Single">
+									<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{location_name}.replace("Physical Locations / ","")]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="149">
+						<jr:detailCell style="table_TD" height="40" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="149" height="40"/>
+								<textElement lineSpacing="Single">
+									<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{product_name}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90">
+						<jr:detailCell style="table_TD" height="40" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="149">
+						<jr:detailCell style="table_TD" height="40" rowSpan="1">
+							<box>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="95" height="40"/>
+								<textElement textAlignment="Right" lineSpacing="Single">
+									<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Number"><![CDATA[$F{product_qty}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="107" y="0" width="42" height="40"/>
+								<textElement lineSpacing="Single">
+									<font fontName="SansSerif" pdfFontName="THSarabun.ttf"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{unit}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="112"/>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

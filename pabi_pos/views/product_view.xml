@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <menuitem id="base.menu_sale_config_sales" name="Sales"
+          parent="base.menu_base_config" sequence="5" groups="base.group_sale_manager"/>
+
+        <record id="view_product_category_tree" model="ir.ui.view">
+            <field name="name">view.product.category.tree</field>
+            <field name="model">product.category</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <tree string="Automatic Workflow" editable="1" create="0" delete="0">
+                    <field name="name" readonly="1"/>
+                    <field name="property_account_income_categ" readonly="1"/>
+                    <field name="property_account_expense_categ" readonly="1"/>
+                    <field name="activity_group_id"/>
+                    <field name="activity_id"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_pos_product_vs_activity" model="ir.actions.act_window">
+            <field name="name">Product Cat. &amp; AG/A</field>
+            <field name="res_model">product.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" eval="view_product_category_tree"/>
+        </record>
+        <menuitem action="action_pos_product_vs_activity" id="menu_pos_product_vs_activity" parent="base.menu_sale_config_sales" sequence="30"/>
+    </data>
+</openerp>

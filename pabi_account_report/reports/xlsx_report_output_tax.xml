@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_output_tax_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.output.tax.form</field>
+            <field name="model">xlsx.report.output.tax</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <field name="period_start_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="period_end_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="period_end_id" position="after">
+                    <field name="calendar_period_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end)]"/>
+                </field>
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Taxbranch Filters">
+                        <group>
+                            <field name="taxbranch_id"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_output_tax_form" model="ir.actions.act_window">
+            <field name="name">Output Tax</field>
+            <field name="res_model">xlsx.report.output.tax</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'lang': 'th_TH'}</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_output_tax"
+            name="Output Tax"
+            parent="menu_pabi_receivable_report"
+            action="action_xlsx_report_output_tax_form"
+            sequence="10"/>
+    </data>
+</openerp>

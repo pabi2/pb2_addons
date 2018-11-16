@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R_4" language="groovy" pageWidth="1417" pageHeight="595" orientation="Landscape" columnWidth="1377" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.100000000000001"/>
+	<property name="ireport.x" value="378"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT po.id,
+pd.name as pd_number,
+pd.objective,
+(SELECT COUNT(*) FROM purchase_requisition_line pdl
+WHERE pdl.requisition_id = pd.id) qty,
+pd.amount_total,
+pm.name as method,
+po.name as rfq_number,
+(SELECT CONCAT(COALESCE(rpt.name || ' ',''),rp.name) FROM res_partner rp
+LEFT JOIN res_partner_title rpt
+ON rpt.id = rp.title
+WHERE rp.id = po.partner_id) as rfq_supplier,
+(SELECT rp.taxbranch FROM res_partner rp
+WHERE rp.id = po.partner_id) as rfq_taxbranch,
+po.amount_total as rfq_amount_total,
+selected_po.id
+
+FROM purchase_requisition pd
+LEFT JOIN operating_unit ou
+ON ou.id = pd.operating_unit_id
+LEFT JOIN purchase_method pm
+ON pm.id = pd.purchase_method_id
+LEFT JOIN purchase_price_range ppr
+ON ppr.id = pd.purchase_price_range_id
+LEFT JOIN purchase_order po
+ON po.requisition_id = pd.id AND  po.order_type = 'quotation'
+LEFT join purchase_order selected_po
+ON selected_po.requisition_id = pd.id AND selected_po.order_type LIKE 'quotation' AND selected_po.state LIKE 'confirmed'
+
+WHERE pd.create_date BETWEEN '2016-08-25' AND '2016-08-28']]>
+	</queryString>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="pd_number" class="java.lang.String"/>
+	<field name="objective" class="java.lang.String">
+		<fieldDescription><![CDATA[Objective]]></fieldDescription>
+	</field>
+	<field name="qty" class="java.lang.Long">
+		<fieldDescription><![CDATA[Quantity]]></fieldDescription>
+	</field>
+	<field name="amount_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Total]]></fieldDescription>
+	</field>
+	<field name="method" class="java.lang.String">
+		<fieldDescription><![CDATA[Computation Method]]></fieldDescription>
+	</field>
+	<field name="rfq_number" class="java.lang.String"/>
+	<field name="rfq_supplier" class="java.lang.String"/>
+	<field name="rfq_taxbranch" class="java.lang.String"/>
+	<field name="rfq_amount_total" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="69">
+			<staticText>
+				<reportElement x="0" y="0" width="1377" height="34"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[สำนักงานพัฒนาวิทยาศาสตร์ และเทคโนโลยี]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="339" y="34" width="436" height="35"/>
+				<textElement textAlignment="Right" lineSpacing="Single">
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[รายงานสรุปผลการดำเนินการจัดซื้อจัดจ้าง ระหว่าง]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="895" y="34" width="33" height="35"/>
+				<textElement lineSpacing="Single">
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[ถึง]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="35" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[ลำดับ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="35" y="0" width="86" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[เลขที่เอกสาร]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="121" y="0" width="218" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[รายละเอียดจัดซื้อ/จัดจ้าง]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="339" y="0" width="82" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[จำนวน]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="421" y="0" width="122" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[งบประมาณ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="543" y="0" width="142" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[วิธีการ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="685" y="0" width="243" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[ผู้เสนอราคา และราคาที่เสนอ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="928" y="0" width="250" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[ผู้ที่ได้รับการคัดเลือกและราคา]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1178" y="0" width="199" height="21"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[เหตุผลที่คัดเลือก]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch"/>
+	</detail>
+</jasperReport>

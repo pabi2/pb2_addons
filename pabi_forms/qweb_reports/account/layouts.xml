@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- STYLE -->
+        <template id="style">
+            .pabi-header, .pabi-page, .pabi-footer, .pabi-logo,  .pabi-title-header-th,
+            .pabi-title-header-en, .pabi-doc-type, .pabi-hidden, .pabi-table-doc-header,
+            .pabi-table-payment-type-header, .pabi-col-doc-header, .pabi-col-doc,
+            .pabi-text-header, .pabi-col-header, .pabi-col-detail, .pabi-col-footer {
+                line-height: 20px !important;
+            }
+            .pabi-header, .pabi-page, .pabi-footer {
+                font-size: 16px !important;
+                /*font-family: 'Tahoma' !important;*/
+            }
+            .pabi-logo {
+                position: absolute !important;
+                z-index: -1 !important;
+                width: 150px !important;
+                top: 0px !important;
+                right: 0px !important;
+            }
+            .pabi-title-header-th {
+                font-size: 28px !important;
+                margin-bottom: 10px !important;
+
+            }
+            .pabi-title-header-en {
+                font-size: 22px !important;
+                margin-bottom: 10px !important;
+            }
+            .pabi-doc-type {
+                font-size: 48px !important;
+                position: absolute !important;
+                bottom: 12px !important;
+            }
+            .pabi-hidden {
+                visibility: hidden !important;
+            }
+            .pabi-table-doc-header, .pabi-table-payment-type-header {
+                width: 100% !important;
+            }
+            .pabi-col-doc-header {
+                border-top: 1px solid !important;
+                border-bottom: 1px solid !important;
+                width: 50% !important;
+                padding-top: 0px !important;
+                padding-bottom: 0px !important;
+            }
+            .pabi-col-doc {
+                border: 0px !important;
+                padding: 0px !important;
+            }
+            .pabi-text-header {
+                padding: 0px !important;
+                border-top: 1px solid !important;
+                border-bottom: 1px solid !important;
+                height: 100px !important;
+            }
+            .pabi-col-header {
+                border-left: 0px !important;
+                border-right: 0px !important;
+                border-top: 0px !important;
+                border-bottom: 1px solid !important;
+                padding-top: 0px !important;
+                padding-bottom: 0px !important
+            }
+            .pabi-col-detail {
+                border: 0px !important;
+                padding-top: 0px !important;
+                padding-bottom: 0px !important;
+            }
+            .pabi-col-footer {
+                border-left: 0px !important;
+                border-right: 0px !important;
+                border-top: 1px solid !important;
+                border-bottom: 1px solid !important;
+                padding-top: 0px !important;
+                padding-bottom: 0px !important;
+            }
+        </template>
+
+        <!-- LAYOUT -->
+        <template id="layout" inherit_id="report.layout">
+            <xpath expr="//style" position="inside">
+                <t t-call="pabi_forms.style"/>
+            </xpath>
+        </template>
+
+        <!-- Clearing Doc -->
+        <template id="account_clearing_doc_header">
+            <t t-if="o.doctype in ['payment', 'receipt', 'bank_receipt']">
+                <t t-set="lines" t-value="[]"/>
+                <t t-if="o.document_id">
+                    <t t-if="o.doctype in ['payment', 'receipt']">
+                        <t t-set="lines" t-value="o.document_id.line_ids.sorted(key=lambda l: l.move_line_id.name)"/>
+                    </t>
+                    <t t-if="o.doctype in ['bank_receipt']">
+                        <t t-set="lines" t-value="o.document_id.bank_intransit_ids.sorted(key=lambda l: l.ref)"/>
+                    </t>
+                </t>
+                <tr>
+                    <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" style="border: 0px; padding: 0px;">
+                        <table class="pabi-table-doc-header">
+                            <tr>
+                                <td class="text-center pabi-col-doc-header">
+                                    <t t-if="o.doctype in ['payment', 'receipt']">
+                                        Clearing Doc.
+                                    </t>
+                                    <t t-if="o.doctype in ['bank_receipt']">
+                                        Doc.No.
+                                    </t>
+                                </td>
+                                <td colspan="2" class="text-center pabi-col-doc-header">Amount</td>
+                            </tr>
+                            <tr t-foreach="lines" t-as="line">
+                                <td class="text-center pabi-col-doc">
+                                    <t t-if="o.doctype in ['payment', 'receipt'] and line.invoice_id">
+                                        <span t-field="line.invoice_id.number"/>
+                                    </t>
+                                    <t t-if="o.doctype in ['bank_receipt'] and line.document_id">
+                                        <span t-esc="line.document_id.display_name.split(' ')[0]"/>
+                                    </t>
+                                </td>
+                                <td class="text-right pabi-col-doc">
+                                    <t t-if="o.doctype in ['payment', 'receipt']">
+                                        <span t-field="line.amount"/>
+                                    </t>
+                                    <t t-if="o.doctype in ['bank_receipt']">
+                                        <span t-esc="'{:,.2f}'.format(line.debit - line.credit)"/>
+                                    </t>
+                                </td>
+                                <td class="pabi-col-doc" style="width: 12%;"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </t>
+        </template>
+
+        <!-- Narration -->
+        <template id="account_naration_header">
+            <tr>
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" class="pabi-text-header">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 50px;">Text:</td>
+                            <td><span t-field="o.narration"/></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </template>
+
+        <!-- Payment Type -->
+        <template id="account_payment_type">
+            <tr>
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" style="border: 0px; padding: 0px;">
+                    <table class="pabi-table-payment-type-header">
+                        <tr>
+                            <td style="width: 50%;">
+                                <span>Payment Type: </span>
+                                <t t-if="o.document_id">
+                                    <span t-field="o.document_id.payment_type"/>
+                                </t>
+                            </td>
+                            <td style="width: 50%;">
+                                <span>Bank/Branch: </span>
+                                <t t-set="bank" t-value="[]"/>
+                                <t t-if="o.journal_id and o.journal_id.bank_account_ids and o.journal_id.bank_account_ids[0].bank and o.journal_id.bank_account_ids[0].bank.abbrev">
+                                    <t t-set="bank" t-value="bank + [o.journal_id.bank_account_ids[0].bank.abbrev]"/>
+                                </t>
+                                <t t-if="o.journal_id and o.journal_id.bank_account_ids and o.journal_id.bank_account_ids[0].bank_branch and o.journal_id.bank_account_ids[0].bank_branch.name">
+                                    <t t-set="bank" t-value="bank + [o.journal_id.bank_account_ids[0].bank_branch.name]"/>
+                                </t>
+                                <span t-esc="' '.join(bank)"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%;">
+                                <t t-if="o.document_id">
+                                    <t t-if="o.document_id.payment_type == 'transfer'">
+                                        <span>Transfer Type: </span>
+                                        <span t-field="o.document_id.transfer_type"/>
+                                    </t>
+                                    <t t-if="o.document_id.payment_type == 'cheque'">
+                                        <span>Cheque Number: </span>
+                                        <span t-field="o.document_id.number_cheque"/>
+                                    </t>
+                                </t>
+                            </td>
+                            <td style="width: 50%;">
+                                <span>Value Date: </span>
+                                <t t-if="o.document_id and o.document_id.date_value">
+                                    <span t-field="o.document_id.date_value"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%; border-bottom: 1px solid; padding-bottom: 0px;">
+                                <span>Amount: </span>
+                                <t t-if="o.doctype in ['payment']">
+                                    <span t-field="o.document_id.amount"/>
+                                </t>
+                                <t t-if="not o.doctype in ['payment']">
+                                    <span t-field="o.amount"/>
+                                </t>
+                            </td>
+                            <td style="width: 50%; border-bottom: 1px solid; padding-bottom: 0px;">
+                                <span>PE Number: </span>
+                                <t t-if="o.document_id">
+                                    <span t-field="o.document_id.payment_export_id.name"/>
+                                </t>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </template>
+
+        <!-- Column Header -->
+        <template id="account_column_header">
+            <tr>
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" class="text-center" style="border: 0px; padding: 0px;">AMOUNT (THB)</td>
+            </tr>
+            <tr>
+                <td class="text-center pabi-col-header">Activity</td>
+                <td class="text-center pabi-col-header">Partner</td>
+                <td class="text-center pabi-col-header">Account Code</td>
+                <td class="text-center pabi-col-header">Account Name</td>
+                <t t-if="o.line_id.mapped('asset_id')">
+                    <td class="text-center pabi-col-header">Asset Code</td>
+                </t>
+                <td class="text-center pabi-col-header">Dr</td>
+                <td class="text-center pabi-col-header">Cr</td>
+                <td class="text-center pabi-col-header">Tax</td>
+                <td class="text-center pabi-col-header">Org</td>
+                <td class="text-center pabi-col-header">Budget</td>
+                <td class="text-center pabi-col-header">Job Order</td>
+            </tr>
+        </template>
+
+        <!-- Column Detail -->
+        <template id="account_column_detail">
+            <tr t-foreach="o.line_id.sorted(key=lambda l: (l.debit, l.credit), reverse=True)" t-as="line">
+                <td class="pabi-col-detail">
+                    <t t-if="line.activity_id">
+                        <span t-field="line.activity_id.name"/>
+                    </t>
+                    <t t-if="not line.activity_id and line.activity_rpt_id">
+                        <span t-field="line.activity_rpt_id.name"/>
+                    </t>
+                </td>
+                <td class="pabi-col-detail">
+                    <t t-if="line.account_id and line.account_id.type in ['receivable', 'payable']">
+                        <t t-if="line.partner_id">
+                            <t t-set="partner_name" t-value="[]"/>
+                            <t t-if="line.partner_id.search_key">
+                                <t t-set="partner_name" t-value="partner_name + [line.partner_id.search_key]"/>
+                            </t>
+                            <t t-if="line.partner_id.name">
+                                <t t-set="partner_name" t-value="partner_name + [line.partner_id.name]"/>
+                            </t>
+                            <span t-esc="' '.join(partner_name)"/>
+                        </t>
+                    </t>
+                </td>
+                <td class="text-center pabi-col-detail">
+                    <t t-if="line.account_id">
+                        <span t-field="line.account_id.code"/>
+                    </t>
+                </td>
+                <td class="pabi-col-detail">
+                    <t t-if="line.account_id">
+                        <span t-field="line.account_id.name"/>
+                    </t>
+                </td>
+                <t t-if="o.line_id.mapped('asset_id')">
+                    <td class="pabi-col-detail">
+                        <t t-if="line.asset_id">
+                            <span t-field="line.asset_id.code"/>
+                        </t>
+                    </td>
+                </t>
+                <td class="text-right pabi-col-detail">
+                    <t t-if="line.debit">
+                        <span t-field="line.debit"/>
+                    </t>
+                </td>
+                <td class="text-right pabi-col-detail">
+                    <t t-if="line.credit">
+                        <span t-field="line.credit"/>
+                    </t>
+                </td>
+                <td class="text-center pabi-col-detail">
+                    <t t-if="line.tax_code_id and len(line.tax_code_id.name.split('_Base')) == 1">
+                        <span t-field="line.tax_code_id.code"/>
+                    </t>
+                </td>
+                <td class="text-center pabi-col-detail">
+                    <t t-if="line.org_id">
+                        <span t-field="line.org_id.name_short"/>
+                    </t>
+                </td>
+                <td class="pabi-col-detail">
+                    <t t-set="budget" t-value="''"/>
+                    <t t-if="line.project_id and line.project_id.code and (budget == '')">
+                        <t t-set="budget" t-value="line.project_id.code"/>
+                    </t>
+                    <t t-if="line.section_id and line.section_id.code and (budget == '')">
+                        <t t-set="budget" t-value="line.section_id.code"/>
+                    </t>
+                    <t t-if="line.invest_asset_id and line.invest_asset_id.code and (budget == '')">
+                        <t t-set="budget" t-value="line.invest_asset_id.code"/>
+                    </t>
+                    <t t-if="line.invest_construction_id and line.invest_construction_id.code and (budget == '')">
+                        <t t-set="budget" t-value="line.invest_construction_id.code"/>
+                    </t>
+                    <t t-if="line.personnel_costcenter_id and line.personnel_costcenter_id.code and (budget == '')">
+                        <t t-set="budget" t-value="line.personnel_costcenter_id.code"/>
+                    </t>
+                    <span t-esc="budget"/>
+                </td>
+                <td class="pabi-col-detail">
+                    <t t-if="line.cost_control_id">
+                        <span t-field="line.cost_control_id.code"/>
+                    </t>
+                </td>
+            </tr>
+        </template>
+
+        <!-- HEADER -->
+        <template id="account_layout_header">
+            <div class="header pabi-header">
+                <div class="row">
+                    <img src="/pabi_forms/static/src/img/logo_nstda.gif" class="pabi-logo"/>
+                    <div class="col-xs-12 text-center pabi-title-header-th">
+                        <strong>-- ปกปิด --</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 text-center pabi-title-header-en">
+                        <t t-if="o.doctype in ['out_invoice', 'out_refund']">
+                            <strong>AR VOUCHER</strong>
+                        </t>
+                        <t t-if="o.doctype in ['in_invoice', 'in_refund']">
+                            <strong>AP VOUCHER</strong>
+                        </t>
+                        <t t-if="o.doctype in ['payment']">
+                            <strong>Payment Voucher</strong>
+                        </t>
+                        <t t-if="o.doctype in ['receipt']">
+                            <strong>Receipt Voucher</strong>
+                        </t>
+                        <t t-if="o.doctype in ['adjustment']">
+                            <t t-if="o.journal_id and o.journal_id.code == 'AJB'">
+                                <strong>JV VOUCHER</strong>
+                            </t>
+                            <t t-if="not o.journal_id or (o.journal_id and o.journal_id.code != 'AJB')">
+                                <strong>JN VOUCHER</strong>
+                            </t>
+                        </t>
+                        <t t-if="o.doctype in ['bank_receipt']">
+                            <strong>Received Voucher</strong>
+                        </t>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <span>Doc. Date: </span>
+                        <span t-field="o.date_document"/>
+                    </div>
+                    <div class="col-xs-3">
+                        <span>Posting Date: </span>
+                        <span t-field="o.date"/>
+                    </div>
+                    <div class="col-xs-5">
+                        <span>Doc. Type: </span>
+                        <t t-set="doctype" t-value="''"/>
+                        <t t-if="o.name != '/'">
+                            <t t-set="doctype" t-value="o.name[0:3]"/>
+                            <t t-if="doctype[-1] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '/', '.', '-']">
+                                <t t-set="doctype" t-value="doctype[0:2]"/>
+                            </t>
+                        </t>
+                        <strong class="pabi-doc-type" t-esc="doctype"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <span>Currency: </span>
+                        <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'bank_receipt', 'salary_expense', 'receipt', 'payment']">
+                            <t t-if="o.document_id and o.document_id.currency_id">
+                                <span t-field="o.document_id.currency_id.name"/>
+                            </t>
+                        </t>
+                        <t t-if="o.doctype in ['adjustment', 'interface_account']">
+                            <span>THB</span>
+                        </t>
+                    </div>
+                    <div class="col-xs-3">
+                        <span>Rate: </span>
+                        <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'bank_receipt', 'salary_expense', 'receipt', 'payment']">
+                            <t t-if="o.document_id and o.document_id.currency_id">
+                                <span t-esc="'{:,.2f}'.format(o.document_id.currency_id.rate_input_silent)"/>
+                            </t>
+                        </t>
+                        <t t-if="o.doctype in ['adjustment', 'interface_account']">
+                            <span t-esc="'{:,.2f}'.format(1.0)"/>
+                        </t>
+                    </div>
+                    <div class="col-xs-5">
+                        <span>Doc. No.: </span>
+                        <span t-field="o.name"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <span>Reference Doc: </span>
+                        <t t-if="o.document_id">
+                            <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'adjustment']">
+                                <span t-field="o.document_id.supplier_invoice_number"/>
+                            </t>
+                            <t t-if="o.doctype in ['payment']">
+                                <t t-if="o.document_id.reference">
+                                    <span t-field="o.document_id.reference"/>
+                                </t>
+                                <t t-if="not o.document_id.reference and o.document_id.wht_cert_ids">
+                                    <span t-field="o.document_id.wht_cert_ids[0].sequence_display"/>
+                                </t>
+                            </t>
+                            <t t-if="o.doctype in ['receipt']">
+                                <span t-field="o.document_id.number_preprint"/>
+                            </t>
+                            <t t-if="o.doctype in ['interface_account']">
+                                <t t-if="o.document_id.type in ['invoice', 'reverse']">
+                                    <span t-field="o.ref"/>
+                                </t>
+                                <t t-if="o.document_id.type in ['voucher']">
+                                    <span t-field="o.document_id.preprint_number"/>
+                                </t>
+                            </t>
+                        </t>
+                    </div>
+                    <div class="col-xs-3">
+                        <t t-if="o.doctype in ['in_invoice', 'in_refund']">
+                            <span>Income Tax Form: </span>
+                            <t t-if="o.document_id">
+                                <span t-field="o.document_id.income_tax_form"/>
+                            </t>
+                        </t>
+                    </div>
+                    <div class="col-xs-5">
+                        <span>Source Doc.: </span>
+                        <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']">
+                            <t t-if="o.document_id and o.document_id.source_document">
+                                <t t-set="source_doc" t-value="[o.document_id.source_document]"/>
+                                <t t-if="o.document_id.source_document_id and o.document_id.source_document_id._name != 'sale.order' and o.document_id.source_document_id.contract_id and o.document_id.source_document_id.contract_id.display_code">
+                                    <t t-set="source_doc" t-value="source_doc + [o.document_id.source_document_id.contract_id.display_code]"/>
+                                </t>
+                                <span t-esc="' '.join(source_doc)"/>
+                            </t>
+                            <t t-if="not o.document_id or (o.document_id and not o.document_id.source_document)">
+                                <span t-field="o.ref"/>
+                            </t>
+                        </t>
+                        <t t-if="o.doctype in ['receipt', 'bank_receipt']">
+                            <span t-field="o.ref"/>
+                        </t>
+                        <t t-if="o.doctype in ['adjustment']">
+                            <t t-if="o.document_id and o.document_id.source_document">
+                                <span t-field="o.document_id.source_document"/>
+                            </t>
+                            <t t-if="not o.document_id or (o.document_id and not o.document_id.source_document)">
+                                <span t-field="o.ref"/>
+                            </t>
+                        </t>
+                        <t t-if="o.doctype in ['interface_account']">
+                            <span t-field="o.document_id.name"/>
+                        </t>
+                    </div>
+                </div>
+                <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']">
+                    <div class="row">
+                        <div class="col-xs-7">
+                            <span>Billing No.: </span>
+                            <t t-if="o.document_id and o.document_id.purchase_billing_id">
+                                <span t-field="o.document_id.purchase_billing_id.name"/>
+                            </t>
+                        </div>
+                        <div class="col-xs-5">
+                            <span class="pabi-hidden">Source Doc.: </span>
+                            <t t-if="o.document_id and o.document_id.origin_invoice_id">
+                                <span t-field="o.document_id.origin_invoice_id.number"/>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+                <div class="row">
+                    <div class="col-xs-7">
+                        <strong>Source of Fund: </strong>
+                        <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'adjustment']">
+                            <t t-if="o.document_id and o.document_id.invoice_line and o.document_id.invoice_line[0].fund_id">
+                                <span t-field="o.document_id.invoice_line[0].fund_id.name"/>
+                            </t>
+                            <t t-if="not o.document_id">
+                                <span t-field="o.source_of_fund"/>
+                                <br/><span>Charge Type: </span>
+                                <span t-field="o.charge_type"/>
+                            </t>
+                        </t>
+                        <t t-if="o.doctype in ['payment', 'receipt']">
+                            <t t-if="o.document_id and o.document_id.line_ids and o.document_id.line_ids[0].move_line_id and o.document_id.line_ids[0].move_line_id.invoice and o.document_id.line_ids[0].move_line_id.invoice.invoice_line and o.document_id.line_ids[0].move_line_id.invoice.invoice_line[0].fund_id">
+                                <span t-esc="o.document_id.line_ids[0].move_line_id.invoice.invoice_line[0].fund_id.name"/>
+                            </t>
+                        </t>
+                        <t t-if="o.doctype in ['salary_expense']">
+                            <t t-if="o.document_id and o.document_id.line_ids and o.document_id.line_ids[0].fund_id">
+                                <span t-esc="o.document_id.line_ids and o.document_id.line_ids[0].fund_id.name"/>
+                            </t>
+                        </t>
+                    </div>
+                    <div class="col-xs-5">
+                        <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'adjustment', 'bank_receipt']">
+                            <span>Reversed Doc. No.: </span>
+                            <t t-set="reverse_doc" t-value="''"/>
+                            <t t-if="o.document_id">
+                                <t t-if="o.document_id.cancel_move_id">
+                                    <t t-set="reverse_doc" t-value="o.document_id.cancel_move_id.name"/>
+                                    <t t-if="o.name != o.document_id.move_id.name">
+                                        <t t-set="reverse_doc" t-value="o.document_id.move_id.name"/>
+                                    </t>
+                                </t>
+                            </t>
+                            <t t-if="not o.document_id and o.reversal_id">
+                                <t t-set="reverse_doc" t-value="o.reversal_id.name"/>
+                            </t>
+                            <span t-esc="reverse_doc"/>
+                        </t>
+                    </div>
+                </div>
+                <t t-if="o.doctype in ['interface_account']">
+                    <div class="row">
+                        <div class="col-xs-7">
+                            <span>Original system: </span>
+                            <t t-esc="o.system_id.name"/>
+                        </div>
+                    </div>
+                </t>
+                <t t-if="o.doctype in ['payment', 'receipt']">
+                    <div class="row">
+                        <div class="col-xs-7">
+                            <t t-if="o.doctype in ['payment']">
+                                <span>Paid To: </span>
+                                <t t-set="paid_to" t-value="''"/>
+                                <t t-if="o.partner_id">
+                                    <t t-set="paid_to" t-value="o.partner_id.name"/>
+                                </t>
+                                <t t-if="o.document_id and o.document_id.is_transdebt and o.document_id.transdebt_partner_id">
+                                    <t t-set="paid_to" t-value="o.document_id.transdebt_partner_id.name"/>
+                                </t>
+                                <span t-esc="paid_to"/>
+                            </t>
+                        </div>
+                        <div class="col-xs-5">
+                            <span>Reversed Doc. No.: </span>
+                            <t t-set="reverse_doc" t-value="''"/>
+                            <t t-if="o.document_id">
+                                <t t-if="o.document_id.cancel_move_id">
+                                    <t t-set="reverse_doc" t-value="o.document_id.cancel_move_id.name"/>
+                                    <t t-if="o.name != o.document_id.move_id.name">
+                                        <t t-set="reverse_doc" t-value="o.document_id.move_id.name"/>
+                                    </t>
+                                </t>
+                            </t>
+                            <span t-esc="reverse_doc"/>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </template>
+
+        <!-- Layout Page Number -->
+        <template id="account_page_number">
+            <div class="row footer pabi-footer">
+                <div class="col-xs-12 text-right">
+                    <ul class="list-inline" style="margin: 15px 20px 0px 0px;">
+                        <li>Page</li>
+                        <li><span class="page"/></li>
+                        <li>/</li>
+                        <li><span class="topage"/></li>
+                    </ul>
+                </div>
+            </div>
+        </template>
+
+        <!-- Summary -->
+        <template id="account_summary_footer">
+            <tr>
+                <td colspan="3" class="pabi-col-footer"></td>
+                <t t-if="o.line_id.mapped('asset_id')">
+                    <td class="pabi-col-footer"></td>
+                </t>
+                <td class="pabi-col-footer">Total</td>
+                <td class="text-right pabi-col-footer">
+                    <span t-esc="'{:,.2f}'.format(sum(o.line_id.mapped('debit')))"/>
+                </td>
+                <td class="text-right pabi-col-footer">
+                    <span t-esc="'{:,.2f}'.format(sum(o.line_id.mapped('credit')))"/>
+                </td>
+                <td colspan="4" class="pabi-col-footer"></td>
+            </tr>
+        </template>
+
+        <!-- Layout Footer 1 -->
+        <template id="account_layout_footer_1">
+            <tr>
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" style="border: 0px; padding-left: 0px; padding: 0px;">
+                    <div class="pabi-footer">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <table>
+                                    <tr>
+                                        <td style="width: 120px; text-align: right; padding-right: 10px; padding-top: 10px;">Accounted by</td>
+                                        <td style="width: 200px; border-bottom: 1px solid; padding-top: 10px;">
+                                            <t t-if="o.doctype not in ['salary_expense']">
+                                                <t t-if="o.document_id and o.document_id.validate_user_id and o.document_id.validate_user_id">
+                                                    <span t-field="o.document_id.validate_user_id.display_name"/>
+                                                </t>
+                                            </t>
+                                            <t t-if="not o.document_id">
+                                                <t t-if="o.create_uid">
+                                                    <span t-field="o.create_uid.display_name"/>
+                                                </t>
+                                            </t>
+                                        </td>
+                                        <td style="width: 200px;"></td>
+                                        <td style="width: 120px; text-align: right; padding-right: 10px; padding-top: 10px;">Approved by</td>
+                                        <td colspan="5" style="width: 200px; border-bottom: 1px solid; padding: 10px;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td style="width: 200px; border-bottom: 1px solid; padding-top: 10px;">
+                                            <t t-if="o.doctype not in ['salary_expense']">
+                                                <t t-if="o.document_id">
+                                                    <span t-field="o.document_id.validate_date"/>
+                                                </t>
+                                            </t>
+                                            <t t-if="not o.document_id">
+                                                <span t-esc="datetime.datetime.strptime(o.create_date, '%Y-%m-%d %H:%M:%S').strftime('%d/%m/%Y')"/>
+                                            </t>
+                                        </td>
+                                        <td colspan="2"></td>
+                                        <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
+                                        <td style="width: 1px; padding-top: 10px;">/</td>
+                                        <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
+                                        <td style="width: 1px; padding-top: 10px;">/</td>
+                                        <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </template>
+
+        <!-- Layout Footer 2 -->
+        <template id="account_layout_footer_2">
+            <tr>
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" style="border: 0px; padding: 0px;">
+                    <div class="pabi-footer">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <table style="border-collapse: separate;">
+                                    <tr>
+                                        <td style="width: 190px; text-align: right; padding-right: 10px; padding-top: 10px; height: 27px;">Accounted by</td>
+                                        <td colspan="5" style="width: 200px; border-bottom: 1px solid; padding-top: 10px; height: 27px;">
+                                            <t t-if="o.document_id and o.document_id.validate_user_id">
+                                                <span t-field="o.document_id.validate_user_id.display_name"/>
+                                            </t>
+                                        </td>
+                                        <td style="width: 10px;"></td>
+                                        <td colspan="6"></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="5" style="width: 200px; padding-top: 10px; border-bottom: 1px solid; height: 27px;">
+                                            <t t-if="o.document_id">
+                                                <span t-field="o.document_id.validate_date"/>
+                                            </t>
+                                        </td>
+                                        <td colspan="7"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 190px; text-align: right; padding-right: 10px; padding-top: 10px;">Accounting reviewed by</td>
+                                        <td colspan="5" style="width: 200px; border-bottom: 1px solid; padding-top: 10px;"></td>
+                                        <td></td>
+                                        <td style="width: 190px; text-align: right; padding-right: 10px; padding-top: 10px;">Approved by</td>
+                                        <td colspan="5" style="width: 200px; border-bottom: 1px solid; padding-top: 10px;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
+                                        <td style="width: 1px; padding-top: 10px;">/</td>
+                                        <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
+                                        <td style="width: 1px; padding-top: 10px;">/</td>
+                                        <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
+                                        <td colspan="2"></td>
+                                        <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
+                                        <td style="width: 1px; padding-top: 10px;">/</td>
+                                        <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
+                                        <td style="width: 1px; padding-top: 10px;">/</td>
+                                        <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 190px; text-align: right; padding-right: 10px; padding-top: 10px;">Transferred to</td>
+                                        <td colspan="5" style="width: 200px; border-bottom: 1px solid; padding-top: 10px;">
+                                            <t t-set="short_name_bank" t-value="''"/>
+                                            <t t-set="bank_branch" t-value="''"/>
+                                            <t t-set="bank_account" t-value="''"/>
+                                            <t t-if="o.document_id">
+                                                <t t-if="o.doctype in ['payment'] and o.document_id.supplier_bank_id and o.document_id.supplier_bank_id.bank and o.document_id.supplier_bank_id.bank.abbrev">
+                                                    <t t-set="short_name_bank" t-value="o.document_id.supplier_bank_id.bank.abbrev"/>
+                                                </t>
+                                                <t t-if="o.doctype in ['receipt'] and o.document_id.supplier_bank_id and o.document_id.supplier_bank_id.abbrev">
+                                                    <t t-set="short_name_bank" t-value="o.document_id.supplier_bank_id.abbrev"/>
+                                                </t>
+                                                <t t-if="o.document_id.supplier_bank_branch">
+                                                    <t t-set="bank_branch" t-value="o.document_id.supplier_bank_branch"/>
+                                                </t>
+                                                <t t-if="o.document_id.supplier_bank_id and o.document_id.supplier_bank_id.acc_number">
+                                                    <t t-set="bank_account" t-value="o.document_id.supplier_bank_id.acc_number"/>
+                                                </t>
+                                                <t t-if="o.doctype in ['payment']">
+                                                    <span t-esc="' '.join([short_name_bank, bank_branch, bank_account])"/>
+                                                </t>
+                                                <t t-if="o.doctype in ['receipt']">
+                                                    <span t-esc="' '.join([short_name_bank, bank_account])"/>
+                                                </t>
+                                            </t>
+                                        </td>
+                                        <td colspan="7"></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td style="width: 66px; border-bottom: 1px solid; padding-top:10px;"></td>
+                                        <td style="width: 1px; padding-top:10px;">/</td>
+                                        <td style="width: 66px; border-bottom: 1px solid;padding-top:10px;"></td>
+                                        <td style="width: 1px; padding-top:10px;">/</td>
+                                        <td style="width: 66px; border-bottom: 1px solid; padding-top:10px;"></td>
+                                        <td colspan="7"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 190px; text-align: right; padding-right: 10px; padding-top: 10px;">Receipt Information</td>
+                                        <td colspan="5" style="width: 200px; border-bottom: 1px solid;"></td>
+                                        <td colspan="7"></td>
+                                    </tr>
+                                    <tr>
+                                        <t t-if="o.document_id and o.document_id.payment_type == 'cheque'">
+                                            <td style="width: 190px; text-align: right; padding-right: 10px; padding-top: 10px;">Recipient</td>
+                                            <td colspan="5" style="width: 200px; border-bottom: 1px solid;"></td>
+                                        </t>
+                                        <t t-if="not o.document_id or (o.document_id and o.document_id.payment_type != 'cheque')">
+                                            <td colspan="6"></td>
+                                        </t>
+                                        <td></td>
+                                        <td style="width: 190px; text-align: right; padding-right: 10px; padding-top: 10px;">Reception No.</td>
+                                        <td colspan="5" style="width: 200px; border-bottom: 1px solid;"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </template>
+
+        <!-- CONTAINER -->
+        <template id="account_layout">
+            <t t-call="pabi_forms.account_layout_header"/>
+            <t t-raw="0"/>
+            <t t-call="pabi_forms.account_page_number"/>
+        </template>
+    </data>
+</openerp>

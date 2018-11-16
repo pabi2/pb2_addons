@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="report_bank_receipt_voucher">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="pabi_forms.account_layout">
+                        <div class="page pabi-page">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <!-- Clearing Doc -->
+                                    <t t-call="pabi_forms.account_clearing_doc_header"/>
+
+                                    <!-- Naration -->
+                                    <t t-call="pabi_forms.account_naration_header"/>
+
+                                    <!-- Column Header -->
+                                    <t t-call="pabi_forms.account_column_header"/>
+                                </thead>
+                                <tbody>
+                                    <!-- Column Detail -->
+                                    <t t-call="pabi_forms.account_column_detail"/>
+
+                                    <!-- Summary -->
+                                    <t t-call="pabi_forms.account_summary_footer"/>
+
+                                    <!-- Last Page Footer -->
+                                    <t t-call="pabi_forms.account_layout_footer_1"/>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</openerp>

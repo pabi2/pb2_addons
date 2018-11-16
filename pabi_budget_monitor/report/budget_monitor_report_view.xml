@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+	<record id="view_budget_monitor_report_graph" model="ir.ui.view">
+		<field name="name">budget.monitor.report.graph</field>
+        <field name="model">budget.monitor.report</field>
+        <field name="inherit_id" ref="account_budget_activity.view_budget_monitor_report_graph"/>
+        <field name="arch" type="xml">
+        	<xpath expr="//graph" position="replace">
+	             <graph string="Budget Monitor" type="pivot">
+	                 <field name="planned_amount" type="measure"/>
+	                 <field name="released_amount" type="measure"/>
+	                 <field name="amount_pr_commit" type="measure"/>
+	                 <field name="amount_po_commit" type="measure"/>
+	                 <field name="amount_exp_commit" type="measure"/>
+	                 <field name="amount_actual" type="measure"/>
+	                 <field name="amount_consumed" type="measure"/>
+	                 <field name="amount_balance" type="measure"/>
+	             </graph>
+         	</xpath>
+         </field>
+    </record>
+
+    <record id="view_budget_monitor_report_search" model="ir.ui.view">
+        <field name="name">budget.monitor.report.search</field>
+        <field name="model">budget.monitor.report</field>
+        <field name="inherit_id" ref="account_budget_activity.view_budget_monitor_report_search"/>
+        <field name="arch" type="xml">
+        	<xpath expr="//search" position="replace">
+            	<search string="Budget Monitor">
+	                <group expand="1" string="Group By">
+											<filter string="Budget Method" name="budget_method" context="{'group_by':'budget_method', 'residual_visible':True}"/>
+											<filter string="Document" name="document" context="{'group_by':'document', 'residual_visible':True}"/>
+											<filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
+											<filter string="Activity" name="activity_id" context="{'group_by':'activity_id', 'residual_visible':True}"/>
+											<filter string="Activity Rpt" name="activity_rpt_id" context="{'group_by':'activity_rpt_id', 'residual_visible':True}"/>
+											<filter string="Product" name="product_id" context="{'group_by':'product_id', 'residual_visible':True}"/>
+											<filter string="Product/Activity" name="product_activity_id" context="{'group_by':'product_activity_id', 'residual_visible':True}"/>
+											<filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+	                    <separator/>
+	                    <filter string="Functional Area" name="groupby_functional_area" context="{'group_by':'functional_area_id'}"/>
+	                    <filter string="Program Group" name="groupby_program_group" context="{'group_by':'program_group_id'}"/>
+	                    <filter string="Program" name="groupby_program" context="{'group_by':'program_id'}"/>
+	                    <filter string="Project Group" name="groupby_project_group" context="{'group_by':'project_group_id'}"/>
+	                    <filter string="Project" name="groupby_project" context="{'group_by':'project_id'}"/>
+	                    <separator/>
+	                    <filter string="Org" name="groupby_org" context="{'group_by':'org_id'}"/>
+	                    <filter string="Sector" name="groupby_sector" context="{'group_by':'sector_id'}"/>
+	                    <filter string="Subsector" name="groupby_subsector" context="{'group_by':'subsector_id'}"/>
+	                    <filter string="Division" name="groupby_division" context="{'group_by':'division_id'}"/>
+	                    <filter string="Section" name="groupby_section" context="{'group_by':'section_id'}"/>
+											<filter string="Report Progam" name="groupby_section_program" context="{'group_by':'section_program_id'}"/>
+	                    <!-- <filter string="Report Progam" name="groupby_rpt_program" context="{'group_by':'program_rpt_id'}"/> -->
+	                </group>
+                </search>
+            </xpath>
+        </field>
+    </record>
+
+</data>
+</openerp>

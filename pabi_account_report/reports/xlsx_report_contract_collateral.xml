@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_contract_collateral_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.contract.collateral.form</field>
+            <field name="model">xlsx.report.contract.collateral</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <field name="fiscalyear_start_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="fiscalyear_end_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_start" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_end" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_end" position="after">
+                    <field name="date_report"/>
+                </field>
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Supplier Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids" domain="[('company_id', '=', company_id), ('supplier', '=', True)]"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_contract_collateral_form" model="ir.actions.act_window">
+            <field name="name">Contract Collateral</field>
+            <field name="res_model">xlsx.report.contract.collateral</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'lang': 'th_TH'}</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_contract_collateral"
+            name="Contract Collateral"
+            parent="menu_pabi_payable_report"
+            action="action_xlsx_report_contract_collateral_form"
+            sequence="40"/>
+    </data>
+</openerp>

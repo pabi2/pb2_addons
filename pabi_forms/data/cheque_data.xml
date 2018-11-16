@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<!-- Supplier Payment (BBL cheque)  -->
+		<record id="supplier_payment_bbl_cheque" model="ir.actions.report.xml">
+			<field name="string">Supplier Payment (BBL cheque)</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="name">BBL cheque</field>
+			<field name="report_name">supplier.payment.bbl.cheque</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/cheque/bbl_cheque.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename">${o.number}_BBL.pdf</field>
+		</record>
+
+		<record id="supplier_payment_bbl_cheque_values" model="ir.values">
+			<field name="name">Supplier Payment (BBL cheque)</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(supplier_payment_bbl_cheque)"/>
+		</record>
+
+		<!-- Supplier Payment (KTB cheque)  -->
+		<record id="supplier_payment_ktb_cheque" model="ir.actions.report.xml">
+			<field name="string">Supplier Payment (KTB cheque)</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="name">KTB cheque</field>
+			<field name="report_name">supplier.payment.ktb.cheque</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/cheque/ktb_cheque.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename">${o.number}_KTB.pdf</field>
+		</record>
+
+		<record id="supplier_payment_ktb_cheque_values" model="ir.values">
+			<field name="name">Supplier Payment (KTB cheque)</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(supplier_payment_ktb_cheque)"/>
+		</record>
+
+		<!-- Supplier Payment (BAY cheque)  -->
+		<record id="supplier_payment_bay_cheque" model="ir.actions.report.xml">
+			<field name="string">Supplier Payment (BAY cheque)</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="name">BAY cheque</field>
+			<field name="report_name">supplier.payment.bay.cheque</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/cheque/bay_cheque.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename">${o.number}_BAY.pdf</field>
+		</record>
+
+		<record id="supplier_payment_bay_cheque_values" model="ir.values">
+			<field name="name">Supplier Payment (BAY cheque)</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(supplier_payment_bay_cheque)"/>
+		</record>
+
+		<!-- Supplier Payment (SCB cheque)  -->
+		<record id="supplier_payment_scb_cheque" model="ir.actions.report.xml">
+			<field name="string">Supplier Payment (SCB cheque)</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="name">SCB cheque</field>
+			<field name="report_name">supplier.payment.scb.cheque</field>
+			<field name="report_rml">pabi_forms/jrxml_reports/cheque/scb_cheque.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+			<field name="force_locale">th_TH</field>
+			<field name="download_filename">${o.number}_SCB.pdf</field>
+		</record>
+
+		<record id="supplier_payment_scb_cheque_values" model="ir.values">
+			<field name="name">Supplier Payment (SCB cheque)</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(supplier_payment_scb_cheque)"/>
+		</record>
+
+	</data>
+</openerp>
