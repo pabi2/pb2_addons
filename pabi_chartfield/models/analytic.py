@@ -147,6 +147,8 @@ class AccountAnalyticAccount(ChartFieldAction, models.Model):
             :param chartfield_dict: i.e., {'section_id': 1234, ...}
             :return: (active, err_message)
         """
+        if self._context.get('no_test_chartfield_active', False):
+            return (True, False)
         test_model = {
             'res.costcenter': 'costcenter_id',
             'res.section': 'section_id',

@@ -296,7 +296,7 @@ class HRExpenseLine(models.Model):
     employee_section_id = fields.Many2one(
         'res.section',
         string='Section',
-        related='expense_id.section_id',
+        related='expense_id.employee_section_id',
         readonly=True,
         store=True,
     )

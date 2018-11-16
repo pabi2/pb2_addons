@@ -55,6 +55,7 @@ class AccountAsset(ChartFieldAction, models.Model):
     parent_id = fields.Many2one(
         readonly=False,
         states={},  # Procurement team want it to always editable.
+        index=True,
     )
     type = fields.Selection(
         # Need this way of doing default, because default_type in context will
@@ -125,6 +126,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         'stock.move',
         string='Move',
         readonly=True,
+        index=True,
     )
     picking_id = fields.Many2one(
         'stock.picking',
@@ -132,6 +134,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         related='move_id.picking_id',
         store=True,
         readonly=True,
+        index=True,
     )
     adjust_id = fields.Many2one(
         'account.asset.adjust',
@@ -207,24 +210,28 @@ class AccountAsset(ChartFieldAction, models.Model):
         'res.project',
         string='Project',
         readonly=True,
+        index=True,
         help="Owner project of the budget structure",
     )
     owner_section_id = fields.Many2one(
         'res.section',
         string='Section',
         readonly=True,
+        index=True,
         help="Owner section of the budget structure",
     )
     owner_invest_asset_id = fields.Many2one(
         'res.invest.asset',
         string='Investment Asset',
         readonly=True,
+        index=True,
         help="Owner invest asset of the budget structure",
     )
     owner_invest_construction_phase_id = fields.Many2one(
         'res.invest.construction.phase',
         string='Construction Phase',
         readonly=True,
+        index=True,
         help="Owner construction phase of the budget structure",
     )
     # --
@@ -378,6 +385,10 @@ class AccountAsset(ChartFieldAction, models.Model):
         string='Net Book Value',
         compute='_compute_net_book_value',
     )
+    account_analytic_id = fields.Many2one(
+        'account.analytic.account',
+        index=True,
+    )
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
 
@@ -520,6 +531,21 @@ class AccountAsset(ChartFieldAction, models.Model):
         dom = [('id', 'in', assets.ids)]
         result.update({'domain': dom, 'context': {'active_test': False}})
         return result
+
+    @api.multi
+    def create_depre_init_entry_on_migration(self):
+        """ This function is used for migrated data only.
+        It will create depre JE for the second line (type = depre, init = true)
+        only if it is not created before (one time only)
+        """
+        DepreLine = self.env['account.asset.line']
+        for asset in self:
+            depre_line = DepreLine.search([('type', '=', 'depreciate'),
+                                           ('init_entry', '=', True),
+                                           ('move_check', '=', False),
+                                           ('asset_id', '=', asset.id)])
+            depre_line.create_move()
+        return True
 
     @api.multi
     def open_depreciation_lines(self):
@@ -686,11 +712,11 @@ class AccountAsset(ChartFieldAction, models.Model):
                 debit = sum(depre_lines.mapped('debit'))
                 credit = sum(depre_lines.mapped('credit'))
                 if float_compare(debit, credit, 2) == 1:
-                    asset_line_dict['credit'] = debit - credit
-                    asset_line_dict['debit'] = False
+                    depre_line_dict['credit'] = debit - credit
+                    depre_line_dict['debit'] = False
                 else:
-                    asset_line_dict['credit'] = False
-                    asset_line_dict['debit'] = credit - debit
+                    depre_line_dict['credit'] = False
+                    depre_line_dict['debit'] = credit - debit
                 depre_move_lines_dict.append(depre_line_dict)
             # Validation
             # if not asset_move_lines_dict:
@@ -757,6 +783,24 @@ class AccountAsset(ChartFieldAction, models.Model):
         move_ids = domain and domain[0][2] or []
         res['domain'] = [('id', 'in', ex_move_ids + move_ids)]
         return res
+
+    @api.model
+    def fix_asset_account_analytic_id(self, asset_id):
+        """ Given that, the asset already have dimension, but missing analytic
+        This is a temporary used during migration period
+        """
+        self = self.with_context(no_test_chartfield_active=True)
+        asset = self.env['account.asset'].browse(asset_id)
+        vals = {'section_id': asset.section_id.id,
+                'project_id': asset.project_id.id,
+                'invest_asset_id': asset.invest_asset_id.id,
+                'invest_construction_phase_id':
+                asset.invest_construction_phase_id.id}
+        asset.update_related_dimension(vals)
+        analytic = self.env['account.analytic.account'].\
+            create_matched_analytic(asset)
+        asset.account_analytic_id = analytic
+        return analytic.id
 
 
 class AccountAssetProfile(models.Model):

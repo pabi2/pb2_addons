@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-
         <record model="ir.ui.view" id="view_budget_invest_asset_report_form">
             <field name="name">view.budget.invest.asset.report.form</field>
             <field name="model">budget.drilldown.report</field>
@@ -35,6 +34,5 @@
                 </group>
             </field>
         </record>
-
     </data>
 </openerp>

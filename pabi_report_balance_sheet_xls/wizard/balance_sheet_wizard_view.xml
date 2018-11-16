@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="accounting_report_view" model="ir.ui.view">
+            <field name="name">Accounting Report</field>
+            <field name="model">accounting.report</field>
+            <field name="inherit_id" ref="account.accounting_report_view"/>
+            <field name="arch" type="xml">
+                <button string="Print" position="after">
+                    <button icon="gtk-execute" name="xls_export" string="Export" type="object" context="{'xls_export': 1}" colspan="2"/>
+                </button>
+            </field>
+        </record>
+    </data>
+</openerp>

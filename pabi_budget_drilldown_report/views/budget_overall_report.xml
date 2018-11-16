@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-
         <record model="ir.ui.view" id="view_budget_overall_report_form">
             <field name="name">view.budget.overall.report.form</field>
             <field name="model">budget.drilldown.report</field>
@@ -21,7 +20,7 @@
                                 <field name="amount_pr_commit" sum="Total"/>
                                 <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_po_commit" sum="Total"/>
-                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
+                                <button name="open_po_commit_items" string="PO Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_exp_commit" sum="Total"/>
                                 <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_total_commit" sum="Total"/>
@@ -46,7 +45,7 @@
                                 <field name="amount_pr_commit" sum="Total"/>
                                 <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_po_commit" sum="Total"/>
-                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
+                                <button name="open_po_commit_items" string="PO Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_exp_commit" sum="Total"/>
                                 <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_total_commit" sum="Total"/>
@@ -70,7 +69,7 @@
                                 <field name="amount_pr_commit" sum="Total"/>
                                 <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_po_commit" sum="Total"/>
-                                <button name="open_po_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
+                                <button name="open_po_commit_items" string="PO Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_exp_commit" sum="Total"/>
                                 <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
                                 <field name="amount_total_commit" sum="Total"/>
@@ -86,6 +85,5 @@
                 </group>
             </field>
         </record>
-
     </data>
 </openerp>

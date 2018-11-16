@@ -292,19 +292,24 @@ class PabiActionAssetCompute(models.TransientModel):
         if assets:
             Analytic = self.env['account.analytic.account']
             logs = []
+            # Test with ower chartfield (for depre)
             self._cr.execute("""
-                select id asset_id, section_id, project_id, invest_asset_id,
-                    invest_construction_phase_id
+                select id asset_id,
+                    owner_section_id as section_id,
+                    owner_project_id as project_id,
+                    owner_invest_asset_id as invest_asset_id,
+                    owner_invest_construction_phase_id
+                        as invest_construction_phase_id
                 from account_asset
                 where id in %s and
                 (
-                 section_id in (select res_id from chartfield_view
+                 owner_section_id in (select res_id from chartfield_view
                     where model = 'res.section' and active = false) or
-                 project_id in (select res_id from chartfield_view
+                 owner_project_id in (select res_id from chartfield_view
                     where model = 'res.project' and active = false) or
-                 invest_asset_id in (select res_id from chartfield_view
+                 owner_invest_asset_id in (select res_id from chartfield_view
                     where model = 'res.invest.asset' and active = false) or
-                 invest_construction_phase_id in (select res_id from
+                 owner_invest_construction_phase_id in (select res_id from
                     chartfield_view where model =
                     'res.invest.construction.phase' and active = false)
                 )

@@ -37,7 +37,6 @@ group_ids = []
 for grp in groups:
     g = grp.split('.')
     res = Data.get_object_reference(g[0], g[1])
-    print res
     group_ids.append((4, res[1]))
 
 user_ids = User.search([('login', 'in', users)])

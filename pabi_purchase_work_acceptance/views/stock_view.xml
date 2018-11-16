@@ -6,6 +6,9 @@
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
+                <form position="attributes">
+                    <attribute name="create">0</attribute>
+                </form>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="acceptance_id"  attrs="{
                     'invisible': [('picking_type_code', '!=', 'incoming')],

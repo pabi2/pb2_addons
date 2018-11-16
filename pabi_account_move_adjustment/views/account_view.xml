@@ -144,6 +144,18 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="Budgeting">
+                                <separator string="Budget Actual"/>
+                                <field name="budget_commit_ids">
+                                    <tree default_order='id'>
+                                        <field name="id"/>
+                                        <field name="fiscalyear_id"/>
+                                        <field name="move_id"/>
+                                        <field name="create_date"/>
+                                        <field name="amount" string="Actual Amount" sum="Total Amount"/>
+                                    </tree>
+                                </field>
+                            </page>
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
@@ -278,6 +290,18 @@
                                         <field name="amount" sum="Tax" required="1"/>
                                         <field name="tax_sequence_display"/>
                                         <field name="addition"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Budgeting">
+                                <separator string="Budget Actual"/>
+                                <field name="budget_commit_ids">
+                                    <tree default_order='id'>
+                                        <field name="id"/>
+                                        <field name="fiscalyear_id"/>
+                                        <field name="move_id"/>
+                                        <field name="create_date"/>
+                                        <field name="amount" string="Actual Amount" sum="Total Amount"/>
                                     </tree>
                                 </field>
                             </page>

@@ -21,7 +21,7 @@
                 </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="deductions" string="Payment Differences">
-                        <field name="multiple_reconcile_ids" nolabel="1"  attrs="{'invisible': [('payment_difference_amount', '=', 0)]}">
+                        <field name="multiple_reconcile_ids" nolabel="1">
                             <tree string="Reconcile Lines" editable="top">
                                 <field name="account_id"/>
                                 <field name="amount" sum="Total Amount"/>

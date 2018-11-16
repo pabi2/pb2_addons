@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 from openerp import models, api
 
 EXCEL_NAME = {
+    'all': 'budget_all_report.xlsx',
     'overall': 'budget_overall_report.xlsx',
     'unit_base': 'budget_unit_base_report.xlsx',
     'project_base': 'budget_project_base_report.xlsx',

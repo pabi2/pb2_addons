@@ -13,15 +13,7 @@ class AmountToWordExt(AmountToWord):
         if obj._name in ('account.invoice', 'sale.order', 'purchase.order'):
             amount_total = obj.amount_total
         elif obj._name == 'account.voucher':
-            for cr_line in obj.line_cr_ids:
-                amount_total += (cr_line.amount +
-                                 cr_line.amount_retention +
-                                 cr_line.amount_wht)
-            for dr_line in obj.line_dr_ids:
-                amount_total -= (dr_line.amount +
-                                 dr_line.amount_retention +
-                                 dr_line.amount_wht)
-            amount_total = abs(amount_total)
+            amount_total = obj.amount
         return amount_total
 
 

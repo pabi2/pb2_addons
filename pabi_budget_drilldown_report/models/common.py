@@ -2,7 +2,8 @@
 from openerp import api, fields
 from openerp.addons.pabi_chartfield.models.chartfield import ChartField
 
-REPORT_TYPES = [('overall', 'Overall'),
+REPORT_TYPES = [('all', 'All'),
+                ('overall', 'Overall'),
                 ('unit_base', 'Section'),
                 ('project_base', 'Project'),
                 ('invest_asset', 'Asset'),
@@ -10,6 +11,7 @@ REPORT_TYPES = [('overall', 'Overall'),
                 ('personnel', 'Personnel')]
 
 REPORT_GROUPBY = {
+    'all': [],
     'unit_base': ['section_id', 'activity_group_id',
                   'charge_type', 'activity_id'],
     'project_base': ['project_id', 'activity_group_id',
@@ -44,7 +46,7 @@ class SearchCommon(ChartField, object):
         string='Budget Method',
     )
     report_type = fields.Selection(
-        lambda self: self._get_report_type(),
+        selection=lambda self: self._get_report_type(),
         string='Report Type',
         required=True,
     )
@@ -54,7 +56,17 @@ class SearchCommon(ChartField, object):
         required=True,  # Overwrite as requried field.
     )
     # ------------ SEARCH ------------
-    # For: All report types
+    # For All
+    chartfield_id = fields.Many2one(
+        'chartfield.view',
+        string='Budget',
+    )
+    chartfield_ids = fields.Many2many(
+        'chartfield.view',
+        string='Budgets',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
+    # For: Overall
     org_id = fields.Many2one(
         'res.org',
         string='Orgs',
@@ -119,6 +131,10 @@ class SearchCommon(ChartField, object):
         'res.personnel.costcenter'
     )
     # Group By
+    group_by_chartfield_id = fields.Boolean(
+        string='Group By - Budget',
+        default=False,
+    )
     group_by_section_id = fields.Boolean(
         string='Group By - Section',
         default=False,
@@ -170,11 +186,16 @@ class SearchCommon(ChartField, object):
         string='Project',
         domain=lambda self: self._get_domain_project(),
     )
+    action_type = fields.Selection(
+        [('budget_overview_report', 'Budget Overview Report'),
+         ('my_budget_report', 'My Budget Report')],
+        string='Action Type',
+    )
 
     @api.model
     def _get_report_type(self):
         report_types = REPORT_TYPES
-        if self._context.get('action', False) == 'my_budget_report':
+        if self._context.get('action_type', False) == 'my_budget_report':
             report_types = [('unit_base', 'Section'),
                             ('project_base', 'Project')]
         return report_types
@@ -234,8 +255,8 @@ class SearchCommon(ChartField, object):
         # --
         member = Member.search([('employee_id', '=', employee_id)])
         self._cr.execute("""
-            select project_id from project_res_users_rel where user_id = %s
-        """ % (user.id, ))
+            select project_id from project_hr_employee_rel where employee_id =
+            %s""" % (employee_id or 0, ))
         project_ids = \
             Project.browse(map(lambda l: l[0], self._cr.fetchall())).ids + \
             Project.search([('analyst_employee_id', '=', employee_id)]).ids + \
@@ -268,6 +289,8 @@ class SearchCommon(ChartField, object):
         self.project_group_id = False
         self.project_id = False
         self.invest_construction_id = False
+        self.chartfield_id = False
+        self.chartfield_ids = False
         # For my budget report
         self.section_ids = False
         self.project_ids = False

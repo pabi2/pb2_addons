@@ -147,7 +147,6 @@ class PABISecurity(models.Model):
                     group_ids.append(rec.group_id.id)
                 group_ids = [(4, x) for x in group_ids]
                 all_users = self.env['res.users'].search([])
-                print all_users.ids
                 all_users.write({'groups_id': group_ids})
             elif rec.method == 'by_user':
                 for line in rec.line_ids:

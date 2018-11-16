@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api, _
+from openerp import models, fields, api
 
 
 class MoveOpenUnreconciledItems(models.TransientModel):
@@ -42,5 +42,4 @@ class MoveOpenUnreconciledItems(models.TransientModel):
         if trg_domain:
             trg_ml_ids = MoveLine.search(domain + trg_domain).ids
         result.update({'domain': [('id', 'in', src_ml_ids + trg_ml_ids)]})
-        print result
         return result

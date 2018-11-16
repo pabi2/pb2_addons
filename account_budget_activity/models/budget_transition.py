@@ -309,11 +309,15 @@ class BudgetTransition(models.Model):
     # Create budget transition log, when link between doc is created
     @api.model
     def create_trans_expense_to_invoice(self, line):
-        if line and line.invoice_line_ids:
+        if line and line.expense_id.state != 'draft':
+            invoice_lines = line.invoice_line_ids.filtered(
+                lambda l: l.invoice_id.state != 'cancel')
+            if not invoice_lines:
+                return
             # For expense use "Amount" instead of "Quantity"
             # Because, quantity is always equal to 1, so we can ignore it.
             self._create_trans_by_target_lines_amount(
-                line, line.invoice_line_ids,
+                line, invoice_lines,
                 'price_subtotal', 'expense_line_id', 'invoice_line_id')
 
     @api.model
@@ -325,16 +329,21 @@ class BudgetTransition(models.Model):
 
     @api.model
     def create_trans_purchase_to_invoice(self, po_line):
-        if po_line and po_line.invoice_lines:
+        # Oder must not be draft but invoice must be draft to create trans
+        if po_line and po_line.order_id.state != 'draft':
+            invoice_lines = po_line.invoice_lines.filtered(
+                lambda l: l.invoice_id.state != 'cancel')
+            if not invoice_lines:
+                return
             # Use invoice plan + invoice_mode = 'change_price', use amount
             if po_line.order_id.use_invoice_plan and \
                     po_line.order_id.invoice_mode == 'change_price':
                 self._create_trans_by_target_lines_amount(
-                    po_line, po_line.invoice_lines,
+                    po_line, invoice_lines,
                     'price_subtotal', 'purchase_line_id', 'invoice_line_id')
             else:  # Other case, use quantity
                 self._create_trans_by_target_lines_quantity(
-                    po_line, po_line.invoice_lines,
+                    po_line, invoice_lines,
                     'quantity', 'purchase_line_id', 'invoice_line_id')
 
     @api.model
@@ -347,9 +356,14 @@ class BudgetTransition(models.Model):
 
     @api.model
     def create_trans_sale_to_invoice(self, so_line):
-        if so_line and so_line.invoice_lines:
+        # Oder must not be draft but invoice must be draft to create trans
+        if so_line and so_line.order_id.state != 'draft':
+            invoice_lines = so_line.invoice_lines.filtered(
+                lambda l: l.invoice_id.state != 'cancel')
+            if not invoice_lines:
+                return
             self._create_trans_by_target_lines_quantity(
-                so_line, so_line.invoice_lines,
+                so_line, invoice_lines,
                 'quantity', 'sale_line_id', 'invoice_line_id',
                 reverse=True)  # For sales
 

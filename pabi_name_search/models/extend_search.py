@@ -97,6 +97,18 @@ class AccountVoucher(ExtendSearch, models.Model):
 #                                                   count=count)
 
 
+class AccountAsset(ExtendSearch, models.Model):
+    _inherit = 'account.asset'
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        # if self._context.get('extended_search', False):
+        args = self._extend_search_arg(args)
+        return super(AccountAsset, self).search(args, offset=offset,
+                                                limit=limit, order=order,
+                                                count=count)
+
+
 class AccounMove(ExtendSearch, models.Model):
     _inherit = 'account.move'
 

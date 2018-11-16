@@ -279,6 +279,7 @@
                                         <field name="external_fund_type"/>
                                         <field name="external_fund_name"/>
                                         <field name="priority"/>
+                                        <field name="conversion_project"/>
                                     </group>
                                 </group>
                                 <group>
@@ -348,12 +349,7 @@
                                 <field name="auditlog_line_ids"/>
                             </page>
                             <page string="More Member">
-                                <field name="more_project_member_ids">
-                                    <tree>
-                                        <field name="name"/>
-                                        <field name="login"/>
-                                    </tree>
-                                </field>
+                                <field name="more_project_member_ids"/>
                             </page>
                         </notebook>
                     </sheet>

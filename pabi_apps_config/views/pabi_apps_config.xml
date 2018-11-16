@@ -211,6 +211,16 @@
                             </div>
                         </div>
                     </group>
+                    <!-- Cash on Delivery -->
+                    <separator string="Cash on Delivery"/>
+                    <group>
+                        <label for="id" string="Prepaid Accounts"/>
+                        <div>
+                            <div>
+                              <field name="prepaid_account_ids" class="oe_inline"  widget="many2many_tags"/>
+                            </div>
+                        </div>
+                    </group>
                     <!-- Long Term Investment -->
                     <separator string="Long Term Investment"/>
                     <group>

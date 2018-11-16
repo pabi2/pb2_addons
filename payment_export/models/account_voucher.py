@@ -45,6 +45,7 @@ class AccountVoucher(models.Model):
         domain="[('partner_id', '=', partner_id)]",
         readonly=True,
         states={'draft': [('readonly', False)]},
+        ondelete='restrict',
     )
     supplier_bank_branch = fields.Char(
         string='Supplier Bank Branch',
