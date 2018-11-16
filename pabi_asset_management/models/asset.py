@@ -675,6 +675,9 @@ class AccountAsset(ChartFieldAction, models.Model):
                 # Same Owner
                 ('project_id', '=', asset.owner_project_id.id),
                 ('section_id', '=', asset.owner_section_id.id),
+                ('invest_asset_id', '=', asset.owner_invest_asset_id.id),
+                ('invest_construction_phase_id', '=',
+                 asset.invest_construction_phase_id.id),
             ], order='id asc')
             if asset_lines:
                 asset_line_dict = asset_lines[0].copy_data(default)[0]
@@ -700,6 +703,9 @@ class AccountAsset(ChartFieldAction, models.Model):
                 # Same Owner
                 ('project_id', '=', asset.owner_project_id.id),
                 ('section_id', '=', asset.owner_section_id.id),
+                ('invest_asset_id', '=', asset.owner_invest_asset_id.id),
+                ('invest_construction_phase_id', '=',
+                 asset.invest_construction_phase_id.id),
             ], order='id asc')
             if depre_lines:
                 depre_line_dict = depre_lines[0].copy_data(default)[0]
@@ -748,6 +754,10 @@ class AccountAsset(ChartFieldAction, models.Model):
             dimension = {
                 'project_id': new_owner.get('owner_project_id', False),
                 'section_id': new_owner.get('owner_section_id', False),
+                'invest_asset_id':
+                new_owner.get('owner_invest_asset_id', False),
+                'invest_construction_phase_id':
+                new_owner.get('owner_invest_construction_phase_id', False),
             }
             Asset = self.env['account.asset']
             res = Asset.new(dimension)._get_related_dimension(dimension)

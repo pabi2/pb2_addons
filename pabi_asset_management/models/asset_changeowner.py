@@ -128,6 +128,8 @@ class AccountAssetChangeowner(models.Model):
         Period = self.env['account.period']
         period = Period.find()
         for line in self.changeowner_ids:
+            if line.move_id:
+                continue
             project = line.project_id
             section = line.section_id
             # For change owner, no owner should be the same
@@ -185,6 +187,7 @@ class AccountAssetChangeowner(models.Model):
             if line.room_id:
                 new_owner['room_id'] = line.room_id.id
             asset.write(new_owner)
+        return True
 
     @api.multi
     @api.constrains('changeowner_ids')
