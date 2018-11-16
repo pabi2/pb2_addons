@@ -392,6 +392,16 @@ class AccountAsset(ChartFieldAction, models.Model):
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
 
+    @api.multi
+    @api.constrains('purchase_value')
+    def _check_purchase_value(self):
+        for rec in self:
+            if rec.purchase_value < 0.0:
+                raise ValidationError(_(
+                    'This operation will result in negative asset values,\n'
+                    'operation not permitted.'))
+        return True
+
     # Building / Floor / Room
     @api.multi
     @api.constrains('section_id', 'project_id', 'invest_asset_id',
