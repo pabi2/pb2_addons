@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_budget_monitor_report_wizard" model="ir.ui.view">
+            <field name="name">Budget Monitoring</field>
+            <field name="model">budget.monitor.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="budget.monitor.report.wizard">
+                    <group>
+                        <group>
+                            <field name="chart_view"/>
+                            <field name="budget_method"/>
+                        </group>
+                        <group>
+                            <field name="fiscalyear_id"/>
+                            <label for="from_period_id" string="Period"/>
+                            <div>
+                                <field name="from_period_id" style="width: 45%%"/>
+                                -
+                                <field name="to_period_id" style="width: 45%%"/>
+                            </div>
+                        </group>
+                    </group>
+                    <group attrs="{'invisible': [('chart_view', '!=', 'personnel')]}">
+                        <group name="filter_personnel" string="Filters - Personnel">
+                            <field name="personnel_costcenter_id"/>
+                        </group>
+                        <group name="groupby_personnel" />
+                    </group>
+                    <group attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}">
+                        <group name="filter_invest_asset" string="Filters - Investment Asset">
+                            <field name="invest_asset_id" />
+                        </group>
+                        <group name="groupby_invest_asset" />
+                    </group>
+                    <group attrs="{'invisible': [('chart_view', '!=', 'invest_construction')]}">
+                        <group name="filter_invest_construction" string="Filters - Investment Construction">
+                            <field name="invest_construction_phase_id" />
+                        </group>
+                        <group name="groupby_invest_construction" />
+                    </group>
+                    <group attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}">
+                        <group name="filter_unit_base" string="Filters - Unit Base">
+                            <field name="org_id"/>
+                            <field name="sector_id"/>
+                            <field name="subsector_id"/>
+                            <field name="division_id"/>
+                            <field name="section_id" />
+                        </group>
+                        <group name="groupby_unit_base" string="Group by - Unit Base">
+                            <field name="groupby_org"/>
+                            <field name="groupby_sector"/>
+                            <field name="groupby_subsector"/>
+                            <field name="groupby_division"/>
+                            <field name="groupby_section"/>
+                        </group>
+                    </group>
+                    <group attrs="{'invisible': [('chart_view', '!=', 'project_base')]}">
+                        <group name="filter_project_base" string="Filters - Project Base">
+                            <field name="functional_area_id"/>
+                            <field name="program_group_id"/>
+                            <field name="program_id"/>
+                            <field name="project_group_id"/>
+                            <field name="project_id" />
+                        </group>
+                        <group name="groupby_project_base" string="Group by - Project Base">
+                            <field name="groupby_functional_area"/>
+                            <field name="groupby_program_group"/>
+                            <field name="groupby_program"/>
+                            <field name="groupby_project_group"/>
+                            <field name="groupby_project"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Budget Filters" name="budget_filters">
+                            <group>
+                                <group string="Paste list of code to search">
+                                    <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                                </group>
+                                <group string="Print only">
+                                    <field name="chartfield_ids" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button name="open_report" string="Open Report" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_budget_monitor_report_wizard" model="ir.actions.act_window">
+            <field name="name">Budget Monitoring</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">budget.monitor.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_budget_monitor_report_wizard"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="account_budget_activity.menu_action_budget_monitor_report" action="action_budget_monitor_report_wizard" parent="account_budget_activity.menu_action_budget_report" sequence="3"/>
+
+    </data>
+</openerp>

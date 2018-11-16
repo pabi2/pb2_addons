@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      <record id="view_asset_register_report_form" model="ir.ui.view">
+          <field name="name">view.asset.register.report.form</field>
+          <field name="model">asset.register.report</field>
+          <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+          <field name="mode">primary</field>
+          <field name="arch" type="xml">
+              <field name="fiscalyear_start_id" position="attributes">
+                  <attribute name="required">True</attribute>
+              </field>
+              <field name="fiscalyear_end_id" position="attributes">
+                  <attribute name="required">True</attribute>
+              </field>
+              <xpath expr="/form//group[@name='criteria']/group" position="inside">
+                  <field name="account_ids" widget="many2many_tags"/>
+                  <field name="asset_state"/>
+                  <field name="asset_profile_ids" widget="many2many_tags"/>
+                  <field name="asset_status_ids" widget="many2many_tags"/>
+                  <field name="building_ids" widget="many2many_tags"/>
+                  <!-- <field name="account_asset_id" widget="many2many_tags"/> -->
+                  <field name="responsible_person_ids" widget="many2many_tags"/>
+                  <field name="floor_ids" widget="many2many_tags"/>
+                  <field name="org_ids" widget="many2many_tags"/>
+                  <field name="room_ids" widget="many2many_tags"/>
+                  <field name="costcenter_ids" widget="many2many_tags"/>
+                  <field name="division_ids" widget="many2many_tags"/>
+                  <field name="sector_ids" widget="many2many_tags"/>
+                  <field name="subsector_ids" widget="many2many_tags"/>
+              </xpath>
+              <page name="time_filters" position="after">
+                  <page string="Asset Filters" name="asset_filters">
+                      <group>
+                          <field name="count_asset"/>
+                      </group>
+                      <group>
+                          <group string="Paste list of code to search">
+                              <field name="asset_filter" placeholder="Paste list of asset codes" nolabel="1"/>
+                          </group>
+                          <group string="Assets">
+                              <field name="asset_ids" nolabel="1">
+                                  <tree editable="bottom">
+                                      <field name="code" readonly="1"/>
+                                      <field name="name" readonly="1"/>
+                                      <field name="status" readonly="1"/>
+                                      <field name="state" readonly="1"/>
+                                  </tree>
+                              </field>
+                          </group>
+                      </group>
+                  </page>
+                  <page string="Budget Filters" name="budget_filters">
+                      <group>
+                          <field name="count_budget"/>
+                      </group>
+                      <group>
+                          <group string="Paste list of code to search">
+                              <field name="budget_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                          </group>
+                          <group string="Source of Budget">
+                              <field name="budget" nolabel="1"/>
+                          </group>
+                      </group>
+                      <group>
+                          <field name="count_owner_budget"/>
+                      </group>
+                      <group>
+                          <group string="Paste list of code to search">
+                              <field name="owner_budget_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                          </group>
+                          <group string="Owner Budget">
+                              <field name="owner_budget" nolabel="1"/>
+                          </group>
+                      </group>
+                  </page>
+                  <page string="Report Setting">
+                      <group>
+                          <p class="oe_grey" colspan="4">
+                            Define account type for accumulated depreciation account, to be used in report query SQL (one time setup).
+                          </p>
+                          <group>
+                              <field name="accum_depre_account_type"/>
+                          </group>
+                          <group>
+                              <field name="depre_account_type"/>
+                          </group>
+                      </group>
+                  </page>
+              </page>
+              <!-- <field name="fiscalyear_end_id" position="after">
+                  <group>
+                      <field name="asset_ids" widget="many2many_tags"/>
+                      <field name="asset_profile_id" widget="many2many_tags"/>
+                      <field name="account_asset_id" widget="many2many_tags"/>
+                      <field name="responsible_person_id" widget="many2many_tags"/>
+                  </group>
+                  <group>
+                      <field name="asset_status_id"/>
+                      <field name="org_id" widget="many2many_tags"/>
+                      <field name="building_id"/>
+                      <field name="floor_id" context="{'building_id': building_id}"/>
+                      <field name="room_id"/>
+                  </group>
+              </field> -->
+          </field>
+      </record>
+
+      <record id="action_asset_register_report_form" model="ir.actions.act_window">
+          <field name="name">Asset Register</field>
+          <field name="res_model">asset.register.report</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">form</field>
+          <field name="target">new</field>
+      </record>
+
+      <menuitem id="menu_asset_register_report"
+          name="Asset Register Report"
+          parent="menu_account_asset_report"
+          action="action_asset_register_report_form"
+          sequence="20"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="value_default_trading_account_payable" model="ir.values">
+            <field name="name">trading_account_payable</field>
+            <field name="model">qweb.report.payable.confirmation.letter</field>
+            <field name="key">default</field>
+            <field name="key2"></field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="value_unpickle">2101010000</field>
+        </record>
+        <record id="value_default_other_account_payable" model="ir.values">
+            <field name="name">other_account_payable</field>
+            <field name="model">qweb.report.payable.confirmation.letter</field>
+            <field name="key">default</field>
+            <field name="key2"></field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="value_unpickle">2102010000</field>
+        </record>
+        <record id="value_default_trading_account_receivable" model="ir.values">
+            <field name="name">trading_account_receivable</field>
+            <field name="model">qweb.report.receivable.confirmation.letter</field>
+            <field name="key">default</field>
+            <field name="key2"></field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="value_unpickle">1102010000</field>
+        </record>
+        <record id="value_default_other_account_receivable" model="ir.values">
+            <field name="name">other_account_receivable</field>
+            <field name="model">qweb.report.receivable.confirmation.letter</field>
+            <field name="key">default</field>
+            <field name="key2"></field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="value_unpickle">1190010000</field>
+        </record>
+        <record id="value_default_allowance_for_doubtful_account_code" model="ir.values">
+            <field name="name">allowance_for_doubtful_account_code</field>
+            <field name="model">xlsx.report.gl.allowance.doubtful.accounts</field>
+            <field name="key">default</field>
+            <field name="key2"></field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="value_unpickle">1103010001</field>
+        </record>
+    </data>
+</openerp>

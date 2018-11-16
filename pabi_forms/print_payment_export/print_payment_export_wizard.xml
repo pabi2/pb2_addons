@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <act_window name="Print Payment Export"
+            id="action_print_payment_export_wizard"
+            src_model="payment.export"
+            res_model="print.payment.export.wizard"
+            view_type="form"
+            view_mode="form"
+            key2="client_print_multi"
+            target="new"
+        />
+
+        <record id="print_payment_export_wizard" model="ir.ui.view">
+            <field name="name">print.payment.export.wizard</field>
+            <field name="model">print.payment.export.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Print Payment Export">
+                    <p>This wizard select report base on transfer type</p>
+                    <group>
+                        <field name="report"/>
+                    </group>
+                    <footer>
+                        <button name="action_print_payment_export" type="object" string="Print" class="oe_highlight"/>
+                        or
+                        <button special="cancel" class="oe_link" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+      </data>
+</openerp>

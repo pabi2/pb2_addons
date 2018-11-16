@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_sla_employee_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.sla.employee.form</field>
+            <field name="model">xlsx.report.sla.employee</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Validated By Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="user_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id)]"/>
+                    </page>
+                    <page string="Source Document Ref. Filters">
+                        <group>
+                            <field name="source_document_type"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_sla_employee_form" model="ir.actions.act_window">
+            <field name="name">SLA Employee</field>
+            <field name="res_model">xlsx.report.sla.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'lang': 'th_TH'}</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_sla_employee"
+            name="SLA Employee"
+            parent="menu_pabi_payable_report"
+            action="action_xlsx_report_sla_employee_form"
+            sequence="90"/>
+    </data>
+</openerp>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_cd_receivable_balance_sheet_summary_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.cd.receivable.balance.sheet.summary.form</field>
+            <field name="model">xlsx.report.cd.receivable.balance.sheet.summary</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Customer Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids" domain="[('company_id', '=', company_id)]"/>
+                    </page>
+                    <page string="MOU Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="mou_ids"/>
+                    </page>
+                    <page string="Account Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="account_ids" domain="[('company_id', '=', company_id)]"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_cd_receivable_balance_sheet_summary_form" model="ir.actions.act_window">
+            <field name="name">CD Receivable Balance Sheet Summary</field>
+            <field name="res_model">xlsx.report.cd.receivable.balance.sheet.summary</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'lang': 'th_TH'}</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_cd_receivable_balance_sheet_summary"
+            name="CD Receivable Balance Sheet Summary"
+            parent="menu_pabi_receivable_report"
+            action="action_xlsx_report_cd_receivable_balance_sheet_summary_form"
+            sequence="50"/>
+    </data>
+</openerp>

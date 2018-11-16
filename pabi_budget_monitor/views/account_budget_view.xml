@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="account_budget_view_form" model="ir.ui.view">
+            <field name="name">account.budget.view.form</field>
+            <field name="model">account.budget</field>
+            <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page[@name='commitment_summary']//field[@name='commitment_summary_revenue_line_ids']//field[@name='activity_group_id']" position="before">
+                    <field name="cost_control_id"/>
+                    <field name="budget_name"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@name='commitment_summary']//field[@name='commitment_summary_expense_line_ids']//field[@name='activity_group_id']" position="before">
+                    <field name="cost_control_id"/>
+                    <field name="budget_name"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

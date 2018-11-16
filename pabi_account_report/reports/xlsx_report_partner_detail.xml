@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_partner_detail_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.partner.detail.form</field>
+            <field name="model">xlsx.report.partner.detail</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <page name="time_filters" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </page>
+                <field name="fiscalyear_start_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="fiscalyear_end_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="fiscalyear_end_id" position="after">
+                    <field name="partner_type"/>
+                    <field name="active"/>
+                </field>
+                <page name="time_filters" position="before">
+                    <page string="Partner Category Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="category_ids"/>
+                    </page>
+                    <page string="Partner Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids" domain="[('company_id', '=', company_id)]"/>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_partner_detail_form" model="ir.actions.act_window">
+            <field name="name">Partner Detail</field>
+            <field name="res_model">xlsx.report.partner.detail</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'lang': 'th_TH'}</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_partner_detail"
+            name="Partner Detail"
+            parent="menu_pabi_payable_report"
+            action="action_xlsx_report_partner_detail_form"
+            sequence="20"/>
+    </data>
+</openerp>
