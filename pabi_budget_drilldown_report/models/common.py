@@ -256,7 +256,7 @@ class SearchCommon(ChartField, object):
         member = Member.search([('employee_id', '=', employee_id)])
         self._cr.execute("""
             select project_id from project_hr_employee_rel where employee_id =
-            %s""" % (employee_id, ))
+            %s""" % (employee_id or 0, ))
         project_ids = \
             Project.browse(map(lambda l: l[0], self._cr.fetchall())).ids + \
             Project.search([('analyst_employee_id', '=', employee_id)]).ids + \
