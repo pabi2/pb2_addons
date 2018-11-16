@@ -199,6 +199,17 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
                 row['activity_id'] = row['activity_rpt_id']
                 del row['activity_rpt_id']
             row['chartfield_ids'] = [(6, 0, self.chartfield_ids.ids)]
+            if self._context.get('action_type', False) == 'my_budget_report':
+                if self.report_type == 'unit_base':
+                    section_ids = self._get_domain_section()[0][2]
+                    if self.section_ids:
+                        section_ids = self.section_ids.ids
+                    row['section_ids'] = [(6, 0, section_ids)]
+                if self.report_type == 'project_base':
+                    project_ids = self._get_domain_project()[0][2]
+                    if self.project_ids:
+                        project_ids = self.project_ids.ids
+                    row['project_ids'] = [(6, 0, project_ids)]
             report_lines.append((0, 0, row))
         view = self.env.ref(view_xml_id)
         return (report_lines, view.id)
@@ -887,22 +898,22 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         }
 
     @api.multi
-    def _update_where_str(self, where_str, chartfield_ids):
+    def _update_where_str(self, where_str):
         section_ids = \
-            chartfield_ids.filtered(lambda x: x.model == 'res.section') \
+            self.chartfield_ids.filtered(lambda x: x.model == 'res.section') \
             .mapped('res_id')
         project_ids = \
-            chartfield_ids.filtered(lambda x: x.model == 'res.project') \
+            self.chartfield_ids.filtered(lambda x: x.model == 'res.project') \
             .mapped('res_id')
         invest_asset_ids = \
-            chartfield_ids.filtered(
+            self.chartfield_ids.filtered(
                 lambda x: x.model == 'res.invest.asset').mapped('res_id')
         personnel_costcenter_ids = \
-            chartfield_ids.filtered(
+            self.chartfield_ids.filtered(
                 lambda x: x.model == 'res.personnel.costcenter') \
             .mapped('res_id')
         invest_construction_phase_ids = \
-            chartfield_ids.filtered(
+            self.chartfield_ids.filtered(
                 lambda x: x.model == 'res.invest.construction.phase') \
             .mapped('res_id')
 
@@ -926,6 +937,12 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
                 str(tuple(invest_construction_phase_ids + [0])))
         if where_list:
             where_str += ' and (' + ' or '.join(where_list) + ')'
+        if self.section_ids:
+            where_str += ' and section_id in %s' \
+                % str(tuple(self.section_ids.ids + [0]))
+        if self.project_ids:
+            where_str += ' and project_id in %s' \
+                % str(tuple(self.project_ids.ids + [0]))
         return where_str
 
     @api.multi
@@ -935,9 +952,9 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         if ttype and ttype not in ('total_commit'):
             where_dict.update({'budget_commit_type': ttype})
         where_str = prepare_where_str(where_dict)
-        if self.chartfield_ids:
-            where_str += self._update_where_str(
-                where_str, self.chartfield_ids)
+
+        # Update where_str
+        where_str += self._update_where_str(where_str)
         # Special Where
         if ttype == 'total_commit':
             where_str += " and budget_commit_type in" \
