@@ -91,7 +91,8 @@ def get_import_job(session, model_name, ctx, res_id, att_id):
         Import = session.env['import.xlsx.template'].with_context(ctx)
         record = Import.import_template(attachment.datas,
                                         wizard.template_id,
-                                        wizard.res_model)
+                                        wizard.res_model,
+                                        wizard.res_id)
         # Write result back to job
         job_uuid = session.context.get('job_uuid')
         job = session.env['queue.job'].search([('uuid', '=', job_uuid)])
