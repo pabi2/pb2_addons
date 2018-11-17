@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from openerp import tools
 from openerp import api, models, fields, _
 from openerp.addons.pabi_base.models.res_common import ResCommon
 
