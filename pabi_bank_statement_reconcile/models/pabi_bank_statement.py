@@ -5,6 +5,7 @@ from openerp.exceptions import ValidationError
 
 class PABIBankStatement(models.Model):
     _name = 'pabi.bank.statement'
+    _inherit = ['mail.thread']
     _description = 'This model hold bank statement generated within Odoo'
 
     name = fields.Char(
@@ -14,11 +15,13 @@ class PABIBankStatement(models.Model):
         readonly=True,
         size=100,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     import_file_name = fields.Char(
         string='FileName',
         size=100,
         copy=False,
+        track_visibility='onchange',
     )
     import_file = fields.Binary(
         string='Import File (*.xls)',
@@ -27,6 +30,7 @@ class PABIBankStatement(models.Model):
         states={'draft': [('readonly', False)],
                 'nstda': [('readonly', False)],
                 'bank': [('readonly', False)]},
+        track_visibility='onchange',
     )
     use_xlsx_template = fields.Boolean(
         string='Import template',
@@ -36,7 +40,8 @@ class PABIBankStatement(models.Model):
                 'nstda': [('readonly', False)],
                 'bank': [('readonly', False)]},
         help="If checked, we will use the selected template for import."
-        "Otherwise, simply use the standard raw template for import."
+        "Otherwise, simply use the standard raw template for import.",
+        track_visibility='onchange',
     )
     xlsx_template_id = fields.Many2one(
         'ir.attachment',
@@ -46,6 +51,7 @@ class PABIBankStatement(models.Model):
                 'nstda': [('readonly', False)],
                 'bank': [('readonly', False)]},
         domain=lambda self: self._get_template_domain(),
+        track_visibility='onchange',
     )
     report_type = fields.Selection(
         [('payment_cheque', 'Unreconciled Cheque'),
@@ -59,6 +65,7 @@ class PABIBankStatement(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         help="Template used to prefill the search criteria",
+        track_visibility='onchange',
     )
     match_method = fields.Selection(
         [('cheque', 'Cheque Number, Amount'),
@@ -66,6 +73,7 @@ class PABIBankStatement(models.Model):
          ('date_value', 'Date Value, Amount')],
         string='Matching Method',
         required=False,
+        track_visibility='onchange',
     )
     match_method_readonly = fields.Selection(
         [('cheque', 'Cheque Number, Amount'),
@@ -74,6 +82,7 @@ class PABIBankStatement(models.Model):
         string='Matching Method',
         readonly=True,
         related='match_method',
+        track_visibility='onchange',
     )
     journal_id = fields.Many2one(
         'account.journal',
@@ -82,6 +91,7 @@ class PABIBankStatement(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     partner_bank_id = fields.Many2one(
         'res.partner.bank',
@@ -91,6 +101,7 @@ class PABIBankStatement(models.Model):
         required=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     account_id = fields.Many2one(
         'account.account',
@@ -98,6 +109,7 @@ class PABIBankStatement(models.Model):
         string='Account',
         store=True,
         readonly=True,
+        track_visibility='onchange',
     )
     doctype = fields.Selection(
         [('payment', 'Supplier Payment'),
@@ -107,12 +119,14 @@ class PABIBankStatement(models.Model):
         default='payment',
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     no_cancel_doc = fields.Boolean(
         string='No Cancelled Document',
         default=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     payment_type = fields.Selection(
         [('cheque', 'Cheque'),
@@ -122,6 +136,7 @@ class PABIBankStatement(models.Model):
         help="Specified Payment Type, can be used to screen Payment Method",
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     transfer_type = fields.Selection(
         [('direct', 'DIRECT'),
@@ -134,23 +149,27 @@ class PABIBankStatement(models.Model):
         "- Oversea is transfer is from oversea.",
         readonly=True,
         states={'draft': [('readonly', False)]},
+        track_visibility='onchange',
     )
     date_report = fields.Date(
         string='Report Date',
         default=lambda self: fields.Date.context_today(self),
         readonly=True,
+        track_visibility='onchange',
     )
     item_ids = fields.One2many(
         'pabi.bank.statement.item',
         'statement_id',
         string='Statement Item',
         copy=False,
+        track_visibility='onchange',
     )
     import_ids = fields.One2many(
         'pabi.bank.statement.import',
         'statement_id',
         string='Statement Import',
         copy=False,
+        track_visibility='onchange',
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -163,6 +182,7 @@ class PABIBankStatement(models.Model):
         string='Status',
         default='draft',
         required=True,
+        track_visibility='onchange',
     )
     _sql_constraints = [
         ('name_unique', 'unique (name)', 'Bank Statement name must be unique!')
