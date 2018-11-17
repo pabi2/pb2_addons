@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="import_journal_entries" model="pabi.process">
+						<field name="name">Import Journal Entries</field>
+				</record>
+		</data>
+</openerp>

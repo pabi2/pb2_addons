@@ -7,5 +7,9 @@
 				<record id="xlsx_report" model="pabi.process">
 						<field name="name">Excel Report</field>
 				</record>
+				# Old Import Process
+				<record id="import_xlsx_template" model="pabi.process">
+						<field name="name">Import Excel Template</field>
+				</record>
 		</data>
 </openerp>
