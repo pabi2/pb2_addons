@@ -656,124 +656,124 @@ class AccountAsset(ChartFieldAction, models.Model):
             self.salvage_value = self.profile_id.salvage_value
     # Method used in change owner and transfer
 
-    @api.model
-    def _prepare_asset_reverse_moves(self, assets):
-        """"
-        As we are using compund asset depreciation, I am not ver sure
-        we will need to find depre lines to be used in transfer, chane owner.
-        will need a lot more test to find out what to do.
-        Note: depre_lines does not seem to have any value at this moment
-        """
-        AccountMoveLine = self.env['account.move.line']
-        default = {'move_id': False,
-                   'parent_asset_id': False,
-                   'asset_profile_id': False,
-                   'product_id': False,
-                   'partner_id': False,
-                   'stock_move_id': False,
-                   }
-        asset_move_lines_dict = []
-        depre_move_lines_dict = []
-        for asset in assets:
-            account_asset_id = asset.profile_id.account_asset_id.id
-            account_depre_id = asset.profile_id.account_depreciation_id.id
-            # Getting the origin move_line (1 asset value and 1 depreciation)
-            # Asset
-            asset_lines = AccountMoveLine.search([  # Should have 1 line
-                ('asset_id', '=', asset.id),
-                ('account_id', '=', account_asset_id),
-                # Same Owner
-                ('project_id', '=', asset.owner_project_id.id),
-                ('section_id', '=', asset.owner_section_id.id),
-                ('invest_asset_id', '=', asset.owner_invest_asset_id.id),
-                ('invest_construction_phase_id', '=',
-                 asset.invest_construction_phase_id.id),
-            ], order='id asc')
-            if asset_lines:
-                asset_line_dict = asset_lines[0].copy_data(default)[0]
-                asset_line_dict.update({
-                    'analytic_account_id': False,
-                    'activity_group_id': False,
-                    'activity_id': False,
-                    'activity_rpt_id': False,
-                })
-                debit = sum(asset_lines.mapped('debit'))
-                credit = sum(asset_lines.mapped('credit'))
-                if float_compare(debit, credit, 2) == 1:
-                    asset_line_dict['credit'] = debit - credit
-                    asset_line_dict['debit'] = False
-                else:
-                    asset_line_dict['credit'] = False
-                    asset_line_dict['debit'] = credit - debit
-                asset_move_lines_dict.append(asset_line_dict)
-            # Depre
-            depre_lines = AccountMoveLine.search([
-                ('asset_id', '=', asset.id),
-                ('account_id', '=', account_depre_id),
-                # Same Owner
-                ('project_id', '=', asset.owner_project_id.id),
-                ('section_id', '=', asset.owner_section_id.id),
-                ('invest_asset_id', '=', asset.owner_invest_asset_id.id),
-                ('invest_construction_phase_id', '=',
-                 asset.invest_construction_phase_id.id),
-            ], order='id asc')
-            if depre_lines:
-                depre_line_dict = depre_lines[0].copy_data(default)[0]
-                depre_line_dict.update({
-                    'analytic_account_id': False,
-                    'activity_group_id': False,
-                    'activity_id': False,
-                    'activity_rpt_id': False,
-                })
-                debit = sum(depre_lines.mapped('debit'))
-                credit = sum(depre_lines.mapped('credit'))
-                if float_compare(debit, credit, 2) == 1:
-                    depre_line_dict['credit'] = debit - credit
-                    depre_line_dict['debit'] = False
-                else:
-                    depre_line_dict['credit'] = False
-                    depre_line_dict['debit'] = credit - debit
-                depre_move_lines_dict.append(depre_line_dict)
-            # Validation
-            # if not asset_move_lines_dict:
-            #     raise ValidationError(
-            #         _('No Asset Value. Something went wrong!\nIt is likely '
-            #         'that, the asset owner do not match with account move.'))
-            return (asset_move_lines_dict, depre_move_lines_dict)
+    # @api.model
+    # def _prepare_asset_reverse_moves(self, assets):
+    #     """"
+    #     As we are using compund asset depreciation, I am not ver sure
+    #     we will need to find depre lines to be used in transfer, chane owner.
+    #     will need a lot more test to find out what to do.
+    #     Note: depre_lines does not seem to have any value at this moment
+    #     """
+    #     AccountMoveLine = self.env['account.move.line']
+    #     default = {'move_id': False,
+    #                'parent_asset_id': False,
+    #                'asset_profile_id': False,
+    #                'product_id': False,
+    #                'partner_id': False,
+    #                'stock_move_id': False,
+    #                }
+    #     asset_move_lines_dict = []
+    #     depre_move_lines_dict = []
+    #     for asset in assets:
+    #         account_asset_id = asset.profile_id.account_asset_id.id
+    #         account_depre_id = asset.profile_id.account_depreciation_id.id
+    #         # Getting the origin move_line (1 asset value and 1 depreciation)
+    #         # Asset
+    #         asset_lines = AccountMoveLine.search([  # Should have 1 line
+    #             ('asset_id', '=', asset.id),
+    #             ('account_id', '=', account_asset_id),
+    #             # Same Owner
+    #             ('project_id', '=', asset.owner_project_id.id),
+    #             ('section_id', '=', asset.owner_section_id.id),
+    #             ('invest_asset_id', '=', asset.owner_invest_asset_id.id),
+    #             ('invest_construction_phase_id', '=',
+    #              asset.invest_construction_phase_id.id),
+    #         ], order='id asc')
+    #         if asset_lines:
+    #             asset_line_dict = asset_lines[0].copy_data(default)[0]
+    #             asset_line_dict.update({
+    #                 'analytic_account_id': False,
+    #                 'activity_group_id': False,
+    #                 'activity_id': False,
+    #                 'activity_rpt_id': False,
+    #             })
+    #             debit = sum(asset_lines.mapped('debit'))
+    #             credit = sum(asset_lines.mapped('credit'))
+    #             if float_compare(debit, credit, 2) == 1:
+    #                 asset_line_dict['credit'] = debit - credit
+    #                 asset_line_dict['debit'] = False
+    #             else:
+    #                 asset_line_dict['credit'] = False
+    #                 asset_line_dict['debit'] = credit - debit
+    #             asset_move_lines_dict.append(asset_line_dict)
+    #         # Depre
+    #         depre_lines = AccountMoveLine.search([
+    #             ('asset_id', '=', asset.id),
+    #             ('account_id', '=', account_depre_id),
+    #             # Same Owner
+    #             ('project_id', '=', asset.owner_project_id.id),
+    #             ('section_id', '=', asset.owner_section_id.id),
+    #             ('invest_asset_id', '=', asset.owner_invest_asset_id.id),
+    #             ('invest_construction_phase_id', '=',
+    #              asset.invest_construction_phase_id.id),
+    #         ], order='id asc')
+    #         if depre_lines:
+    #             depre_line_dict = depre_lines[0].copy_data(default)[0]
+    #             depre_line_dict.update({
+    #                 'analytic_account_id': False,
+    #                 'activity_group_id': False,
+    #                 'activity_id': False,
+    #                 'activity_rpt_id': False,
+    #             })
+    #             debit = sum(depre_lines.mapped('debit'))
+    #             credit = sum(depre_lines.mapped('credit'))
+    #             if float_compare(debit, credit, 2) == 1:
+    #                 depre_line_dict['credit'] = debit - credit
+    #                 depre_line_dict['debit'] = False
+    #             else:
+    #                 depre_line_dict['credit'] = False
+    #                 depre_line_dict['debit'] = credit - debit
+    #             depre_move_lines_dict.append(depre_line_dict)
+    #         # Validation
+    #         # if not asset_move_lines_dict:
+    #         #     raise ValidationError(
+#         #         _('No Asset Value. Something went wrong!\nIt is likely '
+#         #         'that, the asset owner do not match with account move.'))
+    #         return (asset_move_lines_dict, depre_move_lines_dict)
 
-    @api.model
-    def _prepare_asset_target_move(self, move_lines_dict, new_owner=None):
-        if new_owner is None:
-            new_owner = {}
-        debit = sum(x['debit'] for x in move_lines_dict)
-        credit = sum(x['credit'] for x in move_lines_dict)
-        if not move_lines_dict:
-            raise ValidationError(
-                _('Error on function _prepare_asset_target_move.\n'
-                  'Invalid or no journal entry in original asset.'))
-        move_line_dict = move_lines_dict[0].copy()
-        move_line_dict.update({
-            'analytic_account_id': False,  # To refresh dimension
-            'activity_group_id': False,
-            'activity_id': False,
-            'activity_rpt_id': False,
-            'credit': debit,
-            'debit': credit,
-        })
-        if new_owner:
-            dimension = {
-                'project_id': new_owner.get('owner_project_id', False),
-                'section_id': new_owner.get('owner_section_id', False),
-                'invest_asset_id':
-                new_owner.get('owner_invest_asset_id', False),
-                'invest_construction_phase_id':
-                new_owner.get('owner_invest_construction_phase_id', False),
-            }
-            Asset = self.env['account.asset']
-            res = Asset.new(dimension)._get_related_dimension(dimension)
-            move_line_dict.update(res)
-            move_line_dict.update(dimension)
-        return move_line_dict
+    # @api.model
+    # def _prepare_asset_target_move(self, move_lines_dict, new_owner=None):
+    #     if new_owner is None:
+    #         new_owner = {}
+    #     debit = sum(x['debit'] for x in move_lines_dict)
+    #     credit = sum(x['credit'] for x in move_lines_dict)
+    #     if not move_lines_dict:
+    #         raise ValidationError(
+    #             _('Error on function _prepare_asset_target_move.\n'
+    #               'Invalid or no journal entry in original asset.'))
+    #     move_line_dict = move_lines_dict[0].copy()
+    #     move_line_dict.update({
+    #         'analytic_account_id': False,  # To refresh dimension
+    #         'activity_group_id': False,
+    #         'activity_id': False,
+    #         'activity_rpt_id': False,
+    #         'credit': debit,
+    #         'debit': credit,
+    #     })
+    #     if new_owner:
+    #         dimension = {
+    #             'project_id': new_owner.get('owner_project_id', False),
+    #             'section_id': new_owner.get('owner_section_id', False),
+    #             'invest_asset_id':
+    #             new_owner.get('owner_invest_asset_id', False),
+    #             'invest_construction_phase_id':
+    #             new_owner.get('owner_invest_construction_phase_id', False),
+    #         }
+    #         Asset = self.env['account.asset']
+    #         res = Asset.new(dimension)._get_related_dimension(dimension)
+    #         move_line_dict.update(res)
+    #         move_line_dict.update(dimension)
+    #     return move_line_dict
 
     @api.multi
     def post_import_validation(self):
