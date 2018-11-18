@@ -33,6 +33,12 @@
                 <field name="remarks" position="attributes">
                     <attribute name="readonly">True</attribute>
                 </field>
+                <xpath expr="//page[@name='expense']/div[@name='expense_extra']" position="before">
+                    <button name="%(action_budget_control_invest_asset_export_xlsx_template)d"
+                      type="action" string="Export to Excel" class="oe_highlight oe_right" attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}"/>
+                    <button name="%(action_budget_control_invest_asset_import_xlsx_template)d"
+                      type="action" string="Import to Excel" class="oe_right" attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}"/>
+                </xpath>
             </field>
         </record>
 
