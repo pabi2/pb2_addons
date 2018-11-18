@@ -56,6 +56,9 @@
             <field name="model">account.move.line</field>
             <field name="inherit_id" ref="account.view_account_move_line_filter"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="origin"/>
+                </xpath>
                 <xpath expr="//group" position="inside">
                     <filter string="System Origin" domain="[]" context="{'group_by':'system_id'}"/>
                 </xpath>

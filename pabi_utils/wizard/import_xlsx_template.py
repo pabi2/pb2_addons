@@ -12,6 +12,9 @@ from openerp.tools.float_utils import float_compare
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError, RedirectWarning
 from openerp.tools.safe_eval import safe_eval as eval
+from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import FailedJobError
 
 
 def get_field_condition(field):
@@ -53,6 +56,54 @@ def get_sheet_by_name(book, name):
                 return sheet
     except IndexError:
         raise ValidationError(_("'%s' sheet not found") % (name,))
+
+
+def related_importing_record(session, thejob):
+    """ Open up the record we ar importing """
+    job = session.env['queue.job'].search([('uuid', '=', thejob._uuid)])
+    ctx = thejob.args[1]
+    res_ids = literal_eval(job.res_ids)
+    # Specified action
+    if ctx.get('return_action', False):
+        action_id = ctx['return_action']
+        result = session.env.ref(action_id).read()[0]
+        if result.get('res_model') != job.res_model:
+            raise ValidationError(_('Wrong action provided: %s!') % action_id)
+        result.update({'domain': [('id', 'in', res_ids)]})
+        return result
+    # Default action
+    return {
+        'type': 'ir.actions.act_window',
+        'res_model': job.res_model,
+        'view_mode': 'tree,form',
+        'view_type': 'form',
+        'domain': [('id', 'in', res_ids)],
+    }
+
+
+@job(default_channel='root.import_xlsx_template')
+@related_action(action=related_importing_record)
+def get_import_job(session, model_name, ctx, res_id, att_id):
+    try:
+        # Process Import File
+        wizard = session.env[model_name].browse(res_id)
+        attachment = session.env['ir.attachment'].browse(att_id)
+        Import = session.env['import.xlsx.template'].with_context(ctx)
+        record = Import.import_template(attachment.datas,
+                                        wizard.template_id,
+                                        wizard.res_model,
+                                        wizard.res_id)
+        # Write result back to job
+        job_uuid = session.context.get('job_uuid')
+        job = session.env['queue.job'].search([('uuid', '=', job_uuid)])
+        job.write({'res_model': record._name,
+                   'res_ids': [record.id]})
+        # Result Description
+        result = _('Successfully imported excel file : %s for %s') % \
+            (attachment.name, record.display_name)
+        return result
+    except Exception, e:
+        raise FailedJobError(e)
 
 
 class ImportXlsxTemplate(models.TransientModel):
@@ -97,6 +148,21 @@ class ImportXlsxTemplate(models.TransientModel):
         string='Template Name',
         related='template_id.datas_fname',
         readonly=True,
+    )
+    state = fields.Selection(
+        [('choose', 'choose'),
+         ('get', 'get')],
+        default='choose',
+    )
+    async_process = fields.Boolean(
+        string='Run task in background?',
+        default=False,
+    )
+    uuid = fields.Char(
+        string='UUID',
+        readonly=True,
+        size=100,
+        help="Job queue unique identifiers",
     )
 
     @api.model
@@ -373,11 +439,47 @@ class ImportXlsxTemplate(models.TransientModel):
         self.ensure_one()
         if not self.import_file:
             raise ValidationError(_('Please choose excel file to import!'))
-        record = self.import_template(self.import_file, self.template_id,
-                                      self.res_model, self.res_id)
-        if self._context.get('return_action', False):
-            action = self.env.ref(self._context['return_action'])
-            result = action.read()[0]
-            result.update({'domain': [('id', '=', record.id)]})
-            return result
+        if self.async_process:
+            Job = self.env['queue.job']
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = 'Excel Import - %s' % self.res_model
+            ctx = self._context.copy()
+            del ctx['params']  # If not removed, job is not readable by queue
+            attachment = self.env['ir.attachment'].create({
+                'name': self.datas_fname,
+                'datas': self.import_file,
+                'datas_fname': self.datas_fname,
+                'type': 'binary',
+                'description': False,
+            })
+            uuid = get_import_job.delay(session, self._name, ctx,
+                                        self.id, attachment.id,
+                                        description=description)
+            job = Job.search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            job.process_id = \
+                self.env.ref('pabi_utils.import_xlsx_template')
+            # Move file to attach to queue.job
+            attachment.write({
+                'res_model': 'queue.job',
+                'res_id': job.id,
+                'user_id': job.user_id.id, })
+            self.write({'state': 'get', 'uuid': uuid})
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': self._name,
+                'view_mode': 'form',
+                'view_type': 'form',
+                'res_id': self.id,
+                'views': [(False, 'form')],
+                'target': 'new',
+            }
+        else:
+            record = self.import_template(self.import_file, self.template_id,
+                                          self.res_model, self.res_id)
+            if self._context.get('return_action', False):
+                action = self.env.ref(self._context['return_action'])
+                result = action.read()[0]
+                result.update({'domain': [('id', '=', record.id)]})
+                return result
         return
