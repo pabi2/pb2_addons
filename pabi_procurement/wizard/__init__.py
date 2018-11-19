@@ -8,5 +8,6 @@ from . import force_done_reason
 from . import purchase_request_line_close
 from . import purchase_create_invoice_plan
 from . import accept_with_reason
+from . import edit_purchase_desc
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
