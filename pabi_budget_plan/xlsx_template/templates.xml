@@ -792,5 +792,82 @@
           </field>
         </record>
 
+        # Budget Control
+        <!-- Directory Budget Control Templates -->
+        <record model="document.directory" id="dir_budget_control_template">
+            <field name="name">Budget Control Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <!-- Investment Asset Template (Budget Control) -->
+        <record id="budget_control_invest_asset_xlsx_template" model="ir.attachment">
+            <field name="res_model">account.budget</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_control_invest_asset.xlsx</field>
+            <field name="name">Investment Asset Template</field>
+            <field name="parent_id" eval="ref('dir_budget_control_template')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        1: {
+                            '_HEAD_': {
+                                'B3': 'creating_user_id.display_name',
+                                'B4': 'fiscalyear_id.name',
+                                'B5': 'org_id.display_name',
+                                'B6': 'budgeted_expense',
+                                'B7': 'policy_amount',
+                                'B8': 'released_amount',
+                            },
+                            'budget_expense_line_invest_asset': {
+                                'A11': 'fund_id.code',
+                                'B11': 'fund_id.name',
+                                'C11': 'invest_asset_id.code',
+                                'D11': 'invest_asset_id.name',
+                                'E11': 'planned_amount',
+                                'F11': 'released_amount',
+                                'G11': 'm1',
+                                'H11': 'm2',
+                                'I11': 'm3',
+                                'J11': 'm4',
+                                'K11': 'm5',
+                                'L11': 'm6',
+                                'M11': 'm7',
+                                'N11': 'm8',
+                                'O11': 'm9',
+                                'P11': 'm10',
+                                'Q11': 'm11',
+                                'R11': 'm12',
+                            }
+                        },
+                    },
+                    '__IMPORT__': {
+                        1: {
+                            'budget_expense_line_invest_asset': {
+                                'A11': 'fund_id',
+                                'C11': 'invest_asset_id',
+                                'E11': 'planned_amount',
+                                'F11': 'released_amount',
+                                'G11': 'm1',
+                                'H11': 'm2',
+                                'I11': 'm3',
+                                'J11': 'm4',
+                                'K11': 'm5',
+                                'L11': 'm6',
+                                'M11': 'm7',
+                                'N11': 'm8',
+                                'O11': 'm9',
+                                'P11': 'm10',
+                                'Q11': 'm11',
+                                'R11': 'm12',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
+
     </data>
 </openerp>

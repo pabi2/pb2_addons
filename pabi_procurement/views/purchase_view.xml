@@ -180,6 +180,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='partner_id']" position="after">
                 </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+                    <button name="%(action_edit_purchase_desc)d" string="Edit" type="action" icon="gtk-justify-fill"/>
+                </xpath>
             </field>
         </record>
 
