@@ -70,7 +70,9 @@
                             <group>
                                 <field name="line_number_max"/>
                             </group>
-                            <group></group>
+                            <group>
+                                <field name="invoice_detail_disabled"/>
+                            </group>
                         </group>
                         <field name="invoice_detail_config_line_ids"/>
                         <separator string="Footer Configurations"/>

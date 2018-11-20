@@ -118,6 +118,10 @@ class DocumentExportConfig(models.Model):
         string='Invoice Details Configurations',
         copy=True,
     )
+    invoice_detail_disabled = fields.Boolean(
+        string='Disabled',
+        default=False,
+    )
     delimiter_symbol = fields.Char(
         string="Joining Delimiter",
         required=False,

@@ -103,6 +103,10 @@ class DocumentExportParser(models.TransientModel):
                         line.update({'value': value})
                 data_list.append(line_detail_config_lines)
 
+        # If not use footer
+        if config_id.invoice_detail_disabled:
+            return data_list
+
         if export_lines:
             for export_line in export_lines:
                 voucher_lines = export_line.voucher_id.line_ids
