@@ -9,7 +9,7 @@
                 <xpath expr="//form/sheet/notebook/page[@string='Products']" position="after">
                     <page string="Fine">
                         <group>
-                            <field name="fine_rate"/>
+                            <field name="fine_rate" digits="(14, 3)"/>
                             <field name="fine_condition"/>
                             <field name="date_fine"
                                 attrs="{'invisible':[('fine_condition', '!=', 'date')]}"/>
