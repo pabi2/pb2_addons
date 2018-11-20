@@ -348,6 +348,7 @@ class PABIAdvanceDunningLetterLine(models.Model):
     send_email = fields.Boolean(
         related='dunning_id.send_email',
         string='Send Email',
+        readonly=True,
     )
     to_employee_ids = fields.Many2many(
         'hr.employee',
