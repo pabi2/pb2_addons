@@ -331,7 +331,7 @@ class PABIAdvanceDunningLetterLine(models.Model):
         readonly=True,
     )
     date_due = fields.Date(
-        string='Date Due',
+        string='Due Date',
         related='expense_id.date_due',
         readonly=True,
     )

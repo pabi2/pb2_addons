@@ -5,9 +5,9 @@ from openerp import models, fields, api
 class GenerateAssetCode(models.TransientModel):
     _name = 'generate.asset.code'
 
-    action_type = fields.Selection(
+    filter_by = fields.Selection(
         [('null_asset_code', 'Asset Code is Null')],
-        string='Action Type',
+        string='Filter By',
         default='null_asset_code',
         required=True,
     )
@@ -20,6 +20,6 @@ class GenerateAssetCode(models.TransientModel):
         active_ids = context.get('active_ids', [])
         if active_model and active_ids:
             invest_asset = self.env[active_model].browse(active_ids)
-            if self.action_type == 'null_asset_code':
+            if self.filter_by == 'null_asset_code':
                 invest_asset = invest_asset.filtered(lambda l: not l.code)
             invest_asset.generate_code()
