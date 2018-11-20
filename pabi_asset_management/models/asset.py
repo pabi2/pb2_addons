@@ -956,17 +956,17 @@ class AccountAssetLine(models.Model):
         asset = self.asset_id
         move_line_data.update({'name': asset.code})
         # Only update dimension on line with analytic_account_id
-        if move_line_data.get('analytic_account_id', False):
-            dimension = {'section_id': asset.owner_section_id.id,
-                         'project_id': asset.owner_project_id.id,
-                         'invest_asset_id': asset.owner_invest_asset_id.id,
-                         'invest_construction_phase_id':
-                         asset.owner_invest_construction_phase_id.id, }
-            # Mock object to get related dimension
-            Asset = self.env['account.asset']
-            res = Asset.new(dimension)._get_related_dimension(dimension)
-            move_line_data.update(res)
-            move_line_data.update(dimension)
+        # if move_line_data.get('analytic_account_id', False):
+        dimension = {'section_id': asset.owner_section_id.id,
+                     'project_id': asset.owner_project_id.id,
+                     'invest_asset_id': asset.owner_invest_asset_id.id,
+                     'invest_construction_phase_id':
+                     asset.owner_invest_construction_phase_id.id, }
+        # Mock object to get related dimension
+        Asset = self.env['account.asset']
+        res = Asset.new(dimension)._get_related_dimension(dimension)
+        move_line_data.update(res)
+        move_line_data.update(dimension)
         # Finalize
         move_line_data.update({'activity_group_id': False,
                                'activity_id': False,
