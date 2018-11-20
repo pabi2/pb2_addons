@@ -51,6 +51,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         readonly=False,
         states={},  # Always editable
         size=500,
+        index=True,
     )
     parent_id = fields.Many2one(
         readonly=False,

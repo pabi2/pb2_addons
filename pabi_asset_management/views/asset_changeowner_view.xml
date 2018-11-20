@@ -46,11 +46,11 @@
                 <form string="Asset">
                     <header>
                         <button name="action_draft" states="cancel" string="Set to Draft" type="object" invisible="1"
-                          groups="purchase.group_purchase_user"/>
+                          groups="purchase.group_purchase_user,account.group_account_user"/>
                         <button name="action_done" states="draft" string="Change Owner" type="object" class="oe_highlight"
-                          groups="purchase.group_purchase_user"/>
+                          groups="purchase.group_purchase_user,account.group_account_user"/>
                         <button name="action_cancel" states="draft" string="Cancel" type="object"
-                          groups="purchase.group_purchase_user"/>
+                          groups="purchase.group_purchase_user,account.group_account_user"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>
