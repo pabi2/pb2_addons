@@ -4,3 +4,4 @@
 from . import asset_plan_to_budget_plan_wizard
 from . import generate_budget_plan
 from . import budget_breakdown_action_excel_import_wizard
+from . import generate_asset_code

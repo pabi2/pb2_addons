@@ -123,13 +123,12 @@ if diff_budget:
   employee_id = pool['hr.employee'].search(cr, uid, [('user_id', '=', object.preparer_user_id.id)], context=context)
   if employee_id:
     employee_id = employee_id[0]
-  else:
-    supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
-    boss_of_owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
-    boss=[object.preparer_user_id.login,boss_of_owner]
-    action='A'
-    is_complete=True
-    pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
+  supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
+  boss_of_owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
+  boss=[object.preparer_user_id.login,boss_of_owner]
+  action='A'
+  is_complete=True
+  pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
           </field>
       </record>
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
-
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 class AccountVoucherCancel(models.TransientModel):
 
@@ -23,6 +23,11 @@ class AccountVoucherCancel(models.TransientModel):
             return act_close
         assert len(voucher_ids) == 1, "Only 1 sale ID expected"
         voucher = self.env['account.voucher'].browse(voucher_ids)
+        if voucher and voucher.bank_receipt_id and \
+           voucher.bank_receipt_id.state != 'cancel':
+            raise ValidationError(_(
+                "Bank Receipt %s is not cancelled" %
+                (voucher.bank_receipt_id.name)))
         voucher.cancel_reason_txt = self.cancel_reason_txt
         voucher.cancel_voucher()
         return act_close
