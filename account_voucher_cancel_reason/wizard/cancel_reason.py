@@ -23,7 +23,8 @@ class AccountVoucherCancel(models.TransientModel):
             return act_close
         assert len(voucher_ids) == 1, "Only 1 sale ID expected"
         voucher = self.env['account.voucher'].browse(voucher_ids)
-        if voucher and voucher.bank_receipt_id.state != 'cancel':
+        if voucher and voucher.bank_receipt_id and \
+           voucher.bank_receipt_id.state != 'cancel':
             raise ValidationError(_(
                 "Bank Receipt %s is not cancelled" %
                 (voucher.bank_receipt_id.name)))
