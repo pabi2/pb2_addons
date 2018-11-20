@@ -334,16 +334,6 @@ class PurchaseWorkAcceptance(models.Model):
                         })
 
     @api.model
-    def _check_purchase_type(self):
-        type = 'service'
-        for acceptance in self:
-            to_receive = acceptance.order_id.requisition_id.\
-                purchase_type_id.to_receive
-            if to_receive:
-                type = 'incoming'
-        return type
-
-    @api.model
     def _check_product_type(self):
         type = False
         is_consumable = False
@@ -522,9 +512,8 @@ class PurchaseWorkAcceptance(models.Model):
     @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
     def _compute_total_fine(self):
         for acceptance in self:
-            # product_type, is_consumable = acceptance._check_product_type()
-            product_type = acceptance._check_purchase_type()
-            if product_type == 'service':
+            product_type, is_consumable = acceptance._check_product_type()
+            if product_type == 'service' and not is_consumable:
                 acceptance._calculate_service_fine()
             else:
                 acceptance._calculate_incoming_fine()
