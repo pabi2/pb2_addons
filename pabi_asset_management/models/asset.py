@@ -108,6 +108,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         string='Code',  # Rename
         size=100,
         default='/',
+        index=True,
     )
     code2 = fields.Char(
         string='Code (legacy)',
