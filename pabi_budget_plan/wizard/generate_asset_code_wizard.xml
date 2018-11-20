@@ -8,7 +8,7 @@
                 <form string="Generate Asset Codes">
                     <group>
                         <group>
-                            <field name="action_type"/>
+                            <field name="filter_by"/>
                         </group>
                         <group></group>
                     </group>
