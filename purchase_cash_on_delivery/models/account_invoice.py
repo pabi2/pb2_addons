@@ -7,7 +7,7 @@ class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
     is_prepaid = fields.Boolean(
-        string='Cash on Delivery',
+        string='COD/PIA',
         compute='_compute_is_prepaid',
         store=True,
     )
