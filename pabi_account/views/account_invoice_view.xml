@@ -154,6 +154,9 @@
                       context="{'default_partner_id': partner_id, 'default_payment_type': payment_type}">
                         <field string="Payments" name="payment_count" widget="statinfo"/>
                     </button>
+                    <field name="stock_adjusted" invisible="1"/>
+                    <button class="oe_inline oe_stat_button" name="open_stock_adjust_entries" type="object" icon="fa-file-text"
+                      attrs="{'invisible': [('stock_adjusted', '=', False)]}" string="Stk.Adj.Entries"/>
                 </xpath>
             </field>
         </record>

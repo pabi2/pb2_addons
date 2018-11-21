@@ -128,7 +128,6 @@ class AccountMove(models.Model):
                     and not move.tax_detail_ids:
                 raise ValidationError(_('Please fill Tax Detail!'))
             # Validate Adjustment Doctype, at lease 1 line must have AG/A
-            print self._context
             if self._context.get('default_doctype', False) == 'adjustment':
                 ag_lines = move.line_id.filtered('activity_group_id')
                 # JV must have AG/A
