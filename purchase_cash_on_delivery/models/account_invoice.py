@@ -16,7 +16,7 @@ class AccountInvoice(models.Model):
         string='Prepaid Account',
         domain=lambda self:
         [('id', 'in', self.env.user.company_id.prepaid_account_ids.ids)],
-        readonly=True,
+        # readonly=True,
         # states={'draft': [('readonly', False)]},
     )
     clear_prepaid_move_id = fields.Many2one(
