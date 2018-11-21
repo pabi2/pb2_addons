@@ -88,6 +88,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='virtual_available']" position="after">
                     <field name="standard_price" />
+                    <field name="list_price" />
                     <field name="uom_id" />
                 </xpath>
             </field>
