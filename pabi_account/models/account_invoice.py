@@ -102,6 +102,12 @@ class AccountInvoice(models.Model):
     cancel_date = fields.Date(
         string='Cancel Posting Date',
     )
+    stock_adjusted = fields.Boolean(
+        string='Stock Adjusted?',
+        default=False,
+        help="When user use Create Adjustment Stock, this will be flagged",
+    )
+
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
 
@@ -141,6 +147,34 @@ class AccountInvoice(models.Model):
                         break
                 if rec.has_wht:
                     break
+
+    @api.multi
+    def open_stock_adjust_entries(self):
+        self.ensure_one()
+        purchase_lines = self.invoice_line.mapped('purchase_line_id')
+        print purchase_lines
+        # Find only stock moves with symbol ~> and <~, these are adjustments
+        pickings = purchase_lines.mapped('move_ids').\
+            mapped('picking_id').mapped('name')
+        print pickings
+        if not pickings:
+            raise ValidationError(
+                _('Cannot find related stock adjustment entries!'))
+        moves = self.env['account.move.line'].search(
+            [('ref', 'in', pickings),
+             '|', ('name', 'ilike', '~>%'), ('name', 'ilike', '<~%')],
+            order='id')
+        return {
+            'name': _("Journal Entries"),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': self._context,
+            'nodestroy': True,
+            'domain': [('id', 'in', moves.mapped('move_id').ids)],
+        }
 
     @api.onchange('has_wht')
     def _onchange_has_wht(self):
@@ -269,6 +303,23 @@ class AccountInvoice(models.Model):
         })
         action['context'] = ctx
         return action
+
+    @api.multi
+    def action_open_stock_adjust_entries(self):
+        self.ensure_one()
+        moves = self.env['account.move'].search(
+            [('document', '=', self.name)], order='date ASC')
+        return {
+            'name': _("Journal Entries"),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': self._context,
+            'nodestroy': True,
+            'domain': [('id', 'in', moves.ids)],
+        }
 
     @api.multi
     def finalize_invoice_move_lines(self, move_lines):
