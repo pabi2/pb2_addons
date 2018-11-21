@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="320"/>
+	<property name="ireport.y" value="521"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -74,11 +74,11 @@ pdl.price_unit,
 (
 select
 case when atax.amount > 0.0 and atax.price_include = False then
-	reql.price_subtotal + sum(
+	ROUND(reql.price_subtotal + sum(
 	(atax.amount * reql.price_subtotal)
-	)
+	), 2)
 else
-	reql.price_subtotal
+	ROUND(reql.price_subtotal, 2)
 end
 FROM purchase_requisition req
 LEFT JOIN purchase_requisition_line reql
@@ -91,7 +91,8 @@ where reql.id = pdl.id
 group by reql.price_subtotal, atax.id LIMIT 1) as amount_total,
 pr.name as material_group,
 pdl.product_qty::integer as product_qty,
-pu.name as uom,
+(SELECT value FROM ir_translation it
+WHERE it.res_id = pu.id AND it.name LIKE 'product.uom,name') as uom,
 pdl.price_subtotal,
 cur.name as currency
 FROM purchase_requisition_line pdl
@@ -158,7 +159,7 @@ LEFT JOIN hr_employee he
 ON ru.login = he.employee_code
 WHERE ru.id = pr.requested_by) AND it.name LIKE 'hr.employee,last_name')
 ) as requested_by,
-pr.create_date,
+pr.date_start as create_date,
 CONCAT(
 COALESCE((SELECT value FROM ir_translation it
 WHERE it.res_id = (SELECT rpt.id FROM res_users ru
@@ -557,7 +558,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="18" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["รายงานการขอซื้อจ้างโดยวิธี " + $F{method}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["รายงานขอซื้อหรือขอจ้างโดยวิธี" + $F{method}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
