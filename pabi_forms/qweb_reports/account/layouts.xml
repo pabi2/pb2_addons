@@ -516,10 +516,7 @@
                         <span>Reference Doc: </span>
                         <t t-if="o.document_id">
                             <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'adjustment']">
-                                <!-- <span class="cut-text" t-field="o.document_id.supplier_invoice_number"/> -->
-                                <span class="cut-text">
-                                    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                                </span>
+                                <span class="cut-text" t-field="o.document_id.supplier_invoice_number"/>
                             </t>
                             <t t-if="o.doctype in ['payment']">
                                 <t t-if="o.document_id.reference">
@@ -549,10 +546,7 @@
                         <strong>Source of Fund: </strong>
                         <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'adjustment']">
                             <t t-if="o.document_id and o.document_id.invoice_line and o.document_id.invoice_line[0].fund_id">
-                                <!-- <span class="cut-text" t-field="o.document_id.invoice_line[0].fund_id.name"/> -->
-                                <span class="cut-text">
-                                    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                                </span>
+                                <span class="cut-text" t-field="o.document_id.invoice_line[0].fund_id.name"/>
                             </t>
                             <t t-if="not o.document_id">
                                 <span class="cut-text" t-field="o.source_of_fund"/>
