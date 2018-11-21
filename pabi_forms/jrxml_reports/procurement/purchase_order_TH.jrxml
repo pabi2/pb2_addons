@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="16"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="240"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT
-row_number() over (order by pol.name) as pol_count,
+row_number() over (order by pol.id) as pol_count,
 pol.name,
 pol.price_unit,
 SUM(pol.product_qty) product_qty,
@@ -22,7 +22,7 @@ FROM purchase_order_line pol
 LEFT JOIN product_uom pu
 ON pu.id = pol.product_uom
 WHERE pol.order_id = $P{ids}
-GROUP BY pu.id,pol.name,pol.price_unit,pu.name]]>
+GROUP BY pol.id,pu.id,pol.name,pol.price_unit,pu.name]]>
 		</queryString>
 		<field name="pol_count" class="java.lang.Long"/>
 		<field name="name" class="java.lang.String"/>
@@ -111,6 +111,7 @@ po.date_verify verify_date,
 po.fine_rate fine_rate,
 po.fine_condition fine_condition,
 po.fine_num_days fine_days,
+po.fine_num_months fine_month,
 po.date_fine fine_date,
 po.notes notes,
 (SELECT value
@@ -141,12 +142,8 @@ WHERE it.res_id = taxbranch.id AND it.name = 'res.taxbranch,street2' limit 1) as
 FROM ir_translation it
 WHERE it.res_id = taxbranch.id AND it.name = 'res.taxbranch,city' limit 1) as tax_branch_city,
 taxbranch.zip as tax_branch_zip,
-(SELECT value
-FROM ir_translation it
-WHERE it.res_id = taxbranch.id AND it.name = 'res.taxbranch,phone' limit 1) as tax_branch_phone,
-(SELECT value
-FROM ir_translation it
-WHERE it.res_id = taxbranch.id AND it.name = 'res.taxbranch,fax' limit 1) as tax_branch_fax,
+taxbranch.phone as tax_branch_phone,
+taxbranch.fax as tax_branch_fax,
 vendor_township.name vendor_township,
 vendor_district.name vendor_district,
 vendor_province.name vendor_province,
@@ -291,6 +288,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 	<field name="tax_branch_city" class="java.lang.String"/>
 	<field name="vendor_tax" class="java.lang.String"/>
 	<field name="vendor_branch" class="java.lang.String"/>
+	<field name="fine_month" class="java.lang.Integer"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -304,7 +302,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 	<background>
 		<band height="790">
 			<staticText>
-				<reportElement x="299" y="381" width="85" height="376"/>
+				<reportElement x="299" y="367" width="85" height="390"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -317,7 +315,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="384" y="381" width="99" height="376"/>
+				<reportElement x="384" y="367" width="99" height="390"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -330,7 +328,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="48" y="381" width="186" height="376"/>
+				<reportElement x="48" y="367" width="186" height="390"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -343,7 +341,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="381" width="48" height="376"/>
+				<reportElement x="0" y="367" width="48" height="390"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -356,7 +354,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="234" y="381" width="65" height="376"/>
+				<reportElement x="234" y="367" width="65" height="390"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -380,14 +378,14 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="464" y="769" width="107" height="20"/>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="429" y="769" width="42" height="20"/>
@@ -402,18 +400,18 @@ WHERE $X{IN, po.id, PIDS}]]>
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="341">
+		<band height="331" splitType="Prevent">
 			<rectangle>
-				<reportElement x="0" y="0" width="483" height="263"/>
+				<reportElement x="0" y="0" width="483" height="252"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="98" width="483" height="74"/>
+				<reportElement x="0" y="98" width="483" height="60"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="172" width="267" height="94"/>
+				<reportElement x="0" y="158" width="267" height="94"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="232" y="172" width="251" height="94"/>
+				<reportElement x="232" y="158" width="251" height="94"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="265" y="3" width="254" height="54"/>
@@ -438,14 +436,14 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[วันที่ (Date):]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="4" y="171" width="222" height="30"/>
+				<reportElement x="4" y="157" width="222" height="30"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="SansSerif" size="18" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ผู้ขาย (Supplier):]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="234" y="171" width="246" height="30"/>
+				<reportElement x="234" y="157" width="246" height="30"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="SansSerif" size="18" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -479,7 +477,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 ($F{partner_zip} == null ? "" : $F{partner_zip} )]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="5" y="62" width="268" height="22" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="5" y="61" width="268" height="22" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -488,7 +486,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 ($F{tax_branch_fax} != null ? "โทรสาร: " + $F{tax_branch_fax} : "")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="189" width="222" height="22" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="4" y="175" width="222" height="22" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -497,7 +495,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 ($F{vendor_name} == null ? "" : $F{vendor_name})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="202" width="222" height="50" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="4" y="188" width="222" height="50" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -512,7 +510,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 ($F{vendor_zip} == null ? "" : $F{vendor_zip})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="239" width="222" height="22" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="4" y="225" width="222" height="22" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -521,19 +519,19 @@ WHERE $X{IN, po.id, PIDS}]]>
 ($F{vendor_fax} != null ? "โทรสาร: " + $F{vendor_fax} : "")]]></textFieldExpression>
 			</textField>
 			<rectangle>
-				<reportElement x="0" y="270" width="483" height="71"/>
+				<reportElement x="0" y="256" width="483" height="75"/>
 			</rectangle>
 			<line>
-				<reportElement x="0" y="302" width="483" height="1"/>
+				<reportElement x="0" y="288" width="483" height="1"/>
 			</line>
 			<line>
-				<reportElement x="192" y="270" width="1" height="71"/>
+				<reportElement x="192" y="256" width="1" height="75"/>
 			</line>
 			<line>
-				<reportElement x="324" y="270" width="1" height="71"/>
+				<reportElement x="324" y="256" width="1" height="75"/>
 			</line>
 			<staticText>
-				<reportElement x="0" y="269" width="191" height="33"/>
+				<reportElement x="0" y="255" width="191" height="33"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -541,7 +539,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 (Quotation NO. - Date)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="193" y="270" width="131" height="33"/>
+				<reportElement x="193" y="256" width="131" height="33"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -549,7 +547,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 (Payment Term)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="326" y="269" width="157" height="33"/>
+				<reportElement x="326" y="255" width="157" height="33"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -557,44 +555,30 @@ WHERE $X{IN, po.id, PIDS}]]>
 (Buyer)]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2" y="298" width="84" height="27"/>
-				<textElement textAlignment="Right" lineSpacing="Single">
-					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				<reportElement x="5" y="287" width="182" height="27" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Left" lineSpacing="Single">
+					<font fontName="SansSerif" size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_ref}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="104" y="299" width="87" height="26"/>
-				<textElement textAlignment="Left" lineSpacing="Single">
-					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{rfq_date}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="87" y="298" width="17" height="21"/>
-				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<text><![CDATA[-]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="193" y="298" width="128" height="27"/>
+				<reportElement x="193" y="284" width="128" height="27"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_term}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="326" y="297" width="157" height="21"/>
+				<reportElement x="326" y="289" width="157" height="21"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="326" y="309" width="157" height="21"/>
+				<reportElement x="326" y="297" width="157" height="21"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{buyer_phone}  == null ? "" : $F{buyer_phone})]]></textFieldExpression>
 			</textField>
@@ -606,7 +590,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_number}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="234" y="189" width="246" height="66" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="234" y="175" width="246" height="66" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -637,15 +621,11 @@ WHERE $X{IN, po.id, PIDS}]]>
 ($F{tax_branch_zip} == null ? "" : $F{tax_branch_zip})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="147" width="479" height="25" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="4" y="134" width="479" height="25" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{tax_branch_phone} != null ? "โทรศัพท์: " + $F{tax_branch_phone} + ' ': "")
- +
-($F{tax_branch_fax} != null ? "โทรสาร: " + $F{tax_branch_fax} + ' ': "")
-+
-($F{taxbranch_taxid} != null ? "เลขประจำตัวผู้เสียภาษี " + $F{taxbranch_taxid} + ' ' : "")
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{taxbranch_taxid} != null ? "เลขประจำตัวผู้เสียภาษี " + $F{taxbranch_taxid} + ' ' : "")
 +
 ($F{taxbranch_code} != null ? "สาขาที่ " + $F{taxbranch_code} : "")]]></textFieldExpression>
 			</textField>
@@ -686,20 +666,20 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_biotec.gif"]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="325" y="320" width="157" height="21"/>
+				<reportElement x="325" y="308" width="157" height="21"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{buyer_email} == null ? "" : $F{buyer_email})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="251" width="222" height="22" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="4" y="237" width="222" height="22" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{vendor_tax} != null ? "เลขประจำตัวผู้เสียภาษี: " + $F{vendor_tax} + ' ' : "")
  +
-($F{vendor_branch} != null ? ($F{vendor_branch} != "00000" ? "สาขา สำนักงานใหญ่ ": "สาขา " + $F{vendor_branch}) : "")]]></textFieldExpression>
+($F{vendor_branch} != null ? "สาขา " + $F{vendor_branch} : "")]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -811,7 +791,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 								<textElement textAlignment="Center" lineSpacing="Single">
 									<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Integer"><![CDATA[$F{pol_count}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{pol_count}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -825,7 +805,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 							</box>
 							<textField isStretchWithOverflow="true">
 								<reportElement x="5" y="0" width="181" height="18" isPrintWhenDetailOverflows="true"/>
-								<textElement lineSpacing="Single">
+								<textElement verticalAlignment="Top" lineSpacing="Single">
 									<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
@@ -932,7 +912,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{fine_days}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{fine_days}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="45" y="123" width="430" height="32"/>
@@ -946,7 +926,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{stamp_vat}.setScale(0, java.math.RoundingMode.CEILING)]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{stamp_vat}.setScale(0, java.math.RoundingMode.CEILING)]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="45" y="95" width="485" height="28"/>
@@ -957,7 +937,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 			</staticText>
 			<staticText>
 				<reportElement x="45" y="137" width="409" height="18">
-					<printWhenExpression><![CDATA[$F{fine_condition} == "day"]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{fine_condition} == "day" || $F{fine_condition} == "month"]]></printWhenExpression>
 				</reportElement>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -978,7 +958,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{fine_rate}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{fine_rate}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="377" y="95" width="150" height="28"/>
@@ -1025,7 +1005,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<text><![CDATA[ตำแหน่ง]]></text>
 			</staticText>
 			<line>
-				<reportElement x="343" y="238" width="18" height="1"/>
+				<reportElement x="343" y="241" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
@@ -1053,26 +1033,26 @@ WHERE $X{IN, po.id, PIDS}]]>
 ในใบสั่งซื้อ/จ้าง ฉบับนี้ทุกประการ]]></text>
 			</staticText>
 			<line>
-				<reportElement x="370" y="238" width="18" height="1"/>
+				<reportElement x="370" y="241" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="316" y="238" width="18" height="1"/>
+				<reportElement x="316" y="241" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="336" y="231" width="7" height="16"/>
+				<reportElement x="336" y="234" width="7" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[/]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="364" y="231" width="7" height="16"/>
+				<reportElement x="364" y="234" width="7" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -1101,7 +1081,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<reportElement x="0" y="155" width="247" height="140"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="83" y="232" width="7" height="16"/>
+				<reportElement x="83" y="235" width="7" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -1115,26 +1095,26 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{verify_by} != '' ? "( " + $F{verify_by} + " )" : '']]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="90" y="239" width="18" height="1"/>
+				<reportElement x="90" y="242" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="111" y="232" width="7" height="16"/>
+				<reportElement x="111" y="235" width="7" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[/]]></text>
 			</staticText>
 			<line>
-				<reportElement x="117" y="239" width="18" height="1"/>
+				<reportElement x="117" y="242" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="63" y="239" width="18" height="1"/>
+				<reportElement x="63" y="242" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
@@ -1205,7 +1185,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{grand_total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Float"><![CDATA[$F{grand_total}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="304" y="21" width="122" height="21"/>
@@ -1220,9 +1200,9 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{vat}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Float"><![CDATA[$F{vat}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="7" y="13" width="285" height="29" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -1241,7 +1221,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{sub_total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Float"><![CDATA[$F{sub_total}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="46" width="300" height="1"/>
@@ -1259,6 +1239,24 @@ WHERE $X{IN, po.id, PIDS}]]>
 					<font fontName="SansSerif" size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[รวมเป็นเงินทั้งสิ้น]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="159" y="137" width="34" height="18">
+					<printWhenExpression><![CDATA[$F{fine_condition} == "month"]]></printWhenExpression>
+				</reportElement>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{fine_month}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="174" y="137" width="361" height="18" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{fine_condition} == "month"]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[เดือน  นับถัดจากวันที่ผู้ขาย/ผู้รับจ้างลงลายมือชื่อในใบสั่งซื้อ/จ้าง]]></text>
 			</staticText>
 		</band>
 	</lastPageFooter>

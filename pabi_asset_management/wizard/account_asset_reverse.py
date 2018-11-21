@@ -30,12 +30,16 @@ class AccountAssetReverse(models.TransientModel):
         Asset = self.env['account.asset']
         AccountMove = self.env['account.move']
         MoveLine = self.env['account.move.line']
+        Purchase = self.env['purchase.order']
         for asset in Asset.browse(asset_ids):
-            if not asset.picking_id.invoice_state == '2binvoiced':
+            # All invoice related to this PO, must be cancelled state
+            purchase = Purchase.search([('name', '=',
+                                         asset.picking_id.group_id.name)])
+            if purchase.invoice_ids.filtered(lambda l: l.state != 'cancel'):
                 raise ValidationError(
                     _('This action is not allowed for this asset %s.\n'
-                      'Note asset from IN with invoice state = 2binvoied') %
-                    asset.display_name)
+                      'All invoices of %s must be cancelled to remove asset') %
+                    (asset.display_name, purchase.name))
             if asset.state == 'removed':
                 raise ValidationError(
                     _('Asset %s already been removed!') % (asset.code, ))

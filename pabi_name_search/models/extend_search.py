@@ -63,7 +63,8 @@ class ExtendSearch(object):
         for arg in args:
             if isinstance(arg, (list, tuple)):
                 (field, oper, name) = arg
-                if oper == 'ilike' and self._fields[field].type == 'char':
+                if oper == 'ilike' and ('.' not in field) and \
+                        self._fields[field].type == 'char':
                     _ids = self._search_name_to_ids(field, name)
                     new_args.append(['id', 'in', _ids])
                 else:

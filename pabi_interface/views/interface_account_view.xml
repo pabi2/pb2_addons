@@ -126,6 +126,7 @@
             <field name="arch" type="xml">
                 <search string="Interface Account Entry">
                     <field name="name" string="Document Origin"/>
+                    <field name="move_id"/>
                     <field name="system_id"/>
                     <field name="journal_id"/>
                     <field name="company_id" groups="base.group_multi_company"/>

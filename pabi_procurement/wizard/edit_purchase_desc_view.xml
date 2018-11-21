@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="view_edit_purchase_desc" model="ir.ui.view">
+			<field name="name">view.edit.purchase.desc</field>
+			<field name="model">edit.purchase.desc</field>
+			<field name="arch" type="xml">
+				<form string="Edit Description">
+					<field name="name"/>
+					<footer>
+						<button name="save" type="object" string="Save" class="oe_highlight"/>
+						or
+						<button special="cancel" class="oe_link" string="Cancel"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_edit_purchase_desc" model="ir.actions.act_window">
+			<field name="name">Edit Desc.</field>
+			<field name="res_model">edit.purchase.desc</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="context">{}</field>
+			<field name="target">new</field>
+		</record>
+	</data>
+</openerp>

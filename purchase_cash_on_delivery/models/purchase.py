@@ -15,25 +15,31 @@ class PurchaseOrder(models.Model):
     @api.multi
     @api.depends('payment_term_id')
     def _compute_is_prepaid(self):
-        cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
-                                    'cash_on_delivery_payment_term', False)
+        cod_pay_terms = self.env['account.payment.term'].\
+            search([('cash_on_delivery', '=', True)])
+        # cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
+        #                             'cash_on_delivery_payment_term', False)
         for rec in self:
-            rec.is_prepaid = rec.payment_term_id == cod_pay_term
+            rec.is_prepaid = rec.payment_term_id.id in cod_pay_terms.ids
 
     @api.onchange('payment_term_id', 'invoice_method')
     def _onchange_cash_on_delivery(self):
-        cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
-                                    'cash_on_delivery_payment_term')
-        if self.payment_term_id.id == cod_pay_term.id:
+        cod_pay_terms = self.env['account.payment.term'].\
+            search([('cash_on_delivery', '=', True)])
+        # cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
+        #                             'cash_on_delivery_payment_term')
+        if self.payment_term_id.id in cod_pay_terms.ids:
             self.invoice_method = 'order'
 
     @api.multi
     @api.constrains('payment_term_id', 'invoice_method')
     def _check_cash_on_delivery(self):
-        cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
-                                    'cash_on_delivery_payment_term')
+        cod_pay_terms = self.env['account.payment.term'].\
+            search([('cash_on_delivery', '=', True)])
+        # cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
+        #                             'cash_on_delivery_payment_term')
         for purchase in self:
-            if purchase.payment_term_id.id == cod_pay_term.id and \
+            if purchase.payment_term_id.id in cod_pay_terms.ids and \
                     purchase.invoice_method != 'order':
                 raise ValidationError(
                     _('For payment term "Cash on Delivery", Invoice Control '
@@ -41,12 +47,14 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def _validate_purchase_cod_fully_paid(self):
-        cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
-                                    'cash_on_delivery_payment_term')
+        cod_pay_terms = self.env['account.payment.term'].\
+            search([('cash_on_delivery', '=', True)])
+        # cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
+        #                             'cash_on_delivery_payment_term')
         # If not fully paid
         for purchase in self:
             if purchase.invoice_method == 'order' and \
-                    purchase.payment_term_id.id == cod_pay_term.id:
+                    purchase.payment_term_id.id in cod_pay_terms.ids:
                 if not purchase.invoiced or \
                     False in [x.state == 'paid' and True or False
                               for x in purchase.invoice_ids]:
