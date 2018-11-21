@@ -10,6 +10,9 @@ class AccountMoveReverse(models.TransientModel):
     def action_reverse(self):
         self.ensure_one()
         result = super(AccountMoveReverse, self).action_reverse()
+        ctx = ast.literal_eval(result['context'])
+        ctx.update({'direct_create': True})  # To ensure refresh dimension
+        result['context'] = ctx
         move_id = self._context.get('active_id')
         move = self.env['account.move'].browse(move_id)
         if move and move.doctype == 'adjustment':

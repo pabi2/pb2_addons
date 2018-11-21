@@ -14,7 +14,7 @@ import ConfigParser
 import os
 
 # Config file name
-conf = 'migration.conf'
+conf = 'migration_remote.conf'
 
 
 def get_connection(config_file):

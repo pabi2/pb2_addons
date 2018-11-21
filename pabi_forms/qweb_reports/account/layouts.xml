@@ -78,6 +78,22 @@
                 padding-top: 0px !important;
                 padding-bottom: 0px !important;
             }
+            .cut-text30 {
+              display:inline-block;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              width: 140px;
+              height: 1.2em;
+              white-space: nowrap;
+            }
+            .cut-text50 {
+              display:inline-block;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              width: 180px;
+              height: 1.2em;
+              white-space: nowrap;
+            }
         </template>
 
         <!-- LAYOUT -->
@@ -419,25 +435,25 @@
                         <span>Reference Doc: </span>
                         <t t-if="o.document_id">
                             <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'adjustment']">
-                                <span t-field="o.document_id.supplier_invoice_number"/>
+                                <span class="cut-text30" t-field="o.document_id.supplier_invoice_number"/>
                             </t>
                             <t t-if="o.doctype in ['payment']">
                                 <t t-if="o.document_id.reference">
-                                    <span t-field="o.document_id.reference"/>
+                                    <span class="cut-text30" t-field="o.document_id.reference"/>
                                 </t>
                                 <t t-if="not o.document_id.reference and o.document_id.wht_cert_ids">
-                                    <span t-field="o.document_id.wht_cert_ids[0].sequence_display"/>
+                                    <span class="cut-text30" t-field="o.document_id.wht_cert_ids[0].sequence_display"/>
                                 </t>
                             </t>
                             <t t-if="o.doctype in ['receipt']">
-                                <span t-field="o.document_id.number_preprint"/>
+                                <span class="cut-text30" t-field="o.document_id.number_preprint"/>
                             </t>
                             <t t-if="o.doctype in ['interface_account']">
                                 <t t-if="o.document_id.type in ['invoice', 'reverse']">
-                                    <span t-field="o.ref"/>
+                                    <span class="cut-text30" t-field="o.ref"/>
                                 </t>
                                 <t t-if="o.document_id.type in ['voucher']">
-                                    <span t-field="o.document_id.preprint_number"/>
+                                    <span class="cut-text30" t-field="o.document_id.preprint_number"/>
                                 </t>
                             </t>
                         </t>
@@ -501,10 +517,10 @@
                         <strong>Source of Fund: </strong>
                         <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'adjustment']">
                             <t t-if="o.document_id and o.document_id.invoice_line and o.document_id.invoice_line[0].fund_id">
-                                <span t-field="o.document_id.invoice_line[0].fund_id.name"/>
+                                <span class="cut-text50" t-field="o.document_id.invoice_line[0].fund_id.name"/>
                             </t>
                             <t t-if="not o.document_id">
-                                <span t-field="o.source_of_fund"/>
+                                <span class="cut-text50" t-field="o.source_of_fund"/>
                                 <br/><span>Charge Type: </span>
                                 <span t-field="o.charge_type"/>
                             </t>

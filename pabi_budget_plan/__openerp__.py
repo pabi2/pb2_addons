@@ -42,6 +42,7 @@
         # 'wizard/invest_asset_select_wizard_view.xml',
         'wizard/generate_budget_plan_wizard.xml',
         'wizard/budget_breakdown_action_excel_import_wizard.xml',
+        'wizard/generate_asset_code_wizard.xml',
         # 'wizard/edit_invest_asset.xml',
         'views/account_budget_view.xml',
         'views/budget_plan_unit_view.xml',

@@ -8,92 +8,98 @@
             <field name="name">view.pabi.bank.statement.form</field>
             <field name="model">pabi.bank.statement</field>
             <field name="arch" type="xml">
-                <form string="Bank Statement" class="oe_form_configuration">
+                <form string="Bank Statement" class="oe_form_configuration" create="0" delete="0" duplicate="0">
                     <header>
                         <button name="action_done" string="Done" type="object" states="reconcile" class="oe_highlight" groups="account.group_account_user"/>
                         <button name="action_cancel" string="Cancel" type="object" states="draft,nstda,bank,reconcile,done" groups="account.group_account_user"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,nstda,bank,reconcile,done"/>
                     </header>
-                    <div class="oe_button_box oe_right">
-                        <button name="action_get_statement" string="1) Get NSTDA Data" type="object" states="draft,nstda,bank,reconcile" class="oe_inline"/>
-                        <button name="action_import_xls" string="2) Import Bank Data" type="object" class="oe_inline" attrs="{'invisible': ['|', ('import_file', '=', False), ('state', 'in', ('cancel', 'done'))]}"/>
-                        <button name="action_reconcile" string="3) Reconcile" type="object" class="oe_inline oe_highlight" attrs="{'invisible': ['|', ('import_ids', '=', []), ('state', 'in', ('cancel', 'done'))]}"/>
-                    </div>
-                    <div class="oe_title">
-                        <h1>
-                            <label string="Reconcile"/>
-                            <field name="name" class="oe_inline" readonly="1"/>
-                        </h1>
-                    </div>
-                    <group>
+                    <sheet>
+                        <div class="oe_button_box oe_right">
+                            <button name="action_get_statement" string="1) Get NSTDA Data" type="object" states="draft,nstda,bank,reconcile" class="oe_inline" invisible="1"/>
+                            <button name="action_import_xls" string="2) Import Bank Data" type="object" class="oe_inline" attrs="{'invisible': ['|', ('import_file', '=', False), ('state', 'in', ('cancel', 'done'))]}" invisible="1"/>
+                            <button name="action_reconcile" string="3) Reconcile" type="object" class="oe_inline oe_highlight" attrs="{'invisible': ['|', ('import_ids', '=', []), ('state', 'in', ('cancel', 'done'))]}" invisible="1"/>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <label string="Reconcile"/>
+                                <field name="name" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
                         <group>
-                            <field name="report_type"/>
-                            <field name="match_method" required="1" invisible="1"/>
-                            <field name="match_method_readonly"/>
-                        </group>
-                        <group>
-                            <field name="date_report"/>
-                            <field name="import_file_name" invisible="1"/>
-                            <label for="use_xlsx_template"/>  <!-- this section must after journal_id only -->
-                            <div>
+                            <group>
+                                <field name="report_type"/>
+                                <field name="match_method" required="1" invisible="1"/>
+                                <field name="match_method_readonly"/>
+                            </group>
+                            <group>
+                                <field name="date_report"/>
+                                <field name="import_file_name" invisible="1"/>
+                                <label for="use_xlsx_template"/>  <!-- this section must after journal_id only -->
                                 <div>
-                                    <field name="use_xlsx_template" class="oe_inline"/>
-                                    <field name="xlsx_template_id" class="oe_inline" attrs="{'invisible': [('use_xlsx_template', '=', False)], 'required': [('use_xlsx_template', '=', True)]}"/>
+                                    <div>
+                                        <field name="use_xlsx_template" class="oe_inline"/>
+                                        <field name="xlsx_template_id" class="oe_inline" attrs="{'invisible': [('use_xlsx_template', '=', False)], 'required': [('use_xlsx_template', '=', True)]}"/>
+                                    </div>
                                 </div>
-                            </div>
-                            <field name="import_file" filename="import_file_name"/>
+                                <field name="import_file" filename="import_file_name"/>
+                            </group>
                         </group>
-                    </group>
-                    <group string="Filtered By">
-                        <group>
-                            <field name="doctype"/>
-                            <field name="no_cancel_doc" attrs="{'invisible': [('doctype', '=', False)]}"/>
-                            <field name="payment_type"/>
-                            <field name="transfer_type" attrs="{'invisible': [('payment_type', '!=', 'transfer')]}"/>
+                        <group string="Filtered By">
+                            <group>
+                                <field name="doctype"/>
+                                <field name="no_cancel_doc" attrs="{'invisible': [('doctype', '=', False)]}"/>
+                                <field name="payment_type"/>
+                                <field name="transfer_type" attrs="{'invisible': [('payment_type', '!=', 'transfer')]}"/>
+                            </group>
+                            <group>
+                                <field name="journal_id"/>
+                                <field name="partner_bank_id" required="1"/>
+                                <field name="account_id"/>
+                            </group>
                         </group>
-                        <group>
-                            <field name="journal_id"/>
-                            <field name="partner_bank_id" required="1"/>
-                            <field name="account_id"/>
-                        </group>
-                    </group>
-                    <notebook>
-                        <page string="NSTDA">
-                            <field name="item_ids">
-                                <tree editable="bottom" create="0" delete="0">
-                                    <field name="date_value"/>
-                                    <field name="document"/>
-                                    <field name="cheque_number"/>
-                                    <field name="move_line_id" invisible="1"/>
-                                    <field name="validate_user_id"/>
-                                    <field name="partner_code"/>
-                                    <field name="partner_name"/>
-                                    <field name="days_outstanding"/>
-                                    <field name="debit" sum="Debit"/>
-                                    <field name="credit" sum="Credit"/>
-                                    <field name="match_import_id" widget="many2onebutton" string="Reconciled"/>
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="Bank">
-                            <field name="import_ids">
-                                <tree editable="bottom" create="0" delete="0">
-                                    <field name="date_value"/>
-                                    <field name="document"/>
-                                    <field name="cheque_number"/>
-                                    <field name="partner_code"/>
-                                    <field name="partner_name"/>
-                                    <field name="description"/>
-                                    <field name="batch_code"/>
-                                    <field name="debit" sum="Debit"/>
-                                    <field name="credit" sum="Credit"/>
-                                    <field name="match_item_id" widget="many2onebutton" string="Reconciled"
-                                        attrs="{'invisible': [('prev_match_statement_id', '!=', False)]}"/>
-                                    <field name="prev_match_statement_id" widget="many2one_clickable"/>
-                                </tree>
-                            </field>
-                        </page>
-                    </notebook>
+                        <notebook>
+                            <page string="NSTDA">
+                                <field name="item_ids">
+                                    <tree editable="bottom" create="0" delete="0">
+                                        <field name="date_value"/>
+                                        <field name="document"/>
+                                        <field name="cheque_number"/>
+                                        <field name="move_line_id" invisible="1"/>
+                                        <field name="validate_user_id"/>
+                                        <field name="partner_code"/>
+                                        <field name="partner_name"/>
+                                        <field name="days_outstanding"/>
+                                        <field name="debit" sum="Debit"/>
+                                        <field name="credit" sum="Credit"/>
+                                        <field name="match_import_id" widget="many2onebutton" string="Reconciled"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Bank">
+                                <field name="import_ids">
+                                    <tree editable="bottom" create="0" delete="0">
+                                        <field name="date_value"/>
+                                        <field name="document"/>
+                                        <field name="cheque_number"/>
+                                        <field name="partner_code"/>
+                                        <field name="partner_name"/>
+                                        <field name="description"/>
+                                        <field name="batch_code"/>
+                                        <field name="debit" sum="Debit"/>
+                                        <field name="credit" sum="Credit"/>
+                                        <field name="match_item_id" widget="many2onebutton" string="Reconciled"
+                                            attrs="{'invisible': [('prev_match_statement_id', '!=', False)]}"/>
+                                        <field name="prev_match_statement_id" widget="many2one_clickable"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -102,7 +108,7 @@
             <field name="name">view.pabi.bank.statement.tree</field>
             <field name="model">pabi.bank.statement</field>
             <field name="arch" type="xml">
-                <tree string="Bank Statement">
+                <tree string="Bank Statement" create="0" delete="0" duplicate="0">
                     <field name="name"/>
                     <field name="journal_id"/>
                     <field name="create_uid"/>

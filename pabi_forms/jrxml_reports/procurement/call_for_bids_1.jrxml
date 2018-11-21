@@ -274,13 +274,18 @@ pd.delivery_address as deliver_to,
 pm.name as method,
 ppr.name as price_range,
 pd.doc_body as footer,
-po.name as rfq_number,
+(SELECT name FROM purchase_order
+WHERE requisition_id = pd.id ORDER BY name LIMIT 1) as  rfq_number,
 (SELECT rp.name FROM res_partner rp
-WHERE rp.id = po.partner_id  LIMIT 1) as rfq_supplier,
+LEFT JOIN purchase_order po ON po.partner_id = rp.id
+WHERE rp.id = po.partner_id AND po.requisition_id = pd.id ORDER BY po.name LIMIT 1) as rfq_supplier,
 (SELECT rp.taxbranch FROM res_partner rp
-WHERE rp.id = po.partner_id  LIMIT 1) as rfq_taxbranch,
-po.amount_total as rfq_amount_total,
-po.minimum_planned_date-DATE(now()) as minimum_planned_date,
+LEFT JOIN purchase_order po ON po.partner_id = rp.id
+WHERE rp.id = po.partner_id ORDER BY po.name LIMIT 1) as rfq_taxbranch,
+(SELECT amount_total FROM purchase_order
+WHERE requisition_id = pd.id ORDER BY name LIMIT 1) as rfq_amount_total,
+(SELECT minimum_planned_date-DATE(now()) FROM purchase_order
+WHERE requisition_id = pd.id ORDER BY name LIMIT 1) as minimum_planned_date,
 pd.delivery_detail as delivery_detail,
 pcon.name as purchase_condition,
 pcondet.name as purchase_condition_detail,
@@ -400,7 +405,8 @@ pd.create_date as pd_create_date,
 pd.date_verify as pd_verify_date,
 pd.date_doc_approve as pd_approve_date,
 CONCAT(pcht.name,' ',pd.objective) as pd_objective,
-po.amount_total_text_th,
+(SELECT amount_total_text_th FROM purchase_order
+WHERE requisition_id = pd.id ORDER BY name LIMIT 1) as amount_total_text_th,
 cur.name as currency,
 (select
 SUM(
@@ -446,8 +452,6 @@ LEFT JOIN purchase_condition_detail pcondet
 ON pcondet.id = pd.purchase_condition_detail_id
 LEFT JOIN res_currency cur
 ON cur.id = pd.currency_id
-LEFT JOIN purchase_order po
-ON po.requisition_id = pd.id AND po.state = 'done'
 WHERE $X{IN, pd.id, PIDS}]]>
 	</queryString>
 	<field name="pd_id" class="java.lang.Integer"/>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+from openerp import models, api, fields
 
 
 class AccountMove(models.Model):
@@ -12,3 +12,13 @@ class AccountMove(models.Model):
             self = self.with_context(invoice=False)
         move = super(AccountMove, self).create(vals)
         return move
+
+
+class AccountPaymentTerm(models.Model):
+    _inherit = 'account.payment.term'
+
+    cash_on_delivery = fields.Boolean(
+        string='Cash On Delivery',
+        default=False,
+        help="If checked, this term is payment in advance",
+    )

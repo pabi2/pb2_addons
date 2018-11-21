@@ -805,7 +805,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 							</box>
 							<textField isStretchWithOverflow="true">
 								<reportElement x="5" y="0" width="181" height="18" isPrintWhenDetailOverflows="true"/>
-								<textElement lineSpacing="Single">
+								<textElement verticalAlignment="Top" lineSpacing="Single">
 									<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
@@ -1202,7 +1202,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				</textElement>
 				<textFieldExpression class="java.lang.Float"><![CDATA[$F{vat}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="7" y="13" width="285" height="29" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>

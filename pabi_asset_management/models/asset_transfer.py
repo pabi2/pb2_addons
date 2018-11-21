@@ -121,6 +121,13 @@ class AccountAssetTransfer(models.Model):
         string='Source Asset Count',
         compute='_compute_asset_count',
     )
+    new_asset_ids = fields.Many2many(
+        'account.asset',
+        'asset_transfer_asset_rel',
+        'transfer_id', 'asset_id',
+        string='New Assets',
+        readonly=True,
+    )
     source_asset_count = fields.Integer(
         string='Source Asset Count',
         compute='_compute_asset_count',
@@ -133,29 +140,33 @@ class AccountAssetTransfer(models.Model):
         required=True,
         help="Asset Journal (No-Budget)",
     )
-    move_ids = fields.Many2many(
+    move_id = fields.Many2one(
         'account.move',
         string='Journal Entries',
-        compute='_compute_moves',
+        readonly=True,
     )
-    move_count = fields.Integer(
-        string='JE Count',
-        compute='_compute_moves',
-    )
-
-    @api.multi
-    def _compute_moves(self):
-        for rec in self:
-            rec.move_ids = rec.target_asset_ids.mapped('move_id')
-            rec.move_count = len(rec.move_ids)
-        return True
+    # move_ids = fields.Many2many(
+    #     'account.move',
+    #     string='Journal Entries',
+    #     compute='_compute_moves',
+    # )
+    # move_count = fields.Integer(
+    #     string='JE Count',
+    #     compute='_compute_moves',
+    # )
+    #
+    # @api.multi
+    # def _compute_moves(self):
+    #     for rec in self:
+    #         rec.move_ids = rec.target_asset_ids.mapped('move_id')
+    #         rec.move_count = len(rec.move_ids)
+    #     return True
 
     @api.multi
     def _compute_asset_count(self):
         for rec in self:
             rec.source_asset_count = len(rec.asset_ids)
-            rec.target_asset_count = \
-                len(rec.target_asset_ids.mapped('ref_asset_id'))
+            rec.target_asset_count = len(rec.new_asset_ids)
 
     @api.multi
     @api.depends('date', 'date_accept')
@@ -205,7 +216,7 @@ class AccountAssetTransfer(models.Model):
     def _compute_asset_value(self):
         for rec in self:
             source_value = \
-                sum(rec.asset_ids.mapped('depreciation_base'))
+                sum(rec.asset_ids.mapped('purchase_value'))
             target_value = \
                 sum(rec.target_asset_ids.mapped('depreciation_base'))
             rec.source_asset_value = source_value
@@ -261,6 +272,129 @@ class AccountAssetTransfer(models.Model):
     def action_cancel(self):
         self.write({'state': 'cancel'})
 
+    # @api.multi
+    # def _transfer_new_asset(self):
+    #     """ The Concept
+    #     * A new asset will be created, owner chartfields will be the same
+    #       * So, make sure that the asset_profile_id only on new move
+#     * All source asset must have same owner chartfields, otherwise, warning
+#     * We code to allow transfering the asset with depre, in fact, it won't
+    #     * Inactive source assets
+    #     Account Moves
+    #     =============
+#     Dr Accumulated depreciation of transfer assets (for each asset, if any)
+    #         Cr Asset Value of trasferring assets (for each asset)
+    #     Dr Asset Value to the new asset
+    #         Cr Accumulated Depreciation of to the new asset (if any)
+    #     """
+    #     self.ensure_one()
+    #     AccountMove = self.env['account.move']
+    #     Asset = self.env['account.asset']
+    #     Period = self.env['account.period']
+    #     AssetStatus = self.env['account.asset.status']
+    #     period = Period.find()
+    #     # Owner
+    #     project = self.asset_ids.mapped('project_id')
+    #     section = self.asset_ids.mapped('section_id')
+    #     # For Transfer, all asset must belong to same owner
+    #     if len(project) > 1 or len(section) > 1:
+    #         raise ValidationError(
+    #             _('When transfer to new asset, all selected '
+    #               'assets must belong to same owner!'))
+    #     new_owner = {'owner_project_id': project.id,
+    #                  'owner_section_id': section.id}
+    #     # Purchase method, when mixed -> อื่นๆ (asset_purchase_method_11)
+    #     purchase_methods = self.asset_ids.mapped('asset_purchase_method_id')
+    #     new_purchase_method = (len(purchase_methods) == 1 and
+    #                            purchase_methods[0] or
+    #                            self.env.ref('pabi_asset_management.'
+    #                                         'asset_purchase_method_11'))
+    #     # Prepare Old Move
+    #     asset_move_lines_dict, depre_move_lines = \
+    #         Asset._prepare_asset_reverse_moves(self.asset_ids)
+    #     # Create move line for target asset
+    #     new_asset_move_line_dict = \
+    #         Asset._prepare_asset_target_move(asset_move_lines_dict,
+    #                                          new_owner=new_owner)
+    #     new_asset_ids = []
+    #     count = len(self.target_asset_ids)
+    #     total_depre = sum([x['debit'] for x in depre_move_lines])
+    #     accum_depre = 0.0
+    #     i = 0
+    #     for target_asset in self.target_asset_ids:
+    #         i += 1
+    #         # Ratio
+    #         ratio = 1.0
+    #         if self.source_asset_value:
+    #             ratio = (target_asset.depreciation_base /
+    #                      self.source_asset_value)
+    #         # For each target asset, start with reverse move
+    #         move_lines = list(asset_move_lines_dict)
+    #         # Property of New Asset
+    #         new_product = target_asset.product_id
+    #         new_asset_profile = new_product.asset_profile_id
+    #         # Force to AN before lek think it should be fixed.
+    #         # new_journal = new_asset_profile.journal_id
+    #         new_journal = self.journal_id
+    #         new_account_asset = new_asset_profile.account_asset_id
+    #         # For transfer, for each new asset, update following fields
+    #         new_asset_move_line_dict.update({
+    #             'name': target_asset.asset_name,
+    #             'product_id': new_product.id,
+    #             'asset_profile_id': new_asset_profile.id,
+    #             'account_id': new_account_asset.id,
+    #         })
+    #         move_lines.append(new_asset_move_line_dict)
+    #         for move_line in move_lines:
+    #             move_line['debit'] = move_line['debit'] and \
+    #                 target_asset.depreciation_base or 0.0
+    #             move_line['credit'] = move_line['credit'] and \
+    #                 target_asset.depreciation_base or 0.0
+    #         # Depreciation Move Line
+    #         if depre_move_lines:
+    #             depre_move_lines = list(depre_move_lines)
+    #             new_depre_dict = \
+    #                 Asset._prepare_asset_target_move(depre_move_lines)
+    #             depre_move_lines.append(new_depre_dict)
+    #             new_depre = 0.0
+    #             if i == count:
+    #                 new_depre = total_depre - accum_depre
+    #             else:
+    #                 new_depre = ratio * total_depre
+    #             for move_line in depre_move_lines:
+    #                 move_line['debit'] = \
+    #                     move_line['debit'] and new_depre or 0.0
+    #                 move_line['credit'] = \
+    #                     move_line['credit'] and new_depre or 0.0
+    #             accum_depre += new_depre
+    #             move_lines += depre_move_lines
+    #         # For transfer case, make sure that asset_id is false
+    #         for x in move_lines:
+    #             x.update({'asset_id': False})
+    #         # Finalize all moves before create it.
+    #         final_move_lines = [(0, 0, x) for x in move_lines]
+    #         move_dict = {'journal_id': new_journal.id,
+    #                      'line_id': final_move_lines,
+    #                      'period_id': period.id,
+    #                      'date': self.date,
+    #                      'ref': self.name}
+    #         ctx = {'asset_purchase_method_id': new_purchase_method.id,
+    #             'direct_create': False}  # direct_create to recalc dimension
+    #         move = AccountMove.with_context(ctx).create(move_dict)
+    #         # For transfer, new asset should be created
+    #         asset = move.line_id.mapped('asset_id')
+    #         if len(asset) != 1:
+    #             raise ValidationError(
+    #                 _('An asset should be created, something went wrong!'))
+    #         new_asset_ids.append(asset.id)
+    #         target_asset.write({'ref_asset_id': asset.id,
+    #                             'move_id': move.id})
+    #         asset.source_asset_ids = self.asset_ids
+    #     self.asset_ids.write({
+    #         'active': False,
+    #         'target_asset_ids': [(4, x) for x in new_asset_ids],
+    #         'status': AssetStatus.search([('code', '=', 'transfer')]).id})
+
     @api.multi
     def _transfer_new_asset(self):
         """ The Concept
@@ -278,20 +412,20 @@ class AccountAssetTransfer(models.Model):
         """
         self.ensure_one()
         AccountMove = self.env['account.move']
-        Asset = self.env['account.asset']
         Period = self.env['account.period']
         AssetStatus = self.env['account.asset.status']
-        period = Period.find()
         # Owner
-        project = self.asset_ids.mapped('project_id')
-        section = self.asset_ids.mapped('section_id')
+        project = self.asset_ids.mapped('owner_project_id')
+        section = self.asset_ids.mapped('owner_section_id')
+        invest_asset = self.asset_ids.mapped('owner_invest_asset_id')
+        invest_construction_phase = \
+            self.asset_ids.mapped('owner_invest_construction_phase_id')
         # For Transfer, all asset must belong to same owner
-        if len(project) > 1 or len(section) > 1:
+        if len(project) + len(section) + len(invest_asset) + \
+                len(invest_construction_phase) > 1:
             raise ValidationError(
                 _('When transfer to new asset, all selected '
-                  'assets must belong to same owner!'))
-        new_owner = {'owner_project_id': project.id,
-                     'owner_section_id': section.id}
+                  'assets must belong to same budget owner!'))
         # Purchase method, when mixed -> อื่นๆ (asset_purchase_method_11)
         purchase_methods = self.asset_ids.mapped('asset_purchase_method_id')
         new_purchase_method = (len(purchase_methods) == 1 and
@@ -299,15 +433,55 @@ class AccountAssetTransfer(models.Model):
                                self.env.ref('pabi_asset_management.'
                                             'asset_purchase_method_11'))
         # Prepare Old Move
-        asset_move_lines_dict, depre_move_lines = \
-            Asset._prepare_asset_reverse_moves(self.asset_ids)
-        # Create move line for target asset
-        new_asset_move_line_dict = \
-            Asset._prepare_asset_target_move(asset_move_lines_dict,
-                                             new_owner=new_owner)
-        new_asset_ids = []
+        move_lines = []
+        for asset in self.asset_ids:
+            if asset.purchase_value:
+                move_lines += [
+                    # -------------------- OLD OWNER ----------------------
+                    # Cr Asset Value (Old)
+                    {
+                        'asset_id': False,
+                        'account_id':
+                        asset.profile_id.account_asset_id.id,
+                        'partner_id': asset.partner_id.id,
+                        'name': asset.display_name,
+                        # Value
+                        'credit': (asset.purchase_value > 0.0 and
+                                   asset.purchase_value or 0.0),
+                        'debit': (asset.purchase_value < 0.0 and
+                                  -asset.purchase_value or 0.0),
+                        # Budget
+                        'project_id': asset.owner_project_id.id,
+                        'section_id': asset.owner_section_id.id,
+                        'invest_asset_id': asset.owner_invest_asset_id.id,
+                        'invest_construction_phase_id':
+                        asset.owner_invest_construction_phase_id.id,
+                     },
+                ]
+            if asset.value_depreciated:
+                move_lines += [
+                    # Dr Accum Depre (Old)
+                    {
+                        'asset_id': False,
+                        'account_id':
+                        asset.profile_id.account_depreciation_id.id,
+                        'partner_id': asset.partner_id.id,
+                        'name': asset.display_name,
+                        # Value
+                        'credit': (asset.value_depreciated < 0.0 and
+                                   -asset.value_depreciated or 0.0),
+                        'debit': (asset.value_depreciated > 0.0 and
+                                  asset.value_depreciated or 0.0),
+                        # Budget
+                        'project_id': asset.owner_project_id.id,
+                        'section_id': asset.owner_section_id.id,
+                        'invest_asset_id': asset.owner_invest_asset_id.id,
+                        'invest_construction_phase_id':
+                        asset.owner_invest_construction_phase_id.id,
+                     },
+                ]
         count = len(self.target_asset_ids)
-        total_depre = sum([x['debit'] for x in depre_move_lines])
+        total_depre = sum(self.asset_ids.mapped('value_depreciated'))
         accum_depre = 0.0
         i = 0
         for target_asset in self.target_asset_ids:
@@ -317,8 +491,6 @@ class AccountAssetTransfer(models.Model):
             if self.source_asset_value:
                 ratio = (target_asset.depreciation_base /
                          self.source_asset_value)
-            # For each target asset, start with reverse move
-            move_lines = list(asset_move_lines_dict)
             # Property of New Asset
             new_product = target_asset.product_id
             new_asset_profile = new_product.asset_profile_id
@@ -327,62 +499,73 @@ class AccountAssetTransfer(models.Model):
             new_journal = self.journal_id
             new_account_asset = new_asset_profile.account_asset_id
             # For transfer, for each new asset, update following fields
-            new_asset_move_line_dict.update({
-                'name': target_asset.asset_name,
-                'product_id': new_product.id,
-                'asset_profile_id': new_asset_profile.id,
-                'account_id': new_account_asset.id,
-            })
-            move_lines.append(new_asset_move_line_dict)
-            for move_line in move_lines:
-                move_line['debit'] = move_line['debit'] and \
-                    target_asset.depreciation_base or 0.0
-                move_line['credit'] = move_line['credit'] and \
-                    target_asset.depreciation_base or 0.0
+            if target_asset.depreciation_base:
+                new_asset_move_line_dict = {
+                    'asset_id': False,
+                    'account_id': new_account_asset.id,
+                    'name': target_asset.asset_name,
+                    'product_id': new_product.id,
+                    'asset_profile_id': new_asset_profile.id,  # New Asset
+                    # Value
+                    'credit': (target_asset.depreciation_base < 0.0 and
+                               -target_asset.depreciation_base or 0.0),
+                    'debit': (target_asset.depreciation_base > 0.0 and
+                              target_asset.depreciation_base or 0.0),
+                    # Budget
+                    'project_id': project.id,
+                    'section_id': section.id,
+                    'invest_asset_id': False,
+                    'invest_construction_phase_id': False,
+                }
+                move_lines.append(new_asset_move_line_dict)
             # Depreciation Move Line
-            if depre_move_lines:
-                depre_move_lines = list(depre_move_lines)
-                new_depre_dict = \
-                    Asset._prepare_asset_target_move(depre_move_lines)
-                depre_move_lines.append(new_depre_dict)
+            if total_depre:
                 new_depre = 0.0
                 if i == count:
                     new_depre = total_depre - accum_depre
                 else:
                     new_depre = ratio * total_depre
-                for move_line in depre_move_lines:
-                    move_line['debit'] = \
-                        move_line['debit'] and new_depre or 0.0
-                    move_line['credit'] = \
-                        move_line['credit'] and new_depre or 0.0
+                new_depre_dict = {
+                    'asset_id': False,
+                    'account_id':
+                    new_asset_profile.account_depreciation_id.id,
+                    'name': target_asset.asset_name,
+                    # Value
+                    'credit': new_depre > 0.0 and new_depre or 0.0,
+                    'debit': new_depre < 0.0 and -new_depre or 0.0,
+                    # Budget
+                    'project_id': project.id,
+                    'section_id': section.id,
+                    'invest_asset_id': False,
+                    'invest_construction_phase_id': False,
+                }
                 accum_depre += new_depre
-                move_lines += depre_move_lines
-            # For transfer case, make sure that asset_id is false
-            for x in move_lines:
-                x.update({'asset_id': False})
-            # Finalize all moves before create it.
-            final_move_lines = [(0, 0, x) for x in move_lines]
-            move_dict = {'journal_id': new_journal.id,
-                         'line_id': final_move_lines,
-                         'period_id': period.id,
-                         'date': self.date,
-                         'ref': self.name}
-            ctx = {'asset_purchase_method_id': new_purchase_method.id,
-                   'direct_create': False}  # direct_create to recalc dimension
-            move = AccountMove.with_context(ctx).create(move_dict)
-            # For transfer, new asset should be created
-            asset = move.line_id.mapped('asset_id')
-            if len(asset) != 1:
-                raise ValidationError(
-                    _('An asset should be created, something went wrong!'))
-            new_asset_ids.append(asset.id)
-            target_asset.write({'ref_asset_id': asset.id,
-                                'move_id': move.id})
+                move_lines.append(new_depre_dict)
+        # Finalize all moves before create it.
+        final_move_lines = [(0, 0, x) for x in move_lines]
+        move_dict = {'journal_id': new_journal.id,
+                     'line_id': final_move_lines,
+                     'period_id': Period.find(self.date).id,
+                     'date': self.date,
+                     'ref': self.name}
+        ctx = {'asset_purchase_method_id': new_purchase_method.id,
+               'direct_create': True}  # direct_create to recalc dimension
+        move = AccountMove.with_context(ctx).create(move_dict)
+        # For transfer, new asset should be created
+        new_assets = move.line_id.mapped('asset_id')
+        if len(new_assets) != len(self.target_asset_ids):
+            raise ValidationError(
+                _('%s asset(s) should be created, something went wrong!') %
+                len(self.target_asset_ids))
+        for asset in new_assets:
             asset.source_asset_ids = self.asset_ids
         self.asset_ids.write({
             'active': False,
-            'target_asset_ids': [(4, x) for x in new_asset_ids],
+            'target_asset_ids': [(4, x) for x in new_assets.ids],
             'status': AssetStatus.search([('code', '=', 'transfer')]).id})
+        self.write({'new_asset_ids': [(4, x) for x in new_assets.ids],
+                    'move_id': move.id})
+        return True
 
     @api.multi
     def open_source_asset(self):
@@ -400,7 +583,7 @@ class AccountAssetTransfer(models.Model):
         self.ensure_one()
         action = self.env.ref('account_asset_management.account_asset_action')
         result = action.read()[0]
-        target_assets = self.target_asset_ids.mapped('ref_asset_id')
+        target_assets = self.new_asset_ids
         assets = self.env['account.asset'].with_context(active_test=False).\
             search([('id', 'in', target_assets.ids)])
         dom = [('id', 'in', assets.ids)]
@@ -419,7 +602,7 @@ class AccountAssetTransfer(models.Model):
             'type': 'ir.actions.act_window',
             'context': self._context,
             'nodestroy': True,
-            'domain': [('id', 'in', self.move_ids.ids)],
+            'domain': [('id', '=', self.move_id.id)],
         }
 
 
@@ -455,18 +638,18 @@ class AccountAssetTransferTarget(models.Model):
         required=True,
         default=0.0,
     )
-    ref_asset_id = fields.Many2one(
-        'account.asset',
-        string='New Asset',
-        readonly=True,
-        ondelete='restrict',
-    )
-    move_id = fields.Many2one(
-        'account.move',
-        string='Journal Entry',
-        readonly=True,
-        copy=False,
-    )
+    # ref_asset_id = fields.Many2one(
+    #     'account.asset',
+    #     string='New Asset',
+    #     readonly=True,
+    #     ondelete='restrict',
+    # )
+    # move_id = fields.Many2one(
+    #     'account.move',
+    #     string='Journal Entry',
+    #     readonly=True,
+    #     copy=False,
+    # )
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
