@@ -69,10 +69,13 @@ class CreateStockAdjustWizard(models.TransientModel):
             return_move = origin_move.copy({
                 'product_id': product_line.from_product_id.id,
                 'name': '<~ %s' % product_line.from_product_id.name,
-                'price_unit': -origin_move.price_unit,
+                'price_unit': origin_move.price_unit,
                 'product_uom_qty': product_line.quantity,
+                'location_id': origin_move.location_dest_id.id,
+                'location_dest_id': origin_move.location_id.id,
             })
-            return_move.action_done()
+            return_move.with_context(
+                force_valuation_amount=origin_move.price_unit).action_done()
             # Create move with changed product, to be new product move
             new_prod_move = origin_move.copy({
                 'product_id': product_line.to_product_id.id,  # New product
