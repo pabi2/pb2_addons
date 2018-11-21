@@ -9,7 +9,7 @@
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT
-row_number() over (order by pol.name) as pol_count,
+row_number() over (order by pol.id) as pol_count,
 pol.name,
 pol.price_unit,
 SUM(pol.product_qty) product_qty,
@@ -22,7 +22,7 @@ FROM purchase_order_line pol
 LEFT JOIN product_uom pu
 ON pu.id = pol.product_uom
 WHERE pol.order_id = $P{ids}
-GROUP BY pu.id,pol.name,pol.price_unit,pu.name]]>
+GROUP BY pol.id,pu.id,pol.name,pol.price_unit,pu.name]]>
 		</queryString>
 		<field name="pol_count" class="java.lang.Long"/>
 		<field name="name" class="java.lang.String"/>
@@ -569,7 +569,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_term}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="326" y="285" width="157" height="21"/>
+				<reportElement x="326" y="289" width="157" height="21"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="11" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -1185,7 +1185,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{grand_total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Float"><![CDATA[$F{grand_total}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="304" y="21" width="122" height="21"/>
@@ -1200,7 +1200,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{vat}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Float"><![CDATA[$F{vat}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="7" y="13" width="285" height="29" isPrintWhenDetailOverflows="true"/>
@@ -1221,7 +1221,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{sub_total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Float"><![CDATA[$F{sub_total}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="46" width="300" height="1"/>
@@ -1250,7 +1250,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{fine_month}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Transparent" x="169" y="137" width="361" height="18" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement mode="Transparent" x="174" y="137" width="361" height="18" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$F{fine_condition} == "month"]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
