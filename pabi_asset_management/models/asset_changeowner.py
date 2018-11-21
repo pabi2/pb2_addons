@@ -315,7 +315,8 @@ class AccountAssetChangeowner(models.Model):
                     'date': self.date,
                     'ref': self.name}
                 # direct_create = compute chartfield on post
-                ctx = {'allow_asset': True, 'direct_create': True}
+                ctx = {'allow_asset': True, 'direct_create': True,
+                       'no_test_chartfield_active': True}
                 line.move_id = \
                     AccountMove.with_context(ctx).create(move_dict)
             # Asset Owner Info update

@@ -134,6 +134,17 @@ class PurchaseOrder(models.Model):
         string='Incoming Shipments',
         compute='_compute_shipment_count',
     )
+    partner_ref = fields.Text(
+        string='Supplier Reference',
+        states={'confirmed': [('readonly', True)],
+                'approved': [('readonly', True)],
+                'done': [('readonly', True)]},
+        copy=False,
+        help="Reference of the sales order or bid sent by your supplier. "
+             "It's mainly used to do the matching when you receive the "
+             "products as this reference is usually written on the "
+             "delivery order sent by your supplier."
+    )
 
     @api.multi
     def _compute_shipment_count(self):
