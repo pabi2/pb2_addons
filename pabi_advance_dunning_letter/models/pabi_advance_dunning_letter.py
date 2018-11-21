@@ -331,7 +331,7 @@ class PABIAdvanceDunningLetterLine(models.Model):
         readonly=True,
     )
     date_due = fields.Date(
-        string='Date Due',
+        string='Due Date',
         related='expense_id.date_due',
         readonly=True,
     )
@@ -348,6 +348,7 @@ class PABIAdvanceDunningLetterLine(models.Model):
     send_email = fields.Boolean(
         related='dunning_id.send_email',
         string='Send Email',
+        readonly=True,
     )
     to_employee_ids = fields.Many2many(
         'hr.employee',

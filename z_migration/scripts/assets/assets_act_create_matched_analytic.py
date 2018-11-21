@@ -1,5 +1,5 @@
 """
-This method will click button confirm asset in assets
+This method will click button compute in assets
 """
 import sys
 import os
@@ -16,28 +16,33 @@ except Exception:
 
 # Model
 Asset = connection.get_model('account.asset')
-AssetLine = connection.get_model('account.asset.line')
 
 # Domain
-dom = [('type', '=', 'depreciate'),
-       ('init_entry', '=', True),
-       ('move_check', '=', False)]
+# excludes = [
+#     '9100-001-0001-0002015-000',
+#     '9100-001-0001-0001905-000',
+#     '9100-001-0001-0001830-000',
+# ]
+dom = [('account_analytic_id', '=', False)]
+# dom = [('code', 'in', excludes)]
 
 # Search Asset
-depre_lines = AssetLine.search_read(dom, limit=10000, order='id asc')
+assets = Asset.search_read(dom, ['id', 'code'], limit=10000, order='id desc')
+
 log_asset_codes = [[], []]
-logger = log.setup_custom_logger('assets_act_fix_init_depre_entry')
+logger = log.setup_custom_logger('assets_act_create_matched_analytic')
 logger.info('Start process')
-logger.info('Total depre_lines: %s' % len(depre_lines))
-for depre in depre_lines:
+logger.info('Total asset: %s' % len(assets))
+for asset in assets:
     try:
-        asset_id = depre['asset_id'][0]
-        Asset.create_depre_init_entry_on_migration([asset_id])
-        log_asset_codes[0].append(asset_id)
-        logger.info('Pass: %s' % asset_id)
+        print asset['code']
+        account_analytic_id = \
+            Asset.fix_asset_account_analytic_id(asset['id'])
+        log_asset_codes[0].append(asset['code'].encode('utf-8'))
+        logger.info('Pass: %s' % asset['code'])
     except Exception as ex:
-        log_asset_codes[1].append(asset_id)
-        logger.error('Fail: %s (reason: %s)' % (asset_id, ex))
+        log_asset_codes[1].append(asset['code'].encode('utf-8'))
+        logger.error('Fail: %s (reason: %s)' % (asset['code'], ex))
 summary = 'Summary: pass %s%s and fail %s%s' \
           % (len(log_asset_codes[0]),
              log_asset_codes[0] and ' %s' % str(tuple(log_asset_codes[0]))
