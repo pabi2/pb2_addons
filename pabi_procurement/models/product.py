@@ -12,6 +12,14 @@ class ProductTemplate(models.Model):
     cost_method = fields.Selection(
         default='average',
     )
+    property_account_income_categ = fields.Many2one(
+        'account.account',
+        related='categ_id.property_account_income_categ',
+    )
+    property_account_expense_categ = fields.Many2one(
+        'account.account',
+        related='categ_id.property_account_expense_categ',
+    )
 
 
 class ProductCategory(models.Model):

@@ -79,7 +79,11 @@
     <record id="hr_expense_operating_unit.ir_rule_hr_expense_allowed_operating_units"
             model="ir.rule">
         <!-- For case internal charge will see all OU as same division -->
-        <field name="domain_force">['|', '|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False),('operating_unit_id','in',[g.id for g in user.operating_unit_ids]),('internal_section_id.division_id', 'in', [x.division_id.id for x in user.employee_id.section_assign_ids] + [user.employee_id.section_id.division_id.id])]</field>
+        <field name="domain_force">
+            ['|', '|', '|', '|', '|', (user.access_all_operating_unit, '=', True), ('operating_unit_id','=',False), ('operating_unit_id','in',[g.id for g in user.operating_unit_ids]),
+             ('internal_section_id.division_id', 'in', [x.division_id.id for x in user.employee_id.section_assign_ids] + [user.employee_id.section_id.division_id.id]),
+             ('internal_project_id.pm_employee_id', '=', user.employee_id.id), ('internal_project_id.member_ids.employee_id', 'in', [user.employee_id.id])]
+         </field>
     </record>
 
 	<!-- procurement_operating_unit -->

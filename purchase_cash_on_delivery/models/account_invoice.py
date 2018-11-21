@@ -16,8 +16,8 @@ class AccountInvoice(models.Model):
         string='Prepaid Account',
         domain=lambda self:
         [('id', 'in', self.env.user.company_id.prepaid_account_ids.ids)],
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        # readonly=True,
+        # states={'draft': [('readonly', False)]},
     )
     clear_prepaid_move_id = fields.Many2one(
         'account.move',
@@ -39,17 +39,21 @@ class AccountInvoice(models.Model):
     @api.multi
     @api.depends('payment_term')
     def _compute_is_prepaid(self):
-        cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
-                                    'cash_on_delivery_payment_term', False)
+        cod_pay_terms = self.env['account.payment.term'].\
+            search([('cash_on_delivery', '=', True)])
+        # cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
+        #                             'cash_on_delivery_payment_term', False)
         for rec in self:
-            rec.is_prepaid = rec.payment_term == cod_pay_term
+            rec.is_prepaid = rec.payment_term.id in cod_pay_terms.ids
 
     @api.multi
     def finalize_invoice_move_lines(self, move_lines):
-        cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
-                                    'cash_on_delivery_payment_term')
+        cod_pay_terms = self.env['account.payment.term'].\
+            search([('cash_on_delivery', '=', True)])
+        # cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
+        #                             'cash_on_delivery_payment_term')
         # For prepaid only
-        if self.payment_term == cod_pay_term:
+        if self.payment_term.id in cod_pay_terms.ids:
             # journal = self.env.ref('purchase_cash_on_delivery.'
             #                        'clear_prepaid_journal')
             # if not journal.default_debit_account_id or \
@@ -158,9 +162,11 @@ class AccountInvoiceLine(models.Model):
     @api.model
     def move_line_get_item(self, line):
         res = super(AccountInvoiceLine, self).move_line_get_item(line)
-        cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
-                                    'cash_on_delivery_payment_term')
-        if line.invoice_id.payment_term == cod_pay_term and \
+        cod_pay_terms = self.env['account.payment.term'].\
+            search([('cash_on_delivery', '=', True)])
+        # cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
+        #                             'cash_on_delivery_payment_term')
+        if line.invoice_id.payment_term.id in cod_pay_terms.ids and \
                 not self._context.get('is_clear_prepaid', False):
             # journal = self.env.ref('purchase_cash_on_delivery.'
             #                        'clear_prepaid_journal')

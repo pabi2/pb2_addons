@@ -67,6 +67,11 @@ class PurchaseOrder(models.Model):
         string='Warning',
         compute='_compute_check_invoice_plan_warning',
     )
+    bypass_validate_amount = fields.Boolean(
+        string='Ignore Amount Mismatch',
+        default=False,
+        help="To unlock creation of invoices, when amount mismatch!"
+    )
 
     @api.multi
     def _compute_plan_invoice_created(self):
@@ -421,8 +426,11 @@ class PurchaseOrder(models.Model):
                 _validate_invoice_balance(invoice_ids)  # Special Hook
         return inv_id
 
-    @api.model
+    @api.multi
     def _validate_invoice_balance(self, invoice_ids):
+        self.ensure_one()
+        if self.bypass_validate_amount:
+            return
         # Hook
         # Check total amount PO must equal to Invoice
         if self._context.get('first_time', False) and len(invoice_ids) > 0:
@@ -461,7 +469,8 @@ class PurchaseOrder(models.Model):
                 if order_line.order_id.invoice_mode == 'change_quantity':
                     quantity = res.get('quantity', 0.0) * line_percent / 100
                     d = decimal.Decimal(str(quantity))
-                    if d.as_tuple().exponent < -2:
+                    if d.as_tuple().exponent < -2 and \
+                            not order_line.order_id.bypass_validate_amount:
                         raise ValidationError(
                             _('Too many decimal places in percent will cause '
                               'rounding error in invoice quantity, i.e., %s.'

@@ -121,6 +121,11 @@ class AssetRegisterReport(models.TransientModel):
         'res.subsector',
         string='Subsector',
     )
+    current_year = fields.Many2one(
+        'account.fiscalyear',
+        string='Current Year',
+        default=lambda self: self._get_fiscalyear(),
+    )
     # Note: report setting
     accum_depre_account_type = fields.Many2one(
         'account.account.type',

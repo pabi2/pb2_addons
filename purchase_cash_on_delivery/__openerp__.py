@@ -32,6 +32,7 @@ user will go to invoice and click Clear Prepayment.
         'data/payment_term_data.xml',
         'views/account_config.xml',
         'views/account_invoice_view.xml',
+        'views/account_view.xml',
     ],
     'test': [
     ],
