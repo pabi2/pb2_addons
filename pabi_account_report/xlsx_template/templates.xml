@@ -1724,21 +1724,41 @@ result = pd.pivot_table(df, index=groupby,
                              'AQ27': 'warranty_start_date${value or ""}#{number_format=date}',
                              'AR27': 'warranty_expire_date${value or ""}#{number_format=date}',
                              'AS27': 'date_start${value and value.strftime("%Y") or ""}#{number_format=text}',
-                             'AT27': "${'=IF(B22=?(AS27),0,?(AV27))'}#{number_format=number}",
-                             'AU27': "${'=IF(B22=?(AS27),?(AV27),0)'}#{number_format=number}",
-                             'AV27': 'purchase_value${value or ""}#{number_format=number}',
+                             'AT27': 'purchase_before_current${value or 0}#{number_format=number}',
+                             'AU27': 'purchase_current${value or 0}#{number_format=number}',
+                             'AV27': 'purchase_value${value or 0}#{number_format=number}',
                              'AW27': 'accumulated_bf${value or 0}#{number_format=number}',
                              'AX27': 'depreciation${value or 0}#{number_format=number}',
                              'AY27': 'accumulated_cf${value or 0}#{number_format=number}',
-                             'AZ27': "${'=?(AV27)-?(AY27)'}#{number_format=number}",
+                             'AZ27': 'net_book_value${value or 0}#{number_format=number}',
                              'BA27': 'method_number${value or ""}#{number_format=text}',
                              'BB27': 'adjust_id${value and value.name or 0}#{number_format=text}',
                              'BC27': 'status${value and value.name or ""}#{number_format=text}',
                              'BD27': 'date_remove${value or ""}#{number_format=date}',
                          }
+                     },
+                     'Accum. Depre. Group By GL': {
+                         '_BI_': {
+                             'A2': {
+                                 'df': 'Asset Register Report',
+                                 # Group by A, B, C, D, E, F and add Subtotal (so we use pivot)
+                                 # By scripting, we need result = ...
+                                 'oper_code': """
+df = df[["C", "AT", "AU", "AV", "AW", "AX", "AY", "AZ"]]
+groupby = ["C"]
+sum_cols = ["AT", "AU", "AV", "AW", "AX", "AY", "AZ"]
+result = pd.pivot_table(df, index=groupby,
+                     values=sum_cols,
+                     aggfunc=np.sum,
+                     fill_value=0,
+                     margins=True,
+                     margins_name="Total")
+                                 """,
+                             },
+                         },
                      }
-                 }
-             }
+                }
+            }
          </field>
      </record>
 

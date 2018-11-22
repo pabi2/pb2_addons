@@ -43,6 +43,15 @@ class AssetRegisterView(models.AbstractModel):
     budget_type = fields.Char(
         string='Budget Type',
     )
+    purchase_before_current = fields.Float(
+        string='Purchase Value Before Current FY',
+    )
+    purchase_current = fields.Float(
+        string='Purchase Value Current FY',
+    )
+    net_book_value = fields.Float(
+        string='Net Book Value',
+    )
 
 
 class AssetRegisterReport(models.TransientModel):
@@ -281,6 +290,20 @@ class AssetRegisterReport(models.TransientModel):
             select *
             from (
                 select a.*, a.id asset_id, aap.account_asset_id,
+                -- purchase_bf_current
+                case when date_part('year', a.date_start) !=
+                 date_part('year', CURRENT_DATE+92) then a.purchase_value
+                 else null end as purchase_before_current,
+                -- purchase_current
+                case when date_part('year', a.date_start) =
+                 date_part('year', CURRENT_DATE+92) then a.purchase_value
+                 else null end as purchase_current,
+                -- net_book_value
+                (select a.purchase_value - coalesce(sum(credit-debit), 0.0)
+                 from account_move_line ml
+                 where account_id in %s  -- accumulated account
+                 and ml.date <= %s -- date end
+                 and asset_id = a.id) net_book_value,
                 -- budget_type
                 case when a.section_id is not null then 'Section'
                      when a.project_id is not null then 'Project'
@@ -359,7 +382,8 @@ class AssetRegisterReport(models.TransientModel):
             left join res_invest_construction_phase ricp on
             a.owner_invest_construction_phase_id = ricp.id
             ) asset
-        """ + where_str, (tuple(depre_account_ids), date_start, date_end,
+        """ + where_str, (tuple(accum_depre_account_ids), date_end,
+                          tuple(depre_account_ids), date_start, date_end,
                           tuple(accum_depre_account_ids), date_end,
                           tuple(accum_depre_account_ids), date_start))
         results = self._cr.dictfetchall()
