@@ -532,9 +532,9 @@ class PurchaseRequisition(models.Model):
                     'verify_uid': self._uid,
                     'date_verify': fields.Date.context_today(self),
                 })
-        pabiweb_active = self.env.user.company_id.pabiweb_active
-        if pabiweb_active:  # If no connection to PRWeb, no need to send doc
-            self.print_call_for_bid_form()
+        # pabiweb_active = self.env.user.company_id.pabiweb_active
+        # if pabiweb_active:  # If no connection to PRWeb, no need to send doc
+        #     self.print_call_for_bid_form()
         return True
 
     @api.multi
