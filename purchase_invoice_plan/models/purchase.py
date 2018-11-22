@@ -336,20 +336,19 @@ class PurchaseOrder(models.Model):
         self._compute_check_invoice_plan_warning(exception=True)
         return super(PurchaseOrder, self).wkf_approve_order()
 
-    # @api.multi
-    # def _check_invoice_mode(self):
-    #     # Removed as it conflict between asset must use 1 job, but sometime
-    #     # we PO asset > 1 qty
-    #     # --
-    #     # for order in self:
-    #     #     if order.invoice_method == 'invoice_plan':
-    #     #         if order.invoice_mode == 'change_price':
-    #     #             for order_line in order.order_line:
-    #     #                 if order_line.product_qty != 1:
-    #     #                     raise ValidationError(
-    #     #                         _('For invoice plan mode "As 1 Job", '
-    #     #                           'all line quantity must equal to 1'))
-    #     return True
+    @api.multi
+    @api.constrains('invoice_mode')
+    def _check_invoice_mode(self):
+        """ Do not allow change_price for stockable products """
+        for order in self:
+            stock_products = order.order_line.mapped('product_id').\
+                filtered(lambda p: p.type != 'service')
+            print order.invoice_mode
+            if order.invoice_mode == 'change_price' and \
+                    len(stock_products) > 0:
+                raise ValidationError(_('PO with stockable products, '
+                                        '"As 1 Job" is not allowed!'))
+        return True
 
     @api.multi
     def action_invoice_create(self):

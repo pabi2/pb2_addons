@@ -454,7 +454,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{po_date}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="315" y="119" width="240" height="22" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
