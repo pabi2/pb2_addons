@@ -390,7 +390,6 @@ class PurchaseWebInterface(models.Model):
             },
             'attachments': attachment,
         }
-        return True
         try:
             result = alfresco.ord.action(arg)
         except Exception:
