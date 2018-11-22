@@ -440,7 +440,6 @@ class ExportXlsxTemplate(models.TransientModel):
                     begin_rc = min(all_rc)
                     max_word = [[sum([ord(ch) for ch in word]), word]
                                 for word in all_rc]
-                    # col, row = split_row_col(max(max_rc))
                     max_rc = max(max_word)
                     col, row = split_row_col(max_rc[1])
                     end_rc = '%s%s' % (col, max_row)
