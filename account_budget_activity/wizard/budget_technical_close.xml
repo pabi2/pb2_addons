@@ -4,19 +4,23 @@
         <!-- Documents that allow technical close -->
         <act_window id="action_purchase_request_technical_close"
             name="Close &amp; Uncommit Budget" res_model="budget.technical.close.wizard"
-            src_model="purchase.request" view_mode="form" target="new"/>
+            src_model="purchase.request" view_mode="form" target="new"
+            groups="account_budget_activity.group_budget_close_and_uncommit"/>
 
         <act_window id="action_purchase_order_technical_close"
             name="Close &amp; Uncommit Budget" res_model="budget.technical.close.wizard"
-            src_model="purchase.order" view_mode="form" target="new"/>
+            src_model="purchase.order" view_mode="form" target="new"
+            groups="account_budget_activity.group_budget_close_and_uncommit"/>
 
         <act_window id="action_expense_technical_close"
             name="Close &amp; Uncommit Budget" res_model="budget.technical.close.wizard"
-            src_model="hr.expense.expense" view_mode="form" target="new"/>
+            src_model="hr.expense.expense" view_mode="form" target="new"
+            groups="account_budget_activity.group_budget_close_and_uncommit"/>
 
         <act_window id="action_sale_order_technical_close"
             name="Close &amp; Uncommit Budget" res_model="budget.technical.close.wizard"
-            src_model="sale.order" view_mode="form" target="new"/>
+            src_model="sale.order" view_mode="form" target="new"
+            groups="account_budget_activity.group_budget_close_and_uncommit"/>
 
 
         <!-- Technical Close Wizard -->
