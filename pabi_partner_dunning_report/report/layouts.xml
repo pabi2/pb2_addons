@@ -3,13 +3,13 @@
     <data>
         <!-- STYLE -->
         <template id="style">
-            .pabi-header, .pabi-page, .pabi-footer, .pabi-logo {
+            .header_report_customer_dunning_letter, .page_report_customer_dunning_letter, .footer_report_customer_dunning_letter, .logo_report_customer_dunning_letter {
                 line-height: 30px !important;
             }
-            .pabi-header, .pabi-page, .pabi-footer {
+            .header_report_customer_dunning_letter, .page_report_customer_dunning_letter, .footer_report_customer_dunning_letter {
                 font-size: 24px !important;
             }
-            .pabi-logo {
+            .logo_report_customer_dunning_letter {
                 position: absolute !important;
                 z-index: -1 !important;
                 width: 150px !important;
@@ -55,9 +55,9 @@
 
         <!-- HEADER -->
         <template id="customer_dunning_letter_layout_header">
-            <div class="header pabi-header">
+            <div class="header header_report_customer_dunning_letter">
                 <div class="row">
-                    <img src="/pabi_partner_dunning_report/static/src/img/logo_nstda.gif" class="pabi-logo"/>
+                    <img src="/pabi_partner_dunning_report/static/src/img/logo_nstda.gif" class="logo_report_customer_dunning_letter"/>
                 </div>
             </div>
         </template>
@@ -414,7 +414,7 @@
 
         <!-- Layout Page Footer -->
         <template id="customer_dunning_letter_layout_footer">
-            <div class="row footer pabi-footer">
+            <div class="row footer footer_report_customer_dunning_letter">
                 <div class="last-page line_height">
                     ฝ่ายการเงินและบัญชี <br/>
                     โทร. 0 2564 7000 ต่อ 71317<br/>
