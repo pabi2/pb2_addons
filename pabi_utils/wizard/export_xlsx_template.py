@@ -174,6 +174,14 @@ def split_row_col(pos):
     return col, int(row)
 
 
+def split_col(pos):
+    match = re.match(r"([a-z]+)", pos, re.I)
+    if not match:
+        raise ValidationError(_('Position %s is not valid') % pos)
+    col = match.groups()
+    return col
+
+
 def get_sheet_by_name(book, name):
     """ Get sheet by name for openpyxl """
     i = 0
@@ -438,10 +446,14 @@ class ExportXlsxTemplate(models.TransientModel):
                 # prepare worksheet data range, to be used in BI funtions
                 if all_rc:
                     begin_rc = min(all_rc)
-                    max_word = [[sum([ord(ch) for ch in word]), word]
-                                for word in all_rc]
-                    max_rc = max(max_word)
-                    col, row = split_row_col(max_rc[1])
+                    col_split = []
+                    for word in all_rc:
+                        col_split += split_col(word)
+                    col, row = split_row_col(max(all_rc))
+                    lens = [len(x) for x in col_split]
+                    if max(lens) > 1:
+                        col_max = [x for x in col_split if len(x) >= max(lens)]
+                        col = (split_col(max(col_max)))[0]
                     end_rc = '%s%s' % (col, max_row)
                     worksheet_range[sheet_name] = '%s:%s' % (begin_rc, end_rc)
 
