@@ -525,6 +525,7 @@ class PurchaseRequisition(models.Model):
             'verify_uid': self._uid,
             'date_verify': fields.Date.context_today(self),
         })
+        self._cr.commit()
         for order in self.purchase_ids:
             if order.state != 'cancel':
                 order.write({
