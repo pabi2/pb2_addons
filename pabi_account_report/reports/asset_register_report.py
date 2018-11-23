@@ -55,6 +55,12 @@ class AssetRegisterView(models.AbstractModel):
     fiscalyear_asset = fields.Integer(
         string='Fiscalyear Asset',
     )
+    account_code = fields.Char(
+        string='Account Code',
+    )
+    account_name = fields.Char(
+        string='Account Name',
+    )
 
 
 class AssetRegisterReport(models.TransientModel):
@@ -293,6 +299,7 @@ class AssetRegisterReport(models.TransientModel):
             select *
             from (
                 select a.*, a.id asset_id, aap.account_asset_id,
+                aa.code as account_code, aa.name as account_name,
                 -- asset_fiscal_year
                 date_part('year', a.date_start+92) as fiscalyear_asset,
                 -- purchase_bf_current
@@ -386,8 +393,10 @@ class AssetRegisterReport(models.TransientModel):
             left join res_invest_asset ria on a.owner_invest_asset_id = ria.id
             left join res_invest_construction_phase ricp on
             a.owner_invest_construction_phase_id = ricp.id
+            left join account_account aa on aap.account_asset_id = aa.id
             ) asset
-        """ + where_str, (tuple(accum_depre_account_ids), date_end,
+        """ + where_str + 'order by asset.account_code, asset.code',
+                         (tuple(accum_depre_account_ids), date_end,
                           tuple(depre_account_ids), date_start, date_end,
                           tuple(accum_depre_account_ids), date_end,
                           tuple(accum_depre_account_ids), date_start))
