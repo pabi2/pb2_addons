@@ -12,8 +12,6 @@ It also contain defined message for following modules,
 
   - Stock Request
 
-Odoo will provide view for other system to call as - pabi_intray_view
-
     """,
     "website": "https://nstda.or.th/",
     "author": "Kitti U.",
