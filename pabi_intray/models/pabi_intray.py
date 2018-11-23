@@ -52,3 +52,7 @@ class PABIIntray(models.Model):
             from pabi_intray pi
             join mail_message mm on mm.id = pi.message_id
         )""")
+        try:
+            cr.execute("GRANT SELECT ON pabi_intray_view TO intraymo")
+        except Exception:
+            pass
