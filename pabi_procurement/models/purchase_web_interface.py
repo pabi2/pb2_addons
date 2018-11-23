@@ -337,6 +337,9 @@ class PurchaseWebInterface(models.Model):
             self.env['pabi.web.config.settings']._get_alfresco_connect('pcm')
         if alfresco is False:
             return False
+        pabiweb_active = self.env.user.company_id.pabiweb_active
+        if pabiweb_active:  # If no connection to PRWeb, no need to send doc
+            requisition.print_call_for_bid_form()
         pd_file = Attachment.search([
             ('res_id', '=', requisition.id),
             ('res_model', '=', 'purchase.requisition'),
