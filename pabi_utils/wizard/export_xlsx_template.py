@@ -438,7 +438,8 @@ class ExportXlsxTemplate(models.TransientModel):
                 # prepare worksheet data range, to be used in BI funtions
                 if all_rc:
                     begin_rc = min(all_rc)
-                    col, row = split_row_col(max(all_rc))
+                    col, row = split_row_col(
+                        max(sorted(all_rc, reverse=True), key=len))
                     end_rc = '%s%s' % (col, max_row)
                     worksheet_range[sheet_name] = '%s:%s' % (begin_rc, end_rc)
 
