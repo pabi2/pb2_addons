@@ -93,6 +93,9 @@
                 <xpath expr="//field[@name='payment_term_id']" position="attributes">
                     <attribute name="required">1</attribute>
                 </xpath>
+                <xpath expr="//field[@name='incoterm_id']" position="after">
+                    <field name="incoterm_text" />
+                </xpath>
                 <!--<xpath expr="/form/sheet//h1[1]" position="after">-->
                     <!--<h2 attrs="{'invisible': [('state', '!=', 'done')]}">-->
                         <!--<label for="force_done_reason" string="Force Done Reason:"/>-->
