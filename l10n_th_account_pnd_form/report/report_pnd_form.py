@@ -195,7 +195,9 @@ class ReportPNDFormLine(models.Model):
             c.income_tax_form,
             ap.name as wht_period,
             c.date as date_value,
-            round(sum(ct.amount)/sum(ct.base)*100) as tax_percent,
+            case when sum(ct.base) != 0 then
+                round(sum(ct.amount)/sum(ct.base)*100) else 0.0 end
+                as tax_percent,
             ct.wht_cert_income_type, ct.wht_cert_income_desc,
             case when c.state != 'cancel'
                 then sum(ct.base) else 0.0 end as base,
