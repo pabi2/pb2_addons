@@ -305,6 +305,30 @@ class AccountVoucher(models.Model):
                         'period_id': period.id})
         return res
 
+    @api.multi
+    def cancel_voucher(self):
+        """ Auto create reversal for TT and reconcile it """
+        for voucher in self:
+            if voucher.type == 'payment' and not voucher.auto_recognize_vat:
+                print self._context
+                if voucher.recognize_vat_move_id and \
+                        not voucher.recognize_vat_move_id.reversal_id:
+                    # Recreate reversal for TT
+                    tt_move = voucher.recognize_vat_move_id
+                    tt_move.mapped('line_id.reconcile_id').unlink()
+                    ctx = {'force_no_update_check': True}
+                    tt_move.with_context(ctx).create_reversals(
+                        voucher.cancel_date,
+                        reversal_journal_id=tt_move.journal_id.id
+                    )
+                    tt_move.reversal_id.date_document = \
+                        voucher.cancel_date_document
+                    rec_move_ids = [tt_move.id, tt_move.reversal_id.id]
+                    rec_lines = self.env['account.move.line'].search([
+                        ('move_id', 'in', rec_move_ids)])
+                    rec_lines.reconcile()
+        super(AccountVoucher, self).cancel_voucher()
+
 
 class AccountVoucherLine(models.Model):
     _inherit = 'account.voucher.line'

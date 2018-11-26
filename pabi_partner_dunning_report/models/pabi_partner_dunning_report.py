@@ -30,7 +30,6 @@ class PABIPartnerDunningReport(models.Model):
     )
     reconcile_id = fields.Many2one(
         'account.move.reconcile',
-        related='move_line_id.reconcile_id',
         string='Reconcile',
         readonly=True,
     )
@@ -124,7 +123,7 @@ class PABIPartnerDunningReport(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         _sql = """
             select aml.create_uid validate_user_id, aml.id,
-                aml.id as move_line_id,
+                aml.id as move_line_id, aml.reconcile_id as reconcile_id,
                 aml.date_maturity, aml.date, aml.partner_id, rp.category_id,
                 aa.type account_type, new_title,
                 case when letter.l1 is not null then true else false end as l1,
