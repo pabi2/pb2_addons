@@ -35,4 +35,4 @@ class XLSXReportGlAllowanceDoubtfulAccounts(models.TransientModel):
                 self.allowance_for_doubtful_account_code),
                ('move_id.date', '<=', self.date_report),
                ('reconcile_id', '=', False)]
-        self.results = Result.search(dom)
+        self.results = Result.search(dom, order='name,date')
