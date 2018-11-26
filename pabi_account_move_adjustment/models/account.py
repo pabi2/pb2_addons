@@ -23,7 +23,7 @@ class AccountMove(models.Model):
     to_check = fields.Boolean(track_visibility='onchange')
     line_id = fields.One2many('account.move.line',
                               track_visibility='onchange')
-    narration = fields.Text(track_visibility='onchange')
+    narration = fields.Text(track_visibility='onchange', size=1000)
     due_history_ids = fields.One2many(
         'account.move.due.history',
         'move_id',
