@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="896"/>
+	<property name="ireport.y" value="82"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -70,8 +70,7 @@ po.name po_number,
 po.date_order + '7 hours'::interval order_date,
 (SELECT rfq.name FROM purchase_order rfq WHERE rfq.id = po.quote_id) rfq,
 date_reference rfq_date,
-(SELECT rpt.name FROM res_partner_title rpt
-WHERE rpt.id = vendor.title limit 1) vendor_title,
+(SELECT name FROM res_partner_title WHERE id = vendor.title) vendor_title,
 (SELECT value FROM ir_translation it WHERE
 res_id = vendor.id AND it.name LIKE 'res.partner,name' limit 1) vendor_name,
 (SELECT value FROM ir_translation it WHERE
@@ -488,7 +487,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 ($F{tax_branch_fax} != null ? "โทรสาร: " + $F{tax_branch_fax} : "")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="175" width="222" height="22" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="4" y="175" width="222" height="34" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
