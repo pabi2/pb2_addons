@@ -36,17 +36,16 @@ class MoveOpenUnreconciledItems(models.TransientModel):
         src_ml_ids = MoveLine.search(domain + [('move_id', '=', move.id)]).ids
         # Item to reconcile with
         trg_ml_ids = []
+        trg_domain = []
         if self.move_line_ref:
-            trg_ml_ids += MoveLine.search(
-                domain + [('ref', '=', self.move_line_ref)]).ids
+            trg_domain.append(('ref', '=', self.move_line_ref))
         if self.account_move_name:
-            trg_ml_ids += MoveLine.search(
-                domain + [('name', '=', self.account_move_name)]).ids
+            trg_domain.append(('name', '=', self.account_move_name))
         if self.account_id:
-            trg_ml_ids += MoveLine.search(
-                domain + [('account_id', '=', self.account_id.id)]).ids
+            trg_domain.append(('account_id', '=', self.account_id.id))
         if self.move_ids:
-            trg_ml_ids += MoveLine.search(
-                domain + [('move_id', 'in', self.move_ids.ids)]).ids
+            trg_domain.append(('move_id', 'in', self.move_ids.ids))
+        if trg_domain:
+            trg_ml_ids = MoveLine.search(domain + trg_domain).ids
         result.update({'domain': [('id', 'in', src_ml_ids + trg_ml_ids)]})
         return result
