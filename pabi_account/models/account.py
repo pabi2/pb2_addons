@@ -95,7 +95,7 @@ class AccountMove(models.Model):
             items = [x.name for x in lines]
             items = list(set(items))
             if items:
-                rec.line_item_summary = ", ".join(items)
+                rec.line_item_summary = ", ".join(items)[:1000]
 
     @api.model
     def _switch_move_dict_dr_cr(self, move_dict):
