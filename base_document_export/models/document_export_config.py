@@ -31,6 +31,11 @@ class DocumentExportConfigLine(models.Model):
         string='Detail Configuration',
         ondelete='cascade',
     )
+    invoice_detail_configure_id = fields.Many2one(
+        'document.export.config',
+        string='Invoice Detail Configuration',
+        ondelete='cascade',
+    )
     sequence = fields.Integer(
         string='Sequence',
         required=True,
@@ -106,6 +111,16 @@ class DocumentExportConfig(models.Model):
         'detail_configure_id',
         string='Details Configurations',
         copy=True,
+    )
+    invoice_detail_config_line_ids = fields.One2many(
+        'document.export.config.lines',
+        'invoice_detail_configure_id',
+        string='Invoice Details Configurations',
+        copy=True,
+    )
+    invoice_detail_disabled = fields.Boolean(
+        string='Disabled',
+        default=False,
     )
     delimiter_symbol = fields.Char(
         string="Joining Delimiter",
