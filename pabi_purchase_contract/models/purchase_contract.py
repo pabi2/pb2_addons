@@ -329,9 +329,10 @@ class PurchaseContract(models.Model):
         if self._context.get('active_model') == 'purchase.requisition':
             requisition_id = self._context.get('active_id', False)
             req = self.env['purchase.requisition'].browse(requisition_id)
-            if req.state != 'open':
+            if req.state not in ('open', 'done'):
                 raise ValidationError(
-                    _("Contract can be created only during 'Bid Selection'"))
+                    _("Contract can be created only during 'Bid Selection' "
+                      "or 'PO Created'"))
         format_code = ''
         operating_unit = self.env.user.default_operating_unit_id
         if not operating_unit:

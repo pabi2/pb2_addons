@@ -145,6 +145,9 @@ class PurchaseOrder(models.Model):
              "products as this reference is usually written on the "
              "delivery order sent by your supplier."
     )
+    incoterm_text = fields.Char(
+        string='Incoterm Text',
+    )
 
     @api.multi
     def _compute_shipment_count(self):

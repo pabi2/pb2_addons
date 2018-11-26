@@ -11,6 +11,11 @@ class StockPicking(models.Model):
         compute='_compute_is_partner_loc',
         readonly=True,
     )
+    readonly_picking_type_id = fields.Many2one(
+        'stock.picking.type',
+        related='picking_type_id',
+        string='Picking Type',
+    )
 
     @api.model
     def default_get(self, fields):

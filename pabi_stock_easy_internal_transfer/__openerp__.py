@@ -20,6 +20,7 @@ Miscellenous enhancement about easy stock transfer.
     "depends": [
         "stock_easy_internal_transfer",
         "stock_operating_unit",
+        "stock_picking_cancel"
     ],
     "data": [
         "views/stock_view.xml",
