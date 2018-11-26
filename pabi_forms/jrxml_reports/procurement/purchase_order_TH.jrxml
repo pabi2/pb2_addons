@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="160"/>
+	<property name="ireport.y" value="82"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -70,8 +70,7 @@ po.name po_number,
 po.date_order + '7 hours'::interval order_date,
 (SELECT rfq.name FROM purchase_order rfq WHERE rfq.id = po.quote_id) rfq,
 date_reference rfq_date,
-(SELECT rpt.name FROM res_partner_title rpt
-WHERE rpt.id = vendor.title limit 1) vendor_title,
+(SELECT name FROM res_partner_title WHERE id = vendor.title) vendor_title,
 (SELECT value FROM ir_translation it WHERE
 res_id = vendor.id AND it.name LIKE 'res.partner,name' limit 1) vendor_name,
 (SELECT value FROM ir_translation it WHERE
@@ -162,52 +161,52 @@ LEFT JOIN account_tax at
 ON at.id = pot.tax_id
 WHERE ord_id = po.id limit 1) percentvat
 FROM purchase_order po
-LEFT JOIN operating_unit ou
-ON ou.id = po.operating_unit_id
-LEFT JOIN res_partner ou_partner
-ON ou.partner_id = ou_partner.id
-LEFT JOIN res_country_township ou_township
-ON ou_township.id = ou_partner.township_id
-LEFT JOIN res_country_district ou_district
-ON ou_district.id = ou_partner.district_id
-LEFT JOIN res_country_province ou_province
-ON ou_province.id = ou_partner.province_id
-LEFT JOIN res_partner vendor
-ON po.partner_id = vendor.id
-LEFT JOIN res_country vendor_country
-ON vendor_country.id = vendor.country_id
-LEFT JOIN res_country_township vendor_township
-ON vendor_township.id = vendor.township_id
-LEFT JOIN res_country_district vendor_district
-ON vendor_district.id = vendor.district_id
-LEFT JOIN res_country_province vendor_province
-ON vendor_province.id = vendor.province_id
-LEFT JOIN account_payment_term apt
-ON apt.id = po.payment_term_id
-LEFT JOIN res_users approve_user
-ON approve_user.id = po.doc_approve_uid
-LEFT JOIN res_partner approver
-ON approver.id = approve_user.partner_id
-LEFT JOIN res_users verify_user
-ON verify_user.id = po.verify_uid
-LEFT JOIN res_partner verify
-ON verify.id = verify_user.partner_id
-LEFT JOIN hr_employee verify_hr
-ON verify_user.login = verify_hr.employee_code
-LEFT JOIN hr_employee he
-ON he.employee_code = approve_user.login
-LEFT JOIN hr_position approve_position
-ON approve_position.id = he.position_id
-LEFT JOIN res_users validator
-ON validator.id = po.validator
-LEFT JOIN hr_employee validator_hr
-ON validator_hr.employee_code = validator.login
-LEFT JOIN res_partner validater
-ON validater.id = validator.partner_id
-LEFT JOIN res_taxbranch taxbranch
-ON taxbranch.id = po.taxbranch_id
-LEFT JOIN res_org ro
-ON ro.operating_unit_id = ou.id
+ LEFT JOIN operating_unit ou
+ ON ou.id = po.operating_unit_id
+ LEFT JOIN res_partner ou_partner
+ ON ou.partner_id = ou_partner.id
+ LEFT JOIN res_country_township ou_township
+ ON ou_township.id = ou_partner.township_id
+ LEFT JOIN res_country_district ou_district
+ ON ou_district.id = ou_partner.district_id
+ LEFT JOIN res_country_province ou_province
+ ON ou_province.id = ou_partner.province_id
+ LEFT JOIN res_partner vendor
+ ON po.partner_id = vendor.id
+ LEFT JOIN res_country vendor_country
+ ON vendor_country.id = vendor.country_id
+ LEFT JOIN res_country_township vendor_township
+ ON vendor_township.id = vendor.township_id
+ LEFT JOIN res_country_district vendor_district
+ ON vendor_district.id = vendor.district_id
+ LEFT JOIN res_country_province vendor_province
+ ON vendor_province.id = vendor.province_id
+ LEFT JOIN account_payment_term apt
+ ON apt.id = po.payment_term_id
+ LEFT JOIN res_users approve_user
+ ON approve_user.id = po.doc_approve_uid
+ LEFT JOIN res_partner approver
+ ON approver.id = approve_user.partner_id
+ LEFT JOIN res_users verify_user
+ ON verify_user.id = po.verify_uid
+ LEFT JOIN res_partner verify
+ ON verify.id = verify_user.partner_id
+ LEFT JOIN hr_employee verify_hr
+ ON verify_user.login = verify_hr.employee_code
+ LEFT JOIN hr_employee he
+ ON he.employee_code = approve_user.login
+ LEFT JOIN hr_position approve_position
+ ON approve_position.id = he.position_id
+ LEFT JOIN res_users validator
+ ON validator.id = po.validator
+ LEFT JOIN hr_employee validator_hr
+ ON validator_hr.employee_code = validator.login
+ LEFT JOIN res_partner validater
+ ON validater.id = validator.partner_id
+ LEFT JOIN res_taxbranch taxbranch
+ ON taxbranch.id = po.taxbranch_id
+ LEFT JOIN res_org ro
+ ON ro.operating_unit_id = ou.id
 WHERE $X{IN, po.id, PIDS}]]>
 	</queryString>
 	<field name="po_id" class="java.lang.Integer"/>
@@ -488,7 +487,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 ($F{tax_branch_fax} != null ? "โทรสาร: " + $F{tax_branch_fax} : "")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4" y="175" width="222" height="22" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="4" y="175" width="222" height="34" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -882,13 +881,19 @@ WHERE $X{IN, po.id, PIDS}]]>
 	<lastPageFooter>
 		<band height="319">
 			<rectangle>
+				<reportElement x="0" y="81" width="483" height="214"/>
+			</rectangle>
+			<rectangle>
 				<reportElement x="384" y="0" width="99" height="81"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="0" width="299" height="81"/>
+				<reportElement x="0" y="155" width="247" height="140"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="81" width="483" height="214"/>
+				<reportElement x="0" y="215" width="247" height="80"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="299" height="81"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="4" y="81" width="66" height="34"/>
@@ -1079,50 +1084,47 @@ WHERE $X{IN, po.id, PIDS}]]>
 				</textElement>
 				<text><![CDATA[ประทับตราบริษัท (ถ้ามี)]]></text>
 			</staticText>
-			<rectangle>
-				<reportElement x="0" y="155" width="247" height="140"/>
-			</rectangle>
 			<staticText>
-				<reportElement x="83" y="235" width="7" height="16"/>
+				<reportElement x="83" y="194" width="7" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[/]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="37" y="218" width="127" height="21" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="37" y="174" width="127" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{verify_by} != '' ? "( " + $F{verify_by} + " )" : '']]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="90" y="242" width="18" height="1"/>
+				<reportElement x="90" y="201" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="111" y="235" width="7" height="16"/>
+				<reportElement x="111" y="194" width="7" height="16"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[/]]></text>
 			</staticText>
 			<line>
-				<reportElement x="117" y="242" width="18" height="1"/>
+				<reportElement x="117" y="201" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="63" y="242" width="18" height="1"/>
+				<reportElement x="63" y="201" width="18" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="171" y="203" width="100" height="40"/>
+				<reportElement x="171" y="159" width="100" height="40"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="SansSerif" size="12" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -1130,13 +1132,13 @@ WHERE $X{IN, po.id, PIDS}]]>
 หรือผู้ที่ได้รับมอบหมาย]]></text>
 			</staticText>
 			<line>
-				<reportElement x="37" y="215" width="127" height="1"/>
+				<reportElement x="37" y="171" width="127" height="1"/>
 				<graphicElement>
 					<pen lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="5" y="202" width="64" height="21"/>
+				<reportElement x="5" y="158" width="64" height="21"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -1260,6 +1262,79 @@ WHERE $X{IN, po.id, PIDS}]]>
 				</textElement>
 				<text><![CDATA[เดือน  นับถัดจากวันที่ผู้ขาย/ผู้รับจ้างลงลายมือชื่อในใบสั่งซื้อ/จ้าง]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="85" y="282" width="7" height="16"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[/]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="39" y="252" width="127" height="21" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{approve_by} != '' ? "( " + $F{approve_by} + " )" : '']]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="92" y="290" width="18" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="113" y="282" width="7" height="16"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[/]]></text>
+			</staticText>
+			<line>
+				<reportElement x="119" y="290" width="18" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="65" y="290" width="18" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="173" y="237" width="100" height="40"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="SansSerif" size="12" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ผู้มีอำนาจอนุมัติ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="39" y="249" width="127" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="7" y="236" width="64" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[(ลงชื่อ)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="265" width="78" height="21"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ตำแหน่ง]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="73" y="266" width="127" height="21" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Left" lineSpacing="Single">
+					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{approve_position} != '' ? $F{approve_position} : '']]></textFieldExpression>
+			</textField>
 		</band>
 	</lastPageFooter>
 	<summary>

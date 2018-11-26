@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.100000000000007"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="5"/>
+	<property name="ireport.y" value="117"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -100,7 +100,8 @@ po.amount_total grand_total,
 po.amount_total_text_en amount_total_EN,
 po.delivery_address,
 si.code incoterm,
-cur.name as currency
+cur.name as currency,
+po.incoterm_text
 FROM purchase_order po
 LEFT JOIN operating_unit ou
 ON ou.id = po.operating_unit_id
@@ -227,6 +228,9 @@ WHERE $X{IN,po.id,PIDS}]]>
 	<field name="ou_id" class="java.lang.Integer"/>
 	<field name="currency" class="java.lang.String"/>
 	<field name="tax_branch_city" class="java.lang.String"/>
+	<field name="incoterm_text" class="java.lang.String">
+		<fieldDescription><![CDATA[Incoterm txt]]></fieldDescription>
+	</field>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -560,7 +564,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<text><![CDATA[Incoterm]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="130" y="281" width="96" height="21" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="120" y="281" width="113" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -637,6 +641,13 @@ WHERE $X{IN,po.id,PIDS}]]>
 				</reportElement>
 				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_biotec.gif"]]></imageExpression>
 			</image>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="120" y="299" width="113" height="21" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{incoterm_text}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
