@@ -10,12 +10,16 @@ class MoveOpenUnreconciledItems(models.TransientModel):
         size=100,
     )
     account_move_name = fields.Char(
-        string='Journal Entry Number',
+        string='Journal Item Desc.',
         size=100,
     )
     account_id = fields.Many2one(
         'account.account',
         string='Account Code',
+    )
+    move_ids = fields.Many2many(
+        'account.move',
+        string='Journal Entries',
     )
 
     @api.multi
@@ -32,14 +36,17 @@ class MoveOpenUnreconciledItems(models.TransientModel):
         src_ml_ids = MoveLine.search(domain + [('move_id', '=', move.id)]).ids
         # Item to reconcile with
         trg_ml_ids = []
-        trg_domain = []
         if self.move_line_ref:
-            trg_domain.append(('ref', '=', self.move_line_ref))
+            trg_ml_ids += MoveLine.search(
+                domain + [('ref', '=', self.move_line_ref)]).ids
         if self.account_move_name:
-            trg_domain.append(('name', '=', self.account_move_name))
+            trg_ml_ids += MoveLine.search(
+                domain + [('name', '=', self.account_move_name)]).ids
         if self.account_id:
-            trg_domain.append(('account_id', '=', self.account_id.id))
-        if trg_domain:
-            trg_ml_ids = MoveLine.search(domain + trg_domain).ids
+            trg_ml_ids += MoveLine.search(
+                domain + [('account_id', '=', self.account_id.id)]).ids
+        if self.move_ids:
+            trg_ml_ids += MoveLine.search(
+                domain + [('move_id', 'in', self.move_ids.ids)]).ids
         result.update({'domain': [('id', 'in', src_ml_ids + trg_ml_ids)]})
         return result
