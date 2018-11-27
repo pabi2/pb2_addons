@@ -480,11 +480,11 @@ class AccountModel(models.Model):
                       "from Model form!") % (name,))
             analytic_account_id = False
             if line.analytic_account_id:
-                if not model.journal_id.analytic_journal_id:
-                    raise except_orm(
-                        _('No Analytic Journal!'),
-                        _("You have to define an analytic journal on the "
-                          "'%s' journal!") % (model.journal_id.name,))
+                # if not model.journal_id.analytic_journal_id:
+                #     raise except_orm(
+                #         _('No Analytic Journal!'),
+                #         _("You have to define an analytic journal on the "
+                #           "'%s' journal!") % (model.journal_id.name,))
                 analytic_account_id = line.analytic_account_id.id
             val = {
                 'journal_id': model.journal_id.id,
