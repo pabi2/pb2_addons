@@ -210,6 +210,8 @@ class PurchaseOrder(models.Model):
     @api.depends('invoice_plan_ids')
     def _compute_check_invoice_plan_warning(self, exception=False):
         for purchase in self:
+            if exception and purchase.bypass_validate_amount:
+                continue
             if not purchase.invoice_method == 'invoice_plan':
                 continue
             prec = 1
