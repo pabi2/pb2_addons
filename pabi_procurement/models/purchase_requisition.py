@@ -538,6 +538,17 @@ class PurchaseRequisition(models.Model):
         return True
 
     @api.multi
+    def resend_tender_open(self):
+        for res in self:
+            if res.state not in ('verify', 'open'):
+                raise ValidationError(_("Can process on 'To Verify' or "
+                                        "'Bid Selection' only."))
+        self.set_verification_info()
+        self.send_pbweb_requisition()
+        self.tender_open()
+        return True
+
+    @api.multi
     def tender_in_progress(self):
         for requisition in self:
             requisition._check_product_type()
