@@ -209,12 +209,12 @@ class AccountBudgetLine(models.Model):
             rec.fund_id = self.env.ref('base.fund_nstda', False)
         return rec
 
-    @api.multi
-    def _filter_line_to_release(self):
-        """ HOOK for use with charge_type = internal/external """
-        budget_lines = super(AccountBudgetLine, self)._filter_line_to_release()
-        lines = budget_lines.filtered(lambda l: l.charge_type == 'external')
-        if not lines:
-            raise ValidationError(
-                _('No external expense lines for release amount'))
-        return lines
+    # @api.multi
+    # def _filter_line_to_release(self):
+    #     """ HOOK for use with charge_type = internal/external """
+    #     budget_lines = super(AccountBudgetLine, self)._filter_line_to_release()
+    #     lines = budget_lines.filtered(lambda l: l.charge_type == 'external')
+    #     if not lines:
+    #         raise ValidationError(
+    #             _('No external expense lines for release amount'))
+    #     return lines
