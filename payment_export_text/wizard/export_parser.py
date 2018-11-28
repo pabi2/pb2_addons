@@ -124,14 +124,14 @@ class DocumentExportParser(models.TransientModel):
                                     model_id, invoice_line.id)
                             if line['field_code']:
                                 eval(line['field_code'], eval_context,
-                                    mode="exec", nocopy=True)
+                                     mode="exec", nocopy=True)
                                 value = eval_context.get('value', False)
                                 line.update({'value': value})
                             else:
                                 value = line['default_value'] and\
                                     line['default_value'] or ''
                                 line.update({'value': value})
-                         data_list.append(line_invoice_detail_config_lines)
+                        data_list.append(line_invoice_detail_config_lines)
 
         # If not use footer
         if config_id.footer_disabled:
