@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Wa FIne And Retention Form" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="40" bottomMargin="40">
 	<property name="ireport.zoom" value="1.2396694214876312"/>
-	<property name="ireport.x" value="105"/>
-	<property name="ireport.y" value="288"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_dr_ids&quot;]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
@@ -333,7 +333,7 @@ Description]]></text>
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="3" y="327" width="397" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$F{amount_wa} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[($F{amount_wa} != null && $F{amount_wa} > 0)]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
@@ -344,7 +344,7 @@ Description]]></text>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement style="pading_2" stretchType="RelativeToTallestObject" mode="Transparent" x="402" y="325" width="123" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$F{amount_wa} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[($F{amount_wa} != null && $F{amount_wa} > 0)]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
@@ -353,7 +353,7 @@ Description]]></text>
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="3" y="348" width="397" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$F{amount_retention_supplier} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[($F{amount_retention_supplier} != null && $F{amount_retention_supplier} > 0)]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
@@ -361,9 +361,7 @@ Description]]></text>
 				<textFieldExpression class="java.lang.String"><![CDATA["ค่าประกัน" + ($F{retention_diff_comment} != null ? " / " + $F{retention_diff_comment} : "")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="pading_2" stretchType="RelativeToTallestObject" mode="Transparent" x="402" y="346" width="123" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$F{amount_retention_supplier} != null]]></printWhenExpression>
-				</reportElement>
+				<reportElement style="pading_2" stretchType="RelativeToTallestObject" mode="Transparent" x="402" y="346" width="123" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -440,9 +438,7 @@ Description]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_wa} == null && $F{amount_retention_supplier} == null?
-0:
-$F{amount_wa} + $F{amount_retention_supplier}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{total}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement style="pading_2" mode="Transparent" x="248" y="132" width="284" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
