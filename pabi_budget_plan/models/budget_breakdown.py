@@ -78,6 +78,7 @@ class BudgetBreakdown(models.Model):
     )
     state = fields.Selection(
         [('draft', 'Draft'),
+         ('cancel', 'Cancel'),
          ('done', 'Done'),
          ],
         string='Status',
@@ -251,6 +252,10 @@ class BudgetBreakdown(models.Model):
     @api.multi
     def action_draft(self):
         self.write({'state': 'draft'})
+
+    @api.multi
+    def action_cancel(self):
+        self.write({'state': 'cancel'})
 
     @api.multi
     def action_done(self):
