@@ -498,7 +498,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="344" y="291" width="141" height="16"/>
+				<reportElement x="344" y="297" width="141" height="16"/>
 				<textElement lineSpacing="Single">
 					<font size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
