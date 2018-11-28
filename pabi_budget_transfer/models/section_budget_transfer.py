@@ -41,7 +41,7 @@ class SectionBudgetTransfer(models.Model):
         string='Fiscal Year',
         required=True,
         readonly=True,
-        # states={'draft': [('readonly', False)]},
+        states={'draft': [('readonly', False)]},
         default=lambda self: self.env['account.fiscalyear'].find(),
         help="Fiscalyear will be as of current date only, no backdate allowed"
     )
