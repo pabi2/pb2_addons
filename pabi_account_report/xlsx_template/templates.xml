@@ -778,57 +778,27 @@
             <field name="description">
                 {
                     '__EXPORT__': {
-                        'Receivable CD Confirmation Detail Report': {
-                            '_HEAD_': {
-                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                                'B3': 'date_report${value or ""}#{number_format=date}',
-                                'B4': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.title.name, x.name]))) for x in value]) or ""}',
-                                'B5': 'bank_ids${value and ", ".join([x.name for x in value]) or ""}',
-                                'B6': '${env.user.display_name}',
-                                'B7': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
-                            },
-                            'results': {
-                                'A10': 'loan_agreement_id.borrower_partner_id.search_key${value or ""}',
-                                'B10': 'loan_agreement_id.borrower_partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
-                                'C10': 'loan_agreement_id.sale_id.name${value or ""}',
-                                'D10': 'loan_agreement_id.bank_id.bank.name${value or ""}',
-                                'E10': 'loan_agreement_id.bank_id.bank_branch.name${value or ""}',
-                                'F10': 'loan_agreement_id.name${value or ""}',
-                                'G10': 'invoice_plan_id.ref_invoice_id.number${value or ""}',
-                                'H10': 'invoice_plan_id.ref_invoice_id.amount_total${value or ""}',
-                            },
-                            '_TAIL_0': {
-                                'A10': '${"Total"}#{font=bold}',
-                                'H10': '@{sum}#{font=bold;align=right;number_format=number}',
-                            }
-                        },
                         'Receivable CD Confirmation Report': {
                             '_HEAD_': {
                                 'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
-                                'B3': 'date_report${value or ""}#{number_format=date}',
-                                'B4': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.title.name, x.name]))) for x in value]) or ""}',
-                                'B5': 'bank_ids${value and ", ".join([x.name for x in value]) or ""}',
-                                'B6': '${env.user.display_name}',
-                                'B7': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                                'B3': 'borrower_partner_ids${value and ", ".join([x.search_key for x in value]) or ""}',
+                                'B4': 'partner_ids${value and ", ".join([x.search_key for x in value]) or ""}',
+                                'B5': '${env.user.display_name}',
+                                'B6': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                             },
-                            '_BI_': {
-                                'A10': {
-                                    'df': 'Receivable CD Confirmation Detail Report',
-                                    # Group by A, B, C, D, E, F and add Subtotal (so we use pivot)
-                                    # By scripting, we need result = ...
-                                    'oper_code': """
-df = df[["A", "B", "C", "D", "E", "F", "H"]]
-groupby = ["A", "B", "C", "D", "E", "F"]
-sum_cols = ["H"]
-result = pd.pivot_table(df, index=groupby,
-                        values=sum_cols,
-                        aggfunc=np.sum,
-                        fill_value=0,
-                        margins=True,
-                        margins_name="Total")
-                                    """,
-                                },
+                            'results': {
+                                'A9': 'borrower_partner_id.search_key${value or ""}',
+                                'B9': 'borrower_partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
+                                'C9': 'sale_id.name${value or ""}',
+                                'D9': 'supplier_invoice_id.payment_ids${value and ", ".join(list(set(filter(lambda l: l != False, [x.move_id.document_id._name == "account.voucher" and x.move_id.document_id.supplier_bank_id.bank.name or False for x in value])))) or ""}',
+                                'E9': 'supplier_invoice_id.payment_ids${value and ", ".join(list(set(filter(lambda l: l != False, [x.move_id.document_id._name == "account.voucher" and x.move_id.document_id.supplier_bank_id.bank_branch.name or False for x in value])))) or ""}',
+                                'F9': 'name${value or ""}',
+                                'G9': 'sale_id.invoice_plan_ids${value and sum(value.filtered(lambda l: l.state in ["draft", "open"]).mapped("invoice_amount")) or ""}',
                             },
+                            '_TAIL_0': {
+                                'A9': '${"Total"}#{font=bold}',
+                                'G9': '@{sum}#{font=bold;align=right;number_format=number}',
+                            }
                         },
                     }
                 }
