@@ -215,6 +215,8 @@ class AccountBudgetLine(models.Model):
         budget_lines = super(AccountBudgetLine, self)._filter_line_to_release()
         lines = budget_lines.filtered(lambda l: l.charge_type == 'external')
         if not lines:
+            budget = budget_lines and budget_lines[0].budget_id or False
             raise ValidationError(
-                _('No external expense lines for release amount'))
+                _('No external expense lines for release amount, %s') %
+                budget and budget.name or 'n/a')
         return lines
