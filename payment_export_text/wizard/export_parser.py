@@ -108,10 +108,10 @@ class DocumentExportParser(models.TransientModel):
             voucher_lines = [x.voucher_id.line_ids for x in export_lines]
             if export_lines and voucher_lines:
                 for voucher_line in voucher_lines:
-                    line_invoice_detail_config_lines = \
-                        config_id.invoice_detail_config_line_ids.\
-                        read(config_fields_to_read)
                     for invoice_line in voucher_line:
+                        line_invoice_detail_config_lines = \
+                            config_id.invoice_detail_config_line_ids.\
+                            read(config_fields_to_read)
                         for line in line_invoice_detail_config_lines:
                             model_id = active_model.id
                             if line.get('model_id', []):
