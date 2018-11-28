@@ -76,6 +76,7 @@
                                         <field name="released_amount" sum="Released"/>
                                         <field name="latest_policy_amount" sum="Latest Policy Amount"/>
                                         <field name="policy_amount" sum="Policy Amount"/>
+                                        <field name="check"/>
                                         <field name="budget_state" invisible="1"/>
                                     </tree>
                                 </field>
@@ -92,6 +93,7 @@
                                         <field name="rolling" sum="Rolling"/>
                                         <field name="latest_policy_amount" sum="Latest Policy Amount"/>
                                         <field name="policy_amount" sum="Policy Amount"/>
+                                        <field name="check"/>
                                         <field name="budget_state" invisible="1"/>
                                     </tree>
                                 </field>
@@ -107,6 +109,7 @@
                                         <field name="rolling" sum="Rolling"/>
                                         <field name="latest_policy_amount" sum="Latest Policy Amount"/>
                                         <field name="policy_amount" sum="Policy Amount"/>
+                                        <field name="check"/>
                                         <field name="budget_state" invisible="1"/>
                                     </tree>
                                 </field>

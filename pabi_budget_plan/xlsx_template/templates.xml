@@ -229,6 +229,7 @@
                             'F12': 'released_amount',
                             'G12': 'latest_policy_amount',
                             'H12': 'policy_amount',
+                            'I12': 'check${value and "X" or ""}',
                             'J12': 'budget_id.id${value or ""}',
                             'K12': 'budget_plan_id.id${value or ""}',
                         }
@@ -266,7 +267,7 @@
                             'E4': '${time.strftime("%d/%m/%Y")}',
                             'E5': '${env.user.name or ""}',
                         },
-                        'plan_line_ids[100]': {
+                        'plan_line_ids': {
                             'B10': 'priority',
                             'C10': 'select${value and "X" or ""}',
                             'D10': 'approved${value and "X" or ""}',
@@ -323,7 +324,7 @@
                 },
                 '__IMPORT__': {
                     'Asset_Item_Plan': {
-                        'plan_line_ids[100]': {
+                        'plan_line_ids': {
                             'B10': 'priority',
                             'C10${value and True or False}': 'select',
                             'D10${value and True or False}': 'approved',
