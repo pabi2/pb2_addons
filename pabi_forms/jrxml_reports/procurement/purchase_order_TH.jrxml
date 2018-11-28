@@ -70,7 +70,8 @@ po.name po_number,
 po.date_order + '7 hours'::interval order_date,
 (SELECT rfq.name FROM purchase_order rfq WHERE rfq.id = po.quote_id) rfq,
 date_reference rfq_date,
-(SELECT name FROM res_partner_title WHERE id = vendor.title) vendor_title,
+coalesce((SELECT value FROM ir_translation it WHERE
+res_id = vendor.title AND it.name LIKE 'res.partner.title,name' limit 1), (SELECT name FROM res_partner_title WHERE id = vendor.title limit 1)) vendor_title,
 coalesce((SELECT value FROM ir_translation it WHERE
 res_id = vendor.id AND it.name LIKE 'res.partner,name' limit 1), vendor.name) vendor_name,
 coalesce((SELECT value FROM ir_translation it WHERE
