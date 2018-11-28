@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="420"/>
+	<property name="ireport.y" value="144"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -89,7 +89,14 @@ LEFT JOIN account_tax atax
 ON atax.id = prtr.tax_id
 where reql.id = pdl.id
 group by reql.price_subtotal, atax.id LIMIT 1) as amount_total,
-pr.name as material_group,
+(SELECT DISTINCT pr2.name FROM purchase_request_purchase_requisition_line_rel prpd
+LEFT JOIN purchase_request_line prl
+ON prl.id = prpd.purchase_request_line_id
+LEFT JOIN purchase_requisition_line pdl2
+ON pdl2.id = prpd.purchase_requisition_line_id
+LEFT JOIN purchase_request pr2
+ON pr2.id = prl.request_id
+WHERE pdl2.id = pdl.id LIMIT 1) as material_group,
 pdl.product_qty::integer as product_qty,
 (SELECT value FROM ir_translation it
 WHERE it.res_id = pu.id AND it.name LIKE 'product.uom,name') as uom,
@@ -100,17 +107,9 @@ LEFT JOIN purchase_requisition pd
 ON pd.id = pdl.requisition_id
 LEFT JOIN res_currency cur
 ON cur.id = pd.currency_id
-LEFT JOIN purchase_request pr
-ON pr.id = (SELECT DISTINCT prl.request_id FROM purchase_request_purchase_requisition_line_rel prpd
-LEFT JOIN purchase_request_line prl
-ON prl.id = prpd.purchase_request_line_id
-LEFT JOIN purchase_requisition_line pdl
-ON pdl.id = prpd.purchase_requisition_line_id
-WHERE pdl.requisition_id = $P{ids} LIMIT 1)
 LEFT JOIN product_uom pu
 ON pu.id = pdl.product_uom_id
-
-where pdl.requisition_id =  $P{ids}]]>
+where pdl.requisition_id = $P{ids}]]>
 		</queryString>
 		<field name="product_name" class="java.lang.String">
 			<fieldDescription><![CDATA[Supplier Product Name]]></fieldDescription>
@@ -800,7 +799,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{currency} + " อัตราแลกเปลี่ยน 1 " + $F{currency} + " = " + $F{currency_rate}.toString() + ")"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{currency} + " อัตราแลกเปลี่ยน 1 " + $F{currency} + " = " + $F{currency_rate}.toString() + " บาท)"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="199" y="5" width="20" height="25" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
