@@ -35,6 +35,7 @@ from . import xlsx_report_expense_ledger
 from . import xlsx_report_revenue_ledger
 from . import xlsx_report_gl_allowance_doubtful_accounts
 from . import xlsx_report_gl_expenditure
+from . import xlsx_report_gl_project
 # Asset Reports
 from . import asset_repair_report
 from . import asset_register_report
