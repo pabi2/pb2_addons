@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.100000000000007"/>
 	<property name="ireport.x" value="1"/>
-	<property name="ireport.y" value="602"/>
+	<property name="ireport.y" value="122"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -453,7 +453,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<reportElement x="116" y="248" width="1" height="75"/>
 			</line>
 			<line>
-				<reportElement x="373" y="248" width="1" height="75"/>
+				<reportElement x="341" y="248" width="1" height="75"/>
 			</line>
 			<staticText>
 				<reportElement x="0" y="249" width="116" height="18"/>
@@ -463,14 +463,14 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<text><![CDATA[Quotation NO.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="239" y="248" width="131" height="17"/>
+				<reportElement x="238" y="249" width="104" height="17"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Payment Term]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="378" y="249" width="101" height="18"/>
+				<reportElement x="342" y="249" width="137" height="18"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -484,23 +484,23 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_ref}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="244" y="273" width="124" height="21"/>
+				<reportElement x="238" y="273" width="103" height="21"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_term}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="378" y="273" width="105" height="21"/>
+				<reportElement x="344" y="273" width="141" height="21"/>
 				<textElement lineSpacing="Single">
-					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="378" y="291" width="105" height="16"/>
+				<reportElement x="344" y="297" width="141" height="16"/>
 				<textElement lineSpacing="Single">
-					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer_phone}]]></textFieldExpression>
 			</textField>
@@ -638,9 +638,9 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{incoterm_text}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="378" y="307" width="105" height="16"/>
+				<reportElement x="344" y="307" width="141" height="16"/>
 				<textElement lineSpacing="Single">
-					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+					<font size="12" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer_mail}]]></textFieldExpression>
 			</textField>
