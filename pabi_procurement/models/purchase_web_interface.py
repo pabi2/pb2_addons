@@ -356,7 +356,7 @@ class PurchaseWebInterface(models.Model):
         employee = Employee.search([('user_id', '=', request_usr.id)])
         if not employee:
             raise ValidationError(
-                _("No employee date for user %s") % request_usr.login
+                _("No employee data for user %s") % request_usr.login
             )
         attachment = []
         for pd_att in requisition.attachment_ids:
