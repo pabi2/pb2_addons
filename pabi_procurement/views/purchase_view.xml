@@ -96,6 +96,9 @@
                 <xpath expr="//field[@name='incoterm_id']" position="after">
                     <field name="incoterm_text" />
                 </xpath>
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="create_uid" string="Responsible Person"/>
+                </xpath>
                 <!--<xpath expr="/form/sheet//h1[1]" position="after">-->
                     <!--<h2 attrs="{'invisible': [('state', '!=', 'done')]}">-->
                         <!--<label for="force_done_reason" string="Force Done Reason:"/>-->
@@ -201,6 +204,9 @@
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="currency_id"/>
                 </xpath>
+                <xpath expr="//field[@name='origin']" position="before">
+                    <field name="create_uid" string="Responsible Person"/>
+                </xpath>
                 </field>
         </record>
 
@@ -284,6 +290,7 @@
                 </xpath>
                 <xpath expr="//group[@expand='0']" position="inside">
                     <filter string="Status" domain="[]" context="{'group_by':'state'}"/>"
+                    <filter string="Responsible" domain="[]" context="{'group_by':'create_uid'}"/>"
                 </xpath>
             </field>
         </record>
