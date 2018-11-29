@@ -385,7 +385,7 @@
                             'C4': '${time.strftime("%d/%m/%Y")}',
                             'C5': 'user_id.name${value or ""}'
                         },
-                        'plan_expense_line_ids[20]': {
+                        'plan_expense_line_ids: {
                             'B11': 'c_or_n${value == "continue" and "ต่อเนื่อง" or "ใหม่"}',
                             'C11': 'name${value or ""}',
                             'D11': 'month_duration',
@@ -424,7 +424,7 @@
                 },
                 '__IMPORT__': {
                     'Construction Project': {
-                        'plan_expense_line_ids[20]': {
+                        'plan_expense_line_ids': {
                             'B11': 'c_or_n',
                             'C11': 'name',
                             'D11': 'month_duration',
