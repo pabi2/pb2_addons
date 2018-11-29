@@ -11,6 +11,7 @@
         'account_budget_activity',
         'pabi_budget_plan',
         'pabi_hr_expense',
+        'pabi_utils',
     ],
     'data': [
         'data/account_data.xml',
