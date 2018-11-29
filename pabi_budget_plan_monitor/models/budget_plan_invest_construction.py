@@ -20,7 +20,7 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
     _description = 'Prev FY budget performance for construction'
     # Extra variable for this view
     _chart_view = 'invest_construction'
-    _ex_view_fields = ['invest_construction_id', 'org_id']
+    _ex_view_fields = ['activity_group_id', 'invest_construction_id', 'org_id']
     _ex_domain_fields = ['org_id']  # Each plan is by this domain
     _ex_active_domain = \
         [('invest_construction_id.state', '=', 'approve')]
@@ -34,6 +34,11 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
     invest_construction_id = fields.Many2one(
         'res.invest.construction',
         string='Construction',
+        readonly=True,
+    )
+    activity_group_id = fields.Many2one(
+        'account.activity.group',
+        string='Activity Group',
         readonly=True,
     )
 
@@ -52,6 +57,7 @@ class BudgetPlanInvestConstructionPrevFYView(PrevFYCommon, models.Model):
             val = {
                 'c_or_n': 'continue',
                 'invest_construction_id': rec.invest_construction_id.id,
+                'activity_group_id': rec.activity_group_id.id,
             }
             # Project Info, if any
             for field in common_fields:
