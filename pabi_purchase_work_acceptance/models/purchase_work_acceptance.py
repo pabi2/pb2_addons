@@ -412,19 +412,20 @@ class PurchaseWorkAcceptance(models.Model):
     @api.model
     def _calculate_service_fine(self):
         for acceptance in self:
-            if acceptance.order_id.use_invoice_plan:  # invoice plan
-                order_plan = acceptance.order_id.invoice_plan_ids
-                last_installment = 0
-                select_line = False
-                for plan_line in order_plan:
-                    if plan_line.installment >= last_installment:
-                        select_line = plan_line
-                        last_installment = plan_line.installment
-                if select_line:
-                    invoice = select_line.ref_invoice_id
-                    acceptance._calculate_last_invoice_plan_fine(invoice)
-            else:  # normal service
-                acceptance._calculate_normal_service_fine()
+            # if acceptance.order_id.use_invoice_plan:  # invoice plan
+            #     order_plan = acceptance.order_id.invoice_plan_ids
+            #     last_installment = 0
+            #     select_line = False
+            #     for plan_line in order_plan:
+            #         if plan_line.installment >= last_installment:
+            #             select_line = plan_line
+            #             last_installment = plan_line.installment
+            #     if select_line:
+            #         invoice = select_line.ref_invoice_id
+            #         acceptance._calculate_last_invoice_plan_fine(invoice)
+            # else:  # normal service
+            #     acceptance._calculate_normal_service_fine()
+            acceptance._calculate_normal_service_fine()
 
     @api.model
     def _calculate_incoming_fine(self):
@@ -447,7 +448,7 @@ class PurchaseWorkAcceptance(models.Model):
             total_fine_per_day = 0.0
             if overdue_day < 0:
                 end_date = datetime.datetime.strptime(
-                    acceptance.date_contract_end, '%Y-%m-%d')
+                    acceptance.date_scheduled_end, '%Y-%m-%d')
                 fine_delta = end_date - received
                 fine_delta_day = fine_delta.days
                 for line in acceptance.acceptance_line_ids:
@@ -464,11 +465,11 @@ class PurchaseWorkAcceptance(models.Model):
                     fine_per_day = (fine_rate * 0.01) * \
                                    ((to_receive_qty * unit_price) + line_tax)
                     total_fine_per_day += fine_per_day
-                    total_fine += -1 * (fine_delta_day + 1) * fine_per_day
+                    total_fine += -1 * (fine_delta_day) * fine_per_day
                 acceptance.total_fine_cal = total_fine
                 acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
-                acceptance.overdue_day = -1 * (fine_delta_day + 1)
+                acceptance.overdue_day = -1 * (fine_delta_day)
             else:
                 acceptance.total_fine_cal = 0
                 acceptance.total_fine = 0
@@ -498,7 +499,7 @@ class PurchaseWorkAcceptance(models.Model):
             total_fine_per_day = 0.0
             if overdue_day < 0:
                 end_date = datetime.datetime.strptime(
-                    acceptance.date_contract_end, '%Y-%m-%d')
+                    acceptance.date_scheduled_end, '%Y-%m-%d')
                 fine_delta = end_date - received
                 fine_delta_day = fine_delta.days
                 fine_rate = self.order_id.fine_rate
@@ -506,11 +507,11 @@ class PurchaseWorkAcceptance(models.Model):
                 fine_per_day = 100.0 if 0 < fine_per_day < 100.0 \
                     else fine_per_day
                 total_fine_per_day += fine_per_day
-                total_fine += -1 * (fine_delta_day + 1) * fine_per_day
+                total_fine += -1 * (fine_delta_day) * fine_per_day
                 acceptance.total_fine_cal = total_fine
                 acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
-                acceptance.overdue_day = -1 * (fine_delta_day + 1)
+                acceptance.overdue_day = -1 * (fine_delta_day)
             else:
                 acceptance.total_fine_cal = 0
                 acceptance.total_fine = 0
