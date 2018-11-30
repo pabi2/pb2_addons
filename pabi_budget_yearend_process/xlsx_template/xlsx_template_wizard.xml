@@ -10,5 +10,13 @@
           target="new"
           context="{'lang': 'th_TH'}"/>
 
+      <act_window id="action_budget_plan_project_export_xlsx_template"
+          name="Export as Excel"
+          res_model="export.xlsx.template"
+          src_model="project.balance.carry.forward"
+          view_mode="form"
+          target="new"
+          context="{'lang': 'th_TH'}"/>
+
     </data>
 </openerp>

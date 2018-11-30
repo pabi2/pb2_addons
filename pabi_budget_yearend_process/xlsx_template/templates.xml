@@ -49,5 +49,33 @@
             }
           </field>
         </record>
+
+        <!-- Project Balance Carry -->
+        <record id="project_balance_carry_xlsx_template" model="ir.attachment">
+            <field name="res_model">project.balance.carry.forward</field>
+            <field name="datas"></field>
+            <field name="datas_fname">project_balance_carry.xlsx</field>
+            <field name="name">Project Balance Carry Forward template</field>
+            <field name="parent_id" eval="ref('dir_budget_yearend_process_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B2': 'from_fiscalyear_id.name',
+                            'B3': 'to_fiscalyear_id.name',
+                        },
+                        'line_ids': {
+                            'A6': 'program_id${value.display_name or ""}',
+                            'B6': 'project_id${value.display_name or ""}',
+                            'C6': 'balance_amount${value or ""}',
+                            'D6': 'state${value and dict(env["project.balance.carry.forward.line"]._columns["state"].selection)[value] or ""}',
+                            'E6': 'reason${value and dict(env["project.balance.carry.forward.line"]._columns["reason"].selection)[value] or ""}',
+                        }
+                    },
+                },
+            }
+          </field>
+        </record>
     </data>
 </openerp>
