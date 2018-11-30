@@ -35,7 +35,7 @@
                                 'D11': 'amount_to_clearing${value or ""}#{number_format=number}',
                                 'E11': 'description${value or ""}',
                                 'F11': 'to_employee_ids${value and ", ".join([x.display_name for x in value]) or ""}',
-                                'G11': 'cc_employee_ids${value and ", ".join(list(filter(lambda l: l != False, [x.display_name for x in value]))) or ""}',
+                                'G11': 'cc_employee_ids${value and ", ".join([x.display_name for x in value]) or ""}',
                                 'H11': 'date_dunning_1${value or ""}#{number_format=date}',
                             }
                         },
@@ -55,8 +55,8 @@
                                 'C11': 'employee_id.display_name${value or ""}',
                                 'D11': 'amount_to_clearing${value or ""}#{number_format=number}',
                                 'E11': 'description${value or ""}',
-                                'F11': 'to_employee_ids${value and ", ".join(list(filter(lambda l: l != False, [x.display_name for x in value]))) or ""}',
-                                'G11': 'cc_employee_ids${value and ", ".join(list(filter(lambda l: l != False, [x.display_name for x in value]))) or ""}',
+                                'F11': 'to_employee_ids${value and ", ".join([x.display_name for x in value]) or ""}',
+                                'G11': 'cc_employee_ids${value and ", ".join([x.display_name for x in value]) or ""}',
                                 'H11': 'date_dunning_2${value or ""}#{number_format=date}',
                             }
                         },
@@ -76,8 +76,8 @@
                                 'C11': 'employee_id.display_name${value or ""}',
                                 'D11': 'amount_to_clearing${value or ""}#{number_format=number}',
                                 'E11': 'description${value or ""}',
-                                'F11': 'to_employee_ids${value and ", ".join(list(filter(lambda l: l != False, [x.display_name for x in value]))) or ""}',
-                                'G11': 'cc_employee_ids${value and ", ".join(list(filter(lambda l: l != False, [x.display_name for x in value]))) or ""}',
+                                'F11': 'to_employee_ids${value and ", ".join([x.display_name for x in value]) or ""}',
+                                'G11': 'cc_employee_ids${value and ", ".join([x.display_name for x in value]) or ""}',
                                 'H11': 'date_dunning_3${value or ""}#{number_format=date}',
                             }
                         }
