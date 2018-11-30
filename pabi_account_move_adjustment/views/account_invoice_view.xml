@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook//group//field[@name='move_id']" position="after">
-                    <field name="adjust_move_id" ivisible="1"/>
+                    <field name="adjust_move_count" ivisible="1"/>
                 </xpath>
             </field>
         </record>
@@ -17,11 +17,11 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/sheet/notebook//group//field[@name='move_id']" position="after">
-                    <field name="adjust_move_id" invisible="1"/>
+                    <field name="adjust_move_count" invisible="1"/>
                 </xpath>
                 <xpath expr="//div[@name='buttons']" position="inside">
                     <button class="oe_inline oe_stat_button" name="action_open_adjust_journal" type="object" icon="fa-file-text"
-                      attrs="{'invisible': [('adjust_move_id', '=', False)]}"
+                      attrs="{'invisible': [('adjust_move_count', '=', 0)]}"
                       string="Adj. Journal"/>
                 </xpath>
             </field>
