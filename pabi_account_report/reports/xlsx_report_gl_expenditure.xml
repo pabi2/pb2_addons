@@ -60,7 +60,7 @@
         </record>
 
         <menuitem id="menu_xlsx_report_gl_expenditure"
-            name="GL Expenditure"
+            name="GL Project"
             parent="menu_pabi_general_ledger_report"
             action="action_xlsx_report_gl_expenditure_form"
             sequence="10"/>
