@@ -882,6 +882,7 @@ class ResProjectBudgetSummary(models.Model):
     _name = 'res.project.budget.summary'
     _auto = False
     _rec_name = 'fiscalyear_id'
+    _order = 'fiscalyear_id'
     _description = 'Fiscal Year summary of each phase amount'
 
     project_id = fields.Many2one(
