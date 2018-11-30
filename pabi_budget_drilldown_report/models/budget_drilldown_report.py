@@ -269,6 +269,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
                 str(tuple(invest_construction_phase_ids + [0])))
         if where_list:
             where_str += ' and (' + ' or '.join(where_list) + ')'
+        fields_str += fields_str and ', fiscalyear_id'
         if self['group_by_chartfield_id']:
             group_chartfield = 'section_id, project_id, invest_asset_id, \
                                 personnel_costcenter_id, \
@@ -951,7 +952,6 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         where_dict = prepare_where_dict(self, ALL_SEARCH_KEYS)
         if ttype and ttype not in ('total_commit'):
             where_dict.update({'budget_commit_type': ttype})
-        fiscalyear_id = self.report_id.fiscalyear_id.id
         where_str = prepare_where_str(where_dict)
 
         # Update where_str
@@ -964,9 +964,9 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         sql = """
             select analytic_line_id
             from budget_monitor_report
-            where fiscalyear_id = %s and budget_method = '%s'
+            where budget_method = '%s'
             %s
-        """ % (fiscalyear_id, budget_method, where_str)
+        """ % (budget_method, where_str)
         self._cr.execute(sql)
         res = self._cr.fetchall()
         analytic_line_ids = [x[0] for x in res]
