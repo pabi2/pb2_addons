@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="document.directory" id="dir_advance_dunning_letter_template">
+            <field name="name">Advance Dunning Letter Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="advance_dunning_letter_xlsx_template" model="ir.attachment">
+            <field name="res_model">pabi.advance.dunning.letter</field>
+            <field name="datas"></field>
+            <field name="datas_fname">advance_dunning_letter.xlsx</field>
+            <field name="name">Advance Dunning Letter</field>
+            <field name="parent_id" eval="ref('dir_advance_dunning_letter_template')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        1: {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'date_print${value or ""}#{number_format=date}',
+                                'B4': 'print_pdf${value and "X" or ""}',
+                                'B5': 'send_email${value and "X" or ""}',
+                                'B6': 'group_email${value or ""}',
+                                'B7': '${env.user.display_name}',
+                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'dunning_list_1': {
+                                'A11': 'expense_id.number${value or ""}',
+                                'B11': 'date_due${value or ""}#{number_format=date}',
+                                'C11': 'employee_id.display_name${value or ""}',
+                                'D11': 'amount_to_clearing${value or ""}#{number_format=number}',
+                                'E11': 'description${value or ""}',
+                                'F11': 'to_employee_ids${value and ", ".join([x.display_name for x in value]) or ""}',
+                                'G11': 'cc_employee_ids${value and ", ".join(list(filter(lambda l: l != False, [x.display_name for x in value]))) or ""}',
+                                'H11': 'date_dunning_1${value or ""}#{number_format=date}',
+                            }
+                        },
+                        2: {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'date_print${value or ""}#{number_format=date}',
+                                'B4': 'print_pdf${value and "X" or ""}',
+                                'B5': 'send_email${value and "X" or ""}',
+                                'B6': 'group_email${value or ""}',
+                                'B7': '${env.user.display_name}',
+                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'dunning_list_2': {
+                                'A11': 'expense_id.number${value or ""}',
+                                'B11': 'date_due${value or ""}#{number_format=date}',
+                                'C11': 'employee_id.display_name${value or ""}',
+                                'D11': 'amount_to_clearing${value or ""}#{number_format=number}',
+                                'E11': 'description${value or ""}',
+                                'F11': 'to_employee_ids${value and ", ".join(list(filter(lambda l: l != False, [x.display_name for x in value]))) or ""}',
+                                'G11': 'cc_employee_ids${value and ", ".join(list(filter(lambda l: l != False, [x.display_name for x in value]))) or ""}',
+                                'H11': 'date_dunning_2${value or ""}#{number_format=date}',
+                            }
+                        },
+                        3: {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'date_print${value or ""}#{number_format=date}',
+                                'B4': 'print_pdf${value and "X" or ""}',
+                                'B5': 'send_email${value and "X" or ""}',
+                                'B6': 'group_email${value or ""}',
+                                'B7': '${env.user.display_name}',
+                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            'dunning_list_3': {
+                                'A11': 'expense_id.number${value or ""}',
+                                'B11': 'date_due${value or ""}#{number_format=date}',
+                                'C11': 'employee_id.display_name${value or ""}',
+                                'D11': 'amount_to_clearing${value or ""}#{number_format=number}',
+                                'E11': 'description${value or ""}',
+                                'F11': 'to_employee_ids${value and ", ".join(list(filter(lambda l: l != False, [x.display_name for x in value]))) or ""}',
+                                'G11': 'cc_employee_ids${value and ", ".join(list(filter(lambda l: l != False, [x.display_name for x in value]))) or ""}',
+                                'H11': 'date_dunning_3${value or ""}#{number_format=date}',
+                            }
+                        }
+                    }
+                }
+          </field>
+        </record>
+
+    </data>
+</openerp>
