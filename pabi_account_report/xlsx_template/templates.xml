@@ -1555,6 +1555,7 @@ result = pd.pivot_table(df, index=groupby,
                             'BG22': 'supplier_bank_id.acc_number${value or ""}',
                             'BH22': 'supplier_bank_id.bank_branch.name${value or ""}',
                             'BI22': 'payment_export_id.name${value or ""}',
+                            'BJ22': 'invoice_move_line_id.reconcile_id.name${value or ""}',
                         }
                     }
                 }

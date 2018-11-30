@@ -78,6 +78,7 @@ class BudgetBreakdown(models.Model):
     )
     state = fields.Selection(
         [('draft', 'Draft'),
+         ('cancel', 'Cancel'),
          ('done', 'Done'),
          ],
         string='Status',
@@ -251,6 +252,10 @@ class BudgetBreakdown(models.Model):
     @api.multi
     def action_draft(self):
         self.write({'state': 'draft'})
+
+    @api.multi
+    def action_cancel(self):
+        self.write({'state': 'cancel'})
 
     @api.multi
     def action_done(self):
@@ -460,6 +465,20 @@ class BudgetBreakdownLine(ChartField, models.Model):
     policy_amount = fields.Float(
         string='Policy Amount',
     )
+    check = fields.Boolean(
+        string='Check',
+        compute='_compute_check',
+        help="True if latest policy is not equal to final released amount",
+    )
+
+    @api.multi
+    def _compute_check(self):
+        for rec in self:
+            if float_compare(rec.latest_policy_amount,
+                             rec.released_amount, 2) != 0:
+                rec.check = True
+            else:
+                rec.check = False
 
     @api.model
     def _get_planned_expense_hook(self, breakdown, budget_plan):

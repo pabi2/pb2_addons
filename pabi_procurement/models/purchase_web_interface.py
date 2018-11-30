@@ -354,6 +354,10 @@ class PurchaseWebInterface(models.Model):
         request_usr = User.search([('id', '=', requisition.user_id.id)])
         assign_usr = User.search([('id', '=', requisition.verify_uid.id)])
         employee = Employee.search([('user_id', '=', request_usr.id)])
+        if not employee:
+            raise ValidationError(
+                _("No employee data for user %s") % request_usr.login
+            )
         attachment = []
         for pd_att in requisition.attachment_ids:
             if '_main_form.pdf' in pd_att.name:
@@ -377,11 +381,11 @@ class PurchaseWebInterface(models.Model):
         arg = {
             'action': action,
             'pdNo': requisition.name,
-            'sectionId': str(employee.section_id.id),
+            'sectionId': '%s' % employee.section_id.id,
             'prNo': pr_name,
             'docType': doc_type.name,
             'objective': requisition.objective or '',
-            'total': str(requisition.amount_company),
+            'total': '%s' % requisition.amount_company,
             'reqBy': request_usr.login,
             'appBy': assign_usr.login,
             'doc': {

@@ -72,10 +72,10 @@ class ResProject(models.Model):
                                                                  data_dict)
             if res['is_success']:
                 res_id = res['result']['id']
-                document = self.browse(res_id)
+                project = self.browse(res_id)
                 # Refresh
-                document.refresh_budget_line(data_dict)
-                document.prepare_fiscal_plan_line(data_dict, force_run=True)
+                project.refresh_budget_line(data_dict)
+                project.prepare_fiscal_plan_line(data_dict, force_run=True)
         except Exception, e:
             res = {
                 'is_success': False,
@@ -107,10 +107,24 @@ class ResProject(models.Model):
                 friendly_update_data(self._name, data_dict, 'code')
             if res['is_success']:
                 res_id = res['result']['id']
-                document = self.browse(res_id)
+                project = self.browse(res_id)  # Project
+                # Release with latest release history (if any)
+                if res_id:
+                    self._cr.execute("""
+                        select max(id)
+                        from res_project_budget_release
+                        where project_id = %s
+                        group by fiscalyear_id
+                    """, (res_id, ))
+                    Release = self.env['res.project.budget.release']
+                    rels = Release.browse([x[0] for x in self._cr.fetchall()])
+                    for rec in rels:
+                        project.with_context(ignore_lock_release=True).\
+                            _release_fiscal_budget(rec.fiscalyear_id,
+                                                   rec.released_amount)
                 # Refresh
-                document.refresh_budget_line(data_dict)
-                document.prepare_fiscal_plan_line(data_dict, force_run=True)
+                project.refresh_budget_line(data_dict)
+                project.prepare_fiscal_plan_line(data_dict, force_run=True)
         except Exception, e:
             res = {
                 'is_success': False,

@@ -119,8 +119,10 @@ class AccountBudget(ChartField, models.Model):
                          'program_id': budget.program_id.id,
                          'org_id': budget.org_id.id, })
             for line in lines:
+                print line
                 res = line.\
                     _get_chained_dimension(CHART_VIEW_FIELD[budget.chart_view])
+                print res
                 line.write(res)
         return super(AccountBudget, self).budget_done()
 
@@ -243,6 +245,12 @@ class AccountBudgetLine(ChartField, models.Model):
         readonly=True,
         compute='_compute_display_name',
     )
+
+    @api.model
+    def create(self, vals):
+        res = super(AccountBudgetLine, self).create(vals)
+        res.update_related_dimension(vals)
+        return res
 
     @api.model
     def _get_budget_level_type_hook(self, budget_line):

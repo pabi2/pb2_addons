@@ -7,3 +7,4 @@ from . import account_activity
 from . import expense_web_interface
 from . import budget_policy
 from . import budget_breakdown
+from . import ic_picking_web_interface

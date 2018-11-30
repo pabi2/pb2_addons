@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="304"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -87,9 +87,8 @@ then
 else
 vendor.taxbranch
 end) as vendor_branch,
-apt.note payment_term,
 (SELECT value FROM ir_translation it WHERE
-res_id = he.id AND it.name LIKE 'hr.employee,first_name' limit 1) payment_term,
+res_id = apt.id AND it.name LIKE 'account.payment.term,note' limit 1) payment_term,
 CONCAT(
 COALESCE((SELECT value FROM ir_translation it
 WHERE it.res_id = he.title_id AND it.name LIKE 'res.partner.title,name') || ' ', ''),

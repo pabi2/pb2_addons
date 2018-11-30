@@ -864,6 +864,8 @@ class ResProjectBudgetPlan(models.Model):
             vals.update({'synced': False})  # Line updated
         if 'released_amount' in vals:
             for rec in self:
+                if self._context('ignore_lock_release', False):
+                    continue
                 if rec.project_id.lock_release and \
                         vals['released_amount'] != rec.released_amount:
                     raise ValidationError(_('Budget released is locked!'))

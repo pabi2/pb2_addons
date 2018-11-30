@@ -9,9 +9,10 @@
             <field name="arch" type="xml">
                 <form string="Budget Breakdown" create="0" delete="0">
                     <header>
-                        <button name="action_draft" type="object" states="done" string="Set to Draft" invisible="1"/>
+                        <button name="action_draft" type="object" states="cancel" string="Set to Draft" invisible="0"/>
                         <button name="action_done" states="draft" type="object" string="Set New Budget Policy" class="oe_highlight"
                             confirm="This action will assign the new policy amount to all sections' budget. On the new fiscal year, it will also create new budget control for every sections."/>
+                        <button name="action_cancel" states="draft" type="object" string="Cancel"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>
@@ -76,6 +77,7 @@
                                         <field name="released_amount" sum="Released"/>
                                         <field name="latest_policy_amount" sum="Latest Policy Amount"/>
                                         <field name="policy_amount" sum="Policy Amount"/>
+                                        <field name="check"/>
                                         <field name="budget_state" invisible="1"/>
                                     </tree>
                                 </field>
@@ -92,6 +94,7 @@
                                         <field name="rolling" sum="Rolling"/>
                                         <field name="latest_policy_amount" sum="Latest Policy Amount"/>
                                         <field name="policy_amount" sum="Policy Amount"/>
+                                        <field name="check"/>
                                         <field name="budget_state" invisible="1"/>
                                     </tree>
                                 </field>
@@ -107,6 +110,7 @@
                                         <field name="rolling" sum="Rolling"/>
                                         <field name="latest_policy_amount" sum="Latest Policy Amount"/>
                                         <field name="policy_amount" sum="Policy Amount"/>
+                                        <field name="check"/>
                                         <field name="budget_state" invisible="1"/>
                                     </tree>
                                 </field>

@@ -66,7 +66,7 @@ class PurchaseOrder(models.Model):
             # Change product to its variants
             for line in po.order_line:
                 if product_variants.get(line.product_id.id, False):
-                    var_product_id = product_variants[product_id].pop()
+                    var_product_id = product_variants[line.product_id.id].pop()
                     line.write({'product_id': var_product_id})
         return True
 
