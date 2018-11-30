@@ -864,7 +864,7 @@ class ResProjectBudgetPlan(models.Model):
             vals.update({'synced': False})  # Line updated
         if 'released_amount' in vals:
             for rec in self:
-                if self._context('ignore_lock_release', False):
+                if self._context.get('ignore_lock_release', False):
                     continue
                 if rec.project_id.lock_release and \
                         vals['released_amount'] != rec.released_amount:
