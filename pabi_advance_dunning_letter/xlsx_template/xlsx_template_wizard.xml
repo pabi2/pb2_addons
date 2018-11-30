@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <act_window id="action_advance_dunning_letter_xlsx"
+          name="Export as Excel"
+          res_model="export.xlsx.template"
+          src_model="pabi.advance.dunning.letter"
+          view_mode="form"
+          target="new"
+          context="{'lang': 'th_TH'}"/>
+    </data>
+</openerp>
