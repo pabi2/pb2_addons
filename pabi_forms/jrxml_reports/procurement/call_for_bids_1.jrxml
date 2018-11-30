@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="144"/>
+	<property name="ireport.y" value="231"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -69,7 +69,9 @@
 			<parameterDescription><![CDATA[]]></parameterDescription>
 		</parameter>
 		<queryString>
-			<![CDATA[SELECT pdl.product_name,
+			<![CDATA[SELECT
+row_number() over (order by pdl.id) as pdl_count,
+pdl.product_name,
 pdl.price_unit * pd.currency_rate as price_unit,
 (
 select
@@ -131,6 +133,7 @@ where pdl.requisition_id = $P{ids}]]>
 		<field name="currency" class="java.lang.String">
 			<fieldDescription><![CDATA[Currency]]></fieldDescription>
 		</field>
+		<field name="pdl_count" class="java.lang.Integer"/>
 		<variable name="COLUMN_SUM" class="java.lang.Integer" resetType="None" calculation="Count">
 			<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 		</variable>
@@ -876,7 +879,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$V{COLUMN_SUM}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{pdl_count}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
