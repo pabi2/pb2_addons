@@ -951,6 +951,7 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         where_dict = prepare_where_dict(self, ALL_SEARCH_KEYS)
         if ttype and ttype not in ('total_commit'):
             where_dict.update({'budget_commit_type': ttype})
+        fiscalyear_id = self.report_id.fiscalyear_id.id
         where_str = prepare_where_str(where_dict)
 
         # Update where_str
@@ -963,9 +964,9 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         sql = """
             select analytic_line_id
             from budget_monitor_report
-            where budget_method = '%s'
+            where fiscalyear_id = %s and budget_method = '%s'
             %s
-        """ % (budget_method, where_str)
+        """ % (fiscalyear_id, budget_method, where_str)
         self._cr.execute(sql)
         res = self._cr.fetchall()
         analytic_line_ids = [x[0] for x in res]
