@@ -51,7 +51,7 @@
         </record>
 
         <record id="action_xlsx_report_gl_expenditure_form" model="ir.actions.act_window">
-            <field name="name">GL Expenditure</field>
+            <field name="name">GL Project</field>
             <field name="res_model">xlsx.report.gl.expenditure</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
@@ -60,7 +60,7 @@
         </record>
 
         <menuitem id="menu_xlsx_report_gl_expenditure"
-            name="GL Expenditure"
+            name="GL Project"
             parent="menu_pabi_general_ledger_report"
             action="action_xlsx_report_gl_expenditure_form"
             sequence="10"/>
