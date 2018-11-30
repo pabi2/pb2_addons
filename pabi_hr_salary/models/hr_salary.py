@@ -27,8 +27,21 @@ class HRSalaryExpense(models.Model):
             rec.summary_total = sum(rec.summary_ids.mapped('amount'))
 
     @api.multi
+    def _salary_budget_check(self):
+        Budget = self.env['account.budget']
+        for salary in self:
+            doc_date = salary.date
+            lines = salary.line_ids.filtered(lambda l: l.amount > 0.0)
+            doc_lines = Budget.convert_lines_to_doc_lines(lines)
+            res = Budget.pre_commit_budget_check(doc_date, doc_lines, 'amount')
+            if not res['budget_ok']:
+                raise ValidationError(res['message'])
+        return True
+
+    @api.multi
     def action_submit(self):
         self.ensure_one()
+        self._salary_budget_check()
         res = super(HRSalaryExpense, self).action_submit()
         salary_doc = self.print_hr_salary_expense_form()
         # '1' = Submit, '2' = Resubmit, '3' = Cancel
