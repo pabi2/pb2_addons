@@ -19,6 +19,7 @@ Expense Related Reports
     'depends': [
         'email_template_dateutil',
         'pabi_hr_expense',
+        'pabi_utils',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -30,6 +31,10 @@ Expense Related Reports
         'edi/email_templates_10_days.xml',
         'views/pabi_dunning_letter_view.xml',
         'views/account_config.xml',
+        # Export Excel
+        'xlsx_template/templates.xml',
+        'xlsx_template/load_template.xml',
+        'xlsx_template/xlsx_template_wizard.xml',
     ],
     'demo': [
     ],

@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_purchase_order_form" >
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="pabi_procurement.view_purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header/button[@name='action_cancel']" position="before">
+                    <button name="action_make_revision"
+                            string="Make Revision"
+                            type="object"
+                            attrs="{'invisible':[('state', 'not in', ('done')),]}" />
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

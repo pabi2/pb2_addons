@@ -168,10 +168,12 @@ class AccountMove(models.Model):
         move = super(AccountMove, self).create(vals)
         invoice_id = self._context.get('src_invoice_id', False)
         if invoice_id:
-            self._cr.execute("""
-                update account_invoice set adjust_move_id = %s
-                where id = %s
-            """, (move.id, invoice_id))
+            invoice = self.env['account.invoice'].browse(invoice_id)
+            invoice.adjust_move_ids += move
+            # self._cr.execute("""
+            #     update account_invoice set adjust_move_id = %s
+            #     where id = %s
+            # """, (move.id, invoice_id))
         return move
 
 

@@ -32,9 +32,9 @@ class CreateJournalEntryWizard(models.TransientModel):
         if invoice.state not in ('open', 'paid'):
             raise ValidationError(
                 _('Only open invoice allowed!'))
-        if invoice.adjust_move_id:
-            raise ValidationError(
-                _('The adjustmnet journal entry already created!'))
+        # if invoice.adjust_move_id:
+        #     raise ValidationError(
+        #         _('The adjustmnet journal entry already created!'))
 
     @api.multi
     def create_journal_entry(self):
