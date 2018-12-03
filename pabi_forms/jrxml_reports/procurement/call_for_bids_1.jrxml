@@ -102,7 +102,13 @@ WHERE pdl2.id = pdl.id LIMIT 1) as material_group,
 pdl.product_qty::integer as product_qty,
 (SELECT value FROM ir_translation it
 WHERE it.res_id = pu.id AND it.name LIKE 'product.uom,name') as uom,
-pdl.price_subtotal * pd.currency_rate as price_subtotal,
+case when pdl.price_subtotal < (pdl.price_unit * pdl.product_qty)
+then
+(pdl.price_unit * pdl.product_qty) * pd.currency_rate
+else
+pdl.price_subtotal * pd.currency_rate
+end
+as price_subtotal,
 cur.name as currency
 FROM purchase_requisition_line pdl
 LEFT JOIN purchase_requisition pd
