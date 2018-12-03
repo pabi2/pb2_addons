@@ -59,7 +59,7 @@ class XLSXReportCDReceivableBalanceSheetSummary(models.TransientModel):
         'report_id', 'account_id',
         string='Accounts',
         default=lambda self: self.env['account.account'].search(
-            [('code', '=', '1102010006')]),
+            [('code', '=', '1190019900')]),
         readonly=True,
     )
     results = fields.One2many(
@@ -70,7 +70,8 @@ class XLSXReportCDReceivableBalanceSheetSummary(models.TransientModel):
 
     @api.multi
     def get_dom_loan_agreement(self):
-        dom = [('sale_id.state', 'not in', ('draft', 'cancel'))]
+        dom = [('state', 'in', ('bank_paid', 'done')),
+               ('sale_id.state', 'in', ('progress', 'done'))]
         if self.partner_ids:
             dom += [('borrower_partner_id', 'in', self.partner_ids.ids)]
         if self.mou_ids:
