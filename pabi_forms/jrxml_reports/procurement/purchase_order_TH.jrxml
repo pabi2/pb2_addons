@@ -475,7 +475,7 @@ WHERE $X{IN, po.id, PIDS}]]>
 + ' ' +
 ($F{tax_branch_city} == null ? "": $F{tax_branch_city})
 + ' ' +
-($F{partner_zip} == null ? "" : $F{partner_zip} )]]></textFieldExpression>
+($F{tax_branch_zip} == null ? "" : $F{tax_branch_zip} )]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="5" y="61" width="268" height="22" isPrintWhenDetailOverflows="true"/>
