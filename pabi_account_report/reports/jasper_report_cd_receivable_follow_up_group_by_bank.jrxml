@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CD Receivable Follow Up Report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="172"/>
+	<property name="ireport.y" value="145"/>
 	<parameter name="date_report" class="java.lang.String"/>
 	<parameter name="user" class="java.lang.String"/>
 	<parameter name="date_run" class="java.lang.String"/>
@@ -24,7 +24,7 @@
 	<field name="loan_agreement_name" class="java.lang.String">
 		<fieldDescription><![CDATA[loan_agreement_id/name]]></fieldDescription>
 	</field>
-	<field name="supplier_bank_id" class="java.lang.Number">
+	<field name="supplier_bank_id" class="java.lang.String">
 		<fieldDescription><![CDATA[loan_agreement_id/bank_id/bank/id]]></fieldDescription>
 	</field>
 	<field name="supplier_bank_name" class="java.lang.String">
@@ -63,7 +63,13 @@
 	<field name="supplier_invoice_posting_date" class="java.util.Date">
 		<fieldDescription><![CDATA[loan_agreement_id/supplier_invoice_id/date_invoice]]></fieldDescription>
 	</field>
-	<sortField name="supplier_bank_id"/>
+	<field name="bank_id" class="java.lang.String">
+		<fieldDescription><![CDATA[loan_agreement_id/partner_id/id]]></fieldDescription>
+	</field>
+	<field name="bank_name" class="java.lang.String">
+		<fieldDescription><![CDATA[loan_agreement_id/partner_id/name]]></fieldDescription>
+	</field>
+	<sortField name="bank_id"/>
 	<sortField name="loan_agreement_id"/>
 	<sortField name="installment"/>
 	<variable name="amount_total_group_by_loan_agreement" class="java.lang.Number" resetType="Group" resetGroup="Loan Agreement" calculation="Sum">
@@ -76,7 +82,7 @@
 		<variableExpression><![CDATA[$F{amount_total}]]></variableExpression>
 	</variable>
 	<group name="bank">
-		<groupExpression><![CDATA[$F{supplier_bank_id}]]></groupExpression>
+		<groupExpression><![CDATA[$F{bank_id}]]></groupExpression>
 		<groupHeader>
 			<band height="20">
 				<textField pattern="" isBlankWhenNull="true">
@@ -84,7 +90,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($F{supplier_bank_name} ? $F{supplier_bank_name} : "") + ($F{supplier_bank_branch} ? " " + $F{supplier_bank_branch} : "")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_name}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -186,7 +192,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{project}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="142" y="102" width="75" height="20" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="142" y="102" width="85" height="20" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression class="java.lang.Number"><![CDATA[($F{amount_receivable} ? $F{amount_receivable} : 0.0)]]></textFieldExpression>
 				</textField>
@@ -292,7 +298,7 @@
 					<text><![CDATA[Document No]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Transparent" x="217" y="102" width="100" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="228" y="102" width="100" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
