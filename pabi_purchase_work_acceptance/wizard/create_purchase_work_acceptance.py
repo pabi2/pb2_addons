@@ -206,7 +206,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         PWAcceptance = self.env['purchase.work.acceptance']
         vals.update({
             'name': self.env['ir.sequence'].get('purchase.work.acceptance'),
-            'date_scheduled_end': self.date_scheduled_end,
+            'date_scheduled_end': self.date_contract_end,
             'date_contract_start': self.date_contract_start,
             'date_contract_end': self.date_contract_end,
             'date_receive': self.date_receive,

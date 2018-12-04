@@ -80,7 +80,12 @@ case when atax.amount > 0.0 and atax.price_include = False then
 	(atax.amount * reql.price_subtotal)
 	) * pd.currency_rate)::DECIMAL,2)
 else
-	ROUND((reql.price_subtotal * pd.currency_rate)::DECIMAL, 2)
+	case when reql.price_subtotal < (reql.price_unit * reql.product_qty)
+	then
+		ROUND((reql.price_unit * reql.product_qty * pd.currency_rate)::DECIMAL, 2)
+	else
+		ROUND((reql.price_subtotal * pd.currency_rate)::DECIMAL, 2)
+	end
 end
 FROM purchase_requisition req
 LEFT JOIN purchase_requisition_line reql
@@ -90,7 +95,7 @@ ON prtr.requisition_line_id = reql.id
 LEFT JOIN account_tax atax
 ON atax.id = prtr.tax_id
 where reql.id = pdl.id
-group by reql.price_subtotal, atax.id LIMIT 1) as amount_total,
+group by reql.price_subtotal,reql.price_unit,reql.product_qty, atax.id LIMIT 1) as amount_total,
 (SELECT DISTINCT pr2.name FROM purchase_request_purchase_requisition_line_rel prpd
 LEFT JOIN purchase_request_line prl
 ON prl.id = prpd.purchase_request_line_id
@@ -102,7 +107,13 @@ WHERE pdl2.id = pdl.id LIMIT 1) as material_group,
 pdl.product_qty::integer as product_qty,
 (SELECT value FROM ir_translation it
 WHERE it.res_id = pu.id AND it.name LIKE 'product.uom,name') as uom,
-pdl.price_subtotal * pd.currency_rate as price_subtotal,
+case when pdl.price_subtotal < (pdl.price_unit * pdl.product_qty)
+then
+(pdl.price_unit * pdl.product_qty) * pd.currency_rate
+else
+pdl.price_subtotal * pd.currency_rate
+end
+as price_subtotal,
 cur.name as currency
 FROM purchase_requisition_line pdl
 LEFT JOIN purchase_requisition pd
@@ -434,9 +445,14 @@ cur.name as currency,
 SUM(
 case when atax.amount > 0.0 and atax.price_include = False then
 	ROUND((((requestline.price_subtotal) +
-	(atax.amount * requestline.price_subtotal)) * pd.currency_rate)::DECIMAL, 2)
+	(atax.amount * requestline.price_subtotal)) * requisition.currency_rate)::DECIMAL, 2)
 else
-	ROUND((requestline.price_subtotal * pd.currency_rate)::DECIMAL, 2)
+	case when requestline.price_subtotal < (requestline.price_unit * requestline.product_qty)
+	then
+		ROUND((requestline.price_unit * requestline.product_qty * requisition.currency_rate)::DECIMAL, 2)
+	else
+		ROUND((requestline.price_subtotal * requisition.currency_rate)::DECIMAL, 2)
+	end
 end
 )
 FROM purchase_requisition_line reql

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from openerp import fields, models, api, _
+from openerp.exceptions import ValidationError
+import datetime
+from dateutil.relativedelta import relativedelta
 
 
 class PurchaseOrder(models.Model):
@@ -36,33 +39,33 @@ class PurchaseOrder(models.Model):
         string='Fine Condition',
         default='day',
         required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        # readonly=True,
+        # states={'draft': [('readonly', False)]},
     )
     date_fine = fields.Date(
         string='Fine Date',
         default=lambda self: fields.Date.context_today(self),
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        # readonly=True,
+        # states={'draft': [('readonly', False)]},
     )
     fine_num_days = fields.Integer(
         string='Delivery Within (Days)',
         default=15,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        # readonly=True,
+        # states={'draft': [('readonly', False)]},
     )
     fine_num_months = fields.Integer(
         string='Delivery Within (Months)',
         default=1,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        # readonly=True,
+        # states={'draft': [('readonly', False)]},
     )
     fine_rate = fields.Float(
         string='Fine Rate',
         required=True,
         default=0.0,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        # readonly=True,
+        # states={'draft': [('readonly', False)]},
     )
     acceptance_ids = fields.One2many(
         'purchase.work.acceptance',
@@ -79,6 +82,49 @@ class PurchaseOrder(models.Model):
         compute='_count_acceptances',
         store=True,
     )
+    date_contract_end = fields.Date(
+        string='Contract End Date',
+        # default=lambda self: fields.Date.context_today(self),
+        track_visibility='onchange',
+        required=False,
+        # readonly=True,
+        # states={
+        #     'draft': [('readonly', False)],
+        #     'sent': [('readonly', False)],
+        #     'bid': [('readonly', False)],
+        #     'confirmed': [('readonly', False)],
+        # },
+    )
+
+    @api.model
+    @api.onchange('date_contract_start', 'fine_condition', 'fine_num_days',
+                  'fine_num_months', 'date_fine')
+    def _onchange_contract_end_date(self):
+        self.ensure_one()
+        # THHoliday = self.env['thai.holiday']
+        if not self.date_contract_start:
+            raise ValidationError(_('No contract start date!'))
+        start_date = datetime.datetime.strptime(
+            self.date_contract_start,
+            "%Y-%m-%d",
+        )
+        if self.fine_condition == 'day':
+            num_of_day = self.fine_num_days
+            end_date = start_date + datetime.timedelta(days=num_of_day)
+            date_scheduled_end = "{:%Y-%m-%d}".format(end_date)
+            # next_working_end_date = THHoliday.\
+            #     find_next_working_day(date_scheduled_end)
+        if self.fine_condition == 'month':
+            num_months = self.fine_num_months
+            end_date = start_date + relativedelta(months=+num_months)
+            date_scheduled_end = "{:%Y-%m-%d}".format(end_date)
+            # next_working_end_date = THHoliday.\
+            #     find_next_working_day(date_scheduled_end)
+        if self.fine_condition == 'date':
+            date_scheduled_end = self.date_fine
+            # next_working_end_date = THHoliday.\
+            #     find_next_working_day(self.date_fine)
+        self.date_contract_end = date_scheduled_end
 
     @api.multi
     def acceptance_open(self):
@@ -107,3 +153,11 @@ class PurchaseOrder(models.Model):
                             'price_unit': wa_line.price_unit or 0.0
                         })
         return res
+
+
+class PurchaseType(models.Model):
+    _inherit = 'purchase.type'
+
+    to_receive = fields.Boolean(
+        string='To Receive Product',
+    )
