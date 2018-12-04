@@ -53,7 +53,7 @@ class CDReceivablePlanningView(models.Model):
 
     def _get_sql_view(self):
         sql_view = """
-            SELECT ROW_NUMBER() OVER(ORDER BY lca.id, sip.id,af.name) AS id,
+            SELECT ROW_NUMBER() OVER(ORDER BY lca.id, sip.id, af.name) AS id,
                    lca.id AS loan_agreement_id,
                    sip.id AS invoice_plan_id,
                    af.name AS fiscalyear_name,
@@ -95,13 +95,19 @@ class XLSXReportCDReceivablePlanning(models.TransientModel):
     _name = 'xlsx.report.cd.receivable.planning'
     _inherit = 'report.account.common'
 
+    borrower_partner_ids = fields.Many2many(
+        'res.partner',
+        'receivable_planning_borrower_partner_rel',
+        'planning_id', 'partner_id',
+        string='Customer CD',
+        domain=[('customer', '=', True)],
+    )
     partner_ids = fields.Many2many(
         'res.partner',
-        string='Customers',
-    )
-    bank_ids = fields.Many2many(
-        'res.bank',
-        string='Banks',
+        'receivable_planning_partner_rel',
+        'planning_id', 'partner_id',
+        string='Customer (bank)',
+        domain=[('customer', '=', True)],
     )
     results = fields.Many2many(
         'cd.receivable.planning.view',
@@ -112,16 +118,10 @@ class XLSXReportCDReceivablePlanning(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
-        """
-        Solution
-        1. State supplier invoice to paid
-        2. State sale order not in ('draft', 'cancel')
-        """
         self.ensure_one()
         Result = self.env['cd.receivable.planning.view']
-        dom = \
-            [('loan_agreement_id.supplier_invoice_id.state', '=', 'paid'),
-             ('invoice_plan_id.order_id.state', 'not in', ('draft', 'cancel'))]
+        dom = [('loan_agreement_id.state', 'in', ('bank_paid', 'done')),
+               ('invoice_plan_id.order_id.state', 'in', ('progress', 'done'))]
         if self.fiscalyear_start_id:
             dom += [('invoice_plan_id.date_invoice', '>=',
                      self.fiscalyear_start_id.date_start)]
@@ -138,10 +138,10 @@ class XLSXReportCDReceivablePlanning(models.TransientModel):
             dom += [('invoice_plan_id.date_invoice', '>=', self.date_start)]
         if self.date_end:
             dom += [('invoice_plan_id.date_invoice', '<=', self.date_end)]
-        if self.partner_ids:
+        if self.borrower_partner_ids:
             dom += [('loan_agreement_id.borrower_partner_id', 'in',
+                     self.borrower_partner_ids.ids)]
+        if self.partner_ids:
+            dom += [('loan_agreement_id.partner_id', 'in',
                      self.partner_ids.ids)]
-        if self.bank_ids:
-            dom += [('loan_agreement_id.bank_id.bank', 'in',
-                     self.bank_ids.ids)]
         self.results = Result.search(dom, order="fiscalyear_name")
