@@ -153,3 +153,11 @@ class PurchaseOrder(models.Model):
                             'price_unit': wa_line.price_unit or 0.0
                         })
         return res
+
+
+class PurchaseType(models.Model):
+    _inherit = 'purchase.type'
+
+    to_receive = fields.Boolean(
+        string='To Receive Product',
+    )
