@@ -269,6 +269,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
                 str(tuple(invest_construction_phase_ids + [0])))
         if where_list:
             where_str += ' and (' + ' or '.join(where_list) + ')'
+        fields_str += fields_str and ', fiscalyear_id'
         if self['group_by_chartfield_id']:
             group_chartfield = 'section_id, project_id, invest_asset_id, \
                                 personnel_costcenter_id, \
