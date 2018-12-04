@@ -351,6 +351,7 @@ class PurchaseWebInterface(models.Model):
             )
         doc_name = pd_file.name
         doc = pd_file.datas
+        doc_desc = pd_file.description
         request_usr = User.search([('id', '=', requisition.user_id.id)])
         assign_usr = User.search([('id', '=', requisition.verify_uid.id)])
         employee = Employee.search([('user_id', '=', request_usr.id)])
@@ -391,6 +392,7 @@ class PurchaseWebInterface(models.Model):
             'doc': {
                 'name': self.check_pdf_extension(doc_name),
                 'content': doc,
+                'desc': doc_desc,
             },
             'attachments': attachment,
         }
