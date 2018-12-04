@@ -36,6 +36,7 @@
                                 attrs="{'invisible':[('fine_condition', '!=', 'day')]}"/>
                             <field name="fine_num_months"
                                 attrs="{'invisible':[('fine_condition', '!=', 'month')]}"/>
+                            <field name="date_contract_end"/>
                         </group>
                     </page>
                 </xpath>
