@@ -21,6 +21,11 @@ class XLSXReportOutputTax(models.TransientModel):
         string='Taxbranch',
         required=True,
     )
+    tax = fields.Selection(
+        [('o0', 'O0'),
+         ('o7', 'O7')],
+        string='Tax',
+    )
     results = fields.Many2many(
         'account.tax.report',
         string='Results',
@@ -42,4 +47,8 @@ class XLSXReportOutputTax(models.TransientModel):
             dom += [('report_period_id', '=', self.calendar_period_id.id)]
         if self.taxbranch_id:
             dom += [('taxbranch_id', '=', self.taxbranch_id.id)]
+        if self.tax == 'o7':
+            dom += [('tax', 'in', ['O7', 'OI7'])]
+        if self.tax == 'o0':
+            dom += [('tax', '=', 'O0')]
         self.results = Result.search(dom, order='number_preprint')
