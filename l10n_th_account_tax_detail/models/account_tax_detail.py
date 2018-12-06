@@ -183,6 +183,7 @@ class AccountTaxDetail(models.Model):
     ref_move_id = fields.Many2one(
         'account.move',
         string='Ref Journal Entry',
+        ondelete='restrict',
         help="Referene to move_id of either Invoice / Payment / Account Move",
     )
     _sql_constraints = [
