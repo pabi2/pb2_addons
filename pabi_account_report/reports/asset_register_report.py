@@ -404,13 +404,13 @@ class AssetRegisterReport(models.TransientModel):
         ReportLine = self.env['asset.register.view']
         for line in results:
             self.results += ReportLine.new(line)
+        return True
 
-    @api.multi
-    def action_get_report(self):
-        action = self.env.ref(
-            'pabi_account_report.action_asset_register_report_form')
-        action.write({'context': {'wizard_id': self.id}})
-        return super(AssetRegisterReport, self).action_get_report()
+    # @api.multi
+    # def action_get_report(self):
+    #     action = self.env.ref(
+    #         'pabi_account_report.action_asset_register_report_form')
+    #     return super(AssetRegisterReport, self).action_get_report()
 
     @api.onchange('asset_filter')
     def _onchange_asset_filter(self):
