@@ -221,14 +221,14 @@ class AccountMoveLine(MergedChartField, models.Model):
             res_id = self.chartfield_id.res_id
             if self.chartfield_id.model == 'res.section':
                 self.section_id = res_id
-            if self.chartfield_id.model == 'res.project':
+            elif self.chartfield_id.model == 'res.project':
                 self.project_id = res_id
-            if self.chartfield_id.model == 'res.invest.construction.phase':
+            elif self.chartfield_id.model == 'res.invest.construction.phase':
                 self.invest_construction_phase_id = res_id
-            if self.chartfield_id.model == 'res.invest.asset':
+            elif self.chartfield_id.model == 'res.invest.asset':
                 self.invest_asset_id = res_id
-            if self.chartfield_id.model == 'res.project':
-                self.project_id = res_id
+            elif self.chartfield_id.model == 'res.personnel.costcenter':
+                self.personnel_costcenter_id = res_id
 
     @api.multi
     @api.constrains('activity_group_id', 'activity_id')
