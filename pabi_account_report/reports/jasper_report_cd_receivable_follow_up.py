@@ -17,60 +17,56 @@ class JasperReportCDReceivableFollowUp(models.TransientModel):
         required=True,
         default=lambda self: fields.Date.context_today(self),
     )
-    bank_id = fields.Many2one(
-        'res.bank',
-        string='Bank',
+    groupby = fields.Selection(
+        [('groupby_borrower_partner', 'Customer CD'),
+         ('groupby_partner', 'Customer (bank)')],
+        string='Group By',
+        default='groupby_borrower_partner',
+        required=True,
     )
-    bank_branch_id = fields.Many2one(
-        'res.bank.branch',
-        string='Bank Branch'
+    borrower_partner_ids = fields.Many2many(
+        'res.partner',
+        'receivable_follow_borrower_partner_rel',
+        'follow_id', 'partner_id',
+        string='Customer CD',
+        domain=[('customer', '=', True)],
     )
     partner_ids = fields.Many2many(
         'res.partner',
-        string='Customers',
-        domain="[('customer', '=', True)]",
+        'receivable_follow_partner_rel',
+        'follow_id', 'partner_id',
+        string='Customer (bank)',
+        domain=[('customer', '=', True)],
     )
 
-    @api.onchange('bank_id')
-    def _onchange_bank_id(self):
-        self.bank_branch_id = False
+    @api.onchange('groupby')
+    def _onchange_groupby(self):
+        self.borrower_partner_ids = False
         self.partner_ids = False
 
     @api.multi
     def _get_report_name(self):
         self.ensure_one()
         report_name = "cd_receivable_follow_up_group_by_customer"
-        if len(self.bank_id):
+        if self.groupby == 'groupby_partner':
             report_name = "cd_receivable_follow_up_group_by_bank"
         return report_name
 
     @api.multi
     def _get_domain(self):
-        """
-        Solution
-        1. Bank invoice must paid
-        2. Sale order not in (draft, cancel)
-        3. Date due of customer invoice <= report date
-        4. Customer invoice not paid
-        5. Customer invoice not cancel
-        """
         self.ensure_one()
-        dom = [('loan_agreement_id.supplier_invoice_id.date_paid', '!=',
-                False), ('loan_agreement_id.sale_id.state', 'not in',
-               ('draft', 'cancel')),
-               ('invoice_plan_id.ref_invoice_id.date_due', '<=',
-                self.date_report),
+        dom = [('loan_agreement_id.state', 'in', ('bank_paid', 'done')),
+               ('loan_agreement_id.sale_id.state', 'in', ('progress', 'done')),
                ('invoice_plan_id.ref_invoice_id.date_paid', '=', False),
-               ('invoice_plan_id.ref_invoice_id.cancel_move_id', '=', False)]
-        if self.partner_ids:
+               ('invoice_plan_id.ref_invoice_id.cancel_move_id', '=', False),
+               ('invoice_plan_id.ref_invoice_id.date_due', '<=',
+                self.date_report)]
+        if self.borrower_partner_ids:
             dom += [('loan_agreement_id.borrower_partner_id', 'in',
+                     self.borrower_partner_ids.ids)]
+        if self.partner_ids:
+            dom += [('loan_agreement_id.partner_id', 'in',
                      self.partner_ids.ids)]
-        if self.bank_id:
-            dom += [('loan_agreement_id.bank_id.bank', '=',
-                     self.bank_id.id)]
-        if self.bank_branch_id:
-            dom += [('loan_agreement_id.bank_id.bank_branch', '=',
-                     self.bank_branch_id.id)]
         return dom
 
     @api.multi
