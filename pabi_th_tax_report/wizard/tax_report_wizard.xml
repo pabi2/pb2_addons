@@ -38,11 +38,11 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem action="action_account_tax_report"
+        <!-- <menuitem action="action_account_tax_report"
                   name="VAT Report"
                   id="menu_account_tax_report"
                   sequence="5"
-                  parent="l10n_th_account.menu_thai_tax_report" />
+                  parent="l10n_th_account.menu_thai_tax_report" /> -->
 
     </data>
 </openerp>
