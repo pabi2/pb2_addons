@@ -8,6 +8,7 @@ _logger = logging.getLogger(__name__)
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
+    _description = 'Test PR'
 
     @api.model
     def test_generate_ic_picking(self):

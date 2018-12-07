@@ -370,7 +370,7 @@ class PurchaseWebInterface(models.Model):
                 'name': self.check_pdf_extension(pd_att.name),
                 'content': pd_att.datas or '',
                 'url': url,
-                'desc': pd_att.description,
+                'desc': pd_att.description or '',
             }
             attachment.append(pd_attach)
         pr_name = ''
@@ -393,7 +393,7 @@ class PurchaseWebInterface(models.Model):
             'doc': {
                 'name': self.check_pdf_extension(doc_name),
                 'content': doc,
-                'desc': doc_desc,
+                'desc': doc_desc or '',
             },
             'attachments': attachment,
         }

@@ -37,7 +37,9 @@ class XLSXReportInputTax(models.TransientModel):
         """
         self.ensure_one()
         Result = self.env['account.tax.report']
-        dom = [('doc_type', '=', 'purchase')]
+        dom = [('doc_type', '=', 'purchase'), '|', ('move_id', '!=', False),
+               ('invoice_tax_id', '!=', False), '|',
+               ('voucher_tax_id', '!=', False)]
         if self.calendar_period_id:
             dom += [('report_period_id', '=', self.calendar_period_id.id)]
         if self.taxbranch_id:
