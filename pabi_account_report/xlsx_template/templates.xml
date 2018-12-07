@@ -1338,7 +1338,8 @@ result = pd.pivot_table(df, index=groupby,
         </record>
 
         # Expense Ledger Report
-       <record id="xlsx_report_expense_ledger" model="ir.attachment">
+        <!-- Old -->
+       <!-- <record id="xlsx_report_expense_ledger" model="ir.attachment">
            <field name="res_model">xlsx.report.expense.ledger</field>
            <field name="datas"></field>
            <field name="datas_fname">xlsx_report_expense_ledger.xlsx</field>
@@ -1422,7 +1423,95 @@ result = pd.pivot_table(df, index=groupby,
                    }
                }
            </field>
-       </record>
+       </record> -->
+
+       # Expense Ledger Report
+       <!-- New -->
+      <record id="xlsx_report_expense_ledger" model="ir.attachment">
+          <field name="res_model">xlsx.report.expense.ledger</field>
+          <field name="datas"></field>
+          <field name="datas_fname">xlsx_report_expense_ledger.xlsx</field>
+          <field name="name">Expense Ledger</field>
+          <field name="description">
+              {
+                  '__EXPORT__': {
+                      'Expense Ledger Report': {
+                          '_HEAD_': {
+                              'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}#{align=left;number_format=text}',
+                              'B3': 'account_ids${value and ", ".join([x.code for x in value]) or ""}#{align=left;number_format=text}',
+                              'B4': 'chartfield_ids${value and ", ".join([x.code for x in value]) or ""}#{align=left;number_format=text}',
+                              'B5': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.title.name, x.name]))) for x in value]) or ""}#{align=left;number_format=text}',
+                              'B6': 'fiscalyear_start_id.name${value or ""}#{align=left;number_format=text}',
+                              'D6': 'fiscalyear_end_id.name${value or ""}#{align=left;number_format=text}',
+                              'B7': 'filter${value and dict(env["xlsx.report.expense.ledger"]._columns["filter"].selection)[value] or ""}#{align=left;number_format=text}',
+                              'B8': 'period_start_id.name${value or ""}#{align=left;number_format=text}',
+                              'D8': 'period_end_id.name${value or ""}#{align=left;number_format=text}',
+                              'B9': 'date_start${value or ""}#{align=left;number_format=date}',
+                              'D9': 'date_end${value or ""}#{align=left;number_format=date}',
+                              'B10': '${env.user.display_name}#{align=left;number_format=text}',
+                              'B11': '${time.strftime("%d/%m/%Y")}#{align=left;number_format=date}',
+                           },
+                          'results': {
+                              'A14': 'charge_type${value and dict(env["account.move.line"]._columns["charge_type"].selection)[value] or ""}#{number_format=text}',
+                              'B14': 'account_id.code${value or ""}#{number_format=text}',
+                              'C14': 'account_id.name${value or ""}#{number_format=text}',
+                              'D14': 'activity_group_id.code${value or ""}#{number_format=text}',
+                              'E14': 'activity_group_id.name${value or ""}#{number_format=text}',
+                              'F14': 'activity_id.code${value or ""}#{number_format=text}',
+                              'G14': 'activity_id.name${value or ""}#{number_format=text}',
+                              'H14': 'period_id.fiscalyear_id.name${value or ""}#{number_format=text}',
+                              'I14': 'period_id.code${value and ((int(value.split("/")[0])&gt;=1 and int(value.split("/")[0])&lt;=12) and value.split("/")[0] or "12") or ""}#{number_format=text}',
+                              'J14': 'period_id.name${value or ""}#{number_format=text}',
+                              'K14': 'move_id.tax_detail_ids${value and ", ".join(list(set(filter(lambda l: l is not False, [x.tax_id.description for x in value])))) or ""}#{number_format=text}',
+                              'L14': 'id${value and env["account.move.line"].browse(value).debit - env["account.move.line"].browse(value).credit or ""}#{number_format=number}',
+                              'M14': 'name${value or ""}#{number_format=text}',
+                              'N14': 'move_id.narration${value or ""}#{number_format=text}',
+                              'O14': 'prefix_doctype${value or ""}#{number_format=text}',
+                              'P14': 'journal_id.name${value or ""}#{number_format=text}',
+                              'Q14': 'move_id.name${value or ""}#{number_format=text}',
+                              'R14': 'docline_seq${value or ""}#{number_format=text}',
+                              'S14': 'move_id.date_document${value or ""}#{number_format=date}',
+                              'T14': 'move_id.date${value or ""}#{number_format=date}',
+                              'U14': 'invoice.payment_ids${value and ", ".join(list(filter(lambda l: l != False, [x.move_id.name for x in value]))) or ""}#{number_format=text}',
+                              'V14': 'invoice.payment_ids${value and ", ".join(list(filter(lambda l: l != False, [x.move_id.date for x in value]))) or ""}#{number_format=date}',
+                              'W14': 'invoice.source_document_id${value and value.display_name or ""}#{number_format=text}',
+                              'X14': 'fund_id.name${value or ""}#{number_format=text}',
+                              'Y14': 'chartfield_id.code${value or ""}#{number_format=text}',
+                              'Z14': 'chartfield_id.name${value or ""}#{number_format=text}',
+                              'AA14': 'cost_control_type_id.code${value or ""}#{number_format=text}',
+                              'AB14': 'cost_control_type_id.name${value or ""}#{number_format=text}',
+                              'AC14': 'cost_control_id.code${value or ""}#{number_format=text}',
+                              'AD14': 'cost_control_id.name${value or ""}#{number_format=text}',
+                              'AE14': 'costcenter_id.code${value or ""}#{number_format=text}',
+                              'AF14': 'costcenter_id.name${value or ""}#{number_format=text}',
+                              'AG14': 'project_id.master_plan_id.code${value or ""}#{number_format=text}',
+                              'AH14': 'project_id.master_plan_id.name${value or ""}#{number_format=text}',
+                              'AI14': 'mission_id.name${value or ""}#{number_format=text}',
+                              'AJ14': 'write_uid.display_name${value or ""}#{number_format=text}',
+                              'AK14': 'invoice.date_due${value or ""}#{number_format=date}',
+                              'AL14': 'move_id.document_id${value and "cancel_move_id" in value and value.cancel_move_id.name or ""}#{number_format=text}',
+                              'AM14': 'move_id.document_id${value and "cancel_move_id" in value and value.cancel_move_id.date or ""}#{number_format=date}',
+                              'AN14': 'invoice.payment_term.name${value or ""}#{number_format=text}',
+                              'AO14': 'invoice.purchase_billing_id.name${value or ""}#{number_format=text}',
+                              'AP14': 'invoice.payment_ids${value and ", ".join(list(filter(lambda l: l != False, [x.move_id.journal_id.name for x in value]))) or ""}#{number_format=text}',
+                              'AQ14': 'invoice.payment_ids${value and ", ".join(list(filter(lambda l: l != False, [x.move_id.document_id._name == "account.voucher" and x.move_id.document_id.transfer_type and dict(env["account.voucher"]._columns["transfer_type"].selection)[x.move_id.document_id.transfer_type] or "Cheque" for x in value]))) or ""}#{number_format=text}',
+                              'AR14': 'invoice.payment_ids${value and ", ".join(list(filter(lambda l: l != False, [x.move_id.document_id._name == "account.voucher" and x.move_id.document_id.date_value or False for x in value]))) or ""}#{number_format=date}',
+                              'AS14': 'invoice.payment_ids${value and ", ".join(list(filter(lambda l: l != False, [x.move_id.document_id._name == "account.voucher" and x.move_id.document_id.supplier_bank_id.acc_number or False for x in value]))) or ""}#{number_format=text}',
+                              'AT14': 'invoice.payment_ids${value and ", ".join(list(filter(lambda l: l != False, [x.move_id.document_id._name == "account.voucher" and x.move_id.document_id.supplier_bank_id.bank_branch.name or False for x in value]))) or ""}#{number_format=text}',
+                              'AU14': 'invoice.payment_ids${value and ", ".join(list(filter(lambda l: l != False, [x.move_id.document_id._name == "account.voucher" and x.move_id.document_id.payment_export_id.name or False for x in value]))) or ""}#{number_format=text}',
+                              'AV14': "${'=IF(AND(B11&lt;&gt;\"\",?(AK14)&lt;&gt;\"\"), ?(AK14)-B11,\"\")'}",
+                              'AW14': 'partner_id.search_key${value or ""}#{number_format=text}',
+                              'AX14': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}#{number_format=text}',
+                          },
+                          '_TAIL_0': {
+                              'A14': '${"Total"}#{font=bold}',
+                              'L14': '@{sum}#{font=bold;number_format=number}',
+                         }
+                      }
+                  }
+              }
+          </field>
+      </record>
 
        # Allowance for Doubtful Accounts Report
        <record id="xlsx_report_gl_allowance_doubtful_accounts" model="ir.attachment">
