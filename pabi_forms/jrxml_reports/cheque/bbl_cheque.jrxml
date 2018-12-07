@@ -80,7 +80,7 @@ $F{title}+$F{partner_name}]]></textFieldExpression>
 				<reportElement x="616" y="321" width="40" height="1"/>
 			</line>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="345" y="349" width="309" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="340" y="349" width="309" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="16" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
