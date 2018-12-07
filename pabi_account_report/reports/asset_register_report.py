@@ -298,12 +298,12 @@ class AssetRegisterReport(models.TransientModel):
                 select a.*, a.id asset_id, aap.account_asset_id,
                 aa.code as account_code, aa.name as account_name,
                 -- purchase_bf_current
-                case when date_part('year', a.date_start) !=
-                 date_part('year', CURRENT_DATE) then a.purchase_value
+                case when date_part('year', a.date_start+92) !=
+                 date_part('year', CURRENT_DATE+92) then a.purchase_value
                  else null end as purchase_before_current,
                 -- purchase_current
-                case when date_part('year', a.date_start) =
-                 date_part('year', CURRENT_DATE) then a.purchase_value
+                case when date_part('year', a.date_start+92) =
+                 date_part('year', CURRENT_DATE+92) then a.purchase_value
                  else null end as purchase_current,
                 -- net_book_value
                 (select a.purchase_value - coalesce(sum(credit-debit), 0.0)
