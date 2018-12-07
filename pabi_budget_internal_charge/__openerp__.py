@@ -12,6 +12,7 @@
         'pabi_budget_plan',
         'pabi_hr_expense',
         'pabi_utils',
+        'sale_automatic_workflow',
     ],
     'data': [
         'data/account_data.xml',
