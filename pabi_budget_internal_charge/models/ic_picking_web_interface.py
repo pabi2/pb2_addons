@@ -8,7 +8,6 @@ _logger = logging.getLogger(__name__)
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
-    _description = 'Test PR'
 
     @api.model
     def test_generate_ic_picking(self):
@@ -20,8 +19,8 @@ class StockPicking(models.Model):
             'project_id': False,
             'move_lines': [
                 {
-                    'name': u'คลิปดำ เบอร์108',
-                    'product_id': u'คลิปดำ เบอร์108',
+                    'name': u'จานรองแก้วดีเอ็นเอ(V)',
+                    'product_id': u'จานรองแก้วดีเอ็นเอ(V)',
                     'product_uom_qty': 1,
                     'product_uom': u'Box',
                 },
