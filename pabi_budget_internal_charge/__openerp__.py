@@ -26,6 +26,7 @@
         'views/hr_expense_view.xml',
         'views/account_budget_view.xml',
         'views/account_activity_view.xml',
+        'views/stock_view.xml',
         'workflow/hr_expense_workflow.xml',
     ],
     'demo': [
