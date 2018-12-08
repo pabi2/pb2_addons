@@ -510,6 +510,7 @@ class ResProject(LogCommon, models.Model):
         """
         # Not current year, no budget release allowed
         current_fy = self.env['account.fiscalyear'].find()
+        release_external_budget = fiscalyear.control_ext_charge_only
         for project in self.sudo():
             if project.current_fy_release_only and current_fy != fiscalyear.id:
                 raise ValidationError(
@@ -517,6 +518,9 @@ class ResProject(LogCommon, models.Model):
                       'current year budget is allowed.' % fiscalyear.name))
             budget_plans = project.budget_plan_ids.\
                 filtered(lambda l: l.fiscalyear_id == fiscalyear)
+            if release_external_budget:  # Only for external charge
+                budget_plans = budget_plans.\
+                    filtered(lambda l: l.charge_type == 'external')
             if not budget_plans:
                 raise ValidationError(
                     _('Not allow to release budget for project without plan!'))
