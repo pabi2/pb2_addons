@@ -1,5 +1,37 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
+import datetime
+import numpy as np
+
+
+class AccountInvoice(models.Model):
+    _inherit = 'account.invoice'
+
+    business_day = fields.Integer(
+        string='Business Day',
+        compute='_compute_business_day',
+    )
+
+    @api.multi
+    def _compute_business_day(self):
+        holidays = self.env['calendar.event'].search(
+            [('user_id.login', '=', 'holiday')]).mapped('start_date')
+        for rec in self:
+            date_start = rec.date_receipt_billing
+            date_end = rec.date_invoice
+            if date_start and date_end:
+                if date_end >= date_start:
+                    date_end = (datetime.datetime.strptime(
+                                date_end, '%Y-%m-%d')
+                                + datetime.timedelta(days=1)) \
+                                .strftime('%Y-%m-%d')
+                else:
+                    date_start = (datetime.datetime.strptime(
+                                  date_start, '%Y-%m-%d')
+                                  + datetime.timedelta(days=1)) \
+                                  .strftime('%Y-%m-%d')
+                rec.business_day = np.busday_count(
+                    date_start, date_end, holidays=holidays)
 
 
 class XLSXReportSLAProcurement(models.TransientModel):
