@@ -107,6 +107,10 @@ class AccountInvoice(models.Model):
         default=False,
         help="When user use Create Adjustment Stock, this will be flagged",
     )
+    invoice_line = fields.One2many(
+        'account.invoice.line', 'invoice_id',
+        track_visibility='onchange',
+    )
 
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
