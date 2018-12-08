@@ -654,7 +654,8 @@
                                 'J12': 'amount_total${value or ""}#{number_format=number}',
                                 'K12': 'date_invoice${value or ""}#{number_format=date}',
                                 'L12': 'date_receipt_billing${value or ""}#{number_format=date}',
-                                'M12': '${"=NETWORKDAYS(?(L12),?(K12),Holliday!B:B)"}',
+                                'M12': 'business_day${value or 0}',
+                                #'M12': '${"=NETWORKDAYS(?(L12),?(K12),Holliday!B:B)"}',
                                 'N12': "${'=IF(?(M12)&lt;=4,\"Yes\",\"No\")'}",
                             }
                         }

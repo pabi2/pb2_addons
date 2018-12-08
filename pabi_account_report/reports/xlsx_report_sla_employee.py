@@ -24,10 +24,17 @@ class PabiCommonSupplierPaymentReportView(models.Model):
             if rec.invoice_id.source_document_id._name == 'hr.expense.expense':
                 date_start = rec.invoice_id.source_document_id.date_valid
             date_end = rec.voucher_id.payment_export_id.date_value
-            if date_end:
-                date_end = (datetime.datetime.strptime(date_end, '%Y-%m-%d')
-                            + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
             if date_start and date_end:
+                if date_end >= date_start:
+                    date_end = (datetime.datetime.strptime(
+                                date_end, '%Y-%m-%d')
+                                + datetime.timedelta(days=1)) \
+                                .strftime('%Y-%m-%d')
+                else:
+                    date_start = (datetime.datetime.strptime(
+                                  date_start, '%Y-%m-%d')
+                                  + datetime.timedelta(days=1)) \
+                                  .strftime('%Y-%m-%d')
                 rec.business_day = np.busday_count(
                     date_start, date_end, holidays=holidays)
 
