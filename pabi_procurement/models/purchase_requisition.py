@@ -551,6 +551,16 @@ class PurchaseRequisition(models.Model):
         return True
 
     @api.multi
+    def button_verified(self):
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        self.set_verification_info()
+        result = self.send_pbweb_requisition()
+        if result.get('success', False):
+            self.signal_workflow('verified')
+        return True
+
+    @api.multi
     def tender_in_progress(self):
         for requisition in self:
             requisition._check_product_type()
