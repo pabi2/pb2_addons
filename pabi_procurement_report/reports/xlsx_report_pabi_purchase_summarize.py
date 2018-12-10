@@ -195,6 +195,9 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
     partner_category_name = fields.Char(
         string='Supplier Cat',
     )
+    responsible_name = fields.Char(
+        string='Responsible Name',
+    )
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -277,7 +280,8 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         from res_partner_category rpc
 	    LEFT JOIN res_partner rp on rp.category_id = rpc.id
 	    WHERE rp.id = selected_po.partner_id
-        ) as partner_category_name
+        ) as partner_category_name,
+        '' as responsible_name
         FROM purchase_requisition pd
         LEFT JOIN operating_unit ou
         ON ou.id = pd.operating_unit_id
@@ -295,4 +299,5 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         GROUP BY pd.id, ou.id, po.name,pd.name, pd.objective, pd.amount_total, pm.name,
             selected_po.partner_id, selected_po.amount_total, po.partner_id,selected_po.date_order,
         selected_po.id
+        ORDER BY ou.name,po.name
         )""" % (self._table, ))
