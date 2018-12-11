@@ -39,9 +39,8 @@
         <!-- Validate CFB Amount VS Quotation Amount -->
         <record id="purchase_requisition.act_open" model="workflow.activity">
             <field name="action">
-                set_verification_info()
-                send_pbweb_requisition()
-	           	tender_open()</field>
+	           	tender_open()
+            </field>
         </record>
         <record id="purchase_requisition.act_cancel" model="workflow.activity">
             <field name="action">
