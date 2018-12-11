@@ -556,8 +556,9 @@ class PurchaseRequisition(models.Model):
             'This option should only be used for a single id at a time.'
         self.set_verification_info()
         result = self.send_pbweb_requisition()
-        if result.get('success', False):
-            self.signal_workflow('verified')
+        if result:
+            if result.get('success', False):
+                self.signal_workflow('verified')
         return True
 
     @api.multi
