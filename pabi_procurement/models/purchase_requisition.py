@@ -489,8 +489,8 @@ class PurchaseRequisition(models.Model):
     @api.multi
     def send_pbweb_requisition(self):
         PWInterface = self.env['purchase.web.interface']
-        PWInterface.send_pbweb_requisition(self)
-        return True
+        res = PWInterface.send_pbweb_requisition(self)
+        return res
 
     @api.multi
     def send_pbweb_requisition_cancel(self):
