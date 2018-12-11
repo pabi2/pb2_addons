@@ -281,7 +281,15 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
 	    LEFT JOIN res_partner rp on rp.category_id = rpc.id
 	    WHERE rp.id = selected_po.partner_id
         ) as partner_category_name,
-        '' as responsible_name
+        CONCAT(
+        COALESCE((SELECT value FROM ir_translation it
+        WHERE it.res_id = he.title_id AND it.name LIKE 'res.partner.title,name') || ' ', ''),
+        (SELECT value FROM ir_translation it WHERE
+        res_id = he.id AND it.name LIKE 'hr.employee,first_name' limit 1),
+        ' ',
+        (SELECT value FROM ir_translation it WHERE
+        res_id = he.id AND it.name LIKE 'hr.employee,last_name' limit 1)
+        ) as responsible_name
         FROM purchase_requisition pd
         LEFT JOIN operating_unit ou
         ON ou.id = pd.operating_unit_id
@@ -291,6 +299,10 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         ON ppr.id = pd.purchase_price_range_id
         LEFT JOIN purchase_order po
         ON po.requisition_id = pd.id
+	    LEFT JOIN res_users responsible_user
+	    ON responsible_user.id = po.create_uid
+	    LEFT JOIN hr_employee he
+	    aON he.employee_code = responsible_user.login
         LEFT join purchase_order selected_po
         ON selected_po.requisition_id = pd.id AND
             selected_po.order_type LIKE 'purchase_order' AND
@@ -298,6 +310,6 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         WHERE po.order_type = 'purchase_order'
         GROUP BY pd.id, ou.id, po.name,pd.name, pd.objective, pd.amount_total, pm.name,
             selected_po.partner_id, selected_po.amount_total, po.partner_id,selected_po.date_order,
-        selected_po.id
+	    selected_po.id,he.title_id,he.id
         ORDER BY ou.name,po.name
         )""" % (self._table, ))
