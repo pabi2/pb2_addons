@@ -518,6 +518,7 @@ class ResProject(LogCommon, models.Model):
                       'current year budget is allowed.' % fiscalyear.name))
             budget_plans = project.budget_plan_ids.\
                 filtered(lambda l: l.fiscalyear_id == fiscalyear)
+            budget_plans.write({'released_amount': 0.0})  # Set zero
             if release_external_budget:  # Only for external charge
                 budget_plans = budget_plans.\
                     filtered(lambda l: l.charge_type == 'external')
@@ -530,7 +531,6 @@ class ResProject(LogCommon, models.Model):
                     _('Releasing budget (%s) > planned (%s)!' %
                       ('{:,.2f}'.format(released_amount),
                        '{:,.2f}'.format(planned_amount))))
-            budget_plans.write({'released_amount': 0.0})  # Set zero
             remaining = released_amount
             update_vals = []
             for budget_plan in budget_plans:
