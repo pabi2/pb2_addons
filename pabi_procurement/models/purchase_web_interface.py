@@ -429,7 +429,12 @@ class PurchaseWebInterface(models.Model):
             send_act = "C2"
         else:
             send_act = "X2"
-        result = alfresco.req.action(request_name, send_act, user_name)
+        try:
+            result = alfresco.req.action(request_name, send_act, user_name)
+        except Exception:
+            raise ValidationError(
+                _("Can't send data to PabiWeb : PRWeb Authentication Failed")
+            )
         if not result['success']:
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))
