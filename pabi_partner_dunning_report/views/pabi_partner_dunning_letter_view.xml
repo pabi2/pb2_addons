@@ -37,6 +37,7 @@
 								<field name="partner_id"/>
 								<field name="subject"/>
 								<field name="to_whom_title"/>
+								<field name="validate_user_id"/>
 							</group>
 							<group>
 								<field name="date_letter"/>

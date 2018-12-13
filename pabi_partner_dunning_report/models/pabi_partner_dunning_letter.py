@@ -63,6 +63,10 @@ class PABIPartnerDunningLetter(models.Model):
         'letter_id',
         string='Dunning Lines'
     )
+    validate_user_id = fields.Many2one(
+        'res.users',
+        string='Validated By',
+    )
     # Printing Text
     letter_header = fields.Html(
         string='Header',
