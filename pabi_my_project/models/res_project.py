@@ -933,10 +933,36 @@ class ResProjectBudgetSummary(models.Model):
     def init(self, cr):
 
         _sql = """
-            select min(id) as id, project_id, fiscalyear_id, budget_method,
-                sum(m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11+m12) as planned_amount,
-                sum(released_amount) as released_amount
-            from res_project_budget_plan
+            select min(p.id) as id, project_id, fiscalyear_id, budget_method,
+              sum(
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m1 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m2 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m3 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m4 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m5 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m6 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m7 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m8 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m9 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m10 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m11 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m12 end
+            ) as planned_amount,
+            sum(released_amount) as released_amount
+            from res_project_budget_plan p
+            join account_fiscalyear f on p.fiscalyear_id = f.id
             group by project_id, fiscalyear_id, budget_method
         """
 
