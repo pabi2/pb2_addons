@@ -417,6 +417,12 @@
                             </p>
                         </t>
                     </t>
+                    <div class="last-page line_height">
+                        <t t-set="phone" t-value="o.create_uid.partner_id.phone"/>
+                        ฝ่ายการเงินและบัญชี <br/>
+                        โทร. <t t-if="phone"><t t-esc="phone[0:1]"/> <t t-esc="phone[1:5]"/> <t t-esc="phone[5:9]"/> <t t-esc="phone[9:12]"/> <t t-esc="phone[12:]"/></t><br/>
+                        email: ar@nstda.or.th<br/>
+                    </div>
                 </div>
             </t>
         </template>
@@ -424,11 +430,11 @@
         <!-- Layout Page Footer -->
         <template id="customer_dunning_letter_layout_footer">
             <div class="row footer footer_report_customer_dunning_letter">
-                <div class="last-page line_height">
+                <!-- <div class="last-page line_height">
                     ฝ่ายการเงินและบัญชี <br/>
                     โทร. 0 2564 7000 ต่อ 71317<br/>
                     email: ar@nstda.or.th<br/>
-                </div>
+                </div> -->
                 <hr style="margin-bottom: 5px; margin-top: 5px;"/>
                 <div class="row">
                     <div class="col-xs-6 right_report_customer_dunning_letter line_height">
