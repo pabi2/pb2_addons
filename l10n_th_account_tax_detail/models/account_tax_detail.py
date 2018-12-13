@@ -330,7 +330,11 @@ class AccountTaxDetail(models.Model):
                     company = invoice.company_id
                 elif rec.voucher_tax_id:
                     voucher = rec.voucher_tax_id.voucher_id
-                    rec.report_period_id = voucher.period_id
+                    if voucher.recognize_vat_move_id:
+                        rec.report_period_id = \
+                            voucher.recognize_vat_move_id.period_id
+                    else:
+                        rec.report_period_id = voucher.period_id
                     company = voucher.company_id
                 else:
                     rec.report_period_id = rec.period_id
