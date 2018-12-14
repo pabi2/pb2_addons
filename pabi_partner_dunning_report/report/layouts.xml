@@ -89,7 +89,7 @@
                                 <t t-if="o.to_whom_title">
                                     <span><t t-esc="o.to_whom_title"/><br/></span>
                                 </t>
-                                <span><t t-if="o.partner_id.name"/><br/></span>
+                                <span><t t-esc="o.partner_id.name"/><br/></span>
                                 <t t-if="o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip">
                                     <span>
                                         <t t-esc="' '.join(list(filter(lambda l: l != False, [o.partner_id.street, o.partner_id.street2, o.partner_id.township_id.name, o.partner_id.district_id.name, o.partner_id.province_id.name, o.partner_id.zip])))"/>
