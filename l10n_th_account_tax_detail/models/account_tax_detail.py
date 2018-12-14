@@ -338,6 +338,9 @@ class AccountTaxDetail(models.Model):
                     company = voucher.company_id
                 else:
                     rec.report_period_id = rec.period_id
+                # Make sure report_period is not before tax period
+                if rec.report_period_id.date_start < rec.period_id.date_start:
+                    rec.report_period_id = rec.period_id
                 # Compute by currency
                 if rec.currency_id:  # to company currency
                     company_currency = company.currency_id
