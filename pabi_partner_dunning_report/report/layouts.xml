@@ -89,16 +89,7 @@
                                 <t t-if="o.to_whom_title">
                                     <span><t t-esc="o.to_whom_title"/><br/></span>
                                 </t>
-                                <span>
-                                    <t t-if="o.partner_id.is_company">
-                                        <t t-esc="'ผู้จัดการฝ่ายบัญชีและการเงิน'"/><br/>
-                                        <t t-esc="o.partner_id.name"/>
-                                    </t>
-                                    <t t-if="not o.partner_id.is_company">
-                                        <t t-esc="o.partner_id.name"/>
-                                    </t>
-                                    <br/>
-                                </span>
+                                <span><t t-if="o.partner_id.name"/><br/></span>
                                 <t t-if="o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip">
                                     <span>
                                         <t t-esc="' '.join(list(filter(lambda l: l != False, [o.partner_id.street, o.partner_id.street2, o.partner_id.township_id.name, o.partner_id.district_id.name, o.partner_id.province_id.name, o.partner_id.zip])))"/>
@@ -418,9 +409,8 @@
                         </t>
                     </t>
                     <div class="last-page line_height">
-                        <t t-set="phone" t-value="o.create_uid.partner_id.phone"/>
                         ฝ่ายการเงินและบัญชี <br/>
-                        โทร. <t t-if="phone"><t t-esc="phone[0:1]"/> <t t-esc="phone[1:5]"/> <t t-esc="phone[5:9]"/> <t t-esc="phone[9:12]"/> <t t-esc="phone[12:]"/></t><br/>
+                        โทร. <span t-esc="o.create_uid.partner_id.phone"/><br/>
                         email: ar@nstda.or.th<br/>
                     </div>
                 </div>
