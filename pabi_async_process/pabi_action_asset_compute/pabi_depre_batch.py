@@ -6,7 +6,7 @@ from openerp import tools
 from openerp.exceptions import RedirectWarning
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
-from openerp.addons.connector.exception import FailedJobError
+from openerp.addons.connector.exception import RetryableJobError
 
 _logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ def action_post_asset_depre_batch(session, model_name, res_id):
                                                 session.uid, res_id)
         return {'batch_id': batch.id}
     except Exception, e:
-        raise FailedJobError(e)
+        raise RetryableJobError(e)
 
 
 class PabiAssetDepreBatch(models.Model):

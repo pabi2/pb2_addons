@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, fields, _
 from openerp.exceptions import RedirectWarning
+
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
-from openerp.addons.connector.exception import FailedJobError
+from openerp.addons.connector.exception import RetryableJobError
 
 
 def related_sale_order(session, thejob):
@@ -21,16 +22,15 @@ def related_sale_order(session, thejob):
 
 @job
 @related_action(action=related_sale_order)
-def action_sale_create_invoice(session, model_name, res_id):
+def action_sale_manual_invoice(session, model_name, res_id):
     try:
         session.pool[model_name].\
-            action_invoice_create(session.cr, session.uid,
-                                  [res_id], session.context)
+            manual_invoice(session.cr, session.uid, [res_id], session.context)
         sale = session.pool[model_name].browse(session.cr, session.uid, res_id)
         invoice_ids = [x.id for x in sale.invoice_ids]
         return {'invoice_ids': invoice_ids}
     except Exception, e:
-        raise FailedJobError(e)
+        raise RetryableJobError(e)
 
 
 class SaleOrder(models.Model):
@@ -54,7 +54,7 @@ class SaleOrder(models.Model):
     def _compute_job_uuid(self):
         for rec in self:
             task_name = "%s('%s', %s)" % \
-                ('action_sale_create_invoice', self._name, rec.id)
+                ('action_sale_manual_invoice', self._name, rec.id)
             jobs = self.env['queue.job'].search([
                 ('func_string', 'like', task_name),
                 ('state', '!=', 'done')],
@@ -64,10 +64,10 @@ class SaleOrder(models.Model):
         return True
 
     @api.multi
-    def action_invoice_create(self):
+    def manual_invoice(self):
         self.ensure_one()
         if self._context.get('job_uuid', False):  # Called from @job
-            return super(SaleOrder, self).action_invoice_create()
+            return super(SaleOrder, self).manual_invoice()
         # Enqueue
         if self.use_invoice_plan and self.async_process:
             if self.job_id:
@@ -76,11 +76,11 @@ class SaleOrder(models.Model):
                 raise RedirectWarning(message, action.id, _('Go to My Jobs'))
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = '%s - Creating Invoice(s)' % self.name
-            uuid = action_sale_create_invoice.delay(
+            uuid = action_sale_manual_invoice.delay(
                 session, self._name, self.id, description=description)
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
             # Process Name
             job.process_id = self.env.ref('pabi_async_process.'
                                           'sale_invoice_plan')
         else:
-            return super(SaleOrder, self).action_invoice_create()
+            return super(SaleOrder, self).manual_invoice()
