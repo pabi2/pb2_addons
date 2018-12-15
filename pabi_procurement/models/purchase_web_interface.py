@@ -144,6 +144,16 @@ class PurchaseRequisition(models.Model):
                         'type': 'url',
                     }
                     att_file.append([0, False, attachments])
+                    if 'attachments' in af_info:
+                        for attach in af_info['attachments']:
+                            file_info = {
+                                'res_id': requisition.id,
+                                'res_model': 'purchase.requisition',
+                                'name': attach['file_name'],
+                                'url': file_prefix + attach['file_url'],
+                                'type': 'url',
+                            }
+                            att_file.append([0, False, file_info])
                     today = fields.Date.context_today(self)
                     requisition.write({
                         'doc_approve_uid': uid.id,
