@@ -139,10 +139,9 @@ class AccountInvoice(models.Model):
         return result
 
 
-class AccountInvoiceLine(models.Model):
-    _inherit = 'account.invoice.line'
-
-    @api.model
-    def create(self, vals):
-        print vals
-        return super(AccountInvoiceLine, self).create(vals)
+# class AccountInvoiceLine(models.Model):
+#     _inherit = 'account.invoice.line'
+#
+#     @api.model
+#     def create(self, vals):
+#         return super(AccountInvoiceLine, self).create(vals)

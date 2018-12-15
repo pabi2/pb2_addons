@@ -310,7 +310,6 @@ class AccountVoucher(models.Model):
         """ Auto create reversal for TT and reconcile it """
         for voucher in self:
             if voucher.type == 'payment' and not voucher.auto_recognize_vat:
-                print self._context
                 if voucher.recognize_vat_move_id and \
                         not voucher.recognize_vat_move_id.reversal_id:
                     # Recreate reversal for TT
