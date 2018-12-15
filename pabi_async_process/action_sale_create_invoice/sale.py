@@ -20,7 +20,7 @@ def related_sale_order(session, thejob):
     return action
 
 
-@job
+@job(retry_pattern={1: 0})
 @related_action(action=related_sale_order)
 def action_sale_manual_invoice(session, model_name, res_id):
     try:
