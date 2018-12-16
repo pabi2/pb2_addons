@@ -504,7 +504,9 @@ class PurchaseWorkAcceptance(models.Model):
                 fine_delta_day = fine_delta.days
                 fine_rate = self.order_id.fine_rate
                 fine_per_day = (fine_rate * 0.01) * self.order_id.amount_total
-                fine_per_day = 100.0 if 0 < fine_per_day < 100.0 \
+                fine_with_rate = fine_per_day * \
+                    self.order_id.currency_id.rate_input_silent
+                fine_per_day = 100.0 if 0 < fine_with_rate < 100.0 \
                     else fine_per_day
                 total_fine_per_day += fine_per_day
                 total_fine += -1 * fine_delta_day * fine_per_day
