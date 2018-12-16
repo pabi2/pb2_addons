@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="xlsx_report_purchase_order_line_view" model="ir.ui.view">
+            <field name="name">xlsx.report.purchase.order.line.view</field>
+            <field name="model">xlsx.report.purchase.order.line</field>
+            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='criteria']" position="inside">
+                    <group>
+                        <field name="purchase_id"/>
+                    </group>
+                    <group>
+                        <field name="limit"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_report_purchase_order_line" model="ir.actions.act_window">
+            <field name="name">PO Lines Report</field>
+            <field name="res_model">xlsx.report.purchase.order.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_report_asset_item_plan_analysis"
+          name="PO Lines Report"
+          parent="purchase.menu_purchase_form_action"
+          action="action_report_purchase_order_line"
+          sequence="1"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="import_je_split_entries" model="pabi.process">
+						<field name="name">Import JE - Split Entries</field>
+				</record>
+		</data>
+</openerp>

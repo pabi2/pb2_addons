@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory for Budget XLSX Reports -->
+        <record model="document.directory" id="dir_sample_xlsx_reports">
+            <field name="name">Sample XLSX Reports</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        # PO Lines Report
+        <record id="xlsx_report_purchase_order_line" model="ir.attachment">
+            <field name="res_model">xlsx.report.purchase.order.line</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_purchase_order_line.xlsx</field>
+            <field name="name">PO Lines Report</field>
+            <field name="parent_id" eval="ref('dir_sample_xlsx_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B3': 'purchase_id.name${value or ""}',
+                            'B4': 'limit${value or ""}',
+                        },
+                        'results': {
+                            'A7': 'order_id.display_name${value or ""}',
+                            'B7': 'name${value or ""}',
+                            'C7': 'price_subtotal#{number_format=number}',
+                        },
+                        '_TAIL_0': {
+                            'B7': '${"TOTAL"}#{font=bold;align=center;fill=blue}',
+                            'C7': '@{sum}#{font=bold;align=right;number_format=number}',
+                        }
+                    }
+                }
+            }
+          </field>
+        </record>
+
+    </data>
+</openerp>
