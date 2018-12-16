@@ -119,10 +119,8 @@ class AccountBudget(ChartField, models.Model):
                          'program_id': budget.program_id.id,
                          'org_id': budget.org_id.id, })
             for line in lines:
-                print line
                 res = line.\
                     _get_chained_dimension(CHART_VIEW_FIELD[budget.chart_view])
-                print res
                 line.write(res)
         return super(AccountBudget, self).budget_done()
 

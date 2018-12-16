@@ -115,6 +115,6 @@
             <field name="target">inline</field>
         </record>
 
-        <menuitem id="menu_pabi_web_config" name="PABI Web." parent="base.menu_config" sequence="100" action="action_pabi_web_config"/>
+        <menuitem id="menu_pabi_web_config" name="PABI Web." parent="base.menu_config" sequence="300" action="action_pabi_web_config"/>
     </data>
 </openerp>

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-import logging
 import logging
 from openerp import models, api, _
+from openerp.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -9,31 +10,19 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     @api.model
-    def test_generate_pos_order(self):
+    def test_generate_ic_picking(self):
         data_dict = {
-            'partner_id': u'Yot  Boontongkong',  # Any walking customer
-            'user_id': u'Administrator',  # Salesperson
-            'workflow_process_id': u'POS',  # workflow_process_id
-            'client_order_ref': u'Any reference text',  # Optional Text
-            'origin': u'Tax Document from POS',  # To be preprint num in inv
-            'order_line': [
+            'partner_id': u'Administrator',
+            'picking_type_id': u'เบิกสินค้า ค. สินค้าเบิก Internal Transfers',
+            'operating_unit_id': u'สก.',
+            'section_id': u'101018',  # Section or Project
+            'project_id': False,
+            'move_lines': [
                 {
-                    'product_id': u'ดินสอดำ',
-                    'name': u'ดินสอดำ',  # description
-                    'product_uom_qty': 1.0,
-                    'product_uom': u'หลอด',
-                    'price_unit': 100.0,
-                    'tax_id': u'S7',
-                    'discount': 10.0,
-                },
-                {
-                    'product_id': u'ดินสอดำ',
-                    'name': u'ดินสอดำ',  # description
-                    'product_uom_qty': 2.0,
-                    'product_uom': u'หลอด',
-                    'price_unit': 200.0,
-                    'tax_id': u'S7',
-                    'discount': 0.0,
+                    'name': u'จานรองแก้วดีเอ็นเอ(V)',
+                    'product_id': u'จานรองแก้วดีเอ็นเอ(V)',
+                    'product_uom_qty': 1,
+                    'product_uom': u'Box',
                 },
             ]
         }
@@ -43,16 +32,35 @@ class StockPicking(models.Model):
     def generate_ic_picking(self, data_dict):
         _logger.info('generate_ic_picking() - input: %s' % data_dict)
         try:
-            # data_dict = self._pre_process_pos_order(data_dict)
-            data_dict['order_type'] = 'sale_order'
+            # Find picking type
+            PickType = self.env['stock.picking.type']
+            picking_type = PickType.search([
+                ('name', '=', data_dict['picking_type_id']),
+                ('warehouse_id.operating_unit_id.name', '=',
+                 data_dict['operating_unit_id'])])
+            if len(picking_type) != 1:
+                raise ValidationError(_('No single picking type found!'))
+            data_dict['picking_type_id'] = picking_type.id
+            # Add source, dest
+            src_loc_id = picking_type.default_location_src_id.id
+            dest_loc_id = picking_type.default_location_dest_id.id
+            for line_dict in data_dict.get('move_lines', []):
+                line_dict.update({
+                    'invoice_state': 'none',
+                    'location_id': src_loc_id,
+                    'location_dest_id': dest_loc_id,
+                    'picking_type_id': picking_type.id,
+                    'section_id': data_dict['section_id'],
+                    'project_id': data_dict['project_id'],
+                    'product_uos_qty': line_dict['product_uom_qty'],
+                    'product_uos': line_dict['product_uom'],
+                })
             res = self.env['pabi.utils.ws'].friendly_create_data(self._name,
                                                                  data_dict)
             picking = self.browse(res['result']['id'])
-            # pos.post_process_pos_order()
-            # auto confirm oder, with async process
-            # pos.with_context(pos_async_process=False).action_button_confirm()
-            # return more data
             res['result']['name'] = picking.name
+            # Do Transfer
+            picking.validate_picking()
         except Exception, e:
             res = {
                 'is_success': False,

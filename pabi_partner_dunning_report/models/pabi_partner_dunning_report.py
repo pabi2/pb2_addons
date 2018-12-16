@@ -69,6 +69,11 @@ class PABIPartnerDunningReport(models.Model):
         string='Account Type',
         readonly=True,
     )
+    account_id = fields.Many2one(
+        'account.account',
+        string='Account',
+        readonly=True,
+    )
     validate_user_id = fields.Many2one(
         'res.users',
         # compute='_compute_validate_user_id',
@@ -125,7 +130,7 @@ class PABIPartnerDunningReport(models.Model):
             select aml.create_uid validate_user_id, aml.id,
                 aml.id as move_line_id, aml.reconcile_id as reconcile_id,
                 aml.date_maturity, aml.date, aml.partner_id, rp.category_id,
-                aa.type account_type, new_title,
+                aa.type account_type, aa.id account_id, new_title,
                 case when letter.l1 is not null then true else false end as l1,
                 letter.l1 l1_date,
                 case when letter.l2 is not null then true else false end as l2,

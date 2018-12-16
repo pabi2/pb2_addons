@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="pabi_action_do_something_view" model="ir.ui.view">
+            <field name="name">pabi.action.do.something.view</field>
+            <field name="model">pabi.action.do.something</field>
+            <field name="inherit_id" ref="pabi_utils.pabi_action_view"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='criteria']" position="inside">
+                    <group>
+                        <field name="employee_id"/>
+                    </group>
+                    <group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_pabi_action_do_something" model="ir.actions.act_window">
+            <field name="name">Do Something</field>
+            <field name="res_model">pabi.action.do.something</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'return_action': 'hr.open_module_tree_department'}</field>
+        </record>
+
+        <menuitem id="menu_do_something"
+          name="Do Something"
+          parent="hr.menu_hr_department_tree"
+          action="action_pabi_action_do_something"
+          sequence="6"/>
+
+    </data>
+</openerp>
