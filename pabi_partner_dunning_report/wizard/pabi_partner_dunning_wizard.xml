@@ -17,6 +17,12 @@
 								<field name="date_run" attrs="{'readonly': [('search_options', '=', 'today_dunning_report')]}" class="oe_inline"/>
 							</div>
 						</div>
+						<label for="id" string="Accounts"/>
+						<div>
+							<div>
+								<field name="account_ids" style="width:30%%" widget="many2many_tags"/>
+							</div>
+						</div>
 					</group>
 					<group colspan="4">
 						<p>

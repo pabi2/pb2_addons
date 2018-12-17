@@ -4,7 +4,7 @@ from ..models.common import PabiAsync
 
 from openerp.addons.connector.queue.job import job
 from openerp.addons.connector.session import ConnectorSession
-from openerp.addons.connector.exception import FailedJobError
+from openerp.addons.connector.exception import RetryableJobError
 from openerp.addons.pabi_chartfield.models.chartfield import CHART_VIEW_LIST
 
 
@@ -15,7 +15,7 @@ def action_generate_budget_plan(session, model_name, res_id):
             session.cr, session.uid, [res_id], session.context)
         return _("Budget Plan created successfully")
     except Exception as e:
-        raise FailedJobError(e)
+        raise RetryableJobError(e)
 
 
 class GenerateBudgetPlan(PabiAsync, models.TransientModel):

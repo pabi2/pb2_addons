@@ -3,7 +3,7 @@ from openerp import models, api, fields, _
 from openerp.exceptions import RedirectWarning, ValidationError
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
-from openerp.addons.connector.exception import FailedJobError
+from openerp.addons.connector.exception import RetryableJobError
 
 
 def related_stock_picking(session, thejob):
@@ -29,7 +29,7 @@ def action_do_transfer(session, model_name, res_id):
                                                   session.uid, res_id)
         return {'picking_id': picking.id}
     except Exception, e:
-        raise FailedJobError(e)
+        raise RetryableJobError(e)
 
 
 class StockPicking(models.Model):

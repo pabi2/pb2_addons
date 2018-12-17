@@ -4,7 +4,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
-from openerp.addons.connector.exception import FailedJobError
+from openerp.addons.connector.exception import RetryableJobError
 
 
 def related_result(session, thejob):
@@ -47,7 +47,7 @@ def pabi_action_job(session, model_name, func_name, kwargs, return_action):
         result = result_msg or _('Successfully execute process')
         return result
     except Exception, e:
-        raise FailedJobError(e)
+        raise RetryableJobError(e)
 
 
 class PabiAction(models.AbstractModel):

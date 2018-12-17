@@ -85,6 +85,7 @@
 						<filter string="Category" name="groupby_category" context="{'group_by':'category_id'}"/>
 						<filter string="Partner" name="groupby_partner" context="{'group_by':'partner_id'}"/>
 						<filter string="Validator" name="groupby_validate_user_id" context="{'group_by':'validate_user_id'}"/>
+						<filter string="Account" name="groupby_account_id" context="{'group_by': 'account_id'}"/>
 					</group>
 				</search>
 			</field>

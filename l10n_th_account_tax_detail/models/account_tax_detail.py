@@ -183,6 +183,7 @@ class AccountTaxDetail(models.Model):
     ref_move_id = fields.Many2one(
         'account.move',
         string='Ref Journal Entry',
+        ondelete='restrict',
         help="Referene to move_id of either Invoice / Payment / Account Move",
     )
     _sql_constraints = [
@@ -329,9 +330,16 @@ class AccountTaxDetail(models.Model):
                     company = invoice.company_id
                 elif rec.voucher_tax_id:
                     voucher = rec.voucher_tax_id.voucher_id
-                    rec.report_period_id = voucher.period_id
+                    if voucher.recognize_vat_move_id:
+                        rec.report_period_id = \
+                            voucher.recognize_vat_move_id.period_id
+                    else:
+                        rec.report_period_id = voucher.period_id
                     company = voucher.company_id
                 else:
+                    rec.report_period_id = rec.period_id
+                # Make sure report_period is not before tax period
+                if rec.report_period_id.date_start < rec.period_id.date_start:
                     rec.report_period_id = rec.period_id
                 # Compute by currency
                 if rec.currency_id:  # to company currency

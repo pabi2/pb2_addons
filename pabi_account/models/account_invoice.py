@@ -107,6 +107,10 @@ class AccountInvoice(models.Model):
         default=False,
         help="When user use Create Adjustment Stock, this will be flagged",
     )
+    invoice_line = fields.One2many(
+        'account.invoice.line', 'invoice_id',
+        track_visibility='onchange',
+    )
 
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
@@ -152,11 +156,9 @@ class AccountInvoice(models.Model):
     def open_stock_adjust_entries(self):
         self.ensure_one()
         purchase_lines = self.invoice_line.mapped('purchase_line_id')
-        print purchase_lines
         # Find only stock moves with symbol ~> and <~, these are adjustments
         pickings = purchase_lines.mapped('move_ids').\
             mapped('picking_id').mapped('name')
-        print pickings
         if not pickings:
             raise ValidationError(
                 _('Cannot find related stock adjustment entries!'))

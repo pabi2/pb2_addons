@@ -88,7 +88,8 @@
                 </xpath>
                 <xpath expr="//button[@name='sent_suppliers']" position="after">
                     <button name="to_verify" states="in_progress" string="Send to Verify" class="oe_highlight"/>
-                    <button name="verified" states="verify" string="Verify" groups="pabi_procurement.group_purchase_requisition_verify" class="oe_highlight"/>
+                    <button name="verified" states="verify" string="Verify" groups="pabi_procurement.group_purchase_requisition_verify" class="oe_highlight" invisible="1"/>
+                    <button name="button_verified" type="object" states="verify" string="Verify" groups="pabi_procurement.group_purchase_requisition_verify" class="oe_highlight"/>
                     <button name="%(action_requisition_reject)d" type="action" groups="pabi_procurement.group_purchase_requisition_verify" states="verify" string="Reject"/>
                     <button name="print_requisition_with_condition" type="object" string="View PD"/>
                     <button name="print_approval_report" type="object" string="View Approval Report"/>

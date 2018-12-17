@@ -175,6 +175,13 @@ class AccountBudget(models.Model):
                 rec.budget_expense_line_invest_asset.mapped('invest_asset_id')
             assets.with_context(
                 {'fiscalyear_id': rec.fiscalyear_id.id}).generate_code()
+        # For unit based, auto line when no line
+        for rec in self:
+            if rec.chart_view == 'unit_base':
+                if not rec.budget_line_ids:
+                    ag = self.env.user.company_id.default_ag_unit_base_id
+                    default_line = {'activity_group_id': ag.id, }
+                    rec.write({'budget_line_ids': [(0, 0, default_line)]})
         return super(AccountBudget, self).budget_done()
 
 
