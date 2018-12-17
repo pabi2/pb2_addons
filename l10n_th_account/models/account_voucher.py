@@ -678,9 +678,16 @@ class AccountVoucher(CommonVoucher, models.Model):
                 })
                 if journal.entry_posted and move.state != 'posted':
                     move.post()
-            # Call just to by pass in hook, but still benefit from others
-            super(AccountVoucher,
-                  self.with_context(bypass=True)).action_move_line_create()
+                # Call just to by pass in hook, but still benefit from others
+                super(AccountVoucher, voucher.with_context(bypass=True)).\
+                    action_move_line_create()
+                # This seem not necessary, but just ensure the consistency
+                self._cr.execute("""
+                    update account_move_line ml set (date, period_id) = (
+                        select date, period_id from account_move
+                        where id = ml.move_id) where move_id = %s
+                """, (move.id, ))
+            # --
         else:
             super(AccountVoucher, self).action_move_line_create()
         return True

@@ -3,7 +3,7 @@ from openerp import models, api, fields, _
 from openerp.exceptions import RedirectWarning
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
-from openerp.addons.connector.exception import FailedJobError
+from openerp.addons.connector.exception import RetryableJobError
 
 
 def related_purchase_order(session, thejob):
@@ -31,7 +31,7 @@ def action_purchase_create_invoice(session, model_name, res_id):
         invoice_ids = [x.id for x in purchase.invoice_ids]
         return {'invoice_ids': invoice_ids}
     except Exception, e:
-        raise FailedJobError(e)
+        raise RetryableJobError(e)
 
 
 class PurchaseOrder(models.Model):

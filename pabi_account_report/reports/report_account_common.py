@@ -234,8 +234,23 @@ class ReportAccountCommon(models.AbstractModel):
         raise ValidationError(_('Not implemented.'))
 
 
-class FieldReportAccountMove(object):
-    # For Report Only
+# class FieldReportAccountMove(object):
+#     # For Report Only
+#     prefix_doctype = fields.Char(
+#         string='Prefix Document Type',
+#         compute='_compute_prefix_doctype',
+#     )
+#
+#     @api.multi
+#     def _compute_prefix_doctype(self):
+#         for rec in self:
+#             rec.prefix_doctype = PREFIX_DOCTYPE.get(rec.doctype, False)
+
+
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    # For report only
     prefix_doctype = fields.Char(
         string='Prefix Document Type',
         compute='_compute_prefix_doctype',
@@ -244,15 +259,30 @@ class FieldReportAccountMove(object):
     @api.multi
     def _compute_prefix_doctype(self):
         for rec in self:
-            rec.prefix_doctype = PREFIX_DOCTYPE.get(rec.doctype, False)
+            prefix_doctype = rec.name[0:3]
+            if prefix_doctype[-1] in ['0', '1', '2', '3', '4', '5', '6', '7',
+                                      '8', '9', '/', '.', '-']:
+                prefix_doctype = rec.name[0:2]
+            rec.prefix_doctype = prefix_doctype
 
 
-class AccountMove(FieldReportAccountMove, models.Model):
-    _inherit = 'account.move'
-
-
-class AccountMoveLine(FieldReportAccountMove, models.Model):
+class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
+
+    # For report only
+    prefix_doctype = fields.Char(
+        string='Prefix Document Type',
+        compute='_compute_prefix_doctype',
+    )
+
+    @api.multi
+    def _compute_prefix_doctype(self):
+        for rec in self:
+            prefix_doctype = rec.move_id.name[0:3]
+            if prefix_doctype[-1] in ['0', '1', '2', '3', '4', '5', '6', '7',
+                                      '8', '9', '/', '.', '-']:
+                prefix_doctype = rec.move_id.name[0:2]
+            rec.prefix_doctype = prefix_doctype
 
 
 class PabiCommonAccountReportView(models.Model):

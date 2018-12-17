@@ -489,8 +489,8 @@ class PurchaseRequisition(models.Model):
     @api.multi
     def send_pbweb_requisition(self):
         PWInterface = self.env['purchase.web.interface']
-        PWInterface.send_pbweb_requisition(self)
-        return True
+        res = PWInterface.send_pbweb_requisition(self)
+        return res
 
     @api.multi
     def send_pbweb_requisition_cancel(self):
@@ -548,6 +548,17 @@ class PurchaseRequisition(models.Model):
         self.set_verification_info()
         self.send_pbweb_requisition()
         self.tender_open()
+        return True
+
+    @api.multi
+    def button_verified(self):
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        self.set_verification_info()
+        result = self.send_pbweb_requisition()
+        if result:
+            if result.get('success', False):
+                self.signal_workflow('verified')
         return True
 
     @api.multi

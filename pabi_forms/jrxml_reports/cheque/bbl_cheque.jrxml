@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="supplier_payment_ktb_cheque" language="groovy" pageWidth="842" pageHeight="380" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.3310000000000113"/>
-	<property name="ireport.x" value="333"/>
+	<property name="ireport.x" value="436"/>
 	<property name="ireport.y" value="93"/>
 	<style name="payee">
 		<box>
@@ -28,7 +28,7 @@
 		<fieldDescription><![CDATA[amount]]></fieldDescription>
 	</field>
 	<field name="date" class="java.lang.String">
-		<fieldDescription><![CDATA[date]]></fieldDescription>
+		<fieldDescription><![CDATA[date_value]]></fieldDescription>
 	</field>
 	<field name="transferdebt_partner_name" class="java.lang.String">
 		<fieldDescription><![CDATA[transdebt_partner_id/display_name]]></fieldDescription>
@@ -80,9 +80,9 @@ $F{title}+$F{partner_name}]]></textFieldExpression>
 				<reportElement x="616" y="321" width="40" height="1"/>
 			</line>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="345" y="349" width="309" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="340" y="349" width="309" height="25" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="16" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>

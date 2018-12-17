@@ -56,7 +56,6 @@ class AccountInvoice(models.Model):
                     invoice.retention_return_purchase_id or False
                 if object:
                     auto_id = Auto.get_auto_reconcile_id(object)
-                    print auto_id
                     moves = invoice.move_id
                     moves.write({'auto_reconcile_id': auto_id})
                     mlines = MoveLine.search([

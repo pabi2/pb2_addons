@@ -36,7 +36,6 @@ class CreateStockAdjustWizard(models.TransientModel):
                     'from_product_id': inv_line.product_id.id,
                     'quantity': inv_line.quantity, }
             lines.append((0, 0, vals))
-        print lines
         res['adjust_product_line_ids'] = lines
         return res
 

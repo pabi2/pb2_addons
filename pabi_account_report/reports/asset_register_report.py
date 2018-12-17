@@ -52,9 +52,6 @@ class AssetRegisterView(models.AbstractModel):
     net_book_value = fields.Float(
         string='Net Book Value',
     )
-    fiscalyear_asset = fields.Integer(
-        string='Fiscalyear Asset',
-    )
     account_code = fields.Char(
         string='Account Code',
     )
@@ -300,8 +297,6 @@ class AssetRegisterReport(models.TransientModel):
             from (
                 select a.*, a.id asset_id, aap.account_asset_id,
                 aa.code as account_code, aa.name as account_name,
-                -- asset_fiscal_year
-                date_part('year', a.date_start+92) as fiscalyear_asset,
                 -- purchase_bf_current
                 case when date_part('year', a.date_start+92) !=
                  date_part('year', CURRENT_DATE+92) then a.purchase_value

@@ -5,7 +5,7 @@ from ..models.common import PabiAsync
 
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
-from openerp.addons.connector.exception import FailedJobError
+from openerp.addons.connector.exception import RetryableJobError
 
 
 def related_asset(session, thejob):
@@ -32,7 +32,7 @@ def action_compute_depreciation_board(session, model_name, res_id):
                                                 session.uid, res_id)
         return {'asset_id': asset.id}
     except Exception, e:
-        raise FailedJobError(e)
+        raise RetryableJobError(e)
 
 
 class AccountAsset(PabiAsync, models.Model):

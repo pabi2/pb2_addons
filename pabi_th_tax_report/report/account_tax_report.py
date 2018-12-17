@@ -95,6 +95,14 @@ class AccountTaxReport(models.Model):
     tax = fields.Char(
         string='Tax',
     )
+    invoice_tax_id = fields.Many2one(
+        'account.invoice.tax',
+        string='Invoice Tax',
+    )
+    voucher_tax_id = fields.Many2one(
+        'account.voucher.tax',
+        string='Voucher Tax',
+    )
 
     def _select(self):
         # res = """
@@ -134,7 +142,9 @@ class AccountTaxReport(models.Model):
             atd.base as base,
             atd.amount as amount,
             atd.taxbranch_id, number_preprint,
-            at.description as tax
+            at.description as tax,
+            atd.invoice_tax_id,
+            atd.voucher_tax_id
         """
         return res
 

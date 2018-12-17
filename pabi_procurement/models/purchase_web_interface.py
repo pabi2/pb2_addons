@@ -144,6 +144,16 @@ class PurchaseRequisition(models.Model):
                         'type': 'url',
                     }
                     att_file.append([0, False, attachments])
+                    if 'attachments' in af_info:
+                        for attach in af_info['attachments']:
+                            file_info = {
+                                'res_id': requisition.id,
+                                'res_model': 'purchase.requisition',
+                                'name': attach['file_name'],
+                                'url': file_prefix + attach['file_url'],
+                                'type': 'url',
+                            }
+                            att_file.append([0, False, file_info])
                     today = fields.Date.context_today(self)
                     requisition.write({
                         'doc_approve_uid': uid.id,
@@ -360,17 +370,23 @@ class PurchaseWebInterface(models.Model):
                 _("No employee data for user %s") % request_usr.login
             )
         attachment = []
+        name_check_list = []
         for pd_att in requisition.attachment_ids:
             if '_main_form.pdf' in pd_att.name:
                 continue
             url = ""
             if pd_att.url:
                 url = pd_att.url.replace(file_prefix, "")
+            file_name = self.check_pdf_extension(pd_att.name)
+            file_name = file_name.replace(" ", "_")
+            if file_name in name_check_list:
+                file_name = "1_" + file_name
+            name_check_list.append(file_name)
             pd_attach = {
-                'name': self.check_pdf_extension(pd_att.name),
+                'name': file_name,
                 'content': pd_att.datas or '',
                 'url': url,
-                'desc': pd_att.description,
+                'desc': pd_att.description or '',
             }
             attachment.append(pd_attach)
         pr_name = ''
@@ -393,7 +409,7 @@ class PurchaseWebInterface(models.Model):
             'doc': {
                 'name': self.check_pdf_extension(doc_name),
                 'content': doc,
-                'desc': doc_desc,
+                'desc': doc_desc or '',
             },
             'attachments': attachment,
         }
@@ -429,7 +445,12 @@ class PurchaseWebInterface(models.Model):
             send_act = "C2"
         else:
             send_act = "X2"
-        result = alfresco.req.action(request_name, send_act, user_name)
+        try:
+            result = alfresco.req.action(request_name, send_act, user_name)
+        except Exception:
+            raise ValidationError(
+                _("Can't send data to PabiWeb : PRWeb Authentication Failed")
+            )
         if not result['success']:
             raise ValidationError(
                 _("Can't send data to PabiWeb : %s" % (result['message'],))

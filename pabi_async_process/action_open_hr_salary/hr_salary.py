@@ -4,7 +4,7 @@ from ..models.common import PabiAsync
 
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
-from openerp.addons.connector.exception import FailedJobError
+from openerp.addons.connector.exception import RetryableJobError
 
 
 def related_hr_salary(session, thejob):
@@ -30,7 +30,7 @@ def action_open_hr_salary(session, model_name, res_id):
                                                  res_id)
         return {'salary_id': salary.id}
     except Exception, e:
-        raise FailedJobError(e)
+        raise RetryableJobError(e)
 
 
 class HRSalaryExpense(PabiAsync, models.Model):

@@ -2,8 +2,8 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="work_acceptance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true">
 	<property name="OPENERP_RELATIONS" value="[&quot;acceptance_line_ids&quot;,]"/>
 	<property name="ireport.zoom" value="1.4615378250000255"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="224"/>
+	<property name="ireport.y" value="80"/>
 	<subDataset name="po_committee">
 		<parameter name="ids" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -321,7 +321,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 		</band>
 	</background>
 	<pageHeader>
-		<band height="174" splitType="Stretch">
+		<band height="189" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="11" width="555" height="40"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
@@ -420,14 +420,14 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<text><![CDATA[วันที่สิ้นสุด : ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="257" y="135" width="211" height="22"/>
+				<reportElement x="257" y="151" width="211" height="22"/>
 				<textElement textAlignment="Left" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ใบกำกับภาษี/ใบส่งของ/ใบแจ้งหนี้ : ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="362" y="151" width="96" height="22"/>
+				<reportElement x="362" y="167" width="96" height="22"/>
 				<textElement textAlignment="Left" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -476,28 +476,28 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{contract_end_date}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="378" y="135" width="156" height="22"/>
+				<reportElement x="378" y="151" width="156" height="22"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_no}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="257" y="151" width="92" height="22"/>
+				<reportElement x="257" y="167" width="92" height="22"/>
 				<textElement textAlignment="Left" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[วันที่ใบแจ้งหนี้ : ]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="313" y="151" width="220" height="22"/>
+				<reportElement x="313" y="167" width="220" height="22"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{invoice_date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="409" y="151" width="273" height="22"/>
+				<reportElement x="409" y="167" width="273" height="22"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>

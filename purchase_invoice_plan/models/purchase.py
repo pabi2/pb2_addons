@@ -345,7 +345,6 @@ class PurchaseOrder(models.Model):
         for order in self:
             stock_products = order.order_line.mapped('product_id').\
                 filtered(lambda p: p.type != 'service')
-            print order.invoice_mode
             if order.invoice_mode == 'change_price' and \
                     len(stock_products) > 0:
                 raise ValidationError(_('PO with stockable products, '

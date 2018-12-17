@@ -3,7 +3,7 @@ from openerp import models, api, fields, _
 from openerp.exceptions import RedirectWarning
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
-from openerp.addons.connector.exception import FailedJobError
+from openerp.addons.connector.exception import RetryableJobError
 
 
 def related_pos_sale_order(session, thejob):
@@ -28,7 +28,7 @@ def action_confirm_pos_order(session, model_name, res_id):
         pos = session.pool[model_name].browse(session.cr, session.uid, res_id)
         return {'pos_id': pos.id}
     except Exception, e:
-        raise FailedJobError(e)
+        raise RetryableJobError(e)
 
 
 class SaleOrder(models.Model):
