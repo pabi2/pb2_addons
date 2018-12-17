@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="withholding_cert" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0000000000000095"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="361"/>
+	<property name="ireport.y" value="384"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir") + "/../../../pb2_generic/l10n_th_account/report/"]]></defaultValueExpression>
 	</parameter>
@@ -164,7 +164,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(10, 11) : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement isPrintRepeatedValues="false" x="371" y="228" width="17" height="25"/>
+				<reportElement x="371" y="228" width="17" height="25"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" pdfFontName="THSarabun.ttf"/>
 				</textElement>
@@ -325,7 +325,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_address}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement isPrintRepeatedValues="false" x="444" y="211" width="17" height="25"/>
+				<reportElement x="444" y="211" width="17" height="25"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" pdfFontName="THSarabun.ttf"/>
 				</textElement>
@@ -429,7 +429,7 @@
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{type_6_base}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="468" y="0" width="87" height="28"/>
+				<reportElement x="468" y="6" width="87" height="28"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="18" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -450,14 +450,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{sequence_display}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement isPrintRepeatedValues="false" x="80" y="660" width="17" height="25"/>
+				<reportElement x="80" y="660" width="17" height="25"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{withholding}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement isPrintRepeatedValues="false" x="268" y="660" width="18" height="25"/>
+				<reportElement x="268" y="660" width="18" height="25"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" pdfFontName="THSarabun.ttf"/>
 				</textElement>
