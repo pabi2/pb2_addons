@@ -88,7 +88,10 @@
                             <t t-if="o.to_whom_title">
                                 <span><t t-esc="o.to_whom_title"/><br/></span>
                             </t>
-                            <span><t t-esc="o.partner_id.name"/><br/></span>
+                            <t t-if="o.partner_id.category_id.id in [25, 26, 27]">
+                                <span>ผู้จัดการฝ่ายบัญชีและการเงิน</span><br/>
+                            </t>
+                            <span><t t-esc="' '.join(list(filter(lambda l: l != False, [o.partner_id.title.name, o.partner_id.name])))"/><br/></span>
                             <t t-if="o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip">
                                 <span>
                                     <t t-esc="' '.join(list(filter(lambda l: l != False, [o.partner_id.street, o.partner_id.street2, o.partner_id.township_id.name, o.partner_id.district_id.name, o.partner_id.province_id.name, o.partner_id.zip])))"/>
@@ -102,7 +105,7 @@
                 </div>
                 <t t-if="o.letter_type == 'l1'">
                     <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
-                        ตามที่ท่านได้รับบริการจากสำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาตินั้น ปรากฏว่า ท่านมียอดหนี้คงค้าง ณ วันที่ <t t-esc='full_report_date'/> เป็นจำนวนเงินทั้งสิ้น <t t-esc="'{0:,.2f}'.format(int(amount_total))"/> บาท ตามรายละเอียดดังนี้
+                        ตามที่ท่านได้รับบริการจากสำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาตินั้น ปรากฏว่า ท่านมียอดหนี้คงค้าง ณ วันที่ <t t-esc='full_report_date'/> เป็นจำนวนเงินทั้งสิ้น <t t-esc="'{0:,.2f}'.format(amount_total)"/> บาท ตามรายละเอียดดังนี้
                     </p>
                 </t>
                 <t t-if="o.letter_type == 'l2'">
@@ -112,7 +115,7 @@
                 </t>
                 <t t-if="o.letter_type == 'l3'">
                     <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
-                        ตามที่ <t t-esc="o.partner_id.name"/> มีหนี้คงค้างชําระกับสํานักงานฯ จํานวนเงิน <t t-esc="'{0:,.2f}'.format(int(amount_total))"/> บาท ซึ่งสํานักงานฯ ได้มีหนังสือติดตามหนี้ทวงถามไปยังบริษัทฯ แล้ว 2 ครั้ง ดังปรากฎในเอกสารแนบท้ายนี้ ขณะนี้สํานักงานฯ ยังมิได้รับชําระหนี้แต่อย่างใด โดยมีรายละเอียดดังนี้
+                        ตามที่ <t t-esc="o.partner_id.name"/> มีหนี้คงค้างชําระกับสํานักงานฯ จํานวนเงิน <t t-esc="'{0:,.2f}'.format(amount_total)"/> บาท ซึ่งสํานักงานฯ ได้มีหนังสือติดตามหนี้ทวงถามไปยังบริษัทฯ แล้ว 2 ครั้ง ดังปรากฎในเอกสารแนบท้ายนี้ ขณะนี้สํานักงานฯ ยังมิได้รับชําระหนี้แต่อย่างใด โดยมีรายละเอียดดังนี้
                     </p>
                 </t>
                 <table class="center_report_customer_dunning_letter">
@@ -131,14 +134,21 @@
                             <td class="line_table"><t t-esc="ids.move_line_id.ref"/></td>
                             <td class="line_table"><t t-esc="full_date_invoice"/></td>
                             <td class="line_table"><t t-esc="full_date_due"/></td>
-                            <td class="line_table right_report_customer_dunning_letter"><t t-esc="'{0:,.2f}'.format(int(ids.amount_residual))"/></td>
+                            <td class="line_table right_report_customer_dunning_letter">
+                                <t t-if="ids.amount_residual &lt; 0">
+                                    <t t-esc="'(' + '{0:,.2f}'.format(abs(ids.amount_residual)) + ')'"/>
+                                </t>
+                                <t t-if="ids.amount_residual &gt;= 0">
+                                    <t t-esc="'{0:,.2f}'.format(abs(ids.amount_residual))"/>
+                                </t>
+                            </td>
                         </tr>
                     </t>
                     <tr>
                         <td></td>
                         <td></td>
                         <td class="line_table" style="font-weight:bold;">ยอดรวมทั้งสิ้น</td>
-                        <td class="line_table right_report_customer_dunning_letter"><t t-esc="'{0:,.2f}'.format(int(amount_total))"/></td>
+                        <td class="line_table right_report_customer_dunning_letter"><t t-esc="'{0:,.2f}'.format(amount_total)"/></td>
                     </tr>
                 </table>
                 <t t-if="o.letter_type == 'l1'">
