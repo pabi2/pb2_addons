@@ -17,6 +17,7 @@
                             <field name="account_ids" domain="[('company_id', '=', company_id), ('type', '!=', 'view')]" widget="many2many_tags"/>
                             <field name="activity_group_ids" widget="many2many_tags"/>
                             <field name="activity_ids" widget="many2many_tags"/>
+                            <field name="charge_type"/>
                         </group>
                         <group>
                             <field name="company_id" nolabel="1" colspan="4" style="visibility: hidden"/>
