@@ -9,11 +9,12 @@
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-      		<field name="context"
-                eval="{'template_fname': 'sale_order.xlsx',
-                       'template_context': {},
-                       'template_import_states': [],
-                       'lang': 'th_TH'}"/>
+      		  <field name="context">
+                {'template_fname': 'sale_order.xlsx',
+                 'template_context': {},
+                 'template_import_states': [],
+                 'lang': 'th_TH'}
+            </field>
         </record>
 
         # Import
@@ -24,10 +25,12 @@
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-       		<field name="context"
-                eval="{'template_fname': 'sale_order.xlsx',
-                       'template_context': {},
-                       'template_import_states': []}"/>
+            <field name="context">
+                {'template_fname': 'sale_order.xlsx',
+                 'template_context': {},
+                 'template_import_states': [],
+                 'lang': 'th_TH'}
+            </field>
         </record>
     </data>
 </openerp>
