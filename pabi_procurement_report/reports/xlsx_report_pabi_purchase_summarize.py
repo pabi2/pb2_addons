@@ -225,7 +225,7 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         ON linerel.purchase_requisition_line_id =rql.id
         WHERE rql.requisition_id = pd.id
         LIMIT 1
-        ) > 100000
+        ) > 500000
         THEN 
         (
         SELECT prl.price_subtotal
