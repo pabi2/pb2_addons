@@ -159,14 +159,15 @@ class PurchaseRequisition(models.Model):
                     requisition.write({
                         'doc_approve_uid': uid.id,
                         'date_doc_approve': today,
+                        'attachment_ids': att_file,
                     })
                     requisition._cr.commit()
                     for order in requisition.purchase_ids:
                         if order.order_type == 'quotation' \
                                 and order.state not in ('draft', 'cancel'):
-                            requisition.write({
-                                'attachment_ids': att_file,
-                            })
+                            # requisition.write({
+                            #     'attachment_ids': att_file,
+                            # })
                             order.action_button_convert_to_order()
                             if order.state2 != 'done' or order.state != 'done':
                                 order.write({
