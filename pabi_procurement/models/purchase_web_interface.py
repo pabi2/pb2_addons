@@ -152,6 +152,7 @@ class PurchaseRequisition(models.Model):
                                 'name': attach['file_name'],
                                 'url': file_prefix + attach['file_url'],
                                 'type': 'url',
+                                'description': attach['file_name'] or False,
                             }
                             att_file.append([0, False, file_info])
                     today = fields.Date.context_today(self)
