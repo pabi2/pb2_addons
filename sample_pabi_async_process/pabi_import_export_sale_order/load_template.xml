@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- This function is called after all ir.attachment is loaded
+            to load the file content to relevant template_ids -->
+        <function model="ir.attachment" name="load_xlsx_template">
+            <value eval="[
+                ref('sale_order_xlsx_template'),
+            ]"/>
+            <value>sample_pabi_async_process/pabi_import_export_sale_order</value>
+        </function>
+    </data>
+</openerp>
