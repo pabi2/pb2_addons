@@ -2,6 +2,10 @@
     font-family: 'THSarabunNew';
     src: url('../fonts/THSarabunNew.ttf') format('truetype');
 }
+@font-face {
+    font-family: 'Angsana';
+    src: url('../fonts/Angsana.ttf') format('truetype');
+}
 body {
     font-family: 'THSarabunNew';
 }
