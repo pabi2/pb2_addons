@@ -91,6 +91,11 @@ class XLSXReportGlProject(models.TransientModel):
         compute='_compute_count_chartfield',
         string='Budget Count',
     )
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+    )
     results = fields.Many2many(
         'account.move.line',
         string='Results',
@@ -131,6 +136,8 @@ class XLSXReportGlProject(models.TransientModel):
             dom += [('activity_group_id', 'in', self.activity_group_ids.ids)]
         if self.activity_ids:
             dom += [('activity_id', 'in', self.activity_ids.ids)]
+        if self.charge_type:
+            dom += [('charge_type', '=', self.charge_type)]
         # Filter chart view
         if self.chart_view == 'personnel':
             dom += [('org_id', '!=', False)]
