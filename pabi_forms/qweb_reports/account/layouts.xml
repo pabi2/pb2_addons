@@ -10,8 +10,8 @@
                 line-height: 20px !important;
             }
             .pabi-header, .pabi-page, .pabi-footer {
-                font-size: 16px !important;
-                /*font-family: 'Tahoma' !important;*/
+                font-size: 14px !important;
+                font-family: 'Angsana' !important;
             }
             .pabi-logo {
                 position: absolute !important;
@@ -108,7 +108,7 @@
                     </t>
                 </t>
                 <tr>
-                    <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" style="border: 0px; padding: 0px;">
+                    <td t-att-colspan="o.line_id.mapped('asset_id') and 12 or 11" style="border: 0px; padding: 0px;">
                         <table class="pabi-table-doc-header">
                             <tr>
                                 <td class="text-center pabi-col-doc-header">
@@ -149,7 +149,7 @@
         <!-- Narration -->
         <template id="account_naration_header">
             <tr>
-                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" class="pabi-text-header">
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 12 or 11" class="pabi-text-header">
                     <table style="width: 100%;">
                         <tr>
                             <td style="width: 50px;">Text:</td>
@@ -163,7 +163,7 @@
         <!-- Payment Type -->
         <template id="account_payment_type">
             <tr>
-                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" style="border: 0px; padding: 0px;">
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 12 or 11" style="border: 0px; padding: 0px;">
                     <table class="pabi-table-payment-type-header">
                         <tr>
                             <td style="width: 50%;">
@@ -229,11 +229,17 @@
         <!-- Column Header -->
         <template id="account_column_header">
             <tr>
-                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" class="text-center" style="border: 0px; padding: 0px;">AMOUNT (THB)</td>
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 12 or 11" class="text-center" style="border: 0px; padding: 0px;">AMOUNT (THB)</td>
             </tr>
             <tr>
                 <td class="text-center pabi-col-header">Activity</td>
+                <t t-if="o.doctype in ['in_invoice']">
+                    <td class="text-center pabi-col-header">Product</td>
+                </t>
                 <td class="text-center pabi-col-header">Partner</td>
+                <t t-if="o.doctype in ['adjustment']">
+                    <td class="text-center pabi-col-header">Charge Type</td>
+                </t>
                 <td class="text-center pabi-col-header">Account Code</td>
                 <td class="text-center pabi-col-header">Account Name</td>
                 <t t-if="o.line_id.mapped('asset_id')">
@@ -259,6 +265,11 @@
                         <span t-field="line.activity_rpt_id.name"/>
                     </t>
                 </td>
+                <t t-if="o.doctype in ['in_invoice']">
+                    <td class="text-center pabi-col-detail">
+                        <span t-field="line.product_id"/>
+                    </td>
+                </t>
                 <td class="pabi-col-detail">
                     <t t-if="line.account_id and line.account_id.type in ['receivable', 'payable']">
                         <t t-if="line.partner_id">
@@ -273,6 +284,11 @@
                         </t>
                     </t>
                 </td>
+                <t t-if="o.doctype in ['adjustment']">
+                    <td class="text-center pabi-col-detail">
+                        <span t-field="line.charge_type"/>
+                    </td>
+                </t>
                 <td class="text-center pabi-col-detail">
                     <t t-if="line.account_id">
                         <span t-field="line.account_id.code"/>
@@ -453,7 +469,7 @@
                         </t>
                     </div>
                     <div class="col-xs-3">
-                        <t t-if="o.doctype in ['in_invoice', 'in_refund']">
+                        <t t-if="o.doctype in ['in_invoice', 'in_refund', 'out_invoice', 'out_refund']">
                             <span>Income Tax Form: </span>
                             <t t-if="o.document_id">
                                 <span t-field="o.document_id.income_tax_form"/>
@@ -561,7 +577,7 @@
                             <t t-if="o.document_id and o.document_id.invoice_line and o.document_id.invoice_line[0].fund_id">
                                 <span class="cut-text" t-field="o.document_id.invoice_line[0].fund_id.name"/>
                             </t>
-                            <t t-if="not o.document_id">
+                            <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund'] and not o.document_id">
                                 <span class="cut-text" t-field="o.source_of_fund"/>
                                 <br/><span>Charge Type: </span>
                                 <span t-field="o.charge_type"/>
@@ -600,7 +616,7 @@
         <template id="account_summary_footer">
             <tr>
                 <td colspan="3" class="pabi-col-footer"></td>
-                <t t-if="o.line_id.mapped('asset_id')">
+                <t t-if="o.line_id.mapped('asset_id') and 12 or 11">
                     <td class="pabi-col-footer"></td>
                 </t>
                 <td class="pabi-col-footer">Total</td>
@@ -617,7 +633,7 @@
         <!-- Layout Footer 1 -->
         <template id="account_layout_footer_1">
             <tr>
-                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" style="border: 0px; padding-left: 0px; padding: 0px;">
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 12 or 11" style="border: 0px; padding-left: 0px; padding: 0px;">
                     <div class="pabi-footer">
                         <div class="row">
                             <div class="col-xs-12">
@@ -670,7 +686,7 @@
         <!-- Layout Footer 2 -->
         <template id="account_layout_footer_2">
             <tr>
-                <td t-att-colspan="o.line_id.mapped('asset_id') and 11 or 10" style="border: 0px; padding: 0px;">
+                <td t-att-colspan="o.line_id.mapped('asset_id') and 12 or 11" style="border: 0px; padding: 0px;">
                     <div class="pabi-footer">
                         <div class="row">
                             <div class="col-xs-12">
