@@ -708,7 +708,9 @@ class ChartField(object):
 
     @api.multi
     def update_related_dimension(self, vals):
+        print '-----------> %s' % vals
         res = self._get_related_dimension(vals)
+        print '----------->> %s' % res
         if res:
             self.with_context(MyModelLoopBreaker=True).write(res)
             # Fund, assign default if none
