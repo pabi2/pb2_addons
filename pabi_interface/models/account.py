@@ -32,3 +32,23 @@ class AccountMoveLine(models.Model):
         store=True,
         help="System where this interface transaction is being called",
     )
+
+
+class AccountMoveReconcile(models.Model):
+    _inherit = 'account.move.reconcile'
+
+    @api.multi
+    def reconcile_partial_check(self, type='auto'):
+        """ Only in IA document, we found problem with total,
+        so we use abs(total) < 0.0001 """
+        total = 0.0
+        for rec in self:
+            for line in rec.line_partial_ids:
+                if line.account_id.currency_id:
+                    total += line.amount_currency
+                else:
+                    total += (line.debit or 0.0) - (line.credit or 0.0)
+        if not total or abs(total) < 0.00001:
+            rec.line_partial_ids.write({'reconcile_id': rec.id,
+                                        'reconcile_partial_id': False}, )
+        return True

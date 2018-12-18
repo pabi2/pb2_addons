@@ -245,6 +245,12 @@ class AccountBudgetLine(ChartField, models.Model):
     )
 
     @api.model
+    def create(self, vals):
+        res = super(AccountBudgetLine, self).create(vals)
+        res.update_related_dimension(vals)
+        return res
+
+    @api.model
     def _get_budget_level_type_hook(self, budget_line):
         if 'chart_view' in budget_line and budget_line.chart_view:
             return budget_line.chart_view

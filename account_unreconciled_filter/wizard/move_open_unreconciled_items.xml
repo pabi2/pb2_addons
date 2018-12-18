@@ -21,11 +21,10 @@
                     <p>Open Unreconciled Items from this Journal Entry, and also target Unreconciled Items to reconcile with, as below...</p>
                     <group>
                         <group name="type">
-                            <field name="move_line_ref"/>
-                            or
-                            <field name="account_move_name"/>
-                            or
                             <field name="account_id"/>
+                            <field name="move_ids" widget='many2many_tags'/>
+                            <field name="account_move_name"/>
+                            <field name="move_line_ref"/>
                         </group>
                         <group name="extra">
                         </group>

@@ -175,6 +175,13 @@ class AccountBudget(models.Model):
                 rec.budget_expense_line_invest_asset.mapped('invest_asset_id')
             assets.with_context(
                 {'fiscalyear_id': rec.fiscalyear_id.id}).generate_code()
+        # For unit based, auto line when no line
+        for rec in self:
+            if rec.chart_view == 'unit_base':
+                if not rec.budget_line_ids:
+                    ag = self.env.user.company_id.default_ag_unit_base_id
+                    default_line = {'activity_group_id': ag.id, }
+                    rec.write({'budget_line_ids': [(0, 0, default_line)]})
         return super(AccountBudget, self).budget_done()
 
 
@@ -215,6 +222,8 @@ class AccountBudgetLine(models.Model):
         budget_lines = super(AccountBudgetLine, self)._filter_line_to_release()
         lines = budget_lines.filtered(lambda l: l.charge_type == 'external')
         if not lines:
+            budget = budget_lines and budget_lines[0].budget_id or False
             raise ValidationError(
-                _('No external expense lines for release amount'))
+                _('No external expense lines for release amount, %s') %
+                budget and budget.name or 'n/a')
         return lines

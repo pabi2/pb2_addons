@@ -60,7 +60,7 @@
                 <form string="Account Entry">
                     <header>
                         <button name="button_validate" states="draft" string="Post" type="object" class="oe_highlight" groups="account.group_account_invoice"/>
-                        <button name="button_cancel" states="posted" string="Cancel Entry" type="object" groups="account.group_account_invoice"/>
+                        <button name="button_cancel" states="posted" string="Cancel Entry" type="object" groups="account.group_account_invoice" invisible="1"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
@@ -211,7 +211,7 @@
                 <form string="Account Entry">
                     <header>
                         <button name="button_validate" states="draft" string="Post" type="object" class="oe_highlight" groups="account.group_account_invoice"/>
-                        <button name="button_cancel" states="posted" string="Cancel Entry" type="object" groups="account.group_account_invoice"/>
+                        <button name="button_cancel" states="posted" string="Cancel Entry" type="object" groups="account.group_account_invoice" invisible="1"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>

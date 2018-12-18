@@ -510,6 +510,7 @@ class ResProject(LogCommon, models.Model):
         """
         # Not current year, no budget release allowed
         current_fy = self.env['account.fiscalyear'].find()
+        release_external_budget = fiscalyear.control_ext_charge_only
         for project in self.sudo():
             if project.current_fy_release_only and current_fy != fiscalyear.id:
                 raise ValidationError(
@@ -517,6 +518,10 @@ class ResProject(LogCommon, models.Model):
                       'current year budget is allowed.' % fiscalyear.name))
             budget_plans = project.budget_plan_ids.\
                 filtered(lambda l: l.fiscalyear_id == fiscalyear)
+            budget_plans.write({'released_amount': 0.0})  # Set zero
+            if release_external_budget:  # Only for external charge
+                budget_plans = budget_plans.\
+                    filtered(lambda l: l.charge_type == 'external')
             if not budget_plans:
                 raise ValidationError(
                     _('Not allow to release budget for project without plan!'))
@@ -526,7 +531,6 @@ class ResProject(LogCommon, models.Model):
                     _('Releasing budget (%s) > planned (%s)!' %
                       ('{:,.2f}'.format(released_amount),
                        '{:,.2f}'.format(planned_amount))))
-            budget_plans.write({'released_amount': 0.0})  # Set zero
             remaining = released_amount
             update_vals = []
             for budget_plan in budget_plans:
@@ -864,6 +868,8 @@ class ResProjectBudgetPlan(models.Model):
             vals.update({'synced': False})  # Line updated
         if 'released_amount' in vals:
             for rec in self:
+                if self._context.get('ignore_lock_release', False):
+                    continue
                 if rec.project_id.lock_release and \
                         vals['released_amount'] != rec.released_amount:
                     raise ValidationError(_('Budget released is locked!'))
@@ -880,6 +886,7 @@ class ResProjectBudgetSummary(models.Model):
     _name = 'res.project.budget.summary'
     _auto = False
     _rec_name = 'fiscalyear_id'
+    _order = 'fiscalyear_id'
     _description = 'Fiscal Year summary of each phase amount'
 
     project_id = fields.Many2one(
@@ -926,10 +933,36 @@ class ResProjectBudgetSummary(models.Model):
     def init(self, cr):
 
         _sql = """
-            select min(id) as id, project_id, fiscalyear_id, budget_method,
-                sum(m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11+m12) as planned_amount,
-                sum(released_amount) as released_amount
-            from res_project_budget_plan
+            select min(p.id) as id, project_id, fiscalyear_id, budget_method,
+              sum(
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m1 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m2 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m3 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m4 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m5 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m6 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m7 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m8 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m9 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m10 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m11 end +
+                case when control_ext_charge_only = true and
+                charge_type = 'internal' then 0.0 else m12 end
+            ) as planned_amount,
+            sum(released_amount) as released_amount
+            from res_project_budget_plan p
+            join account_fiscalyear f on p.fiscalyear_id = f.id
             group by project_id, fiscalyear_id, budget_method
         """
 

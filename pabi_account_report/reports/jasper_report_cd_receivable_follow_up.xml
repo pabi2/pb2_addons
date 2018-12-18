@@ -13,6 +13,9 @@
                 <field name="fiscalyear_end_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
+                <field name="fiscalyear_end_id" position="after">
+                    <field name="groupby"/>
+                </field>
                 <field name="date_start" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
@@ -22,16 +25,17 @@
                 <field name="date_end" position="after">
                     <field name="date_report"/>
                 </field>
-                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
-                    <page string="Bank Filters">
-                        <group>
-                            <field name="bank_id"/>
-                            <field name="bank_branch_id" domain="[('bank_id', '=', bank_id)]" attrs="{'invisible': [('bank_id', '=', False)]}"/>
-                        </group>
-                    </page>
-                    <page string="Customer Filters" attrs="{'invisible': [('bank_id', '!=', False)]}">
+                <xpath expr="//notebook" position="attributes">
+                    <attribute name="attrs">{'invisible': [('groupby', '=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[@name='time_filters']" position="after">
+                    <page string="Customer CD Filters" attrs="{'invisible': [('groupby', '!=', 'groupby_borrower_partner')]}">
                         <separator string="Print only" colspan="4"/>
-                        <field name="partner_ids" domain="[('company_id', '=', company_id), ('customer', '=', True)]"/>
+                        <field name="borrower_partner_ids"/>
+                    </page>
+                    <page string="Customer (bank) Filters" attrs="{'invisible': [('groupby', '!=', 'groupby_partner')]}">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids"/>
                     </page>
                 </xpath>
             </field>

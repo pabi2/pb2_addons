@@ -145,8 +145,9 @@ class SectionBudgetTransfer(models.Model):
                     raise ValidationError(
                         _('Please verify that all budgets are unit based'))
                 # Fiscal year
-                this_fy = self.env['account.fiscalyear'].find()
-                if this_fy != trans.fiscalyear_id.id:
+                this_fy_id = self.env['account.fiscalyear'].find()
+                this_fy = self.env['account.fiscalyear'].browse(this_fy_id)
+                if this_fy.id != trans.fiscalyear_id.id:
                     raise ValidationError(
                         _('Current FY is %s, you are not allow to transfer '
                           'budget out of this fiscalyear.') % (this_fy.name))

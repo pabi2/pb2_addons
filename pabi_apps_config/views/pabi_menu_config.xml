@@ -233,5 +233,11 @@
           action="pabi_base.action_res_invest_asset"
           parent="pabi_budget_plan.menu_action_budget_plan_invest_asset" sequence="1"  groups="pabi_base.group_cooperate_budget"/>
 
+        # Hide some accounting menu
+        <menuitem name="PIT Rate" id="l10n_th_account_pit.menu_account_pit" action="l10n_th_account_pit.action_account_pit"
+            parent="menu_pabi2_config_unused_menu" sequence="50" groups="account.group_account_invoice"/>
+        <menuitem id="account.menu_account_reports" name="Financial Reports" parent="menu_pabi2_config_unused_menu" sequence="30" />
+        <menuitem id="account.menu_analytic_accounting" name="Analytic Accounting" parent="menu_pabi2_config_unused_menu" groups="analytic.group_analytic_accounting" sequence="40"/>
+
     </data>
 </openerp>

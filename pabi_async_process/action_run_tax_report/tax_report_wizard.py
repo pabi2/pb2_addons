@@ -8,7 +8,7 @@ from ..models.common import PabiAsync
 
 from openerp.addons.connector.queue.job import job
 from openerp.addons.connector.session import ConnectorSession
-from openerp.addons.connector.exception import FailedJobError
+from openerp.addons.connector.exception import RetryableJobError
 
 
 @job
@@ -48,7 +48,7 @@ def action_run_tax_report(session, data, format):
         })
         return _('Tax Report created successfully')
     except Exception, e:
-        raise FailedJobError(e)  # Queue Error
+        raise RetryableJobError(e)  # Queue Error
 
 
 class AccountTaxReportWizard(PabiAsync, models.TransientModel):

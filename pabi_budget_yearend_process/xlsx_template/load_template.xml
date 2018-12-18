@@ -2,7 +2,8 @@
 <openerp>
     <data>
         <function model="ir.attachment" name="load_xlsx_template">
-            <value eval="[ref('budget_carry_over_xlsx_template')]"/>
+            <value eval="[ref('budget_carry_over_xlsx_template'),
+                          ref('project_balance_carry_xlsx_template')]"/>
             <value>pabi_budget_yearend_process/xlsx_template</value>
         </function>
     </data>

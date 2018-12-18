@@ -229,6 +229,7 @@
                             'F12': 'released_amount',
                             'G12': 'latest_policy_amount',
                             'H12': 'policy_amount',
+                            'I12': 'check${value and "X" or ""}',
                             'J12': 'budget_id.id${value or ""}',
                             'K12': 'budget_plan_id.id${value or ""}',
                         }
@@ -266,7 +267,7 @@
                             'E4': '${time.strftime("%d/%m/%Y")}',
                             'E5': '${env.user.name or ""}',
                         },
-                        'plan_line_ids[100]': {
+                        'plan_line_ids': {
                             'B10': 'priority',
                             'C10': 'select${value and "X" or ""}',
                             'D10': 'approved${value and "X" or ""}',
@@ -323,7 +324,7 @@
                 },
                 '__IMPORT__': {
                     'Asset_Item_Plan': {
-                        'plan_line_ids[100]': {
+                        'plan_line_ids': {
                             'B10': 'priority',
                             'C10${value and True or False}': 'select',
                             'D10${value and True or False}': 'approved',
@@ -384,7 +385,7 @@
                             'C4': '${time.strftime("%d/%m/%Y")}',
                             'C5': 'user_id.name${value or ""}'
                         },
-                        'plan_expense_line_ids[20]': {
+                        'plan_expense_line_ids: {
                             'B11': 'c_or_n${value == "continue" and "ต่อเนื่อง" or "ใหม่"}',
                             'C11': 'name${value or ""}',
                             'D11': 'month_duration',
@@ -423,7 +424,7 @@
                 },
                 '__IMPORT__': {
                     'Construction Project': {
-                        'plan_expense_line_ids[20]': {
+                        'plan_expense_line_ids': {
                             'B11': 'c_or_n',
                             'C11': 'name',
                             'D11': 'month_duration',
@@ -800,6 +801,82 @@
             <field name="user_id" ref="base.user_root"/>
             <field name="ressource_id">0</field>
             <field name="group_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+
+        <!-- Unit Base Template (Budget Control) -->
+        <record id="budget_control_unit_base_xlsx_template" model="ir.attachment">
+            <field name="res_model">account.budget</field>
+            <field name="datas"></field>
+            <field name="datas_fname">budget_control_unit_base.xlsx</field>
+            <field name="name">Unit Base Template</field>
+            <field name="parent_id" eval="ref('dir_budget_control_template')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        1: {
+                            '_HEAD_': {
+                                'B3': 'creating_user_id.display_name',
+                                'B4': 'fiscalyear_id.name',
+                                'B5': 'section_id.display_name',
+                                'B6': 'budgeted_expense',
+                                'B7': 'policy_amount',
+                                'B8': 'released_amount',
+                            },
+                            'budget_expense_line_unit_base': {
+                                'A11': 'charge_type',
+                                'B11': 'income_section_id${value.code or ""}',
+                                'C11': 'income_section_id${value.name or ""}',
+                                'D11': 'fund_id.code',
+                                'E11': 'fund_id.name',
+                                'F11': 'cost_control_id${value.code or ""}',
+                                'G11': 'cost_control_id${value.name or ""}',
+                                'H11': 'activity_group_id${value.name or ""}',
+                                'I11': 'description${value or ""}',
+                                'J11': 'planned_amount',
+                                'K11': 'released_amount',
+                                'L11': 'm1',
+                                'M11': 'm2',
+                                'N11': 'm3',
+                                'O11': 'm4',
+                                'P11': 'm5',
+                                'Q11': 'm6',
+                                'R11': 'm7',
+                                'S11': 'm8',
+                                'T11': 'm9',
+                                'U11': 'm10',
+                                'V11': 'm11',
+                                'W11': 'm12',
+                            }
+                        },
+                    },
+                    '__IMPORT__': {
+                        1: {
+                            'budget_expense_line_unit_base': {
+                                'A11': 'charge_type',
+                                'B11': 'income_section_id',
+                                'D11': 'fund_id',
+                                'F11': 'cost_control_id',
+                                'H11': 'activity_group_id',
+                                'I11': 'description',
+                                'J11': 'planned_amount',
+                                'K11': 'released_amount',
+                                'L11': 'm1',
+                                'M11': 'm2',
+                                'N11': 'm3',
+                                'O11': 'm4',
+                                'P11': 'm5',
+                                'Q11': 'm6',
+                                'R11': 'm7',
+                                'S11': 'm8',
+                                'T11': 'm9',
+                                'U11': 'm10',
+                                'V11': 'm11',
+                                'W11': 'm12',
+                            }
+                        }
+                    }
+                }
+            </field>
         </record>
 
         <!-- Investment Asset Template (Budget Control) -->

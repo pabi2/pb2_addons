@@ -13,23 +13,17 @@
                 <field name="fiscalyear_end_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <field name="date_start" position="attributes">
+                <page name="time_filters" position="attributes">
                     <attribute name="invisible">1</attribute>
-                </field>
-                <field name="date_end" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
-                <field name="date_end" position="after">
-                    <field name="date_report"/>
-                </field>
-                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
-                    <page string="Customer Filters">
+                </page>
+                <xpath expr="//notebook/page[@name='time_filters']" position="before">
+                    <page string="Customer CD Filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="partner_ids" domain="[('company_id', '=', company_id), ('customer', '=', True)]"/>
+                        <field name="borrower_partner_ids"/>
                     </page>
-                    <page string="Bank Filters">
+                    <page string="Customer (bank) Filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="bank_ids"/>
+                        <field name="partner_ids"/>
                     </page>
                 </xpath>
             </field>

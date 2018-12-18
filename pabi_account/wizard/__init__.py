@@ -6,3 +6,4 @@ from . import voucher_invoice_description
 from . import cancel_reason
 from . import account_reconcile
 from . import create_stock_adjust_wizard
+from . import account_fiscalyear_close

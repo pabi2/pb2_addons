@@ -32,9 +32,9 @@ class CreateJournalEntryWizard(models.TransientModel):
         if invoice.state not in ('open', 'paid'):
             raise ValidationError(
                 _('Only open invoice allowed!'))
-        if invoice.adjust_move_id:
-            raise ValidationError(
-                _('The adjustmnet journal entry already created!'))
+        # if invoice.adjust_move_id:
+        #     raise ValidationError(
+        #         _('The adjustmnet journal entry already created!'))
 
     @api.multi
     def create_journal_entry(self):
@@ -65,28 +65,103 @@ class CreateJournalEntryWizard(models.TransientModel):
         # If use fin lease model
         if self.use_finlease_model and self.model_id:
             invline = invoice.invoice_line and invoice.invoice_line[0]
+            chartfield = invline and invline.chartfield_id
+            # --
+            section_id = False
+            project_id = False
+            invest_construction_phase_id = False
+            invest_asset_id = False
+            personnel_costcenter_id = False
+            res_id = chartfield and chartfield.res_id
+            if chartfield.model == 'res.section':
+                section_id = res_id
+            elif chartfield.model == 'res.project':
+                project_id = res_id
+            elif chartfield.model == 'res.invest.construction.phase':
+                invest_construction_phase_id = res_id
+            elif chartfield.model == 'res.invest.asset':
+                invest_asset_id = res_id
+            elif chartfield.model == 'res.personnel.costcenter':
+                personnel_costcenter_id = res_id
+            # --
+            Section = self.env['res.section']
+            Project = self.env['res.project']
+            ConstructionPhase = self.env['res.invest.construction.phase']
+            InvestAsset = self.env['res.invest.asset']
+            Personnel = self.env['res.personnel.costcenter']
+            fund_id = False
+            funds = []
+            if section_id:
+                funds = Section.browse(section_id).fund_ids
+            elif project_id:
+                funds = Project.browse(project_id).fund_ids
+            elif invest_construction_phase_id:
+                funds = ConstructionPhase.browse(
+                    invest_construction_phase_id).fund_ids
+            elif invest_asset_id:
+                funds = InvestAsset.browse(invest_asset_id).fund_ids
+            elif personnel_costcenter_id:
+                funds = Personnel.browse(personnel_costcenter_id).fund_ids
+            # Get default fund
+            if len(funds) == 1:
+                fund_id = funds[0].id
+            else:
+                fund_id = False
+            # --
             move_lines = [
                 {'account_id': self.model_id.debit_account_id.id,
                  'debit': invoice.amount_untaxed,
                  'name': invline and invline.name,
-                 'chartfield_id': invline and invline.chartfield_id.id},
+                 'chartfield_id': chartfield and chartfield.id,
+                 'costcenter_id': chartfield and chartfield.costcenter_id.id,
+                 'section_id': section_id,
+                 'project_id': project_id,
+                 'invest_construction_phase_id': invest_construction_phase_id,
+                 'invest_asset_id': invest_asset_id,
+                 'personnel_costcenter_id': personnel_costcenter_id,
+                 'fund_id': fund_id},
                 {'account_id': self.model_id.credit_account_id.id,
                  'credit': invoice.amount_untaxed,
                  'name': invline and invline.name,
-                 'chartfield_id': invline and invline.chartfield_id.id},
+                 'chartfield_id': chartfield and chartfield.id,
+                 'costcenter_id': chartfield and chartfield.costcenter_id.id,
+                 'section_id': section_id,
+                 'project_id': project_id,
+                 'invest_construction_phase_id': invest_construction_phase_id,
+                 'invest_asset_id': invest_asset_id,
+                 'personnel_costcenter_id': personnel_costcenter_id,
+                 'fund_id': fund_id},
             ]
             if self.model_id.fin_debit_account_id:
                 move_lines.append({
                     'account_id': self.model_id.fin_debit_account_id.id,
                     'debit': invoice.amount_untaxed,
                     'name': invline and invline.name,
-                    'chartfield_id': invline and invline.chartfield_id.id})
+                    'chartfield_id': chartfield and chartfield.id,
+                    'costcenter_id':
+                        chartfield and chartfield.costcenter_id.id,
+                    'section_id': section_id,
+                    'project_id': project_id,
+                    'invest_construction_phase_id':
+                        invest_construction_phase_id,
+                    'invest_asset_id': invest_asset_id,
+                    'personnel_costcenter_id': personnel_costcenter_id,
+                    'fund_id': fund_id})
             if self.model_id.fin_credit_account_id:
                 move_lines.append({
                     'account_id': self.model_id.fin_credit_account_id.id,
                     'credit': invoice.amount_untaxed,
                     'name': invline and invline.name,
-                    'chartfield_id': invline and invline.chartfield_id.id})
+                    'chartfield_id': chartfield and chartfield.id,
+                    'costcenter_id':
+                        chartfield and chartfield.costcenter_id.id,
+                    'section_id': section_id,
+                    'project_id': project_id,
+                    'invest_construction_phase_id':
+                        invest_construction_phase_id,
+                    'invest_asset_id': invest_asset_id,
+                    'personnel_costcenter_id': personnel_costcenter_id,
+                    'fund_id': fund_id})
             ctx.update({'default_line_id': move_lines})
         # --
         result['context'] = ctx

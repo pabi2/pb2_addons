@@ -23,7 +23,7 @@ class AccountMove(models.Model):
     to_check = fields.Boolean(track_visibility='onchange')
     line_id = fields.One2many('account.move.line',
                               track_visibility='onchange')
-    narration = fields.Text(track_visibility='onchange')
+    narration = fields.Text(track_visibility='onchange', size=1000)
     due_history_ids = fields.One2many(
         'account.move.due.history',
         'move_id',
@@ -168,10 +168,12 @@ class AccountMove(models.Model):
         move = super(AccountMove, self).create(vals)
         invoice_id = self._context.get('src_invoice_id', False)
         if invoice_id:
-            self._cr.execute("""
-                update account_invoice set adjust_move_id = %s
-                where id = %s
-            """, (move.id, invoice_id))
+            invoice = self.env['account.invoice'].browse(invoice_id)
+            invoice.adjust_move_ids += move
+            # self._cr.execute("""
+            #     update account_invoice set adjust_move_id = %s
+            #     where id = %s
+            # """, (move.id, invoice_id))
         return move
 
 
@@ -219,14 +221,14 @@ class AccountMoveLine(MergedChartField, models.Model):
             res_id = self.chartfield_id.res_id
             if self.chartfield_id.model == 'res.section':
                 self.section_id = res_id
-            if self.chartfield_id.model == 'res.project':
+            elif self.chartfield_id.model == 'res.project':
                 self.project_id = res_id
-            if self.chartfield_id.model == 'res.invest.construction.phase':
+            elif self.chartfield_id.model == 'res.invest.construction.phase':
                 self.invest_construction_phase_id = res_id
-            if self.chartfield_id.model == 'res.invest.asset':
+            elif self.chartfield_id.model == 'res.invest.asset':
                 self.invest_asset_id = res_id
-            if self.chartfield_id.model == 'res.project':
-                self.project_id = res_id
+            elif self.chartfield_id.model == 'res.personnel.costcenter':
+                self.personnel_costcenter_id = res_id
 
     @api.multi
     @api.constrains('activity_group_id', 'activity_id')

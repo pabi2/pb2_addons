@@ -18,7 +18,8 @@ class PABIPartnerDunningReport(models.Model):
         readonly=True,
     )
     amount_residual = fields.Float(
-        related='move_line_id.amount_residual',
+        # related='move_line_id.amount_residual',
+        compute='_compute_amount_residual',
         string='Balance',
         readonly=True,
     )
@@ -30,7 +31,6 @@ class PABIPartnerDunningReport(models.Model):
     )
     reconcile_id = fields.Many2one(
         'account.move.reconcile',
-        related='move_line_id.reconcile_id',
         string='Reconcile',
         readonly=True,
     )
@@ -68,6 +68,11 @@ class PABIPartnerDunningReport(models.Model):
         [('payable', 'Payable'),
          ('receivable', 'Receivable')],
         string='Account Type',
+        readonly=True,
+    )
+    account_id = fields.Many2one(
+        'account.account',
+        string='Account',
         readonly=True,
     )
     validate_user_id = fields.Many2one(
@@ -113,6 +118,13 @@ class PABIPartnerDunningReport(models.Model):
             delta = date_run - date_maturity
             rec.days_overdue = delta.days
 
+    @api.multi
+    def _compute_amount_residual(self):
+        for rec in self:
+            move_line = rec.move_line_id
+            sign = move_line.debit - move_line.credit < 0 and -1 or 1
+            rec.amount_residual = sign * abs(move_line.amount_residual)
+
     def init(self, cr):
         try:
             with cr.savepoint():
@@ -124,9 +136,9 @@ class PABIPartnerDunningReport(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         _sql = """
             select aml.create_uid validate_user_id, aml.id,
-                aml.id as move_line_id,
+                aml.id as move_line_id, aml.reconcile_id as reconcile_id,
                 aml.date_maturity, aml.date, aml.partner_id, rp.category_id,
-                aa.type account_type, new_title,
+                aa.type account_type, aa.id account_id, new_title,
                 case when letter.l1 is not null then true else false end as l1,
                 letter.l1 l1_date,
                 case when letter.l2 is not null then true else false end as l2,

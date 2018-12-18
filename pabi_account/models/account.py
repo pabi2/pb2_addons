@@ -53,6 +53,10 @@ class AccountMove(models.Model):
                 date_clear_undue = self._context.get('date_clear_undue')
                 rec.date_document = date_clear_undue
                 continue
+            # Special case, clear prepayment only
+            if self._context.get('is_clear_prepaid', False):
+                rec.date_document = fields.Date.context_today(self)
+                continue
             # Normal case
             if rec.document_id and 'date_document' in rec.document_id:
                 rec.date_document = rec.document_id.date_document
@@ -62,6 +66,12 @@ class AccountMove(models.Model):
 
     @api.model
     def create(self, vals):
+        # Special case, clear prepayment only
+        if self._context.get('is_clear_prepaid', False):
+            date = fields.Date.context_today(self)
+            period_id = self.env['account.period'].find(dt=date).id
+            vals.update({'date': date, 'period_id': period_id})
+        # --
         res = super(AccountMove, self).create(vals)
         if self._context.get('direct_create'):
             res.date_document = vals.get('date_document', False)
@@ -95,7 +105,7 @@ class AccountMove(models.Model):
             items = [x.name for x in lines]
             items = list(set(items))
             if items:
-                rec.line_item_summary = ", ".join(items)
+                rec.line_item_summary = ", ".join(items)[:1000]
 
     @api.model
     def _switch_move_dict_dr_cr(self, move_dict):

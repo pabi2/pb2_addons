@@ -11,6 +11,8 @@
         'account_budget_activity',
         'pabi_budget_plan',
         'pabi_hr_expense',
+        'pabi_utils',
+        'sale_automatic_workflow',
     ],
     'data': [
         'data/account_data.xml',
@@ -24,6 +26,7 @@
         'views/hr_expense_view.xml',
         'views/account_budget_view.xml',
         'views/account_activity_view.xml',
+        'views/stock_view.xml',
         'workflow/hr_expense_workflow.xml',
     ],
     'demo': [

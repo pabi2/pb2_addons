@@ -417,6 +417,8 @@ class PurchaseRequisition(models.Model):
             'delivery_address': combined_address,
             'payment_term_id': supplier.property_supplier_payment_term.id,
             'is_central_purchase': requisition.is_central_purchase,
+            'doc_approve_uid': requisition.doc_approve_uid.id,
+            'date_doc_approve': requisition.date_doc_approve,
         })
         # Case central purchase, use selected OU
         if self._context.get('sel_operating_unit_id', False):
@@ -487,8 +489,8 @@ class PurchaseRequisition(models.Model):
     @api.multi
     def send_pbweb_requisition(self):
         PWInterface = self.env['purchase.web.interface']
-        PWInterface.send_pbweb_requisition(self)
-        return True
+        res = PWInterface.send_pbweb_requisition(self)
+        return res
 
     @api.multi
     def send_pbweb_requisition_cancel(self):
@@ -521,19 +523,42 @@ class PurchaseRequisition(models.Model):
     def set_verification_info(self):
         assert len(self) == 1, \
             'This option should only be used for a single id at a time.'
-        pabiweb_active = self.env.user.company_id.pabiweb_active
-        if pabiweb_active:  # If no connection to PRWeb, no need to send doc
-            self.print_call_for_bid_form()
         self.write({
             'verify_uid': self._uid,
             'date_verify': fields.Date.context_today(self),
         })
+        self._cr.commit()
         for order in self.purchase_ids:
             if order.state != 'cancel':
                 order.write({
                     'verify_uid': self._uid,
                     'date_verify': fields.Date.context_today(self),
                 })
+        # pabiweb_active = self.env.user.company_id.pabiweb_active
+        # if pabiweb_active:  # If no connection to PRWeb, no need to send doc
+        #     self.print_call_for_bid_form()
+        return True
+
+    @api.multi
+    def resend_tender_open(self):
+        for res in self:
+            if res.state not in ('verify', 'open'):
+                raise ValidationError(_("Can process on 'To Verify' or "
+                                        "'Bid Selection' only."))
+        self.set_verification_info()
+        self.send_pbweb_requisition()
+        self.tender_open()
+        return True
+
+    @api.multi
+    def button_verified(self):
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        self.set_verification_info()
+        result = self.send_pbweb_requisition()
+        if result:
+            if result.get('success', False):
+                self.signal_workflow('verified')
         return True
 
     @api.multi

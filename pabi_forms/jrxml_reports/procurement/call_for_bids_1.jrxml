@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="521"/>
+	<property name="ireport.y" value="231"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -69,16 +69,23 @@
 			<parameterDescription><![CDATA[]]></parameterDescription>
 		</parameter>
 		<queryString>
-			<![CDATA[SELECT pdl.product_name,
-pdl.price_unit,
+			<![CDATA[SELECT
+row_number() over (order by pdl.id) as pdl_count,
+pdl.product_name,
+pdl.price_unit * pd.currency_rate as price_unit,
 (
 select
 case when atax.amount > 0.0 and atax.price_include = False then
-	ROUND(reql.price_subtotal + sum(
+	ROUND((reql.price_subtotal + sum(
 	(atax.amount * reql.price_subtotal)
-	), 2)
+	) * pd.currency_rate)::DECIMAL,2)
 else
-	ROUND(reql.price_subtotal, 2)
+	case when reql.price_subtotal < (reql.price_unit * reql.product_qty)
+	then
+		ROUND((reql.price_unit * reql.product_qty * pd.currency_rate)::DECIMAL, 2)
+	else
+		ROUND((reql.price_subtotal * pd.currency_rate)::DECIMAL, 2)
+	end
 end
 FROM purchase_requisition req
 LEFT JOIN purchase_requisition_line reql
@@ -88,28 +95,34 @@ ON prtr.requisition_line_id = reql.id
 LEFT JOIN account_tax atax
 ON atax.id = prtr.tax_id
 where reql.id = pdl.id
-group by reql.price_subtotal, atax.id LIMIT 1) as amount_total,
-pr.name as material_group,
+group by reql.price_subtotal,reql.price_unit,reql.product_qty, atax.id LIMIT 1) as amount_total,
+(SELECT DISTINCT pr2.name FROM purchase_request_purchase_requisition_line_rel prpd
+LEFT JOIN purchase_request_line prl
+ON prl.id = prpd.purchase_request_line_id
+LEFT JOIN purchase_requisition_line pdl2
+ON pdl2.id = prpd.purchase_requisition_line_id
+LEFT JOIN purchase_request pr2
+ON pr2.id = prl.request_id
+WHERE pdl2.id = pdl.id LIMIT 1) as material_group,
 pdl.product_qty::integer as product_qty,
 (SELECT value FROM ir_translation it
 WHERE it.res_id = pu.id AND it.name LIKE 'product.uom,name') as uom,
-pdl.price_subtotal,
+case when pdl.price_subtotal < (pdl.price_unit * pdl.product_qty)
+then
+(pdl.price_unit * pdl.product_qty) * pd.currency_rate
+else
+pdl.price_subtotal * pd.currency_rate
+end
+as price_subtotal,
 cur.name as currency
 FROM purchase_requisition_line pdl
 LEFT JOIN purchase_requisition pd
 ON pd.id = pdl.requisition_id
 LEFT JOIN res_currency cur
 ON cur.id = pd.currency_id
-LEFT JOIN purchase_request pr
-ON pr.id = (SELECT DISTINCT prl.request_id FROM purchase_request_purchase_requisition_line_rel prpd
-LEFT JOIN purchase_request_line prl
-ON prl.id = prpd.purchase_request_line_id
-LEFT JOIN purchase_requisition_line pdl
-ON pdl.id = prpd.purchase_requisition_line_id
-WHERE pdl.requisition_id = $P{ids} LIMIT 1)
 LEFT JOIN product_uom pu
 ON pu.id = pdl.product_uom_id
-where pdl.requisition_id =  $P{ids}]]>
+where pdl.requisition_id = $P{ids}]]>
 		</queryString>
 		<field name="product_name" class="java.lang.String">
 			<fieldDescription><![CDATA[Supplier Product Name]]></fieldDescription>
@@ -131,6 +144,7 @@ where pdl.requisition_id =  $P{ids}]]>
 		<field name="currency" class="java.lang.String">
 			<fieldDescription><![CDATA[Currency]]></fieldDescription>
 		</field>
+		<field name="pdl_count" class="java.lang.Integer"/>
 		<variable name="COLUMN_SUM" class="java.lang.Integer" resetType="None" calculation="Count">
 			<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 		</variable>
@@ -138,7 +152,7 @@ where pdl.requisition_id =  $P{ids}]]>
 	<subDataset name="request_approval">
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
-			<![CDATA[SELECT
+			<![CDATA[SELECT DISTINCT
 CONCAT(
 COALESCE((SELECT value FROM ir_translation it
 WHERE it.res_id = (SELECT rpt.id FROM res_users ru
@@ -181,8 +195,16 @@ ON ru.login = he.employee_code
 WHERE ru.id = pr.assigned_to) AND it.name LIKE 'hr.employee,last_name')
 ) as approver,
 pr.date_approve
-FROM purchase_request pr
-WHERE pr.id = $P{ids}]]>
+FROM purchase_requisition_line reql
+LEFT JOIN purchase_requisition requisition
+ON requisition.id = reql.requisition_id
+LEFT JOIN purchase_request_purchase_requisition_line_rel linerel
+ON reql.id = linerel.purchase_requisition_line_id
+LEFT JOIN purchase_request_line requestline
+ON linerel.purchase_request_line_id = requestline.id
+LEFT JOIN purchase_request pr
+ON requestline.request_id = pr.id
+WHERE requisition.id =  $P{ids}]]>
 		</queryString>
 		<field name="requested_by" class="java.lang.String">
 			<fieldDescription><![CDATA[Requested by]]></fieldDescription>
@@ -231,7 +253,17 @@ WHERE id = pd.operating_unit_id LIMIT 1) as ou_name,
 (SELECT name FROM operating_unit
 WHERE id = pd.operating_unit_id LIMIT 1) as ou_key,
 pd.name as pd_number,
-pr.name as pr_sap,
+(SELECT array_to_string(array_agg(DISTINCT request.name), ', ')
+FROM purchase_requisition_line reql
+LEFT JOIN purchase_requisition requisition
+ON requisition.id = reql.requisition_id
+LEFT JOIN purchase_request_purchase_requisition_line_rel linerel
+ON reql.id = linerel.purchase_requisition_line_id
+LEFT JOIN purchase_request_line requestline
+ON linerel.purchase_request_line_id = requestline.id
+LEFT JOIN purchase_request request
+ON requestline.request_id = request.id
+WHERE requisition.id = pd.id) as pr_sap,
 CONCAT(
 COALESCE((SELECT value FROM ir_translation it
 WHERE it.res_id = (SELECT rpt.id FROM res_users ru
@@ -412,10 +444,15 @@ cur.name as currency,
 (select
 SUM(
 case when atax.amount > 0.0 and atax.price_include = False then
-	requestline.price_subtotal +
-	(atax.amount * requestline.price_subtotal)
+	ROUND((((requestline.price_subtotal) +
+	(atax.amount * requestline.price_subtotal)) * requisition.currency_rate)::DECIMAL, 2)
 else
-	requestline.price_subtotal
+	case when requestline.price_subtotal < (requestline.price_unit * requestline.product_qty)
+	then
+		ROUND((requestline.price_unit * requestline.product_qty * requisition.currency_rate)::DECIMAL, 2)
+	else
+		ROUND((requestline.price_subtotal * requisition.currency_rate)::DECIMAL, 2)
+	end
 end
 )
 FROM purchase_requisition_line reql
@@ -430,7 +467,30 @@ ON reqtaxes.request_line_id = requestline.id
 LEFT JOIN account_tax atax
 ON atax.id = reqtaxes.tax_id
 where requisition.id = pd.id
-group by requisition.id) as amount_total
+group by requisition.id) as amount_total_th,
+(select
+SUM(
+case when atax.amount > 0.0 and atax.price_include = False then
+	ROUND((requestline.price_subtotal +
+	(atax.amount * requestline.price_subtotal))::DECIMAL, 2)
+else
+	ROUND(requestline.price_subtotal::DECIMAL, 2)
+end
+)
+FROM purchase_requisition_line reql
+LEFT JOIN purchase_requisition requisition
+ON requisition.id = reql.requisition_id
+LEFT JOIN purchase_request_purchase_requisition_line_rel linerel
+ON reql.id = linerel.purchase_requisition_line_id
+LEFT JOIN purchase_request_line requestline
+ON linerel.purchase_request_line_id = requestline.id
+LEFT JOIN purchase_request_taxes_rel reqtaxes
+ON reqtaxes.request_line_id = requestline.id
+LEFT JOIN account_tax atax
+ON atax.id = reqtaxes.tax_id
+where requisition.id = pd.id
+group by requisition.id) as amount_total,
+pd.currency_rate
 FROM purchase_requisition pd
 LEFT JOIN operating_unit ou
 ON ou.id = pd.operating_unit_id
@@ -531,6 +591,12 @@ WHERE $X{IN, pd.id, PIDS}]]>
 	<field name="currency" class="java.lang.String">
 		<fieldDescription><![CDATA[Currency]]></fieldDescription>
 	</field>
+	<field name="amount_total_th" class="java.lang.Double">
+		<fieldDescription><![CDATA[Total]]></fieldDescription>
+	</field>
+	<field name="currency_rate" class="java.lang.Double">
+		<fieldDescription><![CDATA[Total]]></fieldDescription>
+	</field>
 	<title>
 		<band height="55" splitType="Stretch">
 			<staticText>
@@ -620,7 +686,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<text><![CDATA[สังกัดงาน]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="60" y="39" width="182" height="25" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="60" y="39" width="528" height="25" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -716,7 +782,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount_total}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount_total_th}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="5" width="91" height="25">
@@ -728,13 +794,40 @@ WHERE $X{IN, pd.id, PIDS}]]>
 					<text><![CDATA[ในงบประมาณ]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="146" y="5" width="95" height="25" forecolor="#000000" backcolor="#FFFFFF">
+					<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="128" y="5" width="95" height="25" forecolor="#000000" backcolor="#FFFFFF">
 						<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{currency} == "THB"? "บาท" : $F{currency}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["บาท"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="207" y="5" width="130" height="25" forecolor="#000000" backcolor="#FFFFFF">
+						<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1 && $F{currency} != "THB"]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount_total}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="262" y="5" width="325" height="25" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
+						<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1 && $F{currency} != "THB"]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{currency} + " อัตราแลกเปลี่ยน 1 " + $F{currency} + " = " + $F{currency_rate}.toString() + " บาท)"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="199" y="5" width="20" height="25" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
+						<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1 && $F{currency} != "THB"]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["("]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
@@ -802,7 +895,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Integer"><![CDATA[$V{COLUMN_SUM}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{pdl_count}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -872,9 +965,8 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<text><![CDATA[ราคา
-ประมาณ
-ต่อหน่วย]]></text>
+								<text><![CDATA[ราคาประมาณ
+ต่อหน่วย(บาท)]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:tableFooter height="8" rowSpan="1">
@@ -909,7 +1001,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Number"><![CDATA[$F{price_unit}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Double"><![CDATA[$F{price_unit}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -1015,7 +1107,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<bottomPen lineWidth="0.0"/>
 								<rightPen lineWidth="0.5"/>
 							</box>
-							<textField isStretchWithOverflow="true" pattern="">
+							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 								<reportElement x="0" y="0" width="58" height="20" isPrintWhenDetailOverflows="true"/>
 								<box>
 									<leftPen lineWidth="0.5"/>
@@ -1042,7 +1134,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<text><![CDATA[จำนวนราคารวม โดยประมาณ (รวมVat)]]></text>
+								<text><![CDATA[จำนวนราคารวม โดยประมาณ (รวมVat/บาท)]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:tableFooter height="8" rowSpan="1">
@@ -1077,7 +1169,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount_total}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount_total}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -1116,7 +1208,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="request_approval">
 						<datasetParameter name="ids">
-							<datasetParameterExpression><![CDATA[$F{pr_id}]]></datasetParameterExpression>
+							<datasetParameterExpression><![CDATA[$F{pd_id}]]></datasetParameterExpression>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
@@ -1149,7 +1241,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 								<textElement lineSpacing="Single">
 									<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.util.Date"><![CDATA[$F{create_date}]]></textFieldExpression>
+								<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{create_date}]]></textFieldExpression>
 							</textField>
 							<staticText>
 								<reportElement x="5" y="20" width="125" height="19"/>
@@ -1231,32 +1323,32 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				</jr:table>
 			</componentElement>
 		</band>
-		<band height="104">
+		<band height="104" splitType="Prevent">
 			<staticText>
-				<reportElement x="0" y="0" width="338" height="20"/>
+				<reportElement x="0" y="0" width="338" height="20" isPrintInFirstWholeBand="true"/>
 				<textElement lineSpacing="Single">
 					<font size="14" isBold="true" isUnderline="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[ส่วนที่ 2 สำหรับงานจัดหาพัสดุ]]></text>
 			</staticText>
 			<frame>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="1" y="17" width="568" height="22" isPrintWhenDetailOverflows="true"/>
+				<reportElement positionType="Float" x="1" y="17" width="568" height="22" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true"/>
 				<staticText>
-					<reportElement x="0" y="0" width="280" height="20"/>
+					<reportElement x="0" y="0" width="280" height="20" isPrintWhenDetailOverflows="true"/>
 					<textElement lineSpacing="Single">
 						<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[เห็นควรดำเนินการจัดซื้อ/จัดจ้าง/เช่าโดยวิธี ]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="321" y="0" width="229" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="321" y="0" width="229" height="20" isPrintInFirstWholeBand="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{purchase_condition_detail}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="163" y="0" width="158" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="163" y="0" width="158" height="20" isPrintInFirstWholeBand="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
@@ -1264,52 +1356,52 @@ WHERE $X{IN, pd.id, PIDS}]]>
 				</textField>
 			</frame>
 			<frame>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="40" width="568" height="61" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="1" y="40" width="568" height="61" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true"/>
 				<staticText>
-					<reportElement x="1" y="17" width="127" height="20"/>
+					<reportElement x="1" y="17" width="127" height="20" isPrintInFirstWholeBand="true"/>
 					<textElement lineSpacing="Single">
 						<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[ราคากลาง]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="1" y="33" width="154" height="20"/>
+					<reportElement x="1" y="33" width="154" height="20" isPrintInFirstWholeBand="true"/>
 					<textElement lineSpacing="Single">
 						<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[กำหนดเวลาการส่งมอบ]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="0" y="1" width="564" height="20"/>
+					<reportElement x="0" y="1" width="564" height="20" isPrintInFirstWholeBand="true"/>
 					<textElement lineSpacing="Single">
 						<font size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[ทั้งนี้เป็นไปตามพระราชบัญญัติการจัดซื้อจัดจ้างและการบริหารพัสดุภาครัฐ พ.ศ. 2560]]></text>
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="58" y="18" width="129" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="58" y="18" width="129" height="20" isPrintInFirstWholeBand="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Float"><![CDATA[$F{standard_price}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{standard_price}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="128" y="33" width="438" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="128" y="33" width="438" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{delivery_detail}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="138" y="17" width="95" height="17" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement mode="Transparent" x="138" y="17" width="95" height="17" isPrintInFirstWholeBand="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{currency} == "THB"? "บาท" : $F{currency}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["บาท"]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
-		<band height="20">
+		<band height="20" splitType="Prevent">
 			<staticText>
 				<reportElement x="1" y="0" width="437" height="20"/>
 				<textElement lineSpacing="Single">
@@ -1520,7 +1612,7 @@ WHERE $X{IN, pd.id, PIDS}]]>
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{pd_create_date}]]></textFieldExpression>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{pd_create_date}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="253" y="58" width="32" height="20"/>

@@ -434,7 +434,10 @@ class AccountAssetTransfer(models.Model):
                                             'asset_purchase_method_11'))
         # Prepare Old Move
         move_lines = []
+        partner_ids = []
         for asset in self.asset_ids:
+            if asset.partner_id:
+                partner_ids.append(asset.partner_id.id)
             if asset.purchase_value:
                 move_lines += [
                     # -------------------- OLD OWNER ----------------------
@@ -480,6 +483,11 @@ class AccountAssetTransfer(models.Model):
                         asset.owner_invest_construction_phase_id.id,
                      },
                 ]
+        # All source assset must has single partner
+        partner_ids = list(set(partner_ids))
+        if len(partner_ids) != 1:
+            raise ValidationError(
+                _('All source asset must belong to single partner.'))
         count = len(self.target_asset_ids)
         total_depre = sum(self.asset_ids.mapped('value_depreciated'))
         accum_depre = 0.0
@@ -503,6 +511,7 @@ class AccountAssetTransfer(models.Model):
                 new_asset_move_line_dict = {
                     'asset_id': False,
                     'account_id': new_account_asset.id,
+                    'partner_id': partner_ids[0],
                     'name': target_asset.asset_name,
                     'product_id': new_product.id,
                     'asset_profile_id': new_asset_profile.id,  # New Asset
@@ -529,6 +538,7 @@ class AccountAssetTransfer(models.Model):
                     'asset_id': False,
                     'account_id':
                     new_asset_profile.account_depreciation_id.id,
+                    'partner_id': partner_ids[0],
                     'name': target_asset.asset_name,
                     # Value
                     'credit': new_depre > 0.0 and new_depre or 0.0,

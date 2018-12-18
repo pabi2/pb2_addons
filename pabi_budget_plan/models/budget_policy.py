@@ -174,7 +174,7 @@ class BudgetPolicy(models.Model):
         revision = False
         if existing_policies:
             current_rev = existing_policies[0].revision
-            if current_rev == 12:
+            if current_rev == 100000:
                 raise ValidationError(_('You have reached max revision!'))
             else:
                 revision = existing_policies[0].revision + 1

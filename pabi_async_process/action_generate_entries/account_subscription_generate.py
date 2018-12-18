@@ -3,7 +3,7 @@ from openerp import models, api, fields, _
 from ..models.common import PabiAsync
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
-from openerp.addons.connector.exception import FailedJobError
+from openerp.addons.connector.exception import RetryableJobError
 
 
 def related_generate_entries(session, thejob):
@@ -29,7 +29,7 @@ def action_generate_recurring_entries(session, model_name, res_id):
                                                 res_id)
         return {'move_ids': entry.move_ids.ids}
     except Exception, e:
-        raise FailedJobError(e)
+        raise RetryableJobError(e)
 
 
 class AccountSubscriptionGenerate(PabiAsync, models.Model):

@@ -29,6 +29,10 @@ class AccountMove(models.Model):
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
+    asset_id = fields.Many2one(
+        'account.asset',
+        index=True,  # Add index
+    )
     stock_move_id = fields.Many2one(
         'stock.move',
         string='Stock Move',

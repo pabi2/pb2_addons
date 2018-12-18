@@ -43,6 +43,21 @@ class AssetRegisterView(models.AbstractModel):
     budget_type = fields.Char(
         string='Budget Type',
     )
+    purchase_before_current = fields.Float(
+        string='Purchase Value Before Current FY',
+    )
+    purchase_current = fields.Float(
+        string='Purchase Value Current FY',
+    )
+    net_book_value = fields.Float(
+        string='Net Book Value',
+    )
+    account_code = fields.Char(
+        string='Account Code',
+    )
+    account_name = fields.Char(
+        string='Account Name',
+    )
 
 
 class AssetRegisterReport(models.TransientModel):
@@ -281,6 +296,21 @@ class AssetRegisterReport(models.TransientModel):
             select *
             from (
                 select a.*, a.id asset_id, aap.account_asset_id,
+                aa.code as account_code, aa.name as account_name,
+                -- purchase_bf_current
+                case when date_part('year', a.date_start+92) !=
+                 date_part('year', CURRENT_DATE+92) then a.purchase_value
+                 else null end as purchase_before_current,
+                -- purchase_current
+                case when date_part('year', a.date_start+92) =
+                 date_part('year', CURRENT_DATE+92) then a.purchase_value
+                 else null end as purchase_current,
+                -- net_book_value
+                (select a.purchase_value - coalesce(sum(credit-debit), 0.0)
+                 from account_move_line ml
+                 where account_id in %s  -- accumulated account
+                 and ml.date <= %s -- date end
+                 and asset_id = a.id) net_book_value,
                 -- budget_type
                 case when a.section_id is not null then 'Section'
                      when a.project_id is not null then 'Project'
@@ -358,21 +388,24 @@ class AssetRegisterReport(models.TransientModel):
             left join res_invest_asset ria on a.owner_invest_asset_id = ria.id
             left join res_invest_construction_phase ricp on
             a.owner_invest_construction_phase_id = ricp.id
+            left join account_account aa on aap.account_asset_id = aa.id
             ) asset
-        """ + where_str, (tuple(depre_account_ids), date_start, date_end,
+        """ + where_str + 'order by asset.account_code, asset.code',
+                         (tuple(accum_depre_account_ids), date_end,
+                          tuple(depre_account_ids), date_start, date_end,
                           tuple(accum_depre_account_ids), date_end,
                           tuple(accum_depre_account_ids), date_start))
         results = self._cr.dictfetchall()
         ReportLine = self.env['asset.register.view']
         for line in results:
             self.results += ReportLine.new(line)
+        return True
 
-    @api.multi
-    def action_get_report(self):
-        action = self.env.ref(
-            'pabi_account_report.action_asset_register_report_form')
-        action.write({'context': {'wizard_id': self.id}})
-        return super(AssetRegisterReport, self).action_get_report()
+    # @api.multi
+    # def action_get_report(self):
+    #     action = self.env.ref(
+    #         'pabi_account_report.action_asset_register_report_form')
+    #     return super(AssetRegisterReport, self).action_get_report()
 
     @api.onchange('asset_filter')
     def _onchange_asset_filter(self):

@@ -7,7 +7,7 @@
             .pabi-title-header-en, .pabi-doc-type, .pabi-hidden, .pabi-table-doc-header,
             .pabi-table-payment-type-header, .pabi-col-doc-header, .pabi-col-doc,
             .pabi-text-header, .pabi-col-header, .pabi-col-detail, .pabi-col-footer {
-                line-height: 20px !important;
+                line-height: 25px !important;
             }
             .pabi-header, .pabi-page, .pabi-footer {
                 font-size: 14px !important;
@@ -21,18 +21,18 @@
                 right: 0px !important;
             }
             .pabi-title-header-th {
-                font-size: 28px !important;
+                font-size: 32px !important;
                 margin-bottom: 10px !important;
 
             }
             .pabi-title-header-en {
-                font-size: 22px !important;
+                font-size: 28px !important;
                 margin-bottom: 10px !important;
             }
             .pabi-doc-type {
-                font-size: 48px !important;
+                font-size: 60px !important;
                 position: absolute !important;
-                bottom: 12px !important;
+                bottom: 7px !important;
             }
             .pabi-hidden {
                 visibility: hidden !important;
