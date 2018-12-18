@@ -18,7 +18,8 @@ class PABIPartnerDunningReport(models.Model):
         readonly=True,
     )
     amount_residual = fields.Float(
-        related='move_line_id.amount_residual',
+        # related='move_line_id.amount_residual',
+        compute='_compute_amount_residual',
         string='Balance',
         readonly=True,
     )
@@ -116,6 +117,13 @@ class PABIPartnerDunningReport(models.Model):
                                               DATETIME_FORMAT)
             delta = date_run - date_maturity
             rec.days_overdue = delta.days
+
+    @api.multi
+    def _compute_amount_residual(self):
+        for rec in self:
+            move_line = rec.move_line_id
+            sign = move_line.debit - move_line.credit < 0 and -1 or 1
+            rec.amount_residual = sign * abs(move_line.amount_residual)
 
     def init(self, cr):
         try:
