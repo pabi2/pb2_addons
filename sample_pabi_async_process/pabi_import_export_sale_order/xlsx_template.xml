@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        # Export
+        <record id="action_sale_order_export_xlsx_template" model="ir.actions.act_window">
+            <field name="name">Export Sale Order</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">export.xlsx.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+      		<field name="context"
+                eval="{'template_fname': 'sale_order.xlsx',
+                       'template_context': {},
+                       'template_import_states': [],
+                       'lang': 'th_TH'}"/>
+        </record>
+
+        # Import
+        <record id="action_sale_order_import_xlsx_template" model="ir.actions.act_window">
+            <field name="name">Import Sale Order</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">import.xlsx.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+       		<field name="context"
+                eval="{'template_fname': 'sale_order.xlsx',
+                       'template_context': {},
+                       'template_import_states': []}"/>
+        </record>
+    </data>
+</openerp>

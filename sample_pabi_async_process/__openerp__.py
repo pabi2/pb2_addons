@@ -22,6 +22,11 @@
         'xlsx_report_purchase_order_line/templates.xml',
         'xlsx_report_purchase_order_line/load_template.xml',
         'xlsx_report_purchase_order_line/xlsx_report_purchase_order_line.xml',
+        # Import/Export Excel
+        'pabi_import_export_sale_order/templates.xml',
+        'pabi_import_export_sale_order/load_template.xml',
+        'pabi_import_export_sale_order/xlsx_template.xml',
+        'pabi_import_export_sale_order/sale_order.xml',
     ],
     'installable': True,
     'application': False,

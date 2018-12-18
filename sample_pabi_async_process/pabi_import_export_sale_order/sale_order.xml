@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_order_form" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']" position="before">
+                    <button name="%(action_sale_order_export_xlsx_template)d"
+                      type="action" string="Export to Excel" class="oe_highlight oe_right"/>
+                    <button name="%(action_sale_order_import_xlsx_template)d"
+                      type="action" string="Import to Excel" class="oe_right"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
