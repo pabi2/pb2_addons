@@ -34,6 +34,13 @@ class AccountGeneralLedgerWizard(models.TransientModel):
         default='all',
         required=True,
     )
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        required=True,
+        default='external',
+    )
 
     @api.multi
     def run_report(self):
@@ -43,7 +50,8 @@ class AccountGeneralLedgerWizard(models.TransientModel):
                                        self.target_move,
                                        self.reconcile_cond,
                                        self.account_ids,
-                                       self.amount_currency)
+                                       self.amount_currency,
+                                       self.charge_type)
         action = self.env.ref('account_general_ledger_report.'
                               'action_account_general_ledger_report')
         result = action.read()[0]

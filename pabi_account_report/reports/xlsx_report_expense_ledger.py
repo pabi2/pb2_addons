@@ -27,6 +27,11 @@ class XLSXReportExpenseLedger(models.TransientModel):
         compute='_compute_count_chartfield',
         string='Budget Count',
     )
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+    )
     results = fields.Many2many(
         # 'pabi.common.account.report.view',  # Old
         'account.move.line',  # New
@@ -90,6 +95,8 @@ class XLSXReportExpenseLedger(models.TransientModel):
         dom = [('account_id.user_type.code', '=', 'Expense')]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
+        if self.charge_type:
+            dom += [('charge_type', '=', self.charge_type)]
         # Budget
         section_ids = self._get_budget_ids('res.section')
         project_ids = self._get_budget_ids('res.project')

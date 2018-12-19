@@ -19,6 +19,7 @@
                         <group>
                             <field name="target_move"/>
                             <field name="with_movement"/>
+                            <field name="charge_type"/>
                         </group>
                     </group>
                     <field name="line_ids">

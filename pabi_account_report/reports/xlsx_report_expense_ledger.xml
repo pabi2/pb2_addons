@@ -7,6 +7,9 @@
             <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
+                <field name="fiscalyear_date_end" position="after">
+                    <field name="charge_type"/>
+                </field>
                 <xpath expr="//notebook[@name='additional_criteria']" position="inside">
                     <page string="Account Filters" name="account_filters">
                         <separator string="Print only" colspan="4"/>
