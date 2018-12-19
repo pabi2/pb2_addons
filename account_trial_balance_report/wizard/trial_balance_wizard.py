@@ -46,6 +46,13 @@ class AccountTrialBalanceWizard(models.TransientModel):
         string='With Movement',
         default=True,
     )
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+        required=True,
+        default='external',
+    )
 
     @api.onchange('fiscalyear_id', 'filter')
     def _onchange_fiscalyear_id(self):
@@ -70,7 +77,8 @@ class AccountTrialBalanceWizard(models.TransientModel):
                                        self.date_start,
                                        self.date_stop,
                                        self.target_move,
-                                       self.with_movement)
+                                       self.with_movement,
+                                       self.charge_type)
         action = self.env.ref('account_trial_balance_report.'
                               'action_account_trial_balance_report')
         result = action.read()[0]
