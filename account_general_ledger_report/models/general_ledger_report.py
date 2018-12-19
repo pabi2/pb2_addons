@@ -53,9 +53,8 @@ class AccountGeneralLedgerReport(models.Model):
         periods = []
         # All moves, begin of this year until date_stop
         domain = [('period_id.fiscalyear_id', '=', fiscalyear_id),
-                  ('account_id', 'in', account_ids.ids)]
-        if charge_type:
-            domain.append(('charge_type', '=', charge_type))
+                  ('account_id', 'in', account_ids.ids),
+                  ('charge_type', '=', charge_type)]
         if target_move == 'posted':
             domain.append(('move_id.state', '=', 'posted'))
         if reconcile_cond == 'open_item':

@@ -38,6 +38,8 @@ class AccountGeneralLedgerWizard(models.TransientModel):
         [('internal', 'Internal'),
          ('external', 'External')],
         string='Charge Type',
+        required=True,
+        default='external',
     )
 
     @api.multi
