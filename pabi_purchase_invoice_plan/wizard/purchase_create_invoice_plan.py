@@ -283,6 +283,11 @@ class PurchaseCreateInvoicePlan(models.TransientModel):
             order.advance_rounding = self.advance_rounding
             return super(PurchaseCreateInvoicePlan,
                          self).do_create_purchase_invoice_plan()
+        else:
+            order.write({'use_retention': self.use_retention,
+                         'percent_retention': self.percent_retention,
+                         'fixed_retention': self.fixed_retention,
+                         'retention_type': self.retention_type})
         self._validate_installment_date_range()
         self._validate_total_amount()
         self._check_installment_amount()
