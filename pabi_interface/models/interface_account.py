@@ -535,6 +535,7 @@ class InterfaceAccountEntry(models.Model):
     @api.multi
     def _reconcile_payment(self):
         self.ensure_one()
+        prec = self.env['decimal.precision'].precision_get('Account')
         # To reconcile each reciable/payable line
         to_reconcile_lines = self.line_ids.filtered('account_id.reconcile')
         #  .filtered(lambda l: l.account_id.type in ('receivable', 'payable'))
@@ -574,7 +575,7 @@ class InterfaceAccountEntry(models.Model):
                 continue
             # --
             if len(to_rec) >= 2:
-                if debit != credit:
+                if float_compare(debit, credit, prec) != 0:
                     to_rec.reconcile_partial('auto')
                 else:
                     to_rec.reconcile('auto')
