@@ -135,6 +135,9 @@ FROM ir_translation it
 WHERE it.res_id = taxbranch.id AND it.name = 'res.taxbranch,name' limit 1) as tax_branch_name,
 (SELECT value
 FROM ir_translation it
+WHERE it.res_id = ro.id AND it.name = 'res.org,address_print_text' limit 1) as tax_branch_org,
+(SELECT value
+FROM ir_translation it
 WHERE it.res_id = taxbranch.id AND it.name = 'res.taxbranch,street' limit 1) as tax_branch_street,
 (SELECT value
 FROM ir_translation it
@@ -221,7 +224,7 @@ WHERE $X{IN, po.id, PIDS}
  GROUP BY po.id,ou.id,ou_partner.image,ou_partner.street,ou_partner.street2,ou_township.name,ou_district.name,ou_province.name,ou_partner.vat,ou_partner.taxbranch
  ,ou_partner.zip,ou_partner.phone,ou_partner.fax,vendor.title,vendor.id,vendor_country.name,apt.id,he.title_id,he.id,verify_hr.title_id,verify_hr.id,
  validator_hr.title_id,validator_hr.id,validater.phone,validater.email,taxbranch.id,vendor_township.name,vendor_district.name,vendor_province.name,
- pol.name,pol.price_unit,pu.id]]>
+ pol.name,pol.price_unit,pu.id,ro.id]]>
 	</queryString>
 	<field name="po_id" class="java.lang.Integer"/>
 	<field name="partner_image" class="java.lang.Object"/>
@@ -313,6 +316,7 @@ WHERE $X{IN, po.id, PIDS}
 	<field name="product_uom" class="java.lang.String">
 		<fieldDescription><![CDATA[UoM]]></fieldDescription>
 	</field>
+	<field name="tax_branch_org" class="java.lang.String"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -492,26 +496,11 @@ WHERE $X{IN, po.id, PIDS}
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="5" y="30" width="206" height="40" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="5" y="30" width="246" height="68" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{tax_branch_street} == null ? "" : $F{tax_branch_street})
-+ ' ' +
-($F{tax_branch_street2} == null ? "" : $F{tax_branch_street2})
-+ ' ' +
-($F{tax_branch_city} == null ? "": $F{tax_branch_city})
-+ ' ' +
-($F{tax_branch_zip} == null ? "" : $F{tax_branch_zip} )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="5" y="61" width="268" height="22" isPrintWhenDetailOverflows="true"/>
-				<textElement lineSpacing="Single">
-					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{tax_branch_phone} != null ? "โทรศัพท์: " + $F{tax_branch_phone} : "")
-+ ' ' +
-($F{tax_branch_fax} != null ? "โทรสาร: " + $F{tax_branch_fax} : "")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{tax_branch_org} == null ? "" : $F{tax_branch_org})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="4" y="162" width="222" height="34" isPrintWhenDetailOverflows="true"/>
@@ -623,15 +612,6 @@ WHERE $X{IN, po.id, PIDS}
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{delivery_address} != null ? $F{delivery_address}: $F{tax_branch_street}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="5" y="75" width="269" height="22" isPrintWhenDetailOverflows="true"/>
-				<textElement lineSpacing="Single">
-					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{taxbranch_taxid} != null ? "เลขประจำตัวผู้เสียภาษี " + $F{taxbranch_taxid} : "")
-+ ' ' +
-($F{taxbranch_code} != null ? "สาขาที่ " + $F{taxbranch_code} : "")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="4" y="98" width="476" height="50" isPrintWhenDetailOverflows="true"/>
