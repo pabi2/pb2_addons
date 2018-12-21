@@ -132,6 +132,26 @@ class PABIPartnerDunningLetter(models.Model):
                 letter.letter_signature = \
                     self._eval_text(company.letter3_signature, letter)
 
+    @api.multi
+    def get_dunning_letter_line(self, lines):
+        if not lines:
+            return []
+        where = ''
+        if len(lines) == 1:
+            where += ' dl.id = %s' % (str(lines.ids[0]), )
+        else:
+            where += ' dl.id in %s' % (str(tuple(lines.ids)), )
+        self._cr.execute("""
+            select ml.ref, dl.date_invoice, dl.date_due,
+                   sum(dl.amount_residual)
+            from pabi_partner_dunning_letter_line dl
+            join account_move_line ml on dl.move_line_id = ml.id
+            where %s
+            group by ml.ref, dl.date_invoice, dl.date_due
+            order by ml.ref, dl.date_invoice, dl.date_due
+            """ % (where, ))
+        return self._cr.fetchall()
+
 
 class PABIPartnerDunningLetterLine(models.Model):
     _name = 'pabi.partner.dunning.letter.line'

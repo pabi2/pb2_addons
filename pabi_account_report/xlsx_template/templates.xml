@@ -1959,6 +1959,7 @@ result = pd.pivot_table(df, index=groupby,
                             'K1': 'amount_wht${value and -value or ""}',
                             'L1': '${"1"}',
                             'M1': 'wht_cert_income_type${value and value=="1" and "1" or (value=="2" and "4" or "")}',
+                            'N1': 'voucher_id${value and value.number or ""}',
                          },
                      }
                  }
