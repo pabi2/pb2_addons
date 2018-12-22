@@ -23,10 +23,9 @@ class PurchaseOrderCancel(models.TransientModel):
         assert len(order_ids) == 1, "Only 1 purchase order expected"
         order = self.env['purchase.order'].browse(order_ids)
         order.cancel_reason_txt = self.cancel_reason_txt
-        order.signal_workflow('purchase_cancel')
+        order.action_cancel()
         # Just to ensure it is cancelled
         self._cr.execute("""
             update purchase_order set state = 'cancel' where id = %s
         """, (order.id, ))
-        # order.state = 'cancel'
         return act_close
