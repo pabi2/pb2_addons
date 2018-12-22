@@ -22,7 +22,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
             self.cr, uid, uid, context=context).company_id
         header_report_name = ' - '.join(
             (_('GENERAL LEDGER'), company.name, company.currency_id.name))
-        # kittiu: Add to remove bug in case compan name is TH
+        # kittiu: Add to remove bug in case company name is TH
         if header_report_name:
             header_report_name = header_report_name.encode('utf-8')
         # --
@@ -81,9 +81,14 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
         fiscalyear = self.get_fiscalyear_br(data)
         chart_account = self._get_chart_account_id_br(data)
 
+        # PABI2
+        specific_report = data.get('specific_report', False)
+
         if main_filter == 'filter_no':
-            start_period = self.get_first_fiscalyear_period(fiscalyear)
-            stop_period = self.get_last_fiscalyear_period(fiscalyear)
+            start_period = self.get_first_fiscalyear_period(
+                fiscalyear, specific_report=specific_report)
+            stop_period = self.get_last_fiscalyear_period(
+                fiscalyear, specific_report=specific_report)
 
         # computation of ledger lines
         if main_filter == 'filter_date':
@@ -95,22 +100,24 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
 
         initial_balance = self.is_initial_balance_enabled(main_filter)
         initial_balance_mode = initial_balance \
-            and self._get_initial_balance_mode(start) or False
+            and self._get_initial_balance_mode(
+                start, specific_report=specific_report) or False
 
         # Retrieving accounts
         accounts = self.get_all_accounts(new_ids, exclude_type=['view'])
         if initial_balance_mode == 'initial_balance':
             init_balance_memoizer = self._compute_initial_balances(
-                accounts, start, fiscalyear)
+                accounts, start, fiscalyear, specific_report=specific_report)
         elif initial_balance_mode == 'opening_balance':
             init_balance_memoizer = self._read_opening_balance(
-                accounts, start)
+                accounts, start, specific_report=specific_report)
 
         ledger_lines_memoizer = self._compute_account_ledger_lines(
             accounts, init_balance_memoizer, main_filter, target_move,
             reconcile_cond,  # PABI2
             start, stop,
-            partner_ids=partner_ids)
+            partner_ids=partner_ids,
+            specific_report=specific_report)
         objects = self.pool.get('account.account').browse(self.cursor,
                                                           self.uid,
                                                           accounts)
@@ -204,14 +211,15 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
                                       target_move,
                                       reconcile_cond,  # PABI2
                                       start, stop,
-                                      partner_ids=False):
+                                      partner_ids=False,
+                                      specific_report=False):
         res = {}
         for acc_id in accounts_ids:
             move_line_ids = self.get_move_lines_ids(
                 acc_id, main_filter, start, stop, target_move,
                 reconcile_cond,  # PABI2
-                partner_ids=partner_ids
-                )
+                partner_ids=partner_ids,
+                specific_report=specific_report)
             if not move_line_ids:
                 res[acc_id] = []
                 continue
