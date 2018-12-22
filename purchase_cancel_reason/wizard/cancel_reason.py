@@ -24,8 +24,8 @@ class PurchaseOrderCancel(models.TransientModel):
         order = self.env['purchase.order'].browse(order_ids)
         order.cancel_reason_txt = self.cancel_reason_txt
         order.action_cancel()
-        # Just to ensure it is cancelled
-        self._cr.execute("""
-            update purchase_order set state = 'cancel' where id = %s
-        """, (order.id, ))
+        # Just to ensure it is cancelled, this may not need
+        # self._cr.execute("""
+        #     update purchase_order set state = 'cancel' where id = %s
+        # """, (order.id, ))
         return act_close
