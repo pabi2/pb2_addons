@@ -1948,7 +1948,7 @@ result = pd.pivot_table(df, index=groupby,
                         'results': {
                             'A1': "${'1'}",
                             'B1': '${"=ROW()"}',
-                            'C1': 'partner_id.vat${value or ""}',
+                            'C1': 'partner_id.vat${value or ""}#{number_format=text}',
                             'D1': '${""}',
                             'E1': 'partner_id.title${value and value.name or ""}',
                             'F1': 'partner_id.name${value or ""}',
