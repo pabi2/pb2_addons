@@ -374,7 +374,7 @@
                                 'AH9': 'period_length_days${value * 4}',
                             },
                             'results': {
-                                'A16': 'partner_id.search_key${value or ""}',
+                                'A16': 'partner_id.search_key${value or ""}#{number_format=text}',
                                 'B16': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
                                 'C16': 'supplier_invoice_number${value or ""}',
                                 'D16': 'purchase_billing_id.name${value or ""}',
