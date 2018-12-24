@@ -374,7 +374,7 @@
                                 'AH9': 'period_length_days${value * 4}',
                             },
                             'results': {
-                                'A16': 'partner_id.search_key${value or ""}',
+                                'A16': 'partner_id.search_key${value or ""}#{number_format=text}',
                                 'B16': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
                                 'C16': 'supplier_invoice_number${value or ""}',
                                 'D16': 'purchase_billing_id.name${value or ""}',
@@ -505,7 +505,7 @@
                                 'N11': 'invoice_id.date_invoice${value or ""}#{number_format=date}',
                                 'O11': 'invoice_id.date_due${value or ""}#{number_format=date}',
                                 'P11': 'invoice_id.date_receipt_billing${value or ""}#{number_format=date}',
-                                'Q11': 'invoice_id.user_id.display_name${value or ""}',
+                                'Q11': 'invoice_id.validate_user_id.display_name${value or ""}',
                                 'R11': 'invoice_id.state${value and dict(draft="Draft", proforma="Pro-forma", proforma2="Pro-forma", open="Open", paid="Paid", cancel="Cancelled")[value] or ""}',
                             },
                             '_TAIL_0': {
@@ -610,7 +610,9 @@
                                 'P13': 'business_day${value or 0}',
                                 #'P13': '${"=NETWORKDAYS(?(O13),?(N13),Holliday!B:B)"}',
                                 'Q13': "${'=IF(?(P13)&lt;=5,\"Yes\",\"No\")'}",
-                                'R13': 'voucher_id.move_ids${value and value.mapped("match_import_id") and value.mapped("match_import_id").date_value or ""}#{number_format=date}',
+                                'R13': "${'=IF(?(K13)=\"Cheque\",?(V13),\"\")'}",
+                                # hide column
+                                'V13': 'voucher_id.move_ids${value and value.mapped("match_import_id") and value.mapped("match_import_id").date_value or ""}#{number_format=date}',
                             }
                         }
                     }

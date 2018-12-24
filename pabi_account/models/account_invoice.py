@@ -31,6 +31,7 @@ class AccountInvoice(models.Model):
          ],
         string='Payment Type',
         help="Specified Payment Type, can be used to screen Payment Method",
+        track_visibility='onchange',
     )
     currency_rate = fields.Float(
         string='Currency Rate',
@@ -53,6 +54,7 @@ class AccountInvoice(models.Model):
         INCOME_TAX_FORM,
         string='Income Tax Form',
         help="If invoice has withholding tax, this field is required.",
+        track_visibility='onchange',
     )
     has_wht = fields.Boolean(
         string='Has WHT in invoice line',
