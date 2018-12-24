@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import ast
+import calendar
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, api, fields, _
@@ -169,9 +170,11 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
         states={'draft': [('readonly', False)]},
         default='month',
     )
-    consider_month_end = fields.Boolean(
+    consider_month_end = fields.Selection(
+        [('first', 'Use First Day'),
+         ('last', 'Use Last Day')],
         string='Consider Month End',
-        default=False,
+        default='first',
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
@@ -615,16 +618,25 @@ class LoanInstallment(HeaderTaxBranch, models.Model):
             i = 0
             install_lines = []
             while i < rec.period_total:
+                # Consider month end, reset date first.
+                # i.e., first: '2018-02-15' -> '2018-02-01'
+                #       last: '2018-02-15' -> '2018-02-28'
+                if self.consider_month_end:
+                    if self.consider_month_end == 'first':
+                        if date_start.day != 1:
+                            date_start = datetime.strptime(
+                                date_start.strftime('%Y-%m-01'), '%Y-%m-%d')
+                            date_start += relativedelta(months=1)
+                    elif self.consider_month_end == 'last':
+                        last_day = calendar.monthrange(date_start.year,
+                                                       date_start.month)[1]
+                        date_start = datetime(date_start.year,
+                                              date_start.month,
+                                              last_day)
                 line = {
                     'date_start': date_start.strftime('%Y-%m-%d'),
                     'loan_install_id': rec.id,
                 }
-                # Consider month end
-                if self.consider_month_end:
-                    if date_start.day != 1:
-                        date_start = datetime.strptime(
-                            date_start.strftime('%Y-%m-01'), '%Y-%m-%d')
-                        i -= 1
                 # --
                 if rec.period_type == 'day':
                     date_start = \
