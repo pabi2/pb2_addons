@@ -171,6 +171,14 @@
                                 'L9': "${'=IF(AND(?(J9)&lt;&gt;\"\",?(J9)&gt;=1,?(J9)&lt;=15),?(I9),\"\")'}#{number_format=number}",
                                 'M9': "${'=IF(AND(?(J9)&lt;&gt;\"\",?(J9)&gt;=16,?(J9)&lt;=30),?(I9),\"\")'}#{number_format=number}",
                                 'N9': "${'=IF(AND(?(J9)&lt;&gt;\"\",?(J9)&gt;30),?(I9),\"\")'}",
+                            },
+                            '_TAIL_0': {
+                                'A9': '${"Total"}#{font=bold}',
+                                'I9': '@{sum}#{font=bold;number_format=number}',
+                                'K9': '@{sum}#{font=bold;number_format=number}',
+                                'L9': '@{sum}#{font=bold;number_format=number}',
+                                'M9': '@{sum}#{font=bold;number_format=number}',
+                                'N9': '@{sum}#{font=bold;number_format=number}',
                             }
                         },
                     }
