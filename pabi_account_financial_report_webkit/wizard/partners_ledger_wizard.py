@@ -77,8 +77,9 @@ class AccountReportPartnersLedgerWizard(orm.TransientModel):
                                LEFT JOIN account_fiscalyear f
                                    ON (p.fiscalyear_id = f.id)
                                WHERE f.id = %s
-                               AND COALESCE(p.special, FALSE) = FALSE
-                               ORDER BY p.date_start ASC
+                               /*AND COALESCE(p.special, FALSE) = FALSE
+                               ORDER BY p.date_start ASC*/
+                               ORDER BY p.code ASC /*PABI2*/
                                LIMIT 1) AS period_start
                 UNION ALL
                 SELECT * FROM (SELECT p.id
@@ -87,8 +88,9 @@ class AccountReportPartnersLedgerWizard(orm.TransientModel):
                                    ON (p.fiscalyear_id = f.id)
                                WHERE f.id = %s
                                AND p.date_start < NOW()
-                               AND COALESCE(p.special, FALSE) = FALSE
-                               ORDER BY p.date_stop DESC
+                               /*AND COALESCE(p.special, FALSE) = FALSE
+                               ORDER BY p.date_stop DESC*/
+                               ORDER BY p.code DESC /*PABI2*/
                                LIMIT 1) AS period_stop''',
                        (fiscalyear_id, fiscalyear_id))
             periods = [i[0] for i in cr.fetchall()]
@@ -111,6 +113,10 @@ class AccountReportPartnersLedgerWizard(orm.TransientModel):
                          ['amount_currency', 'partner_ids'],
                          context=context)[0]
         data['form'].update(vals)
+
+        # PABI2
+        data['specific_report'] = True
+
         return data
 
     def _print_report(self, cursor, uid, ids, data, context=None):

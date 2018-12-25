@@ -252,9 +252,6 @@ class CommonReportHeaderWebkit(common_report_header):
             # PABI2
             opening_periods = period_obj.browse(self.cursor, self.uid, p_ids) \
                 .filtered(lambda l: '00' in l.code).ids
-            # Check start period is opening period
-            if period.id in opening_periods:
-                return []
             return opening_periods
         return p_ids
 
@@ -757,9 +754,23 @@ WHERE move_id in %s"""
             raise
         return res and dict(res) or {}
 
-    def is_initial_balance_enabled(self, main_filter):
-        if main_filter not in ('filter_no', 'filter_year', 'filter_period'):
-            return False
+    def is_initial_balance_enabled(self, main_filter, start_period=False,
+                                   specific_report=False):
+        if specific_report:
+            # PABI2
+            if main_filter not in ('filter_period'):
+                return False
+
+            if main_filter in ('filter_period') and start_period:
+                opening_period = self._get_st_fiscalyear_period(
+                    start_period.fiscalyear_id, special=True,
+                    specific_report=specific_report)
+                if opening_period == start_period:
+                    return False
+        else:
+            if main_filter not in ('filter_no', 'filter_year',
+                                   'filter_period'):
+                return False
         return True
 
     def _get_initial_balance_mode(self, start_period, specific_report=False):

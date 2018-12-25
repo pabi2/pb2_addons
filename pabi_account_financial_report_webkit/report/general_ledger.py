@@ -59,8 +59,8 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
     def set_context(self, objects, data, ids, report_type=None):
         """Populate a ledger_lines attribute on each browse record that will be
         used by mako template"""
-        new_ids = data['form']['account_ids'] or data[
-            'form']['chart_account_id']
+        new_ids = (data['form']['account_ids'] or
+                   [data['form']['chart_account_id']])
 
         # Account initial balance memoizer
         init_balance_memoizer = {}
@@ -82,7 +82,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
         chart_account = self._get_chart_account_id_br(data)
 
         # PABI2
-        specific_report = data.get('specific_report', False)
+        specific_report = data.get('specific_report')
 
         if main_filter == 'filter_no':
             start_period = self.get_first_fiscalyear_period(
@@ -98,7 +98,9 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
             start = start_period
             stop = stop_period
 
-        initial_balance = self.is_initial_balance_enabled(main_filter)
+        initial_balance = self.is_initial_balance_enabled(
+            main_filter, start_period=start_period,
+            specific_report=specific_report)
         initial_balance_mode = initial_balance \
             and self._get_initial_balance_mode(
                 start, specific_report=specific_report) or False

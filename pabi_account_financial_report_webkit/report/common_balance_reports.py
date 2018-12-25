@@ -123,7 +123,10 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
             data, "comp%s_period_to" % (index,), 'account.period')
         start_date = self._get_form_param("comp%s_date_from" % (index,), data)
         stop_date = self._get_form_param("comp%s_date_to" % (index,), data)
-        init_balance = self.is_initial_balance_enabled(comparison_filter)
+
+        init_balance = self.is_initial_balance_enabled(
+            comparison_filter, start_period=start_period,
+            specific_report=specific_report)
 
         accounts_by_ids = {}
         comp_params = {}
@@ -241,7 +244,7 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
         chart_account = self._get_chart_account_id_br(data)
 
         # PABI2
-        specific_report = data.get('specific_report', False)
+        specific_report = data.get('specific_report')
 
         start_period, stop_period, start, stop = \
             self._get_start_stop_for_filter(main_filter, fiscalyear,
@@ -249,7 +252,10 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
                                             start_period, stop_period,
                                             specific_report=specific_report)
 
-        init_balance = self.is_initial_balance_enabled(main_filter)
+        init_balance = self.is_initial_balance_enabled(
+            main_filter, start_period=start_period,
+            specific_report=specific_report)
+
         initial_balance_mode = init_balance and self._get_initial_balance_mode(
             start, specific_report=specific_report) or False
 

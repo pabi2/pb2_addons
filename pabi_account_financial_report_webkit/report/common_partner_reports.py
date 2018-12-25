@@ -67,21 +67,30 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
     def _get_period_range_from_start_period(self, start_period,
                                             include_opening=False,
                                             fiscalyear=False,
-                                            stop_at_previous_opening=False):
+                                            stop_at_previous_opening=False,
+                                            specific_report=False):
         """We retrieve all periods before start period"""
         periods = super(CommonPartnersReportHeaderWebkit, self).\
             _get_period_range_from_start_period(
                 start_period,
                 include_opening=include_opening,
                 fiscalyear=fiscalyear,
-                stop_at_previous_opening=stop_at_previous_opening)
+                stop_at_previous_opening=stop_at_previous_opening,
+                specific_report=specific_report)
+
+        # PABI2
+        if specific_report:
+            return periods
+
+        # --
         first_special = self._get_first_special_period()
         if first_special and first_special.id not in periods:
             periods.append(first_special.id)
         return periods
 
     def _get_query_params_from_periods(self, period_start, period_stop,
-                                       mode='exclude_opening'):
+                                       mode='exclude_opening',
+                                       specific_report=False):
         """
         Build the part of the sql "where clause" which filters on the selected
         periods.
@@ -91,8 +100,16 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
         :param str mode: deprecated
         """
         # we do not want opening period so we exclude opening
-        periods = self.pool.get('account.period').build_ctx_periods(
-            self.cr, self.uid, period_start.id, period_stop.id)
+
+        periods = []
+        if specific_report:
+            # PABI2
+            periods = self.build_ctx_periods(
+                self.cr, self.uid, period_start.id, period_stop.id)
+        else:
+            periods = self.pool.get('account.period').build_ctx_periods(
+                self.cr, self.uid, period_start.id, period_stop.id)
+
         if not periods:
             return []
 
@@ -109,7 +126,8 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
 
         return sql_conditions, search_params
 
-    def _get_query_params_from_dates(self, date_start, date_stop, **args):
+    def _get_query_params_from_dates(self, date_start, date_stop,
+                                     specific_report=False, **args):
         """
         Build the part of the sql where clause based on the dates to print.
 
@@ -118,6 +136,11 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
         """
 
         periods = self._get_opening_periods()
+
+        # PABI2
+        if specific_report:
+            periods = []
+
         if not periods:
             periods = (-1,)
 
@@ -247,12 +270,22 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
                                            partner_filter,
                                            exclude_reconcile=False,
                                            force_period_ids=False,
-                                           date_stop=None):
+                                           date_stop=None,
+                                           specific_report=False):
+        # PABI2
+        fiscalyear = False
+        include_opening = False
+        if specific_report:
+            fiscalyear = start_period.fiscalyear_id
+            include_opening = True
+
         # take ALL previous periods
         period_ids = force_period_ids \
             if force_period_ids \
             else self._get_period_range_from_start_period(
-                start_period, fiscalyear=False, include_opening=False)
+                start_period, fiscalyear=fiscalyear,
+                include_opening=include_opening,
+                specific_report=specific_report)
 
         if not period_ids:
             period_ids = [-1]
@@ -285,7 +318,8 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
     def _compute_partners_initial_balances(self, account_ids, start_period,
                                            partner_filter=None,
                                            exclude_reconcile=False,
-                                           force_period_ids=False):
+                                           force_period_ids=False,
+                                           specific_report=False):
         """We compute initial balance.
         If form is filtered by date all initial balance are equal to 0
         This function will sum pear and apple in currency amount if account
@@ -295,7 +329,8 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
         move_line_ids = self._partners_initial_balance_line_ids(
             account_ids, start_period, partner_filter,
             exclude_reconcile=exclude_reconcile,
-            force_period_ids=force_period_ids)
+            force_period_ids=force_period_ids,
+            specific_report=specific_report)
         if not move_line_ids:
             move_line_ids = [{'id': -1}]
         sql = ("SELECT ml.account_id, ml.partner_id,"

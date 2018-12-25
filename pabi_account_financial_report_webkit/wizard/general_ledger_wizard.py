@@ -83,6 +83,10 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
                           ],
                          context=context)[0]
         data['form'].update(vals)
+
+        # PABI2
+        data['specific_report'] = True
+
         return data
 
     def onchange_filter(self, cr, uid, ids, filter='filter_no',
@@ -148,9 +152,6 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
     def _print_report(self, cursor, uid, ids, data, context=None):
         # we update form with display account value
         data = self.pre_print_report(cursor, uid, ids, data, context=context)
-
-        # PABI2
-        data['specific_report'] = True
 
         return {'type': 'ir.actions.report.xml',
                 'report_name': 'account.account_report_general_ledger_webkit',
