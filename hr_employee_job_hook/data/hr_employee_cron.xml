@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data noupdate="1">
+		<record id="hr_employee_action_hook_profile" model="ir.cron">
+			<field name="name">HREmployee - Hook Profile</field>
+			<field name="active" eval="False" />
+			<field name="user_id" ref="base.user_root" />
+			<field name="interval_number">1</field>
+			<field name="interval_type">days</field>
+			<field name="numbercall">-1</field>
+			<field name="nextcall">2017-01-01 09:00:00</field>
+			<field name="doall" eval="False" />
+			<field name="model" eval="'hr.employee'" />
+			<field name="function" eval="'action_hook_profile'" />
+			<field name="args">(0,)</field>
+		</record>
+	</data>
+</openerp>
