@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="document.directory" id="dir_sale_order_template">
+            <field name="name">Sale Order Templates</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="sale_order_xlsx_template" model="ir.attachment">
+            <field name="res_model">sale.order</field>
+            <field name="datas"></field>
+            <field name="datas_fname">sale_order.xlsx</field>
+            <field name="name">Sale Order Template</field>
+            <field name="parent_id" eval="ref('dir_sale_order_template')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'sale_order': {
+                            '_HEAD_': {
+                                'B2': 'partner_id.display_name${value or ""}#{align=left;number_format=text}',
+                                'B3': 'order_type${value and dict(env["sale.order"]._columns["order_type"].selection)[value] or ""}#{align=left;number_format=text}',
+                                'B4': 'quote_id.name${value or ""}#{align=left;number_format=text}',
+                                'B5': 'date_order${value or ""}#{align=left;number_format=date}',
+                                'B6': 'client_order_ref${value or ""}#{align=left;number_format=text}',
+                                'B7': 'warehouse_id.name${value or ""}#{align=left;number_format=text}',
+                                'B8': 'pricelist_id.name${value or ""}#{align=left;number_format=text}',
+                                'B9': 'taxbranch_id.display_name${value or ""}#{align=left;number_format=text}',
+                            },
+                            'order_line': {
+                                'A12': 'docline_seq${value or 0}',
+                                'B12': 'product_id.default_code${value or ""}#{number_format=text}',
+                                'C12': 'product_id.name${value or ""}#{number_format=text}',
+                                'D12': 'chartfield_id.code${value or ""}#{number_format=text}',
+                                'E12': 'chartfield_id.name${value or ""}#{number_format=text}',
+                                'F12': 'fund_id.code${value or ""}#{number_format=text}',
+                                'G12': 'fund_id.name${value or ""}#{number_format=text}',
+                                'H12': 'cost_control_id.code${value or ""}#{number_format=text}',
+                                'I12': 'cost_control_id.name${value or ""}#{number_format=text}',
+                                'J12': 'activity_group_id.code${value or ""}#{number_format=text}',
+                                'K12': 'activity_group_id.name${value or ""}#{number_format=text}',
+                                'L12': 'activity_id.code${value or ""}#{number_format=text}',
+                                'M12': 'activity_id.name${value or ""}#{number_format=text}',
+                                'N12': 'activity_rpt_id.code${value or ""}#{number_format=text}',
+                                'O12': 'activity_rpt_id.name${value or ""}#{number_format=text}',
+                                'P12': 'name${value or ""}#{number_format=text}',
+                                'Q12': 'product_uom_qty${value or 0}#{number_format=number}',
+                                'R12': 'product_uom.name${value or ""}#{number_format=text}',
+                                'S12': 'price_unit${value or 0}#{number_format=number}',
+                                'T12': 'tax_id${value and ",".join([x.display_name for x in value]) or ""}',
+                                'U12': 'price_subtotal${value or 0}#{number_format=number}',
+                            }
+                        }
+                    },
+                    '__IMPORT__': {
+                        'sale_order': {
+                            'order_line': {
+                                'A12': 'docline_seq',
+                                'B12': 'product_id',
+                                'J12': 'activity_group_id',
+                                'L12': 'activity_id',
+                                'N12': 'activity_rpt_id',
+                                'D12': 'chartfield_id',
+                                'F12': 'fund_id',
+                                'H12': 'cost_control_id',
+                                'P12': 'name',
+                                'Q12': 'product_uom_qty',
+                                'S12': 'price_unit',
+                                'T12': 'tax_id',
+                                'U12': 'price_subtotal',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
+    </data>
+</openerp>

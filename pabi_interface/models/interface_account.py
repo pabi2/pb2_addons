@@ -537,47 +537,14 @@ class InterfaceAccountEntry(models.Model):
         self.ensure_one()
         # To reconcile each reciable/payable line
         to_reconcile_lines = self.line_ids.filtered('account_id.reconcile')
-        #  .filtered(lambda l: l.account_id.type in ('receivable', 'payable'))
         for line in to_reconcile_lines:
             payment_ml = line.ref_move_line_id
             invoice_ml = line.reconcile_move_line_ids
-            # Validate Account
-            # if payment_ml.account_id != invoice_ml.account_id:
-            #     raise ValidationError(
-            #         _("Wrong account to reconcile for line '%s'.\nInvoice "
-            #           "move line account not equal to that of payment") %
-            #         (line.name,))
-            # Validate Amount Sign
-            # NOTE: remove this condition for case Undue Tax
-            # psign = (payment_ml.debit - payment_ml.credit) > 0 and 1 or -1
-            # isign = (invoice_ml.debit - invoice_ml.credit) > 0 and 1 or -1
-            # if psign == isign:
-            #     raise ValidationError(
-            #         _("To reconcile, amount should be in opposite Dr/Cr "
-            #           "for line '%s'") % (line.name,))
-            # Full or Partial reconcile
-
-            # lines = payment_ml | invoice_ml
-            # residual = sum([x.debit - x.credit for x in lines])
-            # # Reconcile Full or Partial
-            # if not residual:
-            #     lines.reconcile('manual')
-            # else:
-            #     lines.reconcile_partial('manual')
-
-            # to_rec = move_lines.filtered(lambda l: l.account_id == account)
             to_rec = payment_ml | invoice_ml
-            # If nohting to reconcile
-            debit = sum(to_rec.mapped('debit'))
-            credit = sum(to_rec.mapped('credit'))
-            if debit == 0.0 or credit == 0.0:
-                continue
-            # --
             if len(to_rec) >= 2:
-                if debit != credit:
-                    to_rec.reconcile_partial('auto')
-                else:
-                    to_rec.reconcile('auto')
+                r_id = to_rec.reconcile_partial('auto')
+                reconcile = self.env['account.move.reconcile'].browse(r_id)
+                reconcile.reconcile_partial_check()
 
     # ==========================================================
     #                  INTERFACE OTHER SYSEM

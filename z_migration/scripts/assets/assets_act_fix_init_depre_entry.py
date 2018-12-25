@@ -1,5 +1,6 @@
 """
-This method will click button confirm asset in assets
+It will create depre JE for the second line (type = depre, init = true)
+only if it is not created before (one time only)
 """
 import sys
 import os

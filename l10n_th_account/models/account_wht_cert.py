@@ -4,11 +4,14 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from .res_partner import INCOME_TAX_FORM
 
-WHT_CERT_INCOME_TYPE = [('1', '1.เงินเดือน ค่าจ้าง ฯลฯ 40(1)'),
-                        ('2', '2.ค่าธรรมเนียม ค่านายหน้า ฯลฯ 40(2)'),
-                        ('3', '3.ค่าแห่งลิขสิทธิ์ ฯลฯ 40(3)'),
-                        ('5', '5.ค่าจ้างทำของ ค่าบริการ ฯลฯ 3 เตรส'),
-                        ('6', '6.อื่นๆ')]
+WHT_CERT_INCOME_TYPE = [('1', '1. เงินเดือน ค่าจ้าง ฯลฯ 40(1)'),
+                        ('2', '2. ค่าธรรมเนียม ค่านายหน้า ฯลฯ 40(2)'),
+                        ('3', '3. ค่าแห่งลิขสิทธิ์ ฯลฯ 40(3)'),
+                        ('5', '5. ค่าจ้างทำของ ค่าบริการ ฯลฯ 3 เตรส'),
+                        ('6', '6. ค่าบริการ/ค่าสินค้าภาครัฐ'),
+                        ('7', '7. ค่าจ้างทำของ ค่ารับเหมา'),
+                        ('8', '8. ธุรกิจพาณิชย์ เกษตร อื่นๆ')]
+
 
 TAX_PAYER = [('withholding', 'Withholding'),
              ('paid_one_time', 'Paid One Time')]
@@ -164,6 +167,12 @@ class AccountWhtCert(models.Model):
     x_type_6_base = fields.Float(compute='_compute_cert_fields')
     x_type_6_tax = fields.Float(compute='_compute_cert_fields')
     x_type_6_desc = fields.Char(compute='_compute_cert_fields')
+    x_type_7_base = fields.Float(compute='_compute_cert_fields')
+    x_type_7_tax = fields.Float(compute='_compute_cert_fields')
+    x_type_7_desc = fields.Char(compute='_compute_cert_fields')
+    x_type_8_base = fields.Float(compute='_compute_cert_fields')
+    x_type_8_tax = fields.Float(compute='_compute_cert_fields')
+    x_type_8_desc = fields.Char(compute='_compute_cert_fields')
     x_signature = fields.Char(compute='_compute_cert_fields')
 
     @api.multi
@@ -205,6 +214,12 @@ class AccountWhtCert(models.Model):
             rec.x_type_6_base = rec._get_summary_by_type('base', '6')
             rec.x_type_6_tax = rec._get_summary_by_type('tax', '6')
             rec.x_type_6_desc = rec._get_summary_by_type('desc', '6')
+            rec.x_type_7_base = rec._get_summary_by_type('base', '7')
+            rec.x_type_7_tax = rec._get_summary_by_type('tax', '7')
+            rec.x_type_7_desc = rec._get_summary_by_type('desc', '7')
+            rec.x_type_8_base = rec._get_summary_by_type('base', '8')
+            rec.x_type_8_tax = rec._get_summary_by_type('tax', '8')
+            rec.x_type_8_desc = rec._get_summary_by_type('desc', '8')
             rec.x_signature = rec.create_uid.display_name
 
     @api.multi

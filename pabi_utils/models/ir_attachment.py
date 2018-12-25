@@ -39,7 +39,9 @@ class IrAttachment(models.Model):
                 # While can't find better solution, we get the addon dir by
                 # so, make sure that the calling addon in in the same foloer
                 # with this pabi_utils
-                file_dir = file_dir.replace('/pabi_utils/models', '')
+                file_dir = file_dir.\
+                    replace('/pabi_utils/models', '').\
+                    replace('\\pabi_utils\\models', '')
                 file_path = '%s/%s/%s' % (file_dir, folder, att.datas_fname)
                 att.datas = open(file_path, 'rb').read().encode('base64')
             except ValueError, e:
