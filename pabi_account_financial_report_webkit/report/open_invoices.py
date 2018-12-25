@@ -38,7 +38,7 @@ class PartnersOpenInvoicesWebkit(report_sxw.rml_parse,
         header_report_name = ' - '.join((_('OPEN INVOICES REPORT'),
                                         company.name,
                                         company.currency_id.name))
-        # kittiu: Add to remove bug in case compan name is TH
+        # kittiu: Add to remove bug in case company name is TH
         if header_report_name:
             header_report_name = header_report_name.encode('utf-8')
         # --
@@ -102,9 +102,14 @@ class PartnersOpenInvoicesWebkit(report_sxw.rml_parse,
         chart_account = self._get_chart_account_id_br(data)
         group_by_currency = self._get_form_param('group_by_currency', data)
 
+        # PABI2
+        specific_report = data.get('specific_report')
+
         if main_filter == 'filter_no' and fiscalyear:
-            start_period = self.get_first_fiscalyear_period(fiscalyear)
-            stop_period = self.get_last_fiscalyear_period(fiscalyear)
+            start_period = self.get_first_fiscalyear_period(
+                fiscalyear, specific_report=specific_report)
+            stop_period = self.get_last_fiscalyear_period(
+                fiscalyear, specific_report=specific_report)
 
         # Retrieving accounts
         filter_type = ('payable', 'receivable')
@@ -128,7 +133,7 @@ class PartnersOpenInvoicesWebkit(report_sxw.rml_parse,
             stop = stop_period
         ledger_lines_memoizer = self._compute_open_transactions_lines(
             account_ids, main_filter, target_move, start, stop, date_until,
-            partner_filter=partner_ids)
+            partner_filter=partner_ids, specific_report=specific_report)
         objects = self.pool.get('account.account').browse(self.cursor,
                                                           self.uid,
                                                           account_ids)
@@ -180,7 +185,8 @@ class PartnersOpenInvoicesWebkit(report_sxw.rml_parse,
     def _compute_open_transactions_lines(self, accounts_ids, main_filter,
                                          target_move, start, stop,
                                          date_until=False,
-                                         partner_filter=False):
+                                         partner_filter=False,
+                                         specific_report=False):
         res = defaultdict(dict)
 
         # we check if until date and date stop have the same value
@@ -198,14 +204,19 @@ class PartnersOpenInvoicesWebkit(report_sxw.rml_parse,
                                  or none'))
 
         initial_move_lines_per_account = {}
-        if main_filter in ('filter_period', 'filter_no'):
+
+        filters = ('filter_period', 'filter_no')
+        if specific_report:
+            # PABI2
+            # Initial balance have only filter period
+            filters = ('filter_period')
+
+        if main_filter in filters:
             initial_move_lines_per_account = self._tree_move_line_ids(
-                self._partners_initial_balance_line_ids(accounts_ids,
-                                                        start,
-                                                        partner_filter,
-                                                        exclude_reconcile=True,
-                                                        force_period_ids=False,
-                                                        date_stop=date_stop),
+                self._partners_initial_balance_line_ids(
+                    accounts_ids, start, partner_filter,
+                    exclude_reconcile=True, force_period_ids=False,
+                    date_stop=date_stop, specific_report=specific_report),
                 key='id')
 
         for account_id in accounts_ids:
