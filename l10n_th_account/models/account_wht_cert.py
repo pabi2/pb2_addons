@@ -167,6 +167,12 @@ class AccountWhtCert(models.Model):
     x_type_6_base = fields.Float(compute='_compute_cert_fields')
     x_type_6_tax = fields.Float(compute='_compute_cert_fields')
     x_type_6_desc = fields.Char(compute='_compute_cert_fields')
+    x_type_7_base = fields.Float(compute='_compute_cert_fields')
+    x_type_7_tax = fields.Float(compute='_compute_cert_fields')
+    x_type_7_desc = fields.Char(compute='_compute_cert_fields')
+    x_type_8_base = fields.Float(compute='_compute_cert_fields')
+    x_type_8_tax = fields.Float(compute='_compute_cert_fields')
+    x_type_8_desc = fields.Char(compute='_compute_cert_fields')
     x_signature = fields.Char(compute='_compute_cert_fields')
 
     @api.multi
@@ -208,6 +214,12 @@ class AccountWhtCert(models.Model):
             rec.x_type_6_base = rec._get_summary_by_type('base', '6')
             rec.x_type_6_tax = rec._get_summary_by_type('tax', '6')
             rec.x_type_6_desc = rec._get_summary_by_type('desc', '6')
+            rec.x_type_7_base = rec._get_summary_by_type('base', '7')
+            rec.x_type_7_tax = rec._get_summary_by_type('tax', '7')
+            rec.x_type_7_desc = rec._get_summary_by_type('desc', '7')
+            rec.x_type_8_base = rec._get_summary_by_type('base', '8')
+            rec.x_type_8_tax = rec._get_summary_by_type('tax', '8')
+            rec.x_type_8_desc = rec._get_summary_by_type('desc', '8')
             rec.x_signature = rec.create_uid.display_name
 
     @api.multi
