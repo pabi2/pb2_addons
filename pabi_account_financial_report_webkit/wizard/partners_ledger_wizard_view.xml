@@ -46,21 +46,6 @@
             </field>
         </record>
 
-        <!-- PABI2 -->
-        <record id="account_partner_ledger_view_webkit_inherit" model="ir.ui.view">
-            <field name="name">Partner Ledger</field>
-            <field name="model">partners.ledger.webkit</field>
-            <field name="inherit_id" ref="account_partner_ledger_view_webkit"/>
-            <field name="arch" type="xml">
-                <field name="period_from" position="attributes">
-                    <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
-                </field>
-                <field name="period_to" position="attributes">
-                    <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
-                </field>
-            </field>
-        </record>
-
         <record id="action_account_partners_ledger_menu_webkit" model="ir.actions.act_window">
             <field name="name">Partner Ledger</field>
             <field name="type">ir.actions.act_window</field>

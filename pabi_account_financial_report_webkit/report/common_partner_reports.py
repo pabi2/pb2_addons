@@ -19,17 +19,21 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
     def get_partners_move_lines_ids(self, account_id, main_filter, start, stop,
                                     target_move,
                                     exclude_reconcile=False,
-                                    partner_filter=False):
+                                    partner_filter=False,
+                                    specific_report=False):
         filter_from = False
         if main_filter in ('filter_period', 'filter_no'):
             filter_from = 'period'
         elif main_filter == 'filter_date':
             filter_from = 'date'
         if filter_from:
+            opening_mode = 'exclude_opening'
+            if specific_report:
+                opening_mode = 'include_opening'
             return self._get_partners_move_line_ids(
                 filter_from, account_id, start, stop, target_move,
-                exclude_reconcile=exclude_reconcile,
-                partner_filter=partner_filter)
+                opening_mode=opening_mode, exclude_reconcile=exclude_reconcile,
+                partner_filter=partner_filter, specific_report=specific_report)
 
     def _get_first_special_period(self):
         """
@@ -159,7 +163,8 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
                                     target_move,
                                     opening_mode='exclude_opening',
                                     exclude_reconcile=False,
-                                    partner_filter=None):
+                                    partner_filter=None,
+                                    specific_report=False):
         """
 
         :param str filter_from: "periods" or "dates"
@@ -183,7 +188,8 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
                     " AND account_move_line.state = 'valid' "
 
         method = getattr(self, '_get_query_params_from_' + filter_from + 's')
-        sql_conditions, search_params = method(start, stop)
+        sql_conditions, search_params = method(
+            start, stop, mode=opening_mode, specific_report=specific_report)
 
         sql_where += sql_conditions
 
