@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import time
-
 from openerp.osv import fields, orm
 
 
@@ -84,6 +83,10 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
                           ],
                          context=context)[0]
         data['form'].update(vals)
+
+        # PABI2
+        data['specific_report'] = True
+
         return data
 
     def onchange_filter(self, cr, uid, ids, filter='filter_no',
@@ -121,8 +124,9 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
                                LEFT JOIN account_fiscalyear f
                                    ON (p.fiscalyear_id = f.id)
                                WHERE f.id = %s
-                               AND COALESCE(p.special, FALSE) = FALSE
-                               ORDER BY p.date_start ASC
+                               /*AND COALESCE(p.special, FALSE) = FALSE
+                               ORDER BY p.date_start ASC*/
+                               ORDER BY p.code ASC /*PABI2*/
                                LIMIT 1) AS period_start
                 UNION ALL
                 SELECT * FROM (SELECT p.id
@@ -131,8 +135,9 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
                                    ON (p.fiscalyear_id = f.id)
                                WHERE f.id = %s
                                AND p.date_start < NOW()
-                               AND COALESCE(p.special, FALSE) = FALSE
-                               ORDER BY p.date_stop DESC
+                               /*AND COALESCE(p.special, FALSE) = FALSE
+                               ORDER BY p.date_stop DESC*/
+                               ORDER BY p.code DESC /*PABI2*/
                                LIMIT 1) AS period_stop''',
                        (fiscalyear_id, fiscalyear_id))
             periods = [i[0] for i in cr.fetchall()]
@@ -147,6 +152,7 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
     def _print_report(self, cursor, uid, ids, data, context=None):
         # we update form with display account value
         data = self.pre_print_report(cursor, uid, ids, data, context=context)
+
         return {'type': 'ir.actions.report.xml',
                 'report_name': 'account.account_report_general_ledger_webkit',
                 'datas': data}
