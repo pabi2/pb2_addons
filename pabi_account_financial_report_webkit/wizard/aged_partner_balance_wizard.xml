@@ -57,7 +57,7 @@
             <attribute name="String">At the end of</attribute>
           </field>
           <field name="period_to" position="attributes">
-            <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id), ('special', '=', False)]</attribute>
+            <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
           </field>
         </data>
       </field>

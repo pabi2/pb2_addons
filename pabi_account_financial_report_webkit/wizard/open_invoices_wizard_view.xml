@@ -52,27 +52,12 @@
                         <attribute name="on_change">onchange_period_to(fiscalyear_id, period_to, date_to, until_date)</attribute>
                     </field>
                     <field name="period_from" position="attributes">
-                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id), ('special', '=', False)]</attribute>
+                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
                     </field>
                     <field name="period_to" position="attributes">
-                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id), ('special', '=', False)]</attribute>
+                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
                     </field>
                 </data>
-            </field>
-        </record>
-
-        <!-- PABI2 -->
-        <record id="account_open_invoices_view_webkit_inherit" model="ir.ui.view">
-            <field name="name">Open Invoices Report</field>
-            <field name="model">open.invoices.webkit</field>
-            <field name="inherit_id" ref="account_open_invoices_view_webkit"/>
-            <field name="arch" type="xml">
-                <field name="period_from" position="attributes">
-                    <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
-                </field>
-                <field name="period_to" position="attributes">
-                    <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
-                </field>
             </field>
         </record>
 

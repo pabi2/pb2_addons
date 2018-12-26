@@ -48,30 +48,15 @@
                         <attribute name="string">Time Filters</attribute>
                     </page>
                     <field name="period_from" position="attributes">
-                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id), ('special', '=', False)]</attribute>
+                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
                     </field>
                     <field name="period_to" position="attributes">
-                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id), ('special', '=', False)]</attribute>
+                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
                     </field>
                     <field name="fiscalyear_id" position="attributes">
                         <attribute name="attrs">{'required': [('filter', '=', 'filter_opening')]}</attribute>
                     </field>
                 </data>
-            </field>
-        </record>
-
-        <!-- PABI2 -->
-        <record id="account_partner_balance_view_webkit_inherit" model="ir.ui.view">
-            <field name="name">Partner Balance</field>
-            <field name="model">partner.balance.webkit</field>
-            <field name="inherit_id" ref="account_partner_balance_view_webkit"/>
-            <field name="arch" type="xml">
-                <field name="period_from" position="attributes">
-                    <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
-                </field>
-                <field name="period_to" position="attributes">
-                    <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
-                </field>
             </field>
         </record>
 
