@@ -452,6 +452,9 @@ class CommonReportHeaderWebkit(common_report_header):
                                                            self.uid,
                                                            account_ids):
             res[acc.id] = self._compute_init_balance(default_values=True)
+            # Force period
+            if opening_period_selected == start_period.ids:
+                continue
             if acc.user_type.close_method == 'none':
                 # we compute the initial balance for close_method == none only
                 # when we print a GL during the year, when the opening period
@@ -761,12 +764,12 @@ WHERE move_id in %s"""
             if main_filter not in ('filter_period'):
                 return False
 
-            if main_filter in ('filter_period') and start_period:
-                opening_period = self._get_st_fiscalyear_period(
-                    start_period.fiscalyear_id, special=True,
-                    specific_report=specific_report)
-                if opening_period == start_period:
-                    return False
+            # if main_filter in ('filter_period') and start_period:
+            #     opening_period = self._get_st_fiscalyear_period(
+            #         start_period.fiscalyear_id, special=True,
+            #         specific_report=specific_report)
+            #     if opening_period == start_period:
+            #         return False
         else:
             if main_filter not in ('filter_no', 'filter_year',
                                    'filter_period'):
@@ -776,6 +779,9 @@ WHERE move_id in %s"""
     def _get_initial_balance_mode(self, start_period, specific_report=False):
         opening_period_selected = self.get_included_opening_period(
             start_period, specific_report=specific_report)
+        # Force period
+        if opening_period_selected == start_period.ids:
+            opening_period_selected = []
         opening_move_lines = self.periods_contains_move_lines(
             opening_period_selected)
         if opening_move_lines:
