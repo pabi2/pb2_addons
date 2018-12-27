@@ -308,8 +308,15 @@ class trial_balance_xls(report_xls):
             c_sum_cell_style_decimal = xlwt.easyxf(
                 cell_format + _xs['right'],
                 num_format_str=report_xls.decimal_format)
-            c_sum_specs = [(c_spec[0], 1, 0, 'text', None)
-                           for c_spec in c_specs]
+            # c_sum_specs = [(c_spec[0], 1, 0, 'text', None)
+            #                for c_spec in c_specs]
+            c_sum_specs = []
+            for c_spec in c_specs:
+                if c_spec[0] == 'account':
+                    c_sum_specs.append(
+                        (c_spec[0], account_span - 1, 0, 'text', None))
+                    continue
+                c_sum_specs.append((c_spec[0], 1, 0, 'text', None))
             for c_spec in c_specs:
                 index = c_specs.index(c_spec)
                 if 'init_bal' == c_spec[0]:

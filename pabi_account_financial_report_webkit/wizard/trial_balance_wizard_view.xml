@@ -40,10 +40,10 @@
                         <attribute name="string">Time Filters</attribute>
                     </page>
                     <field name="period_from" position="attributes">
-                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id), ('special', '=', False)]</attribute>
+                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
                     </field>
                     <field name="period_to" position="attributes">
-                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id), ('special', '=', False)]</attribute>
+                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
                     </field>
                     <field name="fiscalyear_id" position="attributes">
                         <attribute name="attrs">{'required': [('filter', '=', 'filter_opening')]}</attribute>

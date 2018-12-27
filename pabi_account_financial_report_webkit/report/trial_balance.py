@@ -25,7 +25,7 @@ class TrialBalanceWebkit(report_sxw.rml_parse,
                                                     context=context).company_id
         header_report_name = ' - '.join((_('TRIAL BALANCE'), company.name,
                                          company.currency_id.name))
-        # kittiu: Add to remove bug in case compan name is TH
+        # kittiu: Add to remove bug in case company name is TH
         if header_report_name:
             header_report_name = header_report_name.encode('utf-8')
         # --

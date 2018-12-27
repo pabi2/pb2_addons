@@ -149,6 +149,10 @@ an issue in wkhtmltopdf
 (http://code.google.com/p/wkhtmltopdf/issues/detail?id=656) Instead,
 the header and footer are created as text with arguments passed to
 wkhtmltopdf. The texts are defined inside the report classes.
+
+PABI2
+------------
+specific_report :: filter by all period (include special = True)
 """,
     'version': '8.0.1.1.0',
     'author': "Camptocamp,Ecosoft,Tharathip C.",
