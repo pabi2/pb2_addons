@@ -124,9 +124,10 @@
                 <xpath expr="//form[@string='Products']/group/field[@name='product_uom_id']" position="after">
                     <field name="price_unit"/>
                     <field name="price_standard"/>
+                    <field name="tax_ids" widget="many2many_tags"/>
+                    <field name="price_subtotal"/>
                     <field name="is_green_product"/>
                     <field name="is_innovation"/>
-
                 </xpath>
                 <xpath expr="//form[@string='Products']/group/field[@name='account_analytic_id']" position="after">
                     <field name="product_name"/>
