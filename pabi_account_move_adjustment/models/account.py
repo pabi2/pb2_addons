@@ -78,7 +78,8 @@ class AccountMove(models.Model):
     @api.multi
     def _compute_date_due(self):
         for rec in self:
-            date_due = rec.line_id.mapped('date_maturity')
+            date_due = \
+                rec.line_id.filtered('date_maturity').mapped('date_maturity')
             if date_due:
                 rec.date_due = date_due[0]
             else:
