@@ -155,6 +155,12 @@ class AccountInvoice(models.Model):
             return journal.with_context(ctx)
         return super(AccountInvoice, self)._get_journal_hook(ctx)
 
+    @api.multi
+    def unlink_clear_prepaid_move(self):
+        self.ensure_one()
+        self.clear_prepaid_move_id = False
+        return True
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'

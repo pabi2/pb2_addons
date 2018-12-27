@@ -28,7 +28,18 @@
                         </div>
                     </xpath>
                     <xpath expr="/form/sheet/notebook//group//field[@name='move_id']" position="after">
-                        <field name="clear_prepaid_move_id" attrs="{'invisible': [('clear_prepaid_move_id', '=', False)]}"/>
+                        <label for="clear_prepaid_move_id" attrs="{'invisible': [('clear_prepaid_move_id', '=', False)]}"/>
+                        <div attrs="{'invisible': [('clear_prepaid_move_id', '=', False)]}">
+                            <div>
+                                <field name="clear_prepaid_move_id"/>
+                                <button name="unlink_clear_prepaid_move" type="object"
+                                  string="⇒ Unlink Clear Prepaid JE"
+                                  confirm="Unlink only if you want to redo the clear prepaid again. The unlinked entry may require reversal."
+                                  groups="account.group_account_manager"
+                                  attrs="{'invisible': [('clear_prepaid_move_id', '=', False)]}"
+                                  class="oe_link"/>
+                            </div>
+                        </div>
                     </xpath>
                 </data>
             </field>
