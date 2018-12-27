@@ -11,7 +11,7 @@ import time
 
 def setup_custom_logger(filename):
     module_dir = \
-        os.path.dirname(os.path.realpath(__file__)).split('/controller')[0]
+        os.path.dirname(os.path.realpath(__file__)).split('\\controller')[0]
     log_path = '%s/logs/%s_%s.log' \
         % (module_dir, filename, time.strftime('%Y_%m_%d_%H_%M_%S'))
     formatter = logging.Formatter(

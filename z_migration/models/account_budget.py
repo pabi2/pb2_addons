@@ -26,29 +26,52 @@ class AccountBudget(models.Model):
         Analytic = self.env['account.analytic.account']
         # update to new dimension
         vals = {}
-        if line.section_id:
-            vals['section_id'] = new_obj_id(line.section_id.code,
-                                            'section_id',
-                                            'res.section')
-        elif line.project_id:
-            vals['project_id'] = new_obj_id(line.project_id.code,
-                                            'project_id',
-                                            'res.project')
-        elif line.invest_asset_id:
-            vals['invest_asset_id'] = new_obj_id(line.invest_asset_id.code,
-                                                 'invest_asset_id',
-                                                 'res.invest.asset')
-        elif line.invest_construction_phase_id:
-            vals['invest_construction_phase_id'] = new_obj_id(
-                line.invest_construction_phase_id.code,
-                'invest_construction_phase_id',
-                'res.invest.construction.phase')
-        elif line.personnel_costcenter_id:
-            vals['personnel_costcenter_id'] = new_obj_id(
-                line.personnel_costcenter_id.code,
-                'personnel_costcenter_id', 'res.personnel.costcenter')
-        else:
-            raise ValidationError('New dimension not found!')
+		if model == 'account.asset':
+			if line.owner_section_id:
+				vals['owner_section_id'] = new_obj_id(line.section_id.code,
+												'section_id',
+												'res.section')
+			elif line.owner_project_id:
+				vals['owner_project_id'] = new_obj_id(line.project_id.code,
+												'project_id',
+												'res.project')
+			elif line.owner_invest_asset_id:
+				vals['owner_invest_asset_id'] = new_obj_id(line.invest_asset_id.code,
+													 'invest_asset_id',
+													 'res.invest.asset')
+			elif line.owner_invest_construction_phase_id:
+				vals['owner_invest_construction_phase_id'] = new_obj_id(
+					line.invest_construction_phase_id.code,
+					'invest_construction_phase_id',
+					'res.invest.construction.phase')
+			else:
+				raise ValidationError('New dimension not found!')
+		
+		else:
+			if line.section_id:
+				vals['section_id'] = new_obj_id(line.section_id.code,
+												'section_id',
+												'res.section')
+			elif line.project_id:
+				vals['project_id'] = new_obj_id(line.project_id.code,
+												'project_id',
+												'res.project')
+			elif line.invest_asset_id:
+				vals['invest_asset_id'] = new_obj_id(line.invest_asset_id.code,
+													 'invest_asset_id',
+													 'res.invest.asset')
+			elif line.invest_construction_phase_id:
+				vals['invest_construction_phase_id'] = new_obj_id(
+					line.invest_construction_phase_id.code,
+					'invest_construction_phase_id',
+					'res.invest.construction.phase')
+			elif line.personnel_costcenter_id:
+				vals['personnel_costcenter_id'] = new_obj_id(
+					line.personnel_costcenter_id.code,
+					'personnel_costcenter_id', 'res.personnel.costcenter')
+			else:
+				raise ValidationError('New dimension not found!')
+        
         # do the job
         line.write(vals)
         line.update_related_dimension(vals)
