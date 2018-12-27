@@ -264,7 +264,7 @@ class PABIAdvanceDunningLetter(models.Model):
             raise ValidationError(
                 _('Please enter valid email address for group email!'))
 
-        for line in self.dunning_list:
+        for line in self.dunning_list.filtered(lambda l: l.due_type != '0'):
             template_name = templates[line.due_type]
             template = False
             try:
