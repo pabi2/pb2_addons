@@ -62,3 +62,10 @@ class AccountInvoice(models.Model):
                         ('auto_reconcile_id', '=', auto_id)])
                     mlines.reconcile_special_account()
         return res
+
+    @api.multi
+    def unlink_clear_prepaid_move(self):
+        self.ensure_one()
+        self.clear_prepaid_move_id.auto_reconcile_id = False
+        super(AccountInvoice, self).unlink_clear_prepaid_move()
+        return True

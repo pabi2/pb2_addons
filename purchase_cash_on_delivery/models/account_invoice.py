@@ -158,6 +158,9 @@ class AccountInvoice(models.Model):
     @api.multi
     def unlink_clear_prepaid_move(self):
         self.ensure_one()
+        rec = self.clear_prepaid_move_id.line_id.mapped('reconcile_id') + \
+            self.clear_prepaid_move_id.line_id.mapped('reconcile_partial_id')
+        rec.unlink()
         self.clear_prepaid_move_id = False
         return True
 
