@@ -71,7 +71,7 @@ class StockTransferDetails(models.TransientModel):
                         quantity > stock_move_qty[product_id]:
                     _logger.info('product_id, input: %s' % product_id)
                     _logger.info('stock_move_qty, input: %s' % stock_move_qty)
-                    _logger.info('quantity, input: %s' % stock_move_qty)
+                    _logger.info('quantity, input: %s' % quantity)
                     _logger.info('stock_move_qty_product, input: %s'
                                  % stock_move_qty[product_id])
                     raise ValidationError(
