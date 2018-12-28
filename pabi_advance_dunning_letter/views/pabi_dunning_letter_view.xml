@@ -22,6 +22,7 @@
                     <field name="name"/>
                     <field name="date_print"/>
                     <field name="create_uid"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
