@@ -368,6 +368,7 @@ class InterfaceAccountEntry(models.Model):
         self.ensure_one()
         self._validate_invoice_entry()
         move = self._create_journal_entry()
+        move.button_validate()
         return move
 
     @api.multi
