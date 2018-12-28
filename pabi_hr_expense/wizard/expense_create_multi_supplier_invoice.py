@@ -4,6 +4,7 @@
 
 from openerp import api, models, fields, _
 from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_compare
 
 
 class ExpenseCreateMultiSupplierInvoiceLine(models.TransientModel):
@@ -62,7 +63,7 @@ class ExpenseCreateMultiSupplierInvoice(models.TransientModel):
             date_invoice = self._context.get('date_invoice', False)
             expense = self.env['hr.expense.expense'].browse(expense_id)
             alloc = sum([x.amount for x in self.multi_supplier_invoice_line])
-            if self.amount_untaxed != alloc:
+            if float_compare(self.amount_untaxed, alloc, 2) != 0:
                 raise ValidationError(_('Allocation amount mismatched.'))
             for supplier_info_line in self.multi_supplier_invoice_line:
                 if not supplier_info_line.partner_id:
