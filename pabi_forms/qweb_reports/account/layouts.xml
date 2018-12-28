@@ -10,7 +10,7 @@
                 line-height: 20px !important;
             }
             .pabi-header, .pabi-page, .pabi-footer {
-                font-size: 14px !important;
+                font-size: 20px !important;
                 font-family: 'Angsana' !important;
             }
             .pabi-logo {
@@ -123,8 +123,8 @@
                             </tr>
                             <tr t-foreach="lines" t-as="line">
                                 <td class="text-center pabi-col-doc">
-                                    <t t-if="o.doctype in ['payment', 'receipt'] and line.invoice_id">
-                                        <span t-field="line.invoice_id.number"/>
+                                    <t t-if="o.doctype in ['payment', 'receipt']">
+                                        <span t-field="line.move_line_id.move_id.name"/>
                                     </t>
                                     <t t-if="o.doctype in ['bank_receipt'] and line.document_id">
                                         <span t-esc="line.document_id.display_name.split(' ')[0]"/>
@@ -232,7 +232,7 @@
                 <td t-att-colspan="o.line_id.mapped('asset_id') and 12 or 11" class="text-center" style="border: 0px; padding: 0px;">AMOUNT (THB)</td>
             </tr>
             <tr>
-                <td class="text-center pabi-col-header">Activity</td>
+                <td class="text-center pabi-col-header">Activity RPT</td>
                 <t t-if="o.doctype in ['in_invoice']">
                     <td class="text-center pabi-col-header">Product</td>
                 </t>
@@ -247,7 +247,6 @@
                 </t>
                 <td class="text-center pabi-col-header">Dr</td>
                 <td class="text-center pabi-col-header">Cr</td>
-                <td class="text-center pabi-col-header">Tax</td>
                 <td class="text-center pabi-col-header">Org</td>
                 <td class="text-center pabi-col-header">Budget</td>
                 <td class="text-center pabi-col-header">Job Order</td>
@@ -316,11 +315,11 @@
                         <span t-field="line.credit"/>
                     </t>
                 </td>
-                <td class="text-center pabi-col-detail">
+                <!-- <td class="text-center pabi-col-detail">
                     <t t-if="line.tax_code_id and len(line.tax_code_id.name.split('_Base')) == 1">
                         <span t-field="line.tax_code_id.code"/>
                     </t>
-                </td>
+                </td> -->
                 <td class="text-center pabi-col-detail">
                     <t t-if="line.org_id">
                         <span t-field="line.org_id.name_short"/>
@@ -435,7 +434,10 @@
                     </div>
                     <div class="col-xs-5">
                         <span>Doc. No.: </span>
-                        <span t-field="o.name"/>
+                        <span t-field="o.name" style="font-size: 22px"/>
+                        <t t-if="o.doctype in ['interface_account']">
+                            / <span t-field="o.ref" style="font-size: 22px"></span>
+                        </t>
                     </div>
                 </div>
                 <div class="row">
@@ -577,28 +579,61 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <strong>Source of Fund: </strong>
-                        <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'adjustment']">
-                            <t t-if="o.document_id and o.document_id.invoice_line and o.document_id.invoice_line[0].fund_id">
-                                <span class="cut-text" t-field="o.document_id.invoice_line[0].fund_id.name"/>
-                            </t>
-                            <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund'] and not o.document_id">
-                                <span class="cut-text" t-field="o.source_of_fund"/>
-                                <br/><span>Charge Type: </span>
-                                <span t-field="o.charge_type"/>
-                            </t>
-                        </t>
-                        <t t-if="o.doctype in ['payment', 'receipt']">
-                            <t t-if="o.document_id and o.document_id.line_ids and o.document_id.line_ids[0].move_line_id and o.document_id.line_ids[0].move_line_id.invoice and o.document_id.line_ids[0].move_line_id.invoice.invoice_line and o.document_id.line_ids[0].move_line_id.invoice.invoice_line[0].fund_id">
-                                <span class="cut-text" t-esc="o.document_id.line_ids[0].move_line_id.invoice.invoice_line[0].fund_id.name"/>
-                            </t>
-                        </t>
-                        <t t-if="o.doctype in ['salary_expense']">
-                            <t t-if="o.document_id and o.document_id.line_ids and o.document_id.line_ids[0].fund_id">
-                                <span class="cut-text" t-esc="o.document_id.line_ids and o.document_id.line_ids[0].fund_id.name"/>
-                            </t>
+                        <span t-field="o.source_of_fund"/>
+                        <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund'] and not o.document_id">
+                            <span class="cut-text" t-field="o.source_of_fund"/>
+                            <br/><span>Charge Type: </span>
+                            <span t-field="o.charge_type"/>
                         </t>
                     </div>
                 </div>
+                <!-- <t t-if="o.doctype in ['payment', 'receipt', 'bank_receipt']">
+                    <t t-set="lines" t-value="[]"/>
+                    <t t-if="o.document_id">
+                        <t t-if="o.doctype in ['payment', 'receipt']">
+                            <t t-set="lines" t-value="o.document_id.line_ids.sorted(key=lambda l: l.move_line_id.name)"/>
+                        </t>
+                        <t t-if="o.doctype in ['bank_receipt']">
+                            <t t-set="lines" t-value="o.document_id.bank_intransit_ids.sorted(key=lambda l: l.ref)"/>
+                        </t>
+                    </t>
+                    <tr>
+                        <td t-att-colspan="o.line_id.mapped('asset_id') and 12 or 11" style="border: 0px; padding: 0px;">
+                            <table class="pabi-table-doc-header">
+                                <tr>
+                                    <td class="text-center pabi-col-doc-header">
+                                        <t t-if="o.doctype in ['payment', 'receipt']">
+                                            Clearing Doc.
+                                        </t>
+                                        <t t-if="o.doctype in ['bank_receipt']">
+                                            Doc.No.
+                                        </t>
+                                    </td>
+                                    <td colspan="2" class="text-center pabi-col-doc-header">Amount</td>
+                                </tr>
+                                <tr t-foreach="lines" t-as="line">
+                                    <td class="text-center pabi-col-doc">
+                                        <t t-if="o.doctype in ['payment', 'receipt']">
+                                            <span t-field="line.move_line_id.move_id.name"/>
+                                        </t>
+                                        <t t-if="o.doctype in ['bank_receipt'] and line.document_id">
+                                            <span t-esc="line.document_id.display_name.split(' ')[0]"/>
+                                        </t>
+                                    </td>
+                                    <td class="text-right pabi-col-doc">
+                                        <t t-if="o.doctype in ['payment', 'receipt']">
+                                            <span t-field="line.amount"/>
+                                        </t>
+                                        <t t-if="o.doctype in ['bank_receipt']">
+                                            <span t-esc="'{:,.2f}'.format(line.debit - line.credit)"/>
+                                        </t>
+                                    </td>
+                                    <td class="pabi-col-doc" style="width: 12%;"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </t> -->
             </div>
         </template>
 
@@ -619,7 +654,10 @@
         <!-- Summary -->
         <template id="account_summary_footer">
             <tr>
-                <td colspan="3" class="pabi-col-footer"></td>
+                <td colspan="2" class="pabi-col-footer"></td>
+                <t t-if="o.doctype in ['in_invoice', 'adjustment']">
+                    <td class="pabi-col-footer"></td>
+                </t>
                 <t t-if="o.line_id.mapped('asset_id') and 12 or 11">
                     <td class="pabi-col-footer"></td>
                 </t>
@@ -736,12 +774,15 @@
                                         <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
                                     </tr>
                                     <tr>
-                                        <td style="width: 190px; text-align: right; padding-right: 10px; padding-top: 10px;">Transferred to</td>
+                                        <td style="width: 190px; text-align: right; padding-right: 10px; padding-top: 10px;">Cheque/Transferred to</td>
                                         <td colspan="5" style="width: 200px; border-bottom: 1px solid; padding-top: 10px;">
                                             <t t-set="short_name_bank" t-value="''"/>
                                             <t t-set="bank_branch" t-value="''"/>
                                             <t t-set="bank_account" t-value="''"/>
                                             <t t-if="o.document_id">
+                                                <t t-if="o.doctype in ['payment'] and o.document_id.cheque_lot_id and o.document_id.cheque_lot_id.name">
+                                                    <t t-set="name_cheque" t-value="o.document_id.cheque_lot_id.name"/>
+                                                </t>
                                                 <t t-if="o.doctype in ['payment'] and o.document_id.supplier_bank_id and o.document_id.supplier_bank_id.bank and o.document_id.supplier_bank_id.bank.abbrev">
                                                     <t t-set="short_name_bank" t-value="o.document_id.supplier_bank_id.bank.abbrev"/>
                                                 </t>
@@ -755,7 +796,12 @@
                                                     <t t-set="bank_account" t-value="o.document_id.supplier_bank_id.acc_number"/>
                                                 </t>
                                                 <t t-if="o.doctype in ['payment']">
-                                                    <span t-esc="' '.join([short_name_bank, bank_branch, bank_account])"/>
+                                                    <t t-if="o.document_id.payment_type in ['transfer']">
+                                                        <span t-esc="' '.join([short_name_bank, bank_branch, bank_account])"/>
+                                                    </t>
+                                                    <t t-if="o.document_id.payment_type in ['cheque']">
+                                                        <span t-esc="name_cheque"/>
+                                                    </t>
                                                 </t>
                                                 <t t-if="o.doctype in ['receipt']">
                                                     <span t-esc="' '.join([short_name_bank, bank_account])"/>
