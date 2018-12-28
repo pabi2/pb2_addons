@@ -22,3 +22,8 @@ class WkfCmdSpecialAmountProjectApproval(models.Model):
     amount_max = fields.Float(
         string="Maximum"
     )
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+        related='employee_id.org_id',
+    )
