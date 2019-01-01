@@ -26,8 +26,9 @@
                                     <field name="amount_income" attrs="{'readonly': [('posted', '=', True)]}" sum="Total Income"/>
                                     <field name="precalc_wht" string="WHT Amount" attrs="{'readonly': [('posted', '=', True)]}" sum="Total WHT"/>
                                     <field name="amount_wht" sum="Total WHT" invisible="1"/>
-                                    <field name="posted"/>
-                                    <button name="action_post" type="object" string="Post" icon="gtk-apply" class="oe_highlight" attrs="{'invisible': ['|', ('manual', '=', False), ('posted', '=', True)]}" />
+                                    <!-- Invisible it, not sure we would need to use it -->
+                                    <field name="posted" invisible="1"/>
+                                    <button name="action_post" invisible="1" type="object" string="Post" icon="gtk-apply" class="oe_highlight" attrs="{'invisible': ['|', ('manual', '=', False), ('posted', '=', True)]}" />
                                 </tree>
                             </field>
                         </group>

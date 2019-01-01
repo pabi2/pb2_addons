@@ -834,6 +834,7 @@ class LoanInstallmentPlan(models.Model):
         'account.move.reconcile',
         related='move_line_id.reconcile_id',
         string='Reconcile',
+        store=True,
         readonly=True,
     )
     ref_voucher = fields.Char(

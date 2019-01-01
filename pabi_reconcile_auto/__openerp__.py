@@ -36,6 +36,7 @@ Currently we have done for following events,
         'account_subscription_enhanced',
         'pabi_account_retention',
         'pabi_loan_receivable',
+        'purchase_cash_on_delivery',
     ],
     "data": [
         "security/ir.model.access.csv",

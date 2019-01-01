@@ -28,13 +28,20 @@ class AccountAnalyticLineView(models.Model):
     date = fields.Date(
         string='Posting Date',
     )
+    source_document = fields.Char(
+        string='Source Doc',
+    )
     ref = fields.Char(
-        string='Reference Doc',
+        string='Reference',
     )
     contract_id = fields.Many2one(
         'purchase.contract',
         related='purchase_id.contract_id',
         string='PO Contract',
+    )
+    negate_amount = fields.Float(
+        string='Amount',
+        help="Amount with negate sign, to show expense as positive",
     )
     budget_code = fields.Char(
         compute='_compute_budget',
@@ -63,6 +70,14 @@ class AccountAnalyticLineView(models.Model):
         related='activity_id.name',
         string='Activity Name',
     )
+    activity_rpt_code = fields.Char(
+        related='activity_rpt_id.code',
+        string='Activity Rpt Code',
+    )
+    activity_rpt_name = fields.Char(
+        related='activity_rpt_id.name',
+        string='Activity Rpt Name',
+    )
     general_account_id = fields.Many2one(
         string='Account',
     )
@@ -73,6 +88,14 @@ class AccountAnalyticLineView(models.Model):
     account_name = fields.Char(
         related='general_account_id.name',
         string='Account Name',
+    )
+    docline_account_code = fields.Char(
+        string='Account Code',
+        compute='_compute_docline_account',
+    )
+    docline_account_name = fields.Char(
+        string='Account Name',
+        compute='_compute_docline_account',
     )
     categ_id = fields.Many2one(
         'product.category',
@@ -254,6 +277,31 @@ class AccountAnalyticLineView(models.Model):
     )
 
     @api.multi
+    def _compute_docline_account(self):
+        """
+        For SO/PR/PO/EX, use account_id from product or activity_id
+        But note that, now PR has no product yet, so it won't show anyway
+        """
+        for rec in self:
+            account = False
+            if rec.doctype in ('sale_order', 'employee_expense',
+                               'purchase_request', 'purchase_order'):
+                if rec.activity_id:
+                    account = rec.activity_id.account_id
+                if rec.product_id:
+                    categ = rec.product_id.categ_id
+                    if rec.doctype == 'sale_order':
+                        account = categ.property_account_income_categ
+                    else:
+                        account = categ.property_account_expense_categ
+            else:  # back to normal
+                account = rec.general_account_id
+            if account:
+                rec.docline_account_code = account.code
+                rec.docline_account_name = account.name
+        return True
+
+    @api.multi
     def _compute_budget(self):
         for rec in self:
             if rec.chartfield_id:
@@ -281,7 +329,22 @@ class AccountAnalyticLineView(models.Model):
 
     def _get_sql_select(self):
         sql_select = """
-            aal.*,
+            aal.*, -aal.amount negate_amount,
+            -- Source Document for Invoice (PO/EX) and PO (PR)
+            CASE WHEN aal.doctype = 'purchase_order' THEN
+                (select pr.name
+                 from purchase_request_purchase_order_line_rel rel
+                 join purchase_request_line prl on
+                    prl.id = rel.purchase_request_line_id
+                 join purchase_request pr on pr.id = prl.request_id
+                 where aal.purchase_line_id = purchase_order_line_id limit 1)
+            WHEN aal.doctype = 'in_invoice' THEN
+                (select inv.source_document
+                 from account_invoice inv
+                 where replace(aal.document_id,
+                               'account.invoice,', '')::int  = inv.id limit 1)
+              ELSE null END as source_document,
+            --
             CASE WHEN aal.doctype = 'purchase_order' AND pol.id IS NOT NULL
                     THEN pol.docline_seq
                  WHEN aal.doctype = 'sale_order' AND sol.id IS NOT NULL

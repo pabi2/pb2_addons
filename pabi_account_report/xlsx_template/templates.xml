@@ -171,6 +171,14 @@
                                 'L9': "${'=IF(AND(?(J9)&lt;&gt;\"\",?(J9)&gt;=1,?(J9)&lt;=15),?(I9),\"\")'}#{number_format=number}",
                                 'M9': "${'=IF(AND(?(J9)&lt;&gt;\"\",?(J9)&gt;=16,?(J9)&lt;=30),?(I9),\"\")'}#{number_format=number}",
                                 'N9': "${'=IF(AND(?(J9)&lt;&gt;\"\",?(J9)&gt;30),?(I9),\"\")'}",
+                            },
+                            '_TAIL_0': {
+                                'A9': '${"Total"}#{font=bold}',
+                                'I9': '@{sum}#{font=bold;number_format=number}',
+                                'K9': '@{sum}#{font=bold;number_format=number}',
+                                'L9': '@{sum}#{font=bold;number_format=number}',
+                                'M9': '@{sum}#{font=bold;number_format=number}',
+                                'N9': '@{sum}#{font=bold;number_format=number}',
                             }
                         },
                     }
@@ -1884,7 +1892,7 @@ result = pd.pivot_table(df, index=groupby,
                              'AE27': 'responsible_user_id${value and value.with_context(lang="th_TH").name or ""}#{number_format=text}',
                              'AF27': 'partner_id${value and value.search_key or ""}#{number_format=text}',
                              'AG27': 'partner_id${value and value.name or ""}#{number_format=text}',
-                             'AH27': 'purchase_id${value and value.name or ""}#{number_format=text}',
+                             'AH27': "${'=IF(?(BH27)&lt;&gt;\"\",?(BH27),IF(?(BI27)&lt;&gt;\"\",?(BI27),\"\"))'}",
                              'AI27': 'purchase_request_id${value and value.name or ""}#{number_format=text}',
                              'AJ27': 'asset_purchase_method_id${value and value.name or ""}#{number_format=text}',
                              'AK27': 'doc_request_id${value and value.code or ""}#{number_format=text}',
@@ -1907,6 +1915,9 @@ result = pd.pivot_table(df, index=groupby,
                              'BB27': 'adjust_id${value and value.name or ""}#{number_format=text}',
                              'BC27': 'status${value and value.name or ""}#{number_format=text}',
                              'BD27': 'date_remove${value or ""}#{number_format=date}',
+                             # Hide column
+                             'BH27': 'purchase_id${value and value.name or ""}#{number_format=text}',
+                             'BI27': 'adjust_id${value and value.ship_purchase_id.name or ""}#{number_format=text}',
                          }
                      },
                      'Accum. Depre. Group By GL': {

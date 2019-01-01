@@ -297,9 +297,13 @@ class InterfaceAccountEntry(models.Model):
                 if interface.to_reverse_entry_id.type == 'voucher':
                     self._prepare_voucher_move_for_reversal(move)
                 # Start reverse
+                date_rev = interface.reversed_date
+                period_id = self.env['account.period'].find(date_rev).id
                 move_dict = move.copy_data({
                     'name': move.name + '_VOID',
-                    'ref': move.ref, })
+                    'ref': move.ref,
+                    'date': date_rev,
+                    'period_id': period_id})
                 move_dict = AccountMove._switch_move_dict_dr_cr(move_dict)
                 rev_move = AccountMove.create(move_dict)
                 accounts = move.line_id.mapped('account_id')
@@ -364,6 +368,7 @@ class InterfaceAccountEntry(models.Model):
         self.ensure_one()
         self._validate_invoice_entry()
         move = self._create_journal_entry()
+        move.button_validate()
         return move
 
     @api.multi

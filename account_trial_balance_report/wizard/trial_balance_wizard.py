@@ -50,8 +50,6 @@ class AccountTrialBalanceWizard(models.TransientModel):
         [('internal', 'Internal'),
          ('external', 'External')],
         string='Charge Type',
-        required=True,
-        default='external',
     )
 
     @api.onchange('fiscalyear_id', 'filter')

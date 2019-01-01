@@ -10,6 +10,7 @@
                     <field name="period_id"/>
                     <field name="charge_type"/>
                     <field name="document"/>
+                    <field name="source_document"/>
                     <field name="docline_sequence"/>
                     <field name="date_document"/>
                     <field name="date"/>
@@ -17,14 +18,19 @@
                     <field name="contract_id"/>
                     <field name="budget_code"/>
                     <field name="budget_name"/>
-                    <field name="amount" sum="Total"/>
+                    <field name="negate_amount" sum="Total"/>
+                    <!-- <field name="amount" sum="Total"/> -->
                     <field name="name"/>
                     <field name="activity_group_code"/>
                     <field name="activity_group_name"/>
                     <field name="activity_code"/>
                     <field name="activity_name"/>
-                    <field name="account_code"/>
-                    <field name="account_name"/>
+                    <field name="activity_rpt_code"/>
+                    <field name="activity_rpt_name"/>
+                    <field name="docline_account_code"/>
+                    <field name="docline_account_name"/>
+                    <!-- <field name="account_code"/>
+                    <field name="account_name"/> -->
                     <field name="categ_id"/>
                     <field name="product_code"/>
                     <field name="product_name"/>
@@ -97,9 +103,10 @@
                         <filter string="Fiscal Year" context="{'group_by': 'fiscalyear_id'}"/>
                         <filter string="Period" context="{'group_by': 'period_id'}"/>
                         <filter string="Charge Type" context="{'group_by': 'charge_type'}"/>
-                        <filter string="Reference Doc" context="{'group_by': 'ref'}"/>
+                        <filter string="Reference" context="{'group_by': 'ref'}"/>
                         <filter string="Activity Group" context="{'group_by': 'activity_group_id'}"/>
                         <filter string="Activity" context="{'group_by': 'activity_id'}"/>
+                        <filter string="Activity Rpt" context="{'group_by': 'activity_rpt_id'}"/>
                         <filter string="Account" context="{'group_by': 'general_account_id'}"/>
                         <filter string="Product" context="{'group_by': 'product_id'}"/>
                         <filter string="Costcenter" context="{'group_by': 'costcenter_id'}"/>
@@ -109,8 +116,10 @@
                         <filter string="Org" context="{'group_by': 'org_id'}"/>
                         <filter string="Mission" context="{'group_by': 'mission_id'}"/>
                         <filter string="Job Order" context="{'group_by': 'cost_control_id'}"/>
-                        <filter string="Project C" context="{'group_by': 'invest_construction_id'}"/>
+                        <filter string="Project-C" context="{'group_by': 'invest_construction_id'}"/>
                         <filter string="Doctype" context="{'group_by': 'doctype'}"/>
+                        <filter string="Fund" context="{'group_by': 'fund_id'}"/>
+                        <filter string="Quarter" context="{'group_by': 'quarter'}"/>
                     </group>
                 </search>
             </field>

@@ -8,11 +8,9 @@
             <field name="inherit_id" ref="account.account_common_report_view"/>
             <field name="arch" type="xml">
                 <data>
-                    <!-- PABI2 -->
                     <field name="target_move" position="after">
                         <field name="reconcile_cond" nolabel="1"/>
                     </field>
-                    <!-- -->
                     <xpath expr="/form/label[@string='']" position="replace">
                         <separator string="General Ledger" colspan="4"/>
                         <label nolabel="1" colspan="4" string="This report allows you to print or generate a pdf of your general ledger with details of all your account journals"/>
@@ -53,10 +51,10 @@
                         <attribute name="string">Time Filters</attribute>
                     </page>
                     <field name="period_from" position="attributes">
-                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id), ('special', '=', False)]</attribute>
+                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
                     </field>
                     <field name="period_to" position="attributes">
-                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id), ('special', '=', False)]</attribute>
+                        <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
                     </field>
                 </data>
             </field>

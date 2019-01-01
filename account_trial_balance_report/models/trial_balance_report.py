@@ -52,8 +52,9 @@ class AccountTrailBalanceReport(models.Model):
         accounts = []
         # All moves, begin of this year until date_stop
         domain = [('period_id.fiscalyear_id', '=', fiscalyear_id),
-                  ('date', '<=', date_stop),
-                  ('charge_type', '=', charge_type)]
+                  ('date', '<=', date_stop)]
+        if charge_type:
+            domain.append(('charge_type', '=', charge_type))
         if target_move == 'posted':
             domain.append(('move_id.state', '=', 'posted'))
         moves = Move.search(domain)
@@ -77,8 +78,9 @@ class AccountTrailBalanceReport(models.Model):
         domain = [('account_id', '=', account.id),
                   '|', ('centralisation', '!=', 'normal'),
                   '&', ('centralisation', '=', 'normal'),
-                  ('date', '<', report.date_start),
-                  ('charge_type', '=', charge_type)]
+                  ('date', '<', report.date_start)]
+        if charge_type:
+            domain += [('charge_type', '=', charge_type)]
         if target_move == 'posted':
             domain += [('move_id.state', '=', 'posted')]
         init_moves = MoveLine.search(domain)
@@ -90,8 +92,9 @@ class AccountTrailBalanceReport(models.Model):
         domain = [('account_id', '=', account.id),
                   ('centralisation', '=', 'normal'),
                   ('date', '>=', report.date_start),
-                  ('date', '<=', report.date_stop),
-                  ('charge_type', '=', charge_type), ]
+                  ('date', '<=', report.date_stop)]
+        if charge_type:
+            domain += [('charge_type', '=', charge_type)]
         if target_move == 'posted':
             domain += [('move_id.state', '=', 'posted')]
         focus_moves = MoveLine.search(domain)

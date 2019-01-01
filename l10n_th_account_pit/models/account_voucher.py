@@ -25,6 +25,8 @@ class AccountVoucher(models.Model):
         for voucher in self:
             if voucher.pit_line and voucher.tax_line_wht:
                 raise ValidationError(_('WHT and PIT can not coexists!'))
+            if voucher.pit_line and not voucher.pit_withhold:
+                raise ValidationError(_('Please select Withhold PIT!'))
             for line in voucher.pit_line:
                 line.action_post()
         return super(AccountVoucher, self).proforma_voucher()

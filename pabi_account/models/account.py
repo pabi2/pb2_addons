@@ -88,6 +88,9 @@ class AccountMove(models.Model):
 
     @api.multi
     def _write(self, vals):
+        # an ugly fix to prevent date_document to reset to False unattended
+        if 'date_document' in vals and not vals['date_document']:
+            vals.pop('date_document')
         # KV/DV
         if 'line_item_summary' in vals and vals.get('line_item_summary'):
             summary = vals.get('line_item_summary')
