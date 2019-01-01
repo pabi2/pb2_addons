@@ -152,20 +152,22 @@ class PurchaseRequisition(models.Model):
                                 'name': attach['file_name'],
                                 'url': file_prefix + attach['file_url'],
                                 'type': 'url',
+                                'description': attach['description'] or False,
                             }
                             att_file.append([0, False, file_info])
                     today = fields.Date.context_today(self)
                     requisition.write({
                         'doc_approve_uid': uid.id,
                         'date_doc_approve': today,
+                        'attachment_ids': att_file,
                     })
                     requisition._cr.commit()
                     for order in requisition.purchase_ids:
                         if order.order_type == 'quotation' \
                                 and order.state not in ('draft', 'cancel'):
-                            requisition.write({
-                                'attachment_ids': att_file,
-                            })
+                            # requisition.write({
+                            #     'attachment_ids': att_file,
+                            # })
                             order.action_button_convert_to_order()
                             if order.state2 != 'done' or order.state != 'done':
                                 order.write({
@@ -370,14 +372,20 @@ class PurchaseWebInterface(models.Model):
                 _("No employee data for user %s") % request_usr.login
             )
         attachment = []
+        name_check_list = []
         for pd_att in requisition.attachment_ids:
             if '_main_form.pdf' in pd_att.name:
                 continue
             url = ""
             if pd_att.url:
                 url = pd_att.url.replace(file_prefix, "")
+            file_name = self.check_pdf_extension(pd_att.name)
+            file_name = file_name.replace(" ", "_")
+            if file_name in name_check_list:
+                file_name = "1_" + file_name
+            name_check_list.append(file_name)
             pd_attach = {
-                'name': self.check_pdf_extension(pd_att.name),
+                'name': file_name,
                 'content': pd_att.datas or '',
                 'url': url,
                 'desc': pd_att.description or '',

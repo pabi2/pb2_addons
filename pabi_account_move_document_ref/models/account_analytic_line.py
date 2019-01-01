@@ -38,12 +38,20 @@ class AccountAnalyticLine(models.Model):
                  'purchase_request_id', 'purchase_id')
     def _compute_document(self):
         for rec in self:
-            if rec.move_id:
-                rec.document = rec.move_id.document
+            if rec.move_id:  # move_id is account_move_line
+                document = rec.move_id.document_id
+                if document:
+                    if document._name in ('stock.picking',
+                                          'account.bank.receipt'):
+                        rec.document = document.name
+                    elif document._name == 'account.invoice':
+                        rec.document = document.internal_number
+                    else:
+                        rec.document = document.number
                 rec.document_line = rec.name
-                rec.document_id = rec.move_id.document_id
+                rec.document_id = document
                 rec.doctype = rec.move_id.doctype
-            elif rec.expense_id:
+            if rec.expense_id:
                 rec.document = rec.expense_id.number
                 rec.document_line = rec.expense_line_id.name
                 rec.document_id = \

@@ -12,6 +12,7 @@
                 <tree string="Special Amount Project Approval">
                     <field name="doctype_id"/>
                     <field name="employee_id"/>
+                    <field name="org_id"/>
                     <field name="amount_min" />
                     <field name="amount_max" />
                 </tree>

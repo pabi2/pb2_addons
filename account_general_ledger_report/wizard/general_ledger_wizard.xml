@@ -24,6 +24,7 @@
                             <field name="fiscalyear_id"/>
                             <field name="account_ids" widget="many2many_tags"
                               context="{'tree_view_ref': 'account_general_ledger_report.account_line_tree_view'}"/>
+                            <field name="charge_type"/>
                         </group>
                         <group>
                             <label for="id" string="Target Moves"/>

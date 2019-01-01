@@ -239,16 +239,21 @@ class CommonReportHeaderWebkit(common_report_header):
         return period_obj.search(self.cr, self.uid, [['special', '=', False],
                                                      ['id', 'in', period_ids]])
 
-    def get_included_opening_period(self, period):
+    def get_included_opening_period(self, period, specific_report=False):
         """Return the opening included in normal period we use the assumption
         that there is only one opening period per fiscal year"""
         period_obj = self.pool.get('account.period')
-        return period_obj.search(self.cursor, self.uid,
-                                 [('special', '=', True),
-                                  ('date_start', '>=', period.date_start),
-                                  ('date_stop', '<=', period.date_stop),
-                                  ('company_id', '=', period.company_id.id)],
-                                 limit=1)
+        domain = [('special', '=', True),
+                  ('date_start', '>=', period.date_start),
+                  ('date_stop', '<=', period.date_stop),
+                  ('company_id', '=', period.company_id.id)]
+        p_ids = period_obj.search(self.cursor, self.uid, domain, limit=1)
+        if specific_report:
+            # PABI2
+            opening_periods = period_obj.browse(self.cursor, self.uid, p_ids) \
+                .filtered(lambda l: '00' in l.code).ids
+            return opening_periods
+        return p_ids
 
     def periods_contains_move_lines(self, period_ids):
         if not period_ids:
@@ -279,7 +284,8 @@ class CommonReportHeaderWebkit(common_report_header):
     def _get_period_range_from_start_period(self, start_period,
                                             include_opening=False,
                                             fiscalyear=False,
-                                            stop_at_previous_opening=False):
+                                            stop_at_previous_opening=False,
+                                            specific_report=False):
         """We retrieve all periods before start period"""
         opening_period_id = False
         past_limit = []
@@ -289,6 +295,7 @@ class CommonReportHeaderWebkit(common_report_header):
         if stop_at_previous_opening:
             opening_search = [('special', '=', True),
                               ('date_stop', '<', start_period.date_start)]
+
             if fiscalyear:
                 opening_search.append(('fiscalyear_id', '=', fiscalyear.id))
 
@@ -320,6 +327,17 @@ class CommonReportHeaderWebkit(common_report_header):
         if fiscalyear:
             periods_search.append(('fiscalyear_id', '=', fiscalyear.id))
         periods = period_obj.search(self.cursor, self.uid, periods_search)
+
+        # PABI2
+        if specific_report:
+            periods = period_obj.browse(self.cursor, self.uid, periods)
+            previous_periods = periods.filtered(
+                lambda l: l.fiscalyear_id != start_period.fiscalyear_id).ids
+            current_periods = periods.filtered(
+                lambda l: l.fiscalyear_id == start_period.fiscalyear_id and
+                l.code <= start_period.code).ids
+            periods = previous_periods + current_periods
+
         if include_opening and opening_period_id:
             periods.append(opening_period_id)
         periods = list(set(periods))
@@ -327,21 +345,30 @@ class CommonReportHeaderWebkit(common_report_header):
             periods.remove(start_period.id)
         return periods
 
-    def get_first_fiscalyear_period(self, fiscalyear):
-        return self._get_st_fiscalyear_period(fiscalyear)
+    def get_first_fiscalyear_period(self, fiscalyear, specific_report=False):
+        return self._get_st_fiscalyear_period(
+            fiscalyear, specific_report=specific_report)
 
-    def get_last_fiscalyear_period(self, fiscalyear):
-        return self._get_st_fiscalyear_period(fiscalyear, order='DESC')
+    def get_last_fiscalyear_period(self, fiscalyear, specific_report=False):
+        return self._get_st_fiscalyear_period(
+            fiscalyear, order='DESC', specific_report=specific_report)
 
     def _get_st_fiscalyear_period(self, fiscalyear, special=False,
-                                  order='ASC'):
+                                  order='ASC', specific_report=False):
         period_obj = self.pool.get('account.period')
-        p_id = period_obj.search(self.cursor,
-                                 self.uid,
-                                 [('special', '=', special),
-                                  ('fiscalyear_id', '=', fiscalyear.id)],
-                                 limit=1,
-                                 order='date_start %s' % (order,))
+        p_id = False
+        if specific_report:
+            # PABI2
+            domain = [('fiscalyear_id', '=', fiscalyear.id)]
+            if special:
+                domain += [('special', '=', True)]
+            p_id = period_obj.search(self.cursor, self.uid, domain,
+                                     limit=1, order='code %s' % (order,))
+        else:
+            p_id = period_obj.search(self.cursor, self.uid,
+                                     [('special', '=', special),
+                                      ('fiscalyear_id', '=', fiscalyear.id)],
+                                     limit=1, order='date_start %s' % (order,))
         if not p_id:
             raise osv.except_osv(_('No period found'), '')
         return period_obj.browse(self.cursor, self.uid, p_id[0])
@@ -380,11 +407,12 @@ class CommonReportHeaderWebkit(common_report_header):
                 'init_balance_currency': res.get('curr_balance') or 0.0,
                 'state': mode}
 
-    def _read_opening_balance(self, account_ids, start_period):
+    def _read_opening_balance(self, account_ids, start_period,
+                              specific_report=False):
         """ Read opening balances from the opening balance
         """
         opening_period_selected = self.get_included_opening_period(
-            start_period)
+            start_period, specific_report=specific_report)
         if not opening_period_selected:
             raise osv.except_osv(
                 _('Error'),
@@ -398,7 +426,8 @@ class CommonReportHeaderWebkit(common_report_header):
                 account_id, opening_period_selected, mode='read')
         return res
 
-    def _compute_initial_balances(self, account_ids, start_period, fiscalyear):
+    def _compute_initial_balances(self, account_ids, start_period, fiscalyear,
+                                  specific_report=False):
         """We compute initial balance.
         If form is filtered by date all initial balance are equal to 0
         This function will sum pear and apple in currency amount if account as
@@ -410,16 +439,22 @@ class CommonReportHeaderWebkit(common_report_header):
         # attached doc We include opening period in pnl account in order to see
         # if opening entries were created by error on this account
         pnl_periods_ids = self._get_period_range_from_start_period(
-            start_period, fiscalyear=fiscalyear, include_opening=True)
+            start_period, fiscalyear=fiscalyear, include_opening=True,
+            specific_report=specific_report)
         bs_period_ids = self._get_period_range_from_start_period(
-            start_period, include_opening=True, stop_at_previous_opening=True)
+            start_period, include_opening=True, stop_at_previous_opening=True,
+            specific_report=specific_report)
+
         opening_period_selected = self.get_included_opening_period(
-            start_period)
+            start_period, specific_report=specific_report)
 
         for acc in self.pool.get('account.account').browse(self.cursor,
                                                            self.uid,
                                                            account_ids):
             res[acc.id] = self._compute_init_balance(default_values=True)
+            # Force period
+            if opening_period_selected == start_period.ids:
+                continue
             if acc.user_type.close_method == 'none':
                 # we compute the initial balance for close_method == none only
                 # when we print a GL during the year, when the opening period
@@ -452,11 +487,16 @@ class CommonReportHeaderWebkit(common_report_header):
     ################################################
     def _get_move_ids_from_periods(self, account_id, period_start, period_stop,
                                    target_move, reconcile_cond,
-                                   partner_ids=False):
+                                   partner_ids=False, specific_report=False):
         move_line_obj = self.pool.get('account.move.line')
         period_obj = self.pool.get('account.period')
-        periods = period_obj.build_ctx_periods(
-            self.cursor, self.uid, period_start.id, period_stop.id)
+        periods = []
+        if specific_report:
+            periods = self.build_ctx_periods(
+                self.cursor, self.uid, period_start.id, period_stop.id)
+        else:
+            periods = period_obj.build_ctx_periods(
+                self.cursor, self.uid, period_start.id, period_stop.id)
         if not periods:
             return []
         search = [
@@ -506,7 +546,8 @@ class CommonReportHeaderWebkit(common_report_header):
                            target_move,
                            reconcile_cond,  # PABI2
                            mode='include_opening',
-                           partner_ids=False):
+                           partner_ids=False,
+                           specific_report=False):
         """Get account move lines base on form data"""
         if mode not in ('include_opening', 'exclude_opening'):
             raise osv.except_osv(
@@ -514,9 +555,9 @@ class CommonReportHeaderWebkit(common_report_header):
                 _('Must be in include_opening, exclude_opening'))
 
         if main_filter in ('filter_period', 'filter_no'):
-            return self._get_move_ids_from_periods(account_id, start, stop,
-                                                   target_move, reconcile_cond,
-                                                   partner_ids=partner_ids)
+            return self._get_move_ids_from_periods(
+                account_id, start, stop, target_move, reconcile_cond,
+                partner_ids=partner_ids, specific_report=specific_report)
 
         elif main_filter == 'filter_date':
             return self._get_move_ids_from_dates(account_id, start, stop,
@@ -716,17 +757,62 @@ WHERE move_id in %s"""
             raise
         return res and dict(res) or {}
 
-    def is_initial_balance_enabled(self, main_filter):
-        if main_filter not in ('filter_no', 'filter_year', 'filter_period'):
-            return False
+    def is_initial_balance_enabled(self, main_filter, start_period=False,
+                                   specific_report=False):
+        if specific_report:
+            # PABI2
+            if main_filter not in ('filter_period'):
+                return False
+
+            # if main_filter in ('filter_period') and start_period:
+            #     opening_period = self._get_st_fiscalyear_period(
+            #         start_period.fiscalyear_id, special=True,
+            #         specific_report=specific_report)
+            #     if opening_period == start_period:
+            #         return False
+        else:
+            if main_filter not in ('filter_no', 'filter_year',
+                                   'filter_period'):
+                return False
         return True
 
-    def _get_initial_balance_mode(self, start_period):
+    def _get_initial_balance_mode(self, start_period, specific_report=False):
         opening_period_selected = self.get_included_opening_period(
-            start_period)
+            start_period, specific_report=specific_report)
+        # Force period
+        if opening_period_selected == start_period.ids:
+            opening_period_selected = []
         opening_move_lines = self.periods_contains_move_lines(
             opening_period_selected)
         if opening_move_lines:
             return 'opening_balance'
         else:
             return 'initial_balance'
+
+    def build_ctx_periods(self, cr, uid, period_from_id, period_to_id):
+        if period_from_id == period_to_id:
+            return [period_from_id]
+        Period = self.pool.get('account.period')
+        period_from = Period.browse(cr, uid, period_from_id)
+        period_date_start = period_from.date_start
+        period_code_start = period_from.code
+        company1_id = period_from.company_id.id
+        period_to = Period.browse(cr, uid, period_to_id)
+        period_date_stop = period_to.date_stop
+        period_code_stop = period_to.code
+        company2_id = period_to.company_id.id
+        if company1_id != company2_id:
+            raise osv.except_osv(
+                _('Error!'),
+                _('You should choose the periods '
+                  'that belong to the same company.'))
+        if period_date_start > period_date_stop:
+            raise osv.except_osv(
+                _('Error!'),
+                _('Start period should precede then end period.'))
+        return Period.search(
+            cr, uid,
+            [('date_start', '>=', period_date_start),
+             ('date_stop', '<=', period_date_stop),
+             ('code', '>=', period_code_start),
+             ('code', '<=', period_code_stop)])

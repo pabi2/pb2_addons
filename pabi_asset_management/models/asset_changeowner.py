@@ -179,7 +179,7 @@ class AccountAssetChangeowner(models.Model):
     #                     AccountMove.with_context(ctx).create(move_dict)
     #         # Asset Owner Info update
     #         if line.responsible_user_id:
-    #             new_owner['responsible_user_id'] = line.responsible_user_id.id
+    #           new_owner['responsible_user_id'] = line.responsible_user_id.id
     #         if line.building_id:
     #             new_owner['building_id'] = line.building_id.id
     #         if line.floor_id:

@@ -53,6 +53,10 @@ class AccountMove(models.Model):
                 date_clear_undue = self._context.get('date_clear_undue')
                 rec.date_document = date_clear_undue
                 continue
+            # Special case, clear prepayment only
+            if self._context.get('is_clear_prepaid', False):
+                rec.date_document = fields.Date.context_today(self)
+                continue
             # Normal case
             if rec.document_id and 'date_document' in rec.document_id:
                 rec.date_document = rec.document_id.date_document
@@ -62,6 +66,12 @@ class AccountMove(models.Model):
 
     @api.model
     def create(self, vals):
+        # Special case, clear prepayment only
+        if self._context.get('is_clear_prepaid', False):
+            date = fields.Date.context_today(self)
+            period_id = self.env['account.period'].find(dt=date).id
+            vals.update({'date': date, 'period_id': period_id})
+        # --
         res = super(AccountMove, self).create(vals)
         if self._context.get('direct_create'):
             res.date_document = vals.get('date_document', False)
@@ -78,6 +88,9 @@ class AccountMove(models.Model):
 
     @api.multi
     def _write(self, vals):
+        # an ugly fix to prevent date_document to reset to False unattended
+        if 'date_document' in vals and not vals['date_document']:
+            vals.pop('date_document')
         # KV/DV
         if 'line_item_summary' in vals and vals.get('line_item_summary'):
             summary = vals.get('line_item_summary')
