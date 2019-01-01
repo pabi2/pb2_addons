@@ -19,7 +19,7 @@
 		<![CDATA[/data/recoard]]>
 	</queryString>
 	<field name="title" class="java.lang.String">
-		<fieldDescription><![CDATA[partner_id/title/name]]></fieldDescription>
+		<fieldDescription><![CDATA[partner_id/title]]></fieldDescription>
 	</field>
 	<field name="partner_name" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/name]]></fieldDescription>
