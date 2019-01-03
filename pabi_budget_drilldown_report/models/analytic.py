@@ -275,6 +275,9 @@ class AccountAnalyticLineView(models.Model):
         related='invest_construction_phase_id.contract_date_end',
         string='Contract End Date',
     )
+    net_committed_amount = fields.Float(
+        string='Net Commited',
+    )
 
     @api.multi
     def _compute_docline_account(self):
@@ -282,7 +285,7 @@ class AccountAnalyticLineView(models.Model):
         For SO/PR/PO/EX, use account_id from product or activity_id
         But note that, now PR has no product yet, so it won't show anyway
         """
-        for rec in self:
+        for rec in self.sudo():
             account = False
             if rec.doctype in ('sale_order', 'employee_expense',
                                'purchase_request', 'purchase_order'):
@@ -354,6 +357,21 @@ class AccountAnalyticLineView(models.Model):
                  WHEN aal.doctype = 'purchase_request' AND prl.id IS NOT NULL
                     THEN prl.docline_seq
                  ELSE NULL END AS docline_sequence,
+           -- net_committed_amount for PR/PO/EX
+           nullif(CASE WHEN aal.doctype = 'purchase_order'
+                     AND aal.purchase_id IS NOT NULL
+                   THEN (select -net_committed_amount from purchase_order po
+                         where aal.purchase_id = po.id)
+                WHEN aal.doctype = 'employee_expense'
+                     AND aal.expense_id IS NOT NULL
+                   THEN (select -net_committed_amount from hr_expense_expense x
+                         where aal.expense_id = x.id)
+                WHEN aal.doctype = 'purchase_request'
+                     AND aal.purchase_request_id IS NOT NULL
+                   THEN (select -net_committed_amount from purchase_request pr
+                         where aal.purchase_request_id = pr.id)
+                ELSE null END, 0) as net_committed_amount,
+            --
             CASE WHEN SPLIT_PART(document_id, ',', 1) = 'hr.expense.expense'
                     THEN (SELECT create_date :: DATE
                           FROM hr_expense_expense
