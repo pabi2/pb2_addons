@@ -60,7 +60,9 @@ class AccountMove(models.Model):
             # Normal case
             if rec.document_id and 'date_document' in rec.document_id:
                 # Cancel Case
-                if rec.document_id.cancel_date_document:
+                if 'cancel_date_document' in rec.document_id and \
+                    rec.document_id.cancel_date_document:
+                    
                     rec.date_document = rec.document_id.cancel_date_document
                 else:
                     rec.date_document = rec.document_id.date_document
