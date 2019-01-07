@@ -39,6 +39,20 @@ class CommitCommon(object):
         track_visibility='onchange',
         help="If checked, all committed budget will be released",
     )
+    net_committed_amount = fields.Float(
+        string='Net Committed Amount',
+        compute='_compute_net_committed_amount',
+        store=True,
+        help="Committed Amount Remaining (Net)",
+    )
+
+    @api.multi
+    @api.depends('budget_commit_ids')
+    def _compute_net_committed_amount(self):
+        for rec in self:
+            rec.net_committed_amount = \
+                sum(rec.budget_commit_ids.mapped('amount'))
+        return True
 
     @api.multi
     def release_all_committed_budget(self):

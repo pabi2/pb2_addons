@@ -10,6 +10,7 @@
                     <field name="period_id"/>
                     <field name="charge_type"/>
                     <field name="document"/>
+                    <field name="net_committed_amount"/>
                     <field name="source_document"/>
                     <field name="docline_sequence"/>
                     <field name="date_document"/>

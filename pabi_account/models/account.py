@@ -59,7 +59,13 @@ class AccountMove(models.Model):
                 continue
             # Normal case
             if rec.document_id and 'date_document' in rec.document_id:
-                rec.date_document = rec.document_id.date_document
+                # Cancel Case
+                if 'cancel_date_document' in rec.document_id and \
+                    rec.document_id.cancel_date_document:
+                    
+                    rec.date_document = rec.document_id.cancel_date_document
+                else:
+                    rec.date_document = rec.document_id.date_document
             else:
                 if not self._context.get('direct_create'):
                     rec.date_document = fields.Date.context_today(self)

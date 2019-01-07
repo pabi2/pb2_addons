@@ -15,13 +15,7 @@
                     	attrs="{'invisible': [('diff_expense_amount_flag', '!=', -1)]}"/>
                 </xpath>
 								<xpath expr="//button[@name='invoice_cancel']" position="before">
-										<!-- For case Advance Clearing Invoice + Cancel Reason -->
-										<!-- it should be either,
-										name="%(account_invoice_cancel_reason.action_account_invoice_cancel)d" type="action"
-										or
-										name="invoice_cancel" type="action"
-										but the workflow is not triggered by invoice_cancel, so, for now, I change to action_cancel -->
-										<button name="action_cancel" type="object"
+										<button name="%(account_invoice_cancel_reason.action_account_invoice_cancel)d" type="action"
 											attrs="{'invisible': ['|', ('supplier_invoice_type', '!=', 'advance_clearing_invoice'), ('state', '!=', 'paid')]}"
 											string="Cancel AV Clearing Invoice" groups="account.group_account_invoice"/>
 								</xpath>
