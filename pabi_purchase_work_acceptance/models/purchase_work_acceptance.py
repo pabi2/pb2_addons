@@ -794,10 +794,11 @@ class PurchaseWorkAcceptanceLine(models.Model):
                     cod_pay_terms.ids:
                 return
         if float_compare(self.to_receive_qty, self.balance_qty, 2) == 1:
-            raise ValidationError(
-                _("To Receive Quantity, %s, can't exceed balance quantity.") %
-                self.product_id.name
-            )
+            if self.product_id.type != 'service':
+                raise ValidationError(
+                    _("To Receive Quantity, %s, can't exceed balance quantity.") %
+                    self.product_id.name
+                )
 
 
 class PurchaseWorkAcceptanceEvaluationLine(models.Model):
