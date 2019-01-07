@@ -128,7 +128,10 @@ class PurchaseOrder(models.Model):
         'purchase.select.reason',
         string='Selected Reason',
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={
+            'draft': [('readonly', False)],
+            'done': [('readonly', False)]
+        },
     )
     shipment_count = fields.Integer(
         string='Incoming Shipments',

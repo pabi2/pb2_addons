@@ -261,16 +261,28 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         ) as partner_category_id,
         selected_po.state as doc_state,
         ou.name as ou_name,
-        (
-        SELECT prl.price_subtotal
-        FROM purchase_request_line prl
+        (select
+        SUM(
+        case when atax.amount > 0.0 and atax.price_include = False then
+            ROUND((requestline.price_subtotal +
+            (atax.amount * requestline.price_subtotal))::DECIMAL, 2)
+        else
+            ROUND(requestline.price_subtotal::DECIMAL, 2)
+        end
+        )
+        FROM purchase_requisition_line reql
+        LEFT JOIN purchase_requisition requisition
+        ON requisition.id = reql.requisition_id
         LEFT JOIN purchase_request_purchase_requisition_line_rel linerel
-        ON linerel.purchase_request_line_id = prl.id
-        LEFT JOIN purchase_requisition_line rql
-        ON linerel.purchase_requisition_line_id =rql.id
-        WHERE rql.requisition_id = pd.id
-        LIMIT 1
-        ) as pr_amount,
+        ON reql.id = linerel.purchase_requisition_line_id
+        LEFT JOIN purchase_request_line requestline
+        ON linerel.purchase_request_line_id = requestline.id
+        LEFT JOIN purchase_request_taxes_rel reqtaxes
+        ON reqtaxes.request_line_id = requestline.id
+        LEFT JOIN account_tax atax
+        ON atax.id = reqtaxes.tax_id
+        where requisition.id = pd.id
+        group by requisition.id) as pr_amount,
         (SELECT CONCAT(COALESCE(rpt.name || ' ',''),rp.name)
             FROM res_partner rp
         LEFT JOIN res_partner_title rpt
@@ -302,7 +314,7 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
 	    LEFT JOIN res_users responsible_user
 	    ON responsible_user.id = po.create_uid
 	    LEFT JOIN hr_employee he
-	    aON he.employee_code = responsible_user.login
+	    ON he.employee_code = responsible_user.login
         LEFT join purchase_order selected_po
         ON selected_po.requisition_id = pd.id AND
             selected_po.order_type LIKE 'purchase_order' AND
