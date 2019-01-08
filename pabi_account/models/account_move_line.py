@@ -72,6 +72,11 @@ class AccountMoveLine(models.Model):
                              'in_invoice', 'in_refund')
                 invoice_moves = move_lines.filtered(lambda l:
                                                     l.doctype in inv_types)
-                rec.move_id.narration = invoice_moves and \
-                    invoice_moves[0].move_id.narration
+                if invoice_moves:
+                    rec.move_id.narration = invoice_moves and \
+                        invoice_moves[0].move_id.narration
+                else:
+                    bank_receipt = rec.bank_receipt_id
+                    if bank_receipt:
+                        bank_receipt.move_id.narration = rec.move_id.narration
                 narration_written = True
