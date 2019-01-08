@@ -46,6 +46,9 @@
                     <attribute name="create">0</attribute>
                     <attribute name="edit">0</attribute>
                 </tree>
+                <field name="ref" position="after">
+                    <field name="create_uid"/>
+                </field>
             </field>
         </record>
 
