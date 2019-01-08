@@ -9,7 +9,7 @@ from openerp.addons.pabi_account_move_document_ref.models.account_move import \
 from .common import SearchCommon, REPORT_TYPES, REPORT_GROUPBY
 
 SEARCH_KEYS = dict(CHART_FIELDS).keys() + ['fiscalyear_id']
-ALL_SEARCH_KEYS = SEARCH_KEYS + ['chart_view', 'charge_type',
+ALL_SEARCH_KEYS = SEARCH_KEYS + ['chart_view', 'charge_type', 'budget_method',
                                  'activity_group_id', 'activity_id']
 CHART_VIEWS = CHART_VIEW.keys()
 
@@ -81,12 +81,15 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
     )
 
     @api.model
-    def _get_report_sql(self, fields_str, where_str, budget_method='expense'):
+    def _get_report_sql(self, fields_str, where_str):
         select = ''
         group_by = ''
         if len(fields_str) > 1:
             select = '%s,' % fields_str
             group_by = 'group by %s' % fields_str
+        budget_method = "budget_method = '%s'" % self.budget_method
+        if not self.budget_method:
+            budget_method = 'budget_method is not null'
         return """
             select %s
                 coalesce(sum(planned_amount), 0.0) planned_amount,
@@ -103,7 +106,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
                 sum(amount_consumed) amount_consumed,
                 sum(amount_balance) amount_balance
             from budget_monitor_report
-            where budget_method = '%s'
+            where %s
             %s -- more where clause
             %s -- group by
         """ % (select, budget_method, where_str, group_by)
@@ -158,7 +161,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             sql = """
                 select coalesce(sum(amount_actual), 0.0) actual
                 from budget_consume_report
-                where budget_method = 'expense'
+                where 1=1
                 %s
             """ % consume_where_str
             self._cr.execute(sql)
@@ -293,7 +296,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         return where_str, fields_str
 
     @api.multi
-    def _query_report_by_structure(self, chart_view, budget_method='expense'):
+    def _query_report_by_structure(self, chart_view):
         self.ensure_one()
         where = prepare_where_dict(self, ALL_SEARCH_KEYS)
         if chart_view:
@@ -317,7 +320,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             where_str, fields_str)
 
         # SQL
-        sql = self._get_report_sql(fields_str, where_str, budget_method)
+        sql = self._get_report_sql(fields_str, where_str)
         self._cr.execute(sql)
         rows = self._cr.dictfetchall()
         return rows
@@ -499,7 +502,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
                               'fiscalyear_id': fiscalyear.id,
                               'project_id': project.id,
                               })
-        result = report._query_report_by_structure(chart_view, budget_method)
+        result = report._query_report_by_structure(chart_view)
         # Basic info
         result[0]['fiscalyear'] = fiscalyear.name
         result[0]['project_code'] = project.code
@@ -947,7 +950,7 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         return where_str
 
     @api.multi
-    def _query_open_items(self, ttype=False, budget_method='expense'):
+    def _query_open_items(self, ttype=False):
         self.ensure_one()
         where_dict = prepare_where_dict(self, ALL_SEARCH_KEYS)
         if ttype and ttype not in ('total_commit'):
@@ -964,9 +967,8 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         sql = """
             select analytic_line_id
             from budget_monitor_report
-            where budget_method = '%s'
             %s
-        """ % (budget_method, where_str)
+        """ % (where_str)
         self._cr.execute(sql)
         res = self._cr.fetchall()
         analytic_line_ids = [x[0] for x in res]
