@@ -460,5 +460,26 @@
               }
           </field>
         </record>
+
+        # Account Analytic Line View (when click drilldown button)
+        <record id="account_analytic_line_view_xlsx_template" model="ir.attachment">
+            <field name="res_model">xlsx.account.analytic.line.view</field>
+            <field name="datas"></field>
+            <field name="datas_fname">account_analytic_line_view.xlsx</field>
+            <field name="name">Account Analytic Line View</field>
+            <field name="parent_id" eval="ref('dir_budget_drilldown_template')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    'Budget Lines': {
+                        'results': {
+                            'A2': 'org_id${value and value.name_short or ""}',
+                        },
+                    }
+                }
+              }
+          </field>
+        </record>
+
     </data>
 </openerp>

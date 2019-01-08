@@ -10,7 +10,8 @@
                         ref('budget_project_base_report_xlsx_template'),
                         ref('budget_invest_asset_report_xlsx_template'),
                         ref('budget_invest_construction_report_xlsx_template'),
-                        ref('budget_personnel_report_xlsx_template')]"/>
+                        ref('budget_personnel_report_xlsx_template'),
+                        ref('account_analytic_line_view_xlsx_template')]"/>
             <value>pabi_budget_drilldown_report/xlsx_template</value>
         </function>
     </data>

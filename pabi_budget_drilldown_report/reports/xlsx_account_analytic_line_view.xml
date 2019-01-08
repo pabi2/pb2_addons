@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="xlsx_account_analytic_line_view" model="ir.ui.view">
+            <field name="name">xlsx.account.analytic.line.view</field>
+            <field name="model">xlsx.account.analytic.line.view</field>
+            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='criteria']" position="inside">
+                    <group>
+                    </group>
+                    <group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_account_analytic_line_view_xlsx" model="ir.actions.act_window">
+            <field name="name">Budget Commitment Details</field>
+            <field name="res_model">xlsx.account.analytic.line.view</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>
