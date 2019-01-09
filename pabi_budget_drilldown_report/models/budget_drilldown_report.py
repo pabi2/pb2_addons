@@ -965,10 +965,14 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
                          " ('so_commit', 'pr_commit'," \
                          " 'po_commit', 'exp_commit')"
         budget_method = self.report_id.budget_method
+        if budget_method:
+            budget_method = "budget_method = '%s'" % budget_method
+        else:
+            budget_method = 'budget_method is not null'
         sql = """
             select analytic_line_id
             from budget_monitor_report
-            where budget_method = '%s'
+            where %s
             %s
         """ % (budget_method, where_str)
         self._cr.execute(sql)
