@@ -964,11 +964,13 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
             where_str += " and budget_commit_type in" \
                          " ('so_commit', 'pr_commit'," \
                          " 'po_commit', 'exp_commit')"
+        budget_method = self.report_id.budget_method
         sql = """
             select analytic_line_id
             from budget_monitor_report
+            where budget_method = '%s'
             %s
-        """ % (where_str)
+        """ % (budget_method, where_str)
         self._cr.execute(sql)
         res = self._cr.fetchall()
         analytic_line_ids = [x[0] for x in res]
