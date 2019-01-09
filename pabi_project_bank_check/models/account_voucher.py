@@ -82,11 +82,12 @@ class AccountVoucher(models.Model):
                 raise ValidationError(
                     _('All invoices should belong to projcts that tie to '
                       'payment method : %s') % name_str)
-            # Invalid payment method
-            if rec.journal_id not in rec.project_journal_ids:
-                raise ValidationError(
-                    _('The selected payment method is not valid!\n'
-                      'Please choose from : %s') % name_str)
+            # Invalid payment method only supplier payment
+            if rec.type != 'receipt':
+                if rec.journal_id not in rec.project_journal_ids:
+                    raise ValidationError(
+                        _('The selected payment method is not valid!\n'
+                          'Please choose from : %s') % name_str)
 
     @api.model
     def _get_project_journals(self, invoices):
