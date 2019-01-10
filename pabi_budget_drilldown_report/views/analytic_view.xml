@@ -87,6 +87,7 @@
             <field name="arch" type="xml">
                 <search>
                     <field name="ref"/>
+                    <field name="document"/>
                     <field name="activity_group_id"/>
                     <field name="activity_id"/>
                     <field name="general_account_id"/>
@@ -105,6 +106,7 @@
                         <filter string="Period" context="{'group_by': 'period_id'}"/>
                         <filter string="Charge Type" context="{'group_by': 'charge_type'}"/>
                         <filter string="Reference" context="{'group_by': 'ref'}"/>
+                        <filter string="Document" context="{'group_by': 'document'}"/>
                         <filter string="Activity Group" context="{'group_by': 'activity_group_id'}"/>
                         <filter string="Activity" context="{'group_by': 'activity_id'}"/>
                         <filter string="Activity Rpt" context="{'group_by': 'activity_rpt_id'}"/>
