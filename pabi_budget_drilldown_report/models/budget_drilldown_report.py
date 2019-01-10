@@ -902,6 +902,47 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         }
 
     @api.multi
+    def save_pr_commit_items(self):
+        return self.save_items('pr_commit')
+
+    @api.multi
+    def save_po_commit_items(self):
+        return self.save_items('po_commit')
+
+    @api.multi
+    def save_exp_commit_items(self):
+        return self.save_items('exp_commit')
+
+    @api.multi
+    def save_total_commit_items(self):
+        return self.save_items('total_commit')
+
+    @api.multi
+    def save_actual_items(self):
+        return self.save_items('actual')
+
+    @api.multi
+    def save_consumed_items(self):
+        return self.save_items()
+
+    @api.multi
+    def save_items(self, ttype=False):
+        self.ensure_one()
+        analytic_line_ids = self._query_open_items(ttype=ttype)
+        type_commit = ttype
+        return {
+            'name': _("Analytic Lines"),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'xlsx.account.analytic.line.view',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': {'type_commit': type_commit,
+                        'analytic_line_ids': analytic_line_ids},
+            'target': 'new',
+        }
+
+    @api.multi
     def _update_where_str(self, where_str):
         section_ids = \
             self.chartfield_ids.filtered(lambda x: x.model == 'res.section') \
