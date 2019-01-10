@@ -23,6 +23,7 @@
         'security/ir.model.access.csv',
         'data/report_auto_vacumm.xml',
         'wizard/budget_drilldown_report_wizard.xml',
+        'reports/xlsx_account_analytic_line_view.xml',
         'views/budget_drilldown_common.xml',
         'views/budget_overall_report.xml',
         'views/budget_all_report.xml',

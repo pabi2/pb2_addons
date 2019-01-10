@@ -21,6 +21,7 @@ class AccountAnalyticLineView(models.Model):
     # )
     docline_sequence = fields.Integer(
         string='Item',
+        group_operator='count',
     )
     date_document = fields.Date(
         string='Document Date',
@@ -277,6 +278,7 @@ class AccountAnalyticLineView(models.Model):
     )
     net_committed_amount = fields.Float(
         string='Net Commited',
+        group_operator='avg',
     )
 
     @api.multi
@@ -334,14 +336,14 @@ class AccountAnalyticLineView(models.Model):
         sql_select = """
             aal.*, -aal.amount negate_amount,
             -- Source Document for Invoice (PO/EX) and PO (PR)
-            CASE WHEN aal.doctype = 'purchase_order' THEN
+            CASE WHEN position('purchase.order' in aal.document_id) > 0 THEN
                 (select pr.name
                  from purchase_request_purchase_order_line_rel rel
                  join purchase_request_line prl on
                     prl.id = rel.purchase_request_line_id
                  join purchase_request pr on pr.id = prl.request_id
                  where aal.purchase_line_id = purchase_order_line_id limit 1)
-            WHEN aal.doctype = 'in_invoice' THEN
+            WHEN position('account.invoice' in aal.document_id) > 0 THEN
                 (select inv.source_document
                  from account_invoice inv
                  where replace(aal.document_id,
