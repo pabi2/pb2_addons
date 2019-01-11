@@ -7,15 +7,15 @@
                 <t t-foreach="docs" t-as="o">
                     <t t-call="pabi_partner_dunning_report.customer_dunning_letter_layout">
                         <div class="page page_report_customer_dunning_letter">
-                            <table class="table table-condensed">
-                                <tbody>
+                            <!-- <table class="table table-condensed">
+                                <tbody> -->
                                     <!-- Column Detail -->
                                     <t t-call="pabi_partner_dunning_report.customer_dunning_letter_column_detail"/>
 
                                     <!-- Last Page Footer -->
                                     <!-- <t t-call="pabi_partner_dunning_report.customer_dunning_letter_layout_footer_1"/> -->
-                                </tbody>
-                            </table>
+                                <!-- </tbody>
+                            </table> -->
                         </div>
                     </t>
                 </t>
