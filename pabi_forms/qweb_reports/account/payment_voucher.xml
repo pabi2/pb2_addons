@@ -12,12 +12,12 @@
 
                                 <!-- Naration -->
                                 <t t-call="pabi_forms.account_naration_header"/>
+
+                                <!-- Payment Type -->
+                                <t t-call="pabi_forms.account_payment_type"/>
                             </table>
                             <table class="table table-condensed">
                                 <thead>
-                                    <!-- Payment Type -->
-                                    <t t-call="pabi_forms.account_payment_type"/>
-
                                     <!-- Column Header -->
                                     <t t-call="pabi_forms.account_column_header"/>
                                 </thead>

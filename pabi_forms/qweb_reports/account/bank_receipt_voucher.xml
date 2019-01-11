@@ -9,12 +9,12 @@
                             <table class="table table-condensed">
                                 <!-- Clearing Doc -->
                                 <t t-call="pabi_forms.account_clearing_doc_header"/>
+
+                                <!-- Naration -->
+                                <t t-call="pabi_forms.account_naration_header"/>
                             </table>
                             <table class="table table-condensed">
                                 <thead>
-                                    <!-- Naration -->
-                                    <t t-call="pabi_forms.account_naration_header"/>
-
                                     <!-- Column Header -->
                                     <t t-call="pabi_forms.account_column_header"/>
                                 </thead>
