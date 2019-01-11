@@ -265,22 +265,20 @@
                     </t>
                 </td>
                 <t t-if="o.doctype in ['in_invoice']">
-                    <td class="text-center pabi-col-detail">
+                    <td class="pabi-col-detail">
                         <span t-field="line.product_id"/>
                     </td>
                 </t>
                 <td class="pabi-col-detail">
-                    <t t-if="line.account_id and line.account_id.type in ['receivable', 'payable']">
-                        <t t-if="line.partner_id">
-                            <t t-set="partner_name" t-value="[]"/>
-                            <t t-if="line.partner_id.search_key">
-                                <t t-set="partner_name" t-value="partner_name + [line.partner_id.search_key]"/>
-                            </t>
-                            <t t-if="line.partner_id.name">
-                                <t t-set="partner_name" t-value="partner_name + [line.partner_id.name]"/>
-                            </t>
-                            <span t-esc="' '.join(partner_name)"/>
+                    <t t-if="line.partner_id">
+                        <t t-set="partner_name" t-value="[]"/>
+                        <t t-if="line.partner_id.search_key">
+                            <t t-set="partner_name" t-value="partner_name + [line.partner_id.search_key]"/>
                         </t>
+                        <t t-if="line.partner_id.name">
+                            <t t-set="partner_name" t-value="partner_name + [line.partner_id.name]"/>
+                        </t>
+                        <span t-esc="' '.join(partner_name)"/>
                     </t>
                 </td>
                 <t t-if="o.doctype in ['adjustment']">
