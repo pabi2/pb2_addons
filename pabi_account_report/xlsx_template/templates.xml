@@ -602,7 +602,7 @@
                             'results': {
                                 'A13': 'voucher_id.period_id.fiscalyear_id.name${value or ""}',
                                 'B13': 'voucher_id.number${value or ""}',
-                                'C13': 'invoice_id.source_document_id${value and value.display_name or ""}',
+                                'C13': "${'=IF(?(AE13)&lt;&gt;\"\",?(AE13),?(AF13))'}",
                                 'D13': 'invoice_id.number${value or ""}',
                                 'E13': 'invoice_id.comment${value or ""}',
                                 'F13': 'invoice_id.partner_id.search_key${value or ""}',
@@ -612,16 +612,23 @@
                                 'J13': 'voucher_id.validate_user_id.display_name${value or ""}',
                                 'K13': 'voucher_id${value and value.payment_type == "transfer" and dict(env["account.voucher"]._columns["transfer_type"].selection)[value.transfer_type] or "Cheque"}',
                                 'L13': 'voucher_line_id.amount${value or ""}#{number_format=number}',
-                                'M13': 'voucher_id.date${value or ""}#{number_format=date}',
-                                'N13': 'voucher_id.payment_export_id.date_value${value or ""}#{number_format=date}',
-                                'O13': 'invoice_id.source_document_id${value and value._name == "hr.expense.expense" and value.date_valid or ""}#{number_format=date}',
-                                'P13': 'business_day${value or 0}',
-                                #'P13': '${"=NETWORKDAYS(?(O13),?(N13),Holliday!B:B)"}',
-                                'Q13': "${'=IF(?(P13)&lt;=5,\"Yes\",\"No\")'}",
-                                'R13': "${'=IF(?(K13)=\"Cheque\",?(V13),\"\")'}",
+                                'M13': 'invoice_id.date_document${value or ""}#{number_format=date}',
+                                'N13': 'invoice_id.date_invoice${value or ""}#{number_format=date}',
+                                'O13': 'invoice_id.date_due${value or ""}#{number_format=date}',
+                                'P13': 'voucher_id.date${value or ""}#{number_format=date}',
+                                'Q13': 'voucher_id.payment_export_id.date_value${value or ""}#{number_format=date}',
+                                'R13': 'invoice_id.source_document_id${value and value._name == "hr.expense.expense" and value.date_valid or ""}#{number_format=date}',
+                                'S13': 'business_day${value or 0}',
+                                'T13': "${'=IF(?(S13)&lt;=5,\"Yes\",\"No\")'}",
+                                'U13': "${'=IF(?(K13)=\"Cheque\",?(AG13),\"\")'}",
+                                'V13': "${'=IF(?(M13)=\"\",\"\",IF(AND(DAY(?(M13))&gt;=9,DAY(?(M13))&lt;=22),\"KV 9 - 22\",\"KV 23 - 8\"))'}",
+                                'W13': "${'=IF(?(M13)=\"\",\"\",IF(?(Q13)=\"\",\"ไม่มีวันที่ PE\",IF(AND(?(V13)=\"KV 9 - 22\",?(Q13)&lt;=DATE(YEAR(?(M13)),MONTH(?(M13)),30)),\"Yes\",IF(AND(?(V13)=\"KV 23 - 8\",MONTH(?(M13))&lt;12,?(Q13)&lt;=DATE(YEAR(?(M13)),MONTH(?(M13))+1,15)),\"Yes\",IF(AND(?(V13)=\"KV 23 - 8\",MONTH(?(M13))=12,?(Q13)&lt;=DATE(YEAR(?(M13))+1,MONTH(?(M13))-11,15)),\"Yes\",\"No\")))))'}",
+                                'X13': "${'=IF(?(M13)=\"\",\"\",IF(AND(OR(AND(DAY(?(M13))&gt;=23,DAY(?(M13))&lt;=31),AND(DAY(?(M13))&gt;=1,DAY(?(M13))&lt;=8)),AND(DAY(?(Q13))&gt;=1,DAY(?(Q13))&lt;=15)),\"Yes\",IF(AND(AND(DAY(?(M13))&gt;=9,DAY(?(M13))&lt;=22),AND(DAY(?(Q13))&gt;=16,DAY(?(Q13))&lt;=31)),\"Yes\",\"No\")))'}",
+                                'Y13': '${"=NETWORKDAYS(?(N13),?(M13),Holliday!B:B)"}',
                                 # hide column
-                                'V13': 'voucher_id.move_ids${value and value.mapped("match_import_id") and value.mapped("match_import_id").date_value or ""}#{number_format=date}',
-                            }
+                                'AE13': 'invoice_id.source_document_id${value and value.display_name or ""}',
+                                'AF13': 'salary_number${value or ""}',
+                                'AG13': 'voucher_id.move_ids${value and value.mapped("match_import_id") and value.mapped("match_import_id").date_value or ""}#{number_format=date}',                            }
                         }
                     }
                 }
