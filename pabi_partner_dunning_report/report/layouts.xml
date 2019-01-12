@@ -83,7 +83,7 @@
                     <div class="col-xs-2" style="width:62px;">
                         <span>เรียน</span>
                     </div>
-                    <div class="col-xs-7" style="padding-left:0px;">
+                    <div class="col-xs-8" style="padding-left:0px;">
                         <t t-if="o.letter_type == 'l1' or o.letter_type == 'l2'">
                             <t t-if="o.to_whom_title">
                                 <span><t t-esc="o.to_whom_title"/><br/></span>
@@ -119,56 +119,60 @@
                     </p>
                 </t>
                 <table class="center_report_customer_dunning_letter">
-                    <tr style="font-weight:bold;">
-                        <td class="line_table">ใบแจ้งหนี้เลขที่</td>
-                        <td class="line_table">วันที่ใบแจ้งหนี้</td>
-                        <td class="line_table">วันที่ครบกำหนด</td>
-                        <td class="line_table">จำนวนเงิน (บาท)</td>
-                    </tr>
-                    <!-- <t t-foreach="o.line_ids.sorted(key=lambda l: (l.move_line_id.ref, l.date_invoice, l.date_due, l.amount_residual))" t-as="ids">
-                        <t t-set="date_invoice" t-value="datetime.datetime.strptime(ids.date_invoice, '%Y-%m-%d')"/>
-                        <t t-set="date_due" t-value="datetime.datetime.strptime(ids.date_due, '%Y-%m-%d')"/>
-                        <t t-set="full_date_invoice" t-value="date_invoice.strftime('%d/%m/%Y')"/>
-                        <t t-set="full_date_due" t-value="date_due.strftime('%d/%m/%Y')"/>
-                        <tr>
-                            <td class="line_table"><t t-esc="ids.move_line_id.ref"/></td>
-                            <td class="line_table"><t t-esc="full_date_invoice"/></td>
-                            <td class="line_table"><t t-esc="full_date_due"/></td>
-                            <td class="line_table right_report_customer_dunning_letter">
-                                <t t-if="ids.amount_residual &lt; 0">
-                                    <t t-esc="'(' + '{0:,.2f}'.format(abs(ids.amount_residual)) + ')'"/>
-                                </t>
-                                <t t-if="ids.amount_residual &gt;= 0">
-                                    <t t-esc="'{0:,.2f}'.format(abs(ids.amount_residual))"/>
-                                </t>
-                            </td>
+                    <thead>
+                        <tr style="font-weight:bold;">
+                            <td class="line_table">ใบแจ้งหนี้เลขที่</td>
+                            <td class="line_table">วันที่ใบแจ้งหนี้</td>
+                            <td class="line_table">วันที่ครบกำหนด</td>
+                            <td class="line_table">จำนวนเงิน (บาท)</td>
                         </tr>
-                    </t> -->
-                    <t t-foreach="o.get_dunning_letter_line(o.line_ids)" t-as="line">
-                        <t t-set="date_invoice" t-value="datetime.datetime.strptime(line[1], '%Y-%m-%d')"/>
-                        <t t-set="date_due" t-value="datetime.datetime.strptime(line[2], '%Y-%m-%d')"/>
-                        <t t-set="full_date_invoice" t-value="date_invoice.strftime('%d/%m/%Y')"/>
-                        <t t-set="full_date_due" t-value="date_due.strftime('%d/%m/%Y')"/>
+                    </thead>
+                    <tbody>
+                        <!--<t t-foreach="o.line_ids.sorted(key=lambda l: (l.move_line_id.ref, l.date_invoice, l.date_due, l.amount_residual))" t-as="ids">
+                            <t t-set="date_invoice" t-value="datetime.datetime.strptime(ids.date_invoice, '%Y-%m-%d')"/>
+                            <t t-set="date_due" t-value="datetime.datetime.strptime(ids.date_due, '%Y-%m-%d')"/>
+                            <t t-set="full_date_invoice" t-value="date_invoice.strftime('%d/%m/%Y')"/>
+                            <t t-set="full_date_due" t-value="date_due.strftime('%d/%m/%Y')"/>
+                            <tr>
+                                <td class="line_table"><t t-esc="ids.move_line_id.ref"/></td>
+                                <td class="line_table"><t t-esc="full_date_invoice"/></td>
+                                <td class="line_table"><t t-esc="full_date_due"/></td>
+                                <td class="line_table right_report_customer_dunning_letter">
+                                    <t t-if="ids.amount_residual &lt; 0">
+                                        <t t-esc="'(' + '{0:,.2f}'.format(abs(ids.amount_residual)) + ')'"/>
+                                    </t>
+                                    <t t-if="ids.amount_residual &gt;= 0">
+                                        <t t-esc="'{0:,.2f}'.format(abs(ids.amount_residual))"/>
+                                    </t>
+                                </td>
+                            </tr>
+                        </t>-->
+                        <t t-foreach="o.get_dunning_letter_line(o.line_ids)" t-as="line">
+                            <t t-set="date_invoice" t-value="datetime.datetime.strptime(line[1], '%Y-%m-%d')"/>
+                            <t t-set="date_due" t-value="datetime.datetime.strptime(line[2], '%Y-%m-%d')"/>
+                            <t t-set="full_date_invoice" t-value="date_invoice.strftime('%d/%m/%Y')"/>
+                            <t t-set="full_date_due" t-value="date_due.strftime('%d/%m/%Y')"/>
+                            <tr>
+                                <td class="line_table"><t t-esc="line[0]"/></td>
+                                <td class="line_table"><t t-esc="full_date_invoice"/></td>
+                                <td class="line_table"><t t-esc="full_date_due"/></td>
+                                <td class="line_table right_report_customer_dunning_letter">
+                                    <t t-if="line[3] &lt; 0">
+                                        <t t-esc="'(' + '{0:,.2f}'.format(abs(line[3])) + ')'"/>
+                                    </t>
+                                    <t t-if="line[3] &gt;= 0">
+                                        <t t-esc="'{0:,.2f}'.format(abs(line[3]))"/>
+                                    </t>
+                                </td>
+                            </tr>
+                        </t>
                         <tr>
-                            <td class="line_table"><t t-esc="line[0]"/></td>
-                            <td class="line_table"><t t-esc="full_date_invoice"/></td>
-                            <td class="line_table"><t t-esc="full_date_due"/></td>
-                            <td class="line_table right_report_customer_dunning_letter">
-                                <t t-if="line[3] &lt; 0">
-                                    <t t-esc="'(' + '{0:,.2f}'.format(abs(line[3])) + ')'"/>
-                                </t>
-                                <t t-if="line[3] &gt;= 0">
-                                    <t t-esc="'{0:,.2f}'.format(abs(line[3]))"/>
-                                </t>
-                            </td>
+                            <td></td>
+                            <td></td>
+                            <td class="line_table" style="font-weight:bold;">ยอดรวมทั้งสิ้น</td>
+                            <td class="line_table right_report_customer_dunning_letter"><t t-esc="'{0:,.2f}'.format(amount_total)"/></td>
                         </tr>
-                    </t>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td class="line_table" style="font-weight:bold;">ยอดรวมทั้งสิ้น</td>
-                        <td class="line_table right_report_customer_dunning_letter"><t t-esc="'{0:,.2f}'.format(amount_total)"/></td>
-                    </tr>
+                    </tbody>
                 </table>
                 <t t-if="o.letter_type == 'l1'">
                     <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">

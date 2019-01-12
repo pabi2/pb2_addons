@@ -135,7 +135,11 @@ class PABIPartnerDunningReport(models.Model):
         # View
         tools.drop_view_if_exists(cr, self._table)
         _sql = """
-            select aml.create_uid validate_user_id, aml.id,
+            select case when split_part(am.document_id, ',', 1) =
+                'interface.account.entry' then
+                (select validate_user_id from interface_account_entry where
+                 id = split_part(am.document_id, ',', 2) :: int) else
+                 am.create_uid end as validate_user_id, aml.id,
                 aml.id as move_line_id, aml.reconcile_id as reconcile_id,
                 aml.date_maturity, aml.date, aml.partner_id, rp.category_id,
                 aa.type account_type, aa.id account_id, new_title,
@@ -146,6 +150,7 @@ class PABIPartnerDunningReport(models.Model):
                 case when letter.l3 is not null then true else false end as l3,
                 letter.l3 l3_date
             from account_move_line aml
+            join account_move am on aml.move_id = am.id
             join account_account aa on aa.id = aml.account_id
             join res_partner rp on rp.id = aml.partner_id
             left outer join pabi_dunning_config_title pdct
