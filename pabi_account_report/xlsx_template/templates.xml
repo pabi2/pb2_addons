@@ -105,7 +105,7 @@
                                 'AF11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and " ".join(filter(lambda x: x != False, [value.with_context(lang="th_TH").filtered(lambda l: l.default is True)[0].partner_id.title.name, value.with_context(lang="th_TH").filtered(lambda l: l.default is True)[0].partner_id.name])) or "") or ""}',
                                 'AG11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and (value.filtered(lambda l: l.default is True)[0].active is True and "X" or "") or "") or ""}',
                                 'AH11': 'bank_ids${value and (value.filtered(lambda l: l.default is True) and (value.filtered(lambda l: l.default is True)[0].default is True and "X" or "")) or ""}',
-                                'AI11': 'income_tax_form${value and dict(pnd1="PND1", pnd3="PND3", pnd3a="PND3a", pnd53="PND53")[value] or ""}',
+                                'AI11': 'income_tax_form${value and dict(env["res.partner"]._columns["income_tax_form"].selection)[value] or ""}',
                                 'AJ11': 'create_date${value or ""}#{number_format=date}',
                                 'AK11': 'create_uid${value and value.with_context(lang="th_TH").display_name or ""}',
                                 'AL11': 'write_date${value or ""}#{number_format=date}',
