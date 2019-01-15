@@ -90,16 +90,23 @@ class BalanceSheetParser(report_sxw.rml_parse, common_report_header):
                     context=data['comparison_context']).balance * report.sign \
                     or 0.0
             lines.append(vals)
+
+            ctx = {}
+            if 'active_test' in data['form']['used_context']:
+                ctx['active_test'] = \
+                    data['form']['used_context']['active_test']
+
             account_ids = []
             if report.display_detail == 'no_detail':
                 continue
             if report.type == 'accounts' and report.account_ids:
                 account_ids = account_obj._get_children_and_consol(
-                    cr, uid, [x.id for x in report.account_ids])
+                    cr, uid, [x.id for x in report.account_ids], context=ctx)
             elif report.type == 'account_type' and report.account_type_ids:
                 account_ids = account_obj.search(
                     cr, uid, [('user_type', 'in', [x.id for x in
-                                                   report.account_type_ids])])
+                                                   report.account_type_ids])],
+                    context=ctx)
             if account_ids:
                 for account in account_obj.browse(
                    cr, uid, account_ids, context=data['used_context']):

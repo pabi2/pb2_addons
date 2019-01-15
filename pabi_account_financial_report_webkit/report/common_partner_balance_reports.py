@@ -174,8 +174,7 @@ class CommonPartnerBalanceReportHeaderWebkit(CommonBalanceReportHeaderWebkit,
         stop_date = self._get_form_param("comp%s_date_to" % (index,), data)
 
         init_balance = self.is_initial_balance_enabled(
-            comparison_filter, start_period=start_period,
-            specific_report=specific_report)
+            comparison_filter, specific_report=specific_report)
 
         comp_params = {}
         accounts_details_by_ids = defaultdict(dict)
@@ -250,8 +249,7 @@ class CommonPartnerBalanceReportHeaderWebkit(CommonBalanceReportHeaderWebkit,
                 stop_period, specific_report=specific_report)
 
         initial_balance = self.is_initial_balance_enabled(
-            main_filter, start_period=start_period,
-            specific_report=specific_report)
+            main_filter, specific_report=specific_report)
         initial_balance_mode = initial_balance \
             and self._get_initial_balance_mode(
                 start, specific_report=specific_report) or False

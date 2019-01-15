@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="accounting_report_view" model="ir.ui.view">
+            <field name="name">Accounting Report</field>
+            <field name="model">accounting.report</field>
+            <field name="inherit_id" ref="account.accounting_report_view"/>
+            <field name="arch" type="xml">
+                <field name="account_report_id" position="after">
+                    <field name="charge_type"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="account.action_account_report_bs" model="ir.actions.act_window">
+            <field name="context" eval="{'default_account_report_id':ref('account.account_financial_report_balancesheet0'),'active_test':False}"/>
+        </record>
+
+        <record id="account.action_account_report_pl" model="ir.actions.act_window">
+            <field name="context" eval="{'default_account_report_id':ref('account.account_financial_report_profitandloss0'),'active_test':False}"/>
+        </record>
+    </data>
+</openerp>
