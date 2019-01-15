@@ -109,86 +109,6 @@ class AccountAssetChangeowner(models.Model):
     def action_cancel(self):
         self.write({'state': 'cancel'})
 
-    # @api.multi
-    # def _changeowner(self):
-    #     """ The Concept
-    #     * No new asset is being created
-    #     * Update new owner (project, section) and run move lines
-    #     * Source and target owner must be different, otherwise, warning.
-    #     Accoun Moves
-    #     ============
-    #     Dr Accumulated depreciation of transferring asset (if any)
-    #         Cr Asset Value of trasferring asset
-    #     Dr Asset Value to the new owner
-    #         Cr Accumulated Depreciation of to the new owner (if any)
-    #     """
-    #     self.ensure_one()
-    #     AccountMove = self.env['account.move']
-    #     Asset = self.env['account.asset']
-    #     Period = self.env['account.period']
-    #     period = Period.find()
-    #     for line in self.changeowner_ids:
-    #         if line.move_id:
-    #             continue
-    #         project = line.project_id
-    #         section = line.section_id
-    #         # For change owner, no owner should be the same
-    #         asset = line.asset_id
-    #         if (project and asset.owner_project_id == project) or \
-    #                 (section and asset.owner_section_id == section):
-    #             raise ValidationError(
-    #                 _('Asset %s changes to the same owner!') % (asset.code))
-    #         new_owner = {'owner_project_id': project.id,
-    #                      'owner_section_id': section.id,
-    #                      #  We now have no option to change owner to..
-    #                      'owner_invest_asset_id': False,
-    #                      'owner_invest_construction_phase_id': False}
-    #         # Moving to new owner Project/Section
-    #         if new_owner.get('owner_project_id') or \
-    #                 new_owner.get('owner_section_id'):
-    #             move_lines = []
-    #             asset_move_lines_dict, depre_move_lines_dict = \
-    #                 Asset._prepare_asset_reverse_moves(asset)
-    #             move_lines += asset_move_lines_dict + depre_move_lines_dict
-    #             # Create move line for target asset
-    #             # Asset
-    #             if asset_move_lines_dict:
-    #                 new_asset_move_line_dict = \
-    #                     Asset._prepare_asset_target_move(asset_move_lines_dict,
-    #                                                      new_owner)
-    #                 move_lines.append(new_asset_move_line_dict)
-    #             # Depre
-    #             if depre_move_lines_dict:
-    #                 new_depre_move_lines_dict = \
-    #                     Asset._prepare_asset_target_move(depre_move_lines_dict,
-    #                                                      new_owner)
-    #                 move_lines.append(new_depre_move_lines_dict)
-    #             # Finalize all moves before create it.
-    #             final_move_lines = [(0, 0, x) for x in move_lines]
-    #             if final_move_lines:
-    #                 move_dict = {
-    #                     # Force using AN
-    #                     'journal_id': self.journal_id.id,
-    #                     # 'journal_id': asset.profile_id.journal_id.id,
-    #                     'line_id': final_move_lines,
-    #                     'period_id': period.id,
-    #                     'date': fields.Date.context_today(self),
-    #                     'ref': self.name}
-    #                 ctx = {'allow_asset': True}
-    #                 line.move_id = \
-    #                     AccountMove.with_context(ctx).create(move_dict)
-    #         # Asset Owner Info update
-    #         if line.responsible_user_id:
-    #           new_owner['responsible_user_id'] = line.responsible_user_id.id
-    #         if line.building_id:
-    #             new_owner['building_id'] = line.building_id.id
-    #         if line.floor_id:
-    #             new_owner['floor_id'] = line.floor_id.id
-    #         if line.room_id:
-    #             new_owner['room_id'] = line.room_id.id
-    #         asset.write(new_owner)
-    #     return True
-
     @api.multi
     def _changeowner(self):
         """ The Concept
@@ -210,19 +130,27 @@ class AccountAssetChangeowner(models.Model):
                 continue
             to_project = line.project_id
             to_section = line.section_id
-            # to_invest_asset = False  # Currently, there is no this option
-            # to_invest_construction_phase = False
+            to_invest_asset = line.invest_asset_id
+            to_invest_construction_phase = line.invest_construction_phase_id
+            # At lease 1 dimension should be selected
+            budgets = (to_project.id, to_section.id,
+                       to_invest_asset.id, to_invest_construction_phase.id)
+            if len(filter(lambda x: x, budgets)) == 0:
+                raise ValidationError(_('No new owner selected!'))
             # For change owner, no owner should be the same
             asset = line.asset_id
             if (asset.owner_project_id == to_project) and \
-                    (asset.owner_section_id == to_section):
+                    (asset.owner_section_id == to_section) and \
+                    (asset.invest_asset_id == to_invest_asset) and \
+                    (asset.invest_construction_phase_id ==
+                     to_invest_construction_phase):
                 raise ValidationError(
                     _('Asset %s changes to the same owner!') % (asset.code))
             new_owner = {'owner_project_id': to_project.id,
                          'owner_section_id': to_section.id,
-                         #  We now have no option to change owner to..
-                         'owner_invest_asset_id': False,
-                         'owner_invest_construction_phase_id': False}
+                         'owner_invest_asset_id': to_invest_asset.id,
+                         'owner_invest_construction_phase_id':
+                         to_invest_construction_phase.id}
             # Moving to new owner Project/Section
             move_lines = []
             if asset.purchase_value:
@@ -259,8 +187,9 @@ class AccountAssetChangeowner(models.Model):
                         # Budget
                         'project_id': to_project.id,
                         'section_id': to_section.id,
-                        'invest_asset_id': False,
-                        'invest_construction_phase_id': False,
+                        'invest_asset_id': to_invest_asset.id,
+                        'invest_construction_phase_id':
+                        to_invest_construction_phase.id,
                      },
                 ]
             if asset.value_depreciated:
@@ -299,8 +228,9 @@ class AccountAssetChangeowner(models.Model):
                         # Budget
                         'project_id': to_project.id,
                         'section_id': to_section.id,
-                        'invest_asset_id': False,
-                        'invest_construction_phase_id': False,
+                        'invest_asset_id': to_invest_asset.id,
+                        'invest_construction_phase_id':
+                        to_invest_construction_phase.id,
                      },
                 ]
             # Finalize all moves before create it.
@@ -386,6 +316,14 @@ class AccountAssetChangeownerLine(models.Model):
         'res.project',
         string='Project',
     )
+    invest_asset_id = fields.Many2one(
+        'res.invest.asset',
+        string='Invest Asset',
+    )
+    invest_construction_phase_id = fields.Many2one(
+        'res.invest.construction.phase',
+        string='Construction Phase',
+    )
     responsible_user_id = fields.Many2one(
         'res.users',
         string='Responsible By',
@@ -428,16 +366,39 @@ class AccountAssetChangeownerLine(models.Model):
     def _onchange_section_id(self):
         if self.section_id:
             self.project_id = False
+            self.invest_asset_id = False
+            self.invest_construction_phase_id = False
 
     @api.onchange('project_id')
     def _onchange_project_id(self):
         if self.project_id:
             self.section_id = False
+            self.invest_asset_id = False
+            self.invest_construction_phase_id = False
+
+    @api.onchange('invest_asset_id')
+    def _onchange_invest_asset_id(self):
+        if self.invest_asset_id:
+            self.section_id = False
+            self.project_id = False
+            self.invest_construction_phase_id = False
+
+    @api.onchange('invest_construction_phase_id')
+    def _onchange_invest_construction_phase_id(self):
+        if self.invest_construction_phase_id:
+            self.section_id = False
+            self.project_id = False
+            self.invest_asset_id = False
 
     @api.multi
-    @api.constrains('section_id', 'project_id')
-    def _check_section_project(self):
+    @api.constrains('section_id', 'project_id', 'invest_asset_id',
+                    'invest_construction_phase_id')
+    def _check_budget_dimension(self):
         for rec in self:
-            if rec.section_id and rec.project_id:
+            budgets = (rec.section_id.id,
+                       rec.project_id.id,
+                       rec.invest_asset_id.id,
+                       rec.invest_construction_phase_id.id)
+            if len(filter(lambda x: x, budgets)) > 1:
                 raise ValidationError(
-                    _('Please choose only project or section!'))
+                    _('Please choose only one budget dimension!'))
