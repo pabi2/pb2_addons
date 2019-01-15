@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp.osv import orm
+from openerp.osv import fields, orm
 
 
 class AccountTrialBalanceWizard(orm.TransientModel):
@@ -9,11 +9,22 @@ class AccountTrialBalanceWizard(orm.TransientModel):
     _name = "trial.balance.webkit"
     _description = "Trial Balance Report"
 
+    _columns = {
+        'charge_type': fields.selection(
+            [('internal', 'Internal'),
+             ('external', 'External')],
+            string='Charge Type',
+        )
+    }
+
     def pre_print_report(self, cr, uid, ids, data, context=None):
         data = super(AccountTrialBalanceWizard, self).\
             pre_print_report(cr, uid, ids, data, context)
 
         # PABI2
+        vals = self.read(cr, uid, ids, ['charge_type'], context=context)[0]
+        data['form'].update(vals)
+
         data['specific_report'] = True
 
         return data

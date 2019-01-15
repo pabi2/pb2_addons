@@ -70,3 +70,11 @@ class AccountMoveLine(models.Model):
                  l.product_id.valuation != 'real_time')
         )
         return move_lines
+
+    @api.model
+    def _query_get(self, obj='l'):
+        query = super(AccountMoveLine, self)._query_get(obj=obj)
+        if self.env.context.get('charge_type', False):
+            charge_type = self.env.context.get('charge_type')
+            query += "AND " + obj + ".charge_type = '%s'" % (charge_type, )
+        return query
