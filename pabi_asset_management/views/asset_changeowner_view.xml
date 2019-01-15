@@ -83,6 +83,8 @@
                                         <field name="asset_id"/>
                                         <field name="section_id"/>
                                         <field name="project_id"/>
+                                        <field name="invest_asset_id"/>
+                                        <field name="invest_construction_phase_id"/>
                                         <field name="move_id"/>
                                         <field name="responsible_user_id"/>
                                         <field name="building_id"/>
