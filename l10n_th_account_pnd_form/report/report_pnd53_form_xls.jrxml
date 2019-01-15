@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pnd3_form_xls" language="groovy" pageWidth="2100" pageHeight="595" orientation="Landscape" columnWidth="2100" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.7715610000000155"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="2276"/>
 	<property name="ireport.y" value="0"/>
 	<property name="net.sf.jasperreports.export.csv.field.delimiter" value=" "/>
 	<style name="style1">
@@ -37,7 +37,9 @@ a.state, wht_period, tax_percent, wht_cert_income_type, wht_cert_income_desc, ba
 from report_pnd_form a join report_pnd_form_line b on a.id = b.cert_id
 where a.wht_period_id = $P{wht_period_id} and a.income_tax_form = $P{income_tax_form}]]>
 	</queryString>
-	<field name="wht_sequence_display" class="java.lang.String"/>
+	<field name="wht_sequence_display" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="number" class="java.lang.String"/>
 	<field name="date_value" class="java.sql.Date"/>
 	<field name="tax_payer" class="java.lang.String"/>
@@ -164,6 +166,13 @@ where a.wht_period_id = $P{wht_period_id} and a.income_tax_form = $P{income_tax_
 				</textElement>
 				<text><![CDATA[ประเภทเงินได้]]></text>
 			</staticText>
+			<staticText>
+				<reportElement style="style1" x="1377" y="0" width="100" height="15"/>
+				<textElement markup="none">
+					<font size="8" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Reference]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<detail>
@@ -250,6 +259,13 @@ where a.wht_period_id = $P{wht_period_id} and a.income_tax_form = $P{income_tax_
 					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{wht_cert_income_desc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style1" x="1377" y="0" width="100" height="15"/>
+				<textElement>
+					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{number}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

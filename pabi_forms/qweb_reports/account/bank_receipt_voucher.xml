@@ -7,26 +7,28 @@
                     <t t-call="pabi_forms.account_layout">
                         <div class="page pabi-page">
                             <table class="table table-condensed">
+                                <!-- Clearing Doc -->
+                                <t t-call="pabi_forms.account_clearing_doc_header"/>
+
+                                <!-- Naration -->
+                                <t t-call="pabi_forms.account_naration_header"/>
+                            </table>
+                            <table class="table table-condensed">
                                 <thead>
-                                    <!-- Clearing Doc -->
-                                    <t t-call="pabi_forms.account_clearing_doc_header"/>
-
-                                    <!-- Naration -->
-                                    <t t-call="pabi_forms.account_naration_header"/>
-
                                     <!-- Column Header -->
                                     <t t-call="pabi_forms.account_column_header"/>
                                 </thead>
                                 <tbody>
                                     <!-- Column Detail -->
                                     <t t-call="pabi_forms.account_column_detail"/>
-
-                                    <!-- Summary -->
-                                    <t t-call="pabi_forms.account_summary_footer"/>
-
-                                    <!-- Last Page Footer -->
-                                    <t t-call="pabi_forms.account_layout_footer_1"/>
                                 </tbody>
+                            </table>
+                            <table class="table table-condensed">
+                                <!-- Summary -->
+                                <t t-call="pabi_forms.account_summary_footer"/>
+
+                                <!-- Last Page Footer -->
+                                <t t-call="pabi_forms.account_layout_footer_1"/>
                             </table>
                         </div>
                     </t>

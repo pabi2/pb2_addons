@@ -477,13 +477,16 @@ class BudgetPolicy(models.Model):
                 sub_entities = self.env[sub_entity_model].search([
                     (field, '=', entity.id), ('special', '=', False)])
                 if len(sub_entities) != len(plans):
-                    res['valid'] = False
-                    msg.append("Plan of following entity not accepted.")
                     subentity_ids = plans.mapped(sub_entity_field).ids
                     invalid_sections = sub_entities.filtered(
                         lambda l: l.id not in subentity_ids)
-                    for s in invalid_sections:
-                        msg.append("* %s" % s.display_name)
+                    if invalid_sections:
+                        res['valid'] = False
+                        msg.append("Plan of following entity not accepted.")
+                        for s in invalid_sections:
+                            msg.append("* %s" % s.display_name)
+                    else:
+                        msg.append("Ready...")
                 else:
                     msg.append("Ready...")
             else:

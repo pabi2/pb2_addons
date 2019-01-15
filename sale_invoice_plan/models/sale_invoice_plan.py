@@ -179,7 +179,7 @@ class sale_invoice_plan(models.Model):
         sorted_dates = dates[:]
         sorted_dates.sort()
         if dates != sorted_dates:
-            raise Warning(_("Invoice date are not in order according"
+            raise Warning(_("Invoice date are not in order according "
                             "to installment sequence"))
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

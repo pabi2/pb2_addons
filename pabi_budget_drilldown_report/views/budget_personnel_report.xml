@@ -19,16 +19,22 @@
                                 <field name="released_amount" sum="Total"/>
                                 <field name="amount_pr_commit" sum="Total"/>
                                 <button name="open_pr_commit_items" string="PR Commit Items" icon="gtk-add" type="object"/>
+                                <button name="save_pr_commit_items" string="PR Commit Items" icon="gtk-floppy" type="object"/>
                                 <field name="amount_po_commit" sum="Total"/>
                                 <button name="open_po_commit_items" string="PO Commit Items" icon="gtk-add" type="object"/>
+                                <button name="save_po_commit_items" string="PO Commit Items" icon="gtk-floppy" type="object"/>
                                 <field name="amount_exp_commit" sum="Total"/>
                                 <button name="open_exp_commit_items" string="EX Commit Items" icon="gtk-add" type="object"/>
+                                <button name="save_exp_commit_items" string="EX Commit Items" icon="gtk-floppy" type="object"/>
                                 <field name="amount_total_commit" sum="Total"/>
                                 <button name="open_total_commit_items" string="Total Commit Items" icon="gtk-add" type="object"/>
+                                <button name="save_total_commit_items" string="Total Commit Items" icon="gtk-floppy" type="object"/>
                                 <field name="amount_actual" sum="Total"/>
                                 <button name="open_actual_items" string="Actual Items" icon="gtk-add" type="object"/>
+                                <button name="save_actual_items" string="Actual Items" icon="gtk-floppy" type="object"/>
                                 <field name="amount_consumed" sum="Total"/>
                                 <button name="open_consumed_items" string="Consumed Items" icon="gtk-add" type="object"/>
+                                <button name="save_consumed_items" string="Consumed Items" icon="gtk-floppy" type="object"/>
                                 <field name="amount_balance" sum="Total"/>
                             </tree>
                         </field>

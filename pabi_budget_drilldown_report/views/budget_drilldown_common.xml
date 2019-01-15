@@ -24,12 +24,14 @@
 
                             # For menu budget overview report
                             <field name="chartfield_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all'))]}"/>
-                            <field name="charge_type" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('unit_base'))]}"/>
-                            <field name="org_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('overall', 'unit_base', 'personnel'))]}"/>
-                            <field name="sector_id"  attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('unit_base', 'personnel'))]}"/>
-                            <field name="subsector_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('unit_base', 'personnel'))]}"/>
-                            <field name="division_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('unit_base', 'personnel'))]}"/>
-                            <field name="section_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('unit_base'))]}"/>
+                            <field name="charge_type" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all', 'project_base', 'unit_base', 'invest_asset', 'invest_construction'))]}"/>
+                            <field name="org_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', '=', False)]}"/>
+                            <field name="sector_id"  attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all', 'project_base', 'unit_base', 'personnel', 'invest_asset', 'invest_construction'))]}"/>
+                            <field name="subsector_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all', 'project_base', 'unit_base', 'personnel', 'invest_asset', 'invest_construction'))]}"/>
+                            <field name="division_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all', 'project_base', 'unit_base', 'personnel', 'invest_asset', 'invest_construction'))]}"/>
+                            <field name="section_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all', 'project_base', 'unit_base', 'invest_asset', 'invest_construction'))]}"/>
+                            <field name="section_program_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all', 'unit_base'))]}"/>
+                            <field name="budget_method" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', '=', ('personnel'))]}"/>
                             <!-- unit_base and invest_asset -->
                             <field name="invest_asset_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('invest_asset'))]}"/>
                             <field name="activity_group_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('unit_base', 'invest_asset'))]}"/>

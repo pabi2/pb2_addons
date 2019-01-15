@@ -8,6 +8,7 @@
     'depends': [
         'purchase',
         'purchase_invoice_plan',
+        'purchase_invoice_plan_retention',
         'purchase_action_invoice_create_hook',
         'pabi_chartfield',
         'pabi_asset_management',

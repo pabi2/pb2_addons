@@ -119,6 +119,10 @@ are still unpaid today (today is my clearance date)?'
                          ['until_date', 'group_by_currency'],
                          context=context)[0]
         data['form'].update(vals)
+
+        # PABI2
+        data['specific_report'] = True
+
         return data
 
     def _print_report(self, cr, uid, ids, data, context=None):

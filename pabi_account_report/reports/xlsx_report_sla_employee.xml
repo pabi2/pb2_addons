@@ -22,7 +22,7 @@
         </record>
 
         <record id="action_xlsx_report_sla_employee_form" model="ir.actions.act_window">
-            <field name="name">SLA Employee</field>
+            <field name="name">SLA Expense/Advance Report</field>
             <field name="res_model">xlsx.report.sla.employee</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
@@ -31,7 +31,7 @@
         </record>
 
         <menuitem id="menu_xlsx_report_sla_employee"
-            name="SLA Employee"
+            name="SLA Expense/Advance Report"
             parent="menu_pabi_payable_report"
             action="action_xlsx_report_sla_employee_form"
             sequence="90"/>

@@ -28,12 +28,19 @@ class MailThread(models.AbstractModel):
         url = 'toolbar=hide#id=%s&view_type=form&model=%s' % (object.id,
                                                               object._name)
 
-        for boss in bosses:
+        if bosses:
+            for boss in bosses:
+                vals = {'message_id': message_id,
+                        'owner': owner,
+                        'boss': boss,
+                        'action': action,
+                        'is_complete': is_complete,
+                        'url': url}
+        else:
             vals = {'message_id': message_id,
                     'owner': owner,
-                    'boss': boss,
                     'action': action,
                     'is_complete': is_complete,
                     'url': url}
-            self.env['pabi.intray'].create(vals)
+        self.env['pabi.intray'].create(vals)
         return True

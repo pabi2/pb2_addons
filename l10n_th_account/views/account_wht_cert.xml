@@ -32,7 +32,7 @@
                         </group>
                         <group>
                             <group string="WHT Cert Options">
-                                <field name="income_tax_form" widget="radio" attrs="{'readonly': [('sequence_display', '!=', False)]}"/>
+                                <field name="income_tax_form" readonly="1"/>
                                 <field name="period_id" invisible="1"/>
                                 <field name="tax_payer"/>
                                 <field name="sequence_display" readonly="1"/>

@@ -31,6 +31,7 @@ class AccountInvoice(models.Model):
          ],
         string='Payment Type',
         help="Specified Payment Type, can be used to screen Payment Method",
+        track_visibility='onchange',
     )
     currency_rate = fields.Float(
         string='Currency Rate',
@@ -53,6 +54,7 @@ class AccountInvoice(models.Model):
         INCOME_TAX_FORM,
         string='Income Tax Form',
         help="If invoice has withholding tax, this field is required.",
+        track_visibility='onchange',
     )
     has_wht = fields.Boolean(
         string='Has WHT in invoice line',
@@ -114,6 +116,14 @@ class AccountInvoice(models.Model):
 
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
+
+    @api.multi
+    @api.constrains('invoice_line')
+    def _check_invoice_line(self):
+        for line in self:
+            if len(line.invoice_line) != 1 and \
+               line.receivable_type == 'advance_return':
+                raise ValidationError(_('Advance Clearing must be 1 line!'))
 
     @api.multi
     def action_cancel(self):

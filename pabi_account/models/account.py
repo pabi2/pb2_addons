@@ -59,7 +59,13 @@ class AccountMove(models.Model):
                 continue
             # Normal case
             if rec.document_id and 'date_document' in rec.document_id:
-                rec.date_document = rec.document_id.date_document
+                # Cancel Case
+                if 'cancel_date_document' in rec.document_id and \
+                    rec.document_id.cancel_date_document:
+                    
+                    rec.date_document = rec.document_id.cancel_date_document
+                else:
+                    rec.date_document = rec.document_id.date_document
             else:
                 if not self._context.get('direct_create'):
                     rec.date_document = fields.Date.context_today(self)
@@ -88,6 +94,9 @@ class AccountMove(models.Model):
 
     @api.multi
     def _write(self, vals):
+        # an ugly fix to prevent date_document to reset to False unattended
+        if 'date_document' in vals and not vals['date_document']:
+            vals.pop('date_document')
         # KV/DV
         if 'line_item_summary' in vals and vals.get('line_item_summary'):
             summary = vals.get('line_item_summary')

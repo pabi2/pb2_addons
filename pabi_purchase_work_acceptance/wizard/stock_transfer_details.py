@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import logging
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from openerp.tools.float_utils import float_compare
+
+_logger = logging.getLogger(__name__)
 
 
 class StockTransferDetails(models.TransientModel):
@@ -66,6 +69,11 @@ class StockTransferDetails(models.TransientModel):
             for product_id, quantity in transfer_qty.items():
                 if product_id not in stock_move_qty or \
                         quantity > stock_move_qty[product_id]:
+                    _logger.info('product_id, input: %s' % product_id)
+                    _logger.info('stock_move_qty, input: %s' % stock_move_qty)
+                    _logger.info('quantity, input: %s' % stock_move_qty)
+                    _logger.info('stock_move_qty_product, input: %s'
+                                 % stock_move_qty[product_id])
                     raise ValidationError(
                         _("Can't receive product's quantity over "
                           "stock move's quantity.")
