@@ -10,10 +10,21 @@ class HREmployeeJobHook(models.Model):
     _inherit = 'hr.employee'
 
     @api.multi
-    def action_hook_profile(self):
-        users = self.search([['active','=',True]])
+    def action_hook_profile(self, emps=[]):
+        users = False
+        if emps:
+            users = self.search([
+                ['active','=',True],
+                ['sinid','!=', False],
+                ['employee_code','in', emps]
+            ])
+        else:
+            users = self.search([
+                ['active','=',True],
+                ['sinid','!=', False]
+            ])
         for user in users:
-            user.write({'active': True})
+            user.write({'section_id': user.section_id.id, 'sinid': False})
             if user.employee_code:
                 _logger.info("Job Hook Profile PASS '%s'.", user.employee_code)
         return True
