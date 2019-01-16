@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models
+from openerp import api, fields, models, _
+from openerp.exceptions import ValidationError
 from .account_activity import ActivityCommon
 from .budget_commit import CommitCommon
 from .budget_commit import CommitLineCommon
@@ -81,6 +82,29 @@ class PurchaseOrderLine(CommitLineCommon, ActivityCommon, models.Model):
         'purchase.requisition.line',
         string='Purchase Requisition Line',
     )
+    active = fields.Boolean(
+        'Active',
+        default=True,
+        index=True,
+        help="Inactive line will not result in Picking or Inovice",
+    )
+
+    @api.multi
+    def action_inactivate(self):
+        for line in self:
+            if line.order_id.order_type != 'purchase_order':
+                raise ValidationError(
+                    _('Only Purchase Order is allowed to use this button'))
+            if line.order_id.state != 'draft':
+                raise ValidationError(
+                    _('Document must be "Draft" to delete this line'))
+            line.active = False
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+            'context': {'order_type': 'purchase_order'},
+            'domain': [('order_type', '=', 'purchase_order')],
+        }
 
     @api.multi
     def name_get(self):
