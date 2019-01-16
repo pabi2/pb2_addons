@@ -104,6 +104,7 @@ class PartnersOpenInvoicesWebkit(report_sxw.rml_parse,
 
         # PABI2
         specific_report = data.get('specific_report')
+        context = {'active_test': False}
 
         if main_filter == 'filter_no' and fiscalyear:
             start_period = self.get_first_fiscalyear_period(
@@ -119,7 +120,8 @@ class PartnersOpenInvoicesWebkit(report_sxw.rml_parse,
             filter_type = ('payable',)
 
         account_ids = self.get_all_accounts(
-            new_ids, exclude_type=['view'], only_type=filter_type)
+            new_ids, exclude_type=['view'], only_type=filter_type,
+            context=context)
 
         if not account_ids:
             raise osv.except_osv(_('Error'), _('No accounts to print.'))
