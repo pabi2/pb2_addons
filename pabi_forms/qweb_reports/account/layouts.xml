@@ -778,11 +778,17 @@
                                             <t t-set="bank_branch" t-value="''"/>
                                             <t t-set="bank_account" t-value="''"/>
                                             <t t-if="o.document_id">
-                                                <t t-if="o.doctype in ['payment'] and o.document_id.cheque_lot_id and o.document_id.cheque_lot_id.name">
-                                                    <t t-set="name_cheque" t-value="o.document_id.cheque_lot_id.name"/>
-                                                </t>
                                                 <t t-if="o.doctype in ['payment'] and o.document_id.supplier_bank_id and o.document_id.supplier_bank_id.bank and o.document_id.supplier_bank_id.bank.abbrev">
                                                     <t t-set="short_name_bank" t-value="o.document_id.supplier_bank_id.bank.abbrev"/>
+                                                </t>
+                                                <t t-if="o.document_id.payment_type in ['cheque']">
+                                                    <t t-foreach="o.document_id.partner_id.bank_ids" t-as="line">
+                                                        <t t-if="line.active == True and line.default == True">
+                                                            <span t-field="line.bank.abbrev"/>
+                                                            <span t-field="line.bank_branch.name"/>
+                                                            <span t-field="line.acc_number"/>
+                                                        </t>
+                                                    </t>
                                                 </t>
                                                 <t t-if="o.doctype in ['receipt'] and o.document_id.supplier_bank_id and o.document_id.supplier_bank_id.abbrev">
                                                     <t t-set="short_name_bank" t-value="o.document_id.supplier_bank_id.abbrev"/>
@@ -796,9 +802,6 @@
                                                 <t t-if="o.doctype in ['payment']">
                                                     <t t-if="o.document_id.payment_type in ['transfer']">
                                                         <span t-esc="' '.join([short_name_bank, bank_branch, bank_account])"/>
-                                                    </t>
-                                                    <t t-if="o.document_id.payment_type in ['cheque']">
-                                                        <span t-esc="name_cheque"/>
                                                     </t>
                                                 </t>
                                                 <t t-if="o.doctype in ['receipt']">
