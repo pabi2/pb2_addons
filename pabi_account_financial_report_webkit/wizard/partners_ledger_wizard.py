@@ -113,6 +113,10 @@ class AccountReportPartnersLedgerWizard(orm.TransientModel):
                          ['amount_currency', 'partner_ids'],
                          context=context)[0]
         data['form'].update(vals)
+
+        # PABI2
+        data['specific_report'] = True
+
         return data
 
     def _print_report(self, cursor, uid, ids, data, context=None):
