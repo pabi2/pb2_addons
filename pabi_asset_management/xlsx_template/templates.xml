@@ -22,16 +22,18 @@
               '__IMPORT__': {
                   1: {
                       '_HEAD_': {
-                          'G3': 'date',
+                          'I3': 'date',
                       },
                       'changeowner_ids': {
                           'A6': 'asset_id',
                           'B6': 'section_id',
                           'C6': 'project_id',
-                          'D6': 'responsible_user_id',
-                          'E6': 'building_id',
-                          'F6': 'floor_id',
-                          'G6': 'room_id',
+                          'D6': 'invest_asset_id',
+                          'E6': 'invest_construction_phase_id',
+                          'F6': 'responsible_user_id',
+                          'G6': 'building_id',
+                          'H6': 'floor_id',
+                          'I6': 'room_id',
                       }
                   }
               }

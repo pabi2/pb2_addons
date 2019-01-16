@@ -46,6 +46,11 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
             'res.partner', string='Filter on partner',
             help="Only selected partners will be printed. \
                   Leave empty to print all partners."),
+        'charge_type': fields.selection(
+            [('internal', 'Internal'),
+             ('external', 'External')],
+            string='Charge Type',
+        )
     }
     _defaults = {
         'amount_currency': False,
@@ -80,6 +85,7 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
                           'centralize',
                           'reconcile_cond',  # PABI2
                           'partner_ids',
+                          'charge_type',
                           ],
                          context=context)[0]
         data['form'].update(vals)

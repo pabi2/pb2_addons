@@ -9,7 +9,8 @@
             <field name="arch" type="xml">
                 <data>
                     <field name="target_move" position="after">
-                        <field name="reconcile_cond" nolabel="1"/>
+                        <field name="reconcile_cond" nolabel="1" colspan="2"/>
+                        <field name="charge_type"/>
                     </field>
                     <xpath expr="/form/label[@string='']" position="replace">
                         <separator string="General Ledger" colspan="4"/>

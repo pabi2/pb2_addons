@@ -152,7 +152,7 @@ wkhtmltopdf. The texts are defined inside the report classes.
 
 PABI2
 ------------
-specific_report :: filter by all period (include special = True)
+specific_report :: Use for pabi accounting report (no impact old version)
 """,
     'version': '8.0.1.1.0',
     'author': "Camptocamp,Ecosoft,Tharathip C.",
@@ -185,6 +185,7 @@ specific_report :: filter by all period (include special = True)
         'wizard/open_invoices_wizard_view.xml',
         'wizard/aged_partner_balance_wizard.xml',
         'wizard/print_journal_view.xml',
+        'wizard/account_financial_report_view.xml',
         'report_menus.xml',
     ],
     # tests order matter
