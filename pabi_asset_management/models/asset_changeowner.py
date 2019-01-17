@@ -104,6 +104,7 @@ class AccountAssetChangeowner(models.Model):
         for rec in self:
             rec._changeowner()
         self.write({'state': 'done'})
+        return True
 
     @api.multi
     def action_cancel(self):
