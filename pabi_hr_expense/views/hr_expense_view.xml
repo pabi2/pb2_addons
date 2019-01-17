@@ -216,6 +216,10 @@
 				<attribute name="create">0</attribute>
 				<attribute name="delete">0</attribute>
 			</xpath>
+				<field name="employee_id" position="before">
+					<field name="advance_expense_id" invisible="context.get('is_advance_clearing') == False or context.get('default_is_employee_advance') == True" />
+
+				</field>
 				<field name="date" position="before">
 					<field name="project_code"/>
 					<field name="section_code"/>
