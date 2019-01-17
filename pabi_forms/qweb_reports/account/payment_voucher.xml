@@ -24,14 +24,13 @@
                                 <tbody>
                                     <!-- Column Detail -->
                                     <t t-call="pabi_forms.account_column_detail"/>
-                                </tbody>
-                            </table>
-                            <table class="table table-condensed">
-                                <!-- Summary -->
-                                <t t-call="pabi_forms.account_summary_footer"/>
 
-                                <!-- Last Page Footer -->
-                                <t t-call="pabi_forms.account_layout_footer_2"/>
+                                    <!-- Summary -->
+                                    <t t-call="pabi_forms.account_summary_footer"/>
+
+                                    <!-- Last Page Footer -->
+                                    <t t-call="pabi_forms.account_layout_footer_2"/>
+                                </tbody>
                             </table>
                         </div>
                     </t>
