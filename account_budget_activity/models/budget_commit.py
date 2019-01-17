@@ -79,6 +79,7 @@ class CommitCommon(object):
             rec.budget_transition_ids.\
                 filtered('active').filtered('backward').\
                 regain_budget_commitment([line_field])
+        return True
 
     @api.multi
     def action_technical_closed(self):
