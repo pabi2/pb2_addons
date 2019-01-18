@@ -486,7 +486,7 @@ class CommonReportHeaderWebkit(common_report_header):
     # Account move retrieval helper                #
     ################################################
     def _get_move_ids_from_periods(self, account_id, period_start, period_stop,
-                                   target_move, reconcile_cond,
+                                   target_move, reconcile_cond, charge_type,
                                    partner_ids=False, specific_report=False):
         move_line_obj = self.pool.get('account.move.line')
         period_obj = self.pool.get('account.period')
@@ -507,6 +507,8 @@ class CommonReportHeaderWebkit(common_report_header):
         # PABI2
         if partner_ids:
             search += [('partner_id', 'in', partner_ids)]
+        if charge_type:
+            search += [('charge_type', '=', charge_type)]
         search += self._reconcile_cond_search(reconcile_cond,
                                               period_stop.date_stop)
         # --
@@ -515,7 +517,7 @@ class CommonReportHeaderWebkit(common_report_header):
 
     def _get_move_ids_from_dates(self, account_id, date_start, date_stop,
                                  target_move, reconcile_cond,
-                                 mode='include_opening',
+                                 charge_type, mode='include_opening',
                                  partner_ids=False):
         # TODO imporve perfomance by setting opening period as a property
         move_line_obj = self.pool.get('account.move.line')
@@ -536,6 +538,8 @@ class CommonReportHeaderWebkit(common_report_header):
         # PABI2
         if partner_ids:
             search_period += [('partner_id', 'in', partner_ids)]
+        if charge_type:
+            search_period += [('charge_type', '=', charge_type)]
         search_period += self._reconcile_cond_search(reconcile_cond,
                                                      date_stop)
         # --
@@ -545,6 +549,7 @@ class CommonReportHeaderWebkit(common_report_header):
     def get_move_lines_ids(self, account_id, main_filter, start, stop,
                            target_move,
                            reconcile_cond,  # PABI2
+                           charge_type,
                            mode='include_opening',
                            partner_ids=False,
                            specific_report=False):
@@ -557,11 +562,13 @@ class CommonReportHeaderWebkit(common_report_header):
         if main_filter in ('filter_period', 'filter_no'):
             return self._get_move_ids_from_periods(
                 account_id, start, stop, target_move, reconcile_cond,
-                partner_ids=partner_ids, specific_report=specific_report)
+                charge_type, partner_ids=partner_ids,
+                specific_report=specific_report)
 
         elif main_filter == 'filter_date':
             return self._get_move_ids_from_dates(account_id, start, stop,
                                                  target_move, reconcile_cond,
+                                                 charge_type,
                                                  partner_ids=partner_ids)
         else:
             raise osv.except_osv(
@@ -757,19 +764,11 @@ WHERE move_id in %s"""
             raise
         return res and dict(res) or {}
 
-    def is_initial_balance_enabled(self, main_filter, start_period=False,
-                                   specific_report=False):
+    def is_initial_balance_enabled(self, main_filter, specific_report=False):
         if specific_report:
             # PABI2
             if main_filter not in ('filter_period'):
                 return False
-
-            # if main_filter in ('filter_period') and start_period:
-            #     opening_period = self._get_st_fiscalyear_period(
-            #         start_period.fiscalyear_id, special=True,
-            #         specific_report=specific_report)
-            #     if opening_period == start_period:
-            #         return False
         else:
             if main_filter not in ('filter_no', 'filter_year',
                                    'filter_period'):

@@ -118,6 +118,14 @@ class AccountInvoice(models.Model):
                         'Preprint Number must be unique!')]
 
     @api.multi
+    @api.constrains('invoice_line')
+    def _check_invoice_line(self):
+        for line in self:
+            if len(line.invoice_line) != 1 and \
+               line.receivable_type == 'advance_return':
+                raise ValidationError(_('Advance Clearing must be 1 line!'))
+
+    @api.multi
     def action_cancel(self):
         for rec in self:
             # For invoice created by Picking, cancel invoice should

@@ -406,6 +406,8 @@ class BudgetTransition(models.Model):
         if not trans_target_field:
             raise ValidationError(_('Wrong model for budget transition!'))
         line_ids = []
+        # Regardless of inactive lines
+        objects = objects.with_context(active_test=False)
         if obj_line_field:
             for obj in objects:
                 line_ids += obj[obj_line_field].ids

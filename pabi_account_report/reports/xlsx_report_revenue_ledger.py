@@ -32,8 +32,13 @@ class XLSXReportRevenueLedger(models.TransientModel):
          ('external', 'External')],
         string='Charge Type',
     )
+    user_type = fields.Many2one(
+        'account.account.type',
+        string='Account Type',
+        default=lambda self: self.env.ref('account.data_account_type_revenue'),
+    )
     results = fields.Many2many(
-        'pabi.common.account.report.view',
+        'account.move.line',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
@@ -49,39 +54,51 @@ class XLSXReportRevenueLedger(models.TransientModel):
     def _compute_results(self):
         """
         Solution
-        1. Get from pabi.common.account.report.view
+        1. Get from account.move.line
         2. Check account type is revenue
         """
         self.ensure_one()
-        Result = self.env['pabi.common.account.report.view']
-        dom = [('account_id.user_type.code', '=', 'Revenue')]
+        Result = self.env['account.move.line']
+        dom = [('account_id.user_type', '=', self.user_type.id)]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
         if self.chartfield_ids:
-            ChartfieldView = self.env['chartfield.view']
-            chartfields = ChartfieldView.browse(self.chartfield_ids.ids)
-            budgets = ['%s,%s' % (x.model, x.res_id) for x in chartfields]
-            dom += [('budget', 'in', budgets)]
+            # map beetween chartfield_id with chartfield type
+            chartfields = [('section_id', 'sc:'),
+                           ('project_id', 'pj:'),
+                           ('invest_construction_phase_id', 'cp:'),
+                           ('invest_asset_id', 'ia:'),
+                           ('personnel_costcenter_id', 'pc:')]
+            where_str = ''
+            res_ids = []
+            for chartfield_id, chartfield_type in chartfields:
+                chartfield_ids = self.chartfield_ids.filtered(
+                    lambda l: l.type == chartfield_type).mapped('res_id')
+                if chartfield_ids:
+                    if where_str:
+                        where_str += ' or '
+                    where_str += chartfield_id + ' in %s'
+                    res_ids.append(tuple(chartfield_ids))
+            if res_ids:
+                sql = "select id from account_move_line where " + where_str
+                self._cr.execute(sql, res_ids)
+                dom += [('id', 'in', map(lambda l: l[0], self._cr.fetchall()))]
         if self.partner_ids:
             dom += [('partner_id', 'in', self.partner_ids.ids)]
         if self.charge_type:
             dom += [('charge_type', '=', self.charge_type)]
         if self.fiscalyear_start_id:
-            dom += [('invoice_posting_date',
-                    '>=', self.fiscalyear_start_id.date_start)]
+            dom += [('date', '>=', self.fiscalyear_start_id.date_start)]
         if self.fiscalyear_end_id:
-            dom += [('invoice_posting_date',
-                    '<=', self.fiscalyear_end_id.date_stop)]
+            dom += [('date', '<=', self.fiscalyear_end_id.date_stop)]
         if self.period_start_id:
-            dom += [('invoice_posting_date', '>=',
-                     self.period_start_id.date_start)]
+            dom += [('date', '>=', self.period_start_id.date_start)]
         if self.period_end_id:
-            dom += [('invoice_posting_date', '<=',
-                     self.period_end_id.date_stop)]
+            dom += [('date', '<=', self.period_end_id.date_stop)]
         if self.date_start:
-            dom += [('invoice_posting_date', '>=', self.date_start)]
+            dom += [('date', '>=', self.date_start)]
         if self.date_end:
-            dom += [('invoice_posting_date', '<=', self.date_end)]
+            dom += [('date', '<=', self.date_end)]
         self.results = Result.search(dom).sorted(
                        key=lambda l: (l.charge_type,
                                       l.account_id.code,

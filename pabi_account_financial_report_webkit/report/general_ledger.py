@@ -72,6 +72,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
         reconcile_cond = self._get_form_param('reconcile_cond', data,
                                               default='all')
         partner_ids = self._get_form_param('partner_ids', data)
+        charge_type = self._get_form_param('charge_type', data)
         # --
         start_date = self._get_form_param('date_from', data)
         stop_date = self._get_form_param('date_to', data)
@@ -83,6 +84,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
 
         # PABI2
         specific_report = data.get('specific_report')
+        context = {'active_test': False}
 
         if main_filter == 'filter_no':
             start_period = self.get_first_fiscalyear_period(
@@ -99,14 +101,14 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
             stop = stop_period
 
         initial_balance = self.is_initial_balance_enabled(
-            main_filter, start_period=start_period,
-            specific_report=specific_report)
+            main_filter, specific_report=specific_report)
         initial_balance_mode = initial_balance \
             and self._get_initial_balance_mode(
                 start, specific_report=specific_report) or False
 
         # Retrieving accounts
-        accounts = self.get_all_accounts(new_ids, exclude_type=['view'])
+        accounts = self.get_all_accounts(
+            new_ids, exclude_type=['view'], context=context)
         if initial_balance_mode == 'initial_balance':
             init_balance_memoizer = self._compute_initial_balances(
                 accounts, start, fiscalyear, specific_report=specific_report)
@@ -117,6 +119,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
         ledger_lines_memoizer = self._compute_account_ledger_lines(
             accounts, init_balance_memoizer, main_filter, target_move,
             reconcile_cond,  # PABI2
+            charge_type,
             start, stop,
             partner_ids=partner_ids,
             specific_report=specific_report)
@@ -212,6 +215,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
                                       init_balance_memoizer, main_filter,
                                       target_move,
                                       reconcile_cond,  # PABI2
+                                      charge_type,
                                       start, stop,
                                       partner_ids=False,
                                       specific_report=False):
@@ -220,6 +224,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
             move_line_ids = self.get_move_lines_ids(
                 acc_id, main_filter, start, stop, target_move,
                 reconcile_cond,  # PABI2
+                charge_type,
                 partner_ids=partner_ids,
                 specific_report=specific_report)
             if not move_line_ids:

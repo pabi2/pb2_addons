@@ -21,7 +21,7 @@
                         class="oe_stat_button"
                         icon="fa-pencil-square-o"
                         attrs="{'invisible': [('count_acceptance','=',False)]}"
-                        >
+                        always_show="1">
                         <field name="count_acceptance" widget="statinfo" string="Work Accept."/>
                     </button>
                 </xpath>

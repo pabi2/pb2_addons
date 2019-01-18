@@ -66,6 +66,10 @@ class SearchCommon(ChartField, object):
         string='Budgets',
         domain=[('model', '!=', 'res.personnel.costcenter')],
     )
+    section_program_id = fields.Many2one(
+        'res.section.program',
+        string='Section Program',
+    )
     # For: Overall
     org_id = fields.Many2one(
         'res.org',
@@ -291,6 +295,7 @@ class SearchCommon(ChartField, object):
         self.invest_construction_id = False
         self.chartfield_id = False
         self.chartfield_ids = False
+        self.section_program_id = False
         # For my budget report
         self.section_ids = False
         self.project_ids = False

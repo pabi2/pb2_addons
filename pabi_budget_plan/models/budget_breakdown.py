@@ -362,6 +362,14 @@ class BudgetBreakdown(models.Model):
     def generate_budget_control(self):
         self.ensure_one()
         for line in self.line_ids:
+            # For unit base, if budget control was created, map it up
+            if self.chart_view == 'unit_base':
+                budget = self.env['account.budget'].search(
+                    [('chart_view', '=', self.chart_view),
+                     ('fiscalyear_id', '=', self.fiscalyear_id.id),
+                     ('section_id', '=', line.section_id.id), ], limit=1)
+                if budget:
+                    line.budget_id = budget
             # Generate only line without budget_id yet
             if not line.budget_id:
                 plan = line.budget_plan_id

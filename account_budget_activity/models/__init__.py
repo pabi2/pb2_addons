@@ -17,3 +17,4 @@ from . import procurement
 from . import budget_transition
 from . import budget_commit
 from . import account_budget_summary
+from . import commit_auto_correct

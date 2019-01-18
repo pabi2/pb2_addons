@@ -545,20 +545,6 @@ class PurchaseOrder(models.Model):
         return orders_info
 
 
-class PurchaseOrderLine(models.Model):
-    _inherit = 'purchase.order.line'
-
-    # GOLIVE ONLY
-    # @api.multi
-    # def unlink(self):
-    #     for rec in self:
-    #         if not rec.order_id.is_central_purchase:
-    #             raise ValidationError(
-    #                 _('Deletion of purchase order line is not allowed,\n'
-    #                   'please discard changes!'))
-    #     return super(PurchaseOrderLine, self).unlink()
-
-
 class PRWebPurchaseMethod(models.Model):
     _name = 'prweb.purchase.method'
     _description = 'PRWeb Purchase Method'

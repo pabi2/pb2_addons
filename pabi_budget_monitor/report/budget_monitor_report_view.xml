@@ -30,14 +30,14 @@
         	<xpath expr="//search" position="replace">
             	<search string="Budget Monitor">
 	                <group expand="1" string="Group By">
-											<filter string="Budget Method" name="budget_method" context="{'group_by':'budget_method', 'residual_visible':True}"/>
-											<filter string="Document" name="document" context="{'group_by':'document', 'residual_visible':True}"/>
-											<filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
-											<filter string="Activity" name="activity_id" context="{'group_by':'activity_id', 'residual_visible':True}"/>
-											<filter string="Activity Rpt" name="activity_rpt_id" context="{'group_by':'activity_rpt_id', 'residual_visible':True}"/>
-											<filter string="Product" name="product_id" context="{'group_by':'product_id', 'residual_visible':True}"/>
-											<filter string="Product/Activity" name="product_activity_id" context="{'group_by':'product_activity_id', 'residual_visible':True}"/>
-											<filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
+						<filter string="Budget Method" name="budget_method" context="{'group_by':'budget_method', 'residual_visible':True}"/>
+						<filter string="Document" name="document" context="{'group_by':'document', 'residual_visible':True}"/>
+						<filter string="Activity Group" name="activity_group_id" context="{'group_by':'activity_group_id', 'residual_visible':True}"/>
+						<filter string="Activity" name="activity_id" context="{'group_by':'activity_id', 'residual_visible':True}"/>
+						<filter string="Activity Rpt" name="activity_rpt_id" context="{'group_by':'activity_rpt_id', 'residual_visible':True}"/>
+						<filter string="Product" name="product_id" context="{'group_by':'product_id', 'residual_visible':True}"/>
+						<filter string="Product/Activity" name="product_activity_id" context="{'group_by':'product_activity_id', 'residual_visible':True}"/>
+						<filter string="Fiscal Year" context="{'group_by':'fiscalyear_id'}"/>
 	                    <separator/>
 	                    <filter string="Functional Area" name="groupby_functional_area" context="{'group_by':'functional_area_id'}"/>
 	                    <filter string="Program Group" name="groupby_program_group" context="{'group_by':'program_group_id'}"/>
@@ -50,8 +50,14 @@
 	                    <filter string="Subsector" name="groupby_subsector" context="{'group_by':'subsector_id'}"/>
 	                    <filter string="Division" name="groupby_division" context="{'group_by':'division_id'}"/>
 	                    <filter string="Section" name="groupby_section" context="{'group_by':'section_id'}"/>
-											<filter string="Report Progam" name="groupby_section_program" context="{'group_by':'section_program_id'}"/>
-	                    <!-- <filter string="Report Progam" name="groupby_rpt_program" context="{'group_by':'program_rpt_id'}"/> -->
+						<filter string="Section Progam" name="groupby_section_program" context="{'group_by':'section_program_id'}"/>
+						<filter string="Quarter" name="groupby_quarter" context="{'group_by':'quarter'}"/>
+						<separator/>
+						<filter string="Project C" name="groupby_invest_construction" context="{'group_by':'invest_construction_id'}"/>
+						<filter string="Phase" name="groupby_invest_construction_phase" context="{'group_by':'invest_construction_phase_id'}"/>
+						<filter string="Investment Asset" name="groupby_invest_asset" context="{'group_by':'invest_asset_id'}"/>
+						<filter string="Charge Type" name="groupby_charge_type" context="{'group_by':'charge_type'}"/>
+						<!-- <filter string="Report Progam" name="groupby_rpt_program" context="{'group_by':'program_rpt_id'}"/> -->
 	                </group>
                 </search>
             </xpath>

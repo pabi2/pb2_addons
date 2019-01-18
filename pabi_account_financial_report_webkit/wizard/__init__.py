@@ -7,3 +7,4 @@ from . import partner_balance_wizard
 from . import open_invoices_wizard
 from . import print_journal
 from . import aged_partner_balance_wizard
+from . import account_financial_report
