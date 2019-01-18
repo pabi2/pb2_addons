@@ -7,8 +7,11 @@ from openerp.addons.connector.exception import RetryableJobError
 
 
 @job(default_channel='root.xlsx_report')
-def get_report_job(session, model_name, res_id):
+def get_report_job(session, model_name, res_id, context=None):
     try:
+        # Update context
+        if context:
+            session.context.update(context)
         out_file, out_name = session.pool[model_name].get_report(
             session.cr, session.uid, [res_id], session.context)
         # Make attachment and link ot job queue
@@ -126,7 +129,8 @@ class XLSXReport(models.AbstractModel):
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Excel Report - %s' % (self._name, )
             uuid = get_report_job.delay(
-                session, self._name, self.id, description=description)
+                session, self._name, self.id, description=description,
+                context=session.context)
             job = Job.search([('uuid', '=', uuid)], limit=1)
             # Process Name
             job.process_id = self.env.ref('pabi_utils.xlsx_report')
