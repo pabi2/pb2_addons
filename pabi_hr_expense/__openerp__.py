@@ -13,6 +13,7 @@
     "application": False,
     "installable": True,
     "depends": [
+        
         "pabi_web_config",
         "hr_expense_auto_invoice",
         "hr_expense_advance_clearing",
@@ -21,6 +22,8 @@
         "l10n_th_account",
         "account_invoice_cancel_reason",
         "pabi_attachment_helper",
+        "hr_expense_sequence",
+        
     ],
     "data": [
         "security/ir.model.access.csv",

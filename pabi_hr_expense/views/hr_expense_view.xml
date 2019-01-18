@@ -216,10 +216,7 @@
 				<attribute name="create">0</attribute>
 				<attribute name="delete">0</attribute>
 			</xpath>
-				<field name="employee_id" position="before">
-					<field name="advance_expense_id" invisible="context.get('is_advance_clearing') == False or context.get('default_is_employee_advance') == True" />
 
-				</field>
 				<field name="date" position="before">
 					<field name="project_code"/>
 					<field name="section_code"/>
@@ -233,6 +230,23 @@
 				</field>
 			</field>
 		</record>
+		
+		<record id="view_expenses_tree_2" model="ir.ui.view">
+			<field name="name">hr.expense.expense.tree</field>
+			<field name="model">hr.expense.expense</field>
+			<field name="inherit_id" ref="hr_expense_sequence.view_expenses_tree_sequence"/>
+			<field name="arch" type="xml">
+			<xpath expr="/tree" position="attributes">
+				<attribute name="create">0</attribute>
+				<attribute name="delete">0</attribute>
+			</xpath>
+			<xpath expr="//field[@name='employee_id']" position="before">
+				<field name="advance_expense_id" invisible="context.get('is_advance_clearing') == False or context.get('default_is_employee_advance') == True" sequence="3" />
+			</xpath>
+			</field>
+		</record>
+		
+		
 
 		<record id="view_hr_expense_filter" model="ir.ui.view">
 			<field name="name">hr.expense.expense.filter</field>
