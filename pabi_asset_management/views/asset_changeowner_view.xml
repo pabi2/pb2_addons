@@ -49,6 +49,8 @@
                           groups="purchase.group_purchase_user,account.group_account_user"/>
                         <button name="action_done" states="draft" string="Change Owner" type="object" class="oe_highlight"
                           groups="purchase.group_purchase_user,account.group_account_user"/>
+                        <button name="action_done_backgruond" states="draft" string="Change Owner(Background)" type="object" class="oe_highlight"
+                          groups="purchase.group_purchase_user,account.group_account_user" context="{'changeowner_async_process': 1}"/>
                         <button name="action_cancel" states="draft" string="Cancel" type="object"
                           groups="purchase.group_purchase_user,account.group_account_user"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
@@ -95,6 +97,10 @@
                             </page>
                         </notebook>
                         <field name="note" placeholder="Add an internal note here..."/>
+                        <group>
+                        	<field name="changeowner_job_id"/>
+                        	<field name="changeowner_uuid"/>
+                        </group>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
