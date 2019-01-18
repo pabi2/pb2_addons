@@ -128,7 +128,10 @@ class PurchaseOrder(models.Model):
         'purchase.select.reason',
         string='Selected Reason',
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        states={
+            'draft': [('readonly', False)],
+            'done': [('readonly', False)]
+        },
     )
     shipment_count = fields.Integer(
         string='Incoming Shipments',
@@ -147,6 +150,12 @@ class PurchaseOrder(models.Model):
     )
     incoterm_text = fields.Char(
         string='Incoterm Text',
+    )
+    responsible_uid = fields.Many2one(
+        'res.users',
+        string='Responsible Person',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
 
     @api.multi
@@ -190,6 +199,12 @@ class PurchaseOrder(models.Model):
             else:
                 result.append((po.id, po.name))
         return result
+
+    @api.model
+    def default_get(self, fields):
+        defaults = super(PurchaseOrder, self).default_get(fields)
+        defaults['responsible_uid'] = self._context['uid']
+        return defaults
 
     @api.model
     def _prepare_committee_line(self, line, order_id):
@@ -543,6 +558,20 @@ class PurchaseOrder(models.Model):
                 self.signal_workflow(cr, uid, [old_id], 'purchase_cancel')
 
         return orders_info
+
+
+class PurchaseOrderLine(models.Model):
+    _inherit = 'purchase.order.line'
+
+    # GOLIVE ONLY
+    # @api.multi
+    # def unlink(self):
+    #     for rec in self:
+    #         if not rec.order_id.is_central_purchase:
+    #             raise ValidationError(
+    #                 _('Deletion of purchase order line is not allowed,\n'
+    #                   'please discard changes!'))
+    #     return super(PurchaseOrderLine, self).unlink()
 
 
 class PRWebPurchaseMethod(models.Model):
