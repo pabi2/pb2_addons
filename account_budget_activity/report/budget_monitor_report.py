@@ -114,7 +114,7 @@ class BudgetMonitorReport(models.Model):
 
     def _get_sql_view(self):
         sql_view = """
-            select row_number() over (order by %s) as id,
+            select a.id,
             analytic_line_id, budget_commit_type,
             budget_method, user_id, charge_type, fiscalyear_id,
             -----> doc_ref, doc_id,
@@ -124,7 +124,7 @@ class BudgetMonitorReport(models.Model):
             coalesce(pa1.id, pa2.id) as product_activity_id,
             %s
             from
-            (select null as analytic_line_id, null as budget_commit_type,
+            (select id, null as analytic_line_id, null as budget_commit_type,
             budget_method, user_id, charge_type, fiscalyear_id,
             ------> doc_ref, 'account.budget,' || budget_id as doc_id,
             planned_amount, released_amount,
@@ -137,7 +137,7 @@ class BudgetMonitorReport(models.Model):
             from budget_plan_report
             where state in ('done')
             UNION ALL
-            select analytic_line_id, budget_commit_type, budget_method,
+            select id, analytic_line_id, budget_commit_type, budget_method,
             user_id, charge_type, fiscalyear_id,
             ------> doc_ref, doc_id,
             0.0 as planned_amount, 0.0 as released_amount,
@@ -155,7 +155,6 @@ class BudgetMonitorReport(models.Model):
             left outer join product_activity pa2
             on pa2.temp_product_id = a.product_id
         """ % (self._get_dimension(),
-               self._get_dimension(),
                self._get_dimension(),
                self._get_dimension(),
                )

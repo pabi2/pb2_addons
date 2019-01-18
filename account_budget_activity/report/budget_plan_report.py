@@ -114,7 +114,7 @@ class BudgetPlanReport(models.Model):
 
     def _get_sql_view(self):
         sql_view = """
-            select abl.id, abl.budget_method, ab.creating_user_id as user_id,
+            select ablps.id, abl.budget_method, ab.creating_user_id as user_id,
                 abl.charge_type, abl.fiscalyear_id, ab.id as budget_id,
                 -- Amount
                 case when ablps.sequence = 1
