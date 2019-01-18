@@ -22,7 +22,7 @@
         "l10n_th_account",
         "account_invoice_cancel_reason",
         "pabi_attachment_helper",
-        "hr_expense_sequence",
+
         
     ],
     "data": [

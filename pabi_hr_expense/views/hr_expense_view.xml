@@ -211,41 +211,29 @@
 			<field name="name">hr.expense.expense.tree</field>
 			<field name="model">hr.expense.expense</field>
 			<field name="inherit_id" ref="hr_expense.view_expenses_tree"/>
+			<field name="priority" eval="20"/>
 			<field name="arch" type="xml">
-			<xpath expr="/tree" position="attributes">
-				<attribute name="create">0</attribute>
-				<attribute name="delete">0</attribute>
-			</xpath>
-
-				<field name="date" position="before">
-					<field name="project_code"/>
-					<field name="section_code"/>
-				</field>
-				<field name="date" position="after">
-					<field name="date_due"/>
-					<field name="user_valid"/>
-				</field>
-				<field name="currency_id" position="before">
-					<field name="pay_to"/>
-				</field>
-			</field>
-		</record>
-		
-		<record id="view_expenses_tree_2" model="ir.ui.view">
-			<field name="name">hr.expense.expense.tree</field>
-			<field name="model">hr.expense.expense</field>
-			<field name="inherit_id" ref="hr_expense_sequence.view_expenses_tree_sequence"/>
-			<field name="arch" type="xml">
-			<xpath expr="/tree" position="attributes">
-				<attribute name="create">0</attribute>
-				<attribute name="delete">0</attribute>
-			</xpath>
 			<xpath expr="//field[@name='employee_id']" position="before">
 				<field name="advance_expense_id" invisible="context.get('is_advance_clearing') == False or context.get('default_is_employee_advance') == True" sequence="3" />
 			</xpath>
+			<xpath expr="/tree" position="attributes">
+				<attribute name="create">0</attribute>
+				<attribute name="delete">0</attribute>
+			</xpath>
+			<field name="date" position="before">
+				<field name="project_code"/>
+				<field name="section_code"/>
+			</field>
+			<field name="date" position="after">
+				<field name="date_due"/>
+				<field name="user_valid"/>
+			</field>
+			<field name="currency_id" position="before">
+				<field name="pay_to"/>
+			</field>
 			</field>
 		</record>
-		
+
 		
 
 		<record id="view_hr_expense_filter" model="ir.ui.view">
