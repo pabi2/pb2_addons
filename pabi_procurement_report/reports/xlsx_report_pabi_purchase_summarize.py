@@ -195,6 +195,9 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
     partner_category_name = fields.Char(
         string='Supplier Cat',
     )
+    responsible_name = fields.Char(
+        string='Responsible Name',
+    )
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -222,7 +225,7 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         ON linerel.purchase_requisition_line_id =rql.id
         WHERE rql.requisition_id = pd.id
         LIMIT 1
-        ) > 100000
+        ) > 500000
         THEN 
         (
         SELECT prl.price_subtotal
@@ -258,16 +261,28 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         ) as partner_category_id,
         selected_po.state as doc_state,
         ou.name as ou_name,
-        (
-        SELECT prl.price_subtotal
-        FROM purchase_request_line prl
+        (select
+        SUM(
+        case when atax.amount > 0.0 and atax.price_include = False then
+            ROUND((requestline.price_subtotal +
+            (atax.amount * requestline.price_subtotal))::DECIMAL, 2)
+        else
+            ROUND(requestline.price_subtotal::DECIMAL, 2)
+        end
+        )
+        FROM purchase_requisition_line reql
+        LEFT JOIN purchase_requisition requisition
+        ON requisition.id = reql.requisition_id
         LEFT JOIN purchase_request_purchase_requisition_line_rel linerel
-        ON linerel.purchase_request_line_id = prl.id
-        LEFT JOIN purchase_requisition_line rql
-        ON linerel.purchase_requisition_line_id =rql.id
-        WHERE rql.requisition_id = pd.id
-        LIMIT 1
-        ) as pr_amount,
+        ON reql.id = linerel.purchase_requisition_line_id
+        LEFT JOIN purchase_request_line requestline
+        ON linerel.purchase_request_line_id = requestline.id
+        LEFT JOIN purchase_request_taxes_rel reqtaxes
+        ON reqtaxes.request_line_id = requestline.id
+        LEFT JOIN account_tax atax
+        ON atax.id = reqtaxes.tax_id
+        where requisition.id = pd.id
+        group by requisition.id) as pr_amount,
         (SELECT CONCAT(COALESCE(rpt.name || ' ',''),rp.name)
             FROM res_partner rp
         LEFT JOIN res_partner_title rpt
@@ -277,7 +292,16 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         from res_partner_category rpc
 	    LEFT JOIN res_partner rp on rp.category_id = rpc.id
 	    WHERE rp.id = selected_po.partner_id
-        ) as partner_category_name
+        ) as partner_category_name,
+        CONCAT(
+        COALESCE((SELECT value FROM ir_translation it
+        WHERE it.res_id = he.title_id AND it.name LIKE 'res.partner.title,name') || ' ', ''),
+        (SELECT value FROM ir_translation it WHERE
+        res_id = he.id AND it.name LIKE 'hr.employee,first_name' limit 1),
+        ' ',
+        (SELECT value FROM ir_translation it WHERE
+        res_id = he.id AND it.name LIKE 'hr.employee,last_name' limit 1)
+        ) as responsible_name
         FROM purchase_requisition pd
         LEFT JOIN operating_unit ou
         ON ou.id = pd.operating_unit_id
@@ -287,6 +311,10 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         ON ppr.id = pd.purchase_price_range_id
         LEFT JOIN purchase_order po
         ON po.requisition_id = pd.id
+	    LEFT JOIN res_users responsible_user
+	    ON responsible_user.id = po.create_uid
+	    LEFT JOIN hr_employee he
+	    ON he.employee_code = responsible_user.login
         LEFT join purchase_order selected_po
         ON selected_po.requisition_id = pd.id AND
             selected_po.order_type LIKE 'purchase_order' AND
@@ -294,5 +322,6 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         WHERE po.order_type = 'purchase_order'
         GROUP BY pd.id, ou.id, po.name,pd.name, pd.objective, pd.amount_total, pm.name,
             selected_po.partner_id, selected_po.amount_total, po.partner_id,selected_po.date_order,
-        selected_po.id
+	    selected_po.id,he.title_id,he.id
+        ORDER BY ou.name,po.name
         )""" % (self._table, ))

@@ -44,6 +44,8 @@
                             'H11': 'rfq_amount_total#{number_format=number}',
                             'K11': 'reason${value or ""}',
                             'M11': 'po_date${value or ""}#{number_format=date}',
+                            'N11': 'responsible_name${value or ""}',
+                            'O11': 'doc_state${value or ""}',
                         },
                         '_TAIL_0': {
                         }
