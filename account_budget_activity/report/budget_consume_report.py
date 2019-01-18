@@ -106,7 +106,7 @@ class BudgetConsumeReport(models.Model):
 
     def _get_select_clause(self):
         sql_select = """
-        select aal.id, aal.id as analytic_line_id,
+        select aal.id + 100000000000000 as id, aal.id as analytic_line_id,
             aaj.budget_commit_type,
             aal.charge_type, aal.user_id, aal.date,
             aal.monitor_fy_id fiscalyear_id,
