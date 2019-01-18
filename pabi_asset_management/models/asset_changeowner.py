@@ -1,8 +1,20 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from openerp.exceptions import RedirectWarning
+from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import RetryableJobError
 
-
+@job
+def action_done_async_process(session, model_name, res_id):
+    try:
+        res = session.pool[model_name].action_done_backgruond(
+            session.cr, session.uid, [res_id], session.context)
+        return {'result': res}
+    except Exception, e:
+        raise RetryableJobError(e)
+    
 class AccountAssetChangeowner(models.Model):
     _name = 'account.asset.changeowner'
     _inherit = ['mail.thread']
@@ -80,6 +92,29 @@ class AccountAssetChangeowner(models.Model):
         string='JE Count',
         compute='_compute_moves',
     )
+    
+    changeowner_job_id = fields.Many2one(
+        'queue.job',
+        string='ChangeOwner Job',
+        compute='_compute_changeowner_job_uuid',
+    )
+    changeowner_uuid = fields.Char(
+        string='ChangeOwner Job UUID',
+        compute='_compute_changeowner_job_uuid',
+    )
+    
+    @api.multi
+    def _compute_changeowner_job_uuid(self):
+        for rec in self:
+            task_name = "%s('%s', %s)" % \
+                ('action_done_async_process', self._name, rec.id)
+            jobs = self.env['queue.job'].search([
+                ('func_string', 'like', task_name),
+                ('state', '!=', 'done')],
+                order='id desc', limit=1)
+            rec.changeowner_job_id = jobs and jobs[0] or False
+            rec.changeowner_uuid = jobs and jobs[0].uuid or False
+        return True
 
     @api.multi
     def _compute_moves(self):
@@ -106,6 +141,27 @@ class AccountAssetChangeowner(models.Model):
         self.write({'state': 'done'})
         return True
 
+    @api.multi
+    def action_done_backgruond(self):
+        if self._context.get('changeowner_async_process', False):
+            self.ensure_one()
+            if self._context.get('job_uuid', False):  # Called from @job
+                return self.action_done()
+            if self.changeowner_job_id:
+                message = _('Confirm Change Owner')
+                action = self.env.ref('pabi_utils.action_my_queue_job')
+                raise RedirectWarning(message, action.id, _('Go to My Jobs'))
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = '%s - Confirm Change Owner' % self.name
+            uuid = action_done_async_process.delay(
+                session, self._name, self.id, description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            #job.process_id = self.env.ref('pabi_async_process.'
+            #                              'confirm_pos_order')
+        else:
+            return self.action_done()
+    
     @api.multi
     def action_cancel(self):
         self.write({'state': 'cancel'})
