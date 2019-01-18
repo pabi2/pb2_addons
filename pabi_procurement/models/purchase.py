@@ -151,6 +151,12 @@ class PurchaseOrder(models.Model):
     incoterm_text = fields.Char(
         string='Incoterm Text',
     )
+    responsible_uid = fields.Many2one(
+        'res.users',
+        string='Responsible Person',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
 
     @api.multi
     def _compute_shipment_count(self):
@@ -193,6 +199,12 @@ class PurchaseOrder(models.Model):
             else:
                 result.append((po.id, po.name))
         return result
+
+    @api.model
+    def default_get(self, fields):
+        defaults = super(PurchaseOrder, self).default_get(fields)
+        defaults['responsible_uid'] = self._context['uid']
+        return defaults
 
     @api.model
     def _prepare_committee_line(self, line, order_id):

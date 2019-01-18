@@ -97,7 +97,8 @@
                     <field name="incoterm_text" />
                 </xpath>
                 <xpath expr="//field[@name='currency_id']" position="after">
-                    <field name="create_uid" string="Responsible Person"/>
+                    <!--<field name="create_uid" string="Responsible Person"/>-->
+                    <field name="responsible_uid" />
                 </xpath>
                 <!--<xpath expr="/form/sheet//h1[1]" position="after">-->
                     <!--<h2 attrs="{'invisible': [('state', '!=', 'done')]}">-->
@@ -205,7 +206,8 @@
                     <field name="currency_id"/>
                 </xpath>
                 <xpath expr="//field[@name='origin']" position="before">
-                    <field name="create_uid" string="Responsible Person"/>
+                    <!--<field name="create_uid" string="Responsible Person"/>-->
+                    <field name="responsible_uid" />
                 </xpath>
                 </field>
         </record>

@@ -27,7 +27,7 @@ class AmountToWord(object):
         for obj in self.browse(cursor, user, ids, context=context):
             a = 'Baht'
             b = 'Satang'
-            if obj.currency_id.name == 'JYP':
+            if obj.currency_id.name == 'JPY':
                 a = 'Yen'
                 b = 'Sen'
             if obj.currency_id.name == 'GBP':
@@ -200,7 +200,7 @@ class PurchaseOrder(AmountToWord, osv.osv):
             _amount_total_text_en, string='Amount Total (EN)', type='char',
             store={
                 'purchase.order': (lambda self, cr, uid, ids, c={}:
-                                   ids, ['order_line'], 1000),
+                                   ids, ['order_line', 'currency_id'], 1000),
                 'purchase.order.line': (_get_order,
                                         ['price_unit', 'taxes_id',
                                          'product_qty'], 1000),
