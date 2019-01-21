@@ -9,6 +9,10 @@
                 <!-- <xpath expr="//field[@name='state']" position="before">
                     <field name="doctype" invisible="1"/>
                 </xpath> -->
+                <xpath expr="//field[@name='date']" position="before">
+                	<field name="create_uid" />
+                    <field name="date_document" />
+                </xpath>
                 <xpath expr="//field[@name='journal_id']" position="before">
                     <field name="doctype" invisible="0"/>
                 </xpath>
