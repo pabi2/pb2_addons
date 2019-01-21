@@ -76,6 +76,7 @@ class AdvanceClearingFollowupReport(models.Model):
     )
     amount_remaining = fields.Float(
         string='Remaining',
+        compute='_compute_amount_remaining',
     )
     amount_remaining_disp = fields.Float(
         string='Remaining',
@@ -105,6 +106,9 @@ class AdvanceClearingFollowupReport(models.Model):
     reason = fields.Char(
         related='expense_id.name',
         string='Reason',
+    )
+    date_clearing = fields.Date(
+        string='Clearing Date',
     )
 
     @api.multi
@@ -145,6 +149,15 @@ class AdvanceClearingFollowupReport(models.Model):
                     elif delta.days > 15:
                         rec.aging_gt_15 = True
 
+    @api.multi
+    def _compute_amount_remaining(self):
+        for rec in self:
+            rec.amount_remaining = \
+                rec.amount_advanced - \
+                sum(rec.advance_expense_id.advance_clearing_ids.filtered(
+                    lambda l: l.date <= rec.date_clearing).mapped(
+                        'invoiced_amount'))
+
     def _get_sql_view(self):
         sql_view = """
         select row_number() over (order by adv.number, exc.date) as id,
@@ -159,10 +172,11 @@ class AdvanceClearingFollowupReport(models.Model):
             case when exc.expense_id is not null then exc.invoice_id
                 else null::int end as supplier_invoice_id,
             coalesce(exc.invoiced_amount, 0.0) as amount_credit_advance,
-            adv.amount_advanced - coalesce((select sum(invoiced_amount)
+            /*adv.amount_advanced - coalesce((select sum(invoiced_amount)
                     from hr_expense_clearing
                     where advance_expense_id = exc.advance_expense_id
-                    and date <= exc.date), 0.0) as amount_remaining
+                    and date <= exc.date), 0.0) as amount_remaining*/
+            exc.date date_clearing
         from hr_expense_expense adv
         left outer join hr_expense_clearing exc
             on adv.id = exc.advance_expense_id
