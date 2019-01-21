@@ -315,6 +315,9 @@ class HRExpenseClearing(models.Model):
     invoiced_amount = fields.Float(
         sting='Invoiced Amount',
     )
+    date = fields.Date(
+        string='Date',
+    )
 
     def _sql_select_1(self):
         return """
