@@ -4,6 +4,7 @@ from openerp.exceptions import ValidationError
 import datetime
 import re
 import time
+import calendar
 
 
 class PurchaseBilling(models.Model):
@@ -113,6 +114,8 @@ class PurchaseBilling(models.Model):
         regex = r"\d{1,2}"
         matches = re.findall(regex, date_due_setting)
         for match in matches:
+            if check_day.month == 2 and  int(match) > 29:
+                match = calendar.monthrange(check_day.year, check_day.month)[1]
             check = check_day.replace(day=int(match))
             check = datetime.datetime.strftime(check, "%Y-%m-%d")
             check_string = THHoliday.find_previous_working_day(check)
