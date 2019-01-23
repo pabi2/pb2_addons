@@ -27,7 +27,7 @@
 		<fieldDescription><![CDATA[loan_agreement_id/name]]></fieldDescription>
 	</field>
 	<field name="supplier_bank_name" class="java.lang.String">
-		<fieldDescription><![CDATA[loan_agreement_id/bank_id/bank_name]]></fieldDescription>
+		<fieldDescription><![CDATA[loan_agreement_id/bank_id/bank/name]]></fieldDescription>
 	</field>
 	<field name="supplier_bank_branch" class="java.lang.String">
 		<fieldDescription><![CDATA[loan_agreement_id/bank_id/bank_branch/name]]></fieldDescription>
