@@ -3,7 +3,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from openerp.addons.connector.queue.job import job
 from openerp.addons.connector.session import ConnectorSession
-from openerp.addons.connector.exception import RetryableJobError
+from openerp.addons.connector.exception import FailedJobError
 
 
 @job(default_channel='root.xlsx_report')
@@ -39,7 +39,7 @@ def get_report_job(session, model_name, res_id, context=None):
         result = _('Successfully created excel report : %s') % out_name
         return result
     except Exception, e:
-        raise RetryableJobError(e)
+        raise FailedJobError(e)
 
 
 class XLSXReport(models.AbstractModel):
