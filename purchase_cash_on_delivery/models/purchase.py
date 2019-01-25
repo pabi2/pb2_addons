@@ -75,3 +75,4 @@ class PurchaseOrder(models.Model):
             if not purchase.is_prepaid or \
                     self._context.get('force_release_budget', False):
                 super(PurchaseOrder, purchase).release_all_committed_budget()
+        return True
