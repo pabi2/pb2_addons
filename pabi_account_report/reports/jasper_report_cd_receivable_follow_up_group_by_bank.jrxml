@@ -211,7 +211,7 @@
 				<textField isBlankWhenNull="true">
 					<reportElement mode="Transparent" x="443" y="122" width="173" height="20" backcolor="#FFFFFF"/>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{days_grace_period} + " วัน"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($F{days_grace_period} != null ? $F{days_grace_period} : "0") + " วัน"]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement mode="Transparent" x="0" y="156" width="72" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
