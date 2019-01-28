@@ -65,7 +65,8 @@ class CommitCommon(object):
                     update budget_transition set active = false
                     where active = true and id in %s
                 """, (tuple(trans_ids), ))
-
+        return True
+        
     @api.multi
     def recreate_all_budget_commitment(self):
         """ This method is used for development only """

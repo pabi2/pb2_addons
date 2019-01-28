@@ -83,7 +83,7 @@
                     <div class="col-xs-2" style="width:62px;">
                         <span>เรียน</span>
                     </div>
-                    <div class="col-xs-8" style="padding-left:0px;">
+                    <div class="col-xs-10" style="padding-left:0px;">
                         <t t-if="o.letter_type == 'l1' or o.letter_type == 'l2'">
                             <t t-if="o.to_whom_title">
                                 <span><t t-esc="o.to_whom_title"/><br/></span>
@@ -93,9 +93,18 @@
                             </t>
                             <span><t t-esc="' '.join(list(filter(lambda l: l != False, [o.partner_id.title.name, o.partner_id.name])))"/><br/></span>
                             <t t-if="o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip">
-                                <span>
+                                <!-- <span>
                                     <t t-esc="' '.join(list(filter(lambda l: l != False, [o.partner_id.street, o.partner_id.street2, o.partner_id.township_id.name, o.partner_id.district_id.name, o.partner_id.province_id.name, o.partner_id.zip])))"/>
-                                </span>
+                                </span> -->
+                                <span t-esc="' '.join(list(filter(lambda l: l != False, [o.partner_id.street, o.partner_id.street2])))"/> <!-- Address Line 1 (street + street2) -->
+                                <t t-if="o.partner_id.township_id or o.partner_id.district_id">
+                                    <br/>
+                                    <span t-esc="' '.join(list(filter(lambda l: l != False, [o.partner_id.township_id.name, o.partner_id.district_id.name])))"/> <!-- Address Line 2 (township + distinct) -->
+                                </t>
+                                <t t-if="o.partner_id.province_id or o.partner_id.zip">
+                                    <br/>
+                                    <span t-esc="' '.join(list(filter(lambda l: l != False, [o.partner_id.province_id.name, o.partner_id.zip])))"/> <!-- Address Line 3 (province + zip) -->
+                                </t>
                             </t>
                         </t>
                         <t t-if="o.letter_type == 'l3'">

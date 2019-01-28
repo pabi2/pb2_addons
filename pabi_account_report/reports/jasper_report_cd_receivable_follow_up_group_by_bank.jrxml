@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CD Receivable Follow Up Report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="145"/>
+	<property name="ireport.y" value="14"/>
 	<parameter name="date_report" class="java.lang.String"/>
 	<parameter name="user" class="java.lang.String"/>
 	<parameter name="date_run" class="java.lang.String"/>
@@ -28,7 +28,7 @@
 		<fieldDescription><![CDATA[loan_agreement_id/bank_id/bank/id]]></fieldDescription>
 	</field>
 	<field name="supplier_bank_name" class="java.lang.String">
-		<fieldDescription><![CDATA[loan_agreement_id/bank_id/bank_name]]></fieldDescription>
+		<fieldDescription><![CDATA[loan_agreement_id/bank_id/bank/name]]></fieldDescription>
 	</field>
 	<field name="supplier_bank_branch" class="java.lang.String">
 		<fieldDescription><![CDATA[loan_agreement_id/bank_id/bank_branch/name]]></fieldDescription>
