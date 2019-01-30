@@ -49,6 +49,7 @@
         "wizard/cancel_reason_view.xml",
         "wizard/account_reconcile_view.xml",
         "wizard/create_stock_adjust_wizard.xml",
+        "wizard/voucher_loan_agreement_description_view.xml",
         "views/account_view.xml",
         "views/account_config.xml",
         "views/account_voucher_view.xml",
