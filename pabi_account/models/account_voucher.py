@@ -192,10 +192,10 @@ class AccountVoucher(models.Model):
             if voucher.type == 'payment' and voucher.date_value:
                 Period = self.env['account.period']
                 period = Period.find(voucher.date_value)[:1]
-                if voucher.period_id != period:
-                    raise ValidationError(
-                        _('Value Date can not be in different '
-                          'period as its document!'))
+                #if voucher.period_id != period:
+                #    raise ValidationError(
+                #        _('Value Date can not be in different '
+                #          'period as its document!'))
 
     @api.model
     def _get_related_invoices(self):
