@@ -124,6 +124,7 @@ class ResPartner(models.Model):
                 res = self.env['pabi.utils.ws'].create_data(self._name,
                                                             data_dict)
                 partner = self.browse(res['result']['id'])
+                partner._onchange_category_id()
             # Update translation, if any
             if name_en:
                 partner.with_context(lang='en_US').write({'name': name_en})
