@@ -101,18 +101,20 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         #  assign user's picking type and ou to central purchase requisition
         if req_id.is_central_purchase:
             type_obj = self.env['stock.picking.type']
+            user_ou_id = self.env['res.users'].operating_unit_default_get(
+                self._uid)
             company_id = self.env.context.get('company_id') or \
                 self.env.user.company_id.id
             types = type_obj.search([
                 ('code', '=', 'incoming'),
-                ('warehouse_id.company_id', '=', company_id)
+                ('warehouse_id.company_id', '=', company_id),
+                ('warehouse_id.operating_unit_id', '=', user_ou_id.id)
             ])
             if not types:
                 types = type_obj.search([('code', '=', 'incoming'),
-                                         ('warehouse_id', '=', False)])
+                                         ('warehouse_id', '=', False)
+                                         ('warehouse_id.operating_unit_id', '=', user_ou_id.id)])
             user_picking_type = types[:1]
-            user_ou_id = self.env['res.users'].operating_unit_default_get(
-                self._uid)
             res.update({
                 'operating_unit_id': user_ou_id.id,
                 'picking_type_id': user_picking_type.id,
