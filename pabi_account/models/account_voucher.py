@@ -345,11 +345,50 @@ class AccountVoucherLine(models.Model):
         # related='move_line_id.invoice.taxbranch_id',
         # store=True,
     )
+    loan_agreement_description = fields.Text(
+        string='Loan Agreement Description',
+        readonly=True,
+        size=1000,
+    )
+    loan_installment_description = fields.Text(
+        string='Loan Installment Description',
+        compute='_compute_loan_installment_description',
+        readonly=True,
+        size=1000,
+    )
 
     @api.multi
     def _compute_invoice_taxbranch_id(self):
         for rec in self:
             rec.invoice_taxbranch_id = rec.move_line_id.invoice.taxbranch_id
+
+    @api.multi
+    def _compute_loan_installment_description(self):
+        Plan = self.env['loan.installment.plan']
+        for rec in self:
+            income_account = self.env.user.company_id.loan_income_account_id
+            move_line = rec.voucher_id.move_ids.filtered(
+                lambda l: l.account_id == income_account)
+            income = calc_principal = remain_principal = 0
+            if move_line:
+                income = move_line[0].credit - move_line[0].debit
+            plan = Plan.search([('move_line_id', '=', rec.move_line_id.id)])
+            if plan:
+                calc_principal = plan[0].calc_principal
+                remain_principal = plan[0].remain_principal
+            desc_dict = [
+                (_('ดอกเบี้ย' + ' ' * 20),
+                 _(('{:,.2f}'.format(income) + ' บาท').rjust(30))),
+                (_('เงินต้น' + ' ' * 21),
+                 _(('{:,.2f}'.format(calc_principal) + ' บาท').rjust(30))),
+                (_('ยอดหนี้คงเหลือ' + ' ' * 10),
+                 _(('{:,.2f}'.format(remain_principal) + ' บาท').rjust(30)))]
+            description = ''
+            for desc in desc_dict:
+                description += desc[0] + desc[1]
+                if desc_dict.index(desc) + 1 != len(desc_dict):
+                    description += '\n'
+            rec.loan_installment_description = description
 
 
 class AccountVoucherTax(models.Model):

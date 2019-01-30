@@ -7,3 +7,4 @@ from . import cancel_reason
 from . import account_reconcile
 from . import create_stock_adjust_wizard
 from . import account_fiscalyear_close
+from . import voucher_loan_agreement_description

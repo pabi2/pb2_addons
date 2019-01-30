@@ -172,6 +172,20 @@
             </field>
         </record>
 
+        <record id="view_vendor_receipt_form_loan_agreement_desc" model="ir.ui.view">
+            <field name="name">view.vendor.receipt.form.loan.agreement.desc</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/notebook/page/field[@name='line_cr_ids']/tree/field[@name='amount']" position="after">
+                    <button name="%(action_voucher_loan_agreement_description)d" type="action" icon="gtk-add"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field[@name='line_dr_ids']/tree/field[@name='amount']" position="after">
+                    <button name="%(action_voucher_loan_agreement_description)d" type="action" icon="gtk-add"/>
+                </xpath>
+            </field>
+        </record>
+
         # Set new attribute in create wht cert
         <record id="view_vendor_payment_form_ext" model="ir.ui.view">
             <field name="name">view.vendor.payment.form.ext</field>

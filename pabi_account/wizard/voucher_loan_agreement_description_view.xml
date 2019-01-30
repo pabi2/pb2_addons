@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_voucher_loan_agreement_description" model="ir.ui.view">
+            <field name="name">view.voucher.loan.agreement.description</field>
+            <field name="model">voucher.loan.agreement.description</field>
+            <field name="arch" type="xml">
+                <form string="Loan Agreement Description">
+	                <field name="loan_agreement_description"/>
+                	<footer>
+                        <button name="action_save" string="Save" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Close" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_voucher_loan_agreement_description" model="ir.actions.act_window">
+            <field name="name">Loan Agreement Description</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">voucher.loan.agreement.description</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>
