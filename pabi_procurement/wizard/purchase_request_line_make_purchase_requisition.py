@@ -115,6 +115,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
                                          ('warehouse_id', '=', False)
                                          ('warehouse_id.operating_unit_id', '=', user_ou_id.id)])
             user_picking_type = types[:1]
+            
             res.update({
                 'operating_unit_id': user_ou_id.id,
                 'picking_type_id': user_picking_type.id,
