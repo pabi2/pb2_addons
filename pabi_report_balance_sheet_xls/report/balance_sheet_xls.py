@@ -92,9 +92,9 @@ class BalanceSheetParser(report_sxw.rml_parse, common_report_header):
             lines.append(vals)
 
             ctx = {}
-            if 'active_test' in data['form']['used_context']:
+            if 'active_test' in data['used_context']:
                 ctx['active_test'] = \
-                    data['form']['used_context']['active_test']
+                    data['used_context']['active_test']
 
             account_ids = []
             if report.display_detail == 'no_detail':
