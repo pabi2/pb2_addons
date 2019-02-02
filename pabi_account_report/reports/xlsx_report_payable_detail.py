@@ -40,7 +40,7 @@ class XLSXReportPayableDetail(models.TransientModel):
         compute='_compute_date_real',
     )
     results = fields.Many2many(
-        'pabi.common.account.report.view',
+        'account.move.line',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
@@ -105,37 +105,30 @@ class XLSXReportPayableDetail(models.TransientModel):
 
     @api.multi
     def _compute_results(self):
-        """
-        Solution
-        1. Get from pabi.common.account.report.view
-        2. Check account type is payable
-        """
         self.ensure_one()
-        Result = self.env['pabi.common.account.report.view']
-        dom = [('account_id.type', '=', 'payable')]
+        Result = self.env['account.move.line']
+        dom = [('account_id.type', '=', 'payable'),
+               ('date_maturity', '!=', False),
+               ('move_id.state', '=', 'posted')]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
         if self.partner_ids:
             dom += [('partner_id', 'in', self.partner_ids.ids)]
         if self.move_ids:
-            dom += [('invoice_move_id', 'in', self.move_ids.ids)]
+            dom += [('move_id', 'in', self.move_ids.ids)]
         if self.fiscalyear_start_id:
-            dom += [('invoice_posting_date', '>=',
-                     self.fiscalyear_start_id.date_start)]
+            dom += [('date', '>=', self.fiscalyear_start_id.date_start)]
         if self.fiscalyear_end_id:
-            dom += [('invoice_posting_date', '<=',
-                     self.fiscalyear_end_id.date_stop)]
+            dom += [('date', '<=', self.fiscalyear_end_id.date_stop)]
         if self.period_start_id:
-            dom += [('invoice_posting_date', '>=',
-                     self.period_start_id.date_start)]
+            dom += [('date', '>=', self.period_start_id.date_start)]
         if self.period_end_id:
-            dom += [('invoice_posting_date', '<=',
-                     self.period_end_id.date_stop)]
+            dom += [('date', '<=', self.period_end_id.date_stop)]
         if self.date_start:
-            dom += [('invoice_posting_date', '>=', self.date_start)]
+            dom += [('date', '>=', self.date_start)]
         if self.date_end:
-            dom += [('invoice_posting_date', '<=', self.date_end)]
+            dom += [('date', '<=', self.date_end)]
         if self.as_of_date:
-            dom += [('invoice_posting_date', '<=', self.as_of_date)]
-        self.results = Result.search(
-            dom, order="partner_id,invoice_posting_date,document_number")
+            dom += [('date', '<=', self.as_of_date)]
+        self.results = Result.search(dom).sorted(
+            key=lambda l: (l.partner_id.search_key, l.date, l.move_id.name))
