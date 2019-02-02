@@ -39,6 +39,7 @@ Note: following are arequiremen for system to properly create analytic line
         'wizard/create_journal_entry_wizard.xml',
         'wizard/edit_desc.xml',
         'wizard/account_move_change_date_due.xml',
+        'wizard/account_move_reverse_view.xml',
         'views/account_view.xml',
         'views/account_invoice_view.xml',
         'views/account_move_priority_view.xml',
