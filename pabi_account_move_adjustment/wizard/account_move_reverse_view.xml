@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+		<record id="view_account_move_reverse_ext" model="ir.ui.view">
+            <field name="name">account.move.reverse.form.ext</field>
+            <field name="model">account.move.reverse</field>
+            <field name="inherit_id" ref="account_reversal.view_account_move_reverse"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='move_line_prefix']" position="after">
+            		<newline/>
+                    <field name="reverse_temp_acive_ids" />
+            	</xpath>
+            	<xpath expr="//button[@name='action_reverse']" position="after">
+            		<button name="action_reverse_backgruond" string="Reverse Entries(Background)"
+                            type="object" class="oe_highlight" context="{'reverse_async_process': 1}"/>
+                    or
+            	</xpath>
+            </field>
+        </record>
+		
+        <record id="act_account_move_reverse" model="ir.actions.act_window">
+            <field name="name">Reverse Entries</field>
+            <field name="res_model">account.move.reverse</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_move_reverse"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="ir_account_move_reverse" model="ir.values">
+            <field name="name">Reverse Entries</field>
+            <field name="key2">client_action_multi</field>
+            <field name="model">account.move</field>
+            <field name="value" eval="'ir.actions.act_window,%d'%act_account_move_reverse" />
+        </record>
+
+    </data>
+</openerp>
