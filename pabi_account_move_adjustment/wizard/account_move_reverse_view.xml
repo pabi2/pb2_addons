@@ -9,8 +9,9 @@
             <field name="arch" type="xml">
             	<xpath expr="//field[@name='move_line_prefix']" position="after">
             		<newline/>
-                    <field name="reverse_temp_acive_ids" />
+                    <field name="reverse_temp_acive_ids" invisible="1" />
             	</xpath>
+            	<!--  ใช้งานเฉพาะ ตอนแก้ปัญหา กดรัน Batch เบิ้ลเท่านั้น สามารถกดได้ครั้งเดียว  -->
             	<xpath expr="//button[@name='action_reverse']" position="after">
             		<button name="action_reverse_backgruond" string="Reverse Entries(Background)"
                             type="object" class="oe_highlight" context="{'reverse_async_process': 1}"/>
