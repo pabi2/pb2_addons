@@ -15,7 +15,7 @@
             	<xpath expr="//button[@name='action_reverse']" position="after">
             		<button name="action_reverse_backgruond" string="Reverse Entries(Background)" invisible="1"
                             type="object" class="oe_highlight" context="{'reverse_async_process': 1}"/>
-                    or
+                    
             	</xpath>
             </field>
         </record>
