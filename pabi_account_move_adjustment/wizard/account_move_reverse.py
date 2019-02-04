@@ -22,12 +22,13 @@ class AccountMoveReverse(models.TransientModel):
 
 
     def get_active_ids(self):
-        active_ids = self._context.get('active_ids') or False
-        if active_ids:
-            return ','.join(str(x) for x in active_ids)
-        else:
-            return False
-        
+#         active_ids = self._context.get('active_ids') or False
+#         if active_ids:
+#             return ','.join(str(x) for x in active_ids)
+#         else:
+#             return False
+        return False
+    
     reverse_temp_acive_ids = fields.Text(
         string='Active Ids',
         default=get_active_ids
