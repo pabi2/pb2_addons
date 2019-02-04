@@ -160,6 +160,7 @@
                                         states="draft,sent" string="(update)" type="object" class="oe_edit_only oe_link"/>
                                 </div>
                                 <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                <field name="force_tax_rounding_method" readonly="1" attrs="{'invisible': [('force_tax_rounding_method', '=', False)]}"/>
                             </group>
                             <div class="oe_clear"/>
                             <field name="note" class="oe_inline" placeholder="Terms and conditions..."/>
