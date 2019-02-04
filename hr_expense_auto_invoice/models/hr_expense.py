@@ -282,6 +282,9 @@ class HRExpenseExpese(models.Model):
             if expense._is_valid_for_invoice():
                 if not expense.invoice_id:
                     invoice = expense._create_supplier_invoice_from_expense()
+                    # FIX ปัญหาปรับโครงสร้าง ที่ใช้ section เก่า
+                    if expense.is_advance_clearing and len(invoice) > 1:
+                        invoice.invoice_line[0].section_id = invoice.invoice_line[1].section_id
                     expense.invoice_id = invoice
                 expense.write({
                     'account_move_id': expense.invoice_id.move_id.id,
