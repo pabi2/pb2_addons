@@ -6,7 +6,7 @@ from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import RetryableJobError
 
-@job
+@job(default_channel='root.single_queue')
 def action_done_async_process(session, model_name, res_id):
     try:
         res = session.pool[model_name].action_done_backgruond(
