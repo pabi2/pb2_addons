@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+import logging
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from openerp.exceptions import RedirectWarning
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import RetryableJobError
+
+_logger = logging.getLogger(__name__)
 
 @job(default_channel='root.single_queue')
 def action_done_async_process(session, model_name, res_id):
@@ -136,9 +139,14 @@ class AccountAssetChangeowner(models.Model):
 
     @api.multi
     def action_done(self):
+        i = 0
+        _logger.info("Change owner: %s records: Starting!!" % (len(self)))
         for rec in self:
+            i += 1
             rec._changeowner()
+            _logger.info("Change owner: %s/%s : PASS" % (i, len(self)))
         self.write({'state': 'done'})
+        _logger.info("Change owner: %s records: Completed!!" % (len(self)))
         return True
 
     @api.multi
