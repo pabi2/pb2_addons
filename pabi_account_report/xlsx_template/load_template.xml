@@ -7,6 +7,7 @@
             <value eval="[
                 ref('xlsx_report_input_tax'),
                 ref('xlsx_report_partner_detail'),
+                ref('xlsx_report_pit_detail'),
                 ref('xlsx_report_advance_status'),
                 ref('xlsx_report_cheque_register'),
                 ref('xlsx_report_contract_collateral'),

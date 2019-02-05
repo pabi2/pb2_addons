@@ -36,6 +36,7 @@
         'reports/report_account_common.xml',
         'reports/xlsx_report_input_tax.xml',
         'reports/xlsx_report_partner_detail.xml',
+        'reports/xlsx_report_pit_detail.xml',
         'reports/xlsx_report_advance_status.xml',
         'reports/xlsx_report_cheque_register.xml',
         'reports/xlsx_report_contract_collateral.xml',
