@@ -22,6 +22,5 @@ This is working with Sales Order -> Customer Invoice
         "l10n_th_account",
     ],
     "data": [
-        # "views/sale_view.xml",
     ],
 }
