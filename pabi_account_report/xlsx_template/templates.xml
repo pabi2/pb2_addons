@@ -1909,6 +1909,61 @@ result = pd.pivot_table(df, index=groupby,
              }
          </field>
      </record>
+     
+        # PIT Detail
+        <record id="xlsx_report_pit_detail" model="ir.attachment">
+            <field name="res_model">xlsx.report.pit.detail</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pit_detail.xlsx</field>
+            <field name="name">PIT Detail</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Partner Detail Report': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                'B3': 'partner_type${value and dict(customer="Customer", supplier="Supplier", customer_and_supplier="Customer and Supplier", customer_or_supplier="Customer or Supplier")[value] or ""}',
+                                'B4': 'active${value and dict(true="True", false="False")[value] or ""}',
+                                'B5': 'category_ids${value and ", ".join([x.name for x in value]) or ""}',
+                                'B6': 'partner_ids${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.title.name, x.name]))) for x in value]) or ""}',
+                                'B7': '${env.user.display_name}',
+                                'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                            },
+                            
+                            'income_tax_results': {   
+                                'A11': 'voucher_id.validate_user_id.partner_id.name${value or ""}',
+                                'B11': 'voucher_id.partner_code${value or ""}',   
+                                'C11': 'partner_id.vat${value or ""}#{number_format=text}',
+								'D11': 'partner_id.id${value and " ".join(list(filter(lambda l: l != False, [env["res.partner"].browse(value).title.name, env["res.partner"].browse(value).name]))) or ""}',
+								'E11': 'partner_id.id${value and env["res.partner"].browse(value).street+" "+env["res.partner"].browse(value).street2+" "+env["res.partner"].browse(value).township_id.name+" "+env["res.partner"].browse(value).district_id.name+" "+env["res.partner"].browse(value).province_id.name+" "+env["res.partner"].browse(value).zip or ""}',
+                                'F11': 'partner_id.street${value or ""}',
+                                'G11': 'partner_id.street2${value or ""}',
+                                'H11': 'partner_id.township_id.name${value or ""}',
+                                'I11': 'partner_id.district_id.name${value or ""}',
+                                'J11': 'partner_id.province_id.name${value or ""}',
+                                'K11': 'partner_id.zip${value or ""}#{number_format=text}',
+                                'L11': 'voucher_id.operating_unit_id.name${value or ""}',
+                                'M11': 'date${value and value.date() or ""}',                                           
+                                'N11': 'voucher_id.number${value or ""}',
+                                'O11': 'invoice_id.number${value or ""}',
+                                'P11': 'amount_income${value or ""}',
+                                'Q11': 'amount_wht${value or ""}',
+                                'R11': 'calendar_year${value or ""}',
+                                'S11': 'date${value and (value.strftime("%B")) or ""}',
+                                'T11': 'id${value and env["personal.income.tax"].browse(value).wht_cert_income_type+" "+(env["personal.income.tax"].browse(value).wht_cert_income_desc or "") or ""}',
+                                'U11': 'posted${value or ""}',
+                                'V11': 'voucher_id.move_id.line_item_summary${value or ""}',
+                                
+                            },
+                        },
+                    }
+                }
+            </field>
+        </record>
+
+     
+     
 
     </data>
 </openerp>

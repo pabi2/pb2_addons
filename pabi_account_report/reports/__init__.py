@@ -14,6 +14,7 @@ from . import xlsx_report_sla_supplier
 from . import xlsx_report_sla_employee
 from . import xlsx_report_sla_procurement
 from . import xlsx_report_supplier_receipt_follow_up
+from . import xlsx_report_pit_detail
 from . import qweb_report_payable_confirmation_letter
 # Receivable Reports
 from . import xlsx_report_output_tax
