@@ -139,14 +139,11 @@ class AccountAssetChangeowner(models.Model):
 
     @api.multi
     def action_done(self):
-        i = 0
-        _logger.info("Change owner: %s records: Starting!!" % (len(self)))
+        _logger.info("Change owner Starting!!")
         for rec in self:
-            i += 1
             rec._changeowner()
-            _logger.info("Change owner: %s/%s : PASS" % (i, len(self)))
         self.write({'state': 'done'})
-        _logger.info("Change owner: %s records: Completed!!" % (len(self)))
+        _logger.info("Change owner Completed!!")
         return True
 
     @api.multi
@@ -190,7 +187,10 @@ class AccountAssetChangeowner(models.Model):
         self.ensure_one()
         AccountMove = self.env['account.move']
         Period = self.env['account.period']
+        i = 0
         for line in self.changeowner_ids:
+            i += 1
+            _logger.info("Change owner %s/%s Running!!" % (i, len(self.changeowner_ids)))
             if line.move_id:
                 continue
             to_project = line.project_id
@@ -324,6 +324,7 @@ class AccountAssetChangeowner(models.Model):
             if line.room_id:
                 new_owner['room_id'] = line.room_id.id
             asset.write(new_owner)
+            _logger.info("Change owner %s/%s PASS!!" % (i, len(self.changeowner_ids)))
         return True
 
     @api.multi
