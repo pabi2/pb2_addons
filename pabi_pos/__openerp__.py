@@ -24,6 +24,7 @@ When set automatic workflow = POS, the order will automatically,
         "pabi_utils",
         "pabi_account",
         "pabi_stock_easy_internal_transfer",
+        "account_tax_force_rounding_method",
     ],
     "data": [
         "views/product_view.xml",
