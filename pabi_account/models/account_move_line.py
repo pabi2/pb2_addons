@@ -21,6 +21,11 @@ class AccountMoveLine(models.Model):
         size=100,
         help="To be used during migration period to store origin number",
     )
+    invoice_cancel = fields.Many2one(
+        'account.invoice',
+        compute='_compute_invoice_cancel',
+        help="Functional field, use solely for _budget_eligible_move_lines",
+    )
 
     @api.multi
     @api.depends('reconcile_id')
@@ -80,3 +85,24 @@ class AccountMoveLine(models.Model):
                     if bank_receipt:
                         bank_receipt.move_id.narration = rec.move_id.narration
                 narration_written = True
+
+    @api.multi
+    def _budget_eligible_move_lines(self):
+        """ More filtered to budget _budget_eligible_move_lines
+        For move line created by cancelled invoice, do the filter also
+        """
+        move_lines = super(AccountMoveLine, self)._budget_eligible_move_lines()
+        move_lines = move_lines.filtered(  # Too complicated to use SQL
+            lambda l:
+            not l.invoice_cancel or
+            l.product_id.type == 'service' or
+            l.product_id.valuation != 'real_time'
+        )
+        return move_lines
+
+    @api.multi
+    def _compute_invoice_cancel(self):
+        for line in self:
+            line.invoice_cancel = line.move_id.invoice_cancel_ids and \
+                line.move_id.invoice_cancel_ids[0] or False
+        return True
