@@ -404,7 +404,14 @@ class AccountAssetChangeownerLine(models.Model):
         ondelete='restrict',
     )
     
-
+    run = fields.Boolean(
+        string='Run',
+    )
+    
+    description = fields.Char(
+        string='Description',
+    )
+    
     
     @api.multi
     def changeowner_line(self):
