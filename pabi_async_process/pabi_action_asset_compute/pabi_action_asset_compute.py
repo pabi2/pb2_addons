@@ -250,7 +250,7 @@ class PabiActionAssetCompute(models.TransientModel):
         check_state_draft = self.env['pabi.asset.depre.batch'].search([('state', '=', 'draft')]) 
         if (check_state_draft!=Null):
              raise UserError(
-            _('Have states draft in pabi_asset_depre_batch ') )
+            _('Have states draft in pabi_asset_depre_batch ') ) 
         # Call the function
         res = super(PabiActionAssetCompute, self).\
             pabi_action(process_xml_id, job_desc, func_name, **kwargs)
