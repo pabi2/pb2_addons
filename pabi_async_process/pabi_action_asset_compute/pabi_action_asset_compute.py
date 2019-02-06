@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError, ValidationError
-from asn1crypto.core import Null
 
 
 class PabiActionAssetCompute(models.TransientModel):
@@ -88,11 +87,8 @@ class PabiActionAssetCompute(models.TransientModel):
                                        self.categ_ids.ids,
                                        self.profile_ids.ids)
         # Assume 1 depre line for 1 asset always
-        print(asset_ids)
         raise UserError(
             _('%s assets will be computed in this operation') % len(asset_ids))
-
-
 
     @api.model
     def _get_categ_domain(self):
@@ -179,7 +175,6 @@ class PabiActionAssetCompute(models.TransientModel):
                       batch_note, compute_method='standard_fast',
                       grouping_date=False):
         period = self.env['account.period'].browse(period_id)
-        print("period: ",period,"period_id: ",period.id)
         # Block future period
         # current_period = self.env['account.period'].find()
         # Future period allow?
@@ -190,9 +185,6 @@ class PabiActionAssetCompute(models.TransientModel):
         # Batch ID
         depre_batch = self.env['pabi.asset.depre.batch'].new_batch(period,
                                                                    batch_note)
-        if(depre_batch != null):
-            raise ValidationError(
-                _('Found...'))
 
         group_assets = {}  # Group of assets from search
         created_move_ids = []
@@ -201,7 +193,6 @@ class PabiActionAssetCompute(models.TransientModel):
         if compute_method == 'grouping':  # Groupby Account, Depre Budget
             group_assets = self._search_asset(period, categ_ids, profile_ids,
                                               return_as_groups=True)
-            print("group_assets: ",group_assets)
         else:  # standard
             asset_ids = self._search_asset(period, categ_ids, profile_ids)
             if asset_ids:
@@ -227,7 +218,6 @@ class PabiActionAssetCompute(models.TransientModel):
             result_msg = _('Computed depreciation created %s '
                            'journal entries') % len(created_move_ids)
         return (depre_batch, result_msg)
-
 
     @api.multi
     def pabi_action(self):
