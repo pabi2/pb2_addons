@@ -185,7 +185,10 @@ class AccountAssetChangeowner(models.Model):
         self.ensure_one()
         AccountMove = self.env['account.move']
         Period = self.env['account.period']
+        i = 0
         for line in self.changeowner_ids:
+            i += 1
+            _logger.info("Change owner %s/%s Running!!" % (i, len(self.changeowner_ids)))
             if line.move_id:
                 continue
             to_project = line.project_id
@@ -319,6 +322,7 @@ class AccountAssetChangeowner(models.Model):
             if line.room_id:
                 new_owner['room_id'] = line.room_id.id
             asset.write(new_owner)
+            _logger.info("Change owner %s/%s PASS!!" % (i, len(self.changeowner_ids)))
         return True
 
     @api.multi
@@ -429,6 +433,7 @@ class AccountAssetChangeownerLine(models.Model):
         self.ensure_one()
         AccountMove = self.env['account.move']
         Period = self.env['account.period']
+        _logger.info("Change owner by line %s(%s) Running!!" % (self.changeowner_id.name, self.id))
         if self.move_id:
             return True
         to_project = self.project_id
@@ -575,6 +580,7 @@ class AccountAssetChangeownerLine(models.Model):
         rec_done = len(l)
         if rec_max == rec_done:
             self.changeowner_id.state = 'done'
+        _logger.info("Change owner by line %s(%s) PASS!!" % (self.changeowner_id.name, self.id))
         return True
 
     # Building / Floor / Room
