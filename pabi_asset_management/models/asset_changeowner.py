@@ -403,11 +403,7 @@ class AccountAssetChangeownerLine(models.Model):
         string='Room',
         ondelete='restrict',
     )
-    
-    run = fields.Boolean(
-        string='Run',
-    )
-    
+
     description = fields.Char(
         string='Description',
     )
