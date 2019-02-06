@@ -562,6 +562,19 @@ class AccountAssetChangeownerLine(models.Model):
         if self.room_id:
             new_owner['room_id'] = self.room_id.id
         asset.write(new_owner)
+        self.state = 'done'
+        self._cr.commit()
+        
+        l = sef.env['account.asset.changeowner.line'].search(
+            [
+                ('changeowner_id', '=', self.changeowner_id),
+                ('state', '=', 'done')
+            ]
+        )
+        rec_max = len(self.changeowner_id.changeowner_ids)
+        rec_done = len(l)
+        if rec_max == rec_done:
+            self.changeowner_id.state = 'done'
         return True
 
     # Building / Floor / Room
