@@ -404,6 +404,15 @@ class AccountAssetChangeownerLine(models.Model):
         ondelete='restrict',
     )
     
+    state = fields.Selection([
+            ('draft', 'Draft'),
+            ('error', 'Error'),
+            ('done', 'Done')
+        ],
+        string='State',
+        default='draft'
+    )
+    
     @api.multi
     def changeowner_line(self):
         """ The Concept
@@ -554,7 +563,7 @@ class AccountAssetChangeownerLine(models.Model):
             new_owner['room_id'] = self.room_id.id
         asset.write(new_owner)
         return True
-    
+
     # Building / Floor / Room
     @api.multi
     @api.constrains('building_id', 'floor_id', 'room_id')
