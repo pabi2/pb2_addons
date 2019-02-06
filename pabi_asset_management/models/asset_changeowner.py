@@ -567,7 +567,7 @@ class AccountAssetChangeownerLine(models.Model):
         
         l = self.env['account.asset.changeowner.line'].search(
             [
-                ('changeowner_id', '=', self.changeowner_id),
+                ('changeowner_id', '=', self.changeowner_id.id),
                 ('state', '=', 'done')
             ]
         )
