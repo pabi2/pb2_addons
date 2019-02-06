@@ -565,7 +565,7 @@ class AccountAssetChangeownerLine(models.Model):
         self.state = 'done'
         self._cr.commit()
         
-        l = sef.env['account.asset.changeowner.line'].search(
+        l = self.env['account.asset.changeowner.line'].search(
             [
                 ('changeowner_id', '=', self.changeowner_id),
                 ('state', '=', 'done')
