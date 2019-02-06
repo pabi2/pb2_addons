@@ -139,11 +139,9 @@ class AccountAssetChangeowner(models.Model):
 
     @api.multi
     def action_done(self):
-        _logger.info("Change owner Starting!!")
         for rec in self:
             rec._changeowner()
         self.write({'state': 'done'})
-        _logger.info("Change owner Completed!!")
         return True
 
     @api.multi
@@ -187,10 +185,7 @@ class AccountAssetChangeowner(models.Model):
         self.ensure_one()
         AccountMove = self.env['account.move']
         Period = self.env['account.period']
-        i = 0
         for line in self.changeowner_ids:
-            i += 1
-            _logger.info("Change owner %s/%s Running!!" % (i, len(self.changeowner_ids)))
             if line.move_id:
                 continue
             to_project = line.project_id
@@ -324,7 +319,6 @@ class AccountAssetChangeowner(models.Model):
             if line.room_id:
                 new_owner['room_id'] = line.room_id.id
             asset.write(new_owner)
-            _logger.info("Change owner %s/%s PASS!!" % (i, len(self.changeowner_ids)))
         return True
 
     @api.multi
@@ -409,7 +403,168 @@ class AccountAssetChangeownerLine(models.Model):
         string='Room',
         ondelete='restrict',
     )
-
+    
+    state = fields.Selection(
+        [
+            ('draft', 'Draft'),
+            ('error', 'Error'),
+            ('done', 'Done')
+        ],
+        string='State',
+        default='draft'
+    )
+    
+    @api.multi
+    def changeowner_line(self):
+        """ The Concept
+        * No new asset is being created
+        * Update new owner (project, section) and run move lines
+        * Source and target owner musfperiodt be different, otherwise, warning.
+        Accoun Moves
+        ============
+        Dr Accumulated depreciation of transferring asset (if any)
+            Cr Asset Value of trasferring asset
+        Dr Asset Value to the new owner
+            Cr Accumulated Depreciation of to the new owner (if any)
+        """
+        self.ensure_one()
+        AccountMove = self.env['account.move']
+        Period = self.env['account.period']
+        if self.move_id:
+            return True
+        to_project = self.project_id
+        to_section = self.section_id
+        to_invest_asset = self.invest_asset_id
+        to_invest_construction_phase = self.invest_construction_phase_id
+        # At lease 1 dimension should be selected
+        budgets = (to_project.id, to_section.id,
+                   to_invest_asset.id, to_invest_construction_phase.id)
+        if len(filter(lambda x: x, budgets)) == 0:
+            raise ValidationError(_('No new owner selected!'))
+        # For change owner, no owner should be the same
+        asset = self.asset_id
+        if (asset.owner_project_id == to_project) and \
+                (asset.owner_section_id == to_section) and \
+                (asset.invest_asset_id == to_invest_asset) and \
+                (asset.invest_construction_phase_id ==
+                 to_invest_construction_phase):
+            raise ValidationError(
+                _('Asset %s changes to the same owner!') % (asset.code))
+        new_owner = {'owner_project_id': to_project.id,
+                     'owner_section_id': to_section.id,
+                     'owner_invest_asset_id': to_invest_asset.id,
+                     'owner_invest_construction_phase_id':
+                     to_invest_construction_phase.id}
+        # Moving to new owner Project/Section
+        move_lines = []
+        if asset.purchase_value:
+            move_lines += [
+                # Cr Asset Value (Old)
+                {
+                    'asset_id': asset.id,
+                    'account_id': asset.profile_id.account_asset_id.id,
+                    'partner_id': asset.partner_id.id,
+                    'name': asset.display_name,
+                    # Value
+                    'credit': (asset.purchase_value > 0.0 and
+                               asset.purchase_value or 0.0),
+                    'debit': (asset.purchase_value < 0.0 and
+                              -asset.purchase_value or 0.0),
+                    # Budget
+                    'project_id': asset.owner_project_id.id,
+                    'section_id': asset.owner_section_id.id,
+                    'invest_asset_id': asset.owner_invest_asset_id.id,
+                    'invest_construction_phase_id':
+                    asset.owner_invest_construction_phase_id.id,
+                 },
+                # Dr Asset Value (New)
+                {
+                    'asset_id': asset.id,
+                    'account_id': asset.profile_id.account_asset_id.id,
+                    'partner_id': asset.partner_id.id,
+                    'name': asset.display_name,
+                    # Value
+                    'credit': (asset.purchase_value < 0.0 and
+                               -asset.purchase_value or 0.0),
+                    'debit': (asset.purchase_value > 0.0 and
+                              asset.purchase_value or 0.0),
+                    # Budget
+                    'project_id': to_project.id,
+                    'section_id': to_section.id,
+                    'invest_asset_id': to_invest_asset.id,
+                    'invest_construction_phase_id':
+                    to_invest_construction_phase.id,
+                 },
+            ]
+        if asset.value_depreciated:
+            move_lines += [
+                # Dr Accum Depre (Old)
+                {
+                    'asset_id': asset.id,
+                    'account_id':
+                    asset.profile_id.account_depreciation_id.id,
+                    'partner_id': asset.partner_id.id,
+                    'name': asset.display_name,
+                    # Value
+                    'credit': (asset.value_depreciated < 0.0 and
+                               -asset.value_depreciated or 0.0),
+                    'debit': (asset.value_depreciated > 0.0 and
+                              asset.value_depreciated or 0.0),
+                    # Budget
+                    'project_id': asset.owner_project_id.id,
+                    'section_id': asset.owner_section_id.id,
+                    'invest_asset_id': asset.owner_invest_asset_id.id,
+                    'invest_construction_phase_id':
+                    asset.owner_invest_construction_phase_id.id,
+                 },
+                # Cr Accum Depre (New)
+                {
+                    'asset_id': asset.id,
+                    'account_id':
+                    asset.profile_id.account_depreciation_id.id,
+                    'partner_id': asset.partner_id.id,
+                    'name': asset.display_name,
+                    # Value
+                    'credit': (asset.value_depreciated > 0.0 and
+                               asset.value_depreciated or 0.0),
+                    'debit': (asset.value_depreciated < 0.0 and
+                              -asset.value_depreciated or 0.0),
+                    # Budget
+                    'project_id': to_project.id,
+                    'section_id': to_section.id,
+                    'invest_asset_id': to_invest_asset.id,
+                    'invest_construction_phase_id':
+                    to_invest_construction_phase.id,
+                 },
+            ]
+        # Finalize all moves before create it.
+        final_move_lines = [(0, 0, x) for x in move_lines]
+        if final_move_lines:
+            move_dict = {
+                # Force using AN
+                'journal_id': self.changeowner_id.journal_id.id,
+                # 'journal_id': asset.profile_id.journal_id.id,
+                'line_id': final_move_lines,
+                'period_id': Period.find(self.changeowner_id.date).id,
+                'date': self.changeowner_id.date,
+                'ref': self.changeowner_id.name}
+            # direct_create = compute chartfield on post
+            ctx = {'allow_asset': True, 'direct_create': True,
+                   'no_test_chartfield_active': True}
+            self.move_id = \
+                AccountMove.with_context(ctx).create(move_dict)
+        # Asset Owner Info update
+        if self.responsible_user_id:
+            new_owner['responsible_user_id'] = self.responsible_user_id.id
+        if self.building_id:
+            new_owner['building_id'] = self.building_id.id
+        if self.floor_id:
+            new_owner['floor_id'] = self.floor_id.id
+        if self.room_id:
+            new_owner['room_id'] = self.room_id.id
+        asset.write(new_owner)
+        return True
+    
     # Building / Floor / Room
     @api.multi
     @api.constrains('building_id', 'floor_id', 'room_id')
