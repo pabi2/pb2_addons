@@ -403,13 +403,8 @@ class AccountAssetChangeownerLine(models.Model):
         string='Room',
         ondelete='restrict',
     )
+    
 
-    state = fields.Selection([
-        ('draft', 'Draft')
-        ('done', 'Owner Changed'),
-        ('error', 'Error')],
-         string='Status',
-    )
     
     @api.multi
     def changeowner_line(self):
