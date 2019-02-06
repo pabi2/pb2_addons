@@ -133,34 +133,29 @@ class XLSXReportPITDetail(models.TransientModel):
         self.ensure_one()
         domain, number = [], []
 
+        if self.category_ids:
+            partner_ids = self.env['res.partner'].search([('category_id', 'in', self.category_ids.ids)])
+            pit_ids = self.env['personal.income.tax'].search([('partner_id', 'in', partner_ids.ids)])
+            for pit in pit_ids:
+                number.append(pit.id)   
         
         if self.partner_ids:
             pit_ids = self.env['personal.income.tax'].search([('partner_id', 'in', self.partner_ids.ids)])
             for pit in pit_ids:
-                number.append(pit.id)            
-            domain += [('id', 'in', number)]
+                number.append(pit.id)   
+                         
+        domain += [('id', 'in', number)]
             
         return domain
             
     @api.multi
     def _compute_results(self):
-        self.ensure_one()
-        Partner = self.env['res.partner']
-        partner_domain = self._get_domain()
-        
-        # Check Partner
-        if self.partner_ids:
-            partner_domain += [('id', 'in', self.partner_ids.ids)]
-            
+        self.ensure_one()            
         income_tax = self.env['personal.income.tax']
         income_tax_domain = self._get_income_tax_domain()
-
-        self.income_tax_results = income_tax.search(income_tax_domain, order="id")
         
-        self.partner_detail_results = Partner.search(partner_domain, order="id")
+        self.income_tax_results = income_tax.search(income_tax_domain)
 
-        
-        #self.partner_bank_account_detail_results = \
-        #    PartnerView.search(partner_view_domain, order="partner_id")
+
             
             
