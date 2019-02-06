@@ -60,6 +60,16 @@ class XLSXReportPITDetail(models.TransientModel):
     _inherit = 'report.account.common'
     
 
+
+    WHT_CERT_INCOME_TYPE = [('1', '1. เงินเดือน ค่าจ้าง ฯลฯ 40(1)'),
+                        ('2', '2. ค่าธรรมเนียม ค่านายหน้า ฯลฯ 40(2)'),
+                        ('3', '3. ค่าแห่งลิขสิทธิ์ ฯลฯ 40(3)'),
+                        ('5', '5. ค่าจ้างทำของ ค่าบริการ ฯลฯ 3 เตรส'),
+                        ('6', '6. ค่าบริการ/ค่าสินค้าภาครัฐ'),
+                        ('7', '7. ค่าจ้างทำของ ค่ารับเหมา'),
+                        ('8', '8. ธุรกิจพาณิชย์ เกษตร อื่นๆ')]
+
+
     category_ids = fields.Many2many(
         'res.partner.category',
         string='Categories',
@@ -79,6 +89,10 @@ class XLSXReportPITDetail(models.TransientModel):
         'res.partner',
         string='Partners',
     )
+    wht_cert_income_type = fields.Selection(
+        WHT_CERT_INCOME_TYPE,
+        string='Type of Income',
+    )
     partner_detail_results = fields.Many2many(
         'res.partner',
         string='Partner Detail Results',
@@ -92,6 +106,7 @@ class XLSXReportPITDetail(models.TransientModel):
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
+    
     
     @api.multi
     def _get_domain(self):
@@ -143,8 +158,12 @@ class XLSXReportPITDetail(models.TransientModel):
             pit_ids = self.env['personal.income.tax'].search([('partner_id', 'in', self.partner_ids.ids)])
             for pit in pit_ids:
                 number.append(pit.id)   
-                         
-        domain += [('id', 'in', number)]
+                
+        domain += [('id', 'in', number)]   
+            
+        if not (self.category_ids or self.partner_ids):
+            domain = []
+        
             
         return domain
             
