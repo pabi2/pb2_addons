@@ -403,11 +403,6 @@ class AccountAssetChangeownerLine(models.Model):
         string='Room',
         ondelete='restrict',
     )
-
-    description = fields.Char(
-        string='Description',
-    )
-    
     
     @api.multi
     def changeowner_line(self):
