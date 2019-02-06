@@ -403,15 +403,12 @@ class AccountAssetChangeownerLine(models.Model):
         string='Room',
         ondelete='restrict',
     )
-    
-    state = fields.Selection(
-        [
-            ('draft', 'Draft'),
-            ('error', 'Error'),
-            ('done', 'Done')
-        ],
-        string='State',
-        default='draft'
+
+    state = fields.Selection([
+        ('draft', 'Draft')
+        ('done', 'Owner Changed'),
+        ('error', 'Error')],
+         string='Status',
     )
     
     @api.multi
