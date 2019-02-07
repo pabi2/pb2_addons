@@ -1933,7 +1933,7 @@ result = pd.pivot_table(df, index=groupby,
                             
                             'income_tax_results': {   
                                 'A11': 'voucher_id.validate_user_id.partner_id.name${value or ""}',
-                                'B11': 'voucher_id.partner_code${value or ""}#{number_format=text}',   
+                                'B11': 'partner_id.id${value or ""}#{number_format=text}',   
                                 'C11': 'partner_id.vat${value or ""}#{number_format=text}',
 								'D11': 'partner_id.id${value and " ".join(list(filter(lambda l: l != False, [env["res.partner"].browse(value).title.name, env["res.partner"].browse(value).name]))) or ""}',
 								'E11': 'partner_id.id${value and (env["res.partner"].browse(value).street or "")+" "+(env["res.partner"].browse(value).street2 or "")+" "+(env["res.partner"].browse(value).township_id.name or "")+" "+(env["res.partner"].browse(value).district_id.name or "")+" "+(env["res.partner"].browse(value).province_id.name or "")+" "+(env["res.partner"].browse(value).zip or "") or ""}',
@@ -1951,10 +1951,9 @@ result = pd.pivot_table(df, index=groupby,
                                 'Q11': 'amount_wht${value or ""}',
                                 'R11': 'calendar_year${value or ""}',
                                 'S11': 'date${value and (value.strftime("%B")) or ""}',
-                                'T11': 'id${value and (env["personal.income.tax"].browse(value).wht_cert_income_type or "")+" "+(env["personal.income.tax"].browse(value).wht_cert_income_desc or "") or ""}',
+                                'T11': 'wht_cert_income_type${value and dict(env["xlsx.report.pit.detail"]._columns["wht_cert_income_type"].selection)[value] or ""}',
                                 'U11': 'posted${value or ""}',
                                 'V11': 'voucher_id.move_id.line_item_summary${value or ""}',
-                                
                             },
                         },
                     }
