@@ -173,7 +173,7 @@ class XLSXReportPITDetail(models.TransientModel):
         income_tax = self.env['personal.income.tax']
         income_tax_domain = self._get_income_tax_domain()
         
-        self.income_tax_results = income_tax.search(income_tax_domain)
+        self.income_tax_results = income_tax.search(income_tax_domain, order="partner_id")
 
 
             
