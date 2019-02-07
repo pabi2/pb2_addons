@@ -42,7 +42,7 @@ class PABIAdvanceDunningLetter(models.Model):
     dunning_list_1 = fields.One2many(
         'pabi.advance.dunning.letter.line',
         'dunning_id',
-        string='On due date',
+        string='10 days to due date',
         domain=[('due_type', '=', '1')]
     )
     dunning_list_2 = fields.One2many(
@@ -54,7 +54,7 @@ class PABIAdvanceDunningLetter(models.Model):
     dunning_list_3 = fields.One2many(
         'pabi.advance.dunning.letter.line',
         'dunning_id',
-        string='10 days to due date',
+        string='On due date',
         domain=[('due_type', '=', '3')]
     )
     # Temporary Fields todo remove
@@ -107,7 +107,8 @@ class PABIAdvanceDunningLetter(models.Model):
         search_domain = [('is_employee_advance', '=', True),
                          ('state', '=', 'paid'),
                          ('amount_to_clearing', '>', 0.0),
-                         ('date_due', '<=', date_due), ]
+                         ('date_due', '=', date_due), ]
+        
         if due_type == '1':  # 10 days
             search_domain += [('date_dunning_1', '=', False),
                               ('date_dunning_2', '=', False),
@@ -115,8 +116,14 @@ class PABIAdvanceDunningLetter(models.Model):
         if due_type == '2':  # 5 days
             search_domain += [('date_dunning_2', '=', False),
                               ('date_dunning_3', '=', False)]
+            
         if due_type == '3':  # Now
-            search_domain += [('date_dunning_3', '=', False)]
+            search_domain = [('is_employee_advance', '=', True),
+                             ('state', '=', 'paid'),
+                             ('amount_to_clearing', '>', 0.0),
+                             ('date_due', '>=', date_due),
+                             ('date_dunning_3', '=', False)]
+        
         return search_domain
 
     @api.model
@@ -194,10 +201,11 @@ class PABIAdvanceDunningLetter(models.Model):
         today = datetime.strptime(
             fields.Date.context_today(self), '%Y-%m-%d').date()
         expense_ids = []
-        for due_type in ('3', '2', '1'):  # 3 types of notice,
+        for due_type in ('1', '2', '3'):  # 3 types of notice,
             res['dunning_list_' + due_type] = []
-            date_due = today + relativedelta(days=DUE_TYPE_DAYS[due_type])
+            date_due = today - relativedelta(days=DUE_TYPE_DAYS[due_type])
             expenses = Expense.search(self._search_domain(due_type, date_due))
+            print '\n TYPE: %s\nexpense: %s'%(str(due_type),str(expenses))
             for expense in expenses:
                 if expense.id in expense_ids:  # Send only 1 letter.
                     continue
