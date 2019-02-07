@@ -285,6 +285,10 @@ class HRExpenseExpese(models.Model):
                     # FIX ปัญหาปรับโครงสร้าง ที่ใช้ section เก่า
                     if expense.is_advance_clearing and len(invoice.invoice_line) > 1:
                         invoice.invoice_line[0].section_id = invoice.invoice_line[1].section_id
+                        invoice.invoice_line[0].costcenter_id = invoice.invoice_line[1].costcenter_id
+                        invoice.invoice_line[0].taxbranch_id = invoice.invoice_line[1].taxbranch_id
+                        invoice.invoice_line[0].mission_id = invoice.invoice_line[1].mission_id
+                        invoice.invoice_line[0].org_id = invoice.invoice_line[1].org_id
                     expense.invoice_id = invoice
                 expense.write({
                     'account_move_id': expense.invoice_id.move_id.id,
