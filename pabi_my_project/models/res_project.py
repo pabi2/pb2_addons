@@ -673,11 +673,13 @@ class ResProjectMember(models.Model):
         'res.project',
         string='Project',
         required=True,
+        index=True,
         ondelete='cascade',
     )
     employee_id = fields.Many2one(
         'hr.employee',
         string='Employee',
+        index=True,
         required=True,
     )
     project_position = fields.Selection([
