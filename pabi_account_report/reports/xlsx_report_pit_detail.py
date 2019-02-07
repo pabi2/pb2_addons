@@ -161,7 +161,7 @@ class XLSXReportPITDetail(models.TransientModel):
                 
         domain += [('id', 'in', number)]   
             
-        if not (self.category_ids and self.partner_ids):
+        if (not self.category_ids) and (not self.partner_ids):
             domain = []
         
             
