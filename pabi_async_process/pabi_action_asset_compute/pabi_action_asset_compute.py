@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning as UserError, ValidationError
-from asn1crypto.core import Null
 
 
 class PabiActionAssetCompute(models.TransientModel):
@@ -31,7 +30,6 @@ class PabiActionAssetCompute(models.TransientModel):
     )
     grouping_date = fields.Date(
         string='Date',
-        #return current date in your timesone
         default=lambda self: fields.Date.context_today(self),
         help="For Grouping method, this date will be used to create JE",
     )
@@ -206,7 +204,6 @@ class PabiActionAssetCompute(models.TransientModel):
             self = self.with_context(batch_id=depre_batch.id)
             assets = self.env['account.asset'].browse(asset_ids)
             merge_move = (compute_method == 'grouping') and True or False
-            #error always
             move_ids, error_log = assets._compute_entries(
                 period, check_triggers=True,
                 merge_move=merge_move, merge_date=grouping_date,
@@ -272,7 +269,7 @@ class PabiActionAssetCompute(models.TransientModel):
             _('เช็ค  state ใน  Asset Depre. Batch ต้องไม่มี  draft') )
  
         """ Based on matched assets, run through series of test """
-        '''self.ensure_one()
+        self.ensure_one()
         self.test_log_ids.unlink()
         asset_ids = self._search_asset(
             self.calendar_period_id, self.categ_ids.ids,
@@ -293,7 +290,7 @@ class PabiActionAssetCompute(models.TransientModel):
             'res_id': self.id,
             'views': [(False, 'form')],
             'target': 'new',
-        }'''
+        }
 
     @api.model
     def _log_test_period_closed(self, period):
