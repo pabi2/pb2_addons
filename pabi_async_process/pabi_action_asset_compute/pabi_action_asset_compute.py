@@ -185,7 +185,6 @@ class PabiActionAssetCompute(models.TransientModel):
         # Batch ID
         depre_batch = self.env['pabi.asset.depre.batch'].new_batch(period,
                                                                    batch_note)
-
         group_assets = {}  # Group of assets from search
         created_move_ids = []
         error_logs = []
@@ -238,9 +237,10 @@ class PabiActionAssetCompute(models.TransientModel):
                   }
         #check state draft in pabi_asset_depre_batch
         check_state_draft = self.env['pabi.asset.depre.batch'].search([('state', '=', 'draft')]) 
-        if (check_state_draft!=Null):
-             raise UserError(
-            _('Have states draft in pabi_asset_depre_batch ') ) 
+        if (check_state_draft):
+            raise UserError(
+            _('มีการสร้าง Asset Depre. Batch อยู่แล้ว') )
+
         # Call the function
         res = super(PabiActionAssetCompute, self).\
             pabi_action(process_xml_id, job_desc, func_name, **kwargs)
@@ -262,14 +262,14 @@ class PabiActionAssetCompute(models.TransientModel):
 
     @api.multi
     def run_asset_test(self):
-        """ Based on matched assets, run through series of test """
         #check state draft in pabi_asset_depre_batch
         check_state_draft = self.env['pabi.asset.depre.batch'].search([('state', '=', 'draft')]) 
-        if (check_state_draft!=Null):
-             raise UserError(
-            _('Have states draft in pabi_asset_depre_batch ') )
-             
-        self.ensure_one()             
+        if (check_state_draft):
+            raise UserError(
+            _('มีการสร้าง Asset Depre. Batch อยู่แล้ว') )
+ 
+        """ Based on matched assets, run through series of test """
+        self.ensure_one()
         self.test_log_ids.unlink()
         asset_ids = self._search_asset(
             self.calendar_period_id, self.categ_ids.ids,
