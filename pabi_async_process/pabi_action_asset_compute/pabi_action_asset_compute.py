@@ -237,7 +237,7 @@ class PabiActionAssetCompute(models.TransientModel):
                   'grouping_date': self.grouping_date,
                   }
         #check state draft in pabi_asset_depre_batch
-        check_state_draft = self.env['pabi.asset.depre.batch'].search([('state', '=', 'draft')]) 
+        check_state_draft = self.env['pabi.asset.depre.batch'].search([('state', '=', 'draft')])
         if (check_state_draft!=Null):
              raise UserError(
             _('Have states draft in pabi_asset_depre_batch ') ) 
