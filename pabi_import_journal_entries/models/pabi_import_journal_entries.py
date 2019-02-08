@@ -4,6 +4,20 @@ from openerp.exceptions import ValidationError
 from openerp.tools.float_utils import float_compare
 from openerp.addons.pabi_chartfield_merged.models.chartfield import \
     MergedChartField
+from openerp.exceptions import RedirectWarning
+from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import RetryableJobError
+
+
+@job
+def action_done_async_process(session, model_name, res_id):
+    try:
+        res = session.pool[model_name].action_done_backgruond(
+            session.cr, session.uid, [res_id], session.context)
+        return {'result': res}
+    except Exception, e:
+        raise RetryableJobError(e)
 
 
 class PabiImportJournalEntries(models.Model):
@@ -51,6 +65,61 @@ class PabiImportJournalEntries(models.Model):
         readonly=True,
         copy=False,
     )
+    
+    split_entries_job_id = fields.Many2one(
+        'queue.job',
+        string='split entries Job',
+        compute='_compute_split_entries_job_uuid',
+    )
+    split_entries_uuid = fields.Char(
+        string='split entries Job UUID',
+        compute='_compute_split_entries_job_uuid',
+    )
+###########################--------------------------------- start job backgruond ------------------------------- #######################
+    @api.multi
+    def _compute_split_entries_job_uuid(self):
+        for rec in self:
+            task_name = "%s('%s', %s)" % \
+                ('action_done_async_process', self._name, rec.id)
+            jobs = self.env['queue.job'].search([
+                ('func_string', 'like', task_name),
+                ('state', '!=', 'done')],
+                order='id desc', limit=1)
+            rec.split_entries_job_id = jobs and jobs[0] or False
+            rec.split_entries_uuid = jobs and jobs[0].uuid or False
+        return True
+
+    @api.multi
+    def action_done(self):
+        for rec in self:
+            rec.split_entries()
+        return True
+
+    @api.multi
+    def action_done_backgruond(self):
+        if self._context.get('split_entries_async_process', False):
+            self.ensure_one()
+            if self._context.get('job_uuid', False):  # Called from @job
+                return self.action_done()
+            if self.split_entries_job_id:
+                message = _('Confirm Change Owner')
+                action = self.env.ref('pabi_utils.action_my_queue_job')
+                raise RedirectWarning(message, action.id, _('Go to My Jobs'))
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = '%s - Confirm Change Owner' % self.name
+            uuid = action_done_async_process.delay(
+                session, self._name, self.id, description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            #job.process_id = self.env.ref('pabi_async_process.'
+            #                              'confirm_pos_order')
+        else:
+            return self.action_done()
+
+###########################--------------------------------- end job backgruond ------------------------------- #######################
+
+
+
 
     @api.multi
     def _compute_moves(self):

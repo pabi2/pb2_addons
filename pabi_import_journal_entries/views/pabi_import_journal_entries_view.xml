@@ -24,6 +24,7 @@
                 <form string="Import Journal Entries">
                     <header>
                         <button name="split_entries" string="Split Entries" class="oe_highlight" confirm="Split Entries? This operation will read through import lines and recreate as multiple entries" type="object" states="draft"/>
+                        <button name="action_done_backgruond" string="Split Entries(Background)" class="oe_highlight" confirm="Split Entries? This operation will read through import lines and recreate as multiple entries" type="object" states="draft" context="{'split_entries_async_process': 1}"/>
                         <button name="action_cancel" string="Cancel" type="object" states="draft"/>
                         <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,done"/>
                     </header>
@@ -73,6 +74,10 @@
                                 </field>
                             </page>
                         </notebook>
+                        <group>
+                        	<field name="split_entries_job_id"/>
+                        	<field name="split_entries_uuid"/>
+                        </group>
                     </sheet>
                 </form>
             </field>
