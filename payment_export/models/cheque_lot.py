@@ -262,6 +262,16 @@ class ChequeRegister(models.Model):
         string='Supplier Payment',
         readonly=True,
     )
+    posting_date = fields.Date(
+        related='voucher_id.date',
+        string='Posting Date',
+        readonly=True,
+    )
+    period = fields.Many2one(
+        related='voucher_id.period_id',
+        string='Period',
+        readonly=True,
+    )
     amount = fields.Float(
         string='Amount',
         related='voucher_id.amount',
