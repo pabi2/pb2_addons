@@ -129,6 +129,8 @@
                     <field name="journal_id" invisible="1"/>
                     <field name="number"/>
                     <field name="voucher_id"/>
+                    <field name="posting_date"/>
+                    <field name="period"/>
                     <field name="amount" sum="Amount Total"/>
                     <field name="void"/>
                     <field name="note" attrs="{'required': [('void', '=', True)]}"/>
