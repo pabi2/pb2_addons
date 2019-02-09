@@ -102,11 +102,11 @@ class PabiImportJournalEntries(models.Model):
             if self._context.get('job_uuid', False):  # Called from @job
                 return self.action_done()
             if self.split_entries_job_id:
-                message = _('Confirm Change Owner')
+                message = _('Confirm Split Entries')
                 action = self.env.ref('pabi_utils.action_my_queue_job')
                 raise RedirectWarning(message, action.id, _('Go to My Jobs'))
             session = ConnectorSession(self._cr, self._uid, self._context)
-            description = '%s - Confirm Change Owner' % self.name
+            description = '%s - Confirm Split Entries' % self.name
             uuid = action_done_async_process.delay(
                 session, self._name, self.id, description=description)
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
