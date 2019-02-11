@@ -14,6 +14,7 @@
                         </group>
                         <group>
                             <field name="fiscalyear_id"/>
+
                             <!-- <label for="from_period_id" string="Period"/>
                             <div>
                                 <field name="from_period_id" style="width: 45%%"/>
@@ -31,7 +32,7 @@
                             <field name="sector_id" attrs="{'invisible': [('chart_view', '==', 'personnel')]}"/>
                             <field name="subsector_id" attrs="{'invisible': [('chart_view', '==', 'personnel')]}"/>
                             <field name="division_id" attrs="{'invisible': [('chart_view', '==', 'personnel')]}"/>
-                            <field name="section_id" attrs="{'invisible': [('chart_view', '==', 'personnel')]}"/>
+                            <field name="section_id" attrs="{'invisible': [('chart_view', '==', 'personnel')]}" context="{'active_test': False}" />
                             <field name="section_program_id" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}"/>
                             <field name="functional_area_id" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}"/>
                             <field name="program_group_id" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}"/>
@@ -60,10 +61,10 @@
                         <page string="Budget Filters" name="budget_filters">
                             <group>
                                 <group string="Paste list of code to search">
-                                    <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                                    <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1" context="{'active_test': False}"  />
                                 </group>
                                 <group string="Print only">
-                                    <field name="chartfield_ids" nolabel="1"/>
+                                    <field name="chartfield_ids" nolabel="1" />
                                 </group>
                             </group>
                         </page>
