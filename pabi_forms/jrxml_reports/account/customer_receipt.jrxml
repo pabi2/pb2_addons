@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
 	<property name="ireport.zoom" value="1.239669421487624"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="478"/>
+	<property name="ireport.y" value="286"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -322,7 +322,7 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 		<band height="37">
 			<printWhenExpression><![CDATA[$F{invoice_description} != null]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="76" y="0" width="305" height="18"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="76" y="0" width="314" height="37"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -330,13 +330,6 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 (($F{invoice_description} != null && $F{invoice_description} != "" ? $F{invoice_description} + "\n" : "") +
 ($F{loan_agreement_description} != null && $F{loan_agreement_description} != "" ? $F{loan_agreement_description} + "\n" : "") +
 ($F{loan_installment_description} != null && $F{loan_installment_description} != "" ? $F{loan_installment_description} : ""))]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="77" y="18" width="220" height="18"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_name}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
