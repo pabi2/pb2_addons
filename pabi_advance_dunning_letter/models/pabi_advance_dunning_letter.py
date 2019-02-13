@@ -113,11 +113,11 @@ class PABIAdvanceDunningLetter(models.Model):
             search_domain += [('date_dunning_1', '=', False),
                               ('date_dunning_2', '=', False),
                               ('date_dunning_3', '=', False)]
-        if due_type == '2':  # 5 days
+        elif due_type == '2':  # 5 days
             search_domain += [('date_dunning_2', '=', False),
                               ('date_dunning_3', '=', False)]
             
-        if due_type == '3':  # Now
+        elif due_type == '3':  # Now
             search_domain = [('is_employee_advance', '=', True),
                              ('state', '=', 'paid'),
                              ('amount_to_clearing', '>', 0.0),
