@@ -38,7 +38,7 @@
                             <field name="program_group_id" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}"/>
                             <field name="program_id" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}"/>
                             <field name="project_group_id" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}"/>
-                            <field name="project_id" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}"/>
+                            <field name="project_id" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}" context="{'active_test': False}"/>
                             <field name="invest_construction_id" attrs="{'invisible': [('chart_view', '!=', 'invest_construction')]}"/>
                             <field name="invest_construction_phase_id" attrs="{'invisible': [('chart_view', '!=', 'invest_construction')]}"/>
                         </group>
