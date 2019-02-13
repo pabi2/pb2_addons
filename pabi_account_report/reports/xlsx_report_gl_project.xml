@@ -28,7 +28,7 @@
                             <field name="invest_asset_ids" attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}" widget="many2many_tags"/>
                             <field name="section_ids" attrs="{'invisible': [('chart_view', '!=', 'unit_base')]}" widget="many2many_tags"/>
                             <field name="fund_ids" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}" widget="many2many_tags"/>
-                            <field name="project_ids" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}" widget="many2many_tags"/>
+                            <field name="project_ids" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}" widget="many2many_tags" context="{'active_test': False}"/>
                             <field name="invest_construction_ids" attrs="{'invisible': [('chart_view', '!=', 'invest_construction')]}" widget="many2many_tags"/>
                         </group>
                     </group>
@@ -40,7 +40,7 @@
                         </group>
                         <group>
                             <group string="Paste list of code to search">
-                                <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                                <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1" context="{'active_test': False}"/>
                             </group>
                             <group string="Print only">
                                 <field name="chartfield_ids" nolabel="1"/>

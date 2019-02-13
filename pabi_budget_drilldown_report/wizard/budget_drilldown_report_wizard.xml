@@ -39,7 +39,7 @@
                             <field name="program_group_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('project_base'))]}"/>
                             <field name="program_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('project_base'))]}"/>
                             <field name="project_group_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('project_base'))]}"/>
-                            <field name="project_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('project_base'))]}"/>
+                            <field name="project_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('project_base'))]}" context="{'active_test': False}"/>
                             <!-- filter invest_construction -->
                             <field name="invest_construction_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('invest_construction'))]}"/>
 
