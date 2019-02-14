@@ -14,7 +14,7 @@
                 <xpath expr="//notebook[@name='additional_criteria']" position="inside">
                     <page string="Account Filters" name="account_filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="account_ids" domain="[('company_id', '=', company_id), ('user_type.code', 'in', ('Expense', 'Allocation'))]"/>
+                        <field name="account_ids" domain="[('company_id', '=', company_id), '|', ('user_type.code', 'in', ('Expense', 'Allocation')), ('code', 'like', '5%')]"/>
                     </page>
                     <page string="Budget Filters" name="budget_filters">
                         <group>
@@ -31,7 +31,7 @@
                     </page>
                     <page string="Partner Filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="partner_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id), ('supplier', '=', True)]"/>
+                        <field name="partner_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id)]"/>
                     </page>
                 </xpath>
             </field>
