@@ -45,7 +45,7 @@
 
                             # For menu my budget report
                             <field name="section_ids" widget="many2many_tags" attrs="{'invisible': ['|', ('action_type', '!=', 'my_budget_report'), ('report_type', 'not in', ('unit_base'))]}"/>
-                            <field name="project_ids" widget="many2many_tags" attrs="{'invisible': ['|', ('action_type', '!=', 'my_budget_report'), ('report_type', 'not in', ('project_base'))]}"/>
+                            <field name="project_ids" widget="many2many_tags" attrs="{'invisible': ['|', ('action_type', '!=', 'my_budget_report'), ('report_type', 'not in', ('project_base'))]}" context="{'active_test': False}"/>
                         </group>
                         <group>
                             <field name="group_by_chartfield_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all'))]}"/>
