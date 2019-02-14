@@ -61,6 +61,22 @@ class AccountVoucher(models.Model):
     date_cheque_received = fields.Date(
         string='Cheque Received',
     )
+    date_cheque_encashment = fields.Date(
+        string='Cheque Encashment',
+        compute='_compute_date_cheque_encashment',
+    )
+    
+    
+    
+    @api.multi
+    @api.depends('number_cheque')
+    def _compute_date_cheque_encashment(self):
+        for rec in self:
+            search = self.env['pabi.bank.statement.import'].search([['cheque_number','!=', False],
+                                                                    ['cheque_number','=', rec.number_cheque],
+                                                                    ['date_value','!=',False]], limit=1)
+            
+            rec.date_cheque_encashment = search and search.date_value or False
 
     @api.multi
     @api.depends('journal_id')

@@ -25,6 +25,9 @@
                 <field name="number_cheque" position="attributes">
                     <attribute name="attrs">{'invisible': [('number_cheque', '=', False)]}</attribute>
                 </field>
+                <field name="date_cheque_received" position="after">
+                    <field name="date_cheque_encashment" readonly="1" />
+                </field>
                 <field name="bank_branch" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </field>
