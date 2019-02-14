@@ -7,6 +7,7 @@ from openerp.exceptions import RedirectWarning
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import RetryableJobError
+from openerp.exceptions import Warning as UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -131,6 +132,14 @@ class PabiAssetDepreBatch(models.Model):
 
     @api.multi
     def post_entries(self):
+        
+        #check state draft more than one
+        check_state_draft = self.env['pabi.asset.depre.batch'].search([('state', '=', 'draft')]) 
+        count_state_draft = len(check_state_draft.ids)
+        if(count_state_draft>=2):
+            raise UserError( 
+            _('Please check the Asset Depre. Batch menu, don\'t list the Draft state more than one!!'))
+        
         self.ensure_one()
         if self._context.get('job_uuid', False):  # Called from @job
             return self.action_post_entries()
