@@ -239,7 +239,7 @@ class PabiActionAssetCompute(models.TransientModel):
         check_state_draft = self.env['pabi.asset.depre.batch'].search([('state', '=', 'draft')]) 
         if (check_state_draft):
             raise UserError(
-            _('มีการสร้าง Asset Depre. Batch อยู่แล้ว') )
+            _('Please delete the Draft state in the Asset Depre. Batch menu!!') )
 
         # Call the function
         res = super(PabiActionAssetCompute, self).\
@@ -266,7 +266,7 @@ class PabiActionAssetCompute(models.TransientModel):
         check_state_draft = self.env['pabi.asset.depre.batch'].search([('state', '=', 'draft')]) 
         if (check_state_draft):
             raise UserError(
-            _('มีการสร้าง Asset Depre. Batch อยู่แล้ว') )
+            _('Please delete the Draft state in the Asset Depre. Batch menu!!'))
  
         """ Based on matched assets, run through series of test """
         self.ensure_one()
