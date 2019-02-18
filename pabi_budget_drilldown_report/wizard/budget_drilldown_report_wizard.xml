@@ -28,7 +28,7 @@
                             <field name="sector_id"  attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all', 'project_base', 'unit_base', 'personnel', 'invest_asset', 'invest_construction'))]}"/>
                             <field name="subsector_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all', 'project_base', 'unit_base', 'personnel', 'invest_asset', 'invest_construction'))]}"/>
                             <field name="division_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all', 'project_base', 'unit_base', 'personnel', 'invest_asset', 'invest_construction'))]}"/>
-                            <field name="section_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all', 'project_base', 'unit_base', 'invest_asset', 'invest_construction'))]}"/>
+                            <field name="section_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all', 'project_base', 'unit_base', 'invest_asset', 'invest_construction'))]}" context="{'active_test': False}"/>
                             <field name="section_program_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all', 'unit_base'))]}"/>
                             <!-- filter unit_base and invest_asset -->
                             <field name="invest_asset_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('invest_asset'))]}"/>
@@ -44,7 +44,7 @@
                             <field name="invest_construction_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('invest_construction'))]}"/>
 
                             # For menu my budget report
-                            <field name="section_ids" widget="many2many_tags" attrs="{'invisible': ['|', ('action_type', '!=', 'my_budget_report'), ('report_type', 'not in', ('unit_base'))]}"/>
+                            <field name="section_ids" widget="many2many_tags" attrs="{'invisible': ['|', ('action_type', '!=', 'my_budget_report'), ('report_type', 'not in', ('unit_base'))]}" context="{'active_test': False}"/>
                             <field name="project_ids" widget="many2many_tags" attrs="{'invisible': ['|', ('action_type', '!=', 'my_budget_report'), ('report_type', 'not in', ('project_base'))]}" context="{'active_test': False}"/>
                         </group>
                         <group>
@@ -65,7 +65,7 @@
                         <page string="Budget Filters" name="budget_filters">
                             <group>
                                 <group string="Paste list of code to search">
-                                    <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                                    <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"  context="{'active_test': False}"/>
                                 </group>
                                 <group string="Print only">
                                     <field name="chartfield_ids" nolabel="1"/>
