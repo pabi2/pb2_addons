@@ -65,7 +65,7 @@
                         <page string="Budget Filters" name="budget_filters">
                             <group>
                                 <group string="Paste list of code to search">
-                                    <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                                    <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"  context="{'active_test': False}"/>
                                 </group>
                                 <group string="Print only">
                                     <field name="chartfield_ids" nolabel="1"/>
