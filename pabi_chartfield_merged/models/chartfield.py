@@ -10,7 +10,7 @@ class MergedChartField(ChartField):
         string='Budget',
         compute='_compute_chartfield',
         inverse='_inverse_chartfield',
-        domain=[('model', '!=', 'res.personnel.costcenter')],
+        
     )
 
     @api.multi
