@@ -11,6 +11,7 @@ class XLSXReportPayableDetail(models.TransientModel):
     account_ids = fields.Many2many(
         'account.account',
         string='Accounts',
+        
     )
     partner_ids = fields.Many2many(
         'res.partner',
@@ -107,8 +108,8 @@ class XLSXReportPayableDetail(models.TransientModel):
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['account.move.line']
-        dom = [('account_id.type', '=', 'payable'),
-               ('date_maturity', '!=', False),
+        dom = [#('account_id.type', '=', 'payable'),
+               #('date_maturity', '!=', False),
                ('move_id.state', '=', 'posted')]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
@@ -130,5 +131,11 @@ class XLSXReportPayableDetail(models.TransientModel):
             dom += [('date', '<=', self.date_end)]
         if self.as_of_date:
             dom += [('date', '<=', self.as_of_date)]
+            
         self.results = Result.search(dom).sorted(
             key=lambda l: (l.partner_id.search_key, l.date, l.move_id.name))
+
+
+
+
+
