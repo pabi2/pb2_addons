@@ -15,7 +15,7 @@ class AccountAssetRemove(models.TransientModel):
     journal_id = fields.Many2one(
         'account.journal',
         string='Journal',
-        domain=[('asset', '=', True), '|', ('analytic_journal_id', '=', False), ('code', '=', 'AJ')],
+        domain=[('asset', '=', True), ('analytic_journal_id', '=', False)],
         required=True,
         help="Asset Journal (No-Budget)",
     )
