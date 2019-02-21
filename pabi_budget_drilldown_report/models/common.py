@@ -229,24 +229,42 @@ class SearchCommon(ChartField, object):
             section_ids.extend([user.employee_id.section_id.id])
         if user.has_group(see_own_division):
             division_id = user.employee_id.section_id.division_id.id
-            section = Section.search([('division_id', '=', division_id)])
+            if self._name == 'budget.drilldown.report.wizard':
+                section = Section.search([('division_id', '=', division_id),'|',('active','=',True),('active','=',False)])
+            else:
+                section = Section.search([('division_id', '=', division_id)])
             section_ids.extend(section.ids)
         if user.has_group(see_own_subsector):
             subsector_id = user.employee_id.section_id.subsector_id.id
-            section = Section.search([('subsector_id', '=', subsector_id)])
+            if self._name == 'budget.drilldown.report.wizard':
+                section = Section.search([('subsector_id', '=', subsector_id),'|',('active','=',True),('active','=',False)])
+            else:
+                section = Section.search([('subsector_id', '=', subsector_id)])
             section_ids.extend(section.ids)
         if user.has_group(see_own_sector):
             sector_id = user.employee_id.section_id.sector_id.id
-            section = Section.search([('sector_id', '=', sector_id)])
+            if self._name == 'budget.drilldown.report.wizard':
+                section = Section.search([('sector_id', '=', sector_id),'|',('active','=',True),('active','=',False)])
+            else:
+                section = Section.search([('sector_id', '=', sector_id)])
             section_ids.extend(section.ids)
         if user.has_group(see_own_org):
             org_id = user.employee_id.section_id.org_id.id
-            section = Section.search([('org_id', '=', org_id)])
+            if self._name == 'budget.drilldown.report.wizard':
+                section = Section.search([('org_id', '=', org_id),'|',('active','=',True),('active','=',False)])
+            else:
+                section = Section.search([('org_id', '=', org_id)])
             section_ids.extend(section.ids)
         if user.has_group(see_all_org):
-            section = Section.search([])
+            if self._name == 'budget.drilldown.report.wizard':
+                section = Section.search(['|',('active','=',True),('active','=',False)])
+            else:
+                section = Section.search([])
             section_ids.extend(section.ids)
-        section_ids = list(set(filter(lambda l: l is not False, section_ids)))
+        if self._name == 'budget.drilldown.report.wizard':
+                section_ids = list(set(filter(lambda l: l, section_ids)))
+        else:
+            section_ids = list(set(filter(lambda l: l is not False, section_ids)))
         return [('id', 'in', section_ids)]
 
     @api.model
