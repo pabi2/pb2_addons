@@ -76,8 +76,8 @@ class AccountTrailBalanceReport(models.Model):
     def _get_init_moves(self, report, account, target_move, charge_type):
         MoveLine = self.env['account.move.line']
         domain = [('account_id', '=', account.id),
-                  '|', ('centralisation', '!=', 'normal'),
-                  '&', ('centralisation', '=', 'normal'),
+                  '|', ('journal_id.centralisation', '=', True),
+                  '&', ('journal_id.centralisation', '=', False),
                   ('date', '<', report.date_start)]
         if charge_type:
             domain += [('charge_type', '=', charge_type)]
@@ -90,7 +90,7 @@ class AccountTrailBalanceReport(models.Model):
     def _get_focus_moves(self, report, account, target_move, charge_type):
         MoveLine = self.env['account.move.line']
         domain = [('account_id', '=', account.id),
-                  ('centralisation', '=', 'normal'),
+                  ('journal_id.centralisation', '=', False),
                   ('date', '>=', report.date_start),
                   ('date', '<=', report.date_stop)]
         if charge_type:
