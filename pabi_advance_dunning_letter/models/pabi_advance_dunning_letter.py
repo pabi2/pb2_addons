@@ -121,7 +121,7 @@ class PABIAdvanceDunningLetter(models.Model):
             search_domain = [('is_employee_advance', '=', True),
                              ('state', '=', 'paid'),
                              ('amount_to_clearing', '>', 0.0),
-                             ('date_due', '>=', date_due),
+                             ('date_due', '<=', date_due),
                              ('date_dunning_3', '=', False)]
         
         return search_domain
