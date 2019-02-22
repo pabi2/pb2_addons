@@ -203,7 +203,7 @@ class PABIAdvanceDunningLetter(models.Model):
         expense_ids = []
         for due_type in ('1', '2', '3'):  # 3 types of notice,
             res['dunning_list_' + due_type] = []
-            date_due = today - relativedelta(days=DUE_TYPE_DAYS[due_type])
+            date_due = today + relativedelta(days=DUE_TYPE_DAYS[due_type])
             expenses = Expense.search(self._search_domain(due_type, date_due))
             print '\n TYPE: %s\nexpense: %s'%(str(due_type),str(expenses))
             for expense in expenses:
