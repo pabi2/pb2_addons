@@ -117,6 +117,8 @@
                         <div class="act_as_cell" style="width: 100px;">${_('Activity')}</div>
                         ## account code
                         <div class="act_as_cell" style="width: 65px;">${_('Account')}</div>
+                        ## partner code
+                        <div class="act_as_cell" style="width: 80px;">${_('Partner code')}</div>
                         ## partner
                         <div class="act_as_cell" style="width: 140px;">${_('Partner')}</div>
                         ## move reference
@@ -141,6 +143,7 @@
                         <div class="act_as_cell" style="width: 100px;">${_('Created by')}</div>
                         ## Reconcile ID
                         <div class="act_as_cell" style="width: 50px;">${_('Rec.ID')}</div>
+                        ## Partial ID
                         <div class="act_as_cell" style="width: 50px;">${_('Part.ID')}</div>
 
                     </div>
@@ -179,6 +182,8 @@
                           <div class="act_as_cell"></div>
                           ## account code
                           <div class="act_as_cell"></div>
+                          ## partner code
+                          <div class="act_as_cell"></div>
                           ## partner
                           <div class="act_as_cell"></div>
                           ## move reference
@@ -203,6 +208,7 @@
                          <div class="act_as_cell"></div>
                          ## Reconciled ID
                          <div class="act_as_cell"></div>
+                         ## Partial ID
                          <div class="act_as_cell"></div>
                         </div>
                       %endif
@@ -243,6 +249,8 @@
                           <div class="act_as_cell">${line.get('activity') or ''}</div>
                           ## account code
                           <div class="act_as_cell">${account.code}</div>
+                          ## partner code
+                          <div class="act_as_cell">${line.get('partner_code') or ''}</div>
                           ## partner
                           <div class="act_as_cell overflow_ellipsis">${line.get('partner_name') or ''}</div>
                           ## move reference
@@ -267,6 +275,7 @@
                           <div class="act_as_cell">${line.get('created_name') or ''}</div>
                           ## Reconciled ID
                           <div class="act_as_cell">${line.get('reconcile_id') or ''}</div>
+                          ## Partial ID
                           <div class="act_as_cell">${line.get('partial_id') or ''}</div>
                       </div>
                       %endfor
@@ -296,6 +305,7 @@
                         <div class="act_as_cell" style="width: 100px;"></div>
                         ## Reconciled ID
                         <div class="act_as_cell" style="width: 50px;"></div>
+                        ## Partial ID
                         <div class="act_as_cell" style="width: 50px;"></div>
                     </div>
                 </div>
