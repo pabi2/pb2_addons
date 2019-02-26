@@ -33,6 +33,7 @@ _column_sizes = [
     ('activity_group', 20),
     ('activity', 20),
     ('account_code', 12),
+    ('partner_code', 14),
     ('partner', 30),
     ('reference', 30),
     ('source_document', 30),
@@ -205,7 +206,10 @@ class general_ledger_xls(report_xls):
                 c_hdr_cell_style),
             ('account_code', 1, 0, 'text', ('Account'), None,
                 c_hdr_cell_style),
-            ('partner', 1, 0, 'text', _('Partner'), None, c_hdr_cell_style),
+            ('partner_code', 1, 0, 'text', ('Partner code'), None,
+                c_hdr_cell_style),
+            ('partner', 1, 0, 'text', _('Partner'), None, 
+             c_hdr_cell_style),
             ('reference', 1, 0, 'text', _('Reference'), None,
                 c_hdr_cell_style),
             ('source_document', 1, 0, 'text', _('Source Doc.'),
@@ -379,8 +383,8 @@ class general_ledger_xls(report_xls):
                          line.get('activity_group', '')),
                         ('activity', 1, 0, 'text', line.get('activity', '')),
                         ('account_code', 1, 0, 'text', account.code),
-                        ('partner', 1, 0, 'text',
-                         line.get('partner_name', '')),
+                        ('partner_code', 1, 0, 'text', line.get('partner_code', '')),
+                        ('partner', 1, 0, 'text', line.get('partner_name', '')),
                         ('reference', 1, 0, 'text', line.get('lref', '')),
                         ('source_document', 1, 0, 'text',
                          line.get('source_document', '')),
@@ -405,10 +409,11 @@ class general_ledger_xls(report_xls):
                                 'currency_code') or '', None,
                              ll_cell_style_center),
                         ]
-                    if _p.display_reconciled(data) == 'Open Items':
-                        rec = None
-                    else:
-                        rec = line.get('reconcile_id', '')
+                    #if _p.display_reconciled(data) == 'Open Items':
+                    #    rec = None
+                    #else:
+                    #    rec = line.get('reconcile_id', '')
+                    rec = line.get('reconcile_id', '')
                     c_specs += [
                         # PABI2
                         ('posted_by', 1, 0, 'text', line.get('posted_by', '')),
