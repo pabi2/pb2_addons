@@ -136,7 +136,6 @@
                     <field name="note" attrs="{'required': [('void', '=', True)]}"/>
                     <field name="user_id"/>
                     <field name="update_date"/>
-                    <field name="cheque_lot_id"/>
                     <field name="payment_export_id"/>
                 </tree>
             </field>
