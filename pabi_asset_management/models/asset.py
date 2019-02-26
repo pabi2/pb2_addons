@@ -32,14 +32,14 @@ class AccountAssetStatus(models.Model):
         size=100,
         required=True,
     )
-    map_state = fields.Selection(
-        [('draft', 'Draft'),
-         ('open', 'Running'),
-         ('close', 'Close'),
-         ('removed', 'Removed'), ],
-        string='Asset State Mapping',
-        required=True,
-    )
+#     map_state = fields.Selection(
+#         [('draft', 'Draft'),
+#          ('open', 'Running'),
+#          ('close', 'Close'),
+#          ('removed', 'Removed'), ],
+#         string='Asset State Mapping',
+#         required=True,
+#     )
     map_state_draft = fields.Char(
         string='Show on Draft',
         index=True,
@@ -535,9 +535,8 @@ class AccountAsset(ChartFieldAction, models.Model):
         # Validate status change must be within status map
         elif 'status' in vals and vals.get('status', False):
             status = Status.browse(vals.get('status'))
-            if status.map_state == 'close':
-                code = status.code.replace('close_', '')
-                vals['status'] = Status.search([('code', '=', code)]).id
+            if status.map_state_close == 'close':
+                vals['status'] = Status.search([('code', '=', status.code)]).id
             for asset in self:
                 # jakkrich.cha 
                 # if status.map_state != asset.state:
