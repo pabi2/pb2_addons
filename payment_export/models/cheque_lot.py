@@ -2,6 +2,8 @@
 from datetime import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from pychart.arrow import default
+
 
 
 class ChequeLot(models.Model):
@@ -82,6 +84,11 @@ class ChequeLot(models.Model):
         'cheque.register',
         'cheque_lot_id',
         string='Cheque Registers',
+    )
+    
+    update_date = fields.Many2one(
+        'payment.export',
+        'write_date',
     )
 
     @api.multi
@@ -299,6 +306,34 @@ class ChequeRegister(models.Model):
          'unique(number, journal_id)',
          'Cheque number must be unique of the same payment method!')
     ]
+    
+    ''''user_id = fields.Many2one(
+        'payment.export',
+        string='Update by',
+        readonly=True,
+    )'''    
+    
+    user_id = fields.Char(
+        related='cheque_lot_id.user_id.name',
+        string='Update by',
+    )
+    
+    update_date = fields.Date(
+        compute='_compute_write_date',
+        string='Update date'
+    )
+        
+    
+    @api.depends('payment_export_id')
+    def _compute_write_date(self):
+        for record in self:
+            if record.payment_export_id.write_date :
+                record.update_date = datetime.strptime(record.payment_export_id.write_date,'%Y-%m-%d %H:%M:%S').strftime("%Y-%m-%d")
+            
+            
+    
+    '''write_date = fields.function('_get_write_date',type='date',string='Update date')'''
+    
 
     @api.multi
     def write(self, vals):
