@@ -736,7 +736,7 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
     target_status = fields.Many2one(
         'account.asset.status',
         string='Target Status',
-        domain="[('map_state', 'in', ('removed', 'draft'))]",
+        domain="['|',('map_state_draft', '=', 'draft'), ('map_state_removed', '=', 'removed')]",
         required=True,
     )
     move_id = fields.Many2one(
@@ -934,7 +934,7 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
     target_status = fields.Many2one(
         'account.asset.status',
         string='Target Status',
-        domain="[('map_state', 'in', ('removed', 'draft'))]",
+        domain="['|',('map_state_draft', '=', 'draft'), ('map_state_removed', '=', 'removed')]",
         required=True,
     )
     account_id = fields.Many2one(

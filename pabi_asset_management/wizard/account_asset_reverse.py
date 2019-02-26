@@ -12,7 +12,7 @@ class AccountAssetReverse(models.TransientModel):
     target_status = fields.Many2one(
         'account.asset.status',
         string='Target Status',
-        domain="[('map_state', '=', 'removed')]",
+        domain="[('map_state_removed', '=', 'removed')",
         default=lambda self:
         self.env.ref('pabi_asset_management.asset_status_reverse', False),
         required=True,

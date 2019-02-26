@@ -40,6 +40,22 @@ class AccountAssetStatus(models.Model):
         string='Asset State Mapping',
         required=True,
     )
+    map_state_draft = fields.Char(
+        string='Show on Draft',
+        index=True,
+    )
+    map_state_open = fields.Char(
+        string='Show on Open',
+        index=True,
+    )
+    map_state_close = fields.Char(
+        string='Show on Close',
+        index=True,
+    )
+    map_state_removed = fields.Char(
+        string='Show on Removed',
+        index=True,
+    )
 
 
 class AccountAsset(ChartFieldAction, models.Model):
@@ -81,7 +97,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         string='Asset Status',
         default=lambda self: self.env.ref('pabi_asset_management.'
                                           'asset_status_cancel'),
-        domain="[('map_state', '=', state)]",
+        domain="['|','|','|',('map_state_draft', '=', state),('map_state_open', '=', state),('map_state_close', '=', state),('map_state_removed', '=', state)]",
         required=False,
         index=True,
         help="Status vs State\n"
@@ -507,7 +523,10 @@ class AccountAsset(ChartFieldAction, models.Model):
         # Status follow state
         if 'state' in vals and vals.get('state', False):
             if vals.get('state') == 'close':
-                vals['status'] = Status.search([('code', '=', 'expire')]).id
+                # jakkrich.cha 
+                if 'status' in vals and vals.get('status', False):
+                    if vals.get('status') == 'expire':
+                        vals['status'] = Status.search([('code', '=', 'expire')]).id
             if vals.get('state') == 'open':
                 vals['status'] = Status.search([('code', '=', 'normal')]).id
             if vals.get('state') == 'draft':
@@ -516,8 +535,16 @@ class AccountAsset(ChartFieldAction, models.Model):
         # Validate status change must be within status map
         elif 'status' in vals and vals.get('status', False):
             status = Status.browse(vals.get('status'))
+            if status.map_state == 'close':
+                code = status.code.replace('close_', '')
+                vals['status'] = Status.search([('code', '=', code)]).id
             for asset in self:
-                if status.map_state != asset.state:
+                # jakkrich.cha 
+                # if status.map_state != asset.state:
+                if not (status.map_state_draft == asset.state or \
+                        status.map_state_open == asset.state or \
+                        status.map_state_close == asset.state or \
+                        status.map_state_removed == asset.state):
                     raise ValidationError(_('Invalid change of asset status'))
         res = super(AccountAsset, self).write(vals)
         # # Following code repeat the compute depre, but w/o it, value is zero
