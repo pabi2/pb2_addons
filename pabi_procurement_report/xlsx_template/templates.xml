@@ -530,5 +530,90 @@
               }
             </field>
         </record>
+        
+        
+        <!-- PABI Purchase Annual -->
+        <record id="xlsx_report_pabi_purchase_tracking" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.purchase.tracking</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_purchase_tracking.xlsx</field>
+            <field name="name">Purchase Tracking</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B2': 'org_name${value or ""}',
+                            'B3': 'budget_name${value or ""}',
+                            'B5': 'pr_number${value or ""}',
+                            'B6': 'pr_date${value or ""}',
+                            'B7': 'pr_requester_name${value or ""}',
+                            'B8': 'pr_responsible_name${value or ""}',
+                            'B10': 'po_number${value or ""}',
+                            'B11': 'po_date${value or ""}',
+                            'B12': 'po_responsible_name${value or ""}',
+                        },
+                        'results': {
+							'A15': 'pr_date${value or ""}',
+							'B15': 'pr_name${value or ""}',
+							'C15': 'pr_requested${value or ""}',
+							'D15': '${value or ""}',
+							'E15': 'pr_date_approve${value or ""}',
+							'F15': 'pr_responsible${value or ""}',
+							'G15': '${value or ""}',
+							'H15': 'pr_objective${value or ""}',
+							'I15': 'pr_amount_total${value or ""}',
+							'J15': 'pr_budget${value or ""}',
+							'K15': 'pd_name${value or ""}',
+							'L15': 'pd_ordering_date${value or ""}',
+							'M15': 'pd_date_doc_approve${value or ""}',
+							'N15': 'po_name${value or ""}',
+							'O15': 'po_date${value or ""}',
+							'P15': 'po_date_contract_start${value or ""}',
+							'Q15': 'po_date_contract_end${value or ""}',
+							'R15': 'po_display_code${value or ""}',
+							'S15': 'po_start_date${value or ""}',
+							'T15': 'po_end_date${value or ""}',
+							'U15': 'po_partner${value or ""}',
+							'V15': 'pol_docline_seq${value or ""}',
+							'W15': 'pol_product${value or ""}',
+							'X15': 'pol_name${value or ""}',
+							'Y15': 'pol_date_planned${value or ""}',
+							'Z15': 'pol_budget${value or ""}',
+							'AA15': 'pol_fund${value or ""}',
+							'AB15': 'pol_cost_control${value or ""}',
+							'AC15': 'pol_product_qty${value or ""}',
+							'AD15': 'pol_product_uom${value or ""}',
+							'AE15': 'pol_price_unit${value or ""}',
+							'AF15': 'pol_sub_total${value or ""}',
+							'AG15': 'pol_currency${value or ""}',
+							'AH15': 'pol_fiscalyear${value or ""}',
+							'AI15': 'po_responsible${value or ""}',
+							'AJ15': 'po_payment_term${value or ""}',
+							'AK15': 'pwa_name${value or ""}',
+							'AL15': 'sp_name${value or ""}',
+							'AM15': 'pwq_date_accept${value or ""}',
+							'AN15': 'pb_name${value or ""}',
+							'AO15': 'pb_date_sent${value or ""}',
+							'AP15': 'pb_date${value or ""}',
+							'AQ15': 'inv_name${value or ""}',
+							'AR15': 'inv_date_invoice${value or ""}',
+							'AS15': 'inv_user${value or ""}',
+							'AT15': 'vou_name${value or ""}',
+							'AU15': 'vou_date${value or ""}',
+							'AV15': 'vou_date_value${value or ""}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+              }
+            </field>
+        </record>
+        
+        
+        
+        
     </data>
 </openerp>
