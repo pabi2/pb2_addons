@@ -32,6 +32,10 @@ class XLSXReportExpenseLedger(models.TransientModel):
          ('external', 'External')],
         string='Charge Type',
     )
+    operating_unit_ids = fields.Many2one(
+        'operating.unit',
+        string='Org',
+    )
     user_type = fields.Many2one(
         'account.account.type',
         string='Account Type',
@@ -50,6 +54,15 @@ class XLSXReportExpenseLedger(models.TransientModel):
         for rec in self:
             rec.count_chartfield = len(rec.chartfield_ids)
 
+    @api.onchange('operating_unit_ids')
+    def onchange_org(self):
+        domain_acc = []
+        domain_partner = []
+        if self.operating_unit_ids:
+            domain_acc += [('company_id', '=', self.company_id.ids), '|', ('user_type.code', 'in', ('Expense', 'Allocation')), ('code', 'like', '5%'), ('operating_unit_id', 'in', self.operating_unit_ids.ids)]
+            domain_partner += [('company_id', '=', self.company_id.ids), ('supplier', '=', True), ('user_id.default_operating_unit_id', 'in', self.operating_unit_ids.ids)]
+            return {'domain': {'account_ids': domain_acc, 'partner_ids': domain_partner}}
+
     @api.multi
     def _compute_results(self):
         """
@@ -62,6 +75,9 @@ class XLSXReportExpenseLedger(models.TransientModel):
         dom = [('account_id.user_type', '=', self.user_type.id)]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
+        if self.operating_unit_ids:
+            dom += [('account_id.operating_unit_id', 'in', self.operating_unit_ids.ids)]
+            dom += [('partner_ids.user_id.default_operating_unit_id', 'in', self.operating_unit_ids.ids)]
         if self.chartfield_ids:
             # map beetween chartfield_id with chartfield type
             chartfields = [('section_id', 'sc:'),
