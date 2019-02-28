@@ -17,7 +17,7 @@ class StockPicking(models.Model):
                 wa = WA.browse(acceptance_id)
                 if wa.num_installment > 0:
                     asset_values = dict(
-                        [(x.product_id.id, x.price_unit)
+                        [(x.product_id.id, x.price_unit_untaxed)
                          for x in wa.acceptance_line_ids]
                     )
                     for picking in self:
