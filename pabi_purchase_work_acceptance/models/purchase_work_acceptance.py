@@ -222,11 +222,18 @@ class PurchaseWorkAcceptance(models.Model):
     )
     num_installment = fields.Integer(
         string='Number of Installment',
-        related='order_id.num_installment',
+        compute='_compute_num_installment',
         store=True,
         readonly=True,
         help="Total Installment, if this WA is created with PO's invoice plan",
     )
+
+    @api.multi
+    @api.depends('order_id')
+    def _compute_num_installment(self):
+        for rec in self:
+            rec.num_installment = rec.order_id.use_invoice_plan and \
+                rec.order_id.num_installment or False
 
     @api.model
     @api.depends('date_receive', 'date_scheduled_end')
@@ -757,6 +764,11 @@ class PurchaseWorkAcceptanceLine(models.Model):
     price_unit = fields.Float(
         string='Unit Price',
     )
+    price_unit_untaxed = fields.Float(
+        string='Unit Price (untaxed)',
+        compute="_compute_price_subtotal",
+        store=True,
+    )
     price_subtotal = fields.Float(
         string='Sub Total',
         compute="_compute_price_subtotal",
@@ -778,9 +790,14 @@ class PurchaseWorkAcceptanceLine(models.Model):
             taxes = rec.tax_ids.compute_all(rec.price_unit, rec.to_receive_qty,
                                             product=rec.product_id)
             rec.price_subtotal = taxes['total']
+            taxes = rec.tax_ids.compute_all(rec.price_unit, 1.0,
+                                            product=rec.product_id)
+            rec.price_unit_untaxed = taxes['total']
             if rec.line_id:
                 po_currency = rec.line_id.order_id.currency_id
                 rec.price_subtotal = po_currency.round(rec.price_subtotal)
+                rec.price_unit_untaxed = \
+                    po_currency.round(rec.price_unit_untaxed)
 
     @api.constrains('to_receive_qty')
     def _check_over_qty(self):
