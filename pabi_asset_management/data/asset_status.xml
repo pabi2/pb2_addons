@@ -1,65 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-    <data noupdate="1">
+    <data noupdate="0">
         <record id="asset_status_normal" model="account.asset.status">
             <field name="sequence">1</field>
             <field name="code">normal</field>
             <field name="name">ใช้งานปกติ</field>
-            <field name="map_state">open</field>
+            <field name="map_state_draft"></field>
+            <field name="map_state_open">open</field>
+            <field name="map_state_close">close</field>
+            <field name="map_state_removed"></field>
         </record>
         <record id="asset_status_deliver" model="account.asset.status">
             <field name="sequence">2</field>
             <field name="code">deliver</field>
             <field name="name">ส่งมอบ</field>
-            <field name="map_state">removed</field>
+            <field name="map_state_draft"></field>
+            <field name="map_state_open"></field>
+            <field name="map_state_close"></field>
+            <field name="map_state_removed">removed</field>
         </record>
         <record id="asset_status_transfer" model="account.asset.status">
             <field name="sequence">3</field>
             <field name="code">transfer</field>
             <field name="name">โอนเป็นครุภัณฑ์</field>
-            <field name="map_state">open</field>
+            <field name="map_state_draft"></field>
+            <field name="map_state_open">open</field>
+            <field name="map_state_close">close</field>
+            <field name="map_state_removed"></field>
         </record>
         <record id="asset_status_break" model="account.asset.status">
             <field name="sequence">4</field>
             <field name="code">break</field>
             <field name="name">ชำรุด</field>
-            <field name="map_state">open</field>
+            <field name="map_state_draft"></field>
+            <field name="map_state_open">open</field>
+            <field name="map_state_close">close</field>
+            <field name="map_state_removed"></field>
         </record>
         <record id="asset_status_to_dispose" model="account.asset.status">
             <field name="sequence">5</field>
             <field name="code">to_dispose</field>
             <field name="name">รอจำหน่าย</field>
-            <field name="map_state">open</field>
+            <field name="map_state_draft"></field>
+            <field name="map_state_open">open</field>
+            <field name="map_state_close">close</field>
+            <field name="map_state_removed"></field>
         </record>
         <record id="asset_status_dispose" model="account.asset.status">
             <field name="sequence">6</field>
             <field name="code">dispose</field>
             <field name="name">จำหน่าย</field>
-            <field name="map_state">removed</field>
+            <field name="map_state_draft"></field>
+            <field name="map_state_open"></field>
+            <field name="map_state_close"></field>
+            <field name="map_state_removed">removed</field>
         </record>
         <record id="asset_status_lost" model="account.asset.status">
             <field name="sequence">7</field>
             <field name="code">lost</field>
             <field name="name">สูญหาย</field>
-            <field name="map_state">removed</field>
+            <field name="map_state_draft"></field>
+            <field name="map_state_open"></field>
+            <field name="map_state_close"></field>
+            <field name="map_state_removed">removed</field>
         </record>
         <record id="asset_status_expire" model="account.asset.status">
             <field name="sequence">8</field>
             <field name="code">expire</field>
             <field name="name">หมดอายุการใช้งาน</field>
-            <field name="map_state">close</field>
+            <field name="map_state_draft"></field>
+            <field name="map_state_open"></field>
+            <field name="map_state_close">close</field>
+            <field name="map_state_removed"></field>
         </record>
         <record id="asset_status_cancel" model="account.asset.status">
             <field name="sequence">9</field>
             <field name="code">cancel</field>
             <field name="name">ยกเลิก</field>
-            <field name="map_state">draft</field>
+            <field name="map_state_draft">draft</field>
+            <field name="map_state_open"></field>
+            <field name="map_state_close"></field>
+            <field name="map_state_removed"></field>
         </record>
         <record id="asset_status_reverse" model="account.asset.status">
             <field name="sequence">10</field>
             <field name="code">reverse</field>
             <field name="name">ยกเลิกเลขครุภันฑ์</field>
-            <field name="map_state">removed</field>
+            <field name="map_state_draft"></field>
+            <field name="map_state_open"></field>
+            <field name="map_state_close"></field>
+            <field name="map_state_removed">removed</field>
         </record>
     </data>
 </openerp>
