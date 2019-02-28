@@ -82,7 +82,7 @@ class ChequeLot(models.Model):
         'cheque.register',
         'cheque_lot_id',
         string='Cheque Registers',
-    )
+    )    
 
     @api.multi
     def unlink(self):
@@ -298,7 +298,21 @@ class ChequeRegister(models.Model):
         ('number_unique',
          'unique(number, journal_id)',
          'Cheque number must be unique of the same payment method!')
-    ]
+    ]   
+    user_id = fields.Char(
+        related='cheque_lot_id.user_id.name',
+        string='Update by',
+    )   
+    update_date = fields.Date(
+        compute='_compute_write_date',
+        string='Update date'
+    )
+          
+    @api.depends('payment_export_id')
+    def _compute_write_date(self):
+        for record in self:
+            if record.payment_export_id.write_date :
+                record.update_date = datetime.strptime(record.payment_export_id.write_date,'%Y-%m-%d %H:%M:%S').strftime("%Y-%m-%d")
 
     @api.multi
     def write(self, vals):
