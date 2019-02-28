@@ -9,7 +9,7 @@ class AccountAssetRemove(models.TransientModel):
     target_status = fields.Many2one(
         'account.asset.status',
         string='Asset Status',
-        domain="[('map_state_removed', '=', 'removed')",
+        domain="[('map_state_removed', '=', 'removed')]",
         required=True,
     )
     journal_id = fields.Many2one(

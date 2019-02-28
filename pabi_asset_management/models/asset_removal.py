@@ -186,7 +186,7 @@ class AccountAssetRemovalLine(models.Model):
     target_status = fields.Many2one(
         'account.asset.status',
         string='Asset Status',
-        domain="[('map_state_removed', '=', 'removed')",
+        domain="[('map_state_removed', '=', 'removed')]",
         required=True,
     )
     _sql_constraints = [
