@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <field name="fiscalyear_date_end" position="after">
                     <field name="charge_type"/>
+                    <field name="operating_unit_ids"/>
                     <field name="user_type" invisible="1"/>
                 </field>
                 <xpath expr="//notebook[@name='additional_criteria']" position="inside">
