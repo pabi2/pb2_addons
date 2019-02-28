@@ -235,7 +235,6 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
             dom += [('po_date', '<=', self.po_date_to)]
         if self.po_responsible_ids:
             dom += [('po_responsible_id', 'in', self.po_responsible_ids.ids)]
-        print '-------------------------dom--', dom
         self.results = Result.search(dom)
 
 
@@ -249,10 +248,6 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
     org_id = fields.Many2one(
         'res.org',
         string='Org',
-    )
-    chartfield_id = fields.Many2one(
-        'chartfield.view',
-        string='Budget',
     )
     costcenter_id = fields.Many2one(
         'res.costcenter',
@@ -273,6 +268,14 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         'res.partner',
         string='Responsible Person(PR)',
     )
+    prl_id = fields.Many2one(
+        'purchase.request.line',
+        string='PR line',
+    )
+    pd_id = fields.Many2one(
+        'purchase.requisition',
+        string='PD id',
+    )
     po_id = fields.Many2one(
         'purchase.order',
         string='PO doc',
@@ -284,12 +287,39 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         'res.partner',
         string='Responsible Person(PO)',
     )
-    
+    pol_id = fields.Many2one(
+        'purchase.order.line',
+        string='PO line',
+    )
+    poc_id = fields.Many2one(
+        'purchase.contract',
+        string='POC id',
+    )
+    pwa_id = fields.Many2one(
+        'purchase.work.acceptance',
+        string='PWA id',
+    )
+    sp_id = fields.Many2one(
+        'stock.picking',
+        string='SP id',
+    )
+    inv_id = fields.Many2one(
+        'account.invoice',
+        string='Invoice id',
+    )
+    pb_id = fields.Many2one(
+        'purchase.billing',
+        string='PB id',
+    )
+    vou_id = fields.Many2one(
+        'account.voucher',
+        string='Voucher id',
+    )
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
-        SELECT 
+        SELECT row_number() over (order by pr.id) as id,
         org.id as "org_id", cct.id as "costcenter_id", pr.id as "pr_id", pr.date_start as "pr_date", pr.name as "pr_name", 
         (SELECT part.id FROM res_users uer left join res_partner part on part.id = uer.partner_id
         WHERE uer.id = pr.requested_by) as "pr_requester_id",
@@ -299,6 +329,7 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         WHERE uer.id = pr.responsible_uid) as "pr_responsible_id",
         (SELECT part.display_name2 FROM res_users uer left join res_partner part on part.id = uer.partner_id
         WHERE uer.id = pr.responsible_uid) as "pr_responsible", pr.objective as "pr_objective", pr.amount_total as "pr_amount_total", 
+        prl.id as "prl_id",
         (CASE
             WHEN prl.section_id is not null THEN (
                 select concat('[',cos.code, ']', cos.name_short)
@@ -330,12 +361,12 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
                 left join res_personnel_costcenter rpc on rpc.id = prl.personnel_costcenter_id
                 left join res_costcenter cos on cos.id = rpc.costcenter_id
                 LIMIT 1)
-        END) as "pr_budget", pd.name as "pd_name", pd.ordering_date as "pd_ordering_date", pd.date_doc_approve as "pd_date_doc_approve",
+        END) as "pr_budget", pd.id as "pd_id", pd.name as "pd_name", pd.ordering_date as "pd_ordering_date", pd.date_doc_approve as "pd_date_doc_approve",
         po.id as "po_id", po.name as "po_name", po.date_order as "po_date", po.date_contract_start as "po_date_contract_start", 
-        po.date_contract_end as "po_date_contract_end", poc.display_code as "po_display_code", poc.start_date as "po_start_date", 
+        po.date_contract_end as "po_date_contract_end", poc.id as "poc_id", poc.display_code as "po_display_code", poc.start_date as "poc_start_date", 
         poc.end_date as "po_end_date",
         (SELECT part.id FROM res_users uer left join res_partner part on part.id = uer.partner_id
-        WHERE uer.id = po.responsible_uid) as "po_responsible_id",
+        WHERE uer.id = po.responsible_uid) as "po_responsible_id", pol.id as "pol_id",
         (SELECT part.display_name2 FROM res_partner part WHERE part.id = po.partner_id) as "po_partner", pol.docline_seq as "pol_docline_seq", 
         (SELECT prod.name_template FROM product_product prod WHERE prod.id = pol.product_id) as "pol_product", pol.name as "pol_name",
         pol.date_planned as "pol_date_planned", 
@@ -378,10 +409,10 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         (SELECT fyear.name FROM account_fiscalyear fyear WHERE fyear.id = pol.fiscalyear_id) as "pol_fiscalyear", 
         (SELECT part.display_name2 FROM res_partner part WHERE part.id = po.responsible_uid) as "po_responsible",
         (SELECT payterm.name FROM account_payment_term payterm WHERE payterm.id = po.payment_term_id) as "po_payment_term", 
-        pwa.name as "pwa_name", sp.name as "sp_name", pwa.date_accept as "pwq_date_accept", pb.name as "pb_name", 
-        pb.date_sent as "pb_date_sent", pb.date as "pb_date", inv.number as "inv_name", inv.date_invoice as "inv_date_invoice", 
+        pwa.id as "pwa_id", pwa.name as "pwa_name", sp.id as "sp_id", sp.name as "sp_name", pwa.date_accept as "pwq_date_accept", pb.id as "pb_id", pb.name as "pb_name", 
+        pb.date_sent as "pb_date_sent", pb.date as "pb_date", inv.id as "inv_id", inv.number as "inv_name", inv.date_invoice as "inv_date_invoice", 
         (SELECT part.display_name2 FROM res_users uer left join res_partner part on part.id = uer.partner_id 
-         WHERE uer.id = inv.user_id) as "inv_user", vou.number as "vou_name", vou.date as "vou_date", vou.date_value as "vou_date_value"
+         WHERE uer.id = inv.user_id) as "inv_user", vou.id as "vou_id", vou.number as "vou_name", vou.date as "vou_date", vou.date_value as "vou_date_value"
         
         FROM purchase_request pr
         LEFT join purchase_request_line prl
