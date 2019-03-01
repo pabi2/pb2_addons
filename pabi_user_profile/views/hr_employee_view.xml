@@ -55,7 +55,17 @@
 						</group>
 					</group>
 				</xpath>
+				<xpath expr="//form/sheet/notebook/page[@string='Projects']" position="after">
+					<page string="Section Report">
+                    	<group string="Section Report" >
+							<field name="report_admin"/>
+                        	<field name="section_rpt_ids"/>
+						</group>  
+                    </page>
+				</xpath> 
 			</field>
         </record>
+        
+        
     </data>
 </openerp>

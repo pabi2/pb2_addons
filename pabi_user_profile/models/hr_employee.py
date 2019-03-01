@@ -9,7 +9,6 @@ class ResourceResource(models.Model):
         required=False,
     )
 
-
 class HREmployee(models.Model):
     _inherit = 'hr.employee'
 
@@ -85,6 +84,16 @@ class HREmployee(models.Model):
         'hr.status',
         string='Status',
     )
+    #add by Karndarrat.ngm 20190301
+    report_admin = fields.Boolean(
+        string='Report Admin'
+        ,default=False,store=True)
+    section_rpt_ids = fields.Many2many(
+        'res.section',
+        'hr_section_rpt_rel',
+        'employee_id',
+        'section_id',
+        string='Section')
 
     @api.multi
     @api.depends('employee_code', 'title_id',

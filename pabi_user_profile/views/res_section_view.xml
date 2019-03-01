@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_res_section_form" model="ir.ui.view">
+            <field name="name">view.res.section.form</field>
+            <field name="model">res.section</field>
+            <field name="inherit_id" ref="pabi_budget_monitor.view_res_section_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//notebook/page[@string='Budget Monitor']" position="after">
+				<!-- <xpath expr="//form/sheet/notebook/page[@string='Budget Monitor']" position="after">-->
+                    <page string="Report">
+                        <field name="employee_rpt_ids"/>
+                    </page>
+				</xpath> 
+            </field>
+        </record>
+    </data>
+</openerp>

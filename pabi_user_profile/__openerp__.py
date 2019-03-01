@@ -36,5 +36,6 @@ Add more user's profile
         'views/hr_employee_view.xml',
         'views/hr_status_view.xml',
         'views/res_users_view.xml',
+        'views/res_section_view.xml',
     ],
 }
