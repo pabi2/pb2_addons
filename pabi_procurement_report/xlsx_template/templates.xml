@@ -576,9 +576,8 @@
 							'S15': 'poc_id.start_date${value and value.strftime("%d-%m-%Y") or ""}',
 							'T15': 'poc_id.end_date${value and value.strftime("%d-%m-%Y") or ""}',
 							'U15': 'po_id.partner_id.display_name2${value or ""}',
-							'V15': 'po_id.order_line.docline_seq${value or ""}',
-							
-							'W15': 'pol_id.name${value or ""}',
+							'V15': 'pol_id.docline_seq${value or ""}',
+							'W15': 'pol_id.product_id.name${value or ""}',
 							'X15': 'pol_id.name${value or ""}',
 							'Y15': 'pol_id.date_planned${value and value.strftime("%d-%m-%Y") or ""}',
 							'Z15': 'pol_id.costcenter_id.id${value and ("["+str(env["res.costcenter"].browse(value).code)+"]" or "")+(str(env["res.costcenter"].browse(value).name_short) or "") or ""}',
