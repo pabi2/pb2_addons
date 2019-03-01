@@ -12,8 +12,8 @@
                 		<group>
 		                    <field name="org_ids" widget="many2many_tags"/>
 		                    <field name="chartfield_ids" widget="many2many_tags"/>
-		                    <field name="org_name" invisible="0"/>
-		                    <field name="budget_name" invisible="0"/>
+		                    <field name="org_name" invisible="1"/>
+		                    <field name="budget_name" invisible="1"/>
 		                </group>
                        	<div>
                         	<h1><label string="PR"/></h1>
@@ -25,10 +25,10 @@
 		                        <field name="pr_responsible_ids" widget="many2many_tags"/>
 		                        <field name="pr_date_from"/>
 		                        <field name="pr_date_to"/>
-		                        <field name="pr_number" invisible="0"/>
-		                        <field name="pr_requester_name" invisible="0"/>
-		                        <field name="pr_responsible_name" invisible="0"/>
-		                        <field name="pr_date" invisible="0"/>
+		                        <field name="pr_number" invisible="1"/>
+		                        <field name="pr_requester_name" invisible="1"/>
+		                        <field name="pr_responsible_name" invisible="1"/>
+		                        <field name="pr_date" invisible="1"/>
 		                    </group>
 		                </group>  
                        	<div>
@@ -40,9 +40,9 @@
 		                        <field name="po_responsible_ids" widget="many2many_tags"/>
 		                        <field name="po_date_from"/>
 		                        <field name="po_date_to"/>
-		                        <field name="po_number" invisible="0"/>
-		                        <field name="po_responsible_name" invisible="0"/>
-		                        <field name="po_date" invisible="0"/>
+		                        <field name="po_number" invisible="1"/>
+		                        <field name="po_responsible_name" invisible="1"/>
+		                        <field name="po_date" invisible="1"/>
 	                        </group>
 	                    </group>
 	            	</sheet>

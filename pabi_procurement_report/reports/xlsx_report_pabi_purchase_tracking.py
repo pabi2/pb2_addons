@@ -7,75 +7,27 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
     _name = 'xlsx.report.pabi.purchase.tracking'
     _inherit = 'xlsx.report'
 
-    org_ids = fields.Many2many(
-        'res.org',
-        string='Org',
-    )
-    chartfield_ids = fields.Many2many(
-        'chartfield.view',
-        string='Budget',
-    )
-    pr_ids = fields.Many2many(
-        'purchase.request',
-        string='PR doc',
-    )
-    pr_date_from = fields.Date(
-        string='PR Date From',
-    )
-    pr_date_to = fields.Date(
-        string='PR Date To',
-    )
-    pr_requester_ids = fields.Many2many(
-        'res.partner',
-        string='Requested by(PR)',
-    )
-    pr_responsible_ids = fields.Many2many(
-        'res.partner',
-        string='Responsible Person(PR)',
-    )
-    po_ids = fields.Many2many(
-        'purchase.order',
-        string='PO doc',
-    )
-    po_date_from = fields.Date(
-        string='PO Date From',
-    )
-    po_date_to = fields.Date(
-        string='PO Date To',
-    )
-    po_responsible_ids = fields.Many2many(
-        'res.partner',
-        string='Responsible Person(PO)',
-    )
-    org_name = fields.Char(
-        string='Org',
-    )
-    budget_name = fields.Char(
-        string='Budget',
-    )
-    pr_number = fields.Char(
-        string='PR doc',
-    )
-    po_number = fields.Char(
-        string='PO doc',
-    )
-    pr_requester_name = fields.Char(
-        string='Requested by(PR)',
-    )
-    pr_responsible_name = fields.Char(
-        string='Responsible Person(PR)',
-    )
-    po_responsible_name = fields.Char(
-        string='Responsible Person(PO)',
-    )
-    pr_date = fields.Char(
-        string='PO Date',
-    )
-    po_date = fields.Char(
-        string='PO Date',
-    )
-    
-    
+    org_ids = fields.Many2many('res.org', string='Org',)
+    chartfield_ids = fields.Many2many('chartfield.view', string='Budget',)
+    pr_ids = fields.Many2many('purchase.request', string='PR doc',)
+    pr_date_from = fields.Date(string='PR Date From',)
+    pr_date_to = fields.Date(string='PR Date To',)
+    pr_requester_ids = fields.Many2many('res.partner', string='Requested by(PR)',)
+    pr_responsible_ids = fields.Many2many('res.partner', string='Responsible Person(PR)',)
+    po_ids = fields.Many2many('purchase.order', string='PO doc',)
+    po_date_from = fields.Date(string='PO Date From',)
+    po_date_to = fields.Date(string='PO Date To',)
+    po_responsible_ids = fields.Many2many('res.partner', string='Responsible Person(PO)',)
+    org_name = fields.Char(string='Org',)
+    budget_name = fields.Char(string='Budget',)
+    pr_number = fields.Char(string='PR doc',)
+    po_number = fields.Char(string='PO doc',)
+    pr_requester_name = fields.Char(string='Requested by(PR)',)
+    pr_responsible_name = fields.Char(string='Responsible Person(PR)',)
+    po_responsible_name = fields.Char(string='Responsible Person(PO)',)
+    pr_date = fields.Char(string='PO Date',)
+    po_date = fields.Char(string='PO Date',)
+
     # Report Result
     results = fields.Many2many(
         'xlsx.report.pabi.purchase.tracking.results',
@@ -244,77 +196,24 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
     _auto = False
     _description = 'Temp table as ORM holder'
 
-
-    org_id = fields.Many2one(
-        'res.org',
-        string='Org',
-    )
-    costcenter_id = fields.Many2one(
-        'res.costcenter',
-        string='Costcenter',
-    )
-    pr_id = fields.Many2one(
-        'purchase.request',
-        string='PR doc',
-    )
-    pr_date = fields.Date(
-        string='PR Date',
-    )
-    pr_requester_id = fields.Many2one(
-        'res.partner',
-        string='Requested by(PR)',
-    )
-    pr_responsible_id = fields.Many2one(
-        'res.partner',
-        string='Responsible Person(PR)',
-    )
-    prl_id = fields.Many2one(
-        'purchase.request.line',
-        string='PR line',
-    )
-    pd_id = fields.Many2one(
-        'purchase.requisition',
-        string='PD id',
-    )
-    po_id = fields.Many2one(
-        'purchase.order',
-        string='PO doc',
-    )
-    po_date = fields.Date(
-        string='PO Date',
-    )
-    po_responsible_id = fields.Many2one(
-        'res.partner',
-        string='Responsible Person(PO)',
-    )
-    pol_id = fields.Many2one(
-        'purchase.order.line',
-        string='PO line',
-    )
-    poc_id = fields.Many2one(
-        'purchase.contract',
-        string='POC id',
-    )
-    pwa_id = fields.Many2one(
-        'purchase.work.acceptance',
-        string='PWA id',
-    )
-    sp_id = fields.Many2one(
-        'stock.picking',
-        string='SP id',
-    )
-    inv_id = fields.Many2one(
-        'account.invoice',
-        string='Invoice id',
-    )
-    pb_id = fields.Many2one(
-        'purchase.billing',
-        string='PB id',
-    )
-    vou_id = fields.Many2one(
-        'account.voucher',
-        string='Voucher id',
-    )
+    org_id = fields.Many2one('res.org', string='Org',)
+    costcenter_id = fields.Many2one('res.costcenter', string='Costcenter',)
+    pr_id = fields.Many2one( 'purchase.request', string='PR doc',)
+    pr_date = fields.Date( string='PR Date',)
+    pr_requester_id = fields.Many2one('res.partner', string='Requested by(PR)',)
+    pr_responsible_id = fields.Many2one('res.partner', string='Responsible Person(PR)',)
+    prl_id = fields.Many2one('purchase.request.line', string='PR line',)
+    pd_id = fields.Many2one('purchase.requisition', string='PD id',)
+    po_id = fields.Many2one('purchase.order', string='PO doc',)
+    po_date = fields.Date(string='PO Date',)
+    po_responsible_id = fields.Many2one('res.partner', string='Responsible Person(PO)',)
+    pol_id = fields.Many2one('purchase.order.line', string='PO line',)
+    poc_id = fields.Many2one('purchase.contract', string='POC id',)
+    pwa_id = fields.Many2one('purchase.work.acceptance', string='PWA id',)
+    sp_id = fields.Many2one('stock.picking', string='SP id',)
+    inv_id = fields.Many2one('account.invoice', string='Invoice id',)
+    pb_id = fields.Many2one('purchase.billing', string='PB id',)
+    vou_id = fields.Many2one('account.voucher', string='Voucher id',)
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -444,7 +343,7 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         LEFT JOIN account_voucher vou
         ON vou.id = voul.voucher_id
         LEFT JOIN operating_unit org
-        ON org.id = pr.operating_unit_id and org.id = po.operating_unit_id
+        ON org.id = pr.operating_unit_id or org.id = po.operating_unit_id
         LEFT JOIN res_costcenter cct
-        ON cct.id = prl.costcenter_id and cct.id = pol.costcenter_id
+        ON cct.id = prl.costcenter_id or cct.id = pol.costcenter_id
         order by pr.id, po.id, inv.name, vou.name)""" % (self._table, ))
