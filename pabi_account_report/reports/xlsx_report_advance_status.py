@@ -36,10 +36,10 @@ class XLSXReportAdvanceStatus(models.TransientModel):
             WHERE expense.is_employee_advance = TRUE AND
                 expense.amount_advanced IS NOT NULL
             GROUP BY expense.id
-            HAVING expense.amount_advanced >
+            HAVING expense.amount_advanced >=
                 SUM(CASE WHEN clearing.id IS NULL THEN 0
-                         WHEN clearing.date <= '%s' THEN
-                            clearing.clearing_amount ELSE 0 END)
+                         WHEN clearing.date <= '%s' THEN (CASE WHEN clearing.clearing_amount IS NULL THEN 0 ELSE clearing.clearing_amount END)
+                         ELSE 0 END)
         """ % (date_report, ))
         return map(lambda l: l[0], self._cr.fetchall())
 
