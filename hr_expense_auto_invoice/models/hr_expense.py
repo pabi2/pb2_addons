@@ -284,21 +284,23 @@ class HRExpenseExpese(models.Model):
                     invoice = expense._create_supplier_invoice_from_expense()
                     # FIX ปัญหาปรับโครงสร้าง ที่ใช้ section เก่า
                     if expense.is_advance_clearing and len(invoice.invoice_line) > 1:
-                        # Case Section
-                        invoice.invoice_line[0].section_id = invoice.invoice_line[1].section_id
-                        invoice.invoice_line[0].costcenter_id = invoice.invoice_line[1].costcenter_id
-                        invoice.invoice_line[0].taxbranch_id = invoice.invoice_line[1].taxbranch_id
-                        invoice.invoice_line[0].mission_id = invoice.invoice_line[1].mission_id
-                        invoice.invoice_line[0].org_id = invoice.invoice_line[1].org_id
-                        # Case Project
-                        invoice.invoice_line[0].section_program_id = invoice.invoice_line[1].section_program_id
-                        invoice.invoice_line[0].project_group_id = invoice.invoice_line[1].project_group_id
-                        invoice.invoice_line[0].program_group_id = invoice.invoice_line[1].program_group_id
-                        invoice.invoice_line[0].project_id = invoice.invoice_line[1].project_id
-                        invoice.invoice_line[0].program_id = invoice.invoice_line[1].program_id
-                        invoice.invoice_line[0].chart_view = invoice.invoice_line[1].chart_view
-                        invoice.invoice_line[0].functional_area_id = invoice.invoice_line[1].functional_area_id
                         
+                        invoice.invoice_line[0].write({
+                            # Case Section
+                            'section_id': invoice.invoice_line[1].section_id.id or False,
+                            'costcenter_id': invoice.invoice_line[1].costcenter_id.id or False,
+                            'taxbranch_id': invoice.invoice_line[1].taxbranch_id.id or False,
+                            'mission_id': invoice.invoice_line[1].mission_id.id or False,
+                            'org_id': invoice.invoice_line[1].org_id.id or False,
+                            # Case Project
+                            'section_program_id': invoice.invoice_line[1].section_program_id.id or False,
+                            'project_group_id': invoice.invoice_line[1].project_group_id.id or False,
+                            'program_group_id': invoice.invoice_line[1].program_group_id.id or False,
+                            'project_id': invoice.invoice_line[1].project_id.id or False,
+                            'program_id': invoice.invoice_line[1].program_id.id or False,
+                            'chart_view': invoice.invoice_line[1].chart_view or False,
+                            'functional_area_id': invoice.invoice_line[1].functional_area_id.id or False,
+                        })            
                     expense.invoice_id = invoice
                 expense.write({
                     'account_move_id': expense.invoice_id.move_id.id,
