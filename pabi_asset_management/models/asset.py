@@ -522,11 +522,11 @@ class AccountAsset(ChartFieldAction, models.Model):
         Status = self.env['account.asset.status']
         # Status follow state
         if 'state' in vals and vals.get('state', False):
-            if vals.get('state') == 'close':
+#             if vals.get('state') == 'close':
                 # jakkrich.cha 
-                if 'status' in vals and vals.get('status', False):
-                    if vals.get('status') == 'expire':
-                        vals['status'] = Status.search([('code', '=', 'expire')]).id
+#                 if 'status' in vals and vals.get('status', False):
+#                     if vals.get('status') == 'expire':
+#                         vals['status'] = Status.search([('code', '=', 'expire')]).id
             if vals.get('state') == 'open':
                 vals['status'] = Status.search([('code', '=', 'normal')]).id
             if vals.get('state') == 'draft':
