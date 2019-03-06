@@ -12,8 +12,9 @@
                         <field name="line_ids" nolabel="1">
                             <tree editable="bottom">
                                 <field name="project_id"/>
-                                <field name="activity_group_id"/>
+                                <field name="budget_method"/>
                                 <field name="charge_type"/>
+                                <field name="activity_group_id"/>
                                 <field name="activity_id"/>
                                 <field name="planned_amount" sum="Total"/>
                                 <field name="released_amount" sum="Total"/>
