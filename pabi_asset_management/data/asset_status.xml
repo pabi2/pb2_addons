@@ -69,7 +69,7 @@
             <field name="code">expire</field>
             <field name="name">หมดอายุการใช้งาน</field>
             <field name="map_state_draft"></field>
-            <field name="map_state_open"></field>
+            <field name="map_state_open">open</field>
             <field name="map_state_close">close</field>
             <field name="map_state_removed"></field>
         </record>
