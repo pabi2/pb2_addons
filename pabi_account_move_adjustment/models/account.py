@@ -96,7 +96,7 @@ class AccountMove(models.Model):
                 action = self.env.ref('pabi_utils.action_my_queue_job')
                 raise RedirectWarning(message, action.id, _('Go to My Jobs'))
             session = ConnectorSession(self._cr, self._uid, self._context)
-            description = '%s - Confirm Post' % self.name
+            description = '%s - Confirm Post' % (self.ref or self.name)
             uuid = action_done_async_process.delay(
                 session, self._name, self.id, description=description)
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
