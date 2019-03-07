@@ -14,7 +14,7 @@ MAGIC_COLUMNS = ('id', 'create_uid', 'create_date', 'write_uid', 'write_date')
 @job
 def action_done_async_process(session, model_name, res_id):
     try:
-        res = session.pool[model_name].action_done_backgruond(
+        res = session.pool[model_name].action_done_background(
             session.cr, session.uid, [res_id], session.context)
         return {'result': res}
     except Exception, e:
@@ -96,7 +96,7 @@ class AccountMove(models.Model):
                 action = self.env.ref('pabi_utils.action_my_queue_job')
                 raise RedirectWarning(message, action.id, _('Go to My Jobs'))
             session = ConnectorSession(self._cr, self._uid, self._context)
-            description = '%s - Confirm Post' % self.name
+            description = '%s - Confirm Post' % (self.ref or self.name)
             uuid = action_done_async_process.delay(
                 session, self._name, self.id, description=description)
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
