@@ -50,7 +50,10 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
             [('internal', 'Internal'),
              ('external', 'External')],
             string='Charge Type',
-        )
+        ),
+        'org_ids': fields.many2many(
+            'res.org', string='Org'),
+    
     }
     _defaults = {
         'amount_currency': False,
