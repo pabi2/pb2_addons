@@ -58,8 +58,8 @@ class XLSXReportAdvanceStatus(models.TransientModel):
         date_report = self.date_report
         Result = self.env['hr.expense.expense']
         dom = [('is_employee_advance', '=', True),
-               ('invoice_id.date_paid', '!=', False),
-               ('invoice_id.date_paid', '<=', date_report),
+               #('invoice_id.date_paid', '!=', False),
+               #('invoice_id.date_paid', '<=', date_report),
                ('id', 'in', self._get_expense_id(date_report))]
         if self.employee_ids:
             dom += [('employee_id', 'in', self.employee_ids.ids)]
