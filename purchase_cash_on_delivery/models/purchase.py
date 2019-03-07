@@ -52,12 +52,16 @@ class PurchaseOrder(models.Model):
         # cod_pay_term = self.env.ref('purchase_cash_on_delivery.'
         #                             'cash_on_delivery_payment_term')
         # If not fully paid
+        
         for purchase in self:
-            if purchase.invoice_method == 'order' and \
-                    purchase.payment_term_id.id in cod_pay_terms.ids:
-                if not purchase.invoiced or \
-                    False in [x.state == 'paid' and True or False
-                              for x in purchase.invoice_ids]:
+            if purchase.invoice_method == 'order' and purchase.payment_term_id.id in cod_pay_terms.ids:
+                order_amount_total = 0
+                chk_paid = [(x.state == 'paid' and True or False) for x in purchase.invoice_ids]
+                for inv in purchase.invoice_ids:
+                    if inv.state == 'paid': 
+                        order_amount_total += inv.amount_total
+                    
+                if (not purchase.invoiced) or (not chk_paid) or (self.amount_total != order_amount_total):
                     raise ValidationError(
                         _('For cash on delivery (COD), tranfer is allowed '
                           'only when all invoice(s) are fully paid!'))
