@@ -3,6 +3,7 @@ from openerp import models, fields, api, _
 from openerp.addons.pabi_chartfield_merged.models.chartfield \
 import MergedChartField
 from openerp.exceptions import ValidationError
+from openerp.exceptions import RedirectWarning
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import RetryableJobError
