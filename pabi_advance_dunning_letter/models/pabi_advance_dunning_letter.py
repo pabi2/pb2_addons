@@ -24,7 +24,7 @@ class PABIAdvanceDunningLetter(models.Model):
     date_print = fields.Date(
         string='Print Date',
         default=lambda self: fields.Date.context_today(self),
-        readonly=True,
+        #readonly=True,
     )
     print_pdf = fields.Boolean(
         string='Print as PDF',
