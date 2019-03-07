@@ -13,14 +13,14 @@ REPORT_TYPES = [('all', 'All'),
 REPORT_GROUPBY = {
     'all': [],
     'unit_base': ['section_id', 'activity_group_id',
-                  'charge_type', 'activity_id'],
+                  'charge_type', 'activity_id', 'budget_method'],
     'project_base': ['project_id', 'activity_group_id',
-                     'charge_type', 'activity_id'],
-    'invest_asset': ['org_id', 'invest_asset_id'],
+                     'charge_type', 'activity_id', 'budget_method'],
+    'invest_asset': ['org_id', 'invest_asset_id', 'budget_method'],
     'invest_construction': ['org_id', 'invest_construction_id',
-                            'invest_construction_phase_id'],
+                            'invest_construction_phase_id', 'budget_method'],
     'personnel': ['org_id', 'personnel_costcenter_id',
-                  'activity_group_id', 'activity_id']
+                  'activity_group_id', 'activity_id', 'budget_method']
 }
 
 
@@ -178,6 +178,10 @@ class SearchCommon(ChartField, object):
     )
     group_by_invest_construction_phase_id = fields.Boolean(
         string='Group By - Project Phase',
+        default=False,
+    )
+    group_by_budget_method = fields.Boolean(
+        string='Group By - Budget Method',
         default=False,
     )
     # group_by_personnel_budget_id = fields.Boolean(

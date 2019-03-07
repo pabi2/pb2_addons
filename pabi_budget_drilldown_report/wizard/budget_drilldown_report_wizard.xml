@@ -59,6 +59,7 @@
                             <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel'))]}"/>
                             <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel'))]}"/>
                             <field name="group_by_invest_asset_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('invest_asset'))]}"/>
+                            <field name="group_by_budget_method" attrs="{'invisible': ['|', ('action_type', 'not in', ('my_budget_report','budget_overview_report')), ('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
                         </group>
                     </group>
                     <notebook attrs="{'invisible': [('report_type', '!=', 'all')]}">
