@@ -17,6 +17,7 @@
                     </field>
                     <field name="target_move" position="after">
                         <field name="charge_type"/>
+                        <field name="org_ids" widget="many2many_tags"/>
                     </field>
                     <xpath expr="/form/label[@string='']" position="replace">
                         <separator string="Trial Balance" colspan="4"/>

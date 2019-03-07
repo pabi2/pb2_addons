@@ -14,7 +14,9 @@ class AccountTrialBalanceWizard(orm.TransientModel):
             [('internal', 'Internal'),
              ('external', 'External')],
             string='Charge Type',
-        )
+        ),
+        'org_ids': fields.many2many(
+            'res.org', string='Org'),
     }
 
     def pre_print_report(self, cr, uid, ids, data, context=None):
