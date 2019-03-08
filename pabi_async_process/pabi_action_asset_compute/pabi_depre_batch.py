@@ -132,14 +132,14 @@ class PabiAssetDepreBatch(models.Model):
 
     @api.multi
     def post_entries(self):
-        
+
         #check state draft more than one
-        check_state_draft = self.env['pabi.asset.depre.batch'].search([('state', '=', 'draft')]) 
+        check_state_draft = self.env['pabi.asset.depre.batch'].search([('state', '=', 'draft')])
         count_state_draft = len(check_state_draft.ids)
         if(count_state_draft>=2):
-            raise UserError( 
+            raise UserError(
             _('Please check the Asset Depre. Batch menu, don\'t list the Draft state more than one!!'))
-        
+
         self.ensure_one()
         if self._context.get('job_uuid', False):  # Called from @job
             return self.action_post_entries()
@@ -217,7 +217,8 @@ class PabiAssetDepreBatch(models.Model):
                 alter table account_move disable trigger all""")
             # reset move_check in depre line
             self._cr.execute("""
-                update account_asset_line set move_check = false
+                update account_asset_line
+                set move_check = false, move_id = null
                 where move_id in (
                     select id from account_move
                     where asset_depre_batch_id = %s)
