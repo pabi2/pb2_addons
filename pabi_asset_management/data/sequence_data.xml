@@ -122,6 +122,20 @@
             <field name="padding">7</field>
             <field name="company_id" eval="False"/>
         </record>
+        
+        # PA
+        <record id="seq_type_parent_asset_pa" model="ir.sequence.type">
+            <field name="name">Parent Asset (PA)</field>
+            <field name="code">parent.asset.pa</field>
+        </record>
+
+        <record id="seq_parent_asset_pa" model="ir.sequence">
+            <field name="name">Parent Asset (PA)</field>
+            <field name="code">parent.asset.pa</field>
+            <field name="prefix">PA</field>
+            <field name="padding">7</field>
+            <field name="company_id" eval="False"/>
+        </record>
 
     </data>
 </openerp>
