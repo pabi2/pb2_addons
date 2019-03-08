@@ -306,7 +306,25 @@
 				<text><![CDATA[กรณีที่ท่านได้จัดส่งเอกสารใบสําคัญและ/หรือใบเสร็จรับเงินให้กับฝ่ายการเงินและบัญชีก่อนวันที่ในเอกสาร]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="324" y="175" width="317" height="16"/>
+				<reportElement x="25" y="151" width="727" height="16">
+					<printWhenExpression><![CDATA[$F{due_type} == "3"]]></printWhenExpression>
+				</reportElement>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[หมายเหตุ ฝ่ายการเงินและบัญชี ต้องขออภัยมา ณ โอกาสนี้ หากท่านไม่ได้รับ E-mail]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="173" width="752" height="16">
+					<printWhenExpression><![CDATA[$F{due_type} == "3"]]></printWhenExpression>
+				</reportElement>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ในการแจ้งเตือนก่อนวันครบกำหนดการสะสางเงินยืมทดรองจ่ายครั้งที่ 1 และครั้งที่ 2 ที่ผ่านมา]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="324" y="220" width="317" height="16"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
