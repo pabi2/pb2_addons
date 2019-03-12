@@ -14,7 +14,7 @@
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
                     <field name="by_fiscalyear" invisible="True"/>
-                    <field name="fiscalyear_id" string='By Fiscal Year'/>
+                    <field name="fiscalyear_id" string='Fiscal Year'/>
                 </xpath>
                 <xpath expr="//field[@name='use_advance']" position="after">
                     <field name="advance_rounding" attrs="{'invisible': [('use_advance', '=', False)]}"/>
