@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="asset_status_draft" model="xlsx.report.status">
+            <field name="name">Draft</field>
+            <field name="status">draft</field>
+            <field name="code"></field>
+            <field name="location">hr.expense.expense</field>
+        </record>
+        <record id="asset_status_cancelled" model="xlsx.report.status">
+            <field name="name">Rejected</field>
+            <field name="status">cancelled</field>
+            <field name="code"></field>
+            <field name="location">hr.expense.expense</field>
+        </record>
+        <record id="asset_status_confirm" model="xlsx.report.status">
+            <field name="name">Wait for Accept</field>
+            <field name="status">confirm</field>
+            <field name="code"></field>
+            <field name="location">hr.expense.expense</field>
+        </record>
+        <record id="asset_status_accepted" model="xlsx.report.status">
+            <field name="name">Accepted</field>
+            <field name="status">accepted</field>
+            <field name="code"></field>
+            <field name="location">hr.expense.expense</field>
+        </record>
+        <record id="asset_status_done" model="xlsx.report.status">
+            <field name="name">Waiting Payment</field>
+            <field name="status">done</field>
+            <field name="code"></field>
+            <field name="location">hr.expense.expense</field>
+        </record>
+        <record id="asset_status_invoice_except" model="xlsx.report.status">
+            <field name="name">Invoice Exception</field>
+            <field name="status">invoice_except</field>
+            <field name="code"></field>
+            <field name="location">hr.expense.expense</field>
+        </record>
+        <record id="asset_status_paid" model="xlsx.report.status">
+            <field name="name">Paid</field>
+            <field name="status">paid</field>
+            <field name="code"></field>
+            <field name="location">hr.expense.expense</field>
+        </record>
+        
+    </data>
+</openerp>

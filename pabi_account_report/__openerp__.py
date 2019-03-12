@@ -27,6 +27,7 @@
     'data': [
         'security/ir.model.access.csv',
         'data/menu.xml',
+        'data/status_data.xml',
         'data/report_data.xml',
         'data/default_value.xml',
         'data/report_paperformat.xml',
