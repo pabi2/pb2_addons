@@ -19,12 +19,18 @@ class XLSXReportAdvanceStatus(models.TransientModel):
         'hr.employee',
         string='Employee',
     )
+    status = fields.Many2many(
+        'xlsx.report.status',
+        string='Stauts',
+        domain=[('location', '=', 'hr.expense.expense')],
+    )
     results = fields.Many2many(
         'hr.expense.expense',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
+  
 
     @api.model
     def _get_expense_id(self, date_report):
@@ -58,11 +64,25 @@ class XLSXReportAdvanceStatus(models.TransientModel):
         date_report = self.date_report
         Result = self.env['hr.expense.expense']
         dom = [('is_employee_advance', '=', True),
-               ('state', '!=', 'cancelled'),
+               #('state', '!=', 'cancelled'),
                #('invoice_id.date_paid', '!=', False),
                #('invoice_id.date_paid', '<=', date_report),
                ('id', 'in', self._get_expense_id(date_report))]
+        if not self.status:
+            dom += [('state', 'in', ['draft', 'confirm', 'accepted', 'done', 'invoice_except', 'paid'])]
+        elif self.status:
+            res = []
+            for st in self.status:
+                res += [self.env['xlsx.report.status'].browse(st.id).status]
+            dom += [('state', 'in', res)]
         if self.employee_ids:
             dom += [('employee_id', 'in', self.employee_ids.ids)]
         self.results = Result.search(
             dom, order="operating_unit_id,employee_id,invoice_id")
+
+
+
+
+
+
+
