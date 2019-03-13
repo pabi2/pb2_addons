@@ -732,12 +732,12 @@ FROM account_move_line l
     LEFT JOIN res_project rproject ON (l.project_id = rproject.id)
     LEFT JOIN res_mission rm ON (l.mission_id = rm.id)
     WHERE l.id in %s """
-        if org_ids: #tangkwa 12/03/02019
+        if org_ids: 
              monster += (" AND l.org_id in %s")
         monster += (" ORDER BY %s" % (order,))
         try:
             if org_ids:
-                self.cursor.execute(monster, (tuple(move_line_ids),tuple(org_ids))) #tangkwa 12/03/02019
+                self.cursor.execute(monster, (tuple(move_line_ids),tuple(org_ids)))
             else:
                 self.cursor.execute(monster, (tuple(move_line_ids),)) 
             res = self.cursor.dictfetchall()
