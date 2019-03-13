@@ -89,6 +89,7 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
                           'reconcile_cond',  # PABI2
                           'partner_ids',
                           'charge_type',
+                          'org_ids',
                           ],
                          context=context)[0]
         data['form'].update(vals)

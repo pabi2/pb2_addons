@@ -31,6 +31,9 @@ class CommonReportHeaderWebkit(common_report_header):
     def get_fiscalyear_br(self, data):
         return self._get_info(data, 'fiscalyear_id', 'account.fiscalyear')
 
+    def get_org_name_br(self, data):
+        return self._get_info(data, 'org_ids', 'general.ledger.webkit')
+
     def _get_chart_account_id_br(self, data):
         return self._get_info(data, 'chart_account_id', 'account.account')
 
@@ -574,9 +577,9 @@ class CommonReportHeaderWebkit(common_report_header):
             raise osv.except_osv(
                 _('No valid filter'), _('Please set a valid time filter'))
 
-    def _get_move_line_datas(self, move_line_ids,
+    def _get_move_line_datas(self, move_line_ids,org_ids=False,
                              order='per.special DESC, l.date ASC, \
-                             per.date_start ASC, m.name ASC'):
+                             per.date_start ASC, m.name ASC'): #tangkwa 12/03/2019 ass org_ids
         # Possible bang if move_line_ids is too long
         # We can not slice here as we have to do the sort.
         # If slice has to be done it means that we have to reorder in python
@@ -662,6 +665,7 @@ SELECT l.id AS id,
             per.special AS peropen,
             l.partner_id AS lpartner_id,
             p.search_key AS partner_code,
+            r.name_short AS org_ids,
             p.name AS partner_name,
             m.name AS move_name,
             COALESCE(partialrec.name, fullrec.name, '') AS rec_name,
@@ -717,6 +721,7 @@ FROM account_move_line l
         on (l.reconcile_partial_id = partialrec.id)
     LEFT JOIN account_move_reconcile fullrec on (l.reconcile_id = fullrec.id)
     LEFT JOIN res_partner p on (l.partner_id=p.id)
+    LEFT JOIN res_org r on (r.id=l.org_id)
     LEFT JOIN account_invoice i on (m.id =i.move_id)
     LEFT JOIN account_period per on (per.id=l.period_id)
     JOIN account_journal j on (l.journal_id=j.id)
@@ -726,10 +731,15 @@ FROM account_move_line l
     LEFT JOIN res_taxbranch rt ON (l.taxbranch_id = rt.id)
     LEFT JOIN res_project rproject ON (l.project_id = rproject.id)
     LEFT JOIN res_mission rm ON (l.mission_id = rm.id)
-    WHERE l.id in %s"""
+    WHERE l.id in %s """
+        if org_ids: #tangkwa 12/03/02019
+             monster += (" AND l.org_id in %s")
         monster += (" ORDER BY %s" % (order,))
         try:
-            self.cursor.execute(monster, (tuple(move_line_ids),))
+            if org_ids:
+                self.cursor.execute(monster, (tuple(move_line_ids),tuple(org_ids)))
+            else:
+                self.cursor.execute(monster, (tuple(move_line_ids),)) 
             res = self.cursor.dictfetchall()
         except Exception:
             self.cursor.rollback()

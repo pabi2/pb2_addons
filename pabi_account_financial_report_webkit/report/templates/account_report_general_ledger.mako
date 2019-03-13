@@ -39,6 +39,7 @@
                         ${_('Periods Filter')}
                     %endif
                 </div>
+                <div class="act_as_cell">${_('Org')}</div>
                 <div class="act_as_cell">${_('Accounts Filter')}</div>
                 <div class="act_as_cell">${_('Target Moves')}</div>
                 <div class="act_as_cell">${_('Initial Balance')}</div>
