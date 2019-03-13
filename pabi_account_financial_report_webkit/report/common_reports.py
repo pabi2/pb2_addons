@@ -579,7 +579,7 @@ class CommonReportHeaderWebkit(common_report_header):
 
     def _get_move_line_datas(self, move_line_ids,org_ids=False,
                              order='per.special DESC, l.date ASC, \
-                             per.date_start ASC, m.name ASC'): #tangkwa 12/03/2019 ass org_ids
+                             per.date_start ASC, m.name ASC'):
         # Possible bang if move_line_ids is too long
         # We can not slice here as we have to do the sort.
         # If slice has to be done it means that we have to reorder in python
@@ -737,7 +737,7 @@ FROM account_move_line l
         monster += (" ORDER BY %s" % (order,))
         try:
             if org_ids:
-                self.cursor.execute(monster, (tuple(move_line_ids),tuple(org_ids)))
+                self.cursor.execute(monster, (tuple(move_line_ids),tuple(org_ids))) #tangkwa 12/03/02019
             else:
                 self.cursor.execute(monster, (tuple(move_line_ids),)) 
             res = self.cursor.dictfetchall()
