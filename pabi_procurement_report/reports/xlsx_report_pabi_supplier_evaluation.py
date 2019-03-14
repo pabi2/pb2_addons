@@ -91,7 +91,7 @@ class XLSXReportPabiSupplierEvaluation(models.TransientModel):
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['xlsx.report.pabi.supplier.evaluation.results']
-        dom = []
+        dom = [('state', 'in', ['evaluation', 'done'])]
         if self.org_ids:
             dom += [('org_id', 'in', self.org_ids._ids)]
         if self.partner_ids:
@@ -224,7 +224,8 @@ class XLSXReportPabiSupplierEvaluationResults(models.Model):
         as delay_day,
         org_id as org_id,
         rpt.id as tag_id,
-        rpc.id as category_id
+        rpc.id as category_id,
+        wa.state as state
         from purchase_work_acceptance wa
         left join purchase_order po on po.id = wa.order_id
         left join operating_unit ou on ou.id = po.operating_unit_id
