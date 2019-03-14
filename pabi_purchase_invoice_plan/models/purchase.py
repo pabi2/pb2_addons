@@ -198,11 +198,42 @@ class PurchaseOrderLine(models.Model):
 class PurchaseInvoicePlan(models.Model):
     _inherit = 'purchase.invoice.plan'
 
-    fiscalyear_id = fields.Many2one(
+    order_line_docline_seq = fields.Char(
+        string='#',
+        compute='_compute_results',
+        readonly=True,
+    )
+    order_line_fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
+        compute='_compute_results',
+        readonly=True,
+    )
+    order_line_budget_id = fields.Many2one(
+        'chartfield.view',
+        string='Budget',
+        compute='_compute_results',
+        readonly=True,
+    )
+    order_by_fiscalyear = fields.Boolean(
+        string='By Fiscal Year',
+        compute='_compute_results',
+        readonly=True,
     )
 
-    @api.onchange('order_line_id')
-    def _onchange_order_line_id(self):
-        self.fiscalyear_id = self.order_line_id.fiscalyear_id
+        
+    @api.multi
+    def _compute_results(self):
+        for line in self:
+            line.order_by_fiscalyear = line.order_id.by_fiscalyear
+            line.order_line_fiscalyear_id = line.order_line_id.fiscalyear_id
+            line.order_line_docline_seq = line.order_line_id.docline_seq
+            line.order_line_budget_id = line.order_line_id.chartfield_id
+        
+        
+        
+        
+        
+        
+        
+        
