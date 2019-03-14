@@ -16,6 +16,7 @@ _column_sizes = [
     ('due_date', 10),
     ('period', 10),
     ('fiscal_year', 10),
+    ('org_ids', 10),
     ('budget', 20),
     ('program', 15),
     ('section_program', 15),
@@ -56,7 +57,7 @@ class general_ledger_xls(report_xls):
     column_sizes = dict(_column_sizes)
 
     def generate_xls_report(self, _p, _xs, data, objects, wb):
-
+ 
         ws = wb.add_sheet(_p.report_name[:31])
         ws.panes_frozen = True
         ws.remove_splits = True
@@ -105,6 +106,7 @@ class general_ledger_xls(report_xls):
         c_specs = [
             ('coa', 2, 0, 'text', _('Chart of Account')),
             ('fy', 1, 0, 'text', _('Fiscal Year')),
+            ('org', 1, 0, 'text', _('Org')),
             ('df', 3, 0, 'text', _p.filter_form(data) ==
              'filter_date' and _('Dates Filter') or _('Periods Filter')),
             ('af', 1, 0, 'text', _('Accounts Filter')),
@@ -120,10 +122,16 @@ class general_ledger_xls(report_xls):
         cell_format = _xs['borders_all']
         cell_style = xlwt.easyxf(cell_format)
         cell_style_center = xlwt.easyxf(cell_format + _xs['center'])
+        #find dict org
+        _org_name = self.pool.get('res.org').browse(_p["cr"], _p["uid"],_p.data["form"]["org_ids"])
+        org_name = []
+        for record in _org_name:
+            org_name.append(record.name_short)
         c_specs = [
             ('coa', 2, 0, 'text', _p.chart_account.name),
             ('fy', 1, 0, 'text', _p.fiscalyear.name if _p.fiscalyear else '-'),
-        ]
+            ('org', 1, 0, 'text', ' '.join(org_name)),
+        ]  
         df = _('From') + ': '
         if _p.filter_form(data) == 'filter_date':
             df += _p.start_date if _p.start_date else u''
@@ -179,6 +187,8 @@ class general_ledger_xls(report_xls):
             ('due_date', 1, 0, 'text', _('Due Date'), None, c_hdr_cell_style),
             ('period', 1, 0, 'text', _('Period'), None, c_hdr_cell_style),
             ('fiscal_year', 1, 0, 'text', _('Fiscal Year'), None,
+                c_hdr_cell_style),
+            ('org_ids', 1, 0, 'text', _('Org'), None,
                 c_hdr_cell_style),
             ('budget', 1, 0, 'text', _('Budget'), None, c_hdr_cell_style),
             ('program', 1, 0, 'text', _('Program'), None, c_hdr_cell_style),
@@ -360,6 +370,7 @@ class general_ledger_xls(report_xls):
                         ('period', 1, 0, 'text', line.get('period_code', '')),
                         ('fiscal_year', 1, 0, 'text',
                          line.get('fiscalyear', '')),
+                        ('org_ids', 1, 0, 'text', line.get('org_ids', '')),
                         ('budget', 1, 0, 'text', line.get('budget_name', '')),
                         ('program', 1, 0, 'text', line.get('program', '')),
                         ('section_program', 1, 0, 'text',
