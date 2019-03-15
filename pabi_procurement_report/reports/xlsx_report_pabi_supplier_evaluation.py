@@ -50,7 +50,7 @@ class XLSXReportPabiSupplierEvaluation(models.TransientModel):
             if res != '':
                 res += ', '
             res += prg.operating_unit_id.code
-        self.org_name = res
+        self.org_name = res 
 
     @api.onchange('partner_ids')
     def onchange_partners(self):
@@ -161,6 +161,10 @@ class XLSXReportPabiSupplierEvaluationResults(models.Model):
     )
     delay_day = fields.Integer(
         string='Delay Day',
+        readonly=True,
+    )
+    state = fields.Char(
+        string='State',
         readonly=True,
     )
 

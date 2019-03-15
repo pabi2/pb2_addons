@@ -54,8 +54,6 @@ class XLSXReportPabiPurchaseSummarize(models.TransientModel):
     method_name = fields.Char(
         string='Method',
     )
-
-
     # Report Result
     results = fields.Many2many(
         'xlsx.report.pabi.purchase.summarize.results',
@@ -134,8 +132,24 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         'res.partner',
         string='Supplier',
     )
+    pd_id = fields.Char(
+        string='PD ID',
+        readonly=True,
+    )
     pd_number = fields.Char(
         string='PD No.',
+        readonly=True,
+    )
+    po_id = fields.Char(
+        string='PO ID',
+        readonly=True,
+    )
+    po_number = fields.Char(
+        string='PO No.',
+        readonly=True,
+    )
+    selected_po_number = fields.Char(
+        string='Selected PO No.',
         readonly=True,
     )
     objective = fields.Char(
