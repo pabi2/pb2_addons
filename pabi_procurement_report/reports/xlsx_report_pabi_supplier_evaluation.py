@@ -241,4 +241,5 @@ class XLSXReportPabiSupplierEvaluationResults(models.Model):
         ON rprptl.res_partner_tag_id = rptag.id
         left join res_partner_category rpc on rpc.id = rp.category_id
         left join res_partner_title rpt on rpt.id = rp.title
+        ORDER BY po.name, wa.name
         )""" % (self._table, ))
