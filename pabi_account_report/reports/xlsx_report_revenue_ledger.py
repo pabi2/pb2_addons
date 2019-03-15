@@ -77,7 +77,7 @@ class XLSXReportRevenueLedger(models.TransientModel):
             dom += [('account_id', 'in', self.account_ids.ids)]
         if self.operating_unit_ids:
             dom += [('account_id.operating_unit_id', 'in', self.operating_unit_ids.ids)]
-            dom += [('partner_ids.user_id.default_operating_unit_id', 'in', self.operating_unit_ids.ids)]
+            dom += [('partner_id.user_id.default_operating_unit_id', 'in', self.operating_unit_ids.ids)]
         if self.chartfield_ids:
             # map beetween chartfield_id with chartfield type
             chartfields = [('section_id', 'sc:'),
