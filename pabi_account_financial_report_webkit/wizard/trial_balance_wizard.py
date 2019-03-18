@@ -15,7 +15,7 @@ class AccountTrialBalanceWizard(orm.TransientModel):
              ('external', 'External')],
             string='Charge Type',
         ),
-        'org_ids': fields.many2many(
+        'org_id': fields.many2one(
             'res.org', string='Org'),
     }
 

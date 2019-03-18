@@ -32,7 +32,7 @@ class CommonReportHeaderWebkit(common_report_header):
         return self._get_info(data, 'fiscalyear_id', 'account.fiscalyear')
 
     def get_org_name_br(self, data):
-        return self._get_info(data, 'org_ids', 'general.ledger.webkit')
+        return self._get_info(data, 'org_ids', 'res.org')
 
     def _get_chart_account_id_br(self, data):
         return self._get_info(data, 'chart_account_id', 'account.account')
