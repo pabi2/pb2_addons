@@ -132,17 +132,17 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
         'res.partner',
         string='Supplier',
     )
-    pd_id = fields.Char(
+    pd_id = fields.Many2one(
+        'purchase.requisition',
         string='PD ID',
-        readonly=True,
     )
     pd_number = fields.Char(
         string='PD No.',
         readonly=True,
     )
-    po_id = fields.Char(
+    po_id = fields.Many2one(
+        'purchase.order',
         string='PO ID',
-        readonly=True,
     )
     po_number = fields.Char(
         string='PO No.',
