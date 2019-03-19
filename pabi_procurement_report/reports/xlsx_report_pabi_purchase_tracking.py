@@ -200,7 +200,6 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
             dom += [('po_date', '<=', self.po_date_to)]
         if self.po_responsible_ids:
             dom += [('po_responsible_id', 'in', self.po_responsible_ids.ids)]
-        print '------------------------------------------------dom--', dom
         self.results = Result.search(dom)
 
 
