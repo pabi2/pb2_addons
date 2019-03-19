@@ -6,18 +6,30 @@ from openerp import models, fields, api
 class XLSXReportPabiPurchaseTracking(models.TransientModel):
     _name = 'xlsx.report.pabi.purchase.tracking'
     _inherit = 'xlsx.report'
-
+    
     org_ids = fields.Many2many('res.org', string='Org',)
     chartfield_ids = fields.Many2many('chartfield.view', string='Budget',)
     pr_ids = fields.Many2many('purchase.request', string='PR doc',)
     pr_date_from = fields.Date(string='PR Date From',)
     pr_date_to = fields.Date(string='PR Date To',)
-    pr_requester_ids = fields.Many2many('res.partner', string='Requested by(PR)',)
-    pr_responsible_ids = fields.Many2many('res.partner', string='Responsible Person(PR)',)
+    pr_requester_ids = fields.Many2many(
+        'res.partner',
+        'res_partner_purchase_tracking_pr_requester_rel',
+        'pr_requester_id', 'tracking_report_id',
+        string='Requested by(PR)')
+    pr_responsible_ids = fields.Many2many(
+        'res.partner',
+        'res_partner_purchase_tracking_pr_responsible_rel',
+        'pr_responsible_id', 'tracking_report_id',
+        string='Responsible Person(PR)')
     po_ids = fields.Many2many('purchase.order', string='PO doc',)
     po_date_from = fields.Date(string='PO Date From',)
     po_date_to = fields.Date(string='PO Date To',)
-    po_responsible_ids = fields.Many2many('res.partner', string='Responsible Person(PO)',)
+    po_responsible_ids = fields.Many2many(
+        'res.partner',
+        'res_partner_purchase_tracking_po_responsible_rel',
+        'po_responsible_id', 'tracking_report_id',
+        string='Responsible Person(PO)')
     org_name = fields.Char(string='Org',)
     budget_name = fields.Char(string='Budget',)
     pr_number = fields.Char(string='PR doc',)
@@ -35,6 +47,7 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
         compute='_compute_results',
         help="Use compute fields, so there is nothing store in database",
     )
+    
 
     @api.onchange('org_ids', 'chartfield_ids', 'pr_date_from', 'pr_date_to', 'pr_requester_ids', 'pr_responsible_ids')
     def onchange_pr_domain(self):
@@ -95,7 +108,7 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
         for org in self.org_ids:
             if res_org != '':
                 res_org += ', '
-            res_org += str(org.name_short)
+            res_org += org.name_short
         self.org_name = res_org
 
         for prg in self.chartfield_ids:
@@ -180,13 +193,14 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
         if self.pr_responsible_ids:
             dom += [('pr_responsible_id', 'in', self.pr_responsible_ids.ids)]
         if self.po_ids:
-            dom += [('po_id', 'in', self.pr_ids._ids)]
+            dom += [('po_id', 'in', self.po_ids._ids)]
         if self.po_date_from:
             dom += [('po_date', '>=', self.po_date_from)]
         if self.po_date_to:
             dom += [('po_date', '<=', self.po_date_to)]
         if self.po_responsible_ids:
             dom += [('po_responsible_id', 'in', self.po_responsible_ids.ids)]
+        print '------------------------------------------------dom--', dom
         self.results = Result.search(dom)
 
 
