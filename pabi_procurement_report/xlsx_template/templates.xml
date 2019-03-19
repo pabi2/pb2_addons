@@ -37,7 +37,7 @@
                             'D11': 'pr_amount${value or ""}#{number_format=number}',
                             'E11': 'amount_standard${value or ""}#{number_format=number}',
                             'F11': 'method${value or ""}',
-                            'G11': 'rfq_amount_total${value or ""}{number_format=number}',
+                            'G11': 'rfq_amount_total${value or ""}#{number_format=number}',
                             'H11': 'po_id.amount_total${value or ""}#{number_format=number}',
                             'I11': 'po_id.partner_id.name${value or ""}',
                             'J11': 'po_id.amount_total${value or ""}#{number_format=number}',
