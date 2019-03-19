@@ -286,10 +286,10 @@
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
-                    <attribute name="invisible">True</attribute>
+                    <attribute name="invisible">False</attribute>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
-                    <field name="display_name2"/>
+<!--                     <field name="display_name2"/> -->
                     <field name="partner_code"/>
                 </xpath>
                 <field name="state" position="before">
