@@ -100,7 +100,7 @@ class XLSXReportPabiSupplierEvaluation(models.TransientModel):
             dom += [('tag_id', 'in', self.tag_ids._ids)]
         if self.category_ids:
             dom += [('category_id', 'in', self.tag_ids._ids)]
-        self.results = Result.search(dom)
+        self.results = Result.search(dom, order="po_no, wa_no")
 
 
 class XLSXReportPabiSupplierEvaluationResults(models.Model):
