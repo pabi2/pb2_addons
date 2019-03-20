@@ -15,12 +15,12 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
     pr_requester_ids = fields.Many2many(
         'res.partner',
         'res_partner_purchase_tracking_pr_requester_rel',
-        'pr_requester_id', 'tracking_report_id',
+        'tracking_report_id', 'pr_requester_id',
         string='Requested by(PR)')
     pr_responsible_ids = fields.Many2many(
         'res.partner',
         'res_partner_purchase_tracking_pr_responsible_rel',
-        'pr_responsible_id', 'tracking_report_id',
+        'tracking_report_id', 'pr_responsible_id',
         string='Responsible Person(PR)')
     po_ids = fields.Many2many('purchase.order', string='PO doc',)
     po_date_from = fields.Date(string='PO Date From',)
@@ -28,7 +28,7 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
     po_responsible_ids = fields.Many2many(
         'res.partner',
         'res_partner_purchase_tracking_po_responsible_rel',
-        'po_responsible_id', 'tracking_report_id',
+        'tracking_report_id', 'po_responsible_id',
         string='Responsible Person(PO)')
     org_name = fields.Char(string='Org',)
     budget_name = fields.Char(string='Budget',)
