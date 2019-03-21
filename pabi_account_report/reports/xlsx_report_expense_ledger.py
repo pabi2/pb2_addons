@@ -115,14 +115,14 @@ class XLSXReportExpenseLedger(models.TransientModel):
             dom += [('date', '>=', self.date_start)]
         if self.date_end:
             dom += [('date', '<=', self.date_end)]
-        self.results = Result.search(dom).sorted(
+        self.results = Result.with_context(active=False).search(dom).sorted(
                        key=lambda l: (l.charge_type,
                                       l.account_id.code,
                                       l.activity_group_id.code,
                                       l.activity_id.code,
                                       l.period_id.fiscalyear_id.name,
                                       l.period_id.name))
-
+        pass
     @api.onchange('line_filter')
     def _onchange_line_filter(self):
         self.chartfield_ids = []
