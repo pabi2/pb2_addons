@@ -676,12 +676,15 @@ class InterfaceAccountEntry(models.Model):
     def generate_interface_account_entry(self, data_dict):
         _logger.info("IA - Input: %s" % data_dict)
         if self._is_document_origin_exists(data_dict["name"]):
-            err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่  %s มีอยู่แล้วในระบบ"
+            ia_table = self.env["interface.account.entry"]
+            dom = [("name", "=", data_dict["name"])]
+            ia_data = ia_table.search(dom)
+            err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
             res = {
                 'is_success': False,
                 'result': False,
                 'messages': _(err_message) %
-                            (data_dict["name"])
+                            (data_dict["name"], ia_data.number)
                 }
             _logger.info("IA - Output: %s" % res)
             return res
