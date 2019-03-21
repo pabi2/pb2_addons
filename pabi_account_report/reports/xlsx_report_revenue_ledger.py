@@ -17,7 +17,7 @@ class XLSXReportRevenueLedger(models.TransientModel):
     chartfield_ids = fields.Many2many(
         'chartfield.view',
         string='Budget',
-        domain=[('model', '!=', 'res.personnel.costcenter')],
+        domain=['|',('active', '=', False),('active', '=', True),('model', '!=', 'res.personnel.costcenter')],
     )
     partner_ids = fields.Many2many(
         'res.partner',
@@ -115,7 +115,7 @@ class XLSXReportRevenueLedger(models.TransientModel):
             dom += [('date', '>=', self.date_start)]
         if self.date_end:
             dom += [('date', '<=', self.date_end)]
-        self.results = Result.search(dom).sorted(
+        self.results = Result.with_context(active=False).search(dom).sorted(
                        key=lambda l: (l.charge_type,
                                       l.account_id.code,
                                       l.activity_group_id.code,
