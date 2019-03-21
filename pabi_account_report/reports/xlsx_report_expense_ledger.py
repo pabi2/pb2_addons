@@ -17,7 +17,7 @@ class XLSXReportExpenseLedger(models.TransientModel):
     chartfield_ids = fields.Many2many(
         'chartfield.view',
         string='Budget',
-        domain=[('model', '!=', 'res.personnel.costcenter')],
+        domain=['|',('active', '=', 'False'),('active', '=', 'True'),('model', '!=', 'res.personnel.costcenter')],
     )
     partner_ids = fields.Many2many(
         'res.partner',
