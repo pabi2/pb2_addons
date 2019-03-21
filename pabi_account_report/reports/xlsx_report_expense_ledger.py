@@ -16,8 +16,8 @@ class XLSXReportExpenseLedger(models.TransientModel):
     )
     chartfield_ids = fields.Many2many(
         'chartfield.view',
-        string='Budget',
-        domain=['|',('active', '=', 'False'),('active', '=', 'True'),('model', '!=', 'res.personnel.costcenter')],
+        string='Budget'
+        domain=['|',('active', '=', False),('active', '=', True),('model', '!=', 'res.personnel.costcenter')],
     )
     partner_ids = fields.Many2many(
         'res.partner',
@@ -122,7 +122,7 @@ class XLSXReportExpenseLedger(models.TransientModel):
                                       l.activity_id.code,
                                       l.period_id.fiscalyear_id.name,
                                       l.period_id.name))
-        pass
+
     @api.onchange('line_filter')
     def _onchange_line_filter(self):
         self.chartfield_ids = []
