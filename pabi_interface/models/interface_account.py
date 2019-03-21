@@ -676,10 +676,11 @@ class InterfaceAccountEntry(models.Model):
     def generate_interface_account_entry(self, data_dict):
         _logger.info("IA - Input: %s" % data_dict)
         if self._is_document_origin_exists(data_dict["name"]):
+            err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่  %s มีอยู่แล้วในระบบ"
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': _("ไม่สามารถ Interface ได้, เอกสารเลขที่  %s มีอยู่แล้วในระบบ") %
+                'messages': _(err_message) %
                             (data_dict["name"])
                 }
             _logger.info("IA - Output: %s" % res)
