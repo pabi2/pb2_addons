@@ -558,80 +558,115 @@ class InterfaceAccountEntry(models.Model):
     @api.multi
     def test_generate_interface_account_entry(self):
         data_dict = {
-            'name': u'Test Interface Account Entry from web',
             'number': u'/',
-            'system_id': u'PABI2',
-            'type': u'invoice',
+            'name': u'IVlocal001',
+            'system_id': u'mySales',
+            'type': u'Invoice',
             'journal_id': u'Sales Journal',
-            'partner_id': u'Kaushik',
+            'partner_id': u'0006271',
+            'validate_user_id': u'004010',
+            'validate_date': u'2019-03-31',
+            'preprint_number': False,
+            'date_document': u'2019-03-16',
             'line_ids': [
                 {
-                    'name': u'Credit Line',
+                    'name': u'/',
+                    'account_id': u'1102010002',
+                    'partner_id': u'0006271',
+                    'operating_unit_id': u'ศว.',
+                    'activity_group_id': False,
+                    'activity_id': False,
+                    'section_id': u'301037',
+                    'project_id': False,
+                    'taxbranch_id': u'00003',
+                    'debit': 8000.0,
+                    'credit': 0.0,
                     'tax_id': False,
                     'tax_invoice_number': False,
                     'tax_base_amount': 0.0,
-                    # Line Info
-                    'debit': 428.0,
-                    'credit': 0.0,
-                    'account_id': u'ลูกหนี้การค้า',
-                    'amount_currency': 400.0,
+                    'date': u'2019-03-16',
+                    'date_maturity': u'2019-04-16',
+                    'amount_currency': 8000.0,
                     'currency_id': u'THB',
-                    'partner_id': u'Kaushik',
+                    'reconcile_move_id': False,
+                    'reconcile_move_line_ref': False,
+                    'cost_control_id': False,
+                    'contract_charge_type': False,
+                    'ref': u'IVlocal001',
+                    'contract_number': False,
+                    'contract_date_start': False,
+                    'contract_date_end': False,
+                },
+                {
+                    'name': u'บริษัท พานาโซนิค แมนูแฟคเจอริ่ง อยุธยา จำกัด',
+                    'account_id': u'2106010002',
+                    'partner_id': u'0006271',
                     'operating_unit_id': u'ศว.',
                     'activity_group_id': False,
                     'activity_id': False,
-                    'section_id': False,
+                    'section_id': u'301037',
                     'project_id': False,
-                    'taxbranch_id': False,
-                    'date': u'2017-01-13',
-                    'date_maturity': u'2017-01-14',
-                },
-                {
-                    'name': u'Debit Line-1',
-                    'tax_id': u'Undue Output VAT 7%',
-                    'tax_invoice_number': u'IV16001',
-                    'tax_base_amount': 400.0,
-                    # Line Info
+                    'taxbranch_id': u'00003',
                     'debit': 0.0,
-                    'credit': 28.0,
-                    'account_id': u'พักภาษีขาย',
-                    'amount_currency': 28.0,
+                    'credit': 523.36,
+                    'tax_id': u'DOI7',
+                    'tax_invoice_number': u'IV19005592',
+                    'tax_base_amount': 7476.64,
+                    'date': u'2019-03-16',
+                    'date_maturity': False,
+                    'amount_currency': 523.36,
                     'currency_id': u'THB',
-                    'partner_id': u'Kaushik',
-                    'operating_unit_id': u'ศว.',
-                    'activity_group_id': False,
-                    'activity_id': False,
-                    'section_id': False,
-                    'project_id': False,
-                    'taxbranch_id': u'ศูนย์เทคโนโลยีโลหะและวัสดุแห่งชาติ',
-                    'date': u'2017-01-13',
-                    'date_maturity': u'',
+                    'reconcile_move_id': False,
+                    'reconcile_move_line_ref': False,
+                    'cost_control_id': False,
+                    'contract_charge_type': False,
+                    'ref': u'IVlocal001',
+                    'contract_number': False,
+                    'contract_date_start': False,
+                    'contract_date_end': False,
                 },
                 {
-                    'name': u'Debit Line-2',
+                    'name': u'[500262] TA-ค่าวิเคราะห์เทคนิค TGA 1 ชั่วโมง พร้อมรายงานผล (กรณ',
+                    'account_id': u'4302010002',
+                    'partner_id': u'0006271',
+                    'operating_unit_id': u'ศว.',
+                    'activity_group_id': u'AG9004',
+                    'activity_id': u'A430201003',
+                    'section_id': u'301037',
+                    'project_id': False,
+                    'taxbranch_id': u'00003',
+                    'debit': 0.0,
+                    'credit': 7476.64,
                     'tax_id': False,
-                    'tax_invoice_number': u'IV16001',
+                    'tax_invoice_number': False,
                     'tax_base_amount': 0.0,
-                    # Line Info
-                    'debit': 0.0,
-                    'credit': 400.0,
-                    'account_id': u'วิเคราะห์ทดสอบ/สอบเทียบ/ใบรับรองคุณภาพ',
-                    'amount_currency': 400.0,
+                    'date': u'2019-03-16',
+                    'date_maturity': False,
+                    'amount_currency': 7476.64,
                     'currency_id': u'THB',
-                    'partner_id': u'Kaushik',
-                    'operating_unit_id': u'ศว.',
-                    'activity_group_id': u'ค่าวิเคราะห์และทดสอบ',
-                    'activity_id': u'ให้บริการวิเคราะห์ทดสอบ/ร่วมวิจัย/'
-                    u'รับจ้างวิจัย/เครื่องมือวัด/สอบเทียบ/ใบรับรองคุณภาพ',
-                    'section_id': u'Procurement Section',
-                    'project_id': False,
-                    'taxbranch_id': False,
-                    'date': u'2017-01-13',
-                    'date_maturity': u'',
+                    'reconcile_move_id': False,
+                    'reconcile_move_line_ref': False,
+                    'cost_control_id': False,
+                    'contract_charge_type': False,
+                    'ref': u'IVlocal001',
+                    'contract_number': False,
+                    'contract_date_start': False,
+                    'contract_date_end': False,
                 }
             ]
         }
+            
         return self.generate_interface_account_entry(data_dict)
+
+    @api.model
+    def _is_document_origin_exists(self, doc_origin):
+        ia_table = self.env["interface.account.entry"]
+        dom = [("name", "=", doc_origin)]
+        ia_data = ia_table.search(dom)
+        if ia_data:
+            return True
+        else:
+            return False
 
     @api.model
     def _pre_process_interface_account_entry(self, data_dict):
@@ -640,6 +675,20 @@ class InterfaceAccountEntry(models.Model):
     @api.model
     def generate_interface_account_entry(self, data_dict):
         _logger.info("IA - Input: %s" % data_dict)
+        if self._is_document_origin_exists(data_dict["name"]):
+            ia_table = self.env["interface.account.entry"]
+            dom = [("name", "=", data_dict["name"])]
+            ia_data = ia_table.search(dom)
+            err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
+            res = {
+                'is_success': False,
+                'result': False,
+                'messages': _(err_message) %
+                            (data_dict["name"], ia_data.number)
+                }
+            _logger.info("IA - Output: %s" % res)
+            return res
+        
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
             # For migration period, payment reconicle can be entry or item
