@@ -39,7 +39,7 @@ class XLSXReportExpenseLedger(models.TransientModel):
     user_type = fields.Many2one(
         'account.account.type',
         string='Account Type',
-        default=lambda self: self.env.ref('account.data_account_type_expense'),
+        #default=lambda self: self.env.ref('account.data_account_type_expense'),
     )
     results = fields.Many2many(
         'account.move.line',
@@ -72,7 +72,10 @@ class XLSXReportExpenseLedger(models.TransientModel):
         """
         self.ensure_one()
         Result = self.env['account.move.line']
-        dom = [('account_id.user_type', '=', self.user_type.id)]
+        dom = []
+        
+        if self.user_type:
+            dom = [('account_id.user_type', '=', self.user_type.id)]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
         if self.operating_unit_ids:

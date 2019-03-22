@@ -44,7 +44,7 @@ class XLSXReportGlProject(models.TransientModel):
     chartfield_ids = fields.Many2many(
         'chartfield.view',
         string='Budget',
-        domain=[('model', '!=', 'res.personnel.costcenter')],
+        domain=['|',('active', '=', False),('active', '=', True),('model', '!=', 'res.personnel.costcenter')],
     )
     chart_view = fields.Selection(
         [('personnel', 'Personnel'),
@@ -191,7 +191,8 @@ class XLSXReportGlProject(models.TransientModel):
             dom += [('date', '>=', self.date_start)]
         if self.date_end:
             dom += [('date', '<=', self.date_end)]
-        self.results = Result.search(dom)
+        self.results = Result.with_context(active=False).search(dom)
+        
 
     @api.onchange('line_filter')
     def _onchange_line_filter(self):
