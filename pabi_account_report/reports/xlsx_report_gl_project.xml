@@ -43,7 +43,7 @@
                                 <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1" context="{'active_test': False}"/>
                             </group>
                             <group string="Print only">
-                                <field name="chartfield_ids" nolabel="1"/>
+                                <field name="chartfield_ids" nolabel="1" context="{'active_test': False}"/>
                             </group>
                         </group>
                     </page>
