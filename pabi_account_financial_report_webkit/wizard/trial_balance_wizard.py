@@ -15,7 +15,7 @@ class AccountTrialBalanceWizard(orm.TransientModel):
              ('external', 'External')],
             string='Charge Type',
         ),
-        'org_ids': fields.many2many(
+        'org_id': fields.many2one(
             'res.org', string='Org'),
     }
 
@@ -24,9 +24,23 @@ class AccountTrialBalanceWizard(orm.TransientModel):
             pre_print_report(cr, uid, ids, data, context)
 
         # PABI2
-        vals = self.read(cr, uid, ids, ['charge_type'], context=context)[0]
+        vals = self.read(cr, uid, ids, ['charge_type'], context=context)[0] 
         data['form'].update(vals)
-
+        vals = self.read(cr, uid, ids, ['org_id'], context=context)[0]
+        if vals['org_id']:
+            vals = vals['org_id'][0]
+        else:
+            vals = vals['org_id']
+        data['form'].update({'org_id':vals})
+        #add org_name in form
+        if data['form']['org_id']:
+            _org_name = self.pool.get('res.org').browse(cr,uid, data['form']['org_id']) #pdf 21/03/2019
+            org_name = []
+            for record in _org_name:
+                org_name.append(record.name_short)
+            data['form'].update({'org_name':' '.join(org_name)})
+        else:
+            data['form'].update({'org_name':''})       
         data['specific_report'] = True
 
         return data

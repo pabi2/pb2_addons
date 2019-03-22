@@ -17,7 +17,7 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
 
     def _get_account_details(self, account_ids, target_move, fiscalyear,
                              main_filter, start, stop, initial_balance_mode,
-                             charge_type=False, specific_report=False,
+                             charge_type=False,org_id=False, specific_report=False,
                              context=None):
         """
         Get details of accounts to display on the report
@@ -77,6 +77,7 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
         # PABI2
         if charge_type:
             ctx.update({'charge_type': charge_type})
+            ctx.update({'org_id': org_id})
 
         accounts = account_obj.read(
             self.cursor,
@@ -108,7 +109,8 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
 
     def _get_comparison_details(self, data, account_ids, target_move,
                                 comparison_filter, index, charge_type=False,
-                                specific_report=False, context=None):
+                                org_id=False,specific_report=False, context=None):
+                                
         """
 
         @param data: data of the wizard form
@@ -148,7 +150,7 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
                     start, specific_report=specific_report) or False
             accounts_by_ids = self._get_account_details(
                 account_ids, target_move, fiscalyear, details_filter,
-                start, stop, initial_balance_mode, charge_type=charge_type,
+                start, stop, initial_balance_mode, charge_type=charge_type,org_id=org_id,
                 specific_report=specific_report, context=context)
             comp_params = {
                 'comparison_filter': comparison_filter,
@@ -247,7 +249,7 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
         stop_date = self._get_form_param('date_to', data)
         chart_account = self._get_chart_account_id_br(data)
         charge_type = self._get_form_param('charge_type', data)
-
+        org_id = self._get_form_param('org_id', data)
         # PABI2
         specific_report = data.get('specific_report')
         context = {'active_test': False}
@@ -272,7 +274,7 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
         # get details for each accounts, total of debit / credit / balance
         accounts_by_ids = self._get_account_details(
             account_ids, target_move, fiscalyear, main_filter, start, stop,
-            initial_balance_mode, charge_type=charge_type,
+            initial_balance_mode, charge_type=charge_type,org_id=org_id,
             specific_report=specific_report, context=context)
 
         comparison_params = []
@@ -281,7 +283,7 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
             if comp_filters[index] != 'filter_no':
                 comparison_result, comp_params = self._get_comparison_details(
                     data, account_ids, target_move, comp_filters[index], index,
-                    charge_type=charge_type, specific_report=specific_report,
+                    charge_type=charge_type,org_id=org_id, specific_report=specific_report,
                     context=context)
                 comparison_params.append(comp_params)
                 comp_accounts_by_ids.append(comparison_result)
