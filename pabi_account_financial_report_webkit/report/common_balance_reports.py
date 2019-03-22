@@ -77,6 +77,8 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
         # PABI2
         if charge_type:
             ctx.update({'charge_type': charge_type})
+            
+        if org_id:
             ctx.update({'org_id': org_id})
 
         accounts = account_obj.read(
