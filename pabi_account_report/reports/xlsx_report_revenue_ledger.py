@@ -72,7 +72,8 @@ class XLSXReportRevenueLedger(models.TransientModel):
         """
         self.ensure_one()
         Result = self.env['account.move.line']
-        
+        dom = []
+            
         if self.user_type:
             dom = [('account_id.user_type', '=', self.user_type.id)]
         if self.account_ids:
