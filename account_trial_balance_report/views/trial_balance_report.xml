@@ -15,11 +15,13 @@
                             <field name="fiscalyear_id"/>
                             <field name="date_start"/>
                             <field name="date_stop"/>
+                            <field name="org_id"/>
                         </group>
                         <group>
                             <field name="target_move"/>
                             <field name="with_movement"/>
                             <field name="charge_type"/>
+                            <field name="account_id"/>
                         </group>
                     </group>
                     <field name="line_ids">
