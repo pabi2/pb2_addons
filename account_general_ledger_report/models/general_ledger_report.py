@@ -59,7 +59,7 @@ class AccountGeneralLedgerReport(models.Model):
                   ('account_id', 'in', account_ids.ids)]
         if charge_type:
             domain.append(('charge_type', '=', charge_type))
-        if org_ids:  #tangkwa 26/03/2019
+        if org_ids:
             domain.append(('org_id', 'in', org_ids.ids))
         if target_move == 'posted':
             domain.append(('move_id.state', '=', 'posted'))
