@@ -25,6 +25,7 @@
                             <field name="account_ids" widget="many2many_tags"
                               context="{'tree_view_ref': 'account_general_ledger_report.account_line_tree_view'}"/>
                             <field name="charge_type"/>
+                            <field name="org_ids" widget="many2many_tags"/>
                         </group>
                         <group>
                             <label for="id" string="Target Moves"/>

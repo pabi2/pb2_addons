@@ -39,6 +39,9 @@ class AccountGeneralLedgerWizard(models.TransientModel):
          ('external', 'External')],
         string='Charge Type',
     )
+    org_ids = fields.Many2many(
+        'res.org', string='Org',
+    )
 
     @api.multi
     def run_report(self):
@@ -49,7 +52,8 @@ class AccountGeneralLedgerWizard(models.TransientModel):
                                        self.reconcile_cond,
                                        self.account_ids,
                                        self.amount_currency,
-                                       self.charge_type)
+                                       self.charge_type,
+                                       self.org_ids)
         action = self.env.ref('account_general_ledger_report.'
                               'action_account_general_ledger_report')
         result = action.read()[0]

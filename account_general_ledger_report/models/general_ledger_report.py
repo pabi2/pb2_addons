@@ -43,10 +43,13 @@ class AccountGeneralLedgerReport(models.Model):
          ('external', 'External')],
         string='Charge Type',
     )
+    org_ids = fields.Many2many(
+        'res.org', string='Org',
+    )
 
     @api.model
     def _get_moves(self, fiscalyear_id, target_move, reconcile_cond,
-                   account_ids, amount_currency, charge_type):
+                   account_ids, amount_currency, charge_type, org_ids):
         period = self.env['account.period']
         move = self.env['account.move.line']
         fiscalyear = self.env['account.fiscalyear'].browse(fiscalyear_id)
@@ -56,6 +59,8 @@ class AccountGeneralLedgerReport(models.Model):
                   ('account_id', 'in', account_ids.ids)]
         if charge_type:
             domain.append(('charge_type', '=', charge_type))
+        if org_ids:  #tangkwa 26/03/2019
+            domain.append(('org_id', 'in', org_ids.ids))
         if target_move == 'posted':
             domain.append(('move_id.state', '=', 'posted'))
         if reconcile_cond == 'open_item':
@@ -93,7 +98,7 @@ class AccountGeneralLedgerReport(models.Model):
 
     @api.model
     def generate_report(self, fiscalyear_id, target_move, reconcile_cond,
-                        account_ids, amount_currency, charge_type):
+                        account_ids, amount_currency, charge_type,org_ids):
         # Delete old reports
         self.search(
             [('create_uid', '=', self.env.user.id),
@@ -107,12 +112,14 @@ class AccountGeneralLedgerReport(models.Model):
                               'reconcile_cond': reconcile_cond,
                               'account_ids': [(6, 0, account_ids.ids)],
                               'amount_currency': amount_currency,
-                              'charge_type': charge_type})
-
+                              'charge_type': charge_type,
+                              'org_ids': [(6, 0, org_ids.ids)],
+                              })
         # Compute report lines
         periods, moves = self._get_moves(fiscalyear_id, target_move,
                                          reconcile_cond, account_ids,
-                                         amount_currency, charge_type)
+                                         amount_currency, charge_type,
+                                         org_ids)
 
         report_lines = []
         accum = 0.0
@@ -202,7 +209,8 @@ class AccountGeneralLedgerLine(models.Model):
         rpt = self.report_id
         _x, moves = TB._get_moves(rpt.fiscalyear_id.id, rpt.target_move,
                                   rpt.reconcile_cond, rpt.account_ids,
-                                  rpt.amount_currency, rpt.charge_type)
+                                  rpt.amount_currency, rpt.charge_type,
+                                  rpt.org_ids)
         move_ids = []
         if move_type == 'debit':
             moves = TB._get_focus_moves(moves, self.period_id)
