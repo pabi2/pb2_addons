@@ -123,7 +123,7 @@ class general_ledger_xls(report_xls):
         cell_style = xlwt.easyxf(cell_format)
         cell_style_center = xlwt.easyxf(cell_format + _xs['center'])
         #find dict org
-        _org_name = self.pool.get('res.org').browse(_p["cr"], _p["uid"],_p.data["form"]["org_ids"])
+        _org_name = self.pool.get('res.org').browse(_p["cr"], _p["uid"],_p.data["form"]["org_id"])
         org_name = []
         for record in _org_name:
             org_name.append(record.name_short)
@@ -328,7 +328,8 @@ class general_ledger_xls(report_xls):
 
                     cumul_debit += line.get('debit', 0.0)
                     cumul_credit += line.get('credit', 0.0)
-                    cumul_balance_curr += line.get('amount_currency', 0.0)
+                    if (line.get('amount_currency', 0.0)):
+                        cumul_balance_curr += line.get('amount_currency', 0.0)
                     cumul_balance += line.get('balance', 0.0)
                     label_elements = [line.get('lname', '')]
                     if line.get('invoice_number'):

@@ -32,7 +32,7 @@ class CommonReportHeaderWebkit(common_report_header):
         return self._get_info(data, 'fiscalyear_id', 'account.fiscalyear')
 
     def get_org_name_br(self, data):
-        return self._get_info(data, 'org_ids', 'general.ledger.webkit')
+        return self._get_info(data, 'org_id', 'res.org')
 
     def _get_chart_account_id_br(self, data):
         return self._get_info(data, 'chart_account_id', 'account.account')
@@ -489,7 +489,7 @@ class CommonReportHeaderWebkit(common_report_header):
     # Account move retrieval helper                #
     ################################################
     def _get_move_ids_from_periods(self, account_id, period_start, period_stop,
-                                   target_move, reconcile_cond, charge_type,
+                                   target_move, reconcile_cond, charge_type,org_id,
                                    partner_ids=False, specific_report=False):
         move_line_obj = self.pool.get('account.move.line')
         period_obj = self.pool.get('account.period')
@@ -512,6 +512,8 @@ class CommonReportHeaderWebkit(common_report_header):
             search += [('partner_id', 'in', partner_ids)]
         if charge_type:
             search += [('charge_type', '=', charge_type)]
+        if org_id:
+            search += [('org_id', 'in', org_id)]
         search += self._reconcile_cond_search(reconcile_cond,
                                               period_stop.date_stop)
         # --
@@ -520,7 +522,7 @@ class CommonReportHeaderWebkit(common_report_header):
 
     def _get_move_ids_from_dates(self, account_id, date_start, date_stop,
                                  target_move, reconcile_cond,
-                                 charge_type, mode='include_opening',
+                                 charge_type,org_id, mode='include_opening',
                                  partner_ids=False):
         # TODO imporve perfomance by setting opening period as a property
         move_line_obj = self.pool.get('account.move.line')
@@ -543,6 +545,8 @@ class CommonReportHeaderWebkit(common_report_header):
             search_period += [('partner_id', 'in', partner_ids)]
         if charge_type:
             search_period += [('charge_type', '=', charge_type)]
+        if org_id:
+            search_period += [('org_id', 'in', org_id)]
         search_period += self._reconcile_cond_search(reconcile_cond,
                                                      date_stop)
         # --
@@ -553,6 +557,7 @@ class CommonReportHeaderWebkit(common_report_header):
                            target_move,
                            reconcile_cond,  # PABI2
                            charge_type,
+                           org_id, #tangkwa 21/03/2019
                            mode='include_opening',
                            partner_ids=False,
                            specific_report=False):
@@ -565,19 +570,19 @@ class CommonReportHeaderWebkit(common_report_header):
         if main_filter in ('filter_period', 'filter_no'):
             return self._get_move_ids_from_periods(
                 account_id, start, stop, target_move, reconcile_cond,
-                charge_type, partner_ids=partner_ids,
+                charge_type,org_id, partner_ids=partner_ids, 
                 specific_report=specific_report)
 
         elif main_filter == 'filter_date':
             return self._get_move_ids_from_dates(account_id, start, stop,
                                                  target_move, reconcile_cond,
-                                                 charge_type,
+                                                 charge_type,org_id,
                                                  partner_ids=partner_ids)
         else:
             raise osv.except_osv(
                 _('No valid filter'), _('Please set a valid time filter'))
 
-    def _get_move_line_datas(self, move_line_ids,org_ids=False,
+    def _get_move_line_datas(self, move_line_ids,org_id=False, 
                              order='per.special DESC, l.date ASC, \
                              per.date_start ASC, m.name ASC'):
         # Possible bang if move_line_ids is too long
@@ -665,7 +670,7 @@ SELECT l.id AS id,
             per.special AS peropen,
             l.partner_id AS lpartner_id,
             p.search_key AS partner_code,
-            r.name_short AS org_ids,
+            r.name_short AS org_id,
             p.name AS partner_name,
             m.name AS move_name,
             COALESCE(partialrec.name, fullrec.name, '') AS rec_name,
@@ -732,12 +737,12 @@ FROM account_move_line l
     LEFT JOIN res_project rproject ON (l.project_id = rproject.id)
     LEFT JOIN res_mission rm ON (l.mission_id = rm.id)
     WHERE l.id in %s """
-        if org_ids: 
+        if org_id:
              monster += (" AND l.org_id in %s")
         monster += (" ORDER BY %s" % (order,))
         try:
-            if org_ids:
-                self.cursor.execute(monster, (tuple(move_line_ids),tuple(org_ids)))
+            if org_id:
+                self.cursor.execute(monster, (tuple(move_line_ids),tuple(org_id)))
             else:
                 self.cursor.execute(monster, (tuple(move_line_ids),)) 
             res = self.cursor.dictfetchall()

@@ -53,6 +53,7 @@
             <div class="act_as_row labels">
                 <div class="act_as_cell">${_('Chart of Account')}</div>
                 <div class="act_as_cell">${_('Fiscal Year')}</div>
+                <div class="act_as_cell">${_('Org')}</div>
                 <div class="act_as_cell">
                     %if filter_form(data) == 'filter_date':
                         ${_('Dates Filter')}
@@ -67,6 +68,7 @@
             <div class="act_as_row">
                 <div class="act_as_cell">${ chart_account.name }</div>
                 <div class="act_as_cell">${ fiscalyear.name if fiscalyear else '-' }</div>
+                <div class="act_as_cell">${ data["form"]["org_name"] }</div>
                 <div class="act_as_cell">
                     ${_('From:')}
                     %if filter_form(data) == 'filter_date':
