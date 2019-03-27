@@ -156,12 +156,7 @@ class AssetRegisterReport(models.TransientModel):
         help="Define account type for depreciation account, "
         "to be used in report query SQL."
     )
-    results = fields.Many2many(
-        'asset.register.view',
-        string='Results',
-        compute='_compute_results',
-        help='Use compute fields, so there is nothing store in database',
-    )
+
     # More fileter
     budget_filter = fields.Text(
         string='Filter',
@@ -193,7 +188,19 @@ class AssetRegisterReport(models.TransientModel):
         compute='_compute_count_budget',
         string='Budget Count',
     )
-
+    asset_status = fields.Selection(
+        [('active', 'Active'),
+         ('inactive', 'Inactive')],
+        string='Asset Status',
+        default='active',
+    )
+    results = fields.Many2many(
+        'asset.register.view',
+        string='Results',
+        compute='_compute_results',
+        help='Use compute fields, so there is nothing store in database',
+    )
+    
     @api.multi
     @api.depends('asset_ids')
     def _compute_count_asset(self):
@@ -274,6 +281,9 @@ class AssetRegisterReport(models.TransientModel):
             dom += [('floor_id', 'in', tuple(self.floor_ids.ids + [0]))]
         if self.room_ids:
             dom += [('room_id', 'in', tuple(self.room_ids.ids + [0]))]
+        if self.asset_status:
+            dom += [('active', '=', True if (self.asset_status == 'active') else False)]
+            
         # Prepare fixed params
         date_start = False
         date_end = False
@@ -378,7 +388,7 @@ class AssetRegisterReport(models.TransientModel):
                 (select coalesce(sum(credit-debit), 0.0)
                  from account_move_line ml
                  where account_id in %s  -- accumulatedp account
-                 and ml.date <= %s -- date start
+                 and ml.date < %s -- date start
                  and asset_id = a.id) accumulated_bf
             from
             account_asset a

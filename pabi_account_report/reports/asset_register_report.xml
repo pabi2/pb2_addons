@@ -28,6 +28,7 @@
                   <field name="division_ids" widget="many2many_tags"/>
                   <field name="sector_ids" widget="many2many_tags"/>
                   <field name="subsector_ids" widget="many2many_tags"/>
+                  <field name="asset_status"/>
               </xpath>
               <page name="time_filters" position="after">
                   <page string="Asset Filters" name="asset_filters">
