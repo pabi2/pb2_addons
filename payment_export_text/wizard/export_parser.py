@@ -66,8 +66,6 @@ class DocumentExportParser(models.TransientModel):
                 exec(line['field_code'], eval_context)
                 value = eval_context.get('value', False)
                 line.update({'value': value})
-                
-                pass
             else:
                 value = line['default_value'] and line['default_value'] or ''
                 line.update({'value': value})
