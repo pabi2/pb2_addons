@@ -61,10 +61,13 @@ class DocumentExportParser(models.TransientModel):
                 if line.get('model_id', []):
                     model = line['model_id'][0]
                 eval_context = self._get_eval_context(model, active_id)
-                eval(line['field_code'], eval_context,
-                     mode="exec", nocopy=True)
+                #eval(line['field_code'], eval_context,
+                #     mode="exec", nocopy=True)
+                exec(line['field_code'], eval_context)
                 value = eval_context.get('value', False)
                 line.update({'value': value})
+                
+                pass
             else:
                 value = line['default_value'] and line['default_value'] or ''
                 line.update({'value': value})
@@ -93,8 +96,9 @@ class DocumentExportParser(models.TransientModel):
                         eval_context = self._get_eval_context(
                             model_id, export_line.id)
                     if line['field_code']:
-                        eval(line['field_code'], eval_context,
-                             mode="exec", nocopy=True)
+                        #eval(line['field_code'], eval_context,
+                        #     mode="exec", nocopy=True)
+                        exec(line['field_code'], eval_context)
                         value = eval_context.get('value', False)
                         line.update({'value': value})
                     else:
@@ -123,8 +127,9 @@ class DocumentExportParser(models.TransientModel):
                                 eval_context = self._get_eval_context(
                                     model_id, invoice_line.id)
                             if line['field_code']:
-                                eval(line['field_code'], eval_context,
-                                     mode="exec", nocopy=True)
+                                #eval(line['field_code'], eval_context,
+                                #     mode="exec", nocopy=True)
+                                exec(line['field_code'], eval_context)
                                 value = eval_context.get('value', False)
                                 line.update({'value': value})
                             else:
@@ -145,8 +150,9 @@ class DocumentExportParser(models.TransientModel):
                 if line.get('model_id', []):
                     model = line['model_id'][0]
                 eval_context = self._get_eval_context(model, active_id)
-                eval(line['field_code'], eval_context,
-                     mode="exec", nocopy=True)
+                #eval(line['field_code'], eval_context,
+                #     mode="exec", nocopy=True)
+                exec(line['field_code'], eval_context)
                 value = eval_context.get('value', False)
                 line.update({'value': value})
             else:
