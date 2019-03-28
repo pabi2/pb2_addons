@@ -256,38 +256,38 @@ class AccountTrailBalanceLine(models.Model):
         _x, moves = TB._get_moves(rpt.fiscalyear_id.id,
                                   rpt.date_start, rpt.date_stop,
                                   rpt.target_move, rpt.with_movement,
-                                  rpt.charge_type,rpt.org_id,
-                                  rpt.account_id)
+                                  rpt.charge_type,rpt.org_id.id,
+                                  rpt.account_id.id)
         move_ids = []
         if move_type == 'debit':
             moves = TB._get_focus_moves(
                 rpt, self.account_id, rpt.target_move, rpt.charge_type,
-                rpt.org_id,rpt.account_id)
+                rpt.org_id.id,rpt.account_id.id)
             move_ids = MoveLine.search([('id', 'in', moves.ids),
                                         ('debit', '>', 0.0)]).ids
         if move_type == 'credit':
             moves = TB._get_focus_moves(
                 rpt, self.account_id, rpt.target_move, rpt.charge_type,
-                rpt.org_id,rpt.account_id)
+                rpt.org_id.id,rpt.account_id.id)
             move_ids = MoveLine.search([('id', 'in', moves.ids),
                                         ('credit', '>', 0.0)]).ids
         if move_type == 'balance':
             moves = TB._get_focus_moves(
                 rpt, self.account_id, rpt.target_move, rpt.charge_type,
-                rpt.org_id,rpt.account_id)
+                rpt.org_id.id,rpt.account_id.id)
             move_ids = moves.ids
         if move_type == 'initial':
             moves = TB._get_init_moves(
                 rpt, self.account_id, rpt.target_move, rpt.charge_type,
-                rpt.org_id,rpt.account_id)
+                rpt.org_id.id,rpt.account_id.id)
             move_ids = moves.ids
         if move_type == 'final_balance':
             init_moves = TB._get_init_moves(
                 rpt, self.account_id, rpt.target_move, rpt.charge_type,
-                rpt.org_id,rpt.account_id)
+                rpt.org_id.id,rpt.account_id.id)
             blance_moves = TB._get_focus_moves(
                 rpt, self.account_id, rpt.target_move, rpt.charge_type,
-                rpt.org_id,rpt.account_id)
+                rpt.org_id.id,rpt.account_id.id)
             move_ids = init_moves.ids + blance_moves.ids
 
         return {
