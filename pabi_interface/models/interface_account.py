@@ -675,20 +675,30 @@ class InterfaceAccountEntry(models.Model):
     @api.model
     def generate_interface_account_entry(self, data_dict):
         _logger.info("IA - Input: %s" % data_dict)
-        if self._is_document_origin_exists(data_dict["name"]):
+        
+        # if origin document exists
+        if data_dict["type"] != "Reverse" and \
+            self._is_document_origin_exists(data_dict["name"]):
+            
             ia_table = self.env["interface.account.entry"]
             dom = [("name", "=", data_dict["name"])]
             ia_data = ia_table.search(dom)
-            err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
+            
+            # return exists IA document number
+            message = "Record created successfully"
+            res = {}
             res = {
-                'is_success': False,
-                'result': False,
-                'messages': _(err_message) %
-                            (data_dict["name"], ia_data.number)
+                "is_success": True,
+                "messages": message,
+                "result": {}
                 }
+            res["result"]["id"] = ia_data.id
+            res["result"]["number"] = ia_data.number
+            res["result"]["fiscalyear"] = ia_data.move_id.period_id.fiscalyear_id.name
             _logger.info("IA - Output: %s" % res)
             return res
         
+        # if origin not exists
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
             # For migration period, payment reconicle can be entry or item
