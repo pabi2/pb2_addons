@@ -43,10 +43,19 @@ class AccountTrailBalanceReport(models.Model):
          ('external', 'External')],
         string='Charge Type',
     )
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+    )
+    account_id = fields.Many2one(
+        'account.account',
+        string='Account',
+    )
 
     @api.model
     def _get_moves(self, fiscalyear_id, date_start, date_stop,
-                   target_move, with_movement, charge_type):
+                   target_move, with_movement, charge_type,
+                   org_id,account_id):
         Account = self.env['account.account']
         Move = self.env['account.move.line']
         accounts = []
@@ -55,6 +64,10 @@ class AccountTrailBalanceReport(models.Model):
                   ('date', '<=', date_stop)]
         if charge_type:
             domain.append(('charge_type', '=', charge_type))
+        if org_id:
+            domain.append(('org_id', '=', org_id))
+        if account_id:
+            domain.append(('account_id', '=', account_id))
         if target_move == 'posted':
             domain.append(('move_id.state', '=', 'posted'))
         moves = Move.search(domain)
@@ -73,7 +86,7 @@ class AccountTrailBalanceReport(models.Model):
         return (accounts, moves)
 
     @api.model
-    def _get_init_moves(self, report, account, target_move, charge_type):
+    def _get_init_moves(self, report, account, target_move, charge_type,org_id,account_id):
         MoveLine = self.env['account.move.line']
         domain = [('account_id', '=', account.id),
                   '|', ('journal_id.centralisation', '=', True),
@@ -81,13 +94,17 @@ class AccountTrailBalanceReport(models.Model):
                   ('date', '<', report.date_start)]
         if charge_type:
             domain += [('charge_type', '=', charge_type)]
+        if org_id:
+            domain += [('org_id', '=', org_id)]
+        if account_id:
+            domain += [('account_id', '=', account_id)]
         if target_move == 'posted':
             domain += [('move_id.state', '=', 'posted')]
         init_moves = MoveLine.search(domain)
         return init_moves
 
     @api.model
-    def _get_focus_moves(self, report, account, target_move, charge_type):
+    def _get_focus_moves(self, report, account, target_move, charge_type,org_id,account_id):
         MoveLine = self.env['account.move.line']
         domain = [('account_id', '=', account.id),
                   ('journal_id.centralisation', '=', False),
@@ -95,6 +112,10 @@ class AccountTrailBalanceReport(models.Model):
                   ('date', '<=', report.date_stop)]
         if charge_type:
             domain += [('charge_type', '=', charge_type)]
+        if org_id:
+            domain += [('org_id', '=', org_id)]
+        if account_id:
+            domain += [('account_id', '=', account_id)]
         if target_move == 'posted':
             domain += [('move_id.state', '=', 'posted')]
         focus_moves = MoveLine.search(domain)
@@ -102,7 +123,8 @@ class AccountTrailBalanceReport(models.Model):
 
     @api.model
     def generate_report(self, fiscalyear_id, date_start, date_stop,
-                        target_move, with_movement, charge_type):
+                        target_move, with_movement, charge_type,
+                        org_id,account_id):
         # Delete old reports
         self.search(
             [('create_uid', '=', self.env.user.id),
@@ -117,20 +139,25 @@ class AccountTrailBalanceReport(models.Model):
                               'date_stop': date_stop,
                               'target_move': target_move,
                               'with_movement': with_movement,
-                              'charge_type': charge_type})
+                              'charge_type': charge_type,
+                              'org_id' : org_id,
+                              'account_id' : account_id
+                              })
 
         # Compute report lines
         accounts, moves = self._get_moves(fiscalyear_id, date_start, date_stop,
                                           target_move, with_movement,
-                                          charge_type)
+                                          charge_type,org_id,account_id)
 
         report_lines = []
 
         for account in accounts:
             init_moves = self._get_init_moves(
-                report, account, target_move, charge_type)
+                report, account, target_move, charge_type,
+                org_id,account_id)
             focus_moves = self._get_focus_moves(
-                report, account, target_move, charge_type)
+                report, account, target_move, charge_type,
+                org_id,account_id)
             initial = 0.0
             debit = 0.0
             credit = 0.0
@@ -229,31 +256,38 @@ class AccountTrailBalanceLine(models.Model):
         _x, moves = TB._get_moves(rpt.fiscalyear_id.id,
                                   rpt.date_start, rpt.date_stop,
                                   rpt.target_move, rpt.with_movement,
-                                  rpt.charge_type)
+                                  rpt.charge_type,rpt.org_id.id,
+                                  rpt.account_id.id)
         move_ids = []
         if move_type == 'debit':
             moves = TB._get_focus_moves(
-                rpt, self.account_id, rpt.target_move, rpt.charge_type)
+                rpt, self.account_id, rpt.target_move, rpt.charge_type,
+                rpt.org_id.id,rpt.account_id.id)
             move_ids = MoveLine.search([('id', 'in', moves.ids),
                                         ('debit', '>', 0.0)]).ids
         if move_type == 'credit':
             moves = TB._get_focus_moves(
-                rpt, self.account_id, rpt.target_move, rpt.charge_type)
+                rpt, self.account_id, rpt.target_move, rpt.charge_type,
+                rpt.org_id.id,rpt.account_id.id)
             move_ids = MoveLine.search([('id', 'in', moves.ids),
                                         ('credit', '>', 0.0)]).ids
         if move_type == 'balance':
             moves = TB._get_focus_moves(
-                rpt, self.account_id, rpt.target_move, rpt.charge_type)
+                rpt, self.account_id, rpt.target_move, rpt.charge_type,
+                rpt.org_id.id,rpt.account_id.id)
             move_ids = moves.ids
         if move_type == 'initial':
             moves = TB._get_init_moves(
-                rpt, self.account_id, rpt.target_move, rpt.charge_type)
+                rpt, self.account_id, rpt.target_move, rpt.charge_type,
+                rpt.org_id.id,rpt.account_id.id)
             move_ids = moves.ids
         if move_type == 'final_balance':
             init_moves = TB._get_init_moves(
-                rpt, self.account_id, rpt.target_move, rpt.charge_type)
+                rpt, self.account_id, rpt.target_move, rpt.charge_type,
+                rpt.org_id.id,rpt.account_id.id)
             blance_moves = TB._get_focus_moves(
-                rpt, self.account_id, rpt.target_move, rpt.charge_type)
+                rpt, self.account_id, rpt.target_move, rpt.charge_type,
+                rpt.org_id.id,rpt.account_id.id)
             move_ids = init_moves.ids + blance_moves.ids
 
         return {
