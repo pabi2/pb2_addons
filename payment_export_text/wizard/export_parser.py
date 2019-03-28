@@ -72,6 +72,7 @@ class DocumentExportParser(models.TransientModel):
         data_list.append(header_config_lines)
         # for Line Detail part
         export_lines = payment_export_record.line_ids
+        
         # If defined line number max
         if config_id.line_number_max not in [False, 0] and \
                 len(export_lines) > config_id.line_number_max:
@@ -111,9 +112,7 @@ class DocumentExportParser(models.TransientModel):
             if export_lines and voucher_lines:
                 for voucher_line in voucher_lines:
                     for invoice_line in voucher_line:
-                        line_invoice_detail_config_lines = \
-                            config_id.invoice_detail_config_line_ids.\
-                            read(config_fields_to_read)
+                        line_invoice_detail_config_lines = config_id.invoice_detail_config_line_ids.read(config_fields_to_read)
                         for line in line_invoice_detail_config_lines:
                             model_id = active_model.id
                             if line.get('model_id', []):
@@ -140,8 +139,7 @@ class DocumentExportParser(models.TransientModel):
         if config_id.footer_disabled:
             return data_list
         # for footer part
-        footer_config_lines =\
-            config_id.footer_config_line_ids.read(config_fields_to_read)
+        footer_config_lines = config_id.footer_config_line_ids.read(config_fields_to_read)
         for line in footer_config_lines:
             if line['field_code']:
                 model = active_model.id
