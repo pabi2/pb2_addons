@@ -573,5 +573,107 @@
           </field>
         </record>
 
+        <record id="rpt_budget_future_commit_template" model="ir.attachment">
+            <field name="res_model">rpt.budget.future.commit</field>
+            <field name="datas"></field>
+            <field name="datas_fname">rpt_budget_future_commit.xlsx</field>
+            <field name="name">Future Commit</field>
+            <field name="parent_id" eval="ref('dir_budget_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'future_commit': {
+                            '_HEAD_': {
+                                'B4': 'report_type${value or ""}',
+                                'B5': 'fiscalyear_id.name${value or ""}',
+                            },
+                            'results': {
+                                'A16': 'doc_number${value or ""}',
+                                'B16': 'order_date${value or ""}',
+                                'C16': 'po_contract${value or ""}',
+                                'D16': 'po_contract_type${value or ""}',
+                                'E16': 'po_contract_start_date${value or ""}',
+                                'F16': 'po_contract_end_date${value or ""}',
+                                'G16': 'procurement_method${value or ""}',
+                                'H16': 'pr_reference_doc${value or ""}',
+                                'I16': 'pd_reference_doc${value or ""}',
+								'J16': 'item${value or ""}',
+								'K16': 'product${value or ""}',
+								'L16': 'description${value or ""}',
+								'M16': 'scheduled_date${value or ""}',
+								'N16': 'product_cat${value or ""}',
+								'O16': 'gl${value or ""}',
+								'P16': 'gl_name${value or ""}',
+								'Q16': 'activity_group_code${value or ""}',
+								'R16': 'activity_group_name${value or ""}',
+								'S16': 'activity_rpt_code${value or ""}',
+								'T16': 'activity_rpt_name${value or ""}',
+								'U16': 'budget_view${value or ""}',
+								'V16': 'budget_code${value or ""}',
+								'W16': 'budget_name${value or ""}',
+								'X16': 'fund${value or ""}',
+								'Y16': 'job_order${value or ""}',
+								'Z16': 'quantity${value or ""}',
+								'AA16': 'uom${value or ""}',
+								'AB16': 'price_unit${value or ""}',
+								'AC16': 'taxes${value or ""}',
+								'AD16': 'subtotal${value or ""}',
+								'AE16': 'type_taxes${value or ""}',
+								'AF16': 'ex_in_clude${value or ""}',
+								'AG16': 'total${value or ""}',
+								'AH16': 'currency${value or ""}',
+								'AI16': 'fiscalyear${value or ""}',
+								'AJ16': 'invoice_plan${value or ""}',
+								'AK16': 'fin_lease${value or ""}',
+								'AL16': 'supplier_code${value or ""}',
+								'AM16': 'supplier_name${value or ""}',
+								'AN16': 'org_code${value or ""}',
+								'AO16': 'org_name${value or ""}',
+								'AP16': 'costcenter_code${value or ""}',
+								'AQ16': 'costcenter_name${value or ""}',
+								'AR16': 'mission_name${value or ""}',
+								'AS16': 'functional_area_code${value or ""}',
+								'AT16': 'functional_area_name${value or ""}',
+								'AU16': 'program_group_code${value or ""}',
+								'AV16': 'program_group_name${value or ""}',
+								'AW16': 'program_code${value or ""}',
+								'AX16': 'program_name${value or ""}',
+								'AY16': 'project_group_code${value or ""}',
+								'AZ16': 'project_group_name${value or ""}',
+								'BA16': 'master_plan_code${value or ""}',
+								'BB16': 'master_plan_name${value or ""}',
+								'BC16': 'project_type_code${value or ""}',
+								'BD16': 'project_type_name${value or ""}',
+								'BE16': 'operation_code${value or ""}',
+								'BF16': 'operation_name${value or ""}',
+								'BG16': 'fund_type_code${value or ""}',
+								'BH16': 'fund_type_name${value or ""}',
+								'BI16': 'project_date_start${value or ""}',
+								'BJ16': 'project_date_end${value or ""}',
+								'BK16': 'start_date_spending${value or ""}',
+								'BL16': 'end_date_spending${value or ""}',
+								'BM16': 'pm_code${value or ""}',
+								'BN16': 'pm_name${value or ""}',
+								'BO16': 'project_status${value or ""}',
+								'BP16': 'sector_code${value or ""}',
+								'BQ16': 'sector_name${value or ""}',
+								'BR16': 'subsector_code${value or ""}',
+								'BS16': 'subsector_name${value or ""}',
+								'BT16': 'division_code${value or ""}',
+								'BU16': 'division_name${value or ""}',
+								'BV16': 'section_program_code${value or ""}',
+								'BW16': 'section_program_name${value or ""}',
+								'BX16': 'project_c_code${value or ""}',
+								'BY16': 'project_c_name${value or ""}',
+								'BZ16': 'pm_project_c_code${value or ""}',
+								'CA16': 'pm_project_c_name${value or ""}',
+								'CB16': 'po_status${value or ""}',
+                            }
+                        }
+                    }
+                }
+			</field>
+		</record>
+
     </data>
 </openerp>

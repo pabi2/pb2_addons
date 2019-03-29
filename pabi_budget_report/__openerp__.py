@@ -16,6 +16,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/action_report.xml',
         # 'archive/wizards/budget_plan_unit_analysis_report_wizard.xml',
         # 'archive/wizards/budget_plan_project_analysis_report_wizard.xml',
         'wizards/budget_summary_report_wizard.xml',
@@ -29,6 +30,7 @@
         'reports/xlsx_report_budget_plan_asset_analysis.xml',
         'reports/xlsx_report_budget_plan_construction_analysis.xml',
         'reports/xlsx_report_budget_summary.xml',
+        'reports/report_budget_common_multi_view.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/load_template.xml',
     ],
