@@ -31,7 +31,7 @@ class RPTBudgetFutureCommit(models.TransientModel):
             dom += [('budget_view', '=', self.report_type)]
         
         
-        self.results = Result.search([], limit=100)
+        self.results = Result.search([])
         
         print '\n results: '+str(self.results)
     
@@ -193,8 +193,8 @@ class RPTBudgetFutureCommitLine(models.Model):
             ) as pr_reference_doc,
             pur_re.name as pd_reference_doc,
             CAST(ROW_NUMBER() OVER(PARTITION BY po.name ORDER BY pol.id) AS Int) AS item,
-            product.name_template as product, 
-            pol.name as description, 
+            'product' as product, 
+            'description' as description, 
             to_char(pol.date_planned, 'DD/MM/YYYY') as scheduled_date, 
             pcg.name as product_cat, aac.code as gl, aac.name as gl_name,
             ag.code as activity_group_code, ag.name as activity_group_name, 
@@ -349,6 +349,7 @@ class RPTBudgetFutureCommitLine(models.Model):
         LEFT JOIN etl_issi_m_section inv_mst ON inv_mst.section_id = res_inv.owner_section_id
     WHERE po.state in ('approved','confirmed','done')
         and po.order_type = 'purchase_order'
+    order by pol.id
         """
         return sql_view
 
