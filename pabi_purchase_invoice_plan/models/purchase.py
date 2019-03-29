@@ -116,8 +116,6 @@ class PurchaseOrder(models.Model):
                      ('state', 'in', [False, 'cancel'])]
                 )
         if installment:
-            res01 = installment[0]
-            res02 = installment.fiscalyear_id
             fiscalyear = installment[0].fiscalyear_id
             if po_line.order_id.by_fiscalyear:
                 if po_line.fiscalyear_id == fiscalyear:
