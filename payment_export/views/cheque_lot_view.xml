@@ -137,6 +137,8 @@
                     <field name="user_id"/>
                     <field name="update_date"/>
                     <field name="payment_export_id"/>
+                    <field name="journal_id"/>
+                    <field name="cheque_lot_id"/>
                     <field name="responsible"/>
                 </tree>
             </field>

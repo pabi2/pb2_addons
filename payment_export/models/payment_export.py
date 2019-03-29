@@ -81,7 +81,7 @@ class PaymentExport(models.Model):
         track_visibility='onchange',
     )
     cheque_number_to = fields.Char(
-        string='Cheque Number From',
+        string='Cheque Number To',
         compute='_compute_cheque_number',
         track_visibility='onchange',
     )
