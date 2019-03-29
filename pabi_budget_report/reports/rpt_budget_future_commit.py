@@ -31,7 +31,7 @@ class RPTBudgetFutureCommit(models.TransientModel):
             dom += [('budget_view', '=', self.report_type)]
         
         
-        self.results = Result.search([])
+        self.results = Result.search([], limit=100)
         
         print '\n results: '+str(self.results)
     
