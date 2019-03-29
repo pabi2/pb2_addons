@@ -349,7 +349,7 @@ class RPTBudgetFutureCommitLine(models.Model):
         LEFT JOIN etl_issi_m_section inv_mst ON inv_mst.section_id = res_inv.owner_section_id
     WHERE po.state in ('approved','confirmed','done')
         and po.order_type = 'purchase_order'
-    order by pol.id DESC
+    order by pol.id
         """
         return sql_view
 
