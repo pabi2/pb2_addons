@@ -193,7 +193,7 @@ class RPTBudgetFutureCommitLine(models.Model):
             ) as pr_reference_doc,
             pur_re.name as pd_reference_doc,
             CAST(ROW_NUMBER() OVER(PARTITION BY po.name ORDER BY pol.id) AS Int) AS item,
-            'product' as product, 
+            product.name_template as product, 
             'description' as description, 
             to_char(pol.date_planned, 'DD/MM/YYYY') as scheduled_date, 
             pcg.name as product_cat, aac.code as gl, aac.name as gl_name,
@@ -349,7 +349,7 @@ class RPTBudgetFutureCommitLine(models.Model):
         LEFT JOIN etl_issi_m_section inv_mst ON inv_mst.section_id = res_inv.owner_section_id
     WHERE po.state in ('approved','confirmed','done')
         and po.order_type = 'purchase_order'
-    order by pol.id
+    order by pol.id DESC
         """
         return sql_view
 
