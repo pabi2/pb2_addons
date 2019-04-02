@@ -325,12 +325,14 @@ class general_ledger_xls(report_xls):
                         ws, row_pos, row_data, c_init_cell_style)
 
                 for line in _p['ledger_lines'][account.id]:
-
-                    cumul_debit += line.get('debit', 0.0)
-                    cumul_credit += line.get('credit', 0.0)
+                    if (line.get('debit', 0.0)):
+                        cumul_debit += line.get('debit', 0.0)
+                    if (line.get('credit', 0.0)):
+                        cumul_credit += line.get('credit', 0.0)
                     if (line.get('amount_currency', 0.0)):
                         cumul_balance_curr += line.get('amount_currency', 0.0)
-                    cumul_balance += line.get('balance', 0.0)
+                    if (line.get('balance', 0.0)):
+                        cumul_balance += line.get('balance', 0.0)
                     label_elements = [line.get('lname', '')]
                     if line.get('invoice_number'):
                         label_elements.append(
