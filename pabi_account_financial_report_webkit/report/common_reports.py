@@ -795,8 +795,10 @@ WHERE move_id in %s"""
         opening_period_selected = self.get_included_opening_period(
             start_period, specific_report=specific_report)
         # Force period
-        if opening_period_selected == start_period.ids:
-            opening_period_selected = []
+        #Bug when you choose _get_start_stop_for_filter
+#         if opening_period_selected == start_period.ids:
+#             opening_period_selected = []
+        #opening 
         opening_move_lines = self.periods_contains_move_lines(
             opening_period_selected)
         if opening_move_lines:
