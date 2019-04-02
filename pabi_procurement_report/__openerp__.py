@@ -19,6 +19,7 @@
         'security/ir.model.access.csv',
         'wizards/pabi_purchase_summarize_report_wizard.xml',
         # Created using pabi_utils xlsx_template
+        'reports/xlsx_report_pabi_stock_balance_test.xml',
         'reports/xlsx_report_pabi_purchase_tracking.xml',
         'reports/xlsx_report_pabi_purchase_summarize.xml',
         'reports/xlsx_report_pabi_standard_asset.xml',
