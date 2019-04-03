@@ -2,8 +2,8 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voucher" language="groovy" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
 	<property name="ireport.zoom" value="1.5000000000000262"/>
-	<property name="ireport.x" value="145"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.x" value="234"/>
+	<property name="ireport.y" value="619"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -178,6 +178,12 @@
 	<field name="payment_amount_tax" class="java.lang.Number">
 		<fieldDescription><![CDATA[tax_line_normal/amount]]></fieldDescription>
 	</field>
+	<field name="amount" class="java.lang.Number">
+		<fieldDescription><![CDATA[amount]]></fieldDescription>
+	</field>
+	<field name="payment_amount" class="java.lang.Number">
+		<fieldDescription><![CDATA[multiple_reconcile_ids/amount]]></fieldDescription>
+	</field>
 	<sortField name="invoice_type"/>
 	<variable name="amount_total_text" class="java.lang.String">
 		<variableExpression><![CDATA[$P{REPORT_LOCALE}.toString().equals("en_US") ?
@@ -275,14 +281,14 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 				<reportElement x="380" y="248" width="13" height="18">
 					<printWhenExpression><![CDATA[$F{invoice_amount_tax} > 0]]></printWhenExpression>
 				</reportElement>
-				<textElement verticalAlignment="Bottom"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="438" y="248" width="13" height="18">
 					<printWhenExpression><![CDATA[$F{invoice_amount_tax} == null || $F{invoice_amount_tax} == 0]]></printWhenExpression>
 				</reportElement>
-				<textElement verticalAlignment="Bottom"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 		</band>
@@ -345,7 +351,7 @@ $F{payment_amount_untaxed}]]></textFieldExpression>
 	</detail>
 	<lastPageFooter>
 		<band height="310">
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="390" y="106" width="92" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
@@ -410,61 +416,42 @@ $F{payment_amount_untaxed}]]></textFieldExpression>
 				<reportElement x="150" y="40" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "transfer"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="77" y="40" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "credit"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="21" y="40" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "cash"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="214" y="40" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "cheque"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement mode="Transparent" x="390" y="120" width="92" height="15" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$V{amount_retention} > 0]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_retention}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement mode="Transparent" x="260" y="135" width="144" height="15" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$V{amount_retention} > 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{amount_retention} > 0 || $F{payment_amount} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[ได้รับเงินสุทธิ]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement mode="Transparent" x="389" y="135" width="92" height="15" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$V{amount_retention} > 0]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_total} == null ? 0.0 : ($V{amount_total})
-- $V{amount_retention}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement mode="Transparent" x="260" y="120" width="144" height="15" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$V{amount_retention} > 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{amount_retention} > 0 || $F{payment_amount} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
@@ -489,6 +476,20 @@ $F{payment_amount_tax}]]></textFieldExpression>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_LOCALE}.toString().equals("th_TH") ? "หากมีการแก้ไขขอให้แจ้งภายใน 7 วัน มิฉะนั้นสำนักงานฯ จะถือว่าถูกต้อง" :
 "Any change must be notified within 7 days. Otherwise, all will be considered as correct."]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="392" y="135" width="90" height="15"/>
+				<textElement textAlignment="Right" lineSpacing="Single">
+					<font fontName="Monospaced" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="367" y="121" width="115" height="15"/>
+				<textElement textAlignment="Right" lineSpacing="Single">
+					<font fontName="Monospaced" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{payment_amount}.abs()]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>
