@@ -94,11 +94,14 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
                          context=context)[0]
         data['form'].update(vals)
         #add org_name in form
-        _org_name = self.pool.get('res.org').browse(cr,uid,vals['org_id'])
-        org_name = []
-        for record in _org_name:
-            org_name.append(record.name_short)
-        data['form'].update({'org_name':' '.join(org_name)})
+        if vals['org_id']:
+            _org_name = self.pool.get('res.org').browse(cr,uid,vals['org_id'])
+            org_name = []
+            for record in _org_name:
+                org_name.append(record.name_short)
+            data['form'].update({'org_name':' '.join(org_name)})
+        else: 
+            data['form'].update({'org_name':' '})
         # PABI2
         data['specific_report'] = True
 
