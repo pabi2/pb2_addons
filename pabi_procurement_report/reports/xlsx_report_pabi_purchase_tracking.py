@@ -66,7 +66,7 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
     
     @api.onchange('org_ids', 'chartfield_ids', 'po_date_from', 'po_date_to', 'po_responsible_ids')
     def onchange_po_domain(self):
-        dom = [('name', 'like', 'PO%')]
+        dom = []
         if self.org_ids:
             res = []
             operating_unit_ids = []
@@ -185,7 +185,7 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
         if self.pr_responsible_ids:
             dom += [('pr_responsible_id', 'in', self.pr_responsible_ids.ids)]
         if self.po_ids:
-            dom += [('po_id', 'in', po_ids.ids)]
+            dom += [('po_id', 'in', self.po_ids.ids)]
         if self.po_date_from:
             dom += [('po_date', '>=', self.po_date_from)]
         if self.po_date_to:
