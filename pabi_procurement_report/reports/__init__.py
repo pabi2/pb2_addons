@@ -15,4 +15,4 @@ from . import xlsx_report_pabi_hiring_summary
 from . import xlsx_report_pabi_green_product_summary
 from . import xlsx_report_pabi_purchase_annual
 from . import xlsx_report_pabi_supplier_evaluation_score
-from . import xlsx_report_pabi_stock_balance_test
+
