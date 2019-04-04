@@ -611,39 +611,7 @@
               }
             </field>
         </record>
-        
-        <!-- PABI Stock Balance Test -->
-        <record id="xlsx_report_pabi_stock_balance_test" model="ir.attachment">
-            <field name="res_model">xlsx.report.pabi.stock.balance.test</field>
-            <field name="datas"></field>
-            <field name="datas_fname">xlsx_report_pabi_stock_balance.xlsx</field>
-            <field name="name">PABI Stock Balance Test</field>
-            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
-            <field name="description">
-              {
-                '__EXPORT__': {
-                    1: {
-                        '_HEAD_': {
-                            'B2': 'ou_name${value or ""}',
-                            'B3': 'location_name${value or ""}',
-                            'B4': '${time.strftime("%d-%m-%Y")}',
-                        },
-                        'results': {
-                            'A7': 'product_name${value or ""}',
-                            'B7': 'ou_name${value or ""}',
-                            'C7': 'location_name${value or ""}',
-                            'D7': 'balance${value or ""}',
-                            'E7': 'uom_name${value or ""}',
-                            'F7': 'price${value or ""}',
-                            'G7': 'currency${value or ""}',
-                        },
-                        '_TAIL_0': {
-                        }
-                    }
-                }
-              }
-          </field>
-        </record>
+
         
         
         
