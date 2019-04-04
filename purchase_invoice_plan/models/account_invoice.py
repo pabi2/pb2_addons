@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields
+from openerp import models, fields , api
 
 
 class AccountInvoice(models.Model):
@@ -12,3 +12,23 @@ class AccountInvoice(models.Model):
         copy=False,
         readonly=True,
     )
+    
+    is_invoice_plan = fields.Boolean(
+        compute="_compute_is_invoice_plan",
+        string='Is Invoice Plan',
+        store=True,
+    )
+    
+    installment = fields.Integer(
+        related='invoice_plan_ids.installment',
+        string='Installment',
+    )
+    
+    @api.multi
+    @api.depends('invoice_plan_ids')
+    def _compute_is_invoice_plan(self):
+        for invoice in self:
+            if invoice.invoice_plan_ids:
+                invoice.is_invoice_plan = True
+            else:
+                invoice.is_invoice_plan = False
