@@ -442,7 +442,7 @@ $F{payment_amount_untaxed}]]></textFieldExpression>
 			</staticText>
 			<staticText>
 				<reportElement mode="Transparent" x="260" y="135" width="144" height="15" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$V{amount_retention} > 0 || $F{payment_amount} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{payment_amount} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
@@ -451,7 +451,7 @@ $F{payment_amount_untaxed}]]></textFieldExpression>
 			</staticText>
 			<staticText>
 				<reportElement mode="Transparent" x="260" y="120" width="144" height="15" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$V{amount_retention} > 0 || $F{payment_amount} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{payment_amount} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
@@ -478,14 +478,18 @@ $F{payment_amount_tax}]]></textFieldExpression>
 "Any change must be notified within 7 days. Otherwise, all will be considered as correct."]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="392" y="135" width="90" height="15"/>
+				<reportElement x="393" y="135" width="89" height="15">
+					<printWhenExpression><![CDATA[$F{payment_amount} != null]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right" lineSpacing="Single">
 					<font fontName="Monospaced" size="9"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="367" y="121" width="115" height="15"/>
+				<reportElement x="367" y="121" width="115" height="15">
+					<printWhenExpression><![CDATA[$F{payment_amount} != null]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right" lineSpacing="Single">
 					<font fontName="Monospaced" size="9"/>
 				</textElement>
