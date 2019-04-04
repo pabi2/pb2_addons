@@ -292,6 +292,9 @@
                     <field name="display_name2"/>
                     <field name="partner_code"/>
                 </xpath>
+                <xpath expr="//field[@name='number']" position="before">
+                    <field name="date_document"/>
+                </xpath>
                 <field name="state" position="before">
                     <field name="comment" string="Info"/>
                 </field>
