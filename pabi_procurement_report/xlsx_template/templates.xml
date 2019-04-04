@@ -563,7 +563,7 @@
 							'F15': 'pr_id.responsible_uid.display_name2${value or ""}',
 							'G15': '',
 							'H15': 'pr_id.objective${value or ""}',
-							'I15': 'prl_id.price_subtotal${value or ""}',
+							'I15': 'prl_id.amount_total${value or ""}',
 							'J15': 'prl_id.costcenter_id.id${value and ("["+str(env["res.costcenter"].browse(value).code)+"]" or "")+(str(env["res.costcenter"].browse(value).name_short) or "") or ""}',
 							'K15': 'pd_id.name${value or ""}',
 							'L15': 'pd_id.ordering_date${value and value.strftime("%d-%m-%Y") or ""}',
