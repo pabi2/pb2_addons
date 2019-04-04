@@ -50,11 +50,13 @@ class XLSXReportAdvancePayment(models.TransientModel):
         """
         self.ensure_one()
         Result = self.env["account.move.line"]
-        dom = [('account_id', 'in', self._get_account_ids()),
-               # ('invoice.is_advance', '=', True),
+        dom = [('invoice', '!=', False),
                ('reconcile_id', '=', False)]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
+        elif not self.account_ids:
+            dom += [('account_id', 'in', self._get_account_ids())]
+            
         self.results = Result.search(dom, order='account_id')
         
         
