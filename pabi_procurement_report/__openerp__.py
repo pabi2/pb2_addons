@@ -27,6 +27,7 @@
         'reports/xlsx_report_pabi_sla_balance.xml',
         'reports/xlsx_report_pabi_supplier_list.xml',
         'reports/xlsx_report_pabi_stock_balance.xml',
+        'reports/xlsx_report_pabi_stock_balance_02.xml',
         'reports/xlsx_report_pabi_supplier_evaluation.xml',
         'reports/xlsx_report_pabi_supplier_evaluation_score.xml',
         'reports/xlsx_report_pabi_comparison_pr_po.xml',
