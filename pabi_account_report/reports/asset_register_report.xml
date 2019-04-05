@@ -89,21 +89,6 @@
                       </group>
                   </page>
               </page>
-              <!-- <field name="fiscalyear_end_id" position="after">
-                  <group>
-                      <field name="asset_ids" widget="many2many_tags"/>
-                      <field name="asset_profile_id" widget="many2many_tags"/>
-                      <field name="account_asset_id" widget="many2many_tags"/>
-                      <field name="responsible_person_id" widget="many2many_tags"/>
-                  </group>
-                  <group>
-                      <field name="asset_status_id"/>
-                      <field name="org_id" widget="many2many_tags"/>
-                      <field name="building_id"/>
-                      <field name="floor_id" context="{'building_id': building_id}"/>
-                      <field name="room_id"/>
-                  </group>
-              </field> -->
           </field>
       </record>
 

@@ -60,6 +60,8 @@ class AssetRegisterView(models.AbstractModel):
     )
 
 
+
+
 class AssetRegisterReport(models.TransientModel):
     _name = 'asset.register.report'
     _inherit = 'report.account.common'
