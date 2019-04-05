@@ -11,3 +11,5 @@ class AccountUseModel(models.TransientModel):
         self = self.with_context(end_period_date=end_period_date)
         res = super(AccountUseModel, self).create_entries()
         return res
+    
+
