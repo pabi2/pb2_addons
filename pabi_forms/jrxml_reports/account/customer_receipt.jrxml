@@ -2,8 +2,8 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voucher" language="groovy" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
 	<property name="ireport.zoom" value="1.239669421487624"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="334"/>
+	<property name="ireport.x" value="29"/>
+	<property name="ireport.y" value="480"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -400,28 +400,28 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 				<reportElement x="150" y="40" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "transfer"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="77" y="40" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "credit"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="21" y="40" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "cash"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="214" y="40" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "cheque"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
@@ -454,7 +454,7 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 			</textField>
 			<staticText>
 				<reportElement mode="Transparent" x="260" y="120" width="144" height="15" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$V{amount_retention} > 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{amount_retention} > 0 ]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
