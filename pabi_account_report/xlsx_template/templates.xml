@@ -296,6 +296,7 @@
             </field>
         </record>
 
+
         # Advance Payment
         <record id="xlsx_report_advance_payment" model="ir.attachment">
             <field name="res_model">xlsx.report.advance.payment</field>

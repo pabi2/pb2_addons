@@ -60,9 +60,3 @@ class XLSXReportAdvancePayment(models.TransientModel):
         self.results = Result.search(dom, order='account_id')
         
         
-        
-        
-        
-        
-        
-        
