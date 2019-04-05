@@ -373,7 +373,7 @@ class general_ledger_xls(report_xls):
                         ('period', 1, 0, 'text', line.get('period_code', '')),
                         ('fiscal_year', 1, 0, 'text',
                          line.get('fiscalyear', '')),
-                        ('org_id', 1, 0, 'text', line.get('org_id', '')),
+                        ('org_id', 1, 0, 'text', line.get('org_id', '')), #PABI2
                         ('budget', 1, 0, 'text', line.get('budget_name', '')),
                         ('program', 1, 0, 'text', line.get('program', '')),
                         ('section_program', 1, 0, 'text',
