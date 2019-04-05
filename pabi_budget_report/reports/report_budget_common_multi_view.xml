@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
 	<data>
-        <record id="view_report_budget_common_form" model="ir.ui.view">
-            <field name="name">view.report.budget.common.form</field>
+        <record id="view_report_budget_common_multi_form" model="ir.ui.view">
+            <field name="name">view.report.budget.common.multi.form</field>
             <field name="model">report.budget.common.multi</field>
             <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='criteria']" position="replace">
-                    <group name="report_type">
+                    <group name="report_types">
                         <group>
                             <field name="report_type"/>
                             <field name="budget_method" attrs="{'invisible': [('report_type', '=', ('personnel'))]}"/>
@@ -64,6 +64,18 @@
                             <field name="group_by_budget_method" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Budget Filters" name="budget_filters">
+                            <group>
+                                <group string="Paste list of code to search">
+                                    <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1" context="{'active_test': False}"  />
+                                </group>
+                                <group string="Print only">
+                                    <field name="chartfield_ids" nolabel="1" />
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
                 </xpath>
                 <xpath expr="//div[@name='xlsx.report']" position="before">
                 	<group name="report_type" string="Report type">
@@ -75,29 +87,29 @@
                     </group>
                 </xpath>
                 <xpath expr="//div[@name='xlsx.report']" position="replace">
-                	<div name="xlsx.report">
+                	<div name="xlsx.report" attrs="{'invisible': [('xlsx_report', '!=', True)]}" >
 					    <field name="state" invisible="1"/>
 					    <field name="name" invisible="1"/>
 					    <div states="choose" groups="pabi_utils.group_see_own_spool_report">
-					        <field name="async_process" attrs="{'invisible': [('xlsx_report', '!=', True),('jasper_report', '!=', True)]}" />
-					        	<label for="async_process" attrs="{'invisible': [('xlsx_report', '!=', True),('jasper_report', '!=', True)]}" />
-					        <field name="to_csv" attrs="{'invisible': [('xlsx_report', '!=', True)]}" /><label for="to_csv" attrs="{'invisible': [('xlsx_report', '!=', True)]}" />
+					        <field name="async_process"/>
+					        	<label for="async_process"/>
+					        <field name="to_csv" /><label for="to_csv" />
 					        <field name="csv_delimiter" invisible="1"/>
 					        <field name="csv_extension" invisible="1"/>
 					        <field name="csv_quote" invisible="1"/>
 					    </div>
 					    <div states="get">
-					        <h2 attrs="{'invisible': ['|',('async_process', '=', True),('xlsx_report', '!=', True)]}">
+					        <h2 attrs="{'invisible': [('async_process', '=', True)]}">
 					            Complete Prepare Report (.xlsx)
 					        </h2>
-					        <h2 attrs="{'invisible': ['|',('async_process', '=', False),('xlsx_report', '!=', True)]}">
+					        <h2 attrs="{'invisible': [('async_process', '=', False)]}">
 					            Report Enqueued (.xlsx)
 					        </h2>
-					        <p attrs="{'invisible': ['|',('async_process', '=', True),('xlsx_report', '!=', True)]}" colspan="4">
+					        <p attrs="{'invisible': [('async_process', '=', True)]}" colspan="4">
 					            Here is the report file:
 					            <field name="data" filename="name" class="oe_inline"/>
 					        </p>
-					        <p attrs="{'invisible': ['|',('async_process', '=', False),('xlsx_report', '!=', True)]}" colspan="4">
+					        <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
 					            Report UUID:
 					            <field name="uuid" class="oe_inline"/>
 					        </p>
@@ -105,7 +117,7 @@
 					</div>
                 </xpath>
                 <xpath expr="//div[@name='xlsx.report']" position="after">
-                	<footer states="choose">
+                	<footer name="button_report" states="choose">
 					    <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"
                 				attrs="{'invisible': [('xlsx_report', '!=', True)]}" />
 	                	<button name="run_report" string="View Report" type="object" default_focus="1" class="oe_highlight" 
@@ -119,11 +131,10 @@
 					    <button special="cancel" string="Close" type="object"/>
 					</footer>
                 </xpath>
-                
             </field>
         </record>
         
-        <record model="ir.ui.view" id="view_budget_common_drilldown_form">
+        <record model="ir.ui.view" id="view_budget_common_multi_drilldown_form">
             <field name="name">view.budget.common.drilldown.form</field>
             <field name="model">report.budget.common.multi</field>
             <field name="arch" type="xml">

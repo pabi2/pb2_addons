@@ -29,6 +29,8 @@ REPORT_GROUPBY = {
                   'activity_group_id', 'activity_id', 'budget_method']
 }
 
+CHARTFIELDS_TYPE = {'sc:': 1000000, 'pj:': 2000000, 'cp:': 3000000, 'ia:': 4000000, 'pc:':5000000}
+
 @job(default_channel='root.rpt_budget_future_commit')
 def get_report_job(session, model_name, res_id, lang=False):
     try:
@@ -260,6 +262,28 @@ class ReportBudgetCommonMulti(ChartField, models.AbstractModel):
         string='jasper report',
         default=False,
     )
+    line_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    chartfield_ids = fields.Many2many(
+        'chartfield.view',
+        string='Budget',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
+    
+    
+    @api.onchange('line_filter')
+    def _onchange_line_filter(self):
+        self.chartfield_ids = []
+        Chartfield = self.env['chartfield.view']
+        dom = []
+        if self.line_filter:
+            codes = self.line_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.chartfield_ids = Chartfield.search(dom, order='id')
     
     @api.model
     def _get_fiscalyear(self):
@@ -503,9 +527,17 @@ class ReportBudgetCommonMulti(ChartField, models.AbstractModel):
             self.analytic_report = False
     
     
-    
-    
-    
+    @api.multi
+    def _get_chartfield_ids(self, chartfield, type):
+        chartfield_id = []
+        
+        chartfield_ids = chartfield.filtered(lambda l: l.type == type).ids
+        
+        for chart in chartfield_ids:
+            chartfield_id.append(chart-CHARTFIELDS_TYPE[type])
+            
+        return chartfield_id
+        
     
     @api.multi
     def get_jasper_report(self):
@@ -540,11 +572,10 @@ class ReportBudgetCommonMulti(ChartField, models.AbstractModel):
         raise ValidationError(_('Not implemented.'))
     
     @api.multi
-    def run_jasper_report(self, data):
-        print '\n run_jasper_report'
+    def run_jasper_report(self, data, report_ids):
         self.ensure_one()
         # Enqueue
-        if self.async_process:
+        """if self.async_process:
             Job = self.env['queue.job']
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Excel Report - %s' % (self._name, )
@@ -555,7 +586,7 @@ class ReportBudgetCommonMulti(ChartField, models.AbstractModel):
             # Process Name
             job.process_id = self.env.ref('pabi_budget_multi_report.jasper_report')
             self.write({'state': 'get', 'uuid': uuid})
-        """
+        
         #else:
             #print '\n ELSE'
             #out_file, out_name = self.get_report()
@@ -569,8 +600,8 @@ class ReportBudgetCommonMulti(ChartField, models.AbstractModel):
                 'views': [(False, 'form')],
                 'target': 'new',
             }"""
-            
-        report_name = self.env.ref(data['report_ids']).report_name
+        
+        report_name = self.env.ref(report_ids).report_name
         print '\n report_name'+str(report_name)
         return {
                 'type': 'ir.actions.report.xml',

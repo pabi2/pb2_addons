@@ -11,4 +11,5 @@ from . import xlsx_report_asset_item_plan_analysis
 from . import xlsx_report_budget_plan_asset_analysis
 from . import xlsx_report_budget_plan_construction_analysis
 from . import xlsx_report_budget_summary
+from . import rpt_budget_future_commit_parser
 from . import rpt_budget_future_commit

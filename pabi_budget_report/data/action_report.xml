@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-    	<record id="ir_cron_rpt_budget_future_commit_report" model="ir.cron">
-            <field name="name">rpt_budget_future_commit_report</field>
-            <field name="user_id" ref="base.user_root"/>
-            <field name="interval_number">1</field>
-            <field name="interval_type">months</field>
-            <field name="numbercall">-1</field>
-            <field name="nextcall">2019-04-04 00:00:00</field>
-            <field eval="False" name="doall"/>
-            <field eval="'rpt.budget.future.commit'" name="model"/>
-            <field eval="'_action_rpt_budget_future_commit'" name="function"/>
+    	<record id="rpt_budget_future_commit_jasper_report" model="ir.actions.report.xml">
+        	<field name="auto">True</field>
+            <field name="model">rpt.budget.future.commit.line</field>
+            <field name="name">Future Commit</field>
+            <field name="report_name">rpt_budget_future_commit_report</field>
+            <field name="report_rml">pabi_budget_report/reports/rpt_budget_future_commit_report.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+        </record>
+        <record id="rpt_budget_future_commit_report_values" model="ir.values">
+            <field name="name">Future Commit</field>
+            <field name="model">rpt.budget.future.commit.line</field>
+            <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(rpt_budget_future_commit_jasper_report)"/>
         </record>
     </data>
 </openerp>
