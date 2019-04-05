@@ -29,7 +29,10 @@ class XLSXReportAdvancePayment(models.TransientModel):
 
     @api.model
     def _get_account_ids(self):
-        return self.env.user.company_id.other_deposit_account_ids.ids
+        ids = []
+        for res in self.env.user.company_id.other_deposit_account_ids:
+            if res.code != '1106010007' : ids += [res.id]
+        return ids
 
     @api.model
     def _get_domain_account_ids(self):
@@ -47,9 +50,13 @@ class XLSXReportAdvancePayment(models.TransientModel):
         """
         self.ensure_one()
         Result = self.env["account.move.line"]
-        dom = [('account_id', 'in', self._get_account_ids()),
-               # ('invoice.is_advance', '=', True),
+        dom = [('invoice', '!=', False),
                ('reconcile_id', '=', False)]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
-        self.results = Result.search(dom)
+        elif not self.account_ids:
+            dom += [('account_id', 'in', self._get_account_ids())]
+            
+        self.results = Result.search(dom, order='account_id')
+        
+        
