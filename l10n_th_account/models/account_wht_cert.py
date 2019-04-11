@@ -378,18 +378,31 @@ class AccountWhtCert(models.Model):
     def _get_summary_by_type(self, column, ttype='all'):
         self.ensure_one()
         wht_lines = self.wht_line
-        if ttype != 'all':
-            wht_lines = wht_lines.filtered(lambda l:
-                                           l.wht_cert_income_type == ttype)
-        if column == 'base':
-            return round(sum([x.base for x in wht_lines]), 2)
-        if column == 'tax':
-            return round(sum([x.amount for x in wht_lines]), 2)
-        if column == 'desc':
-            descs = [x.wht_cert_income_desc for x in wht_lines]
-            descs = filter(lambda x: x and x != '', descs)
-            desc = ', '.join(descs)
-            return desc
+        if len(wht_lines) == 1:
+            if ttype != 'all':
+                wht_lines = wht_lines.filtered(lambda l:
+                                               l.wht_cert_income_type == ttype)
+            if column == 'base':
+                return wht_lines.base
+            if column == 'tax':
+                return wht_lines.amount
+            if column == 'desc':
+                return wht_lines.wht_cert_income_desc
+        else:
+            if ttype != 'all':
+                wht_lines = wht_lines.filtered(lambda l:
+                                               l.wht_cert_income_type == ttype)
+            if column == 'base':
+                return round(sum([x.base for x in wht_lines]), 2)
+            if column == 'tax':
+                return round(sum([x.amount for x in wht_lines]), 2)
+            if column == 'desc':
+                descs = [x.wht_cert_income_desc for x in wht_lines]
+                descs = filter(lambda x: x and x != '', descs)
+                desc = ', '.join(descs)
+                return desc
+
+
 
     @api.model
     def _prepare_address(self, partner):
