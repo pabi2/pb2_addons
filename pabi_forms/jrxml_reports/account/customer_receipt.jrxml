@@ -2,8 +2,8 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voucher" language="groovy" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
 	<property name="ireport.zoom" value="1.239669421487624"/>
-	<property name="ireport.x" value="50"/>
-	<property name="ireport.y" value="529"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="288"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -179,7 +179,7 @@
 		<fieldDescription><![CDATA[company_id/loan_installment_account_id/id]]></fieldDescription>
 	</field>
 	<field name="account_id" class="java.lang.Integer">
-		<fieldDescription><![CDATA[line_ids/account_id/id]]></fieldDescription>
+		<fieldDescription><![CDATA[account_id]]></fieldDescription>
 	</field>
 	<field name="bank_name" class="java.lang.String">
 		<fieldDescription><![CDATA[line_ids/invoice_id/loan_agreement_id/partner_id/name]]></fieldDescription>
