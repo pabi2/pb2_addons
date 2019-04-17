@@ -13,9 +13,7 @@
 	</style>
 	<parameter name="report_type" class="java.lang.String"/>
 	<parameter name="fiscal_year" class="java.lang.String"/>
-	<parameter name="budget_overview" class="java.lang.String"/>
 	<parameter name="org" class="java.lang.String"/>
-	<parameter name="budget" class="java.lang.String"/>
 	<parameter name="po_document" class="java.lang.String"/>
 	<parameter name="order_date" class="java.lang.String"/>
 	<parameter name="run_by" class="java.lang.String"/>
@@ -267,13 +265,13 @@
 		<fieldDescription><![CDATA[po_status]]></fieldDescription>
 	</field>
 	<pageHeader>
-		<band height="200" splitType="Stretch">
+		<band height="150" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="0" width="200" height="15"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[รายงานจัดซื้อจ้างที่คงค้าง ]]></text>
+				<text><![CDATA[à¸£à¸²à¸¢à¸‡à¸²à¸™à¸ˆà¸±à¸”à¸‹à¸·à¹‰à¸­à¸ˆà¹‰à¸²à¸‡à¸—à¸µà¹ˆà¸„à¸‡à¸„à¹‰à¸²à¸‡ ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="15" width="250" height="15"/>
@@ -315,94 +313,66 @@
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Budget Overview]]></text>
+				<text><![CDATA[Org]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="100" y="60" width="100" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{budget_overview}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{org}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="75" width="100" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Org]]></text>
+				<text><![CDATA[PO document]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="100" y="75" width="100" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{org}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{po_document}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="90" width="100" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Budget]]></text>
+				<text><![CDATA[Order Date]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="100" y="90" width="100" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{budget}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{order_date}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="105" width="100" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[PO document]]></text>
+				<text><![CDATA[Run By]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="100" y="105" width="100" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{po_document}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{run_by}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="120" width="100" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Order Date]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="100" y="120" width="100" height="15" backcolor="#00CCCC"/>
-				<textElement>
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{order_date}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="0" y="135" width="100" height="15" backcolor="#00CCCC"/>
-				<textElement>
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Run By]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="100" y="135" width="100" height="15" backcolor="#00CCCC"/>
-				<textElement>
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{run_by}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="0" y="150" width="100" height="15" backcolor="#00CCCC"/>
-				<textElement>
-					<font size="8" isBold="true"/>
-				</textElement>
 				<text><![CDATA[Run Date]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="100" y="150" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="100" y="120" width="100" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
@@ -986,567 +956,567 @@
 			<textField>
 				<reportElement style="border_box" x="0" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{doc_number} ? $F{doc_number} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="80" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{order_date} ? $F{order_date} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="160" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{po_contract} ? $F{po_contract} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="240" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{po_contract_type} ? $F{po_contract_type} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="320" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{po_contract_start_date} ? $F{po_contract_start_date} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="400" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{po_contract_end_date} ? $F{po_contract_end_date} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="480" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{procurement_method} ? $F{procurement_method} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="560" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pr_reference_doc} ? $F{pr_reference_doc} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="640" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pd_reference_doc} ? $F{pd_reference_doc} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="720" y="0" width="40" height="40"/>
 				<textElement textAlignment="Right">
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{item} ? $F{item} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="760" y="0" width="120" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{product} ? $F{product} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="880" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{description} ? $F{description} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="980" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{scheduled_date} ? $F{scheduled_date} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1060" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{product_cat} ? $F{product_cat} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1160" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{gl} ? $F{gl} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1240" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{gl_name} ? $F{gl_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1340" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{activity_group_code} ? $F{activity_group_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1420" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{activity_group_name} ? $F{activity_group_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1520" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{activity_rpt_code} ? $F{activity_rpt_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1600" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{activity_rpt_name} ? $F{activity_rpt_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1700" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{budget_view} ? $F{budget_view} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1780" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{budget_code} ? $F{budget_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1860" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{budget_name} ? $F{budget_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1960" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fund} ? $F{fund} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="2040" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{job_order} ? $F{job_order} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="2120" y="0" width="60" height="40"/>
 				<textElement textAlignment="Right">
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{quantity} ? $F{quantity} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="2180" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{uom} ? $F{uom} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="2260" y="0" width="80" height="40"/>
 				<textElement textAlignment="Right">
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{price_unit} ? new java.text.DecimalFormat("#,###.00").format($F{price_unit}) : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="2340" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{taxes} ? $F{taxes} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="2420" y="0" width="100" height="40"/>
 				<textElement textAlignment="Right">
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{subtotal} ? new java.text.DecimalFormat("#,###.00").format($F{subtotal}) : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="2520" y="0" width="100" height="40"/>
 				<textElement textAlignment="Right">
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{subtotal_th} ? new java.text.DecimalFormat("#,###.00").format($F{subtotal_th}) : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="2620" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{type_taxes} ? $F{type_taxes} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="2700" y="0" width="100" height="40"/>
 				<textElement textAlignment="Right">
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ex_in_clude} ? new java.text.DecimalFormat("#,###.00").format($F{ex_in_clude}) : 0.00]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="2800" y="0" width="100" height="40"/>
 				<textElement textAlignment="Right">
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total} ? new java.text.DecimalFormat("#,###.00").format($F{total}) : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="2900" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{currency} ? $F{currency} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="2960" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fiscalyear} ? $F{fiscalyear} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3040" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{invoice_plan} ? $F{invoice_plan} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3100" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fin_lease} ? $F{fin_lease} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3160" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{supplier_code} ? $F{supplier_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3240" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{supplier_name} ? $F{supplier_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3340" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{org_code} ? $F{org_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3400" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{org_name} ? $F{org_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3500" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{costcenter_code} ? $F{costcenter_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3580" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{costcenter_name} ? $F{costcenter_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3680" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{mission_name} ? $F{mission_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3740" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{functional_area_code} ? $F{functional_area_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3800" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{functional_area_name} ? $F{functional_area_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3900" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{program_group_code} ? $F{program_group_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="3960" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{program_group_name} ? $F{program_group_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="4060" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{program_code} ? $F{program_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="4120" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{program_name} ? $F{program_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="4220" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{project_group_code} ? $F{project_group_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="4300" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{project_group_name} ? $F{project_group_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="4400" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{master_plan_code} ? $F{master_plan_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="4460" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{master_plan_name} ? $F{master_plan_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="4560" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{project_type_code} ? $F{project_type_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="4620" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{project_type_name} ? $F{project_type_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="4720" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{operation_code} ? $F{operation_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="4780" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{operation_name} ? $F{operation_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="4880" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fund_type_code} ? $F{fund_type_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="4940" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fund_type_name} ? $F{fund_type_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="5040" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{project_date_start} ? $F{project_date_start} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="5120" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{project_date_end} ? $F{project_date_end} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="5200" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{start_date_spending} ? $F{start_date_spending} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="5280" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{end_date_spending} ? $F{end_date_spending} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="5360" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pm_code} ? $F{pm_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="5440" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pm_name} ? $F{pm_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="5540" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{project_status} ? $F{project_status} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="5640" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sector_code} ? $F{sector_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="5700" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sector_name} ? $F{sector_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="5800" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{subsector_code} ? $F{subsector_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="5860" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{subsector_name} ? $F{subsector_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="5960" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{division_code} ? $F{division_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="6020" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{division_name} ? $F{division_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="6120" y="0" width="60" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{section_program_code} ? $F{section_program_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="6180" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{section_program_name} ? $F{section_program_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="6280" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{project_c_code} ? $F{project_c_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="6360" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{project_c_name} ? $F{project_c_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="6460" y="0" width="80" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pm_project_c_code} ? $F{pm_project_c_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="6540" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pm_project_c_name} ? $F{pm_project_c_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="6640" y="0" width="100" height="40"/>
 				<textElement>
-					<font size="8" />
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{po_status} ? $F{po_status} : '']]></textFieldExpression>
 			</textField>

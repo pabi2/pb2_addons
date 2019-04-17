@@ -13,9 +13,7 @@ def budget_report_parser(cr, uid, ids, data, context):
         'parameters': {
             'report_type': data['parameters']['report_type'],
             'fiscal_year': data['parameters']['fiscal_year'],
-            'budget_overview': data['parameters']['budget_overview'],
             'org': data['parameters']['org'],
-            'budget': data['parameters']['budget'],
             'po_document': data['parameters']['po_document'],
             'order_date': data['parameters']['order_date'],
             'run_by': data['parameters']['run_by'],
@@ -29,3 +27,8 @@ jasper_reports.report_jasper(
                             'rpt.budget.future.commit.line',  # Model View name
                             parser=budget_report_parser,
 )
+jasper_reports.report_jasper(
+                            'report.rpt_budget_future_commit_summary_report',  # report_name in report_data.xml
+                            'rpt.budget.future.commit.summary.line',  # Model View name
+                            parser=budget_report_parser,
+)                            

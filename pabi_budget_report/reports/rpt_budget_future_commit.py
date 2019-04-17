@@ -145,21 +145,6 @@ class RPTBudgetFutureCommit(models.TransientModel):
         
         return super(RPTBudgetFutureCommit, self).run_jasper_report(data, report_ids)
     
-    
-    @api.multi
-    def _get_data_to_report(self):
-        report_ids = 'pabi_budget_multi_report.rpt_budget_future_commit_report'
-        commit_id = self.create({
-                                    'xlsx_report': True,
-                                    'async_process': True,
-                                })
-        commit_id.action_get_report()
-        
-    
-    def _action_rpt_budget_future_commit(self, cr, uid, context=None):
-        future_commit_obj = self.pool.get('rpt.budget.future.commit')
-        
-        future_commit_obj._get_data_to_report(cr, uid, [], context=context)
         
         
 class RPTBudgetFutureCommitLine(models.Model):

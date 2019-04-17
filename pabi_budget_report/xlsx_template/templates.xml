@@ -597,8 +597,8 @@
 								'B14': 'order_date${value or ""}',
 								'C14': 'contract_id.name${value or ""}',
 								'D14': 'po_contract_type_id.name${value or ""}',
-								'E14':': 'po_contract_start_date${value or ""}',
-								'F14':': 'po_contract_start_date${value or ""}',
+								'E14': 'po_contract_start_date${value or ""}',
+								'F14': 'po_contract_start_date${value or ""}',
 								'G14': 'purchase_method_id.name${value or ""}',
 								'H14': 'request_id.name${value or ""}',
 								'I14': 'requisition_id.name${value or ""}',
@@ -674,6 +674,34 @@
 								'CA14': 'pm_project_c_code${value or ""}',
 								'CB14': 'pm_project_c_name${value or ""}',
 								'CC14': 'po_status${value or ""}',
+                            }
+                        }
+                    }
+                }
+			</field>
+		</record>
+
+        <record id="rpt_budget_future_commit_summary_template" model="ir.attachment">
+            <field name="res_model">rpt.budget.future.commit.summary</field>
+            <field name="datas"></field>
+            <field name="datas_fname">rpt_budget_future_commit_summary.xlsx</field>
+            <field name="name">Future Commit Summary</field>
+            <field name="parent_id" eval="ref('dir_budget_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'future_commit_summary': {
+                            'results': {
+                                'A2': 'fiscalyear_id.name${value or ""}',
+								'B2': 'purchase_id.name${value or ""}',
+								'C2': 'contract_id.name${value or ""}',
+								'D2': 'subtotal${value or ""}#{align=right;number_format=number}',
+								'E2': 'po_commit${value or ""}#{align=right;number_format=number}',
+								'F2': 'po_actual${value or ""}#{align=right;number_format=number}',
+								'G2': 'remaining${value or ""}#{align=right;number_format=number}',
+								'H2': 'budget_view${value or ""}',
+								'I2': 'budget_code${value or ""}',
+								'J2': 'budget_name${value or ""}',
                             }
                         }
                     }

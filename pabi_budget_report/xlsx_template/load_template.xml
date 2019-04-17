@@ -13,6 +13,7 @@
                 ref('xlsx_report_budget_summary'),
                 ref('xlsx_report_budget_plan_construction_analysis'),
                 ref('rpt_budget_future_commit_template'),
+                ref('rpt_budget_future_commit_summary_template'),
             ]"/>
             <value>pabi_budget_report/xlsx_template</value>
         </function>
