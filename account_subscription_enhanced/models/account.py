@@ -16,7 +16,6 @@ import openerp
 from openerp import workflow
 
 
-
 @job
 def action_done_async_process(session, model_name, res_id):
     try:
@@ -25,8 +24,8 @@ def action_done_async_process(session, model_name, res_id):
         return {'result': res}
     except Exception, e:
         raise RetryableJobError(e)
-
-
+    
+    
 
 class AccountSubscription(models.Model):
     _inherit = 'account.subscription'
@@ -337,12 +336,12 @@ class AccountModel(models.Model):
         string='Use Model Job UUID',
         compute='_compute_button_use_model_job_uuid',
     )
-    
-    
+
+
 ###########################--------------------------------- start job backgruond ------------------------------- #######################
 
     @api.multi
-    def _compute_button_use_model_job_uuid(self):
+    def _compute_button_use_model_job_uuid(self):      
         for rec in self:
             task_name = "%s('%s', %s)" % \
                 ('action_done_async_process', self._name, rec.id)
@@ -353,20 +352,22 @@ class AccountModel(models.Model):
             rec.button_use_model_job_id = jobs and jobs[0] or False
             rec.button_use_model_uuid = jobs and jobs[0].uuid or False
         return True
-    
+
     @api.multi
-    def action_done(self):
+    def action_done(self, context):
         for rec in self:
-            Use_Model = self.env['account.use.model']
-            rec.Use_Model.create_entries()
+            vals = {}
+            Use_Model = rec.env['account.use.model'].create(vals)
+            Use_Model.create_entries()
         return True
 
     @api.multi
     def action_done_background(self):
+        self = self.with_context(active_ids=self.id)
         if self._context.get('button_use_model_async_process', False):
             self.ensure_one()
             if self._context.get('job_uuid', False):  # Called from @job
-                return self.action_done()
+                return self.action_done(self._context)
             if self.button_use_model_job_id:
                 message = _('Use Model')
                 action = self.env.ref('pabi_utils.action_my_queue_job')
@@ -378,9 +379,10 @@ class AccountModel(models.Model):
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
 
         else:
-            return self.action_done()
-        
-###########################--------------------------------- end job backgruond ------------------------------- #######################
+            return self.action_done(self._context)
+
+ ###########################--------------------------------- end job backgruond ------------------------------- #######################
+
 
 
     @api.multi
