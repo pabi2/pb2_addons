@@ -376,6 +376,7 @@ class AccountWhtCert(models.Model):
 
     @api.multi
     def _get_summary_by_type(self, column, ttype='all'):
+        descs = []
         self.ensure_one()
         wht_lines = self.wht_line
         if ttype != 'all':
@@ -386,10 +387,19 @@ class AccountWhtCert(models.Model):
         if column == 'tax':
             return round(sum([x.amount for x in wht_lines]), 2)
         if column == 'desc':
-            descs = [x.wht_cert_income_desc for x in wht_lines]
+            for x in wht_lines:
+                desc_ = x.wht_cert_income_desc
+                if '.' in desc_:
+                    desc_ = desc_.split('.',2)[1]
+                
+                if desc_ not in descs:
+                    descs.append(desc_)
+            
             descs = filter(lambda x: x and x != '', descs)
             desc = ', '.join(descs)
             return desc
+
+
 
     @api.model
     def _prepare_address(self, partner):
