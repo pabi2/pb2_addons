@@ -22,6 +22,12 @@
                 <field name="project_ids" position="attributes">
                 	<attribute name="invisible">1</attribute>
             	</field>
+                <field name="activity_group_id" position="attributes">
+                	<attribute name="invisible">1</attribute>
+            	</field>
+                <field name="activity_id" position="attributes">
+                	<attribute name="invisible">1</attribute>
+            	</field>
             	<group name="report_types" position="attributes">
                 	<attribute name="attrs">{'invisible': [('async_process', '=', True),('uuid','!=',False)]}</attribute>
             	</group>
