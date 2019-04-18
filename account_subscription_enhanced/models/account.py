@@ -355,9 +355,13 @@ class AccountModel(models.Model):
 
     @api.multi
     def action_done(self, context):
+        self = self.with_context(active_ids=context['active_ids'])
         for rec in self:
             vals = {}
             Use_Model = rec.env['account.use.model'].create(vals)
+            raise ValidationError(
+                _("Test Code : id %s - context %s") % (Use_Model, self._context,))
+            
             Use_Model.create_entries()
         return True
 
