@@ -93,9 +93,10 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
     def onchange_org_id(self):
         res_org, res_bud = '', ''
         for org in self.org_ids:
-            if res_org != '':
-                res_org += ', '
-            res_org += str(org.name_short)
+            name = self.env['operating.unit'].search([('id', '=', org.operating_unit_id.id)]).name
+            if res_org != '': 
+                res_org += ', '+name
+            else: res_org += name
         self.org_name = res_org
 
         for prg in self.chartfield_ids:
