@@ -561,10 +561,35 @@ class ReportBudgetCommonMulti(ChartField, models.AbstractModel):
             csv_quote=self.csv_quote)
             
             
-    """@api.multi
+    @api.multi
     def action_get_report(self):
-        res = super(ReportBudgetCommon, self).action_get_report()
-        return res"""
+        self.ensure_one()
+        # Enqueue
+        if self.async_process:
+            Job = self.env['queue.job']
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = 'Excel Report - %s' % (self._name, )
+            uuid = get_report_job.delay(
+                session, self._name, self.id, description=description,
+                lang=session.context.get('lang', False))
+            job = Job.search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            job.process_id = self.env.ref('pabi_utils.xlsx_report')
+            self.write({'state': 'get', 'uuid': uuid})
+        else:
+            out_file, out_name = self.get_report()
+            self.write({'state': 'get', 'data': out_file, 'name': out_name})
+            
+        view_id = self.env.ref('pabi_budget_report.view_budget_common_show_uuid_form').id
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'view_mode': 'form',
+            'view_type': 'form',
+            'res_id': self.id,
+            'views': [(view_id, 'form')],
+            'target': 'new',
+        }
     
     
     @api.multi

@@ -72,11 +72,11 @@ class RPTBudgetFutureCommitSummary(models.TransientModel):
         if self.org_id:
             dom += [('operating_unit_id.org_id', '=', self.org_id.id)]
         if self.sector_id:
-            dom += [('sector_code', '=', self.sector_id.code)]
+            dom += [('sector_id', '=', self.sector_id.id)]
         if self.subsector_id:
-            dom += [('subsector_code', '=', self.subsector_id.code)]
+            dom += [('subsector_id', '=', self.subsector_id.id)]
         if self.division_id:
-            dom += [('division_code', '=', self.division_id.code)]
+            dom += [('division_id', '=', self.division_id.id)]
         if self.section_id:
             section_ids.append(self.section_id.id)
         if self.section_program_id:
@@ -106,8 +106,8 @@ class RPTBudgetFutureCommitSummary(models.TransientModel):
             dom += [('invest_construction_phase_id', 'in', invest_construction_phase_ids)]
         if len(invest_asset_ids) > 0:
             dom += [('invest_asset_id', 'in', invest_asset_ids)]
-
-        self.results = Result.search(dom, limit=3)
+        
+        self.results = Result.search(dom)
     
     
     @api.multi
@@ -157,6 +157,9 @@ class RPTBudgetFutureCommitSummaryLine(models.Model):
     fiscalyear_id = fields.Many2one('account.fiscalyear')
     invest_construction_phase_id = fields.Many2one('res.invest.construction.phase')
     operating_unit_id = fields.Many2one('operating.unit')
+    #sector_id = fields.Many2one('res.sector')
+    #subsector_id = fields.Many2one('res.subsector')
+    #division_id = fields.Many2one('res.division')
     section_id = fields.Many2one('res.section')
     section_program_id = fields.Many2one('res.section.program')
     invest_asset_id = fields.Many2one('res.invest.asset')
@@ -171,56 +174,26 @@ class RPTBudgetFutureCommitSummaryLine(models.Model):
     
     def _get_sql_view(self):
         sql_view = """
-         SELECT 
-        ROW_NUMBER() over (order by pol.order_id) AS id,
-        SUM(ROUND((pol.product_qty*pol.price_unit)*
-        (CASE
-            WHEN cur.name = 'THB' THEN 1
-             WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                 WHERE cur_r.currency_id = cur.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1) IS NULL 
-             THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                 WHERE cur_r.currency_id = cur.id and CAST(po.date_order AS DATE) > CAST(cur_r.name AS DATE) order by cur_r.name DESC limit 1)
-            ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-             WHERE cur_r.currency_id = cur.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1)
-        END), 2)) as subtotal,
-        sum(sum_com.amount) as po_commit, sum(sum_act.amount) as po_actual, sum_act.budget_view,
-        CASE 
-            WHEN pol.project_id IS NOT NULL THEN mpj.project_code
-            WHEN pol.invest_construction_phase_id IS NOT NULL THEN ricp.code
-            WHEN pol.section_id IS NOT NULL THEN mst.section_code
-            WHEN pol.invest_asset_id IS NOT NULL THEN inv_mst.section_code
-            ELSE null
-        END as budget_code,
-        CASE 
-            WHEN pol.project_id IS NOT NULL THEN mpj.project_name
-            WHEN pol.invest_construction_phase_id IS NOT NULL THEN ricp.name
-            WHEN pol.section_id IS NOT NULL THEN mst.section_name
-            WHEN pol.invest_asset_id IS NOT NULL THEN inv_mst.section_name
-            ELSE null
-        END as budget_name,
-        po.contract_id, pol.fiscalyear_id, pol.invest_construction_phase_id,
-        po.operating_unit_id, pol.sector_id, pol.subsector_id, pol.division_id, pol.section_id, pol.section_program_id, 
-        pol.invest_asset_id, pol.functional_area_id, pol.program_group_id, pol.program_id, pol.project_group_id, pol.project_id, 
-        pol.invest_construction_id, pol.order_id as purchase_id
-    FROM purchase_order po
-        LEFT JOIN purchase_order_line pol ON pol.order_id = po.id
-        LEFT JOIN res_currency cur ON cur.id = po.currency_id
-        LEFT JOIN etl_issi_m_project mpj ON mpj.pb2_project_id = pol.project_id
-        LEFT JOIN etl_issi_m_section mst ON mst.section_id = pol.section_id
-        LEFT JOIN res_invest_construction_phase ricp ON ricp.id = pol.invest_construction_phase_id
-        LEFT JOIN res_invest_asset res_inv ON res_inv.id = pol.invest_asset_id
-        LEFT JOIN etl_issi_m_section inv_mst ON inv_mst.section_id = res_inv.owner_section_id
-        INNER JOIN issi_budget_summary_commit_view sum_com ON sum_com.document = po.name
-        INNER JOIN issi_budget_summary_actual_view sum_act ON sum_act.ref_document = po.name
-    WHERE sum_com.budget_commit_type in ('po_commit') AND sum_com.budget_method in ('expense')
-        AND sum_act.charge_type in ('external') 
-        AND sum_act.budget_method in ('expense') AND sum_act.ref_document not like 'EX%'
-    GROUP BY sum_com.fisyear, sum_com.document, sum_act.budget_view,
-        po.contract_id, pol.fiscalyear_id, pol.invest_construction_phase_id,
-        po.operating_unit_id, pol.sector_id, pol.subsector_id, pol.division_id, pol.section_id, pol.section_program_id, 
-        pol.invest_asset_id, pol.functional_area_id, pol.program_group_id, pol.program_id, pol.project_group_id, pol.project_id, 
-        pol.invest_construction_id, pol.order_id, mpj.project_code, ricp.code, mst.section_code, inv_mst.section_code,
-        mpj.project_name, ricp.name, mst.section_name, inv_mst.section_name
+            SELECT ROW_NUMBER() over (order by po.id) AS id,
+                SUM(fc.subtotal_th) as subtotal,
+                SUM(sum_com.amount) as po_commit,
+                SUM(sum_act.amount) as po_actual,
+                SUM(fc.subtotal_th)-SUM(sum_com.amount)-SUM(sum_com.amount) as remaining,
+                fc.budget_view, fc.budget_code, fc.budget_name, fc.contract_id, fc.fiscalyear_id, fc.invest_construction_phase_id, 
+                fc.operating_unit_id, fc.sector_code, fc.sector_name, fc.subsector_code, fc.subsector_name, fc.division_code, 
+                fc.division_name, fc.section_id, fc.section_program_id, fc.invest_asset_id, fc.functional_area_id, fc.program_group_id, 
+                fc.program_id, fc.project_group_id, fc.project_id, fc.invest_construction_id, fc.purchase_id
+            FROM rpt_budget_future_commit_line fc
+                LEFT JOIN purchase_order po ON po.id = fc.purchase_id
+                INNER JOIN issi_budget_summary_commit_view sum_com ON sum_com.document = po.name
+                INNER JOIN issi_budget_summary_actual_view sum_act ON sum_act.ref_document = po.name
+            WHERE sum_com.budget_commit_type in ('po_commit') AND sum_com.budget_method in ('expense')
+                AND sum_act.charge_type in ('external') 
+                AND sum_act.budget_method in ('expense') AND sum_act.ref_document not like 'EX%'
+            GROUP BY po.id, fc.purchase_id, fc.budget_view, fc.budget_code, fc.budget_name, fc.contract_id, fc.fiscalyear_id, 
+                fc.invest_construction_phase_id, fc.operating_unit_id, fc.sector_code, fc.sector_name, fc.subsector_code, 
+                fc.subsector_name, fc.division_code, fc.division_name, fc.section_id, fc.section_program_id, fc.invest_asset_id, 
+                fc.functional_area_id, fc.program_group_id, fc.program_id, fc.project_group_id, fc.project_id, fc.invest_construction_id
         """
         
         return sql_view

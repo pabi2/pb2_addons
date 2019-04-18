@@ -51,9 +51,6 @@
 	<field name="remaining" class="java.lang.String">
 		<fieldDescription><![CDATA[remaining]]></fieldDescription>
 	</field>
-	<variable name="remaining" class="java.lang.Integer">
-		<variableExpression><![CDATA[$F{subtotal}-$F{po_commit}-$F{po_actual}]]></variableExpression>
-	</variable>
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
@@ -82,7 +79,7 @@
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[PO ตามสัญญา]]></text>
+				<text><![CDATA[PO à¸•à¸²à¸¡à¸ªà¸±à¸�à¸�à¸²]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="400" y="0" width="100" height="20"/>

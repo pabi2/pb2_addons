@@ -202,5 +202,20 @@
                 </form>
             </field>
         </record>
+        
+        <record model="ir.ui.view" id="view_budget_common_show_uuid_form">
+            <field name="name">view.budget.common.show.uuid.form</field>
+            <field name="model">report.budget.common.multi</field>
+            <field name="arch" type="xml">
+                <form string="Report Enqueued" edit="0" create="0" delete="0">
+                	<group name="Report Enqueued" string="Report Enqueued (.xlsx)">
+                		<field name="uuid" readonly="1"/>
+                	</group>
+                	<footer>
+                		<button string="close" class="oe_button" special="cancel"/>
+                	</footer>
+                </form>
+            </field>
+        </record>
 	</data>
 </openerp>
