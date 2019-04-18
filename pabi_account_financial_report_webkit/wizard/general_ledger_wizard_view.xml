@@ -11,7 +11,7 @@
                     <field name="target_move" position="after">
                         <field name="reconcile_cond" nolabel="1" colspan="2"/>
                         <field name="charge_type"/>
-                        <field name="org_ids" widget="many2many_tags"/>
+                        <field name="org_id" widget="many2many_tags"/>
                     </field>
                     <xpath expr="/form/label[@string='']" position="replace">
                         <separator string="General Ledger" colspan="4"/>

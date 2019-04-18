@@ -73,7 +73,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
                                               default='all')
         partner_ids = self._get_form_param('partner_ids', data)
         charge_type = self._get_form_param('charge_type', data)
-        org_ids = self._get_form_param('org_ids',data)
+        org_id = self._get_form_param('org_id',data)
         # --
         start_date = self._get_form_param('date_from', data)
         stop_date = self._get_form_param('date_to', data)
@@ -121,7 +121,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
             accounts, init_balance_memoizer, main_filter, target_move,
             reconcile_cond,  # PABI2
             charge_type,
-            org_ids,
+            org_id,
             start, stop,
             partner_ids=partner_ids,
             specific_report=specific_report)
@@ -218,7 +218,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
                                       target_move,
                                       reconcile_cond,  # PABI2
                                       charge_type,
-                                      org_ids,
+                                      org_id,
                                       start, stop,
                                       partner_ids=False,
                                       specific_report=False):
@@ -228,20 +228,21 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
                 acc_id, main_filter, start, stop, target_move,
                 reconcile_cond,  # PABI2
                 charge_type,
+                org_id,
                 partner_ids=partner_ids,
                 specific_report=specific_report)
             if not move_line_ids:
                 res[acc_id] = []
                 continue
 
-            lines = self._get_ledger_lines(move_line_ids, acc_id,org_ids)
+            lines = self._get_ledger_lines(move_line_ids, acc_id,org_id)
             res[acc_id] = lines
         return res
 
-    def _get_ledger_lines(self, move_line_ids, account_id,org_ids):
+    def _get_ledger_lines(self, move_line_ids, account_id,org_id):
         if not move_line_ids:
             return []
-        res = self._get_move_line_datas(move_line_ids,org_ids)
+        res = self._get_move_line_datas(move_line_ids,org_id)
         # computing counter part is really heavy in term of ressouces
         # consuption looking for a king of SQL to help me improve it
         move_ids = [x.get('move_id') for x in res]

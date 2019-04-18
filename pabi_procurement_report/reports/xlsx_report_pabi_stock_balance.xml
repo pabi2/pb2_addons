@@ -10,7 +10,7 @@
                 <xpath expr="//group[@name='criteria']" position="inside">
                     <group>
                         <field name="org_ids" widget="many2many_tags"/>
-                        <field name="location_id"/>
+                        <field name="location_ids" widget="many2many_tags"/>
                         <field name="product_ids" widget="many2many_tags"/>
                         <field name="ou_name" invisible="1"/>
                         <field name="location_name" invisible="1"/>

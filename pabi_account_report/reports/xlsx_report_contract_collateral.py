@@ -34,9 +34,9 @@ class XLSXReportContractCollateral(models.TransientModel):
         """
         self.ensure_one()
         Result = self.env['purchase.contract']
-        dom = []
-        if self.date_report:
-            dom += [('collateral_remand_date', '>=', self.date_report)]
+        dom = [('collateral_remand_date', '=', False)]
+        #if self.date_report:
+        #    dom += [('collateral_remand_date', '>=', self.date_report)]
         if self.partner_ids:
             dom += [('supplier_id', 'in', self.partner_ids.ids)]
         self.results = Result.search(dom)

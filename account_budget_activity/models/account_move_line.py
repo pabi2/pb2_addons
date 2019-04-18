@@ -4,7 +4,7 @@ from openerp import api, fields, models
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
-
+    
     charge_type = fields.Selection(  # Prepare for pabi_internal_charge
         [('internal', 'Internal'),
          ('external', 'External')],
@@ -14,6 +14,9 @@ class AccountMoveLine(models.Model):
         help="Specify whether the move line is for Internal Charge or "
         "External Charge. Only expense internal charge to be set as internal",
     )
+    org_id = fields.Many2one(
+            'res.org', string='Org')
+            
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
@@ -77,4 +80,7 @@ class AccountMoveLine(models.Model):
         if self.env.context.get('charge_type', False):
             charge_type = self.env.context.get('charge_type')
             query += "AND " + obj + ".charge_type = '%s'" % (charge_type, )
+        if self.env.context.get('org_id', False):
+            org_id = self.env.context.get('org_id')
+            query += "AND " + obj + ".org_id = %d" % (org_id, )
         return query

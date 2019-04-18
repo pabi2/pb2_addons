@@ -61,6 +61,7 @@
                         ${stop_period.name if stop_period else u'' }
                     %endif
                 </div>
+                <div class="act_as_cell">${ data["form"]["org_name"] }</div>
                 <div class="act_as_cell">
                     %if accounts(data):
                         ${', '.join([account.code for account in accounts(data)])}

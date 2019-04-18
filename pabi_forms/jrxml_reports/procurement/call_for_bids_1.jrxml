@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="call_for_bid" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="183"/>
-	<property name="ireport.y" value="535"/>
+	<property name="ireport.zoom" value="1.1269722013523664"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="83"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;,]"/>
 	<style name="table" lineSpacing="Single">
 		<box>
@@ -442,19 +442,19 @@ CONCAT(pcht.name,' ',pd.objective) as pd_objective,
 WHERE requisition_id = pd.id ORDER BY name LIMIT 1) as amount_total_text_th,
 cur.name as currency,
 (select
-SUM(
+ROUND(SUM(
 case when atax.amount > 0.0 and atax.price_include = False then
-	ROUND((((requestline.price_subtotal) +
-	(atax.amount * requestline.price_subtotal)) * requisition.currency_rate)::DECIMAL, 2)
+	(((requestline.price_subtotal) +
+	(atax.amount * requestline.price_subtotal)) * requisition.currency_rate)
 else
 	case when requestline.price_subtotal < (requestline.price_unit * requestline.product_qty)
 	then
-		ROUND((requestline.price_unit * requestline.product_qty * requisition.currency_rate)::DECIMAL, 2)
+		(requestline.price_unit * requestline.product_qty * requisition.currency_rate)
 	else
-		ROUND((requestline.price_subtotal * requisition.currency_rate)::DECIMAL, 2)
+		(requestline.price_subtotal * requisition.currency_rate)
 	end
 end
-)
+)::DECIMAL, 2)
 FROM purchase_requisition_line reql
 LEFT JOIN purchase_requisition requisition
 ON requisition.id = reql.requisition_id

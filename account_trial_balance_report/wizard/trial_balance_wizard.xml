@@ -11,6 +11,8 @@
                         <group>
                             <field name="fiscalyear_id"/>
                             <field name="filter"/>
+                            <field name="org_id"/>
+                            <field name="account_id"/>
                             <label for="id" string="Period" attrs="{'invisible': [('filter', '!=', 'filter_period')]}"/>
                             <div attrs="{'invisible': [('filter', '!=', 'filter_period')]}">
                                 <div>

@@ -307,6 +307,11 @@ class ChequeRegister(models.Model):
         compute='_compute_write_date',
         string='Update date'
     )
+    responsible = fields.Many2one(
+        'res.users',
+        string='Responsible',
+        related='payment_export_id.user_id',
+    )
           
     @api.depends('payment_export_id')
     def _compute_write_date(self):

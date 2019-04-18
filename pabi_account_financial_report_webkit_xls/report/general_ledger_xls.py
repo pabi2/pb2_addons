@@ -16,7 +16,7 @@ _column_sizes = [
     ('due_date', 10),
     ('period', 10),
     ('fiscal_year', 10),
-    ('org_ids', 10),
+    ('org_id', 10),
     ('budget', 20),
     ('program', 15),
     ('section_program', 15),
@@ -123,7 +123,7 @@ class general_ledger_xls(report_xls):
         cell_style = xlwt.easyxf(cell_format)
         cell_style_center = xlwt.easyxf(cell_format + _xs['center'])
         #find dict org
-        _org_name = self.pool.get('res.org').browse(_p["cr"], _p["uid"],_p.data["form"]["org_ids"])
+        _org_name = self.pool.get('res.org').browse(_p["cr"], _p["uid"],_p.data["form"]["org_id"])
         org_name = []
         for record in _org_name:
             org_name.append(record.name_short)
@@ -188,7 +188,7 @@ class general_ledger_xls(report_xls):
             ('period', 1, 0, 'text', _('Period'), None, c_hdr_cell_style),
             ('fiscal_year', 1, 0, 'text', _('Fiscal Year'), None,
                 c_hdr_cell_style),
-            ('org_ids', 1, 0, 'text', _('Org'), None,
+            ('org_id', 1, 0, 'text', _('Org'), None,
                 c_hdr_cell_style),
             ('budget', 1, 0, 'text', _('Budget'), None, c_hdr_cell_style),
             ('program', 1, 0, 'text', _('Program'), None, c_hdr_cell_style),
@@ -325,11 +325,14 @@ class general_ledger_xls(report_xls):
                         ws, row_pos, row_data, c_init_cell_style)
 
                 for line in _p['ledger_lines'][account.id]:
-
-                    cumul_debit += line.get('debit', 0.0)
-                    cumul_credit += line.get('credit', 0.0)
-                    cumul_balance_curr += line.get('amount_currency', 0.0)
-                    cumul_balance += line.get('balance', 0.0)
+                    if (line.get('debit', 0.0)):
+                        cumul_debit += line.get('debit', 0.0)
+                    if (line.get('credit', 0.0)):
+                        cumul_credit += line.get('credit', 0.0)
+                    if (line.get('amount_currency', 0.0)):
+                        cumul_balance_curr += line.get('amount_currency', 0.0)
+                    if (line.get('balance', 0.0)):
+                        cumul_balance += line.get('balance', 0.0)
                     label_elements = [line.get('lname', '')]
                     if line.get('invoice_number'):
                         label_elements.append(
@@ -370,7 +373,7 @@ class general_ledger_xls(report_xls):
                         ('period', 1, 0, 'text', line.get('period_code', '')),
                         ('fiscal_year', 1, 0, 'text',
                          line.get('fiscalyear', '')),
-                        ('org_ids', 1, 0, 'text', line.get('org_ids', '')),
+                        ('org_id', 1, 0, 'text', line.get('org_id', '')), #PABI2
                         ('budget', 1, 0, 'text', line.get('budget_name', '')),
                         ('program', 1, 0, 'text', line.get('program', '')),
                         ('section_program', 1, 0, 'text',

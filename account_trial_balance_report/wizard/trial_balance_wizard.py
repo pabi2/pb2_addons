@@ -51,7 +51,15 @@ class AccountTrialBalanceWizard(models.TransientModel):
          ('external', 'External')],
         string='Charge Type',
     )
-
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+    )
+    account_id = fields.Many2one(
+        'account.account',
+        string='Account',
+    )
+    
     @api.onchange('fiscalyear_id', 'filter')
     def _onchange_fiscalyear_id(self):
         self.date_start = self.fiscalyear_id.date_start
@@ -76,7 +84,10 @@ class AccountTrialBalanceWizard(models.TransientModel):
                                        self.date_stop,
                                        self.target_move,
                                        self.with_movement,
-                                       self.charge_type)
+                                       self.charge_type,
+                                       self.org_id.id,
+                                       self.account_id.id
+                                       )
         action = self.env.ref('account_trial_balance_report.'
                               'action_account_trial_balance_report')
         result = action.read()[0]

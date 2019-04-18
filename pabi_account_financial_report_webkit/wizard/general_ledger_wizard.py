@@ -51,7 +51,7 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
              ('external', 'External')],
             string='Charge Type',
         ),
-        'org_ids': fields.many2many(
+        'org_id': fields.many2many(
             'res.org', string='Org'),
     
     }
@@ -89,11 +89,16 @@ class AccountReportGeneralLedgerWizard(orm.TransientModel):
                           'reconcile_cond',  # PABI2
                           'partner_ids',
                           'charge_type',
-                          'org_ids',
+                          'org_id', #pdf 21/03/2019
                           ],
                          context=context)[0]
         data['form'].update(vals)
-
+        #add org_name in form
+        _org_name = self.pool.get('res.org').browse(cr,uid,vals['org_id'])
+        org_name = []
+        for record in _org_name:
+            org_name.append(record.name_short)
+        data['form'].update({'org_name':' '.join(org_name)})
         # PABI2
         data['specific_report'] = True
 

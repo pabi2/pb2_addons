@@ -12,7 +12,7 @@ class XLSXReportPabiStockBalance(models.TransientModel):
         'res.org',
         string='Org',
     )
-    location_id = fields.Many2one(
+    location_ids = fields.Many2many(
         'stock.location',
         string='Location',
         required=True,
@@ -50,10 +50,10 @@ class XLSXReportPabiStockBalance(models.TransientModel):
             res += prg.operating_unit_id.code
         self.ou_name = res
 
-    @api.onchange('location_id')
+    @api.onchange('location_ids')
     def onchange_loc(self):
         res = ''
-        for loc in self.location_id:
+        for loc in self.location_ids:
             if res != '':
                 res += ', '
             res += loc.name
@@ -65,8 +65,8 @@ class XLSXReportPabiStockBalance(models.TransientModel):
         Result = self.env['xlsx.report.pabi.stock.balance.results']
         dom = [
             '|',
-            ('loc_id', '=', self.location_id.id),
-            ('loc_dest_id', '=', self.location_id.id),
+            ('loc_id', 'in', self.location_ids.ids),
+            ('loc_dest_id', 'in', self.location_ids.ids),
         ]
         if self.org_ids:
             dom += [('org_id', 'in', self.org_ids._ids)]

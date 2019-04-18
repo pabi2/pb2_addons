@@ -10,7 +10,7 @@ from openerp.tools.translate import _
 
 
 class trial_balance_xls(report_xls):
-    column_sizes = [12, 60, 17, 17, 17, 17, 17, 17]
+    column_sizes = [12,10, 60, 17, 17, 17, 17, 17, 17]
 
     def generate_xls_report(self, _p, _xs, data, objects, wb):
 
@@ -56,6 +56,7 @@ class trial_balance_xls(report_xls):
         cell_style_center = xlwt.easyxf(cell_format + _xs['center'])
         c_specs = [
             ('fy', 1, 0, 'text', _('Fiscal Year')),
+            ('org', 1, 0, 'text', _('Org')),
             ('af', 2, 0, 'text', _('Accounts Filter')),
             ('df', 1, 0, 'text', _p.filter_form(data) ==
              'filter_date' and _('Dates Filter') or _('Periods Filter')),
@@ -74,6 +75,7 @@ class trial_balance_xls(report_xls):
         cell_style_center = xlwt.easyxf(cell_format + _xs['center'])
         c_specs = [
             ('fy', 1, 0, 'text', _p.fiscalyear.name if _p.fiscalyear else '-'),
+            ('org', 1, 0, 'text', data['form']['org_name']),
             ('af', 2, 0, 'text', _p.accounts(data) and ', '.join(
                 [account.code for account in _p.accounts(data)]) or _('All')),
         ]
