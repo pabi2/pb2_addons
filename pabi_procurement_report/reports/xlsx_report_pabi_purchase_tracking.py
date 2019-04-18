@@ -97,6 +97,7 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
             if res_org != '': 
                 res_org += ', '+name
             else: res_org += name
+        ##org_name
         self.org_name = res_org
 
         for prg in self.chartfield_ids:
