@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data noupdate="0">
+    	<!-- hr.expense.expense -->
         <record id="asset_status_draft" model="xlsx.report.status">
             <field name="name">Draft</field>
             <field name="status">draft</field>
@@ -44,5 +45,32 @@
             <field name="location">hr.expense.expense</field>
         </record>
         
+    	<!-- asset.register.view -->
+        <record id="asset_register_state_draft" model="xlsx.report.status">
+            <field name="name">Draft</field>
+            <field name="status">draft</field>
+            <field name="code"></field>
+            <field name="location">asset.register.view</field>
+        </record>
+        <record id="asset_register_state_running" model="xlsx.report.status">
+            <field name="name">Running</field>
+            <field name="status">running</field>
+            <field name="code"></field>
+            <field name="location">asset.register.view</field>
+        </record>
+        <record id="asset_register_state_close" model="xlsx.report.status">
+            <field name="name">Close</field>
+            <field name="status">close</field>
+            <field name="code"></field>
+            <field name="location">asset.register.view</field>
+        </record>
+        <record id="asset_register_state_removed" model="xlsx.report.status">
+            <field name="name">Removed</field>
+            <field name="status">removed</field>
+            <field name="code"></field>
+            <field name="location">asset.register.view</field>
+        </record>
+        
     </data>
 </openerp>
+

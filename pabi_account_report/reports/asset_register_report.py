@@ -111,13 +111,20 @@ class AssetRegisterReport(models.TransientModel):
         'res.org',
         string='Org',
     )
-    asset_state = fields.Selection(
+    asset_state = fields.Many2many(
+        'xlsx.report.status',
+        string='Asset State',
+        domain=[('location', '=', 'asset.register.view')],
+        default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', ['draft', 'running', 'close'])]),
+    )
+    """asset_state = fields.Selection(
         [('draft', 'Draft'),
          ('open', 'Running'),
          ('close', 'Close'),
          ('removed', 'Removed')],
         string='Asset State',
     )
+    """
     account_ids = fields.Many2many(
         'account.account',
         string='Account Code',
@@ -142,6 +149,7 @@ class AssetRegisterReport(models.TransientModel):
         'account.fiscalyear',
         string='Current Year',
         default=lambda self: self._get_fiscalyear(),
+        
     )
     # Note: report setting
     accum_depre_account_type = fields.Many2one(
@@ -190,10 +198,10 @@ class AssetRegisterReport(models.TransientModel):
         compute='_compute_count_budget',
         string='Budget Count',
     )
-    asset_status = fields.Selection(
+    asset_active = fields.Selection(
         [('active', 'Active'),
          ('inactive', 'Inactive')],
-        string='Asset Status',
+        string='Asset Active',
         default='active',
     )
     results = fields.Many2many(
@@ -276,15 +284,24 @@ class AssetRegisterReport(models.TransientModel):
             dom += [('owner_subsector_id', 'in',
                     tuple(self.subsector_ids.ids + [0]))]
         if self.asset_state:
-            dom += [('state', '=', self.asset_state)]
+            res = []
+            for state in self.asset_state:
+                state_name = self.env['xlsx.report.status'].search([('id', '=', state.id)])
+                res += [str(state_name.status)]
+            dom += [('state', 'in', tuple(res))]
+
         if self.building_ids:
             dom += [('building_id', 'in', tuple(self.building_ids.ids + [0]))]
         if self.floor_ids:
             dom += [('floor_id', 'in', tuple(self.floor_ids.ids + [0]))]
         if self.room_ids:
             dom += [('room_id', 'in', tuple(self.room_ids.ids + [0]))]
-        if self.asset_status:
-            dom += [('active', '=', True if (self.asset_status == 'active') else False)]
+        if self.asset_active:
+            dom += [('active', '=', True if (self.asset_active == 'active') else False)]
+        if self.date_start:
+            dom += [('date_start', '>=', self.date_start)] 
+        if self.date_end:
+            dom += [('date_start', '<=', self.date_end)]
             
         # Prepare fixed params
         date_start = False
