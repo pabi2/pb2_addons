@@ -9,6 +9,9 @@ from openerp.addons.pabi_chartfield.models.chartfield \
     import ChartFieldAction
 from openerp.exceptions import ValidationError
 from openerp.tools.float_utils import float_compare
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountAssetAdjust(models.Model):
@@ -616,6 +619,7 @@ class AccountAssetAdjust(models.Model):
                 'ship_purchase_id': self.ship_purchase_id.id, })
         # --
         for line in self.adjust_expense_to_asset_ids:
+            _logger.info("line_id: %s", str(line.id))
             line.account_analytic_id = \
                 Analytic.create_matched_analytic(line)
             # Create new asset
@@ -632,6 +636,7 @@ class AccountAssetAdjust(models.Model):
             amount_depre = sum(depre_lines.mapped('amount'))
             # Create collective move
             move = line.create_account_move_expense_to_asset(amount_depre)
+            _logger.info("move_id: %s", str(move.id))
             line.move_id = move
             # Set move_check equal to amount depreciated
             depre_lines.write({'move_id': move.id})
@@ -1166,6 +1171,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         Period = self.env['account.period']
         adjust = self.adjust_id
         new_asset = self.ref_asset_id
+        _logger.info("new_asset: %s", str(new_asset.id))
         exp_acc = self.account_id
         adjust_date = adjust.date
         ctx = dict(self._context,
@@ -1208,15 +1214,16 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         # Dr: new asset - asset value
         #     Cr: expense - asset value
         purchase_value = new_asset.purchase_value
+        _logger.info("analytic_id: %s", str(new_asset.account_analytic_id.id))
         if purchase_value:
             new_asset_debit = AssetAdjust._setup_move_line_data(
                 new_asset.code, new_asset, period, new_asset_acc, adjust_date,
                 debit=purchase_value, credit=False,
-                analytic_id=False)
+                analytic_id=new_asset.account_analytic_id.id)
             expenese_credit = AssetAdjust._setup_move_line_data(
                 exp_acc.name, False, period, exp_acc, adjust_date,
                 debit=False, credit=purchase_value,
-                analytic_id=new_asset.account_analytic_id.id)
+                analytic_id=False)
             line_dict += [(0, 0, new_asset_debit), (0, 0, expenese_credit)]
         # Dr: new - depre value (account_expense_depreciation_id)(budget)
         #   Cr: new - depre accum value (account_depreciation_id)
