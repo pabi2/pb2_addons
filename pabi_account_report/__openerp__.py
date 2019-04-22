@@ -77,6 +77,9 @@
         'reports/asset_register_report.xml',
         # PND Reports
         'reports/xlsx_report_pnd1.xml',
+        #Preprint Receipt
+        'reports/xlsx_report_preprint_receipt.xml',
+        
     ],
     'demo': [
     ],
