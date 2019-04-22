@@ -54,7 +54,7 @@
         </record>
         <record id="asset_register_state_running" model="xlsx.report.status">
             <field name="name">Running</field>
-            <field name="status">running</field>
+            <field name="status">open</field>
             <field name="code"></field>
             <field name="location">asset.register.view</field>
         </record>

@@ -1851,7 +1851,7 @@ result = pd.pivot_table(df, index=groupby,
                              'BB27': 'adjust_id${value and value.name or ""}#{number_format=text}',
                              'BC27': 'status${value and value.name or ""}#{number_format=text}',
                              'BD27': 'date_remove${value or ""}#{number_format=date}',
-                             'BE27': 'state${value or ""}#{number_format=text}',
+                             'BE27': 'state${value and ("running" if value == "open" else value) or ""}#{number_format=text}',
                              # Hide column
                              'BH27': 'purchase_id${value and value.name or ""}#{number_format=text}',
                              'BI27': 'adjust_id${value and value.ship_purchase_id.name or ""}#{number_format=text}',

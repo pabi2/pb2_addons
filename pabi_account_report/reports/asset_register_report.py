@@ -115,7 +115,7 @@ class AssetRegisterReport(models.TransientModel):
         'xlsx.report.status',
         string='Asset State',
         domain=[('location', '=', 'asset.register.view')],
-        default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', ['draft', 'running', 'close'])]),
+        default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', ['draft', 'open', 'close'])]),
     )
     """asset_state = fields.Selection(
         [('draft', 'Draft'),
@@ -284,11 +284,12 @@ class AssetRegisterReport(models.TransientModel):
             dom += [('owner_subsector_id', 'in',
                     tuple(self.subsector_ids.ids + [0]))]
         if self.asset_state:
-            res = []
+            res, state_name = [], self.asset_state.ids
             for state in self.asset_state:
                 state_name = self.env['xlsx.report.status'].search([('id', '=', state.id)])
                 res += [str(state_name.status)]
-            dom += [('state', 'in', tuple(res))]
+            if len(self.asset_state) == 1 : dom += [('state', '=', str(state_name.status))]
+            else: dom += [('state', 'in', tuple(res))]
 
         if self.building_ids:
             dom += [('building_id', 'in', tuple(self.building_ids.ids + [0]))]
