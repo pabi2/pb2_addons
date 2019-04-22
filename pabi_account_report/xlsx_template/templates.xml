@@ -1969,7 +1969,7 @@ result = pd.pivot_table(df, index=groupby,
             </field>
         </record>
 
-        # GL project
+        # Preprint Receipt
         <record id="xlsx_report_input_tax" model="ir.attachment">
             <field name="res_model">xlsx.report.preprint.receipt</field>
             <field name="datas"></field>
@@ -1981,7 +1981,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Preprint Receipt': {
                             '_HEAD_': {
-                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}#{align=left;number_format=text}',
+                                'A3': '${env.user.with_context(lang="en_US").company_id.partner_id.name}#{align=left;number_format=text}',
                                 'B3': 'fiscalyear_start_id.name${value or ""}#{align=left;number_format=text}',
                                 'D3': 'fiscalyear_end_id.name${value or ""}#{align=left;number_format=text}',
                                 'B4': 'period_start_id.name${value or ""}#{align=left;number_format=text}',
