@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_budget_future_commit_summary_report" pageWidth="7040" pageHeight="20000" columnWidth="7000" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_budget_future_commit_summary_report" pageWidth="7040" pageHeight="20000" columnWidth="7000" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -11,13 +11,6 @@
 			<rightPen lineWidth="0.5"/>
 		</box>
 	</style>
-	<parameter name="report_type" class="java.lang.String"/>
-	<parameter name="fiscal_year" class="java.lang.String"/>
-	<parameter name="org" class="java.lang.String"/>
-	<parameter name="po_document" class="java.lang.String"/>
-	<parameter name="order_date" class="java.lang.String"/>
-	<parameter name="run_by" class="java.lang.String"/>
-	<parameter name="run_date" class="java.lang.String"/>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
 	</queryString>
@@ -48,9 +41,15 @@
 	<field name="budget_name" class="java.lang.String">
 		<fieldDescription><![CDATA[budget_name]]></fieldDescription>
 	</field>
-	<field name="remaining" class="java.lang.String">
-		<fieldDescription><![CDATA[remaining]]></fieldDescription>
+	<field name="status" class="java.lang.String">
+		<fieldDescription><![CDATA[purchase_id/state]]></fieldDescription>
 	</field>
+	<field name="close_uncommit" class="java.lang.String">
+		<fieldDescription><![CDATA[purchase_id/technical_closed]]></fieldDescription>
+	</field>
+	<variable name="remaining" class="java.lang.String">
+		<variableExpression><![CDATA[$F{subtotal}-($F{po_commit} ? $F{po_commit} : 0)-($F{po_actual} ? $F{po_actual} : 0)]]></variableExpression>
+	</variable>
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
@@ -79,7 +78,7 @@
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[PO à¸•à¸²à¸¡à¸ªà¸±à¸�à¸�à¸²]]></text>
+				<text><![CDATA[PO ตามสัญญา]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="400" y="0" width="100" height="20"/>
@@ -122,6 +121,20 @@
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Budget Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="1100" y="0" width="100" height="20"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="1200" y="0" width="100" height="20"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Close & Uncommit]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -174,7 +187,7 @@
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{remaining} ? $F{remaining} : '']]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{remaining}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="700" y="0" width="100" height="20"/>
@@ -196,6 +209,20 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{budget_name} ? $F{budget_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="1100" y="0" width="100" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{status} ? $F{status} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="1200" y="0" width="100" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{close_uncommit} ? 'X' : '']]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

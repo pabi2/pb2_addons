@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_budget_future_commit_report" pageWidth="7040" pageHeight="20000" columnWidth="7000" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_budget_future_commit_report" pageWidth="7040" pageHeight="20000" columnWidth="7000" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -16,6 +16,8 @@
 	<parameter name="org" class="java.lang.String"/>
 	<parameter name="po_document" class="java.lang.String"/>
 	<parameter name="order_date" class="java.lang.String"/>
+	<parameter name="budget_overview" class="java.lang.String"/>
+	<parameter name="budget_method" class="java.lang.String"/>
 	<parameter name="run_by" class="java.lang.String"/>
 	<parameter name="run_date" class="java.lang.String"/>
 	<queryString language="xPath">
@@ -267,117 +269,124 @@
 	<pageHeader>
 		<band height="150" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="200" height="15"/>
+				<reportElement x="0" y="0" width="240" height="15"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[à¸£à¸²à¸¢à¸‡à¸²à¸™à¸ˆà¸±à¸”à¸‹à¸·à¹‰à¸­à¸ˆà¹‰à¸²à¸‡à¸—à¸µà¹ˆà¸„à¸‡à¸„à¹‰à¸²à¸‡ ]]></text>
+				<text><![CDATA[รายงานจัดซื้อจ้างที่คงค้าง]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="15" width="250" height="15"/>
+				<reportElement x="0" y="15" width="240" height="15"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Purchase Commitment Open Item Report]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="30" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="0" y="30" width="80" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Report Type]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="100" y="30" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="80" y="30" width="160" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{report_type}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="45" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="0" y="45" width="80" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fiscal Year]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="100" y="45" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="80" y="45" width="160" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fiscal_year}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="60" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="0" y="60" width="80" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Org]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="100" y="60" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="80" y="60" width="160" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{org}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="75" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="0" y="75" width="80" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[PO document]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="100" y="75" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="80" y="75" width="160" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{po_document}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="90" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="0" y="90" width="80" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Order Date]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="100" y="90" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="80" y="90" width="160" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{order_date}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="105" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="0" y="105" width="80" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Run By]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="100" y="105" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="80" y="105" width="160" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{run_by}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="120" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="0" y="120" width="80" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Run Date]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="100" y="120" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="80" y="120" width="160" height="15" backcolor="#00CCCC"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{run_date}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="0" y="135" width="240" height="15" backcolor="#00CCCC"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  ]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -952,7 +961,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="125" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<textField>
 				<reportElement style="border_box" x="0" y="0" width="80" height="40"/>
 				<textElement>

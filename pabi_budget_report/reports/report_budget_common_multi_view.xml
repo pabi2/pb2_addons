@@ -7,11 +7,16 @@
             <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
+	            <!-- <xpath expr="//form[@string='Excel Report']" position="inside">
+	            	 <field name="action_type" invisible="1"/>
+            	</xpath> -->
                 <xpath expr="//group[@name='criteria']" position="replace">
                     <group name="report_types">
                         <group>
-                            <field name="report_type"/>
-                            <field name="budget_method" attrs="{'invisible': [('report_type', '=', ('personnel'))]}"/>
+                            <field name="report_type" attrs="{'invisible': [('action_type', '=', 'my_budget_report')]}"/>
+                            <field name="chart_view" attrs="{'invisible': [('action_type', 'not in', ('my_budget_report'))]}"/>
+                            <field name="budget_method" attrs="{'invisible': ['|',('report_type', '=', ('personnel')),
+                            												('action_type', 'not in', ('my_budget_report'))]}"/>
                         </group>
                         <group>
                             <field name="fiscalyear_id"/>
@@ -20,7 +25,7 @@
                     <group name="filter" string="Filter / Group By">
                         <group>
                             <!-- Action type -->
-                            <!-- <field name="action_type" invisible="1"/> -->
+                            <field name="action_type" invisible="1"/>
 
                             # For menu budget overview report
                             <field name="chartfield_id" attrs="{'invisible': [('report_type', 'not in', ('all'))]}"/>

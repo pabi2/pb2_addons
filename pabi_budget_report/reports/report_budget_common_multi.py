@@ -299,7 +299,8 @@ class ReportBudgetCommonMulti(ChartField, models.AbstractModel):
     def _get_report_type(self):
         report_types = REPORT_TYPES
         if self._context.get('action_type', False) == 'my_budget_report':
-            report_types = [('unit_base', 'Section'),
+            report_types = [('all', 'All'),
+                            ('unit_base', 'Section'),
                             ('project_base', 'Project')]
         return report_types
     """

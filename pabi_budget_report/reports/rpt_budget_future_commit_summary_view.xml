@@ -60,7 +60,7 @@
         </record>
 	
   		<record id="action_menu_rpt_budget_future_commit_summary_wizard" model="ir.actions.act_window">
-		    <field name="name">Budget Future Commit Summary</field>
+		    <field name="name">Budget Future Commit(Summary)</field>
 		    <field name="type">ir.actions.act_window</field>
 		    <field name="res_model">rpt.budget.future.commit.summary</field>
 		    <field name="view_mode">form</field>

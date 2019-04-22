@@ -121,13 +121,6 @@ class RPTBudgetFutureCommitSummary(models.TransientModel):
         for rec in self.results:
             ids.append(rec.id)
         data['parameters']['ids'] = ids
-        data['parameters']['report_type'] = self.report_type
-        data['parameters']['fiscal_year'] = self.fiscalyear_id.name
-        data['parameters']['org'] = self.org_id and self.org_id.operating_unit_id.name or ''
-        data['parameters']['po_document'] = self.purchase_id and self.purchase_id.name or ''
-        data['parameters']['order_date'] = ''#self.date_report and str((datetime.strptime(str(self.date_report), '%Y-%m-%d')).strftime("%d/%m/%Y")) or ''
-        data['parameters']['run_by'] = self.create_uid.partner_id.name
-        data['parameters']['run_date'] = str((datetime.strptime(str(self.create_date), '%Y-%m-%d %H:%M:%S')).strftime("%d/%m/%Y"))
         
         report_ids = 'pabi_budget_report.rpt_budget_future_commit_summary_jasper_report'
         
@@ -142,7 +135,7 @@ class RPTBudgetFutureCommitSummaryLine(models.Model):
     subtotal = fields.Float('subtotal', digits=(32, 2))
     po_commit = fields.Float('po_commit', digits=(32, 2))
     po_actual = fields.Float('po_actual', digits=(32, 2))
-    remaining = fields.Float('remaining', digits=(32, 2))
+    #remaining = fields.Float('remaining', digits=(32, 2))
     budget_view = fields.Char('budget_view')
     budget_code = fields.Char('budget_code')
     budget_name = fields.Char('budget_name')
@@ -174,23 +167,24 @@ class RPTBudgetFutureCommitSummaryLine(models.Model):
     
     def _get_sql_view(self):
         sql_view = """
-            SELECT ROW_NUMBER() over (order by po.id) AS id,
+            SELECT ROW_NUMBER() over (order by po.id) AS id, po.name,
                 SUM(fc.subtotal_th) as subtotal,
-                SUM(sum_com.amount) as po_commit,
-                SUM(sum_act.amount) as po_actual,
-                SUM(fc.subtotal_th)-SUM(sum_com.amount)-SUM(sum_com.amount) as remaining,
+                (SELECT SUM(sum_com.amount) FROM issi_budget_summary_commit_view sum_com WHERE sum_com.document = po.name 
+                    AND sum_com.fisyear = fis.name AND sum_com.budget_commit_type in ('po_commit') 
+                    AND sum_com.budget_method in ('expense'))
+                as po_commit,
+                (SELECT SUM(sum_act.amount) FROM issi_budget_summary_actual_view sum_act WHERE sum_act.ref_document = po.name 
+                    AND sum_act.fisyear = fis.name AND sum_act.charge_type in ('external') AND sum_act.document_ref in ('account_invoice', 'stock_picking')
+                    AND sum_act.budget_method in ('expense') AND sum_act.ref_document not like 'EX%')
+                as po_actual,
                 fc.budget_view, fc.budget_code, fc.budget_name, fc.contract_id, fc.fiscalyear_id, fc.invest_construction_phase_id, 
                 fc.operating_unit_id, fc.sector_code, fc.sector_name, fc.subsector_code, fc.subsector_name, fc.division_code, 
                 fc.division_name, fc.section_id, fc.section_program_id, fc.invest_asset_id, fc.functional_area_id, fc.program_group_id, 
                 fc.program_id, fc.project_group_id, fc.project_id, fc.invest_construction_id, fc.purchase_id
             FROM rpt_budget_future_commit_line fc
                 LEFT JOIN purchase_order po ON po.id = fc.purchase_id
-                INNER JOIN issi_budget_summary_commit_view sum_com ON sum_com.document = po.name
-                INNER JOIN issi_budget_summary_actual_view sum_act ON sum_act.ref_document = po.name
-            WHERE sum_com.budget_commit_type in ('po_commit') AND sum_com.budget_method in ('expense')
-                AND sum_act.charge_type in ('external') 
-                AND sum_act.budget_method in ('expense') AND sum_act.ref_document not like 'EX%'
-            GROUP BY po.id, fc.purchase_id, fc.budget_view, fc.budget_code, fc.budget_name, fc.contract_id, fc.fiscalyear_id, 
+                LEFT JOIN account_fiscalyear fis ON fis.id = fc.fiscalyear_id
+            GROUP BY po.id, po.name, fc.purchase_id, fis.name, fc.budget_view, fc.budget_code, fc.budget_name, fc.contract_id, fc.fiscalyear_id, 
                 fc.invest_construction_phase_id, fc.operating_unit_id, fc.sector_code, fc.sector_name, fc.subsector_code, 
                 fc.subsector_name, fc.division_code, fc.division_name, fc.section_id, fc.section_program_id, fc.invest_asset_id, 
                 fc.functional_area_id, fc.program_group_id, fc.program_id, fc.project_group_id, fc.project_id, fc.invest_construction_id

@@ -133,11 +133,11 @@ class RPTBudgetFutureCommit(models.TransientModel):
         data['parameters']['ids'] = ids
         data['parameters']['report_type'] = self.report_type
         data['parameters']['fiscal_year'] = self.fiscalyear_id.name
-        data['parameters']['budget_overview'] = ''#self.
         data['parameters']['org'] = self.org_id and self.org_id.operating_unit_id.name or ''
-        data['parameters']['budget'] = ''#self.
         data['parameters']['po_document'] = self.purchase_id and self.purchase_id.name or ''
         data['parameters']['order_date'] = self.date_report and str((datetime.strptime(str(self.date_report), '%Y-%m-%d')).strftime("%d/%m/%Y")) or ''
+        data['parameters']['budget_overview'] = ''#self.chart_view
+        data['parameters']['budget_method'] = ''#self.budget_method
         data['parameters']['run_by'] = self.create_uid.partner_id.name
         data['parameters']['run_date'] = str((datetime.strptime(str(self.create_date), '%Y-%m-%d %H:%M:%S')).strftime("%d/%m/%Y"))
         
@@ -154,7 +154,7 @@ class RPTBudgetFutureCommitLine(models.Model):
     id = fields.Integer('ID')
     order_date = fields.Char('order_date')
     po_contract_start_date = fields.Char('po_contract_start_date')
-    po_contract_start_date = fields.Char('po_contract_start_date')
+    po_contract_end_date = fields.Char('po_contract_end_date')
     item = fields.Integer('item')
     scheduled_date = fields.Char('scheduled_date')
     budget_view = fields.Char('budget_view')

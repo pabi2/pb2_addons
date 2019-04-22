@@ -10,9 +10,6 @@
             	<field name="fiscalyear_id" position="after">
             		<field name="date_report"/>
             	</field>
-            	<field name="budget_method" position="attributes">
-                	<attribute name="invisible">1</attribute>
-            	</field>
             	<field name="chartfield_id" position="attributes">
                 	<attribute name="invisible">1</attribute>
             	</field>
