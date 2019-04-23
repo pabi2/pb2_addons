@@ -136,7 +136,7 @@ class RPTBudgetFutureCommitSummaryLine(models.Model):
     subtotal = fields.Float('subtotal', digits=(32, 2))
     po_commit = fields.Float('po_commit', digits=(32, 2))
     po_actual = fields.Float('po_actual', digits=(32, 2))
-    #remaining = fields.Float('remaining', digits=(32, 2))
+    remaining = fields.Float('remaining', compute='_compute_remaining', digits=(32, 2))
     document_number = fields.Char('document_number')
     fisyear = fields.Char('fisyear')
     po_status = fields.Char('po_status')
@@ -168,88 +168,11 @@ class RPTBudgetFutureCommitSummaryLine(models.Model):
     project_id = fields.Many2one('res.project')
     invest_construction_id = fields.Many2one('res.invest.construction')
     
-    """
-    def _get_sql_view(self):
-        sql_view = 
-            SELECT 
-                ROW_NUMBER() over (order by po.id) AS id,
-                SUM(ROUND((pol.product_qty*pol.price_unit)*
-                (CASE
-                    WHEN cur.name = 'THB' THEN 1
-                    WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                         WHERE cur_r.currency_id = cur.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1) IS NULL 
-                     THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                         WHERE cur_r.currency_id = cur.id and CAST(po.date_order AS DATE) > CAST(cur_r.name AS DATE) order by cur_r.name DESC limit 1)
-                    ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                         WHERE cur_r.currency_id = cur.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1)
-                END), 2)) as subtotal,
-                (SELECT SUM(sum_com.amount) FROM issi_budget_summary_commit_view sum_com WHERE sum_com.document = po.name 
-                    AND sum_com.fisyear = fis.name AND sum_com.budget_commit_type in ('po_commit') 
-                    AND sum_com.budget_method in ('expense') GROUP BY sum_com.document)
-                as po_commit,
-                (SELECT SUM(sum_act.amount) FROM issi_budget_summary_actual_view sum_act WHERE sum_act.ref_document = po.name 
-                    AND sum_act.fisyear = fis.name AND sum_act.charge_type in ('external')  AND sum_act.document_ref in ('account_invoice', 'stock_picking')
-                    AND sum_act.budget_method in ('expense') AND sum_act.ref_document not like 'EX%'
-                    GROUP BY sum_act.ref_document)
-                as po_actual,
-                CASE 
-                    WHEN pol.project_id IS NOT NULL THEN 'project_base'
-                    WHEN pol.invest_construction_phase_id IS NOT NULL THEN 'invest_construction'
-                    WHEN pol.section_id IS NOT NULL THEN 'unit_base'
-                    WHEN pol.invest_asset_id IS NOT NULL THEN 'invest_asset'
-                    ELSE null
-                END as budget_view,
-                CASE 
-                    WHEN pol.project_id IS NOT NULL THEN mpj.project_code
-                    WHEN pol.invest_construction_phase_id IS NOT NULL THEN ricp.code
-                    WHEN pol.section_id IS NOT NULL THEN mst.section_code
-                    WHEN pol.invest_asset_id IS NOT NULL THEN inv_mst.section_code
-                    ELSE null
-                END as budget_code,
-                CASE 
-                    WHEN pol.project_id IS NOT NULL THEN mpj.project_name
-                    WHEN pol.invest_construction_phase_id IS NOT NULL THEN ricp.name
-                    WHEN pol.section_id IS NOT NULL THEN mst.section_name
-                    WHEN pol.invest_asset_id IS NOT NULL THEN inv_mst.section_name
-                    ELSE null
-                END as budget_name,
-                mst.sector_code, mst.sector_name, mst.subsector_code, mst.subsector_name, mst.division_code, mst.division_name,
-                po.contract_id, pol.fiscalyear_id, pol.invest_construction_phase_id, po.operating_unit_id, pol.section_id, pol.section_program_id, pol.invest_asset_id,
-                mpj.pb2_functional_area_id as functional_area_id,
-                mpj.pb2_program_group_id as program_group_id,
-                mpj.pb2_program_id as program_id,
-                mpj.pb2_project_group_id as project_group_id,
-                mpj.pb2_project_id as project_id,
-                pol.invest_construction_id, po.id AS purchase_id
-            FROM purchase_order po
-                LEFT JOIN purchase_contract pur_con ON pur_con.id = po.contract_id
-                LEFT JOIN purchase_order_line pol ON pol.order_id = po.id
-                LEFT JOIN res_currency cur ON cur.id = po.currency_id
-                LEFT JOIN res_invest_construction_phase ricp ON ricp.id = pol.invest_construction_phase_id
-                LEFT JOIN account_fiscalyear fis ON fis.id = pol.fiscalyear_id
-                LEFT JOIN etl_issi_m_project mpj ON mpj.pb2_project_id = pol.project_id
-                LEFT JOIN etl_issi_m_section mst ON mst.section_id = pol.section_id
-                LEFT JOIN res_invest_asset res_inv ON res_inv.id = pol.invest_asset_id
-                LEFT JOIN etl_issi_m_section inv_mst ON inv_mst.section_id = res_inv.owner_section_id
-            WHERE po.state in ('approved','confirmed','done') and po.order_type = 'purchase_order'
-            GROUP BY po.id, po.name, fis.name, pol.project_id, pol.invest_construction_phase_id, pol.section_id, pol.invest_asset_id, mpj.project_code,
-                ricp.code, mst.section_code, inv_mst.section_code, mpj.project_name, ricp.name, mst.section_name, inv_mst.section_name, 
-                mst.sector_code, mst.sector_name, mst.subsector_code, mst.subsector_name, mst.division_code, mst.division_name,
-                po.contract_id, pol.fiscalyear_id, pol.invest_construction_phase_id, po.operating_unit_id, pol.section_id, pol.section_program_id, pol.invest_asset_id,
-                mpj.pb2_functional_area_id, mpj.pb2_program_group_id, mpj.pb2_program_id, mpj.pb2_project_group_id, mpj.pb2_project_id, pol.invest_construction_id
-        
-        
-        
-        return sql_view
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute(CREATE OR REPLACE VIEW %s AS (%s)
-                   % (self._table, self._get_sql_view()))
-"""
-
-
-
+    
+    @api.multi
+    def _compute_remaining(self):
+        for rec in self:
+            rec.remaining = rec.subtotal - rec.po_commit or 0 - rec.po_actual or 0
 
 
 
