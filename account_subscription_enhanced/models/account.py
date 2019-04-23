@@ -361,8 +361,6 @@ class AccountModel(models.Model):
             vals = {}
             Use_Model = rec.env['account.use.model'].create(vals)
             print '-------------------------------------------------------------', Use_Model
-            raise ValidationError(
-                _("Test Code : Use_Model(new use) %s - context %s - id(new model) %s") % (Use_Model, self._context, self))
             Use_Model.create_entries()
         return True
 
