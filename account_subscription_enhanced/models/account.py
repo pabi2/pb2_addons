@@ -357,8 +357,9 @@ class AccountModel(models.Model):
     def action_done(self, context):
         self = self.with_context(active_ids=context['active_ids'])
         for rec in self:
-            vals = {}
+            print '************************************************************', rec
             Use_Model = rec.env['account.use.model'].create(vals)
+            print '-------------------------------------------------------------', Use_Model
             Use_Model.create_entries()
         return True
 
