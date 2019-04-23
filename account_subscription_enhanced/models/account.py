@@ -354,21 +354,17 @@ class AccountModel(models.Model):
         return True
 
     @api.multi
-    def action_done(self, Use_Model):
+    def action_done(self):
         for rec in self:
-            Use_Model.create_entries()
+            rec.button_background
         return True
 
     @api.multi
     def action_done_background(self):
-        self = self.with_context(active_ids=self.id, active_model='account.model')   
-        for rec in self:
-            vals = {}
-            Use_Model = rec.env['account.use.model'].create(vals)
         if self._context.get('button_use_model_async_process', False):
             self.ensure_one()
             if self._context.get('job_uuid', False):  # Called from @job
-                return self.action_done(Use_Model)
+                return self.action_done()
             if self.button_use_model_job_id:
                 message = _('Use Model')
                 action = self.env.ref('pabi_utils.action_my_queue_job')
@@ -380,7 +376,18 @@ class AccountModel(models.Model):
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
 
         else:
-            return self.action_done(Use_Model)
+            return self.action_done()
+        
+    @api.multi
+    def button_background(self):
+        #self = self.with_context(active_ids=self.id, active_model='account.model')
+        print '------------------------------------------------', self
+        vals = {}
+        Use_Model = self.env['account.use.model'].create(vals)
+        print '------------------------------------------------', Use_Model
+        print '------------------------------------------------', self._context
+        Use_Model.create_entries()  
+        return True
 
  ###########################--------------------------------- end job backgruond ------------------------------- #######################
 
