@@ -309,7 +309,7 @@ class AssetRegisterReport(models.TransientModel):
         
         if self.filter == 'filter_date':
             date_start = self.fiscalyear_start_id.date_start
-            date_end = self.date_end if self.date_end <= self.fiscalyear_end_id.date_stop else self.fiscalyear_end_id.date_stop
+            date_end = self.date_end
         if self.filter == 'filter_period':
             date_start = self.period_start_id.date_start
             date_end = self.period_end_id.date_stop
