@@ -172,7 +172,7 @@ class RPTBudgetFutureCommitSummaryLine(models.Model):
     @api.multi
     def _compute_remaining(self):
         for rec in self:
-            rec.remaining = rec.subtotal - rec.po_commit or 0 - rec.po_actual or 0
+            rec.remaining = rec.subtotal - rec.po_commit - rec.po_actual
 
 
 
