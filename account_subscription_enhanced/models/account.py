@@ -368,7 +368,7 @@ class AccountModel(models.Model):
         if self._context.get('button_use_model_async_process', False):
             self.ensure_one()
             if self._context.get('job_uuid', False):  # Called from @job
-                return self.action_done(self._context)
+                return self.action_done(Use_Model)
             if self.button_use_model_job_id:
                 message = _('Use Model')
                 action = self.env.ref('pabi_utils.action_my_queue_job')
@@ -380,7 +380,7 @@ class AccountModel(models.Model):
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
 
         else:
-            return self.action_done(self._context)
+            return self.action_done(Use_Model)
 
  ###########################--------------------------------- end job backgruond ------------------------------- #######################
 
