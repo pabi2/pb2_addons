@@ -45,10 +45,10 @@
 		<fieldDescription><![CDATA[po_status]]></fieldDescription>
 	</field>
 	<field name="close_uncommit" class="java.lang.String">
-		<fieldDescription><![CDATA[purchase_id/close_uncommit]]></fieldDescription>
+		<fieldDescription><![CDATA[close_uncommit]]></fieldDescription>
 	</field>
 	<variable name="remaining" class="java.lang.String">
-		<variableExpression><![CDATA[$F{subtotal}-($F{po_commit} ? $F{po_commit} : 0)-($F{po_actual} ? $F{po_actual} : 0)]]></variableExpression>
+		<variableExpression><![CDATA[$F{subtotal}-$F{po_commit}-$F{po_actual}]]></variableExpression>
 	</variable>
 	<columnHeader>
 		<band height="20" splitType="Stretch">
@@ -215,7 +215,7 @@
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{status} ? $F{status} : '']]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{po_status} ? $F{po_status} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1200" y="0" width="100" height="20"/>

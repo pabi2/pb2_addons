@@ -689,19 +689,20 @@
             <field name="parent_id" eval="ref('dir_budget_reports')"/>
             <field name="description">
                 {
-                    '__EXPORT__': {
+                	'__EXPORT__': {
                         'future_commit_summary': {
                             'results': {
                                 'A2': 'fiscalyear_id.name${value or ""}',
-								'B2': 'purchase_id.name${value or ""}',
+								'B2': 'document_number${value or ""}',
 								'C2': 'contract_id.name${value or ""}',
 								'D2': 'subtotal${value or ""}#{align=right;number_format=number}',
 								'E2': 'po_commit${value or ""}#{align=right;number_format=number}',
 								'F2': 'po_actual${value or ""}#{align=right;number_format=number}',
-								'G2': 'remaining${value or ""}#{align=right;number_format=number}',
 								'H2': 'budget_view${value or ""}',
 								'I2': 'budget_code${value or ""}',
 								'J2': 'budget_name${value or ""}',
+								'K2': 'po_status${value or ""}',
+								'L2': 'close_uncommit${value or ""}',
                             }
                         }
                     }
