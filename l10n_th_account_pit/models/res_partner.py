@@ -18,3 +18,9 @@ class ResPartner(models.Model):
         string='PIT Yearly',
         readonly=True,
     )
+    sign_image = fields.Binary(
+        string='Signature Image'
+    )
+
+
+    
