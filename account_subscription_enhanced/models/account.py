@@ -355,7 +355,7 @@ class AccountModel(models.Model):
 
     @api.multi
     def action_done(self, context):
-        self = self.with_context(active_ids=context['active_ids'], active_model=context['active_model'])
+        self._context = context
         for rec in self:
             print '************************************************************', rec
             vals = {}
