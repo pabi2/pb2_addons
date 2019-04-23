@@ -354,20 +354,17 @@ class AccountModel(models.Model):
         return True
 
     @api.multi
-    def action_done(self, context):
-        self._context = context
+    def action_done(self, Use_Model):
         for rec in self:
-            print '************************************************************', rec
-            vals = {}
-            Use_Model = rec.env['account.use.model'].create(vals)
-            print '-------------------------------------------------------------', Use_Model
-            print '-------------------------------------------------------------', self._context
             Use_Model.create_entries()
         return True
 
     @api.multi
     def action_done_background(self):
-        self = self.with_context(active_ids=self.id, active_model='account.model')
+        self = self.with_context(active_ids=self.id, active_model='account.model')   
+        for rec in self:
+            vals = {}
+            Use_Model = rec.env['account.use.model'].create(vals)
         if self._context.get('button_use_model_async_process', False):
             self.ensure_one()
             if self._context.get('job_uuid', False):  # Called from @job
