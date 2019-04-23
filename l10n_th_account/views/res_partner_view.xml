@@ -21,6 +21,13 @@
                             </group>
                         </page>
                     </page>
+                    <xpath expr="//notebook/page[@name='thai_taxation']" position="after">
+	                    <page string="Signature" name="signature" >
+	                    	<group string="Upload Signature">
+	                    		<field name="sign_image" widget="image" class="oe_avatar oe_left"/>
+	                    	</group>
+	                    </page>
+	                </xpath>
                 </data>
             </field>
         </record>
