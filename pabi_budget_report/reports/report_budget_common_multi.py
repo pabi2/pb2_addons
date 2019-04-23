@@ -509,9 +509,9 @@ class ReportBudgetCommonMulti(ChartField, models.AbstractModel):
             self.activity_id = False
             
     
-    @api.onchange('xlsx_report')
+    @api.onchange('xlsx_report','async_process')
     def _onchange_report_xlsx_print(self):
-        if self.xlsx_report:
+        if self.xlsx_report or self.async_process:
             self.analytic_report = False
             self.jasper_report = False
         
@@ -520,13 +520,16 @@ class ReportBudgetCommonMulti(ChartField, models.AbstractModel):
         if self.analytic_report:
             self.xlsx_report = False
             self.jasper_report = False
+            self.async_process = False
+            self.to_csv = False
         
     @api.onchange('jasper_report')
     def _onchange_report_jasper_print(self):
         if self.jasper_report:
             self.xlsx_report = False
             self.analytic_report = False
-    
+            self.async_process = False
+            self.to_csv = False
     
     @api.multi
     def _get_chartfield_ids(self, chartfield, type):

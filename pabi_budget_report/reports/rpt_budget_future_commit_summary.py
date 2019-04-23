@@ -140,7 +140,7 @@ class RPTBudgetFutureCommitSummaryLine(models.Model):
     document_number = fields.Char('document_number')
     fisyear = fields.Char('fisyear')
     po_status = fields.Char('po_status')
-    close_uncommit = fields.Char('close_uncommit')
+    close_uncommit = fields.Boolean('close_uncommit')
     budget_view = fields.Char('budget_view')
     budget_code = fields.Char('budget_code')
     budget_name = fields.Char('budget_name')
