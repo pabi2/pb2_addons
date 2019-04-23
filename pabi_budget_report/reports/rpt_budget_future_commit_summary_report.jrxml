@@ -18,7 +18,7 @@
 		<fieldDescription><![CDATA[fiscalyear_id/name]]></fieldDescription>
 	</field>
 	<field name="doc_number" class="java.lang.String">
-		<fieldDescription><![CDATA[purchase_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[document_number]]></fieldDescription>
 	</field>
 	<field name="contract_number" class="java.lang.String">
 		<fieldDescription><![CDATA[contract_id/display_name]]></fieldDescription>
@@ -41,11 +41,11 @@
 	<field name="budget_name" class="java.lang.String">
 		<fieldDescription><![CDATA[budget_name]]></fieldDescription>
 	</field>
-	<field name="status" class="java.lang.String">
-		<fieldDescription><![CDATA[purchase_id/state]]></fieldDescription>
+	<field name="po_status" class="java.lang.String">
+		<fieldDescription><![CDATA[po_status]]></fieldDescription>
 	</field>
 	<field name="close_uncommit" class="java.lang.String">
-		<fieldDescription><![CDATA[purchase_id/technical_closed]]></fieldDescription>
+		<fieldDescription><![CDATA[purchase_id/close_uncommit]]></fieldDescription>
 	</field>
 	<variable name="remaining" class="java.lang.String">
 		<variableExpression><![CDATA[$F{subtotal}-($F{po_commit} ? $F{po_commit} : 0)-($F{po_actual} ? $F{po_actual} : 0)]]></variableExpression>
