@@ -527,8 +527,7 @@ class AccountAssetAdjust(models.Model):
         _logger.info("start asset create_matched_analytic ")
         new_asset.account_analytic_id = \
             Analytic.create_matched_analytic(new_asset)
-        _logger.info("analytic_id: %s", str(new_asset.account_analytic_id.id))
-        _logger.info("end asset create_matched_analytic ")
+        _logger.info("new_asset.account_analytic_id: %s", str(new_asset.account_analytic_id.id))
         # Set back to normal
         # new_asset.type = 'normal'
         return new_asset
@@ -634,6 +633,7 @@ class AccountAssetAdjust(models.Model):
             new_asset = self._create_asset(line.asset_date, line.amount,
                                            line.product_id, line.asset_name,
                                            line.account_analytic_id)
+            _logger.info("new_asset_id: %s", str(new_asset.id))
             line.ref_asset_id = new_asset
             # Find amount from depreciation board
             new_asset.compute_depreciation_board()
@@ -1179,7 +1179,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         Period = self.env['account.period']
         adjust = self.adjust_id
         new_asset = self.ref_asset_id
-        _logger.info("new_asset: %s", str(new_asset.id))
         exp_acc = self.account_id
         adjust_date = adjust.date
         ctx = dict(self._context,
@@ -1222,7 +1221,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         # Dr: new asset - asset value
         #     Cr: expense - asset value
         purchase_value = new_asset.purchase_value
-        _logger.info("analytic_id: %s", str(new_asset.account_analytic_id.id))
+        _logger.info("new_asset.account_analytic_id: %s", str(new_asset.account_analytic_id.id))
         if purchase_value:
             new_asset_debit = AssetAdjust._setup_move_line_data(
                 new_asset.code, new_asset, period, new_asset_acc, adjust_date,
