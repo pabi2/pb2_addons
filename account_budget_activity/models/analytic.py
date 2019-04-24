@@ -373,6 +373,7 @@ class AccountAnalyticAccount(models.Model):
         # *************************** End *******************************
         analytics = Analytic.search(domain)
         if not analytics:
+            _logger.info("not analytic")
             vals = dict((x[0], x[2]) for x in domain)
             vals['name'] = (rec.product_id.name or
                             rec.activity_id.name or
@@ -398,4 +399,6 @@ class AccountAnalyticAccount(models.Model):
             # *************************** End *******************************
             return Analytic.create(vals)
         else:
+            _logger.info("have analytic:")
+            _logger.info(analytics[0])
             return analytics[0]

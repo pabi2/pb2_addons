@@ -527,7 +527,7 @@ class AccountAssetAdjust(models.Model):
         _logger.info("start asset create_matched_analytic ")
         new_asset.account_analytic_id = \
             Analytic.create_matched_analytic(new_asset)
-        _logger.info(new_asset.account_analytic_id)
+        _logger.info("analytic_id: %s", str(new_asset.account_analytic_id.id))
         _logger.info("end asset create_matched_analytic ")
         # Set back to normal
         # new_asset.type = 'normal'
@@ -628,8 +628,7 @@ class AccountAssetAdjust(models.Model):
             line.account_analytic_id = \
                 Analytic.create_matched_analytic(line)
             _logger.info("********** end create_matched_analytic **********")
-            _logger.info("analytic_id: ")
-            _logger.info(str(line.account_analytic_id.id))
+            _logger.info("analytic_id: %s", str(line.account_analytic_id.id))
                 
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,
