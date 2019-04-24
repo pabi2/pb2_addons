@@ -624,7 +624,7 @@ class AccountAssetAdjust(models.Model):
             line.account_analytic_id = \
                 Analytic.create_matched_analytic(line)
             _logger.info("********** end create_matched_analytic **********")
-            _logger.info("analytic_id: ", str(line.account_analytic_id))
+            _logger.info("analytic_id: ", str(line.account_analytic_id.id))
                 
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,
