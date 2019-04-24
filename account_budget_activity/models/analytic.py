@@ -221,7 +221,7 @@ class AccountAnalyticLine(models.Model):
 
     @api.model
     def create(self, vals):
-        _logger.info("create analytic")
+        _logger.info("create analytic line")
         """ Add posting dimension """
         if vals.get('account_id', False):
             _logger.info("account_id: False")
@@ -399,6 +399,5 @@ class AccountAnalyticAccount(models.Model):
             # *************************** End *******************************
             return Analytic.create(vals)
         else:
-            _logger.info("have analytic:")
-            _logger.info(analytics[0])
+            _logger.info("have analytic: %s", str(analytics[0].id))
             return analytics[0]
