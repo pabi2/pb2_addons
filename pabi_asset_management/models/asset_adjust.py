@@ -515,6 +515,7 @@ class AccountAssetAdjust(models.Model):
 
     @api.model
     def _create_asset(self, asset_date, amount, product, asset_name, analytic):
+        _logger.info("create asset")
         Asset = self.env['account.asset']
         Analytic = self.env['account.analytic.account']
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
@@ -523,8 +524,11 @@ class AccountAssetAdjust(models.Model):
                            })
         new_asset = Asset.create(asset_dict)
         new_asset.update_related_dimension(asset_dict)
+        _logger.info("start asset create_matched_analytic ")
         new_asset.account_analytic_id = \
             Analytic.create_matched_analytic(new_asset)
+        _logger.info(new_asset.account_analytic_id)
+        _logger.info("end asset create_matched_analytic ")
         # Set back to normal
         # new_asset.type = 'normal'
         return new_asset
@@ -625,7 +629,7 @@ class AccountAssetAdjust(models.Model):
                 Analytic.create_matched_analytic(line)
             _logger.info("********** end create_matched_analytic **********")
             _logger.info("analytic_id: ")
-            _logger.info(line.account_analytic_id)
+            _logger.info(str(line.account_analytic_id.id))
                 
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,

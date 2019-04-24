@@ -221,6 +221,7 @@ class AccountAnalyticLine(models.Model):
 
     @api.model
     def create(self, vals):
+        _logger.info("create analytic")
         """ Add posting dimension """
         if vals.get('account_id', False):
             _logger.info("account_id: False")
@@ -368,8 +369,6 @@ class AccountAnalyticAccount(models.Model):
         # else:
         #     domain.append(('type', '=', 'pr_product'))
         domain.append(('type', '=', 'normal'))  # remove this line if use above
-        _logger.info("********** domain **********")
-        _logger.info(domain)
         #
         # *************************** End *******************************
         analytics = Analytic.search(domain)
@@ -395,9 +394,6 @@ class AccountAnalyticAccount(models.Model):
             #      'pr_product')
             #
             vals['type'] = 'normal'
-            
-            _logger.info("********** vals **********")
-            _logger.info(vals)
             #
             # *************************** End *******************************
             return Analytic.create(vals)
