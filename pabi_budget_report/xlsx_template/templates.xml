@@ -703,7 +703,7 @@
 								'I2': 'budget_code${value or ""}',
 								'J2': 'budget_name${value or ""}',
 								'K2': 'po_status${value or ""}',
-								'L2': 'close_uncommit${value or ""}',
+								'L2': 'close_uncommit${value and "X" or ""}',
                             }
                         }
                     }

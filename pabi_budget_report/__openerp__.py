@@ -33,6 +33,8 @@
         'reports/report_budget_common_multi_view.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/load_template.xml',
+        'reports/rpt_budget_commit_view.xml',
+        'reports/rpt_budget_actual_view.xml',
         'reports/rpt_budget_future_commit_view.xml',
         'reports/rpt_budget_future_commit_summary_view.xml',
     ],

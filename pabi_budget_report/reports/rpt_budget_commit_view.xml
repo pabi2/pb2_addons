@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        
+		<record id="view_rpt_budget_commit_wizard" model="ir.ui.view">
+            <field name="name">view.rpt.budget.commit.wizard</field>
+            <field name="model">rpt.budget.commit</field>
+            <field name="inherit_id" ref="pabi_budget_report.view_report_budget_common_multi_form"/>
+            <field name="arch" type="xml">
+            	<group name="report_type" position="replace">
+	               	<group name="report_type" string="Report type">
+	               		<div states="choose">
+		               		<field name="async_process"/><label for="async_process"/>
+							<field name="jasper_report" on_change="1" /><label for="jasper_report"/>
+						</div>
+	            	</group>
+	            </group>
+	            <div name="xlsx.report" position="replace">
+                	<field name="state" invisible="1"/>
+                	<field name="uuid" invisible="1"/>
+            	</div>
+                <footer name="button_report" position="replace">
+                	<footer name="button_report" states="choose">
+					    <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"
+                				attrs="{'invisible': [('async_process', '!=', True)]}" />
+		                <button name="run_jasper_report" string="View Report" type="object" default_focus="1" class="oe_highlight"
+							    attrs="{'invisible': [('jasper_report', '!=', True)]}"/>
+					    or
+					    <button special="cancel" string="Cancel" type="object" class="oe_link"/>
+					</footer>
+				</footer>
+            </field>
+        </record>
+	
+  		<record id="action_menu_rpt_budget_commit_wizard" model="ir.actions.act_window">
+		    <field name="name">Budget Commit</field>
+		    <field name="type">ir.actions.act_window</field>
+		    <field name="res_model">rpt.budget.commit</field>
+		    <field name="view_mode">form</field>
+		    <field name="view_mode">form</field>
+		    <field name="view_id" ref="view_rpt_budget_commit_wizard" />
+		    <field name="target">new</field>
+		    <field name="context">{'action_type': 'my_budget_report'}</field>
+  		</record>
+  		
+  		<menuitem id="menu_rpt_budget_commit" parent="account_budget_activity.menu_action_budget_report" sequence="108" 
+  			action="action_menu_rpt_budget_commit_wizard"/>
+  			
+	</data>
+</openerp>

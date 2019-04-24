@@ -219,7 +219,7 @@
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1200" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{close_uncommit} ? 'X' : '']]></textFieldExpression>

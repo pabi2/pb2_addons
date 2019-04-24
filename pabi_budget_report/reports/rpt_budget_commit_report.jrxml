@@ -1,0 +1,1675 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_budget_commit_report" pageWidth="8040" pageHeight="20000" columnWidth="8000" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="border_box">
+		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+			<topPen lineWidth="0.5" lineStyle="Solid"/>
+			<leftPen lineWidth="0.5" lineStyle="Solid"/>
+			<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<parameter name="report_type" class="java.lang.String"/>
+	<parameter name="fiscal_year" class="java.lang.String"/>
+	<parameter name="org" class="java.lang.String"/>
+	<parameter name="po_document" class="java.lang.String"/>
+	<parameter name="order_date" class="java.lang.String"/>
+	<parameter name="budget_overview" class="java.lang.String"/>
+	<parameter name="budget_method" class="java.lang.String"/>
+	<parameter name="run_by" class="java.lang.String"/>
+	<parameter name="run_date" class="java.lang.String"/>
+	<queryString language="xPath">
+		<![CDATA[/data/record]]>
+	</queryString>
+	<field name='fisyear' class='java.lang.String'>	
+		<fieldDescription><![CDATA[fisyear]]></fieldDescription>
+	</field>
+	<field name='period' class='java.lang.String'>	
+		<fieldDescription><![CDATA[period]]></fieldDescription>
+	</field>
+	<field name='budget_commit_type' class='java.lang.String'>	
+		<fieldDescription><![CDATA[budget_commit_type]]></fieldDescription>
+	</field>
+	<field name='charge_type' class='java.lang.String'>	
+		<fieldDescription><![CDATA[charge_type]]></fieldDescription>
+	</field>
+	<field name='budget_method' class='java.lang.String'>	
+		<fieldDescription><![CDATA[budget_method]]></fieldDescription>
+	</field>
+	<field name='doctype' class='java.lang.String'>	
+		<fieldDescription><![CDATA[doctype]]></fieldDescription>
+	</field>
+	<field name='budget_view' class='java.lang.String'>	
+		<fieldDescription><![CDATA[budget_view]]></fieldDescription>
+	</field>
+	<field name='source_budget_code' class='java.lang.String'>	
+		<fieldDescription><![CDATA[source_budget_code]]></fieldDescription>
+	</field>
+	<field name='source_budget_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[source_budget_name]]></fieldDescription>
+	</field>
+	<field name='doc_date' class='java.lang.String'>	
+		<fieldDescription><![CDATA[doc_date]]></fieldDescription>
+	</field>
+	<field name='posting_date' class='java.lang.String'>	
+		<fieldDescription><![CDATA[posting_date]]></fieldDescription>
+	</field>
+	<field name='document' class='java.lang.String'>	
+		<fieldDescription><![CDATA[document]]></fieldDescription>
+	</field>
+	<field name='item' class='java.lang.String'>	
+		<fieldDescription><![CDATA[item]]></fieldDescription>
+	</field>
+	<field name='amount' class='java.lang.String'>	
+		<fieldDescription><![CDATA[amount]]></fieldDescription>
+	</field>
+	<field name='detail' class='java.lang.String'>	
+		<fieldDescription><![CDATA[detail]]></fieldDescription>
+	</field>
+	<field name='ref_document' class='java.lang.String'>	
+		<fieldDescription><![CDATA[ref_document]]></fieldDescription>
+	</field>
+	<field name='schedule_date' class='java.lang.String'>	
+		<fieldDescription><![CDATA[schedule_date]]></fieldDescription>
+	</field>
+	<field name='id' class='java.lang.String'>	
+		<fieldDescription><![CDATA[id]]></fieldDescription>
+	</field>
+	<field name='po_contract' class='java.lang.String'>	
+		<fieldDescription><![CDATA[po_contract]]></fieldDescription>
+	</field>
+	<field name='contract_start_date' class='java.lang.String'>	
+		<fieldDescription><![CDATA[contract_start_date]]></fieldDescription>
+	</field>
+	<field name='contract_end_date' class='java.lang.String'>	
+		<fieldDescription><![CDATA[contract_end_date]]></fieldDescription>
+	</field>
+	<field name='product_category' class='java.lang.String'>	
+		<fieldDescription><![CDATA[product_category]]></fieldDescription>
+	</field>
+	<field name='product_code' class='java.lang.String'>	
+		<fieldDescription><![CDATA[product_code]]></fieldDescription>
+	</field>
+	<field name='product_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[product_name]]></fieldDescription>
+	</field>
+	<field name='purchasing_method' class='java.lang.String'>	
+		<fieldDescription><![CDATA[purchasing_method]]></fieldDescription>
+	</field>
+	<field name='activity_group' class='java.lang.String'>	
+		<fieldDescription><![CDATA[activity_group]]></fieldDescription>
+	</field>
+	<field name='activity_group_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[activity_group_name]]></fieldDescription>
+	</field>
+	<field name='activity' class='java.lang.String'>	
+		<fieldDescription><![CDATA[activity]]></fieldDescription>
+	</field>
+	<field name='activity_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[activity_name]]></fieldDescription>
+	</field>
+	<field name='activity_rpt' class='java.lang.String'>	
+		<fieldDescription><![CDATA[activity_rpt]]></fieldDescription>
+	</field>
+	<field name='activity_rpt_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[activity_rpt_name]]></fieldDescription>
+	</field>
+	<field name='account_code' class='java.lang.String'>	
+		<fieldDescription><![CDATA[account_code]]></fieldDescription>
+	</field>
+	<field name='account_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[account_name]]></fieldDescription>
+	</field>
+	<field name='partner_code' class='java.lang.String'>	
+		<fieldDescription><![CDATA[partner_code]]></fieldDescription>
+	</field>
+	<field name='partner_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[partner_name]]></fieldDescription>
+	</field>
+	<field name='org_code' class='java.lang.String'>	
+		<fieldDescription><![CDATA[org_code]]></fieldDescription>
+	</field>
+	<field name='org_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[org_name]]></fieldDescription>
+	</field>
+	<field name='section' class='java.lang.String'>	
+		<fieldDescription><![CDATA[section]]></fieldDescription>
+	</field>
+	<field name='section_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[section_name]]></fieldDescription>
+	</field>
+	<field name='costcenter' class='java.lang.String'>	
+		<fieldDescription><![CDATA[costcenter]]></fieldDescription>
+	</field>
+	<field name='costcenter_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[costcenter_name]]></fieldDescription>
+	</field>
+	<field name='costcenter_used' class='java.lang.String'>	
+		<fieldDescription><![CDATA[costcenter_used]]></fieldDescription>
+	</field>
+	<field name='costcenter_name_used' class='java.lang.String'>	
+		<fieldDescription><![CDATA[costcenter_name_used]]></fieldDescription>
+	</field>
+	<field name='mission' class='java.lang.String'>	
+		<fieldDescription><![CDATA[mission]]></fieldDescription>
+	</field>
+	<field name='functional_area' class='java.lang.String'>	
+		<fieldDescription><![CDATA[functional_area]]></fieldDescription>
+	</field>
+	<field name='functional_area_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[functional_area_name]]></fieldDescription>
+	</field>
+	<field name='program_group' class='java.lang.String'>	
+		<fieldDescription><![CDATA[program_group]]></fieldDescription>
+	</field>
+	<field name='program_group_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[program_group_name]]></fieldDescription>
+	</field>
+	<field name='program' class='java.lang.String'>	
+		<fieldDescription><![CDATA[program]]></fieldDescription>
+	</field>
+	<field name='program_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[program_name]]></fieldDescription>
+	</field>
+	<field name='project_group' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_group]]></fieldDescription>
+	</field>
+	<field name='propect_group_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[propect_group_name]]></fieldDescription>
+	</field>
+	<field name='master_plan_code' class='java.lang.String'>	
+		<fieldDescription><![CDATA[master_plan_code]]></fieldDescription>
+	</field>
+	<field name='master_plan_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[master_plan_name]]></fieldDescription>
+	</field>
+	<field name='project_type' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_type]]></fieldDescription>
+	</field>
+	<field name='project_type_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_type_name]]></fieldDescription>
+	</field>
+	<field name='project_operation_code' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_operation_code]]></fieldDescription>
+	</field>
+	<field name='project_operation_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_operation_name]]></fieldDescription>
+	</field>
+	<field name='project_fund_code' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_fund_code]]></fieldDescription>
+	</field>
+	<field name='project_fund_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_fund_name]]></fieldDescription>
+	</field>
+	<field name='project_date_start' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_date_start]]></fieldDescription>
+	</field>
+	<field name='project_date_end' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_date_end]]></fieldDescription>
+	</field>
+	<field name='project_date_start_spending' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_date_start_spending]]></fieldDescription>
+	</field>
+	<field name='project_date_end_spending' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_date_end_spending]]></fieldDescription>
+	</field>
+	<field name='project_date_close' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_date_close]]></fieldDescription>
+	</field>
+	<field name='project_date_close_cond' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_date_close_cond]]></fieldDescription>
+	</field>
+	<field name='project_date_approved' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_date_approved]]></fieldDescription>
+	</field>
+	<field name='contract_date_start' class='java.lang.String'>	
+		<fieldDescription><![CDATA[contract_date_start]]></fieldDescription>
+	</field>
+	<field name='contract_date_end' class='java.lang.String'>	
+		<fieldDescription><![CDATA[contract_date_end]]></fieldDescription>
+	</field>
+	<field name='project_date_end_proposal' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_date_end_proposal]]></fieldDescription>
+	</field>
+	<field name='project_date_terminate' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_date_terminate]]></fieldDescription>
+	</field>
+	<field name='pm' class='java.lang.String'>	
+		<fieldDescription><![CDATA[pm]]></fieldDescription>
+	</field>
+	<field name='pm_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[pm_name]]></fieldDescription>
+	</field>
+	<field name='project_status' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_status]]></fieldDescription>
+	</field>
+	<field name='sector' class='java.lang.String'>	
+		<fieldDescription><![CDATA[sector]]></fieldDescription>
+	</field>
+	<field name='sector_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[sector_name]]></fieldDescription>
+	</field>
+	<field name='sub_sector' class='java.lang.String'>	
+		<fieldDescription><![CDATA[sub_sector]]></fieldDescription>
+	</field>
+	<field name='sub_sector_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[sub_sector_name]]></fieldDescription>
+	</field>
+	<field name='division' class='java.lang.String'>	
+		<fieldDescription><![CDATA[division]]></fieldDescription>
+	</field>
+	<field name='division_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[division_name]]></fieldDescription>
+	</field>
+	<field name='section_program' class='java.lang.String'>	
+		<fieldDescription><![CDATA[section_program]]></fieldDescription>
+	</field>
+	<field name='section_program_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[section_program_name]]></fieldDescription>
+	</field>
+	<field name='project_c_code' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_c_code]]></fieldDescription>
+	</field>
+	<field name='project_c_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_c_name]]></fieldDescription>
+	</field>
+	<field name='project_c_date_start' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_c_date_start]]></fieldDescription>
+	</field>
+	<field name='project_c_date_end' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_c_date_end]]></fieldDescription>
+	</field>
+	<field name='project_c_date_expansion' class='java.lang.String'>	
+		<fieldDescription><![CDATA[project_c_date_expansion]]></fieldDescription>
+	</field>
+	<field name='requested_by' class='java.lang.String'>	
+		<fieldDescription><![CDATA[requested_by]]></fieldDescription>
+	</field>
+	<field name='requested_by_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[requested_by_name]]></fieldDescription>
+	</field>
+	<field name='approver' class='java.lang.String'>	
+		<fieldDescription><![CDATA[approver]]></fieldDescription>
+	</field>
+	<field name='approver_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[approver_name]]></fieldDescription>
+	</field>
+	<field name='prepared_by' class='java.lang.String'>	
+		<fieldDescription><![CDATA[prepared_by]]></fieldDescription>
+	</field>
+	<field name='prepared_by_name' class='java.lang.String'>	
+		<fieldDescription><![CDATA[prepared_by_name]]></fieldDescription>
+	</field>
+	<pageHeader>
+		<band height="75" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="260" height="15"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[รายงานผูกพันคงค้าง PR/PO/EX]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="15" width="80" height="15"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Budget View]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="15" width="180" height="15" backcolor="#00CCCC"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{budget_overview}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="30" width="80" height="15" backcolor="#00CCCC"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Budget Method]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="30" width="180" height="15" backcolor="#00CCCC"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{budget_method}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="45" width="80" height="15" backcolor="#00CCCC"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fiscal Year]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="45" width="180" height="15" backcolor="#00CCCC"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fiscal_year}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="60" width="260" height="15" backcolor="#00CCCC"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement style='border_box' x='0' y='0' width='50' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[fisyear]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='50' y='0' width='30' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[period]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='80' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[budget_commit_type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='160' y='0' width='50' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[charge_type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='210' y='0' width='50' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[budget_method]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='260' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[doctype]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='340' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[budget_view]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='420' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[source_budget_code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='500' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[source_budget_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='580' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[doc_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='660' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[posting_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='740' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[document]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='820' y='0' width='30' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[item]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='850' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='930' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[detail]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1010' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[ref_document]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1090' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[schedule_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1170' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1250' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[po_contract]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1330' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[contract_start_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1410' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[contract_end_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1490' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[product_category]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1570' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[product_code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1650' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[product_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1730' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[purchasing_method]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1810' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[activity_group]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1890' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[activity_group_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='1970' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[activity]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='2050' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[activity_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='2130' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[activity_rpt]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='2210' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[activity_rpt_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='2290' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[account_code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='2370' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[account_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='2450' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[partner_code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='2530' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[partner_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='2610' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[org_code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='2690' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[org_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='2770' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[section]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='2850' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[section_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='2930' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[costcenter]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3010' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[costcenter_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3090' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[costcenter_used]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3170' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[costcenter_name_used]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3250' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[mission]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3330' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[functional_area]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3410' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[functional_area_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3490' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[program_group]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3570' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[program_group_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3650' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[program]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3730' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[program_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3810' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_group]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3890' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[propect_group_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='3970' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[master_plan_code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='4050' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[master_plan_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='4130' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='4210' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_type_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='4290' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_operation_code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='4370' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_operation_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='4450' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_fund_code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='4530' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_fund_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='4610' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_date_start]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='4690' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_date_end]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='4770' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_date_start_spending]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='4850' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_date_end_spending]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='4930' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_date_close]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5010' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_date_close_cond]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5090' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_date_approved]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5170' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[contract_date_start]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5250' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[contract_date_end]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5330' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_date_end_proposal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5410' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_date_terminate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5490' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[pm]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5570' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[pm_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5650' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5730' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[sector]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5810' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[sector_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5890' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[sub_sector]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='5970' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[sub_sector_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='6050' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[division]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='6130' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[division_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='6210' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[section_program]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='6290' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[section_program_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='6370' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_c_code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='6450' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_c_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='6530' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_c_date_start]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='6610' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_c_date_end]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='6690' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[project_c_date_expansion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='6770' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[requested_by]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='6850' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[requested_by_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='6930' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[approver]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='7010' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[approver_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='7090' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[prepared_by]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style='border_box' x='7170' y='0' width='80' height='40'/>
+				<textElement>
+					<font size='8' isBold='true'/>
+				</textElement>
+				<text><![CDATA[prepared_by_name]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+						<textField>
+				<reportElement style='border_box' x='0' y='0' width='50' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fisyear} ? $F{fisyear} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='50' y='0' width='30' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{period} ? $F{period} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='80' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{budget_commit_type} ? $F{budget_commit_type} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='160' y='0' width='50' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{charge_type} ? $F{charge_type} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='210' y='0' width='50' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{budget_method} ? $F{budget_method} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='260' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doctype} ? $F{doctype} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='340' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{budget_view} ? $F{budget_view} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='420' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{source_budget_code} ? $F{source_budget_code} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='500' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{source_budget_name} ? $F{source_budget_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='580' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_date} ? $F{doc_date} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='660' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{posting_date} ? $F{posting_date} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='740' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{document} ? $F{document} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='820' y='0' width='30' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item} ? $F{item} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='850' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{amount} ? $F{amount} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='930' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{detail} ? $F{detail} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1010' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ref_document} ? $F{ref_document} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1090' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{schedule_date} ? $F{schedule_date} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1170' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id} ? $F{id} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1250' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{po_contract} ? $F{po_contract} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1330' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contract_start_date} ? $F{contract_start_date} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1410' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contract_end_date} ? $F{contract_end_date} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1490' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{product_category} ? $F{product_category} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1570' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{product_code} ? $F{product_code} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1650' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{product_name} ? $F{product_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1730' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{purchasing_method} ? $F{purchasing_method} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1810' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity_group} ? $F{activity_group} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1890' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity_group_name} ? $F{activity_group_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='1970' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity} ? $F{activity} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='2050' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity_name} ? $F{activity_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='2130' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity_rpt} ? $F{activity_rpt} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='2210' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity_rpt_name} ? $F{activity_rpt_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='2290' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{account_code} ? $F{account_code} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='2370' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{account_name} ? $F{account_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='2450' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partner_code} ? $F{partner_code} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='2530' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partner_name} ? $F{partner_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='2610' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{org_code} ? $F{org_code} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='2690' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{org_name} ? $F{org_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='2770' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{section} ? $F{section} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='2850' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{section_name} ? $F{section_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='2930' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{costcenter} ? $F{costcenter} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3010' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{costcenter_name} ? $F{costcenter_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3090' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{costcenter_used} ? $F{costcenter_used} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3170' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{costcenter_name_used} ? $F{costcenter_name_used} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3250' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mission} ? $F{mission} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3330' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{functional_area} ? $F{functional_area} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3410' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{functional_area_name} ? $F{functional_area_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3490' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{program_group} ? $F{program_group} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3570' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{program_group_name} ? $F{program_group_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3650' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{program} ? $F{program} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3730' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{program_name} ? $F{program_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3810' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_group} ? $F{project_group} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3890' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{propect_group_name} ? $F{propect_group_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='3970' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{master_plan_code} ? $F{master_plan_code} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='4050' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{master_plan_name} ? $F{master_plan_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='4130' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_type} ? $F{project_type} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='4210' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_type_name} ? $F{project_type_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='4290' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_operation_code} ? $F{project_operation_code} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='4370' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_operation_name} ? $F{project_operation_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='4450' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_fund_code} ? $F{project_fund_code} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='4530' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_fund_name} ? $F{project_fund_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='4610' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_date_start} ? $F{project_date_start} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='4690' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_date_end} ? $F{project_date_end} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='4770' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_date_start_spending} ? $F{project_date_start_spending} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='4850' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_date_end_spending} ? $F{project_date_end_spending} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='4930' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_date_close} ? $F{project_date_close} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5010' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_date_close_cond} ? $F{project_date_close_cond} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5090' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_date_approved} ? $F{project_date_approved} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5170' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contract_date_start} ? $F{contract_date_start} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5250' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contract_date_end} ? $F{contract_date_end} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5330' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_date_end_proposal} ? $F{project_date_end_proposal} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5410' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_date_terminate} ? $F{project_date_terminate} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5490' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pm} ? $F{pm} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5570' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pm_name} ? $F{pm_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5650' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_status} ? $F{project_status} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5730' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sector} ? $F{sector} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5810' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sector_name} ? $F{sector_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5890' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sub_sector} ? $F{sub_sector} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='5970' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sub_sector_name} ? $F{sub_sector_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='6050' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{division} ? $F{division} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='6130' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{division_name} ? $F{division_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='6210' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{section_program} ? $F{section_program} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='6290' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{section_program_name} ? $F{section_program_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='6370' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_c_code} ? $F{project_c_code} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='6450' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_c_name} ? $F{project_c_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='6530' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_c_date_start} ? $F{project_c_date_start} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='6610' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_c_date_end} ? $F{project_c_date_end} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='6690' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_c_date_expansion} ? $F{project_c_date_expansion} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='6770' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{requested_by} ? $F{requested_by} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='6850' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{requested_by_name} ? $F{requested_by_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='6930' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{approver} ? $F{approver} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='7010' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{approver_name} ? $F{approver_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='7090' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prepared_by} ? $F{prepared_by} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style='border_box' x='7170' y='0' width='80' height='15'/>
+				<textElement>
+					<font size='8'/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prepared_by_name} ? $F{prepared_by_name} : '']]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
