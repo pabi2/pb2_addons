@@ -284,7 +284,7 @@ class AssetRegisterReport(models.TransientModel):
             dom += [('owner_subsector_id', 'in',
                     tuple(self.subsector_ids.ids + [0]))]
         if self.asset_state:
-            res, state_name = [], self.asset_state.ids
+            res, state_name = [], self.asset_state
             for state in self.asset_state:
                 state_name = self.env['xlsx.report.status'].search([('id', '=', state.id)])
                 res += [str(state_name.status)]
@@ -308,8 +308,8 @@ class AssetRegisterReport(models.TransientModel):
         date_end = False
         
         if self.filter == 'filter_date':
-            date_start = self.fiscalyear_start_id.date_start
-            date_end = self.date_end if self.date_end <= self.fiscalyear_end_id.date_stop else self.fiscalyear_end_id.date_stop
+            date_start = self.date_start #self.fiscalyear_start_id.date_start
+            date_end = self.date_end
         if self.filter == 'filter_period':
             date_start = self.period_start_id.date_start
             date_end = self.period_end_id.date_stop

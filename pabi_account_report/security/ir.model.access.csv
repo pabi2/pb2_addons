@@ -14,3 +14,4 @@ access_pabi_common_supplier_payment_report_view,access_pabi_common_supplier_paym
 access_asset_repair_view,access_asset_repair_view,model_asset_repair_view,,1,0,0,0
 access_asset_register_view,access_asset_register_view,model_asset_register_view,,1,0,0,0
 access_sla_employee_view,access_sla_employee_view,model_sla_employee_view,,1,0,0,0
+xlsx_report_status_view,xlsx_report_status_view,model_xlsx_report_status,,1,1,1,0
