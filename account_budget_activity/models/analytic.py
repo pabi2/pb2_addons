@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models, _
 from openerp.exceptions import ValidationError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountAnalyticJournal(models.Model):
@@ -220,8 +223,11 @@ class AccountAnalyticLine(models.Model):
     def create(self, vals):
         """ Add posting dimension """
         if vals.get('account_id', False):
+            _logger.info("account_id: False")
             Analytic = self.env['account.analytic.account']
             analytic = Analytic.browse(vals['account_id'])
+            _logger.info("analytic: ")
+            _logger.info(analytic)
             if not analytic:
                 analytic = Analytic.create_matched_analytic(self)
             if analytic:
@@ -230,6 +236,7 @@ class AccountAnalyticLine(models.Model):
         # Prepare period_id for reporting purposes
         date = vals.get('date', fields.Date.context_today(self))
         if date:
+            _logger.info("if date")
             periods = self.env['account.period'].find(date)
             period = periods and periods[0] or False
             vals.update({'period_id': period.id})
@@ -361,6 +368,8 @@ class AccountAnalyticAccount(models.Model):
         # else:
         #     domain.append(('type', '=', 'pr_product'))
         domain.append(('type', '=', 'normal'))  # remove this line if use above
+        _logger.info("********** domain **********")
+        _logger.info(domain)
         #
         # *************************** End *******************************
         analytics = Analytic.search(domain)
@@ -386,6 +395,9 @@ class AccountAnalyticAccount(models.Model):
             #      'pr_product')
             #
             vals['type'] = 'normal'
+            
+            _logger.info("********** vals **********")
+            _logger.info(vals)
             #
             # *************************** End *******************************
             return Analytic.create(vals)

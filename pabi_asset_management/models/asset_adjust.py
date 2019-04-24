@@ -620,8 +620,12 @@ class AccountAssetAdjust(models.Model):
         # --
         for line in self.adjust_expense_to_asset_ids:
             _logger.info("line_id: %s", str(line.id))
+            _logger.info("********** start create_matched_analytic **********")
             line.account_analytic_id = \
                 Analytic.create_matched_analytic(line)
+            _logger.info("********** end create_matched_analytic **********")
+            _logger.info("analytic_id: ", str(line.account_analytic_id))
+                
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,
                                            line.product_id, line.asset_name,
