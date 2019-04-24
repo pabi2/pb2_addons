@@ -12,6 +12,7 @@
               </field>
               <field name="fiscalyear_end_id" position="attributes">
                   <attribute name="required">True</attribute>
+                  <attribute name="invisible">True</attribute>
               </field>
               <xpath expr="/form//group[@name='criteria']/group" position="inside">
                   <field name="account_ids" widget="many2many_tags"/>

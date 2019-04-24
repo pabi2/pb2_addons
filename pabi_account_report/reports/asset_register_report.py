@@ -299,16 +299,16 @@ class AssetRegisterReport(models.TransientModel):
             dom += [('room_id', 'in', tuple(self.room_ids.ids + [0]))]
         if self.asset_active:
             dom += [('active', '=', True if (self.asset_active == 'active') else False)]
-        if self.date_start:
-            dom += [('date_start', '>=', self.date_start)] 
         if self.date_end:
             dom += [('date_start', '<=', self.date_end)]
+
             
         # Prepare fixed params
         date_start = False
         date_end = False
+        
         if self.filter == 'filter_date':
-            date_start = self.date_start
+            date_start = self.date_start #self.fiscalyear_start_id.date_start
             date_end = self.date_end
         if self.filter == 'filter_period':
             date_start = self.period_start_id.date_start
