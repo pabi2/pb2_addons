@@ -117,14 +117,7 @@ class AssetRegisterReport(models.TransientModel):
         domain=[('location', '=', 'asset.register.view')],
         default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', ['draft', 'open', 'close'])]),
     )
-    """asset_state = fields.Selection(
-        [('draft', 'Draft'),
-         ('open', 'Running'),
-         ('close', 'Close'),
-         ('removed', 'Removed')],
-        string='Asset State',
-    )
-    """
+
     account_ids = fields.Many2many(
         'account.account',
         string='Account Code',
