@@ -125,198 +125,72 @@ class RPTBudgetCommitLine(models.Model):
     _auto = False
     
     id = fields.Integer('ID')
-    fisyear = fields.Char('fisyear')
-    period = fields.Char('period')
     budget_commit_type = fields.Char('budget_commit_type')
     charge_type = fields.Char('charge_type')
     budget_method = fields.Char('budget_method')
     doctype = fields.Char('doctype')
-    budget_view = fields.Char('budget_view')
-    source_budget_code = fields.Char('source_budget_code')
-    source_budget_name = fields.Char('source_budget_name')
-    doc_date = fields.Char('doc_date')
-    posting_date = fields.Char('posting_date')
+    chart_view = fields.Char('chart_view')
+    fisyear = fields.Char('fisyear')
+    period = fields.Char('period')
     document = fields.Char('document')
-    item = fields.Integer('item')
-    amount = fields.Char('amount')
     detail = fields.Char('detail')
-    ref_document = fields.Char('ref_document')
-    schedule_date = fields.Char('schedule_date')
-    po_contract = fields.Char('po_contract')
-    contract_start_date = fields.Char('contract_start_date')
-    contract_end_date = fields.Char('contract_end_date')
-    product_category = fields.Char('product_category')
-    product_code = fields.Char('product_code')
-    product_name = fields.Char('product_name')
-    purchasing_method = fields.Char('purchasing_method')
     activity_group = fields.Char('activity_group')
     activity_group_name = fields.Char('activity_group_name')
     activity = fields.Char('activity')
     activity_name = fields.Char('activity_name')
-    activity_rpt = fields.Char('activity_rpt')
-    activity_rpt_name = fields.Char('activity_rpt_name')
-    account_code = fields.Char('account_code')
-    account_name = fields.Char('account_name')
-    partner_code = fields.Char('partner_code')
-    partner_name = fields.Char('partner_name')
-    org_code = fields.Char('org_code')
-    org_name = fields.Char('org_name')
     section = fields.Char('section')
     section_name = fields.Char('section_name')
+    project = fields.Char('project')
+    project_name = fields.Char('project_name')
+    org = fields.Char('org')
+    org_name = fields.Char('org_name')
     costcenter = fields.Char('costcenter')
     costcenter_name = fields.Char('costcenter_name')
-    costcenter_used = fields.Char('costcenter_used')
-    costcenter_name_used = fields.Char('costcenter_name_used')
-    mission = fields.Char('mission')
-    functional_area = fields.Char('functional_area')
-    functional_area_name = fields.Char('functional_area_name')
-    program_group = fields.Char('program_group')
-    program_group_name = fields.Char('program_group_name')
-    program = fields.Char('program')
-    program_name = fields.Char('program_name')
-    project_group = fields.Char('project_group')
-    propect_group_name = fields.Char('propect_group_name')
-    master_plan_code = fields.Char('master_plan_code')
-    master_plan_name = fields.Char('master_plan_name')
-    project_type = fields.Char('project_type')
-    project_type_name = fields.Char('project_type_name')
-    project_operation_code = fields.Char('project_operation_code')
-    project_operation_name = fields.Char('project_operation_name')
-    project_fund_code = fields.Char('project_fund_code')
-    project_fund_name = fields.Char('project_fund_name')
-    project_date_start = fields.Char('project_date_start')
-    project_date_end = fields.Char('project_date_end')
-    project_date_start_spending = fields.Char('project_date_start_spending')
-    project_date_end_spending = fields.Char('project_date_end_spending')
-    project_date_close = fields.Char('project_date_close')
-    project_date_close_cond = fields.Char('project_date_close_cond')
-    project_date_approved = fields.Char('project_date_approved')
-    contract_date_start = fields.Char('contract_date_start')
-    contract_date_end = fields.Char('contract_date_end')
-    project_date_end_proposal = fields.Char('project_date_end_proposal')
-    project_date_terminate = fields.Char('project_date_terminate')
-    pm = fields.Char('pm')
-    pm_name = fields.Char('pm_name')
-    project_status = fields.Char('project_status')
-    sector = fields.Char('sector')
-    sector_name = fields.Char('sector_name')
-    sub_sector = fields.Char('sub_sector')
-    sub_sector_name = fields.Char('sub_sector_name')
-    division = fields.Char('division')
-    division_name = fields.Char('division_name')
-    section_program = fields.Char('section_program')
-    section_program_name = fields.Char('section_program_name')
-    project_c_code = fields.Char('project_c_code')
-    project_c_name = fields.Char('project_c_name')
-    project_c_date_start = fields.Char('project_c_date_start')
-    project_c_date_end = fields.Char('project_c_date_end')
-    project_c_date_expansion = fields.Char('project_c_date_expansion')
-    requested_by = fields.Char('requested_by')
-    requested_by_name = fields.Char('requested_by_name')
-    approver = fields.Char('approver')
-    approver_name = fields.Char('approver_name')
-    prepared_by = fields.Char('prepared_by')
-    prepared_by_name = fields.Char('prepared_by_name')
-
+    purchase_line_id = fields.Many2one('purchase.order.line','purchase_line_id')
+    purchase_request_line_id = fields.Many2one('purchase.request.line','purchase_request_line_id')
+    expense_line_id = fields.Many2one('hr.expense.line','expense_line_id')
+    sale_line_id = fields.Many2one('sale.order.line','sale_line_id')
+    amount = fields.Float('amount')
+    date_doc = fields.Date('date_doc')
+    posting_date = fields.Char('posting_date')
     
 
     def _get_sql_view(self):
         sql_view = """
         SELECT 
-            ROW_NUMBER() over (order by document) AS id,
-            fisyear,
-            period,
-            budget_commit_type,
-            charge_type,
-            budget_method,
-            doctype,
-            budget_view,
-            source_budget_code,
-            source_budget_name,
-            doc_date,
-            posting_date,
-            document,
-            item,
-            amount,
-            detail,
-            ref_document,
-            schedule_date,
-            po_contract,
-            contract_start_date,
-            contract_end_date,
-            product_category,
-            product_code,
-            product_name,
-            purchasing_method,
-            activity_group,
-            activity_group_name,
-            activity,
-            activity_name,
-            activity_rpt,
-            activity_rpt_name,
-            account_code,
-            account_name,
-            partner_code,
-            partner_name,
-            org_code,
-            org_name,
-            section,
-            section_name,
-            costcenter,
-            costcenter_name,
-            costcenter_used,
-            costcenter_name_used,
-            mission,
-            functional_area,
-            functional_area_name,
-            program_group,
-            program_group_name,
-            program,
-            program_name,
-            project_group,
-            propect_group_name,
-            master_plan_code,
-            master_plan_name,
-            project_type,
-            project_type_name,
-            project_operation_code,
-            project_operation_name,
-            project_fund_code,
-            project_fund_name,
-            project_date_start,
-            project_date_end,
-            project_date_start_spending,
-            project_date_end_spending,
-            project_date_close,
-            project_date_close_cond,
-            project_date_approved,
-            contract_date_start,
-            contract_date_end,
-            project_date_end_proposal,
-            project_date_terminate,
-            pm,
-            pm_name,
-            project_status,
-            sector,
-            sector_name,
-            sub_sector,
-            sub_sector_name,
-            division,
-            division_name,
-            section_program,
-            section_program_name,
-            project_c_code,
-            project_c_name,
-            project_c_date_start,
-            project_c_date_end,
-            project_c_date_expansion,
-            requested_by,
-            requested_by_name,
-            approver,
-            approver_name,
-            prepared_by,
-            prepared_by_name
-        FROM issi.budget.commit.view
+            com.id, com.budget_commit_type, com.charge_type, com.budget_method, com.doctype, com.chart_view, com.fisyear, com.period, com.document,
+            com.detail, com.activity_group, com.activity_group_name, com.activity, com.activity_name, com.section, com.section_name, com.project,
+            com.project_name, com.org, com.org_name, com.costcenter, com.costcenter_name, com.purchase_line_id, com.purchase_request_line_id,
+            com.expense_line_id, com.sale_line_id, com.amount, com.date_doc,
+            CASE
+                WHEN com.doctype = 'purchase_request' THEN to_char(pr.date_approve, 'DD/MM/YYYY')
+                WHEN com.doctype = 'purchase_order' THEN to_char(po.date_order, 'DD/MM/YYYY')
+                WHEN com.doctype = 'employee_expense' THEN to_char(ex.date, 'DD/MM/YYYY')
+                ELSE ''
+            END AS posting_date,
+            CASE
+                WHEN com.chart_view = 'invest_construction' THEN bgcon.code
+                WHEN com.chart_view = 'invest_asset' THEN bgasset.code
+                WHEN com.chart_view = 'project_base' THEN prj.project_code
+                WHEN com.chart_view = 'unit_base' THEN sec2.section_code
+                WHEN com.chart_view = 'personnel' THEN budper.code
+                ELSE ''::character varying
+            END AS source_budget_code,
+            CASE
+                WHEN com.chart_view = 'invest_construction' THEN bgcon.phase_name
+                WHEN com.chart_view = 'invest_asset' THEN bgasset.name
+                WHEN com.chart_view = 'project_base' THEN prj.project_name::character varying
+                WHEN com.chart_view = 'unit_base' THEN sec2.section_name::character varying
+                WHEN com.chart_view = 'personnel' THEN budper.name
+                ELSE ''
+            END AS source_budget_name,
+        FROM issi_budget_commit_view com
+            LEFT JOIn purchase_order_line pol ON pol.id = com.purchase_line_id
+            LEFT JOIn purchase_order po ON po.id = pol.order_id
+            LEFT JOIn purchase_request_line prl ON prl.id = com.purchase_request_line_id
+            LEFT JOIn purchase_request pr ON pr.id = prl.request_id
+            LEFT JOIn hr_expense_line exl ON exl.id = com.expense_line_id
+            LEFT JOIN hr_expense_expense ex ON ex.id = exl.expense_id
         """
         return sql_view
 
