@@ -50,7 +50,7 @@ class XLSXReportPabiSupplierEvaluation(models.TransientModel):
             if res != '':
                 res += ', '
             res += prg.operating_unit_id.code
-        self.org_name = res
+        self.org_name = res 
 
     @api.onchange('partner_ids')
     def onchange_partners(self):
@@ -91,7 +91,7 @@ class XLSXReportPabiSupplierEvaluation(models.TransientModel):
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['xlsx.report.pabi.supplier.evaluation.results']
-        dom = []
+        dom = [('state', 'in', ['evaluation', 'done'])]
         if self.org_ids:
             dom += [('org_id', 'in', self.org_ids._ids)]
         if self.partner_ids:
@@ -100,7 +100,7 @@ class XLSXReportPabiSupplierEvaluation(models.TransientModel):
             dom += [('tag_id', 'in', self.tag_ids._ids)]
         if self.category_ids:
             dom += [('category_id', 'in', self.tag_ids._ids)]
-        self.results = Result.search(dom)
+        self.results = Result.search(dom, order="po_no, wa_no")
 
 
 class XLSXReportPabiSupplierEvaluationResults(models.Model):
@@ -161,6 +161,10 @@ class XLSXReportPabiSupplierEvaluationResults(models.Model):
     )
     delay_day = fields.Integer(
         string='Delay Day',
+        readonly=True,
+    )
+    state = fields.Char(
+        string='State',
         readonly=True,
     )
 
@@ -224,7 +228,8 @@ class XLSXReportPabiSupplierEvaluationResults(models.Model):
         as delay_day,
         org_id as org_id,
         rpt.id as tag_id,
-        rpc.id as category_id
+        rpc.id as category_id,
+        wa.state as state
         from purchase_work_acceptance wa
         left join purchase_order po on po.id = wa.order_id
         left join operating_unit ou on ou.id = po.operating_unit_id
@@ -236,4 +241,5 @@ class XLSXReportPabiSupplierEvaluationResults(models.Model):
         ON rprptl.res_partner_tag_id = rptag.id
         left join res_partner_category rpc on rpc.id = rp.category_id
         left join res_partner_title rpt on rpt.id = rp.title
+        ORDER BY po.name, wa.name
         )""" % (self._table, ))
