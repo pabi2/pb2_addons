@@ -1248,5 +1248,5 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                 debit=False, credit=amount_depre,
                 analytic_id=False)
             line_dict += [(0, 0, new_exp_debit), (0, 0, new_depr_credit), ]
-        _loggger.info("end _prepare_move_line_expense_to_asset")
+        _logger.info("end _prepare_move_line_expense_to_asset")
         return line_dict
