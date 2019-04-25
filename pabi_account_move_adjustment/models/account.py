@@ -199,10 +199,10 @@ class AccountMove(models.Model):
             if self._context.get('default_doctype', False) == 'adjustment':
                 ag_lines = move.line_id.filtered('activity_group_id')
                 # JV must have AG/A
-                #if move.journal_id.analytic_journal_id and not ag_lines:
-                #    raise ValidationError(
-                #        _('For budget related transaction, '
-                #          'at least 1 line must have AG/A!'))
+                if move.journal_id.analytic_journal_id and not ag_lines:
+                    raise ValidationError(
+                        _('For budget related transaction, '
+                          'at least 1 line must have AG/A!'))
                 # JN must not have AG/A
                 if not move.journal_id.analytic_journal_id and ag_lines:
                     raise ValidationError(
