@@ -152,7 +152,9 @@ class RPTBudgetCommitLine(models.Model):
     sale_line_id = fields.Many2one('sale.order.line','sale_line_id')
     amount = fields.Float('amount')
     date_doc = fields.Date('date_doc')
-    posting_date = fields.Char('posting_date')
+    posting_date = fields.Date('posting_date')
+    source_budget_code = fields.Char('source_budget_code')
+    source_budget_name = fields.Char('source_budget_name')
     
 
     def _get_sql_view(self):
@@ -163,10 +165,10 @@ class RPTBudgetCommitLine(models.Model):
             com.project_name, com.org, com.org_name, com.costcenter, com.costcenter_name, com.purchase_line_id, com.purchase_request_line_id,
             com.expense_line_id, com.sale_line_id, com.amount, com.date_doc,
             CASE
-                WHEN com.doctype = 'purchase_request' THEN to_char(pr.date_approve, 'DD/MM/YYYY')
-                WHEN com.doctype = 'purchase_order' THEN to_char(po.date_order, 'DD/MM/YYYY')
-                WHEN com.doctype = 'employee_expense' THEN to_char(ex.date, 'DD/MM/YYYY')
-                ELSE ''
+                WHEN com.doctype = 'purchase_request' THEN pr.date_approve
+                WHEN com.doctype = 'purchase_order' THEN po.date_order
+                WHEN com.doctype = 'employee_expense' THEN ex.date
+                ELSE NULL
             END AS posting_date,
             CASE
                 WHEN com.chart_view = 'invest_construction' THEN bgcon.code
@@ -174,16 +176,16 @@ class RPTBudgetCommitLine(models.Model):
                 WHEN com.chart_view = 'project_base' THEN prj.project_code
                 WHEN com.chart_view = 'unit_base' THEN sec2.section_code
                 WHEN com.chart_view = 'personnel' THEN budper.code
-                ELSE ''::character varying
+                ELSE ''
             END AS source_budget_code,
             CASE
                 WHEN com.chart_view = 'invest_construction' THEN bgcon.phase_name
                 WHEN com.chart_view = 'invest_asset' THEN bgasset.name
-                WHEN com.chart_view = 'project_base' THEN prj.project_name::character varying
-                WHEN com.chart_view = 'unit_base' THEN sec2.section_name::character varying
+                WHEN com.chart_view = 'project_base' THEN prj.project_name
+                WHEN com.chart_view = 'unit_base' THEN sec2.section_name
                 WHEN com.chart_view = 'personnel' THEN budper.name
                 ELSE ''
-            END AS source_budget_name,
+            END AS source_budget_name
         FROM issi_budget_commit_view com
             LEFT JOIn purchase_order_line pol ON pol.id = com.purchase_line_id
             LEFT JOIn purchase_order po ON po.id = pol.order_id
@@ -191,6 +193,12 @@ class RPTBudgetCommitLine(models.Model):
             LEFT JOIn purchase_request pr ON pr.id = prl.request_id
             LEFT JOIn hr_expense_line exl ON exl.id = com.expense_line_id
             LEFT JOIN hr_expense_expense ex ON ex.id = exl.expense_id
+            LEFT JOIN account_analytic_line aal ON aal.id = com.analytic_line_id
+            LEFT JOIN issi_m_investment_construction_phase_view bgcon ON aal.invest_construction_phase_id = bgcon.invest_construction_phase_id
+            LEFT JOIN res_invest_asset bgasset ON aal.invest_asset_id = bgasset.id
+            LEFT JOIN etl_issi_m_project prj ON aal.project_id = prj.pb2_project_id
+            LEFT JOIN etl_issi_m_section sec2 ON aal.section_id = sec2.section_id
+            LEFT JOIN res_personnel_costcenter budper ON aal.personnel_costcenter_id = budper.id
         """
         return sql_view
 
