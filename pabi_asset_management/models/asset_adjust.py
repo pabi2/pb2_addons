@@ -1202,11 +1202,15 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
             self._prepare_move_line_expense_to_asset(new_asset, exp_acc,
                                                      period, adjust_date,
                                                      amount_depre)
+        _logger.info("end prepare line_dict")
         move.write({'line_id': line_dict})
         if adjust.journal_id.entry_posted:
+            _logger.info("in adjust.journal_id.entry_posted")
             del ctx['novalidate']
             move.with_context(ctx).post()
+        _logger.info("write move_id")
         self.write({'move_id': move.id})
+        _logger.info("end write move_id")
         return move
 
     @api.model
@@ -1244,4 +1248,5 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                 debit=False, credit=amount_depre,
                 analytic_id=False)
             line_dict += [(0, 0, new_exp_debit), (0, 0, new_depr_credit), ]
+        _loggger.info("end _prepare_move_line_expense_to_asset")
         return line_dict
