@@ -518,13 +518,19 @@ class AccountAssetAdjust(models.Model):
         _logger.info("create asset")
         Asset = self.env['account.asset']
         Analytic = self.env['account.analytic.account']
+        _logger.info("analytic_id %s:", str(analytic.id))
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
+        _logger.info("asset_dict before update")
+        _logger.info(asset_dict)
         asset_dict.update({'date_start': asset_date,
                            'purchase_value': amount,
                            })
+        _logger.info("asset_dict after update")
+        _logger.info(asset_dict)
         new_asset = Asset.create(asset_dict)
+        _logger.info("new_asset.account_analytic_id1: %s", str(new_asset.account_analytic_id.id))
         new_asset.update_related_dimension(asset_dict)
-        _logger.info("start asset create_matched_analytic ")
+        _logger.info("new_asset.account_analytic_id2: %s", str(new_asset.account_analytic_id.id))
         new_asset.account_analytic_id = \
             Analytic.create_matched_analytic(new_asset)
         _logger.info("new_asset.account_analytic_id: %s", str(new_asset.account_analytic_id.id))
@@ -1202,7 +1208,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
             self._prepare_move_line_expense_to_asset(new_asset, exp_acc,
                                                      period, adjust_date,
                                                      amount_depre)
-        _logger.info("end prepare line_dict")
         move.write({'line_id': line_dict})
         if adjust.journal_id.entry_posted:
             _logger.info("in adjust.journal_id.entry_posted")
@@ -1210,7 +1215,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
             move.with_context(ctx).post()
         _logger.info("write move_id")
         self.write({'move_id': move.id})
-        _logger.info("end write move_id")
         return move
 
     @api.model

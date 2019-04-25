@@ -227,8 +227,7 @@ class AccountAnalyticLine(models.Model):
             _logger.info("account_id: False")
             Analytic = self.env['account.analytic.account']
             analytic = Analytic.browse(vals['account_id'])
-            _logger.info("analytic: ")
-            _logger.info(analytic)
+            _logger.info("analytic_id: %s", str(analytic.id))
             if not analytic:
                 analytic = Analytic.create_matched_analytic(self)
             if analytic:
@@ -345,6 +344,8 @@ class AccountAnalyticAccount(models.Model):
 
     @api.model
     def create_matched_analytic(self, rec):
+        _logger.info("rec")
+        _logger.info(rec)
         # Not allow product and activity at the same time.
         if ('product_id' in rec._fields) and ('activity_id' in rec._fields):
             if rec.product_id and rec.activity_id:
