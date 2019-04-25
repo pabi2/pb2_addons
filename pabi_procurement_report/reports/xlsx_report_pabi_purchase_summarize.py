@@ -338,6 +338,7 @@ class XLSXReportPabiPurchaseSummarizeResults(models.Model):
             ON selected_po.requisition_id = pd.id AND
             selected_po.order_type LIKE 'purchase_order' AND
             selected_po.state NOT LIKE 'cancel'
+            where po.order_id is null
             ORDER BY ou.name,pd.name,po.name
         )""" % (self._table, ))
 
