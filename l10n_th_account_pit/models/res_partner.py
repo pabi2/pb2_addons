@@ -18,3 +18,7 @@ class ResPartner(models.Model):
         string='PIT Yearly',
         readonly=True,
     )
+
+
+
+    
