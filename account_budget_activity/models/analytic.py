@@ -344,8 +344,7 @@ class AccountAnalyticAccount(models.Model):
 
     @api.model
     def create_matched_analytic(self, rec):
-        _logger.info("rec")
-        _logger.info(rec)
+        _logger.info("rec analytic_id: %s", str(rec.account_analytic_id.id))
         # Not allow product and activity at the same time.
         if ('product_id' in rec._fields) and ('activity_id' in rec._fields):
             if rec.product_id and rec.activity_id:
@@ -354,6 +353,8 @@ class AccountAnalyticAccount(models.Model):
         # Only create analytic if not exists yet
         Analytic = self.env['account.analytic.account'].sudo()
         domain = self.get_analytic_search_domain(rec)
+        _logger.info("domain1")
+        _logger.info(domain)
         # If not a valid domain, return False (domain with no values)
         if self._invalid_domain(domain):
             return False
@@ -372,7 +373,11 @@ class AccountAnalyticAccount(models.Model):
         domain.append(('type', '=', 'normal'))  # remove this line if use above
         #
         # *************************** End *******************************
+        _logger.info("domain2")
+        _logger.info(domain)
         analytics = Analytic.search(domain)
+        _logger.info("analytics")
+        _logger.info(analytics)
         if not analytics:
             _logger.info("not analytic")
             vals = dict((x[0], x[2]) for x in domain)
