@@ -641,7 +641,9 @@ class AccountAssetAdjust(models.Model):
                                            line.account_analytic_id)
             _logger.info("new_asset_id: %s", str(new_asset.id))
             line.ref_asset_id = new_asset
-            line.activity_id = line.activity_rpt_id
+            _logger.info("line.activity_id: %s", str(line.activity_id))
+            _logger.info("line.activity_rpt_id: %s", str(line.activity_rpt_id))
+            #line.activity_id = line.activity_rpt_id
             # Find amount from depreciation board
             new_asset.compute_depreciation_board()
             new_asset.validate()
