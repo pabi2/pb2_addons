@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+    	<!--
         <record id="xlsx_report_pabi_stock_balance_02_view" model="ir.ui.view">
             <field name="name">xlsx.report.pabi.stock.balance.02.view</field>
             <field name="model">xlsx.report.pabi.stock.balance.02</field>
@@ -22,15 +23,15 @@
         </record>
 
         <record id="action_xlsx_report_pabi_stock_balance_02" model="ir.actions.act_window">
-            <field name="name">Stock Balance02</field>
+            <field name="name">Stock Balance</field>
             <field name="res_model">xlsx.report.pabi.stock.balance.02</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
 
-		<menuitem id="menu_xlsx_report_pabi_stock_balance_02" name="Stock Balance02" parent="menu_procurement_report" action="action_xlsx_report_pabi_stock_balance_02" sequence="99"/>
-
+		<menuitem id="menu_xlsx_report_pabi_stock_balance_02" name="Stock Balance" parent="menu_procurement_report" action="action_xlsx_report_pabi_stock_balance_02" sequence="99"/>
+		-->
 
     </data>
 </openerp>

@@ -59,7 +59,7 @@ class XLSXReportPabiStockBalance(models.TransientModel):
             res += loc.name
         self.location_name = res
 
-    @api.multi
+    """@api.multi
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['xlsx.report.pabi.stock.balance.results']
@@ -77,7 +77,22 @@ class XLSXReportPabiStockBalance(models.TransientModel):
         #         ('date_transfer', '>=', self.date_start),
         #         ('date_transfer', '<=', self.date_end),
         #     ]
+        self.results = Result.search(dom)"""
+        
+    @api.multi
+    def _compute_results(self):
+        self.ensure_one()
+        Result = self.env['xlsx.report.pabi.stock.balance.results']
+        dom = []
+        if self.location_ids:
+            dom += [('loc_id', 'in', self.location_ids.ids)]
+        if self.org_ids:
+            dom += [('org_id', 'in', self.org_ids.ids)]
+        if self.product_ids:
+            dom += [('product_id', 'in', self.product_ids.ids)]
+
         self.results = Result.search(dom)
+    
 
 
 class XLSXReportPabiStockBalanceResults(models.Model):
@@ -117,10 +132,10 @@ class XLSXReportPabiStockBalanceResults(models.Model):
         'res.org',
         string='Org',
     )
-    loc_dest_id = fields.Many2one(
-        'stock.location',
-        string='Location',
-    )
+    #loc_dest_id = fields.Many2one(
+    #    'stock.location',
+    #    string='Location',
+    #)
     location_name = fields.Char(
         string='Location Name',
         readonly=True,
@@ -134,7 +149,43 @@ class XLSXReportPabiStockBalanceResults(models.Model):
         readonly=True,
     )
 
+
     def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+            SELECT row_number() over (order by q.product_id) as id,
+            t.name as product_name,
+            q.product_id as product_id,
+            p.default_code as product_code,
+            q.location_id as loc_id,
+            sl.name as location_name, 
+            sum(q.qty) as balance,
+            COALESCE((
+            select value_float from ir_property where res_id = concat('product.template,',t.id) 
+                and type='float' order by id desc limit 1 ) * sum(q.qty),0.0) as price,
+            puom.name as uom,
+            ou.name as ou_name,
+            rc.name as currency,
+            (SELECT id from res_org WHERE operating_unit_id = ou.id) as org_id
+            FROM public.stock_quant q
+            left join stock_location sl on q.location_id = sl.id
+            left join operating_unit ou on sl.operating_unit_id = ou.id 
+            left join product_product p on q.product_id = p.id 
+            left join product_template t on p.product_tmpl_id = t.id
+            left join product_uom puom on t.uom_id = puom.id
+            left join res_company com on com.id = t.company_id
+            left join res_currency rc on com.currency_id = rc.id
+            group by t.id, sl.name, q.product_id, puom.name, ou.id, ou.name, rc.name, p.default_code, q.location_id
+            order by t.name
+        )""" % (self._table, ))
+
+
+
+
+
+
+
+    '''def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
         with uitstock as (
@@ -220,4 +271,4 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             from uitstock u 
             full outer join instock i on u.product = i.product AND u.loc = i.loc
             order by product_code,product_name
-        )""" % (self._table, ))
+        )""" % (self._table, ))'''
