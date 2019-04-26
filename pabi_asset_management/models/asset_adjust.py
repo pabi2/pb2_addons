@@ -515,25 +515,16 @@ class AccountAssetAdjust(models.Model):
 
     @api.model
     def _create_asset(self, asset_date, amount, product, asset_name, analytic):
-        _logger.info("create asset")
         Asset = self.env['account.asset']
         Analytic = self.env['account.analytic.account']
-        _logger.info("analytic_id %s:", str(analytic.id))
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
-        _logger.info("asset_dict before update")
-        _logger.info(asset_dict)
         asset_dict.update({'date_start': asset_date,
                            'purchase_value': amount,
                            })
-        _logger.info("asset_dict after update")
-        _logger.info(asset_dict)
         new_asset = Asset.create(asset_dict)
-        _logger.info("new_asset.account_analytic_id1: %s", str(new_asset.account_analytic_id.id))
         new_asset.update_related_dimension(asset_dict)
-        _logger.info("new_asset.account_analytic_id2: %s", str(new_asset.account_analytic_id.id))
         new_asset.account_analytic_id = \
             Analytic.create_matched_analytic(new_asset)
-        _logger.info("new_asset.account_analytic_id: %s", str(new_asset.account_analytic_id.id))
         # Set back to normal
         # new_asset.type = 'normal'
         return new_asset
@@ -629,21 +620,17 @@ class AccountAssetAdjust(models.Model):
         # --
         for line in self.adjust_expense_to_asset_ids:
             _logger.info("line_id: %s", str(line.id))
-            _logger.info("********** start create_matched_analytic **********")
             line.account_analytic_id = \
                 Analytic.create_matched_analytic(line)
-            _logger.info("********** end create_matched_analytic **********")
-            _logger.info("analytic_id: %s", str(line.account_analytic_id.id))
                 
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,
                                            line.product_id, line.asset_name,
                                            line.account_analytic_id)
-            _logger.info("new_asset_id: %s", str(new_asset.id))
             line.ref_asset_id = new_asset
             _logger.info("line.activity_id: %s", str(line.activity_id))
             _logger.info("line.activity_rpt_id: %s", str(line.activity_rpt_id))
-            #line.activity_id = line.activity_rpt_id
+            line.activity_id = line.activity_rpt_id
             # Find amount from depreciation board
             new_asset.compute_depreciation_board()
             new_asset.validate()
@@ -657,7 +644,7 @@ class AccountAssetAdjust(models.Model):
             line.move_id = move
             # Set move_check equal to amount depreciated
             depre_lines.write({'move_id': move.id})
-            for movl in move:
+            for movl in move.line_ids:
                 _logger.info("movl_id: %s", str(movl.id))
 
     @api.model
@@ -1215,7 +1202,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                                                      amount_depre)
         move.write({'line_id': line_dict})
         if adjust.journal_id.entry_posted:
-            _logger.info("in adjust.journal_id.entry_posted")
             del ctx['novalidate']
             move.with_context(ctx).post()
         _logger.info("write move_id")
@@ -1234,7 +1220,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         # Dr: new asset - asset value
         #     Cr: expense - asset value
         purchase_value = new_asset.purchase_value
-        _logger.info("new_asset.account_analytic_id: %s", str(new_asset.account_analytic_id.id))
         if purchase_value:
             new_asset_debit = AssetAdjust._setup_move_line_data(
                 new_asset.code, new_asset, period, new_asset_acc, adjust_date,
@@ -1259,5 +1244,4 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                 debit=False, credit=amount_depre,
                 analytic_id=False)
             line_dict += [(0, 0, new_exp_debit), (0, 0, new_depr_credit), ]
-        _logger.info("end _prepare_move_line_expense_to_asset")
         return line_dict

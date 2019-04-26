@@ -221,13 +221,10 @@ class AccountAnalyticLine(models.Model):
 
     @api.model
     def create(self, vals):
-        _logger.info("create analytic line")
         """ Add posting dimension """
         if vals.get('account_id', False):
-            _logger.info("account_id: False")
             Analytic = self.env['account.analytic.account']
             analytic = Analytic.browse(vals['account_id'])
-            _logger.info("analytic_id: %s", str(analytic.id))
             if not analytic:
                 analytic = Analytic.create_matched_analytic(self)
             if analytic:
@@ -236,7 +233,6 @@ class AccountAnalyticLine(models.Model):
         # Prepare period_id for reporting purposes
         date = vals.get('date', fields.Date.context_today(self))
         if date:
-            _logger.info("if date")
             periods = self.env['account.period'].find(date)
             period = periods and periods[0] or False
             vals.update({'period_id': period.id})
@@ -344,7 +340,6 @@ class AccountAnalyticAccount(models.Model):
 
     @api.model
     def create_matched_analytic(self, rec):
-        _logger.info("rec analytic_id: %s", str(rec.account_analytic_id.id))
         # Not allow product and activity at the same time.
         if ('product_id' in rec._fields) and ('activity_id' in rec._fields):
             if rec.product_id and rec.activity_id:
@@ -353,8 +348,6 @@ class AccountAnalyticAccount(models.Model):
         # Only create analytic if not exists yet
         Analytic = self.env['account.analytic.account'].sudo()
         domain = self.get_analytic_search_domain(rec)
-        _logger.info("domain1")
-        _logger.info(domain)
         # If not a valid domain, return False (domain with no values)
         if self._invalid_domain(domain):
             return False
@@ -373,13 +366,8 @@ class AccountAnalyticAccount(models.Model):
         domain.append(('type', '=', 'normal'))  # remove this line if use above
         #
         # *************************** End *******************************
-        _logger.info("domain2")
-        _logger.info(domain)
         analytics = Analytic.search(domain)
-        _logger.info("analytics")
-        _logger.info(analytics)
         if not analytics:
-            _logger.info("not analytic")
             vals = dict((x[0], x[2]) for x in domain)
             vals['name'] = (rec.product_id.name or
                             rec.activity_id.name or
@@ -405,5 +393,4 @@ class AccountAnalyticAccount(models.Model):
             # *************************** End *******************************
             return Analytic.create(vals)
         else:
-            _logger.info("have analytic: %s", str(analytics[0].id))
             return analytics[0]
