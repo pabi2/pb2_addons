@@ -32,7 +32,7 @@
             </field>
         </record>
 	
-  		<!-- <record id="action_menu_rpt_budget_commit_wizard" model="ir.actions.act_window">
+  		<record id="action_menu_rpt_budget_commit_wizard" model="ir.actions.act_window">
 		    <field name="name">Budget Commit</field>
 		    <field name="type">ir.actions.act_window</field>
 		    <field name="res_model">rpt.budget.commit</field>
@@ -44,7 +44,7 @@
   		</record>
   		
   		<menuitem id="menu_rpt_budget_commit" parent="account_budget_activity.menu_action_budget_report" sequence="108" 
-  			action="action_menu_rpt_budget_commit_wizard"/> -->
+  			action="action_menu_rpt_budget_commit_wizard"/>
   			
 	</data>
 </openerp>

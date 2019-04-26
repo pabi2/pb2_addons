@@ -32,7 +32,7 @@
             </field>
         </record>
 	
-  		<!-- <record id="action_menu_rpt_budget_actual_wizard" model="ir.actions.act_window">
+  		<record id="action_menu_rpt_budget_actual_wizard" model="ir.actions.act_window">
 		    <field name="name">Budget actual</field>
 		    <field name="type">ir.actions.act_window</field>
 		    <field name="res_model">rpt.budget.actual</field>
@@ -44,7 +44,7 @@
   		</record>
   		
   		<menuitem id="menu_rpt_budget_actual" parent="account_budget_activity.menu_action_budget_report" sequence="109" 
-  			action="action_menu_rpt_budget_actual_wizard"/> -->
+  			action="action_menu_rpt_budget_actual_wizard"/>
   			
 	</data>
 </openerp>
