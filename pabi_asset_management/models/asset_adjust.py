@@ -641,6 +641,7 @@ class AccountAssetAdjust(models.Model):
                                            line.account_analytic_id)
             _logger.info("new_asset_id: %s", str(new_asset.id))
             line.ref_asset_id = new_asset
+            line.activity_id = line.activity_rpt_id
             # Find amount from depreciation board
             new_asset.compute_depreciation_board()
             new_asset.validate()
@@ -654,6 +655,8 @@ class AccountAssetAdjust(models.Model):
             line.move_id = move
             # Set move_check equal to amount depreciated
             depre_lines.write({'move_id': move.id})
+            for movl in move:
+                _logger.info("movl_id: %s", str(movl.id))
 
     @api.model
     def _setup_move_data(self, journal, adjust_date,
@@ -1239,6 +1242,8 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                 exp_acc.name, False, period, exp_acc, adjust_date,
                 debit=False, credit=purchase_value,
                 analytic_id=False)
+            _logger.info("new_asset_debit")
+            _logger.info(new_asset_debit)
             line_dict += [(0, 0, new_asset_debit), (0, 0, expenese_credit)]
         # Dr: new - depre value (account_expense_depreciation_id)(budget)
         #   Cr: new - depre accum value (account_depreciation_id)
