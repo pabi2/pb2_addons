@@ -1970,6 +1970,37 @@ result = pd.pivot_table(df, index=groupby,
             </field>
         </record>
 
+        # Preprint Receipt
+        <record id="xlsx_report_input_tax" model="ir.attachment">
+            <field name="res_model">xlsx.report.preprint.receipt</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_preprint_receipt.xlsx</field>
+            <field name="name">Preprint Receipt</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Preprint Receipt': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}#{align=left;number_format=text}',
+                                'B3': 'fiscalyear_start_id.name${value or ""}#{align=left;number_format=text}',
+                                'D3': 'fiscalyear_end_id.name${value or ""}#{align=left;number_format=text}',
+                                'B4': 'period_start_id.name${value or ""}#{align=left;number_format=text}',
+                                'D4': 'period_end_id.name${value or ""}#{align=left;number_format=text}',
+                            },
+	                        'results': {
+	                        	 
+	                            'A8': 'preprint_number${value or ""}#{align=left;number_format=text}',
+	                            'B8': 'name${value or ""}#{align=left;number_format=text}',
+	                         	'C8': 'period_id.fiscalyear_id.name${value or ""}',
+	                            'D8': 'period_id.name${value or ""}#{number_format=text}',
+	                            'E8': 'date${value and value.strftime("%d/%m/%Y") or ""}',
+	                         },
+                         }
+                    }
+                }
+            </field>
+        </record>
      
      
 

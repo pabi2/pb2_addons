@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_preprint_receipt_form" model="ir.ui.view">
+            <field name="name">xlsx.report.preprint.receipt.form</field>
+            <field name="model">xlsx.report.preprint.receipt</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+				<xpath expr="//group/group" position="replace">
+                    <group>
+                        <group>
+                            <field name="chart_account_id" widget="selection" context="{'show_account_view': True}"/>
+                            <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]"/>
+                            <field name="fiscalyear_date_start" invisible="1"/>
+                            <field name="postingdate_start" />
+                            <field name="move_id" />
+                        </group>
+                        <group>
+                            <field name="company_id" nolabel="1" colspan="4" style="visibility: hidden"/>
+                            <field name="fiscalyear_end_id" domain="[('company_id', '=', company_id)]"/>
+                            <field name="fiscalyear_date_end" invisible="1"/>
+                            <field name="postingdate_end" />
+                        </group>
+                    </group>
+                </xpath>
+        	</field>
+        </record>
+
+        <record id="action_xlsx_report_preprint_receipt_form" model="ir.actions.act_window">
+            <field name="name">PrePrint Receipt</field>
+            <field name="res_model">xlsx.report.preprint.receipt</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'lang': 'th_TH'}</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_preprint_receipt"
+            name="Preprint Receipt"
+            parent="menu_pabi_receivable_report"
+            action="action_xlsx_report_preprint_receipt_form"
+            sequence="130"/>
+    </data>
+</openerp>
