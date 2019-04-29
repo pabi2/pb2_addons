@@ -356,9 +356,7 @@ class AccountModel(models.Model):
     @api.multi
     def action_done(self):
         for rec in self:
-            print '------------------------------------------------', self
-            run_def = rec.button_background()
-            print '------------------------------------------------run_def', run_def
+            rec.button_background()
         return True
 
     @api.multi
@@ -383,13 +381,9 @@ class AccountModel(models.Model):
     @api.multi
     def button_background(self):
         self = self.with_context(active_ids=self.id, active_model='account.model')
-        print '------------------------------------------------', self
         vals = {}
         Use_Model = self.env['account.use.model'].create(vals)
-        print '------------------------------------------------', Use_Model
-        print '------------------------------------------------', self._context
         Use_Model.create_entries()  
-        print '------------------------------------------------create_entries', Use_Model
         return True
 
  ###########################--------------------------------- end job backgruond ------------------------------- #######################
