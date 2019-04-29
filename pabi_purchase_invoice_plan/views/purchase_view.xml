@@ -29,7 +29,8 @@
                                                  '|',('invoice_method', '!=', 'invoice_plan'),
                                                  ('plan_invoice_created','!=',True)]}</attribute>
                 </xpath>
-                <xpath expr="//form/sheet/notebook/page[@string='Invoice Plan']/field[@name='invoice_plan_ids']/tree/field[@name='sequence']" position="before">
+                <!-- invoice_plan_ids -->
+                <xpath expr="//form/sheet/notebook/page[@string='Invoice Plan']/field[@name='invoice_plan_ids']/tree/field[@name='sequence']" position="after">
                 	<field name="order_line_docline_seq" />
                     <field name="order_line_fiscalyear_id" />
                 </xpath>
@@ -38,6 +39,15 @@
                     <field name="order_by_fiscalyear" />
                     <button name="%(action_edit_invoice_plan_date)d" string="Edit" type="action" icon="gtk-justify-fill" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                 </xpath>
+                <!-- invoice_plan_wd_ids -->
+                <xpath expr="//form/sheet/notebook/page[@string='Invoice Plan']/field[@name='invoice_plan_wd_ids']/tree/field[@name='sequence']" position="after">
+                	<field name="order_line_docline_seq" />
+                    <field name="order_line_fiscalyear_id" />
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[@string='Invoice Plan']/field[@name='invoice_plan_wd_ids']/tree/field[@name='date_invoice']" position="after">
+                	<field name="order_line_budget_id" />
+                </xpath>
+                
             </field>
         </record>
     </data>
