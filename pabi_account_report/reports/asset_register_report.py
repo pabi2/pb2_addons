@@ -16,6 +16,7 @@ class AssetRegisterView(models.AbstractModel):
     _name = 'asset.register.view'
     _inherit = 'account.asset'
 
+    
     asset_id = fields.Many2one(
         'account.asset',
         string='Asset ID',
@@ -301,7 +302,7 @@ class AssetRegisterReport(models.TransientModel):
             dom += [('active', '=', True if (self.asset_active == 'active') else False)]
         if self.date_end:
             dom += [('date_start', '<=', self.date_end)]
-
+        
             
         # Prepare fixed params
         date_start = False
@@ -425,6 +426,7 @@ class AssetRegisterReport(models.TransientModel):
                           tuple(depre_account_ids), date_start, date_end,
                           tuple(accum_depre_account_ids), date_end,
                           tuple(accum_depre_account_ids), date_start))
+
         results = self._cr.dictfetchall()
         ReportLine = self.env['asset.register.view']
         for line in results:

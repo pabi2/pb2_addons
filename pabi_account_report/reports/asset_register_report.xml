@@ -99,6 +99,7 @@
           <field name="view_type">form</field>
           <field name="view_mode">form</field>
           <field name="target">new</field>
+          <field name="context">{'lang': 'th_TH'}</field>
       </record>
 
       <menuitem id="menu_asset_register_report"
