@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
+import datetime
 
 
 class AccountMoveLine(models.Model):
@@ -102,7 +103,16 @@ class XLSXReportGlProject(models.TransientModel):
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
-
+    filter = fields.Selection(
+        selection_add=[('filter_clearing_date', 'Clearing date')],
+    )
+    cleaning_date_start = fields.Date(
+        string='Start Date',
+    )
+    cleaning_date_end = fields.Date(
+        string='End Date',
+    )
+                
     @api.onchange('chart_view')
     def _onchange_chart_view(self):
         self.org_ids = False
@@ -191,7 +201,28 @@ class XLSXReportGlProject(models.TransientModel):
             dom += [('date', '>=', self.date_start)]
         if self.date_end:
             dom += [('date', '<=', self.date_end)]
-        self.results = Result.with_context(active=False).search(dom)
+        if self.cleaning_date_start and self.cleaning_date_end and self.charge_type=='external':
+            check=Result.with_context(active=False).search(dom)
+            cleaning_ids = []
+            for record in check:
+                if record.document_id!=False and record.document_id._name != "stock.picking":
+                    _check= ", ".join(list(filter(lambda l: l != False, [x.move_id.document_id and "bank_receipt_id" in x.move_id.document_id._columns.keys() and x.move_id.document_id.bank_receipt_id.move_id.date or False for x in record.document_id.payment_ids])))
+                    if record.document_id.type not in ("out_invoice", "out_refund"):
+                        pay_date = ", ".join(list(filter(lambda l: l != False, [x.move_id.doctype == "payment" and x.move_id.date or False for x in record.document_id.payment_ids])))
+                    else: pay_date=""
+                    if not(record.document_id._name == "account.invoice" and record.id != record.document_id.cancel_move_id.id):
+                        pay_date = ", ".join([x.move_id.date for x in env["interface.account.entry"].search([("number", "=", record.document_id.to_payment)]).move_id.line_id.mapped("bank_receipt_id")])
+                    if pay_date and datetime.datetime.strptime(self.cleaning_date_start, "%Y-%m-%d").date() <=  datetime.datetime.strptime(pay_date, "%Y-%m-%d").date() <= datetime.datetime.strptime(self.cleaning_date_end, "%Y-%m-%d").date():
+                        cleaning_ids.append(record.id)
+                    if _check and (not pay_date) and datetime.datetime.strptime(self.cleaning_date_start, "%Y-%m-%d").date() <=  datetime.datetime.strptime(_check, "%Y-%m-%d").date() <= datetime.datetime.strptime(self.cleaning_date_end, "%Y-%m-%d").date():
+                        cleaning_ids.append(record.id)
+                   
+            self.results = Result.search([['id','in',cleaning_ids]])
+        else: 
+            self.results = Result.with_context(active=False).search(dom) 
+        
+        
+
         
 
     @api.onchange('line_filter')
