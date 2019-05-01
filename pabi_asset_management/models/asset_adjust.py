@@ -650,22 +650,22 @@ class AccountAssetAdjust(models.Model):
                 
                 # find adjust_id
                 exp_to_asset = self.env["account.asset.adjust.expense_to_asset"]
-                adjust_id = exp_to_asset.search(
+                asset_adjust = exp_to_asset.search(
                                                 [('move_id', '=', move.id)]
-                                                ).adjust_id.id
-                _logger.info("adjust_id: %s", str(adjust_id))
+                                                ).adjust_id
+                _logger.info("adjust_id: %s", str(asset_adjust.id))
+                _logger.info("invoice_id: %s", str(asset_adjust.invoice_id))
                 
                 # find invoice_id
-                asset_adj = self.env["account.asset.adjust"]
-                invoice_id = asset_adj.search(
-                                            [('id', '=', adjust_id)]
-                                            ).invoice_id.id
-                _logger.info("invoice_id: %s", str(invoice_id))
+#                 asset_adj = self.env["account.asset.adjust"]
+#                 invoice_id = asset_adj.search(
+#                                             [('id', '=', adjust_id)]
+#                                             ).invoice_id.id
+#                 _logger.info("invoice_id: %s", str(invoice_id))
                 
-                # assign AG&A to move_line with invoice's AG&A
-#                 move_line = self.env["account.move.line"]
-#                 
-#                 move_line_id = move_line.search([('move_id', '=', movl.id)]).move_id
+                # assign AG&A to move_line's credit with invoice's AG&A
+                move_line = self.env["account.move.line"]
+#                 if credit:
 
     @api.model
     def _setup_move_data(self, journal, adjust_date,
