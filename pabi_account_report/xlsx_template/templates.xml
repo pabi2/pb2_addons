@@ -36,7 +36,7 @@
                                 'E10': 'partner_id.vat${value or ""}#{number_format=text}',
                                 'F10': 'partner_id.taxbranch${value and (value == "00000" and "Head Office" or value) or ""}',
                                 'G10': 'base${value or ""}#{number_format=number}',
-                                'H10': 'amount${value or ""}#{number_format=number}',
+                               	'H10': 'amount${value or ""}#{number_format=number}',
                                 'I10': 'move_number${value or ""}',
                             },
                             '_TAIL_0': {

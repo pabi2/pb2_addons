@@ -14,7 +14,7 @@
                             <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]"/>
                             <field name="fiscalyear_date_start" invisible="1"/>
                             <field name="postingdate_start" />
-                            <field name="move_id" />
+                            <field name="move_id" widget="many2many_tags"/>
                         </group>
                         <group>
                             <field name="company_id" nolabel="1" colspan="4" style="visibility: hidden"/>

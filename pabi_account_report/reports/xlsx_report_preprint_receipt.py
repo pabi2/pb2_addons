@@ -30,7 +30,6 @@ class AccountMove(models.Model):
                 move.preprint_number = lines.invoice_number
                 
                 
-                
 class XLSXReportGlProject(models.TransientModel):
     _name = 'xlsx.report.preprint.receipt'
     _inherit = 'report.account.common'
@@ -45,7 +44,7 @@ class XLSXReportGlProject(models.TransientModel):
         'res.org',
         string='Org',
     )
-    move_id = fields.Many2one(
+    move_id = fields.Many2many(
         'account.move',
         string='Document No',
     )
@@ -88,26 +87,18 @@ class XLSXReportGlProject(models.TransientModel):
         if self.date_end:
             dom += [('date', '<=', self.date_end)]
         if self.move_id :
-            dom += [('id', '=', self.move_id.id)]
-        dom += [('preprint_number','!=',False)]
-        test = Result.with_context(active=False).search(dom)
-
-        for move in test:
-            if move.doctype == 'receipt':
-                Fund = self.env['account.voucher'] 
-                domain = ([('move_id', '=', move.id)])
-                lines = Fund.search(domain)
-                move.preprint_number = lines.number_preprint
-            if move.doctype == 'interface_account': 
-                Fund = self.env['interface.account.entry'] 
-                domain = ([('move_id', '=', move.id)])
-                lines = Fund.search(domain)
-                move.preprint_number = lines.preprint_number
-            if move.doctype == 'adjustment': 
-                Fund = self.env['account.tax.detail'] 
-                domain = ([('ref_move_id', '=', move.id)])
-                lines = Fund.search(domain)
-                move.preprint_number = lines.invoice_number
-        self.results = test
+            use_id=[]
+            for id in self.move_id.ids:
+                check = self.env['account.tax.detail'] 
+                domain = ([('ref_move_id', '=',id),('amount', '=', 0)])
+                lines = check.search(domain)
+                if lines.invoice_number:
+                    use_id.append(id)
+            dom += [('id', 'in', use_id)]
+        #dom += [('preprint_number','!=',False)]
+#         test = Result.with_context(active=False).search(dom)
+#         dom = [('preprint_number', '!=', False)]
+#         self.results = test.with_context(active=False).search(dom)
+        self.results = Result.with_context(active=False).search(dom)
         print "self.results "
     
