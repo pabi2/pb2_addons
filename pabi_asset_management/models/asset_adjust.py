@@ -433,13 +433,10 @@ class AccountAssetAdjust(models.Model):
                     adjust_line.chartfield_id = \
                         adjust_line.invoice_line_id.chartfield_id
                     quantity = value[3]
-                    _logger.info("adjust_line")
-                    _logger.info(adjust_line)
+                    _logger.info("adjust_line.invoice_line_id")
+                    _logger.info(adjust_line.invoice_line_id)
                     for i in range(quantity):
                         self.adjust_expense_to_asset_ids += adjust_line
-                    _logger.info("self.adjust_expense_to_asset_ids")
-                    _logger.info(self.adjust_expense_to_asset_ids)
-                    
             else:
                 accounts = self.invoice_id.invoice_line.\
                     filtered(lambda l: not l.product_id).mapped('account_id')
@@ -629,6 +626,7 @@ class AccountAssetAdjust(models.Model):
         # --
         for line in self.adjust_expense_to_asset_ids:
             _logger.info("line_id: %s", str(line.id))
+            _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
             line.account_analytic_id = \
                 Analytic.create_matched_analytic(line)
                 
