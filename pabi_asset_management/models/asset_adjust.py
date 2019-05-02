@@ -658,13 +658,13 @@ class AccountAssetAdjust(models.Model):
                     # assign invoice's AG&A to move_line's credit line
                     if movl.credit and (movl.account_id == invl.account_id):
                         _logger.info("account_id: %s", str(movl.account_id))
-                        update_dict = {
+                        activity_dict = {
                             "activity_group_id": invl.activity_group_id.id,
                             "activity_id": invl.activity_id.id,
                             "activity_rpt_id": invl.activity_rpt_id.id,
                         }
-                        line_dict += [(0, 0, update_dict)]
-                        movl.write(line_dict)
+                        update_dict = [(0, 0, activity_dict)]
+                        movl.write(update_dict)
 
     @api.model
     def _setup_move_data(self, journal, adjust_date,
