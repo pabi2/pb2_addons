@@ -260,6 +260,7 @@ class AccountAssetAdjust(models.Model):
     @api.multi
     def action_done(self):
         for rec in self:
+            _logger.info("rec.adjust_type: %s", str(rec.adjust_type))
             if rec.adjust_type == 'asset_type':
                 rec.adjust_asset_type()
             if rec.adjust_type == 'asset_to_expense':
@@ -432,8 +433,13 @@ class AccountAssetAdjust(models.Model):
                     adjust_line.chartfield_id = \
                         adjust_line.invoice_line_id.chartfield_id
                     quantity = value[3]
+                    _logger.info("adjust_line")
+                    _logger.info(adjust_line)
                     for i in range(quantity):
                         self.adjust_expense_to_asset_ids += adjust_line
+                    _logger.info("self.adjust_expense_to_asset_ids")
+                    _logger.info(self.adjust_expense_to_asset_ids)
+                    
             else:
                 accounts = self.invoice_id.invoice_line.\
                     filtered(lambda l: not l.product_id).mapped('account_id')
@@ -601,6 +607,7 @@ class AccountAssetAdjust(models.Model):
         * Create new asset
         * Create collective moves
         """
+        _logger.info("adjust_expense_to_asset")
         self.ensure_one()
         value = sum(self.adjust_expense_to_asset_ids.mapped('amount'))
         if float_compare(self.limit_asset_value, value, 2) == -1:
