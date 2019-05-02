@@ -625,12 +625,13 @@ class AccountAssetAdjust(models.Model):
                 'ship_purchase_id': self.ship_purchase_id.id, })
             
         values = self._context.get('expense_to_asset_dict', {})
-        _logger.info("values2")
-        _logger.info(values)
+        invoice_line_id = values[2]
+        _logger.info("invoice_line_id: %s", str(invoice_line_id))
         
         # --
         for line in self.adjust_expense_to_asset_ids:
             _logger.info("line_id: %s", str(line.id))
+            line.invoice_line_id = invoice_line_id
             _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
             line.account_analytic_id = \
                 Analytic.create_matched_analytic(line)
