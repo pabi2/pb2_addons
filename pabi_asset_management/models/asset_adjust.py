@@ -645,27 +645,20 @@ class AccountAssetAdjust(models.Model):
             # Set move_check equal to amount depreciated
             depre_lines.write({'move_id': move.id})
             
-            for movl in move.line_id:
-                _logger.info("movl_id: %s", str(movl.id))
-                
-                # find adjust_id
-                exp_to_asset = self.env["account.asset.adjust.expense_to_asset"]
-                asset_adjust = exp_to_asset.search(
+            # find adjust_id
+            exp_to_asset = self.env["account.asset.adjust.expense_to_asset"]
+            asset_adjust = exp_to_asset.search(
                                                 [('move_id', '=', move.id)]
                                                 ).adjust_id
+            for movl in move.line_id:
+                _logger.info("movl_id: %s", str(movl.id))
                 _logger.info("adjust_id: %s", str(asset_adjust.id))
                 _logger.info("invoice_id: %s", str(asset_adjust.invoice_id))
-                
-                # find invoice_id
-#                 asset_adj = self.env["account.asset.adjust"]
-#                 invoice_id = asset_adj.search(
-#                                             [('id', '=', adjust_id)]
-#                                             ).invoice_id.id
-#                 _logger.info("invoice_id: %s", str(invoice_id))
-                
-                # assign AG&A to move_line's credit with invoice's AG&A
-                move_line = self.env["account.move.line"]
-#                 if credit:
+                for invl in asset_adjust.invoice_id.line_id:
+                    # assign invoice's AG&A to move_line's credit line
+                    if movl.credit and (movl.account_id == invl.account_id):
+                        _logger.info("account_id: %s", str(movl.account_id))
+                        movl.write({'activity_id': invl.activity_id})
 
     @api.model
     def _setup_move_data(self, journal, adjust_date,
