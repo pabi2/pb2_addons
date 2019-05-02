@@ -112,8 +112,8 @@ class XLSXReportReceivableDetail(models.TransientModel):
         self.ensure_one()
         Result = self.env['account.move.line']
         dom = [('account_id.type', '=', 'receivable'),
-               ('date_maturity', '!=', False),
-               ('move_id.state', '=', 'posted')]
+               ('move_id.state', '=', 'posted'),]
+               #('date_maturity', '!=', False),]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
         if self.partner_ids:
