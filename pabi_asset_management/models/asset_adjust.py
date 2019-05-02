@@ -654,7 +654,7 @@ class AccountAssetAdjust(models.Model):
                 _logger.info("movl_id: %s", str(movl.id))
                 _logger.info("adjust_id: %s", str(asset_adjust.id))
                 _logger.info("invoice_id: %s", str(asset_adjust.invoice_id))
-                for invl in asset_adjust.invoice_id.line_id:
+                for invl in asset_adjust.invoice_id.invoice_line:
                     # assign invoice's AG&A to move_line's credit line
                     if movl.credit and (movl.account_id == invl.account_id):
                         _logger.info("account_id: %s", str(movl.account_id))
