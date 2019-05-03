@@ -628,11 +628,10 @@ class AccountAssetAdjust(models.Model):
         
         # --
         for line in self.adjust_expense_to_asset_ids:
-            _logger.info("line_id: %s", str(line.id))
+            line.account_analytic_id = Analytic.create_matched_analytic(line)
             line.invoice_line_id = invoice_line_id
+            _logger.info("line.id: %s", str(line.id))
             _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
-            line.account_analytic_id = \
-                Analytic.create_matched_analytic(line)
                 
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,
@@ -655,24 +654,6 @@ class AccountAssetAdjust(models.Model):
             line.move_id = move
             # Set move_check equal to amount depreciated
             depre_lines.write({'move_id': move.id})
-            
-            # find adjust_id
-            exp_to_asset = self.env["account.asset.adjust.expense_to_asset"]
-            asset_adjust = exp_to_asset.search(
-                                                [('move_id', '=', move.id)]
-                                                ).adjust_id
-            for movl in move.line_id:
-                _logger.info("movl_id: %s", str(movl.id))
-                _logger.info("adjust_id: %s", str(asset_adjust.id))
-                _logger.info("invoice_id: %s", str(asset_adjust.invoice_id))
-                for invl in asset_adjust.invoice_id.invoice_line:
-                    # assign invoice's AG&A to move_line's credit line
-                    if movl.credit and (movl.account_id == invl.account_id):
-#                         _logger.info("account_id: %s", str(movl.account_id))
-                        movl.write({'analytic_account_id': invl.account_analytic_id.id})
-                        movl.write({'activity_id': invl.activity_id.id})
-                        movl.write({'activity_rpt_id': invl.activity_rpt_id.id})
-                        movl.write({'activity_group_id': invl.activity_group_id.id})
 
     @api.model
     def _setup_move_data(self, journal, adjust_date,
@@ -1253,6 +1234,40 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
             del ctx['novalidate']
             move.with_context(ctx).post()
         self.write({'move_id': move.id})
+        
+        
+            
+        # find adjust_id
+        invoice_line = self.invoice_line_id
+        _logger.info("self.invoice_line_id: %s", str(invoice_line))
+#         exp_to_asset = self.env["account.asset.adjust.expense_to_asset"]
+#         asset_adjust = exp_to_asset.search(
+#                                             [('move_id', '=', move.id)]
+#                                             ).adjust_id
+        for movl in move.line_id:
+            _logger.info("movl_id: %s", str(movl.id))
+            _logger.info("adjust_id: %s", str(asset_adjust.id))
+#             _logger.info("invoice_id: %s", str(asset_adjust.invoice_id))
+
+            if movl.credit:
+                movl.write({'analytic_account_id': \
+                            invoice_line.account_analytic_id.id})
+                movl.write({'activity_id': \
+                            invoice_line.activity_id.id})
+                movl.write({'activity_rpt_id': \
+                            invoice_line.activity_rpt_id.id})
+                movl.write({'activity_group_id': \
+                            invoice_line.activity_group_id.id})
+#             for invl in asset_adjust.invoice_id.invoice_line:
+#                     # assign invoice's AG&A to move_line's credit line
+#                 if movl.credit and (movl.account_id == invl.account_id):
+# #                         _logger.info("account_id: %s", str(movl.account_id))
+#                     movl.write({'analytic_account_id': invl.account_analytic_id.id})
+#                     movl.write({'activity_id': invl.activity_id.id})
+#                     movl.write({'activity_rpt_id': invl.activity_rpt_id.id})
+#                     movl.write({'activity_group_id': invl.activity_group_id.id})
+                        
+        
         return move
 
     @api.model
@@ -1276,46 +1291,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                 exp_acc.name, False, period, exp_acc, adjust_date,
                 debit=False, credit=purchase_value,
                 analytic_id=False)
-
-
-
-
-
-            
-            
-        
-#             # find adjust_id
-#             #exp_to_asset = self.env["account.asset.adjust.expense_to_asset"]
-#             asset_adjust = self.search([('move_id', '=', move.id)]).adjust_id
-#             invoice_line = None
-#             for movl in move.line_id:
-#                 _logger.info("movl_id: %s", str(movl.id))
-#                 _logger.info("adjust_id: %s", str(asset_adjust.id))
-#                 _logger.info("invoice_id: %s", str(asset_adjust.invoice_id))
-#                 for invl in asset_adjust.invoice_id.invoice_line:
-#                     # assign invoice's AG&A to move_line's credit line
-#                     if movl.credit and \
-#                         (movl.account_id == invl.account_id):
-#                         invoice_line = invl
-#     #                         _logger.info("account_id: %s", str(movl.account_id))
-#     #                     movl.write({'analytic_account_id': invl.account_analytic_id.id})
-#     #                         movl.write({'activity_id': invl.activity_id.id})
-#     #                         movl.write({'activity_rpt_id': invl.activity_rpt_id.id})
-#     #                         movl.write({'activity_group_id': invl.activity_group_id.id})
-# 
-#             expenese_credit = AssetAdjust._setup_expense_move_line_data(
-#                 exp_acc.name, False, period, exp_acc, adjust_date,
-#                 debit=False, credit=purchase_value,
-#                 analytic_id=False)
-            
-            
-            
-            
-            
-            
-            
-            
-            
             # 'date': adjust_date,
             line_dict += [(0, 0, new_asset_debit), (0, 0, expenese_credit)]
         # Dr: new - depre value (account_expense_depreciation_id)(budget)
