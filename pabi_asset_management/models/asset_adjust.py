@@ -1236,16 +1236,23 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         # assign invoice_line's data to move_line's credit line
         self._assign_move_line_with_invoice_line(move)
         
-        # Create analytic line for expense
+        # create analytic line for expense
         self._create_expense_analytic_line(movl_debit)
         
         return move
     
     @api.model
     def _create_expense_analytic_line(self, movl_debit):
-        analytic_line = self.env['account.analytic.line']
         
-        invl_analytic_line = self.invoice_line_id.account_analytic_id.line_ids
+        inv_number = self.adjust_id.invoice_id.number
+        
+        domain = []
+        domain.append(("ref", "=", inv_number))
+                
+        analytic_line = self.env['account.analytic.line']
+        invl_analytic_line = analytic_line.search(domain)
+        
+        
         line_analytic_line = self.account_analytic_id.line_ids
         _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         _logger.info("line_analytic_line: %s", str(line_analytic_line))
