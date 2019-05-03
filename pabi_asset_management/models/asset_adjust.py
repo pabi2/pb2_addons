@@ -1231,7 +1231,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         # update activity_id = activity_rpt_id
         for movl in move.line_id:
             if movl.debit:
-                movl.write({"activity_id": movl.activity_rpt_id})
+                movl.write({"activity_id": movl.activity_rpt_id.id})
 
         # assign invoice_line's data to move_line's credit line
         self._assign_move_line_with_invoice_line(move)
