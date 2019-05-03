@@ -86,8 +86,6 @@ class CreateAssetAdjustWizard(models.TransientModel):
         self._validate()
         action = self.env.ref('pabi_asset_management.'
                               'action_account_asset_adjust')
-        _logger.info("action")
-        _logger.info(action)
         result = action.read()[0]
         view = self.env.ref('pabi_asset_management.'
                             'view_account_asset_adjust_form')
