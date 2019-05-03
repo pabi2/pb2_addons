@@ -1246,7 +1246,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
 #                                             ).adjust_id
         for movl in move.line_id:
             _logger.info("movl_id: %s", str(movl.id))
-            _logger.info("adjust_id: %s", str(asset_adjust.id))
+#             _logger.info("adjust_id: %s", str(asset_adjust.id))
 #             _logger.info("invoice_id: %s", str(asset_adjust.invoice_id))
 
             if movl.credit:
