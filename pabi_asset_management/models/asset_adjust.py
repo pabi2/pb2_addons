@@ -1234,17 +1234,50 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
             del ctx['novalidate']
             move.with_context(ctx).post()
         self.write({'move_id': move.id})
+
+        self._assign_move_line_with_invoice_line(move)
         
+        # Create analytic line for expense
+        _logger.info("analytic_id: %s", str(self.account_analytic_id))
+        for line in self.account_analytic_id.line_ids:
+            _logger.info("id: %s", str(line.id))
+#         # assign invoice_line's data to move_line's credit line
+#         invoice_line = self.invoice_line_id
+#         _logger.info("self.invoice_line_id: %s", str(invoice_line))
+#         for movl in move.line_id:
+#             _logger.info("movl_id: %s", str(movl.id))
+#             if movl.credit:
+#                 movl.write({'taxbranch_id': \
+#                             invoice_line.taxbranch_id.id})
+#                 movl.write({'operating_unit_id': \
+#                             invoice_line.operating_unit_id.id})
+#                 movl.write({'analytic_account_id': \
+#                             invoice_line.account_analytic_id.id})
+#                 movl.write({'activity_id': \
+#                             invoice_line.activity_id.id})
+#                 movl.write({'activity_rpt_id': \
+#                             invoice_line.activity_rpt_id.id})
+#                 movl.write({'activity_group_id': \
+#                             invoice_line.activity_group_id.id})
+#                 movl.write({'costcenter_id': \
+#                             invoice_line.costcenter_id.id})
+#                 movl.write({'project_id': \
+#                             invoice_line.project_id.id})
+#                 movl.write({'org_id': \
+#                             invoice_line.org_id.id})
+#                 movl.write({'fund_id': \
+#                             invoice_line.fund_id.id})
         
-            
-        # find adjust_id
+        return move
+
+    @api.model
+    def _assign_move_line_with_invoice_line(self, move):
+        # assign invoice_line's data to move_line's credit line
         invoice_line = self.invoice_line_id
         _logger.info("self.invoice_line_id: %s", str(invoice_line))
         for movl in move.line_id:
             _logger.info("movl_id: %s", str(movl.id))
-
             if movl.credit:
-                # assign invoice_line's data to move_line's credit line
                 movl.write({'taxbranch_id': \
                             invoice_line.taxbranch_id.id})
                 movl.write({'operating_unit_id': \
@@ -1265,8 +1298,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                             invoice_line.org_id.id})
                 movl.write({'fund_id': \
                             invoice_line.fund_id.id})
-        
-        return move
 
     @api.model
     def _prepare_move_line_expense_to_asset(self, new_asset, exp_acc,
