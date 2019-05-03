@@ -22,6 +22,7 @@
 This module allow creating asset during incoming shipment.
     """,
     "data": [
+        "security/security_group.xml",
         "security/ir.model.access.csv",
         # "data/import_templates.xml",
         "xlsx_template/templates.xml",
