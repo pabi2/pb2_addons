@@ -1245,9 +1245,9 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
     def _create_expense_analytic_line(self, movl_debit):
         analytic_line = self.env['account.analytic.line']
         
-        invl_analytic = self.invoice_line_id.account_analytic_id
+        invl_analytic_line = self.invoice_line_id.account_analytic_id.line_ids
         line_analytic_line = self.account_analytic_id.line_ids
-        _logger.info("invl_analytic: %s", str(invl_analytic))
+        _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         _logger.info("line_analytic_line: %s", str(line_analytic_line))
         
 #         values = []
