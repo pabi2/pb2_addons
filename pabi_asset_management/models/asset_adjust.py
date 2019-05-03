@@ -260,7 +260,6 @@ class AccountAssetAdjust(models.Model):
     @api.multi
     def action_done(self):
         for rec in self:
-            _logger.info("rec.adjust_type: %s", str(rec.adjust_type))
             if rec.adjust_type == 'asset_type':
                 rec.adjust_asset_type()
             if rec.adjust_type == 'asset_to_expense':
@@ -600,7 +599,6 @@ class AccountAssetAdjust(models.Model):
         * Create new asset
         * Create collective moves
         """
-        _logger.info("adjust_expense_to_asset")
         self.ensure_one()
         value = sum(self.adjust_expense_to_asset_ids.mapped('amount'))
         if float_compare(self.limit_asset_value, value, 2) == -1:
@@ -1229,19 +1227,37 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         _logger.info("move_id: %s", str(move.id))
         
         # update activity_id = activity_rpt_id
+        movl_debit = 0
         for movl in move.line_id:
             if movl.debit:
+                movl_debit = movl.debit
                 movl.write({"activity_id": movl.activity_rpt_id.id})
 
         # assign invoice_line's data to move_line's credit line
         self._assign_move_line_with_invoice_line(move)
         
         # Create analytic line for expense
-        _logger.info("analytic_id: %s", str(self.account_analytic_id))
-        for line in self.account_analytic_id.line_ids:
-            _logger.info("account_analytic_line: %s", str(line))
+        self._create_expense_analytic_line(movl_debit)
         
         return move
+    
+    @api.model
+    def _create_expense_analytic_line(self, movl_debit):
+        analytic_line = self.env['account.analytic.line']
+        
+        invl_analytic = self.invoice_line_id.account_analytic_id
+        line_analytic_line = self.account_analytic_id.line_ids
+        _logger.info("invl_analytic: %s", str(invl_analytic))
+        _logger.info("line_analytic_line: %s", str(line_analytic_line))
+        
+#         values = []
+#         values["account_id"] = invl_analytic.account_id
+#         values["amount"] = movl_debit * -1
+#         values["unit_amount"] = 0
+#         values["name"] = invl_analytic.name
+#         values["general_account_id"] = invl_analytic.general_account_id
+#         
+#         line_id = analytic_line.create(self.account_analytic_id)
 
     @api.model
     def _assign_move_line_with_invoice_line(self, move):
