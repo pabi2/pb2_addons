@@ -31,6 +31,7 @@
                 <form string="Account Entry" edit="1" create="0" delete="0">
                     <header>
                         <button name="button_validate" states="draft" string="Post" type="object" class="oe_highlight" groups="account.group_account_invoice"/>
+						<button name="action_done_background" string="Post(Background)" class="oe_highlight" confirm="Post? This operation will read through import lines and recreate as multiple entries" type="object" states="draft" context="{'button_validate_async_process': 1}"/>
                         <button name="button_cancel" states="posted" string="Cancel Entry" type="object" groups="account.group_account_invoice" invisible="1"/>
                         <button name="button_delete" string="Delete Entry" confirm="Are you sure to delete this entry?" type="object" groups="account.group_account_invoice"
                           attrs="{'invisible': [('name', '=', False), ('state', '=', 'draft')]}"/>
@@ -150,6 +151,10 @@
                                 </field>
                             </page>
                         </notebook>
+                        <group>
+	                    	<field name="button_validate_job_id"/>
+	                    	<field name="button_validate_uuid"/>
+	                    </group>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
