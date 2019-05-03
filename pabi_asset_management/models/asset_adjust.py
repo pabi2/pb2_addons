@@ -1240,16 +1240,15 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         # find adjust_id
         invoice_line = self.invoice_line_id
         _logger.info("self.invoice_line_id: %s", str(invoice_line))
-#         exp_to_asset = self.env["account.asset.adjust.expense_to_asset"]
-#         asset_adjust = exp_to_asset.search(
-#                                             [('move_id', '=', move.id)]
-#                                             ).adjust_id
         for movl in move.line_id:
             _logger.info("movl_id: %s", str(movl.id))
-#             _logger.info("adjust_id: %s", str(asset_adjust.id))
-#             _logger.info("invoice_id: %s", str(asset_adjust.invoice_id))
 
             if movl.credit:
+                # assign invoice_line's data to move_line's credit line
+                movl.write({'taxbranch_id': \
+                            invoice_line.taxbranch_id.id})
+                movl.write({'operating_unit_id': \
+                            invoice_line.operating_unit_id.id})
                 movl.write({'analytic_account_id': \
                             invoice_line.account_analytic_id.id})
                 movl.write({'activity_id': \
@@ -1258,15 +1257,14 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                             invoice_line.activity_rpt_id.id})
                 movl.write({'activity_group_id': \
                             invoice_line.activity_group_id.id})
-#             for invl in asset_adjust.invoice_id.invoice_line:
-#                     # assign invoice's AG&A to move_line's credit line
-#                 if movl.credit and (movl.account_id == invl.account_id):
-# #                         _logger.info("account_id: %s", str(movl.account_id))
-#                     movl.write({'analytic_account_id': invl.account_analytic_id.id})
-#                     movl.write({'activity_id': invl.activity_id.id})
-#                     movl.write({'activity_rpt_id': invl.activity_rpt_id.id})
-#                     movl.write({'activity_group_id': invl.activity_group_id.id})
-                        
+                movl.write({'costcenter_id': \
+                            invoice_line.costcenter_id.id})
+                movl.write({'project_id': \
+                            invoice_line.project_id.id})
+                movl.write({'org_id': \
+                            invoice_line.org_id.id})
+                movl.write({'fund_id': \
+                            invoice_line.fund_id.id})
         
         return move
 
