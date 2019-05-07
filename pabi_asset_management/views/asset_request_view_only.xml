@@ -1,0 +1,110 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <!-- Asset Request -->
+        <record model="ir.ui.view" id="view_account_asset_request_only_form">
+            <field name="name">account.asset.request.only.form</field>
+            <field name="model">account.asset.request</field>
+            <field name="arch" type="xml">
+                <form string="Asset">
+                    <header>
+                        <button name="action_done" states="approve" string="Request" type="object" class="oe_highlight"
+                          groups="pabi_asset_management.group_assets_report"/>
+                        <button name="action_cancel" states="draft,confirm,approve,done" string="Cancel" type="object"
+                          groups="pabi_asset_management.group_assets_report"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box oe_right"></div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                              <field name="user_id"/>
+                              <field name="approve_user_id"/>
+                              <field name="date_request"/>
+                            </group>
+                            <group>
+                              <field name="responsible_user_id"/>
+                              <field name="building_id"/>
+                              <field name="floor_id" context="{'building_id': building_id}"/>
+                              <field name="room_id" context="{'building_id': building_id, 'floor_id': floor_id}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Source Assets">
+                                <field name="request_asset_ids" context="{'default_building_id': building_id, 'default_floor_id': floor_id, 'default_room_id': room_id}">
+                                    <tree editable="bottom">
+                                        <field name="asset_id"/>
+                                        <field name="purchase_value" sum="Total Value"/>
+                                        <field name="building_id"/>
+                                        <field name="floor_id" context="{'building_id': building_id}"/>
+                                        <field name="room_id" context="{'building_id': building_id, 'floor_id': floor_id}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_account_asset_request_only_tree">
+            <field name="name">account.asset.request.only.tree</field>
+            <field name="model">account.asset.request</field>
+            <field name="arch" type="xml">
+                <tree string="Asset Request">
+                    <field name="name"/>
+                    <field name="date_request"/>
+                    <field name="user_id"/>
+                    <field name="responsible_user_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_asset_request_only_search" model="ir.ui.view">
+            <field name="name">account.asset.request.only.search</field>
+            <field name="model">account.asset.request</field>
+            <field name="arch" type="xml">
+                <search string="Asset Request">
+                    <field name="name" string="Asset Request"/>
+                    <field name="user_id"/>
+                    <field name="responsible_user_id"/>
+                    <filter icon="terp-check" name="draft" string="Draft" domain="[('state','=','draft')]" help="Draft Moves"/>
+                    <filter icon="terp-check" name="confirm" string="Waiting Approval" domain="[('state','=', 'confirm')]" help="Confirm Moves"/>
+                    <filter icon="terp-check" name="approve" string="Approved" domain="[('state','=',('approve'))]" help="Approved Moves"/>
+                    <filter icon="terp-check" name="done" string="Requested" domain="[('state','=', 'done')]" help="Requested Moves"/>
+                    <filter icon="terp-check" name="cancel" string="Cancelled" domain="[('state','=','cancel')]" help="Cancelled Moves"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Received By" domain="" context="{'group_by':'responsible_user_id'}"/>
+                        <filter string="Status" domain="" context="{'group_by':'state'}"/>
+                        <filter string="Request Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_request'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_account_asset_request_only">
+            <field name="name">Request</field>
+            <field name="res_model">account.asset.request</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_account_asset_request_only_tree"/>
+            <field name="search_view_id" ref="view_account_asset_request_only_search"/>
+            <field name="domain">[('responsible_user_id', '=', uid), ('state', 'in', ['approve','done','cancel'])]</field>
+        </record>
+
+        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_request_only" name="Request"
+          action="action_account_asset_request_only"
+          groups="pabi_asset_management.group_assets_report"/>
+
+    </data>
+</openerp>

@@ -15,9 +15,9 @@
                         <button name="action_approve" states="confirm" string="Approve" type="object" class="oe_highlight"
                           groups="purchase.group_purchase_user"/>
                         <button name="action_done" states="approve" string="Request" type="object" class="oe_highlight"
-                          groups="purchase.group_purchase_user"/>
+                          groups="purchase.group_purchase_user,pabi_asset_management.group_assets_report"/>
                         <button name="action_cancel" states="draft,confirm,approve,done" string="Cancel" type="object"
-                          groups="purchase.group_purchase_user"/>
+                          groups="purchase.group_purchase_user,pabi_asset_management.group_assets_report"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve,done"/>
                     </header>
                     <sheet>
