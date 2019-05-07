@@ -1258,12 +1258,12 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values = {}
         # follow by invl_analytic_line
         values["name"] = invl_analytic_line.name
-        values["journal_id"] = invl_analytic_line.journal_id
-        values["general_account_id"] = invl_analytic_line.general_account_id
-        values["product_id"] = invl_analytic_line.product_id
+        values["journal_id"] = invl_analytic_line.journal_id.id
+        values["general_account_id"] = invl_analytic_line.general_account_id.id
+        values["product_id"] = invl_analytic_line.product_id.id
         # follow by line_analytic_line
-        values["account_id"] = line_analytic_line.account_id
-        values["company_id"] = line_analytic_line.company_id
+        values["account_id"] = line_analytic_line.account_id.id
+        values["company_id"] = line_analytic_line.company_id.id
         values["amount"] = line_analytic_line.amount * -1
         values["date"] = line_analytic_line.date
         values["ref"] = line_analytic_line.ref
@@ -1271,7 +1271,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values["unit_amount"] = 0
         values["amount_currency"] = 0
          
-        line_id = analytic_line.create(values)
+#         line_id = analytic_line.create(values)
 
     @api.model
     def _assign_move_line_with_invoice_line(self, move):
