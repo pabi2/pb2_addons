@@ -31,7 +31,7 @@ REPORT_GROUPBY = {
 
 CHARTFIELDS_TYPE = {'sc:': 1000000, 'pj:': 2000000, 'cp:': 3000000, 'ia:': 4000000, 'pc:':5000000}
 
-@job(default_channel='root.rpt_budget_future_commit')
+@job(default_channel='root.budget_report')
 def get_report_job(session, model_name, res_id, lang=False):
     try:
         # Update context

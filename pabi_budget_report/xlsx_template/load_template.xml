@@ -12,6 +12,7 @@
                 ref('xlsx_report_budget_plan_asset_analysis'),
                 ref('xlsx_report_budget_summary'),
                 ref('xlsx_report_budget_plan_construction_analysis'),
+                ref('rpt_budget_commit_template'),
                 ref('rpt_budget_future_commit_template'),
                 ref('rpt_budget_future_commit_summary_template'),
             ]"/>

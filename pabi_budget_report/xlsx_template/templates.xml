@@ -711,5 +711,121 @@
 			</field>
 		</record>
 
+        <record id="rpt_budget_commit_template" model="ir.attachment">
+            <field name="res_model">rpt.budget.commit</field>
+            <field name="datas"></field>
+            <field name="datas_fname">rpt_budget_commit.xlsx</field>
+            <field name="name">Commit</field>
+            <field name="parent_id" eval="ref('dir_budget_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Commit': {
+                            '_HEAD_': {
+                                'C2': 'report_type${value or ""}',
+                                'C3': 'fiscalyear_id.name${value or ""}',
+                                'C4': 'org_id.operating_unit_id.name${value or ""}',
+                            },
+                            'results': {
+                                'A7' : 'fisyear${value or ""}',
+								'B7' : 'period${value or ""}',
+								'C7' : 'budget_commit_type${value or ""}',
+								'D7' : 'charge_type${value or ""}',
+								'E7' : 'budget_method${value or ""}',
+								'F7' : 'doctype${value or ""}',
+								'G7' : 'budget_view${value or ""}',
+								'H7' : 'source_budget_code${value or ""}',
+								'I7' : 'source_budget_name${value or ""}',
+								'J7' : 'doc_date${value or ""}',
+								'K7' : 'posting_date${value or ""}',
+								'L7' : 'document${value or ""}',
+								'M7' : 'item${value or 0}#{align=right}',
+								'N7' : 'amount${value or 0}#{align=right;number_format=number}',
+								'O7' : 'detail${value or ""}',
+								'P7' : 'ref_document${value or ""}',
+								'Q7' : 'schedule_date${value or ""}#{number_format=date}',
+								'R7' : 'id${value or 0}#{align=right}',
+								'S7' : 'po_contract${value or ""}',
+								'T7' : 'contract_start_date${value or ""}',
+								'U7' : 'contract_end_date${value or ""}',
+								'V7' : 'product_category${value or ""}',
+								'W7' : 'product_code${value or ""}#{align=right;number_format=number}',
+								'X7' : 'product_name${value or ""}',
+								'Y7' : 'purchasing_method${value or ""}',
+								'Z7' : 'activity_group${value or ""}',
+								'AA7' : 'activity_group_name${value or ""}',
+								'AB7' : 'activity${value or ""}',
+								'AC7' : 'activity_name${value or ""}',
+								'AD7' : 'activity_rpt${value or ""}',
+								'AE7' : 'activity_rpt_name${value or ""}',
+								'AF7' : 'account_code${value or ""}',
+								'AG7' : 'account_name${value or ""}',
+								'AH7' : 'partner_code${value or ""}',
+								'AI7' : 'partner_name${value or ""}',
+								'AJ7' : 'org_code${value or ""}',
+								'AK7' : 'org_name${value or ""}',
+								'AL7' : 'section${value or ""}',
+								'AM7' : 'section_name${value or ""}',
+								'AN7' : 'costcenter${value or ""}',
+								'AO7' : 'costcenter_name${value or ""}',
+								'AP7' : 'costcenter_used${value or ""}',
+								'AQ7' : 'costcenter_name_used${value or ""}',
+								'AR7' : 'mission${value or ""}',
+								'AS7' : 'functional_area${value or ""}',
+								'AT7' : 'functional_area_name${value or ""}',
+								'AU7' : 'program_group${value or ""}',
+								'AV7' : 'program_group_name${value or ""}',
+								'AW7' : 'program${value or ""}',
+								'AX7' : 'program_name${value or ""}',
+								'AY7' : 'project_group${value or ""}',
+								'AZ7' : 'propect_group_name${value or ""}',
+								'BA7' : 'master_plan_code${value or ""}',
+								'BB7' : 'master_plan_name${value or ""}',
+								'BC7' : 'project_type${value or ""}',
+								'BD7' : 'project_type_name${value or ""}',
+								'BE7' : 'project_operation_code${value or ""}',
+								'BF7' : 'project_operation_name${value or ""}',
+								'BG7' : 'project_fund_code${value or ""}',
+								'BH7' : 'project_fund_name${value or ""}',
+								'BI7' : 'project_date_start${value or ""}',
+								'BJ7' : 'project_date_end${value or ""}',
+								'BK7' : 'project_date_start_spending${value or ""}',
+								'BL7' : 'project_date_end_spending${value or ""}',
+								'BM7' : 'project_date_close${value or ""}',
+								'BN7' : 'project_date_close_cond${value or ""}',
+								'BO7' : 'project_date_approved${value or ""}',
+								'BP7' : 'contract_date_start${value or ""}',
+								'BQ7' : 'contract_date_end${value or ""}',
+								'BR7' : 'project_date_end_proposal${value or ""}',
+								'BS7' : 'project_date_terminate${value or ""}',
+								'BT7' : 'pm${value or ""}',
+								'BU7' : 'pm_name${value or ""}',
+								'BV7' : 'project_status${value or ""}',
+								'BW7' : 'sector${value or ""}',
+								'BX7' : 'sector_name${value or ""}',
+								'BY7' : 'sub_sector${value or ""}',
+								'BZ7' : 'sub_sector_name${value or ""}',
+								'CA7' : 'division${value or ""}',
+								'CB7' : 'division_name${value or ""}',
+								'CC7' : 'section_program${value or ""}',
+								'CD7' : 'section_program_name${value or ""}',
+								'CE7' : 'project_c_code${value or ""}',
+								'CF7' : 'project_c_name${value or ""}',
+								'CG7' : 'project_c_date_start${value or ""}#{number_format=date}',
+								'CH7' : 'project_c_date_end${value or ""}#{number_format=date}',
+								'CI7' : 'project_c_date_expansion${value or ""}#{number_format=date}',
+								'CJ7' : 'requested_by${value or ""}',
+								'CK7' : 'requested_by_name${value or ""}',
+								'CL7' : 'approver${value or ""}',
+								'CM7' : 'approver_name${value or ""}',
+								'CN7' : 'prepared_by${value or ""}',
+								'CO7' : 'prepared_by_name${value or ""}',
+                            }
+                        }
+                    }
+                }
+			</field>
+		</record>
+
     </data>
 </openerp>
