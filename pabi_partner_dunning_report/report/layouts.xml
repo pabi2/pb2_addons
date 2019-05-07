@@ -76,7 +76,7 @@
                         บันทึกข้อความ
                     </p>
                 </t>
-                <div>ที่ &#160;&#160;&#160;&#160;&#160;วท 5401/ <t t-esc="number"/></div>
+                <div>ที่ &#160;&#160;&#160;&#160;&#160;อว 6001/ <t t-esc="number"/></div>
                 <div class="center_report_customer_dunning_letter" style="margin-top: 20px;visibility: hidden;">วันที่ <t t-esc='full_report_date'/></div>
                 <div class="newline_report_customer_dunning_letter"><t t-esc='subject'/></div>
                 <div class="row newline_report_customer_dunning_letter">

@@ -4,7 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
-	<style name="border_box">
+	<style name="border_box" lineSpacing="Single">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 			<topPen lineWidth="0.5" lineStyle="Solid"/>
 			<leftPen lineWidth="0.5" lineStyle="Solid"/>
