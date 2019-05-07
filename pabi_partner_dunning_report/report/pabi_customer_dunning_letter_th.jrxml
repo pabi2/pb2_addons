@@ -4,7 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
-	<style name="border_box">
+	<style name="border_box" lineSpacing="Single">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 			<topPen lineWidth="0.5" lineStyle="Solid"/>
 			<leftPen lineWidth="0.5" lineStyle="Solid"/>
@@ -141,7 +141,7 @@
 					<textElement lineSpacing="Single" markup="none">
 						<font size="11" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
-					<text><![CDATA[ที่ วท 5401/]]></text>
+					<text><![CDATA[ที่ อว 6001/]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement style="box" positionType="Float" mode="Transparent" x="0" y="129" width="491" height="25"/>
