@@ -1266,7 +1266,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values["general_account_id"] = invl_analytic_line.general_account_id.id
         values["product_uom_id"] = invl_analytic_line.product_uom_id.id
         values["journal_id"] = invl_analytic_line.journal_id.id
-        values["move_id"] = invl_analytic_line.move_id.id
         values["product_id"] = invl_analytic_line.product_id.id
         values["activity_group_id"] = invl_analytic_line.activity_group_id.id
         values["activity_rpt_id"] = invl_analytic_line.activity_rpt_id.id
@@ -1299,6 +1298,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values["period_id"] = line_analytic_line.period_id.id
         values["quarter"] = line_analytic_line.quarter
         values["doctype"] = line_analytic_line.doctype
+        values["move_id"] = line_analytic_line.move_id.id
         
         values["unit_amount"] = 0
         values["amount_currency"] = 0
