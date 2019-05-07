@@ -1250,23 +1250,22 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                 
         analytic_line = self.env['account.analytic.line']
         invl_analytic_lines = self.invoice_line_id.account_analytic_id.line_ids
-        _logger.info("invl_analytic_lines: %s", str(invl_analytic_lines))
-#         invl_analytic_line = analytic_line.search(domain)
-#         _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         invl_analytic_line = invl_analytic_lines.search(domain)
-        _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
-        
         line_analytic_line = self.account_analytic_id.line_ids
+        _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         _logger.info("line_analytic_line: %s", str(line_analytic_line))
-        
+
         values = {}
         # follow by invl_analytic_line
         values["name"] = invl_analytic_line.name
         values["journal_id"] = invl_analytic_line.journal_id.id
         values["general_account_id"] = invl_analytic_line.general_account_id.id
-        values["product_uom_id"] = invl_analytic_line.product_uom_id.id
+#         values["product_uom_id"] = invl_analytic_line.product_uom_id.id
         values["journal_id"] = invl_analytic_line.journal_id.id
         values["product_id"] = invl_analytic_line.product_id.id
+        
+        _logger.info("invl_analytic_line.product_id.id: %s", str(invl_analytic_line.product_id.id))
+        _logger.info("line_analytic_line.product_id.id: %s", str(line_analytic_line.product_id.id))
         values["activity_group_id"] = invl_analytic_line.activity_group_id.id
         values["activity_rpt_id"] = invl_analytic_line.activity_rpt_id.id
         values["section_program_id"] = invl_analytic_line.section_program_id.id
