@@ -1227,22 +1227,20 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         _logger.info("move_id: %s", str(move.id))
         
         # update activity_id = activity_rpt_id
-        movl_debit = 0
         for movl in move.line_id:
             if movl.debit:
-                movl_debit = movl.debit
                 movl.write({"activity_id": movl.activity_rpt_id.id})
 
         # assign invoice_line's data to move_line's credit line
         self._assign_move_line_with_invoice_line(move)
         
         # create analytic line for expense
-        self._create_expense_analytic_line(movl_debit)
+        self._create_expense_analytic_line()
         
         return move
     
     @api.model
-    def _create_expense_analytic_line(self, movl_debit):
+    def _create_expense_analytic_line(self):
         
         inv_number = self.adjust_id.invoice_id.number
         
@@ -1257,14 +1255,23 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         _logger.info("line_analytic_line: %s", str(line_analytic_line))
         
-#         values = []
-#         values["account_id"] = invl_analytic.account_id
-#         values["amount"] = movl_debit * -1
-#         values["unit_amount"] = 0
-#         values["name"] = invl_analytic.name
-#         values["general_account_id"] = invl_analytic.general_account_id
-#         
-#         line_id = analytic_line.create(self.account_analytic_id)
+        values = []
+        # follow by invl_analytic_line
+        values["name"] = invl_analytic_line.name
+        values["journal_id"] = invl_analytic_line.journal_id
+        values["general_account_id"] = invl_analytic_line.general_account_id
+        values["product_id"] = invl_analytic_line.product_id
+        # follow by line_analytic_line
+        values["account_id"] = line_analytic_line.account_id
+        values["company_id"] = line_analytic_line.company_id
+        values["amount"] = line_analytic_line.amount * -1
+        values["date"] = line_analytic_line.date
+        values["ref"] = line_analytic_line.ref
+        
+        values["unit_amount"] = 0
+        values["amount_currency"] = 0
+         
+        line_id = analytic_line.create(values)
 
     @api.model
     def _assign_move_line_with_invoice_line(self, move):
@@ -1293,6 +1300,40 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                             invoice_line.org_id.id})
                 movl.write({"fund_id": \
                             invoice_line.fund_id.id})
+                movl.write({"invest_construction_phase_id": \
+                            invoice_line.invest_construction_phase_id.id})
+                movl.write({"division_id": \
+                            invoice_line.division_id.id})
+                movl.write({"section_id": \
+                            invoice_line.section_id.id})
+                movl.write({"program_id": \
+                            invoice_line.program_id.id})
+                movl.write({"mission_id": \
+                            invoice_line.mission_id.id})
+                movl.write({"personnel_costcenter_id": \
+                            invoice_line.personnel_costcenter_id.id})
+                movl.write({"section_program_id": \
+                            invoice_line.section_program_id.id})
+                movl.write({"program_group_id": \
+                            invoice_line.program_group_id.id})
+                movl.write({"subsector_id": \
+                            invoice_line.subsector_id.id})
+                movl.write({"invest_asset_id": \
+                            invoice_line.invest_asset_id.id})
+                movl.write({"sector_id": \
+                            invoice_line.sector_id.id})
+                movl.write({"costcenter_id": \
+                            invoice_line.costcenter_id.id})
+                movl.write({"spa_id": \
+                            invoice_line.spa_id.id})
+                movl.write({"cost_control_id": \
+                            invoice_line.cost_control_id.id})
+                movl.write({"cost_control_type_id": \
+                            invoice_line.cost_control_type_id.id})
+                movl.write({"project_group_id": \
+                            invoice_line.project_group_id.id})
+                movl.write({"functional_area_id": \
+                            invoice_line.functional_area_id.id})
 
     @api.model
     def _prepare_move_line_expense_to_asset(self, new_asset, exp_acc,
