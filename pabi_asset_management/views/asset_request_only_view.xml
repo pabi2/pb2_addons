@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <!-- Asset Request -->
+         <record model="ir.actions.act_window" id="action_account_asset_request_only">
+            <field name="name">Request</field>
+            <field name="res_model">account.asset.request</field>
+            <field name="view_type">form</field>
+            <field name="inherit_id" ref="pabi_asset_management.view_account_asset_request_form"/>
+            <field name="domain">[('responsible_user_id', '=', uid), ('state', 'in', ['approve','done','cancel'])]</field>
+        </record>
+
+         <menuitem parent="menu_asset_actions" id="menu_action_account_asset_request_only" name="My Asset Request"
+          action="action_account_asset_request_only"
+          groups="pabi_asset_management.group_assets_report"/>
+
+     </data>
+</openerp>

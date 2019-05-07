@@ -22,6 +22,7 @@
 This module allow creating asset during incoming shipment.
     """,
     "data": [
+        "security/security_group.xml",
         "security/ir.model.access.csv",
         # "data/import_templates.xml",
         "xlsx_template/templates.xml",
@@ -45,6 +46,7 @@ This module allow creating asset during incoming shipment.
         "views/account_invoice_view.xml",
         "views/account_view.xml",
         "views/asset_request_view.xml",
+        "views/asset_request_only_view.xml",
         "views/asset_changeowner_view.xml",
         "views/asset_transfer_view.xml",
         "views/asset_adjust_view.xml",
