@@ -13,5 +13,15 @@
 				</xpath>
 			</field>
 		</record>
+		
+        #action_invoice
+		<record id="account.action_invoice_tree2" model="ir.actions.act_window">
+		     <field name="name">Supplier Invoices</field>
+		     <field name="res_model">account.invoice</field>
+             <field name="view_mode">tree,form,calendar,graph</field>
+           	 <field name="view_type">form</field>
+		     <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase', 'active_test': False}</field>
+		</record>
+		
 	</data>
 </openerp>
