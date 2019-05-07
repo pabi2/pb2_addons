@@ -1255,7 +1255,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         _logger.info("line_analytic_line: %s", str(line_analytic_line))
         
-        values = []
+        values = {}
         # follow by invl_analytic_line
         values["name"] = invl_analytic_line.name
         values["journal_id"] = invl_analytic_line.journal_id
@@ -1271,7 +1271,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values["unit_amount"] = 0
         values["amount_currency"] = 0
          
-#         line_id = analytic_line.create(values)
+        line_id = analytic_line.create(values)
 
     @api.model
     def _assign_move_line_with_invoice_line(self, move):
