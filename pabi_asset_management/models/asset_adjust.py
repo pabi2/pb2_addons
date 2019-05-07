@@ -1286,7 +1286,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         # follow by line_analytic_line
         values["write_uid"] = line_analytic_line.write_uid.id
         values["create_uid"] = line_analytic_line.create_uid.id
-        values["user_id"] = line_analytic_line.user_id
+        values["user_id"] = line_analytic_line.user_id.id
         values["account_id"] = line_analytic_line.account_id.id
         values["company_id"] = line_analytic_line.company_id.id
         values["amount"] = line_analytic_line.amount * -1
