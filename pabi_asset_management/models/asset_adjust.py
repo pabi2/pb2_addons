@@ -1275,7 +1275,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values["unit_amount"] = 0
         values["amount_currency"] = 0
          
-        expense_analytic_line_id = analytic_line.copy(invl_analytic_line)
+        expense_analytic_line_id = analytic_line.create(invl_analytic_line)
         _logger.info("expense_analytic_line_id: %s", str(expense_analytic_line_id))
 
     @api.model
