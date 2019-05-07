@@ -1243,17 +1243,20 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
     def _create_expense_analytic_line(self):
         
         inv_number = self.adjust_id.invoice_id.number
+        _logger.info("inv_number: %s", str(inv_number))
         
         domain = []
         domain.append(("document", "=", inv_number))
                 
         analytic_line = self.env['account.analytic.line']
-        invl_analytic_lines = self.invoice_line_id.account_analytic_id
+        invl_analytic_lines = self.invoice_line_id.account_analytic_id.line_ids
+        _logger.info("invl_analytic_lines: %s", str(invl_analytic_lines))
+        invl_analytic_line = analytic_line.search(domain)
+        _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         invl_analytic_line = invl_analytic_lines.search(domain)
+        _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         
         line_analytic_line = self.account_analytic_id.line_ids
-        _logger.info("inv_number: %s", str(inv_number))
-        _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         _logger.info("line_analytic_line: %s", str(line_analytic_line))
         
         values = {}
@@ -1272,7 +1275,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values["unit_amount"] = 0
         values["amount_currency"] = 0
          
-        line_id = analytic_line.copy(invl_analytic_line)
+#         line_id = analytic_line.copy(invl_analytic_line)
 
     @api.model
     def _assign_move_line_with_invoice_line(self, move):
