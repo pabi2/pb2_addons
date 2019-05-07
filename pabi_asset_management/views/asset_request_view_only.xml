@@ -2,22 +2,16 @@
 <openerp>
     <data>
         <!-- Asset Request -->
-        <record model="ir.ui.view" id="view_account_asset_request_form">
-            <field name="name">account.asset.request.form</field>
+        <record model="ir.ui.view" id="view_account_asset_request_only_form">
+            <field name="name">account.asset.request.only.form</field>
             <field name="model">account.asset.request</field>
             <field name="arch" type="xml">
                 <form string="Asset">
                     <header>
-                        <button name="action_draft" states="cancel" string="Set to Draft" type="object" invisible="1"
-                          groups="purchase.group_purchase_user"/>
-                        <button name="action_confirm" states="draft" string="Confirm" type="object" class="oe_highlight"
-                          groups="purchase.group_purchase_user"/>
-                        <button name="action_approve" states="confirm" string="Approve" type="object" class="oe_highlight"
-                          groups="purchase.group_purchase_user"/>
                         <button name="action_done" states="approve" string="Request" type="object" class="oe_highlight"
-                          groups="purchase.group_purchase_user,pabi_asset_management.group_assets_report"/>
+                          groups="pabi_asset_management.group_assets_report"/>
                         <button name="action_cancel" states="draft,confirm,approve,done" string="Cancel" type="object"
-                          groups="purchase.group_purchase_user,pabi_asset_management.group_assets_report"/>
+                          groups="pabi_asset_management.group_assets_report"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve,done"/>
                     </header>
                     <sheet>
@@ -63,8 +57,8 @@
             </field>
         </record>
 
-        <record model="ir.ui.view" id="view_account_asset_request_tree">
-            <field name="name">account.asset.request.tree</field>
+        <record model="ir.ui.view" id="view_account_asset_request_only_tree">
+            <field name="name">account.asset.request.only.tree</field>
             <field name="model">account.asset.request</field>
             <field name="arch" type="xml">
                 <tree string="Asset Request">
@@ -77,8 +71,8 @@
             </field>
         </record>
 
-        <record id="view_account_asset_request_search" model="ir.ui.view">
-            <field name="name">account.asset.request.search</field>
+        <record id="view_account_asset_request_only_search" model="ir.ui.view">
+            <field name="name">account.asset.request.only.search</field>
             <field name="model">account.asset.request</field>
             <field name="arch" type="xml">
                 <search string="Asset Request">
@@ -99,17 +93,18 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="action_account_asset_request">
+        <record model="ir.actions.act_window" id="action_account_asset_request_only">
             <field name="name">Request</field>
             <field name="res_model">account.asset.request</field>
             <field name="view_type">form</field>
-            <field name="view_id" ref="view_account_asset_request_tree"/>
-            <field name="search_view_id" ref="view_account_asset_request_search"/>
+            <field name="view_id" ref="view_account_asset_request_only_tree"/>
+            <field name="search_view_id" ref="view_account_asset_request_only_search"/>
+            <field name="domain">[('responsible_user_id', '=', uid), ('state', 'in', ['approve','done','cancel'])]</field>
         </record>
 
-        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_request"
-          action="action_account_asset_request"
-          groups="purchase.group_purchase_user,account.group_account_user"/>
+        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_request_only" name="Request"
+          action="action_account_asset_request_only"
+          groups="pabi_asset_management.group_assets_report"/>
 
     </data>
 </openerp>

@@ -46,6 +46,7 @@ This module allow creating asset during incoming shipment.
         "views/account_invoice_view.xml",
         "views/account_view.xml",
         "views/asset_request_view.xml",
+        "views/asset_request_view_only.xml",
         "views/asset_changeowner_view.xml",
         "views/asset_transfer_view.xml",
         "views/asset_adjust_view.xml",
