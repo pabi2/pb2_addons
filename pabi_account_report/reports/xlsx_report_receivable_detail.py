@@ -136,5 +136,9 @@ class XLSXReportReceivableDetail(models.TransientModel):
             dom += [('date', '<=', self.date_end)]
         if self.as_of_date:
             dom += [('date', '<=', self.as_of_date)]
-        self.results = Result.search(dom).sorted(
+        ids = []
+        for x in Result.search(dom):
+            ids += [x.id if x.move_id.doctype == 'adjustment' or x.date_maturity else False]
+        res = [('id', 'in', tuple(ids))]
+        self.results = Result.search(res).sorted(
             key=lambda l: (l.partner_id.search_key, l.date, l.move_id.name))
