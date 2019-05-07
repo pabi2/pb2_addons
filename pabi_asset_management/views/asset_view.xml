@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <menuitem id="menu_asset_main" name="Assets" parent="" groups="purchase.group_purchase_user,account.group_account_user" sequence="51"/>
+        <menuitem id="menu_asset_main" name="Assets" parent="" groups="purchase.group_purchase_user,account.group_account_user,pabi_asset_management.group_assets_report" sequence="51"/>
 
         <menuitem id="account_asset_management.menu_finance_assets" name="Assets" parent="menu_asset_main" sequence="10" groups="purchase.group_purchase_user,account.group_account_user"/>
 

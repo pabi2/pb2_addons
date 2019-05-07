@@ -25,6 +25,7 @@
         <menuitem id="menu_account_asset_report"
             name="Reports"
             parent="pabi_asset_management.menu_asset_main"
+            groups="purchase.group_purchase_user,account.group_account_user"
             sequence="80"/>
     </data>
 </openerp>
