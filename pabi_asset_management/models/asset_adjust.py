@@ -1224,7 +1224,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
             del ctx['novalidate']
             move.with_context(ctx).post()
         self.write({'move_id': move.id})
-        _logger.info("move_id: %s", str(move.id))
+#         _logger.info("move_id: %s", str(move.id))
         
         # update activity_id = activity_rpt_id
         for movl in move.line_id:
@@ -1249,12 +1249,16 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         domain.append(("document", "=", inv_number))
                 
         analytic_line = self.env['account.analytic.line']
-        invl_analytic_lines = self.invoice_line_id.account_analytic_id.line_ids
+        invoice_line_id = self.invoice_line_id
+        _logger.info("invoice_line_id: %s", str(invoice_line_id))
+        invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
+        _logger.info("invoice_line_id.account_analytic_id.line_ids: %s", str(invoice_line_id.account_analytic_id.line_ids))
         invl_analytic_line = invl_analytic_lines.search(domain)
         _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         
         domain = []
         domain.append(("amount", "=", (self.amount * -1)))
+        _logger.info("domain: %s", str(domain))
         line_analytic_line = self.account_analytic_id.line_ids
         _logger.info("line_analytic_line: %s", str(line_analytic_line))
         line_analytic_line = line_analytic_line.search(domain)
@@ -1316,9 +1320,9 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
     @api.model
     def _assign_move_line_with_invoice_line(self, move):
         invoice_line = self.invoice_line_id
-        _logger.info("self.invoice_line_id: %s", str(invoice_line))
+#         _logger.info("self.invoice_line_id: %s", str(invoice_line))
         for movl in move.line_id:
-            _logger.info("movl_id: %s", str(movl.id))
+#             _logger.info("movl_id: %s", str(movl.id))
             if movl.credit:
                 movl.write({"taxbranch_id": \
                             invoice_line.taxbranch_id.id})
