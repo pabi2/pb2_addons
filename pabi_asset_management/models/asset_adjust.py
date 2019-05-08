@@ -1257,7 +1257,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         
         domain = []
-        domain.append(("account_id", "=", self.account_analytic_id))
+        domain.append(("account_id", "=", self.account_analytic_id.id))
         domain.append(("amount", "=", (self.amount * -1)))
         _logger.info("domain: %s", str(domain))
         line_analytic_line = self.account_analytic_id.line_ids
