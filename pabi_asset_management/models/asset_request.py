@@ -56,6 +56,12 @@ class AccountAssetRequest(models.Model):
         states={'draft': [('readonly', False)]},
         help="Default purchase request user, but can change."
     )
+    boss_ids = fields.One2many(
+        'wkf.cmd.boss.level.approval', 
+        'section_id',
+        string='Boss Level Approver',
+        compute='_compute_boss_ids'
+    )
     request_asset_ids = fields.One2many(
         'account.asset.request.line',
         'request_id',
@@ -68,6 +74,8 @@ class AccountAssetRequest(models.Model):
         [('draft', 'Draft'),
          ('confirm', 'Waiting Approval'),
          ('approve', 'Approved'),
+         ('verify', 'Verify'),
+         ('ready', 'Ready to Request'),
          ('done', 'Requested'),
          ('cancel', 'Cancelled')],
         string='Status',
@@ -98,6 +106,12 @@ class AccountAssetRequest(models.Model):
         states={'draft': [('readonly', False)]},
         ondelete='restrict',
     )
+    
+    @api.one
+    @api.onchange('responsible_user_id')
+    def _compute_boss_ids(self):
+        if self.responsible_user_id:
+            self.boss_ids = self.responsible_user_id.employee_id.section_id.boss_ids.ids
 
     # Building / Floor / Room
     @api.multi
@@ -167,7 +181,30 @@ class AccountAssetRequest(models.Model):
                     _('Only %s can approve this document!') %
                     (rec.approve_user_id.name,))
         self.write({'state': 'approve'})
-
+        
+    @api.multi
+    def action_verify(self):
+        for rec in self:
+            assets = rec.request_asset_ids.mapped('asset_id')
+            assets.validate_asset_to_request()
+            if self.env.user != rec.approve_user_id:
+                raise ValidationError(
+                    _('Only %s can approve this document!') %
+                    (rec.approve_user_id.name,))
+        self.write({'state': 'verify'})
+      
+    @api.multi    
+    def action_ready(self):
+        for rec in self:
+            assets = rec.request_asset_ids.mapped('asset_id')
+            assets.validate_asset_to_request()
+            if self.env.user.partner_id.employee_id not in [x.employee_id for x in rec.boss_ids]:
+                raise ValidationError(
+                    _('Only %s can approve this document!') %
+                    (", ".join([x.employee_id.first_name for x in rec.boss_ids])))
+        self.write({'state': 'ready'}) 
+     
+        
     @api.multi
     def action_done(self):
         for rec in self:
