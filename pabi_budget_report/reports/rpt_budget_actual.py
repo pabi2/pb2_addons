@@ -278,7 +278,7 @@ class RPTBudgetActualLine(models.Model):
     budget_view = fields.Char('budget view')
     source_budget_code = fields.Char('source budget code')
     source_budget_name = fields.Char('source budget name')
-    item = fields.Integer('item')
+    item = fields.Char('item')
     
     """
     def _get_sql_view(self):
