@@ -452,7 +452,9 @@ class AccountAssetAdjust(models.Model):
                         self.env['account.asset.adjust.expense_to_asset'].new()
                     adjust_line.account_id = account
                     self.adjust_expense_to_asset_ids += adjust_line
-            _logger.info("self.adjust_expense_to_asset_ids: %s", str(self.adjust_expense_to_asset_ids))
+            
+            for line in self.adjust_expense_to_asset_ids:
+                _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
 
     @api.model
     def _set_asset_as_removed(self, asset, target_status):
@@ -631,13 +633,13 @@ class AccountAssetAdjust(models.Model):
                 'ship_expense': True,
                 'ship_purchase_id': self.ship_purchase_id.id, })
             
-        _logger.info("self.adjust_expense_to_asset_ids2: %s", str(self.adjust_expense_to_asset_ids))
         values = self._context.get('expense_to_asset_dict', {})
         _logger.info("values: %s", str(values))
         invoice_line_id = values[0][2]
         
         # --
         for line in self.adjust_expense_to_asset_ids:
+            _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
             line.account_analytic_id = Analytic.create_matched_analytic(line)
             line.invoice_line_id = invoice_line_id
             _logger.info("line.id: %s", str(line.id))
