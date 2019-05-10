@@ -436,7 +436,6 @@ class AccountAssetAdjust(models.Model):
                     
                     _logger.info("adjust_line.account_id: %s", str(adjust_line.account_id))
                     _logger.info("adjust_line.product_id: %s", str(adjust_line.product_id))
-                    _logger.info("adjust_line.asset_name: %s", str(adjust_line.asset_name))
                     _logger.info("adjust_line.invoice_line_id: %s", str(adjust_line.invoice_line_id))
                     _logger.info("adjust_line.chartfield_id: %s", str(adjust_line.chartfield_id))
                     _logger.info("quantity: %s", str(quantity))
