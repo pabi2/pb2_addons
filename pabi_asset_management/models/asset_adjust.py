@@ -452,6 +452,7 @@ class AccountAssetAdjust(models.Model):
                         self.env['account.asset.adjust.expense_to_asset'].new()
                     adjust_line.account_id = account
                     self.adjust_expense_to_asset_ids += adjust_line
+            _logger.info("self.adjust_expense_to_asset_ids: %s", str(self.adjust_expense_to_asset_ids))
 
     @api.model
     def _set_asset_as_removed(self, asset, target_status):
