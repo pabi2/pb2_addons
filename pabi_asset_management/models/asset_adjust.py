@@ -631,7 +631,9 @@ class AccountAssetAdjust(models.Model):
                 'ship_expense': True,
                 'ship_purchase_id': self.ship_purchase_id.id, })
             
+        _logger.info("self.adjust_expense_to_asset_ids2: %s", str(self.adjust_expense_to_asset_ids))
         values = self._context.get('expense_to_asset_dict', {})
+        _logger.info("values: %s", str(values))
         invoice_line_id = values[0][2]
         
         # --
