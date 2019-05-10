@@ -420,6 +420,7 @@ class AccountAssetAdjust(models.Model):
         elif self.adjust_type == 'expense_to_asset':
             if src_invoice_id:
                 values = self._context.get('expense_to_asset_dict', {})
+                _logger.info("context.get('expense_to_asset_dict', {}): %s", str(values))
                 for value in values:
                     adjust_line = \
                         self.env['account.asset.adjust.expense_to_asset'].new()
