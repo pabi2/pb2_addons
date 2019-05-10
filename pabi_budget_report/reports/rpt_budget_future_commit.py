@@ -52,7 +52,6 @@ class RPTBudgetFutureCommit(models.TransientModel):
     @api.multi
     def _compute_results(self):
         self.ensure_one()
-        dom = []
         section_ids = []
         project_ids = []
         invest_construction_phase_ids = []
@@ -61,7 +60,7 @@ class RPTBudgetFutureCommit(models.TransientModel):
         date_report = self.date_report
         Result = self.env['rpt.budget.future.commit.line']
         
-        dom += [('fiscalyear_id', '=', self.fiscalyear_id.id)]
+        dom = [('fiscalyear_id', '=', self.fiscalyear_id.id)]
         
         if self.chartfield_ids:
             chartfield = self.chartfield_ids

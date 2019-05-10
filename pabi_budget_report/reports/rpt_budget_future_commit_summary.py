@@ -56,7 +56,7 @@ class RPTBudgetFutureCommitSummary(models.TransientModel):
         
         Result = self.env['rpt.budget.future.commit.summary.line']
         
-        dom += [('fiscalyear_id', '=', self.fiscalyear_id.id)]
+        dom = [('fiscalyear_id', '=', self.fiscalyear_id.id)]
         
         if self.chartfield_ids:
             chartfield = self.chartfield_ids
