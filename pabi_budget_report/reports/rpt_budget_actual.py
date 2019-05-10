@@ -203,7 +203,7 @@ class RPTBudgetActualLine(models.Model):
     contract_start_date = fields.Char('contract start date')
     contract_end_date = fields.Char('contract end date')
     product_category = fields.Char('product category')
-    product_code = fields.Char('product code')
+    product_code = fields.Integer('product code')
     product_name = fields.Char('product name')
     purchasing_method = fields.Char('purchasing method')
     activity_group = fields.Char('activity group')
