@@ -1243,10 +1243,19 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
     def _create_expense_analytic_line(self):
         
         inv_number = self.adjust_id.invoice_id.number
+        inv_movl_ids = self.adjust_id.invoice_id.move_id.line_id
+        inv_movl_id = ""
+        for inv_movl in inv_movl_ids:
+            if inv_movl.analytic_account_id:
+                inv_movl_id = inv_movl.id
+                break
         _logger.info("inv_number: %s", str(inv_number))
+        _logger.info("inv_movl_ids: %s", str(inv_movl_ids))
+        _logger.info("inv_movl_id: %s", str(inv_movl_id))
         
         domain = []
-        domain.append(("document", "=", inv_number))
+#         domain.append(("document", "=", inv_number))
+        domain.append(("move_id", "=", inv_movl_id))
                 
         analytic_line = self.env['account.analytic.line']
         invoice_line_id = self.invoice_line_id
