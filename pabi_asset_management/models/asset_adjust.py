@@ -418,11 +418,8 @@ class AccountAssetAdjust(models.Model):
                 self.adjust_asset_to_expense_ids += adjust_line
         # Expense => Asset
         elif self.adjust_type == 'expense_to_asset':
-            _logger.info("expense_to_asset")
             if src_invoice_id:
-                _logger.info("src_invoice_id: %s", str(src_invoice_id))
                 values = self._context.get('expense_to_asset_dict', {})
-                _logger.info("context.get('expense_to_asset_dict', {}): %s", str(values))
                 for value in values:
                     adjust_line = \
                         self.env['account.asset.adjust.expense_to_asset'].new()
@@ -434,17 +431,9 @@ class AccountAssetAdjust(models.Model):
                         adjust_line.invoice_line_id.chartfield_id
                     quantity = value[3]
                     
-                    _logger.info("adjust_line.account_id: %s", str(adjust_line.account_id))
-                    _logger.info("adjust_line.product_id: %s", str(adjust_line.product_id))
-                    _logger.info("adjust_line.invoice_line_id: %s", str(adjust_line.invoice_line_id))
-                    _logger.info("adjust_line.chartfield_id: %s", str(adjust_line.chartfield_id))
-                    _logger.info("quantity: %s", str(quantity))
-                    
                     for i in range(quantity):
-                        _logger.info("i: %s", i)
                         self.adjust_expense_to_asset_ids += adjust_line
             else:
-                _logger.info("else")
                 accounts = self.invoice_id.invoice_line.\
                     filtered(lambda l: not l.product_id).mapped('account_id')
                 for account in accounts:
@@ -452,9 +441,6 @@ class AccountAssetAdjust(models.Model):
                         self.env['account.asset.adjust.expense_to_asset'].new()
                     adjust_line.account_id = account
                     self.adjust_expense_to_asset_ids += adjust_line
-            
-            for line in self.adjust_expense_to_asset_ids:
-                _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
 
     @api.model
     def _set_asset_as_removed(self, asset, target_status):
@@ -634,7 +620,6 @@ class AccountAssetAdjust(models.Model):
                 'ship_purchase_id': self.ship_purchase_id.id, })
             
         values = self._context.get('expense_to_asset_dict', {})
-        _logger.info("values: %s", str(values))
         i = 0
         
         # --
@@ -1322,6 +1307,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values["fund_id"] = invl_analytic_line.fund_id.id
         values["document_id"] = invl_analytic_line.document_id
         values["document_line"] = invl_analytic_line.document_line
+        values["product_id"] = invl_analytic_line.product_id.id
         # follow by line_analytic_line
         values["write_uid"] = line_analytic_line.write_uid.id
         values["create_uid"] = line_analytic_line.create_uid.id
