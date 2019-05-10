@@ -49,13 +49,14 @@ class RPTBudgetFutureCommitSummary(models.TransientModel):
     @api.multi
     def _compute_results(self):
         self.ensure_one()
-        dom = []
         section_ids = []
         project_ids = []
         invest_construction_phase_ids = []
         invest_asset_ids = []
         
         Result = self.env['rpt.budget.future.commit.summary.line']
+        
+        dom += [('fiscalyear_id', '=', self.fiscalyear_id.id)]
         
         if self.chartfield_ids:
             chartfield = self.chartfield_ids
@@ -67,8 +68,6 @@ class RPTBudgetFutureCommitSummary(models.TransientModel):
             
         if self.report_type != 'all':
             dom += [('budget_view', '=', self.report_type)]
-        if self.fiscalyear_id:
-            dom += [('fiscalyear_id', '=', self.fiscalyear_id.id)]
         if self.org_id:
             dom += [('operating_unit_id.org_id', '=', self.org_id.id)]
         if self.sector_id:

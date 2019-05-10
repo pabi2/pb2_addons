@@ -20,13 +20,14 @@ class RPTBudgetCommit(models.TransientModel):
     @api.multi
     def _compute_results(self):
         self.ensure_one()
-        dom = []
         section_ids = []
         project_ids = []
         invest_construction_phase_ids = []
         invest_asset_ids = []
         
         Result = self.env['rpt.budget.commit.line']
+        
+        dom += [('fisyear', '=', self.fiscalyear_id.name)]
         
         if self.chartfield_ids:
             chartfield = self.chartfield_ids
@@ -42,8 +43,6 @@ class RPTBudgetCommit(models.TransientModel):
             dom += [('budget_method', '=', self.budget_method)]
         if self.chartfield_id:
             dom += [('source_budget_code', '=', self.chartfield_id.code)]
-        if self.fiscalyear_id:
-            dom += [('fisyear', '=', self.fiscalyear_id.name)]
         if self.org_id:
             dom += [('org_code', '=', self.org_id.code)]
         if self.charge_type:

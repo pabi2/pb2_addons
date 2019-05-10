@@ -61,6 +61,8 @@ class RPTBudgetFutureCommit(models.TransientModel):
         date_report = self.date_report
         Result = self.env['rpt.budget.future.commit.line']
         
+        dom += [('fiscalyear_id', '=', self.fiscalyear_id.id)]
+        
         if self.chartfield_ids:
             chartfield = self.chartfield_ids
             
@@ -73,8 +75,6 @@ class RPTBudgetFutureCommit(models.TransientModel):
             dom += [('budget_view', '=', self.report_type)]
         if self.date_report:
             dom += [('order_date', '=', str((datetime.strptime(str(self.date_report), '%Y-%m-%d')).strftime("%d/%m/%Y")))]
-        if self.fiscalyear_id:
-            dom += [('fiscalyear_id', '=', self.fiscalyear_id.id)]
         if self.org_id:
             dom += [('operating_unit_id.org_id', '=', self.org_id.id)]
         if self.sector_id:
