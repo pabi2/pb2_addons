@@ -111,8 +111,13 @@ class AccountAssetRequest(models.Model):
     @api.onchange('responsible_user_id')
     def _compute_boss_ids(self):
         if self.responsible_user_id:
-            self.boss_ids = self.responsible_user_id.employee_id.section_id.boss_ids.ids
-
+            boss = self.responsible_user_id.employee_id.section_id.boss_ids
+            if self.responsible_user_id.employee_id not in [x.employee_id for x in boss]:
+                self.boss_ids = boss.ids
+            else:
+                fund=self.env['wkf.cmd.boss.level.approval'].search([('employee_id','=',self.responsible_user_id.employee_id.id)]) 
+                self.boss_ids = [ x.id for x in boss if x.level.id > fund.level.id ]
+                
     # Building / Floor / Room
     @api.multi
     @api.constrains('building_id', 'floor_id', 'room_id')
