@@ -418,7 +418,9 @@ class AccountAssetAdjust(models.Model):
                 self.adjust_asset_to_expense_ids += adjust_line
         # Expense => Asset
         elif self.adjust_type == 'expense_to_asset':
+            _logger.info("expense_to_asset")
             if src_invoice_id:
+                _logger.info("src_invoice_id: %s", str(src_invoice_id))
                 values = self._context.get('expense_to_asset_dict', {})
                 _logger.info("context.get('expense_to_asset_dict', {}): %s", str(values))
                 for value in values:
@@ -434,6 +436,7 @@ class AccountAssetAdjust(models.Model):
                     for i in range(quantity):
                         self.adjust_expense_to_asset_ids += adjust_line
             else:
+                _logger.info("else")
                 accounts = self.invoice_id.invoice_line.\
                     filtered(lambda l: not l.product_id).mapped('account_id')
                 for account in accounts:
