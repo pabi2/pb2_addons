@@ -626,6 +626,7 @@ class AccountAssetAdjust(models.Model):
             line.account_analytic_id = Analytic.create_matched_analytic(line)
             line.invoice_line_id = invoice_line_id
             _logger.info("line.id: %s", str(line.id))
+            _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
                 
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,
@@ -1331,7 +1332,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
     @api.model
     def _assign_move_line_with_invoice_line(self, move):
         invoice_line = self.invoice_line_id
-#         _logger.info("self.invoice_line_id: %s", str(invoice_line))
+        _logger.info("self.invoice_line_id: %s", str(invoice_line))
         for movl in move.line_id:
 #             _logger.info("movl_id: %s", str(movl.id))
             if movl.credit:
