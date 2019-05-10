@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_budget_commit_report" pageWidth="11040" pageHeight="20000" columnWidth="11000" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_budget_commit_report" pageWidth="9040" pageHeight="20000" columnWidth="9000" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="10238"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="border_box" lineSpacing="Single">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
@@ -23,33 +23,6 @@
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
 	</queryString>
-	<field name="fisyear" class="java.lang.String">
-		<fieldDescription><![CDATA[fisyear]]></fieldDescription>
-	</field>
-	<field name="period" class="java.lang.String">
-		<fieldDescription><![CDATA[period]]></fieldDescription>
-	</field>
-	<field name="budget_commit_type" class="java.lang.String">
-		<fieldDescription><![CDATA[budget_commit_type]]></fieldDescription>
-	</field>
-	<field name="charge_type" class="java.lang.String">
-		<fieldDescription><![CDATA[charge_type]]></fieldDescription>
-	</field>
-	<field name="budget_method" class="java.lang.String">
-		<fieldDescription><![CDATA[budget_method]]></fieldDescription>
-	</field>
-	<field name="doctype" class="java.lang.String">
-		<fieldDescription><![CDATA[doctype]]></fieldDescription>
-	</field>
-	<field name="budget_view" class="java.lang.String">
-		<fieldDescription><![CDATA[budget_view]]></fieldDescription>
-	</field>
-	<field name="source_budget_code" class="java.lang.String">
-		<fieldDescription><![CDATA[source_budget_code]]></fieldDescription>
-	</field>
-	<field name="source_budget_name" class="java.lang.String">
-		<fieldDescription><![CDATA[source_budget_name]]></fieldDescription>
-	</field>
 	<field name="doc_date" class="java.lang.String">
 		<fieldDescription><![CDATA[doc_date]]></fieldDescription>
 	</field>
@@ -59,8 +32,8 @@
 	<field name="document" class="java.lang.String">
 		<fieldDescription><![CDATA[document]]></fieldDescription>
 	</field>
-	<field name="item" class="java.lang.String">
-		<fieldDescription><![CDATA[item]]></fieldDescription>
+	<field name="amvl_item" class="java.lang.String">
+		<fieldDescription><![CDATA[amvl_item]]></fieldDescription>
 	</field>
 	<field name="amount" class="java.lang.String">
 		<fieldDescription><![CDATA[amount]]></fieldDescription>
@@ -71,11 +44,11 @@
 	<field name="ref_document" class="java.lang.String">
 		<fieldDescription><![CDATA[ref_document]]></fieldDescription>
 	</field>
+	<field name="document_ref" class="java.lang.String">
+		<fieldDescription><![CDATA[document_ref]]></fieldDescription>
+	</field>
 	<field name="schedule_date" class="java.lang.String">
 		<fieldDescription><![CDATA[schedule_date]]></fieldDescription>
-	</field>
-	<field name="id" class="java.lang.String">
-		<fieldDescription><![CDATA[id]]></fieldDescription>
 	</field>
 	<field name="po_contract" class="java.lang.String">
 		<fieldDescription><![CDATA[po_contract]]></fieldDescription>
@@ -221,21 +194,6 @@
 	<field name="project_date_close_cond" class="java.lang.String">
 		<fieldDescription><![CDATA[project_date_close_cond]]></fieldDescription>
 	</field>
-	<field name="project_date_approved" class="java.lang.String">
-		<fieldDescription><![CDATA[project_date_approved]]></fieldDescription>
-	</field>
-	<field name="contract_date_start" class="java.lang.String">
-		<fieldDescription><![CDATA[contract_date_start]]></fieldDescription>
-	</field>
-	<field name="contract_date_end" class="java.lang.String">
-		<fieldDescription><![CDATA[contract_date_end]]></fieldDescription>
-	</field>
-	<field name="project_date_end_proposal" class="java.lang.String">
-		<fieldDescription><![CDATA[project_date_end_proposal]]></fieldDescription>
-	</field>
-	<field name="project_date_terminate" class="java.lang.String">
-		<fieldDescription><![CDATA[project_date_terminate]]></fieldDescription>
-	</field>
 	<field name="pm" class="java.lang.String">
 		<fieldDescription><![CDATA[pm]]></fieldDescription>
 	</field>
@@ -284,11 +242,11 @@
 	<field name="project_c_date_expansion" class="java.lang.String">
 		<fieldDescription><![CDATA[project_c_date_expansion]]></fieldDescription>
 	</field>
-	<field name="requested_by" class="java.lang.String">
-		<fieldDescription><![CDATA[requested_by]]></fieldDescription>
+	<field name="request_by" class="java.lang.String">
+		<fieldDescription><![CDATA[request_by]]></fieldDescription>
 	</field>
-	<field name="requested_by_name" class="java.lang.String">
-		<fieldDescription><![CDATA[requested_by_name]]></fieldDescription>
+	<field name="request_by_name" class="java.lang.String">
+		<fieldDescription><![CDATA[request_by_name]]></fieldDescription>
 	</field>
 	<field name="approver" class="java.lang.String">
 		<fieldDescription><![CDATA[approver]]></fieldDescription>
@@ -303,58 +261,44 @@
 		<fieldDescription><![CDATA[prepared_by_name]]></fieldDescription>
 	</field>
 	<pageHeader>
-		<band height="75" splitType="Stretch">
+		<band height="60" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="280" height="15"/>
+				<reportElement x="0" y="0" width="240" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[รายงานผูกพันคงค้าง PR/PO/EX]]></text>
+				<text><![CDATA[รายงานข้อมูลจ่ายจริง]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="15" width="100" height="15"/>
+				<reportElement x="0" y="15" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Budget View]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="100" y="15" width="180" height="15" backcolor="#00CCCC"/>
+				<reportElement x="80" y="15" width="160" height="15" backcolor="#00CCCC"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{budget_overview}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="30" width="100" height="15" backcolor="#00CCCC"/>
+				<reportElement x="0" y="30" width="80" height="15" backcolor="#00CCCC"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Budget Method]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="100" y="30" width="180" height="15" backcolor="#00CCCC"/>
+				<reportElement x="80" y="30" width="160" height="15" backcolor="#00CCCC"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{budget_method}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="45" width="100" height="15" backcolor="#00CCCC"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Fiscal Year]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="100" y="45" width="180" height="15" backcolor="#00CCCC"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{fiscal_year}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="0" y="60" width="280" height="15" backcolor="#00CCCC"/>
+				<reportElement x="0" y="45" width="240" height="15" backcolor="#00CCCC"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
@@ -365,1334 +309,1110 @@
 	<columnHeader>
 		<band height="15" splitType="Stretch">
 			<staticText>
-				<reportElement style="border_box" x="0" y="0" width="50" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[fisyear]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="50" y="0" width="50" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[period]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="100" y="0" width="100" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[budget commit type]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="200" y="0" width="80" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[charge type]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="280" y="0" width="80" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[budget method]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="360" y="0" width="100" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[doctype]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="460" y="0" width="80" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[budget view]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="540" y="0" width="100" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[source budget code]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="640" y="0" width="200" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[source budget name]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="840" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="0" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[doc date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="920" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="80" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[posting date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="1000" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="160" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[document]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="1080" y="0" width="30" height="15"/>
+				<reportElement style="border_box" x="240" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[item]]></text>
+				<text><![CDATA[amvl item]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="1110" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="320" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="1190" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="400" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[detail]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="1390" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="480" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[ref document]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="1470" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="560" y="0" width="80" height="15"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[document ref]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="640" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[schedule date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="1550" y="0" width="20" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[id]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="1570" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="720" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[po contract]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="1650" y="0" width="100" height="15"/>
+				<reportElement style="border_box" x="800" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[contract start date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="1750" y="0" width="100" height="15"/>
+				<reportElement style="border_box" x="900" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[contract end date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="1850" y="0" width="100" height="15"/>
+				<reportElement style="border_box" x="1000" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[product category]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="1950" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="1100" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[product code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="2030" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="1180" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[product name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="2230" y="0" width="120" height="15"/>
+				<reportElement style="border_box" x="1330" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[purchasing method]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="2350" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="1430" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[activity group]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="2430" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="1510" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[activity group name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="2630" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="1660" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[activity]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="2710" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="1740" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[activity name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="2910" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="1890" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[activity rpt]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="2990" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="1970" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[activity rpt name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="3190" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="2120" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[account code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="3270" y="0" width="100" height="15"/>
+				<reportElement style="border_box" x="2200" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[account name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="3370" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="2350" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[partner code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="3450" y="0" width="120" height="15"/>
+				<reportElement style="border_box" x="2430" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[partner name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="3570" y="0" width="50" height="15"/>
+				<reportElement style="border_box" x="2580" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[org code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="3620" y="0" width="50" height="15"/>
+				<reportElement style="border_box" x="2660" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[org name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="3670" y="0" width="50" height="15"/>
+				<reportElement style="border_box" x="2810" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[section]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="3720" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="2890" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[section name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="3920" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="3040" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[costcenter]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="4000" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="3120" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[costcenter name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="4200" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="3270" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[costcenter used]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="4280" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="3370" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[costcenter name used]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="4480" y="0" width="50" height="15"/>
+				<reportElement style="border_box" x="3520" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[mission]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="4530" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="3600" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[functional area]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="4610" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="3700" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[functional area name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="4810" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="3850" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[program group]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="4890" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="3930" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[program group name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="5090" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="4080" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[program]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="5170" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="4160" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[program name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="5370" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="4310" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project group]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="5450" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="4390" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[propect group name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="5650" y="0" width="100" height="15"/>
+				<reportElement style="border_box" x="4540" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[master plan code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="5750" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="4640" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[master plan name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="5950" y="0" width="60" height="15"/>
+				<reportElement style="border_box" x="4790" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project type]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="6010" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="4870" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project type name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="6210" y="0" width="120" height="15"/>
+				<reportElement style="border_box" x="5020" y="0" width="120" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project operation code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="6330" y="0" width="120" height="15"/>
+				<reportElement style="border_box" x="5140" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project operation name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="6450" y="0" width="120" height="15"/>
+				<reportElement style="border_box" x="5290" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project fund code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="6570" y="0" width="100" height="15"/>
+				<reportElement style="border_box" x="5390" y="0" width="130" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project fund name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="6670" y="0" width="100" height="15"/>
+				<reportElement style="border_box" x="5520" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project date start]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="6770" y="0" width="100" height="15"/>
+				<reportElement style="border_box" x="5620" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project date end]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="6870" y="0" width="150" height="15"/>
+				<reportElement style="border_box" x="5720" y="0" width="140" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project date start spending]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="7020" y="0" width="150" height="15"/>
+				<reportElement style="border_box" x="5860" y="0" width="140" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project date end spending]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="7170" y="0" width="100" height="15"/>
+				<reportElement style="border_box" x="6000" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project date close]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="7270" y="0" width="150" height="15"/>
+				<reportElement style="border_box" x="6100" y="0" width="120" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project date close cond]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="7420" y="0" width="150" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[project date approved]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="7570" y="0" width="100" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[contract date start]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="7670" y="0" width="100" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[contract date end]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="7770" y="0" width="150" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[project date end proposal]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="7920" y="0" width="150" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[project date terminate]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="8070" y="0" width="50" height="15"/>
+				<reportElement style="border_box" x="6220" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[pm]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="8120" y="0" width="120" height="15"/>
+				<reportElement style="border_box" x="6300" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[pm name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="8240" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="6450" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project status]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="8320" y="0" width="50" height="15"/>
+				<reportElement style="border_box" x="6530" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[sector]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="8370" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="6610" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[sector name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="8570" y="0" width="60" height="15"/>
+				<reportElement style="border_box" x="6760" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[sub sector]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="8630" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="6840" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[sub sector name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="8830" y="0" width="50" height="15"/>
+				<reportElement style="border_box" x="6990" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[division]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="8880" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="7070" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[division name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="9080" y="0" width="100" height="15"/>
+				<reportElement style="border_box" x="7220" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[section program]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="9180" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="7320" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[section program name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="9380" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="7470" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project c code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="9460" y="0" width="200" height="15"/>
+				<reportElement style="border_box" x="7550" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project c name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="9660" y="0" width="100" height="15"/>
+				<reportElement style="border_box" x="7700" y="0" width="120" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project c date start]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="9760" y="0" width="100" height="15"/>
+				<reportElement style="border_box" x="7820" y="0" width="100" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project c date end]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="9860" y="0" width="120" height="15"/>
+				<reportElement style="border_box" x="7920" y="0" width="120" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[project c date expansion]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="9980" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="8040" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[requested by]]></text>
+				<text><![CDATA[request by]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="10060" y="0" width="120" height="15"/>
+				<reportElement style="border_box" x="8120" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[requested by name]]></text>
+				<text><![CDATA[request by name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="10180" y="0" width="50" height="15"/>
+				<reportElement style="border_box" x="8270" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[approver]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="10230" y="0" width="120" height="15"/>
+				<reportElement style="border_box" x="8350" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[approver name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="10350" y="0" width="80" height="15"/>
+				<reportElement style="border_box" x="8500" y="0" width="80" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[prepared by]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="border_box" x="10430" y="0" width="120" height="15"/>
+				<reportElement style="border_box" x="8580" y="0" width="150" height="15"/>
 				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[prepared by name]]></text>
 			</staticText>
-			<staticText>
-				<reportElement style="border_box" x="10550" y="0" width="50" height="15"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[ ]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" mode="Opaque" x="10550" y="0" width="100" height="15" backcolor="#FFFF33"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Days]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" mode="Opaque" x="10650" y="0" width="100" height="15" backcolor="#FFFF33"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Aging]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="border_box" mode="Opaque" x="10750" y="0" width="100" height="15" backcolor="#FFFF33"/>
-				<textElement lineSpacing="Single">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Group Aging]]></text>
-			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="30" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<textField>
-				<reportElement style="border_box" x="0" y="0" width="50" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{fisyear} ? $F{fisyear} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="50" y="0" width="50" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{period} ? $F{period} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="100" y="0" width="100" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{budget_commit_type} ? $F{budget_commit_type} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="200" y="0" width="80" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{charge_type} ? $F{charge_type} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="280" y="0" width="80" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{budget_method} ? $F{budget_method} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="360" y="0" width="100" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{doctype} ? $F{doctype} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="460" y="0" width="80" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{budget_view} ? $F{budget_view} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="540" y="0" width="100" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{source_budget_code} ? $F{source_budget_code} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="640" y="0" width="200" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{source_budget_name} ? $F{source_budget_name} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="840" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="0" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_date} ? $F{doc_date} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="920" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="80" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{posting_date} ? $F{posting_date} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="1000" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="160" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{document} ? $F{document} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="1080" y="0" width="30" height="30"/>
+				<reportElement style="border_box" x="240" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{item} ? $F{item} : ""]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amvl_item} ? $F{amvl_item} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="1110" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="320" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{amount})) : 0.00]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="1190" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="400" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{detail} ? $F{detail} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="1390" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="480" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{ref_document} ? $F{ref_document} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="1470" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="560" y="0" width="80" height="40"/>
+				<textElement lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{document_ref} ? $F{document_ref} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="640" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{schedule_date} ? $F{schedule_date} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="1550" y="0" width="20" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{id} ? $F{id} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="1570" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="720" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_contract} ? $F{po_contract} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="1650" y="0" width="100" height="30"/>
+				<reportElement style="border_box" x="800" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract_start_date} ? $F{contract_start_date} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="1750" y="0" width="100" height="30"/>
+				<reportElement style="border_box" x="900" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract_end_date} ? $F{contract_end_date} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="1850" y="0" width="100" height="30"/>
+				<reportElement style="border_box" x="1000" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{product_category} ? $F{product_category} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="1950" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="1100" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{product_code} ? $F{product_code} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="2030" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="1180" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{product_name} ? $F{product_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="2230" y="0" width="120" height="30"/>
+				<reportElement style="border_box" x="1330" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{purchasing_method} ? $F{purchasing_method} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="2350" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="1430" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{activity_group} ? $F{activity_group} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="2430" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="1510" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{activity_group_name} ? $F{activity_group_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="2630" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="1660" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{activity} ? $F{activity} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="2710" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="1740" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{activity_name} ? $F{activity_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="2910" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="1890" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{activity_rpt} ? $F{activity_rpt} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="2990" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="1970" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{activity_rpt_name} ? $F{activity_rpt_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="3190" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="2120" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{account_code} ? $F{account_code} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="3270" y="0" width="100" height="30"/>
+				<reportElement style="border_box" x="2200" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{account_name} ? $F{account_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="3370" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="2350" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_code} ? $F{partner_code} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="3450" y="0" width="120" height="30"/>
+				<reportElement style="border_box" x="2430" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name} ? $F{partner_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="3570" y="0" width="50" height="30"/>
+				<reportElement style="border_box" x="2580" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{org_code} ? $F{org_code} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="3620" y="0" width="50" height="30"/>
+				<reportElement style="border_box" x="2660" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{org_name} ? $F{org_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="3670" y="0" width="50" height="30"/>
+				<reportElement style="border_box" x="2810" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{section} ? $F{section} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="3720" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="2890" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{section_name} ? $F{section_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="3920" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="3040" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{costcenter} ? $F{costcenter} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="4000" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="3120" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{costcenter_name} ? $F{costcenter_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="4200" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="3270" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{costcenter_used} ? $F{costcenter_used} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="4280" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="3370" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{costcenter_name_used} ? $F{costcenter_name_used} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="4480" y="0" width="50" height="30"/>
+				<reportElement style="border_box" x="3520" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{mission} ? $F{mission} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="4530" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="3600" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{functional_area} ? $F{functional_area} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="4610" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="3700" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{functional_area_name} ? $F{functional_area_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="4810" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="3850" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{program_group} ? $F{program_group} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="4890" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="3930" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{program_group_name} ? $F{program_group_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="5090" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="4080" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{program} ? $F{program} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="5170" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="4160" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{program_name} ? $F{program_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="5370" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="4310" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_group} ? $F{project_group} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="5450" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="4390" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{propect_group_name} ? $F{propect_group_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="5650" y="0" width="100" height="30"/>
+				<reportElement style="border_box" x="4540" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{master_plan_code} ? $F{master_plan_code} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="5750" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="4640" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{master_plan_name} ? $F{master_plan_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="5950" y="0" width="60" height="30"/>
+				<reportElement style="border_box" x="4790" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_type} ? $F{project_type} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="6010" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="4870" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_type_name} ? $F{project_type_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="6210" y="0" width="120" height="30"/>
+				<reportElement style="border_box" x="5020" y="0" width="120" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_operation_code} ? $F{project_operation_code} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="6330" y="0" width="120" height="30"/>
+				<reportElement style="border_box" x="5140" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_operation_name} ? $F{project_operation_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="6450" y="0" width="120" height="30"/>
+				<reportElement style="border_box" x="5290" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_fund_code} ? $F{project_fund_code} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="6570" y="0" width="100" height="30"/>
+				<reportElement style="border_box" x="5390" y="0" width="130" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_fund_name} ? $F{project_fund_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="6670" y="0" width="100" height="30"/>
+				<reportElement style="border_box" x="5520" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_date_start} ? $F{project_date_start} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="6770" y="0" width="100" height="30"/>
+				<reportElement style="border_box" x="5620" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_date_end} ? $F{project_date_end} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="6870" y="0" width="150" height="30"/>
+				<reportElement style="border_box" x="5720" y="0" width="140" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_date_start_spending} ? $F{project_date_start_spending} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="7020" y="0" width="150" height="30"/>
+				<reportElement style="border_box" x="5860" y="0" width="140" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_date_end_spending} ? $F{project_date_end_spending} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="7170" y="0" width="100" height="30"/>
+				<reportElement style="border_box" x="6000" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_date_close} ? $F{project_date_close} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="7270" y="0" width="150" height="30"/>
+				<reportElement style="border_box" x="6100" y="0" width="120" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_date_close_cond} ? $F{project_date_close_cond} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="7420" y="0" width="150" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_date_approved} ? $F{project_date_approved} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="7570" y="0" width="100" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract_date_start} ? $F{contract_date_start} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="7670" y="0" width="100" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract_date_end} ? $F{contract_date_end} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="7770" y="0" width="150" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_date_end_proposal} ? $F{project_date_end_proposal} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="7920" y="0" width="150" height="30"/>
-				<textElement lineSpacing="Single">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_date_terminate} ? $F{project_date_terminate} : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="border_box" x="8070" y="0" width="50" height="30"/>
+				<reportElement style="border_box" x="6220" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{pm} ? $F{pm} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="8120" y="0" width="120" height="30"/>
+				<reportElement style="border_box" x="6300" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{pm_name} ? $F{pm_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="8240" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="6450" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_status} ? $F{project_status} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="8320" y="0" width="50" height="30"/>
+				<reportElement style="border_box" x="6530" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{sector} ? $F{sector} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="8370" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="6610" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{sector_name} ? $F{sector_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="8570" y="0" width="60" height="30"/>
+				<reportElement style="border_box" x="6760" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{sub_sector} ? $F{sub_sector} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="8630" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="6840" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{sub_sector_name} ? $F{sub_sector_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="8830" y="0" width="50" height="30"/>
+				<reportElement style="border_box" x="6990" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{division} ? $F{division} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="8880" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="7070" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{division_name} ? $F{division_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="9080" y="0" width="100" height="30"/>
+				<reportElement style="border_box" x="7220" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{section_program} ? $F{section_program} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="9180" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="7320" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{section_program_name} ? $F{section_program_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="9380" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="7470" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_c_code} ? $F{project_c_code} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="9460" y="0" width="200" height="30"/>
+				<reportElement style="border_box" x="7550" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_c_name} ? $F{project_c_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="9660" y="0" width="100" height="30"/>
+				<reportElement style="border_box" x="7700" y="0" width="120" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_c_date_start} ? $F{project_c_date_start} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="9760" y="0" width="100" height="30"/>
+				<reportElement style="border_box" x="7820" y="0" width="100" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_c_date_end} ? $F{project_c_date_end} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="9860" y="0" width="120" height="30"/>
+				<reportElement style="border_box" x="7920" y="0" width="120" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_c_date_expansion} ? $F{project_c_date_expansion} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="9980" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="8040" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{requested_by} ? $F{requested_by} : ""]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{request_by} ? $F{request_by} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="10060" y="0" width="120" height="30"/>
+				<reportElement style="border_box" x="8120" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{requested_by_name} ? $F{requested_by_name} : ""]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{request_by_name} ? $F{request_by_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="10180" y="0" width="50" height="30"/>
+				<reportElement style="border_box" x="8270" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{approver} ? $F{approver} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="10230" y="0" width="120" height="30"/>
+				<reportElement style="border_box" x="8350" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{approver_name} ? $F{approver_name} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="10350" y="0" width="80" height="30"/>
+				<reportElement style="border_box" x="8500" y="0" width="80" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{prepared_by} ? $F{prepared_by} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="border_box" x="10430" y="0" width="120" height="30"/>
+				<reportElement style="border_box" x="8580" y="0" width="150" height="40"/>
 				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>

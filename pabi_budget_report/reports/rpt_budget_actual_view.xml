@@ -40,7 +40,7 @@
 		    <field name="view_mode">form</field>
 		    <field name="view_id" ref="view_rpt_budget_actual_wizard" />
 		    <field name="target">new</field>
-		    <field name="context">{'action_type': 'my_budget_report'}</field>
+		    <field name="context">{"default_action_type":"my_budget_report"}</field>
   		</record>
   		
   		<menuitem id="menu_rpt_budget_actual" parent="account_budget_activity.menu_action_budget_report" sequence="109" 

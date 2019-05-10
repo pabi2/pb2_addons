@@ -9,10 +9,6 @@ class RPTBudgetCommit(models.TransientModel):
     _inherit = 'report.budget.common.multi'
     
     
-    purchase_id = fields.Many2one(
-        'purchase.order',
-        string='Purchase Order',
-    )
     results = fields.Many2many(
         'rpt.budget.commit.line',
         string='Results',
@@ -32,63 +28,59 @@ class RPTBudgetCommit(models.TransientModel):
         
         Result = self.env['rpt.budget.commit.line']
         
-        """if self.chartfield_ids:
+        if self.chartfield_ids:
             chartfield = self.chartfield_ids
             
             section_ids = self._get_chartfield_ids(chartfield, 'sc:')
             project_ids = self._get_chartfield_ids(chartfield, 'pj:')
             invest_construction_phase_ids = self._get_chartfield_ids(chartfield, 'cp:')
             invest_asset_ids = self._get_chartfield_ids(chartfield, 'ia:')
-          
-        if self.report_type != 'all':
-            dom += [('budget_view', '=', self.report_type)]
-        if self.date_report:
-            dom += [('order_date', '=', str((datetime.strptime(str(self.date_report), '%Y-%m-%d')).strftime("%d/%m/%Y")))]
+            
+        if self.chart_view:
+            dom += [('budget_view', '=', self.chart_view)]
+        if self.budget_method:
+            dom += [('budget_method', '=', self.budget_method)]
+        if self.chartfield_id:
+            dom += [('source_budget_code', '=', self.chartfield_id.code)]
         if self.fiscalyear_id:
-            dom += [('fiscalyear_id', '=', self.fiscalyear_id.id)]
+            dom += [('fisyear', '=', self.fiscalyear_id.name)]
         if self.org_id:
-            dom += [('operating_unit_id.org_id', '=', self.org_id.id)]
+            dom += [('org_code', '=', self.org_id.code)]
+        if self.charge_type:
+            dom += [('charge_type', '=', self.charge_type)]
         if self.sector_id:
-            dom += [('sector_code', '=', self.sector_id.code)]
+            dom += [('sector', '=', self.sector_id.code)]
         if self.subsector_id:
-            dom += [('subsector_code', '=', self.subsector_id.code)]
+            dom += [('subsector', '=', self.subsector_id.code)]
         if self.division_id:
-            dom += [('division_code', '=', self.division_id.code)]
+            dom += [('division', '=', self.division_id.code)]
         if self.section_id:
             section_ids.append(self.section_id.id)
         if self.section_program_id:
-            dom += [('section_program_id', '=', self.section_program_id.id)]
-        if self.invest_asset_id:
-            invest_asset_ids.append(self.invest_asset_id.id)
-        if self.activity_group_id:
-            dom += [('activity_group_id', '=', self.activity_group_id.id)]
-        if self.activity_id:
-            dom += [('activity_rpt_id', '=', self.activity_id.id)]
-        if self.functional_area_id:
-            dom += [('functional_area_id', '=', self.functional_area_id.id)]
-        if self.program_group_id:
-            dom += [('program_group_id', '=', self.program_group_id.id)]
-        if self.program_id:
-            dom += [('program_id', '=', self.program_id.id)]
-        if self.project_group_id:
-            dom += [('project_group_id', '=', self.project_group_id.id)]
-        if self.project_id:
-            project_ids.append(self.project_id.id)
-        if self.invest_construction_id:
-            dom += [('invest_construction_id', '=', self.invest_construction_id.id)]
-        if self.purchase_id:
-            dom += [('purchase_id', '=', self.purchase_id.id)]
+            dom += [('section_program', '=', self.section_program_id.code)]
             
         if len(section_ids) > 0:
-            dom += [('section_id', 'in', section_ids)]
+            search = self.env['res.section'].search([['id','in',section_ids]])
+            section = [x.code for x in search]
+            
+            dom += [('source_budget_code', 'in', section)]
         if len(project_ids) > 0:
-            dom += [('project_id', 'in', project_ids)]
+            search = self.env['res.project'].search([['id','in',project_ids]])
+            project = [x.code for x in search]
+            
+            dom += [('source_budget_code', 'in', project)]
         if len(invest_construction_phase_ids) > 0:
-            dom += [('invest_construction_phase_id', 'in', invest_construction_phase_ids)]
+            search = self.env['res.invest.construction.phase'].search([['id','in',invest_construction_phase_ids]])
+            phase = [x.code for x in search]
+            
+            dom += [('source_budget_code', 'in', phase)]
         if len(invest_asset_ids) > 0:
-            dom += [('invest_asset_id', 'in', invest_asset_ids)]
-        """
-        self.results = Result.search(dom, limit=5)
+            search = self.env['res.invest.asset'].search([['id','in',invest_asset_ids]])
+            asset = [x.code for x in search]
+            
+            dom += [('source_budget_code', 'in', asset)]
+        
+        self.results = Result.search(dom)
     
     
     @api.multi
@@ -105,7 +97,7 @@ class RPTBudgetCommit(models.TransientModel):
         data['parameters']['report_type'] = ''
         data['parameters']['fiscal_year'] = self.fiscalyear_id.name or ''
         data['parameters']['org'] = self.org_id and self.org_id.operating_unit_id.name or ''
-        data['parameters']['po_document'] = self.purchase_id and self.purchase_id.name or ''
+        data['parameters']['po_document'] = ''#self.purchase_id and self.purchase_id.name or ''
         data['parameters']['order_date'] = ''
         data['parameters']['budget_overview'] = self.chart_view or ''
         data['parameters']['budget_method'] = self.budget_method or ''
@@ -122,9 +114,9 @@ class RPTBudgetCommit(models.TransientModel):
        
 class RPTBudgetCommitLine(models.Model):
     _name = 'rpt.budget.commit.line'
-    _auto = False
+    #_auto = False
     
-    id = fields.Integer('ID')
+    #id = fields.Integer('ID')
     fisyear = fields.Char('fisyear')
     period = fields.Char('period')
     budget_commit_type = fields.Char('budget commit type')
@@ -218,9 +210,9 @@ class RPTBudgetCommitLine(models.Model):
     prepared_by = fields.Char('prepared by')
     prepared_by_name = fields.Char('prepared by name')
     
-    
+    """
     def _get_sql_view(self):
-        sql_view = """
+        sql_view = 
         SELECT 
             ROW_NUMBER() over (order by document) AS id,
             fisyear,
@@ -316,12 +308,12 @@ class RPTBudgetCommitLine(models.Model):
             prepared_by,
             prepared_by_name
         FROM issi_budget_summary_commit_view
-        """
+        
         return sql_view
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
+        cr.execute(CREATE OR REPLACE VIEW %s AS (%s)
                    % (self._table, self._get_sql_view()))
-        
+     """   
 

@@ -39,3 +39,8 @@ jasper_reports.report_jasper(
                             'rpt.budget.commit.line',  # Model View name
                             parser=budget_report_parser,
 )
+jasper_reports.report_jasper(
+                            'report.rpt_budget_actual_report',  # report_name in report_data.xml
+                            'rpt.budget.actual.line',  # Model View name
+                            parser=budget_report_parser,
+)

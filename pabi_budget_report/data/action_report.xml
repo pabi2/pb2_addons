@@ -39,7 +39,7 @@
         
     	<record id="rpt_budget_commit_jasper_report" model="ir.actions.report.xml">
         	<field name="auto">True</field>
-            <field name="model">issi.budget.commit.view</field>
+            <field name="model">rpt.budget.commit.line</field>
             <field name="name">Commit</field>
             <field name="report_name">rpt_budget_commit_report</field>
             <field name="report_rml">pabi_budget_report/reports/rpt_budget_commit_report.jrxml</field>
@@ -51,8 +51,26 @@
         </record>
         <record id="rpt_budget_commit_report_values" model="ir.values">
             <field name="name">Commit</field>
-            <field name="model">issi.budget.commit.view</field>
+            <field name="model">rpt.budget.commit.line</field>
             <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(rpt_budget_commit_jasper_report)"/>
+        </record>
+        
+    	<record id="rpt_budget_actual_jasper_report" model="ir.actions.report.xml">
+        	<field name="auto">True</field>
+            <field name="model">rpt.budget.actual.line</field>
+            <field name="name">Actual</field>
+            <field name="report_name">rpt_budget_actual_report</field>
+            <field name="report_rml">pabi_budget_report/reports/rpt_budget_actual_report.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+        </record>
+        <record id="rpt_budget_actual_report_values" model="ir.values">
+            <field name="name">Actual</field>
+            <field name="model">rpt.budget.actual.line</field>
+            <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(rpt_budget_actual_jasper_report)"/>
         </record>
     </data>
 </openerp>

@@ -3,7 +3,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="border_box">
+	<style name="border_box" lineSpacing="Single">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 			<topPen lineWidth="0.5" lineStyle="Solid"/>
 			<leftPen lineWidth="0.5" lineStyle="Solid"/>
@@ -54,84 +54,84 @@
 		<band height="20" splitType="Stretch">
 			<staticText>
 				<reportElement style="border_box" x="0" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fiscalyear]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="100" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Doc Number]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="200" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Contract Number]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="300" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[PO ตามสัญญา]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="400" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[PO Commit]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="500" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Actual]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="600" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Remaining]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="700" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Budget View]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="800" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Budget]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="900" y="0" width="200" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Budget Name]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="1100" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Status]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="border_box" x="1200" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Close & Uncommit]]></text>
@@ -142,87 +142,87 @@
 		<band height="20" splitType="Stretch">
 			<textField>
 				<reportElement style="border_box" x="0" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{fiscalyear} ? $F{fiscalyear} : '']]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fiscalyear} ? $F{fiscalyear} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="100" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{doc_number} ? $F{doc_number} : '']]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_number} ? $F{doc_number} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="200" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{contract_number} ? $F{contract_number} : '']]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract_number} ? $F{contract_number} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="300" y="0" width="100" height="20"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{subtotal} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{subtotal})) : 0.00]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{subtotal} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{subtotal})) : 0.00]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="400" y="0" width="100" height="20"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{po_commit} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{po_commit})) : 0.00]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_commit} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{po_commit})) : 0.00]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="500" y="0" width="100" height="20"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{po_actual} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{po_actual})) : 0.00]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_actual} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{po_actual})) : 0.00]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="600" y="0" width="100" height="20"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{remaining} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{remaining})) : 0.00]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{remaining} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{remaining})) : 0.00]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="700" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{budget_view} ? $F{budget_view} : '']]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{budget_view} ? $F{budget_view} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="800" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{budget_code} ? $F{budget_code} : '']]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{budget_code} ? $F{budget_code} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="900" y="0" width="200" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{budget_name} ? $F{budget_name} : '']]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{budget_name} ? $F{budget_name} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1100" y="0" width="100" height="20"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{po_status} ? $F{po_status} : '']]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_status} ? $F{po_status} : '']]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="border_box" x="1200" y="0" width="100" height="20"/>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{close_uncommit} ? 'X' : '']]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{close_uncommit} ? 'X' : '']]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

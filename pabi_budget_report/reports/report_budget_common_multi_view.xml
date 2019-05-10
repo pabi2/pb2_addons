@@ -12,6 +12,7 @@
             	</xpath> -->
                 <xpath expr="//group[@name='criteria']" position="replace">
                     <group name="report_types">
+                        <field name="action_type" invisible="1"/>
                         <group>
                             <field name="report_type" attrs="{'invisible': [('action_type', '=', 'my_budget_report')]}"/>
                             <field name="chart_view" attrs="{'invisible': [('action_type', 'not in', ('my_budget_report'))]}"/>
@@ -25,7 +26,6 @@
                     <group name="filter" string="Filter / Group By">
                         <group>
                             <!-- Action type -->
-                            <field name="action_type" invisible="1"/>
 
                             # For menu budget overview report
                             <field name="chartfield_id" attrs="{'invisible': [('report_type', 'not in', ('all'))]}"/>
@@ -55,7 +55,7 @@
                             <field name="project_ids" widget="many2many_tags" attrs="{'invisible': [('report_type', 'not in', ('project_base'))]}" context="{'active_test': False}"/>
                         </group>
                         <group>
-                            <field name="group_by_chartfield_id" attrs="{'invisible': [('report_type', 'not in', ('all'))]}"/>
+                            <!-- <field name="group_by_chartfield_id" attrs="{'invisible': [('report_type', 'not in', ('all'))]}"/>
                             <field name="group_by_org_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset', 'invest_construction', 'personnel'))]}"/>
                             <field name="group_by_section_id"  attrs="{'invisible': [('report_type', 'not in', ('unit_base'))]}"/>
                             <field name="group_by_invest_construction_id" attrs="{'invisible': [('report_type', 'not in', ('invest_construction'))]}"/>
@@ -66,7 +66,7 @@
                             <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel'))]}"/>
                             <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel'))]}"/>
                             <field name="group_by_invest_asset_id" attrs="{'invisible': [('report_type', 'not in', ('invest_asset'))]}"/>
-                            <field name="group_by_budget_method" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
+                            <field name="group_by_budget_method" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base'))]}"/> -->
                         </group>
                     </group>
                     <notebook>

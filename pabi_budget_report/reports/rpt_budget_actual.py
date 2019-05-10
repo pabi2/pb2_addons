@@ -9,10 +9,6 @@ class RPTBudgetActual(models.TransientModel):
     _inherit = 'report.budget.common.multi'
     
     
-    purchase_id = fields.Many2one(
-        'purchase.order',
-        string='Purchase Order',
-    )
     results = fields.Many2many(
         'rpt.budget.actual.line',
         string='Results',
@@ -20,6 +16,80 @@ class RPTBudgetActual(models.TransientModel):
     )
     
     
+    @api.multi
+    def _get_sql_group_by(self):
+        group_by = []
+        if self.group_by_chartfield_id or self.group_by_section_id or self.group_by_invest_construction_phase_id or self.group_by_invest_asset_id or self.group_by_project_id:
+            group_by.append('source_budget_code')
+        if self.group_by_org_id:
+            group_by.append('org_code')
+        #if self.group_by_invest_construction_id:
+        #    group_by.append('')
+        if self.group_by_charge_type:
+            group_by.append('charge_type')
+        if self.group_by_budget_method:
+            group_by.append('budget_method')
+            
+        group_by = ','.join(group_by)
+        
+        return group_by
+    
+    @api.multi
+    def _get_sql_where(self):
+        budget_code = []
+        where_str = 'fisyear = '+self.fiscalyear_id.name
+        
+        
+        if self.chartfield_ids:
+            chartfield = self.chartfield_ids
+            
+            section_ids = self._get_chartfield_ids(chartfield, 'sc:')
+            project_ids = self._get_chartfield_ids(chartfield, 'pj:')
+            invest_construction_phase_ids = self._get_chartfield_ids(chartfield, 'cp:')
+            invest_asset_ids = self._get_chartfield_ids(chartfield, 'ia:')
+        
+        if self.chart_view:
+            where_str += """ and budget_view = '%s'"""%self.chart_view
+        if self.budget_method:
+            where_str += """ and budget_method = '%s'"""%self.budget_method
+        if self.chartfield_id:
+            budget_code.append(chartfield_id.code)
+        if self.org_id:
+            where_str += """ and org_code = '%s'"""%self.org_id.code
+        if self.charge_type:
+            where_str += """ and charge_type = '%s'"""%self.charge_type
+        if self.sector_id:
+            where_str += """ and sector = '%s'"""%self.sector_id.code
+        if self.subsector_id:
+            where_str += """ and subsector = '%s'"""%self.subsector_id.code
+        if self.division_id:
+            where_str += """ and division = '%s'"""%self.division_id.code
+        if self.section_program_id:
+            where_str += """ and section_program = '%s'"""%self.section_program_id.code
+        if self.section_id:
+            section_ids.append(self.section_id.id)
+            
+        if len(section_ids) > 0:
+            search = self.env['res.section'].search([['id','in',section_ids]])
+            for section in search:
+                budget_code.append(section.code)
+        if len(project_ids) > 0:
+            search = self.env['res.project'].search([['id','in',project_ids]])
+            for project in search:
+                budget_code.append(project.code)
+        if len(invest_construction_phase_ids) > 0:
+            search = self.env['res.invest.construction.phase'].search([['id','in',invest_construction_phase_ids]])
+            for phase in search:
+                budget_code.append(phase.code)
+        if len(invest_asset_ids) > 0:
+            search = self.env['res.invest.asset'].search([['id','in',invest_asset_ids]])
+            for asset in search:
+                budget_code.append(asset.code)
+        
+        """"if len(budget_code) > 0:
+            budget_code = ','.join(budget_code)
+            where_str += """ and source_budget_code in '%s'"""%self.section_program_id.code
+            """
     
     @api.multi
     def _compute_results(self):
@@ -32,64 +102,59 @@ class RPTBudgetActual(models.TransientModel):
         
         Result = self.env['rpt.budget.actual.line']
         
-        """if self.chartfield_ids:
+        if self.chartfield_ids:
             chartfield = self.chartfield_ids
             
             section_ids = self._get_chartfield_ids(chartfield, 'sc:')
             project_ids = self._get_chartfield_ids(chartfield, 'pj:')
             invest_construction_phase_ids = self._get_chartfield_ids(chartfield, 'cp:')
             invest_asset_ids = self._get_chartfield_ids(chartfield, 'ia:')
-          
-        if self.report_type != 'all':
-            dom += [('budget_view', '=', self.report_type)]
-        if self.date_report:
-            dom += [('order_date', '=', str((datetime.strptime(str(self.date_report), '%Y-%m-%d')).strftime("%d/%m/%Y")))]
+        
+        if self.chart_view:
+            dom += [('budget_view', '=', self.chart_view)]
+        if self.budget_method:
+            dom += [('budget_method', '=', self.budget_method)]
+        if self.chartfield_id:
+            dom += [('source_budget_code', '=', self.chartfield_id.code)]
         if self.fiscalyear_id:
-            dom += [('fiscalyear_id', '=', self.fiscalyear_id.id)]
+            dom += [('fisyear', '=', self.fiscalyear_id.name)]
         if self.org_id:
-            dom += [('operating_unit_id.org_id', '=', self.org_id.id)]
+            dom += [('org_code', '=', self.org_id.code)]
+        if self.charge_type:
+            dom += [('charge_type', '=', self.charge_type)]
         if self.sector_id:
-            dom += [('sector_code', '=', self.sector_id.code)]
+            dom += [('sector', '=', self.sector_id.code)]
         if self.subsector_id:
-            dom += [('subsector_code', '=', self.subsector_id.code)]
+            dom += [('subsector', '=', self.subsector_id.code)]
         if self.division_id:
-            dom += [('division_code', '=', self.division_id.code)]
+            dom += [('division', '=', self.division_id.code)]
         if self.section_id:
             section_ids.append(self.section_id.id)
         if self.section_program_id:
-            dom += [('section_program_id', '=', self.section_program_id.id)]
-        if self.invest_asset_id:
-            invest_asset_ids.append(self.invest_asset_id.id)
-        if self.activity_group_id:
-            dom += [('activity_group_id', '=', self.activity_group_id.id)]
-        if self.activity_id:
-            dom += [('activity_rpt_id', '=', self.activity_id.id)]
-        if self.functional_area_id:
-            dom += [('functional_area_id', '=', self.functional_area_id.id)]
-        if self.program_group_id:
-            dom += [('program_group_id', '=', self.program_group_id.id)]
-        if self.program_id:
-            dom += [('program_id', '=', self.program_id.id)]
-        if self.project_group_id:
-            dom += [('project_group_id', '=', self.project_group_id.id)]
-        if self.project_id:
-            project_ids.append(self.project_id.id)
-        if self.invest_construction_id:
-            dom += [('invest_construction_id', '=', self.invest_construction_id.id)]
-        if self.purchase_id:
-            dom += [('purchase_id', '=', self.purchase_id.id)]
+            dom += [('section_program', '=', self.section_program_id.code)]
             
         if len(section_ids) > 0:
-            dom += [('section_id', 'in', section_ids)]
+            search = self.env['res.section'].search([['id','in',section_ids]])
+            section = [x.code for x in search]
+            
+            dom += [('source_budget_code', 'in', section)]
         if len(project_ids) > 0:
-            dom += [('project_id', 'in', project_ids)]
+            search = self.env['res.project'].search([['id','in',project_ids]])
+            project = [x.code for x in search]
+            
+            dom += [('source_budget_code', 'in', project)]
         if len(invest_construction_phase_ids) > 0:
-            dom += [('invest_construction_phase_id', 'in', invest_construction_phase_ids)]
+            search = self.env['res.invest.construction.phase'].search([['id','in',invest_construction_phase_ids]])
+            phase = [x.code for x in search]
+            
+            dom += [('source_budget_code', 'in', phase)]
         if len(invest_asset_ids) > 0:
-            dom += [('invest_asset_id', 'in', invest_asset_ids)]
-        """
-        self.results = Result.search(dom, limit=5)
-        print '\n Actual Results: '+str(self.results)
+            search = self.env['res.invest.asset'].search([['id','in',invest_asset_ids]])
+            asset = [x.code for x in search]
+            
+            dom += [('source_budget_code', 'in', asset)]
+            
+        self.results = Result.search(dom)
     
     
     @api.multi
@@ -106,7 +171,7 @@ class RPTBudgetActual(models.TransientModel):
         data['parameters']['report_type'] = ''
         data['parameters']['fiscal_year'] = self.fiscalyear_id.name or ''
         data['parameters']['org'] = self.org_id and self.org_id.operating_unit_id.name or ''
-        data['parameters']['po_document'] = self.purchase_id and self.purchase_id.name or ''
+        data['parameters']['po_document'] = ''#self.purchase_id and self.purchase_id.name or ''
         data['parameters']['order_date'] = ''
         data['parameters']['budget_overview'] = self.chart_view or ''
         data['parameters']['budget_method'] = self.budget_method or ''
@@ -121,9 +186,9 @@ class RPTBudgetActual(models.TransientModel):
        
 class RPTBudgetActualLine(models.Model):
     _name = 'rpt.budget.actual.line'
-    _auto = False
+    #_auto = False
     
-    id = fields.Integer('doc date')
+    #id = fields.Integer('doc date')
     doc_date = fields.Char('doc date')
     posting_date = fields.Char('posting date')
     document = fields.Char('document')
@@ -215,9 +280,9 @@ class RPTBudgetActualLine(models.Model):
     source_budget_name = fields.Char('source budget name')
     item = fields.Integer('item')
     
-
+    """
     def _get_sql_view(self):
-        sql_view = """
+        sql_view = 
     SELECT 
         ROW_NUMBER() over (order by document,fisyear) AS id,
         doc_date,
@@ -310,12 +375,12 @@ class RPTBudgetActualLine(models.Model):
         source_budget_name,
         item
     FROM issi_budget_summary_actual_view
-        """
+        
         return sql_view
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
+        cr.execute(CREATE OR REPLACE VIEW %s AS (%s)
                    % (self._table, self._get_sql_view()))
-        
+    """
  
