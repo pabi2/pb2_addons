@@ -85,9 +85,9 @@ class HREmployee(models.Model):
         string='Status',
     )
     #add by Karndarrat.ngm 20190301
-#     report_admin = fields.Boolean(
-#         string='Report Admin'
-#         ,default=False,store=True)
+    report_admin = fields.Boolean(
+        string='Report Admin'
+        ,default=False,store=True)
     section_rpt_ids = fields.Many2many(
         'res.section',
         'hr_section_rpt_rel',
