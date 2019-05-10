@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-
+import datetime
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
@@ -10,7 +10,51 @@ class AccountMoveLine(models.Model):
         string='Budget Fund Rule Line',
         compute='_compute_budget_fund_rule_line',
     )
+    tax_code = fields.Char(
+        string='Tax',
+        compute='_compute_tax',
+    )
+    vat_amount = fields.Float(
+        string = 'VAT Amount',
+        compute='_compute_vat_amount',
+    )
 
+    @api.multi
+    def _compute_tax(self):
+        for move in self:
+            if move.doctype == 'interface_account': 
+                Fund = self.env['interface.account.entry'] 
+                domain = ([('move_id', '=', move.move_id.id)])
+                lines = Fund.search(domain)
+                tax = []
+                if lines.line_ids:
+                    for line in lines.line_ids:
+                        if line.tax_id.id:
+                            tax.append(line.tax_id.description)
+                    move.tax_code = ", ".join(tax)  
+            else:
+                tax = []
+                if move.move_id.invoice_ids:
+                    for line_invoice in move.move_id.invoice_ids.invoice_line:
+                        for tax_line in line_invoice.invoice_line_tax_id:
+                            for tax_code in tax_line:
+                                tax.append(tax_code.description)
+                    move.tax_code = ", ".join(list(dict.fromkeys(tax))) 
+                    
+    
+    @api.multi
+    def _compute_vat_amount(self):
+        for move in self:
+            if move.doctype == 'interface_account': 
+                Fund = self.env['interface.account.entry'] 
+                domain = ([('move_id', '=', move.move_id.id)])
+                lines = Fund.search(domain)
+                for line in lines.line_ids:
+                    if line.tax_id.id:
+                        move.vat_amount = line.credit
+            else:
+                move.vat_amount = abs(sum(move.move_id.invoice_ids.tax_line.mapped("amount")))
+                             
     @api.multi
     def _compute_budget_fund_rule_line(self):
         for rec in self:
@@ -102,6 +146,15 @@ class XLSXReportGlProject(models.TransientModel):
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
+    filter = fields.Selection(
+        selection_add=[('filter_clearing_date', 'Clearing date')],
+    )
+    cleaning_date_start = fields.Date(
+        string='Start Date',
+    )
+    cleaning_date_end = fields.Date(
+        string='End Date',
+    )
 
     @api.onchange('chart_view')
     def _onchange_chart_view(self):
@@ -191,8 +244,31 @@ class XLSXReportGlProject(models.TransientModel):
             dom += [('date', '>=', self.date_start)]
         if self.date_end:
             dom += [('date', '<=', self.date_end)]
-        self.results = Result.with_context(active=False).search(dom)
-        
+        if self.cleaning_date_start and self.cleaning_date_end:
+            check=Result.with_context(active=False).search(dom)
+            cleaning_ids = []
+            for record in check:
+                if record.charge_type == "external":
+                    if record.document_id!=False and record.document_id._name != "stock.picking":
+                        try:
+                            _check= ", ".join(list(filter(lambda l: l != False, [x.move_id.document_id and "bank_receipt_id" in x.move_id.document_id._columns.keys() and x.move_id.document_id.bank_receipt_id.move_id.date or False for x in record.document_id.payment_ids])))
+                            if record.document_id.type not in ("out_invoice", "out_refund"):
+                                pay_date = ", ".join(list(filter(lambda l: l != False, [x.move_id.doctype == "payment" and x.move_id.date or False for x in record.document_id.payment_ids])))
+                            if not(record.document_id._name == "account.invoice" and record.id != record.document_id.cancel_move_id.id):
+                                pay_date = ", ".join([x.move_id.date for x in self.env["interface.account.entry"].search([("number", "=", record.document_id.to_payment)]).move_id.line_id.mapped("bank_receipt_id")])
+                        except Exception:
+                            if _check and datetime.datetime.strptime(self.cleaning_date_start, "%Y-%m-%d").date() <=  datetime.datetime.strptime(_check, "%Y-%m-%d").date() <= datetime.datetime.strptime(self.cleaning_date_end, "%Y-%m-%d").date(): 
+                                cleaning_ids.append(record.id)
+                            pass    
+                        if pay_date and datetime.datetime.strptime(self.cleaning_date_start, "%Y-%m-%d").date() <=  datetime.datetime.strptime(pay_date, "%Y-%m-%d").date() <= datetime.datetime.strptime(self.cleaning_date_end, "%Y-%m-%d").date():
+                            cleaning_ids.append(record.id)
+                        if _check and (not pay_date) and datetime.datetime.strptime(self.cleaning_date_start, "%Y-%m-%d").date() <=  datetime.datetime.strptime(_check, "%Y-%m-%d").date() <= datetime.datetime.strptime(self.cleaning_date_end, "%Y-%m-%d").date():
+                            cleaning_ids.append(record.id)
+                else:
+                    cleaning_ids.append(record.id)
+            self.results = Result.search([['id','in',cleaning_ids]])
+        else:
+            self.results = Result.with_context(active=False).search(dom)
 
     @api.onchange('line_filter')
     def _onchange_line_filter(self):
