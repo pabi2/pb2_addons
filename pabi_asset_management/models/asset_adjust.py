@@ -433,7 +433,16 @@ class AccountAssetAdjust(models.Model):
                     adjust_line.chartfield_id = \
                         adjust_line.invoice_line_id.chartfield_id
                     quantity = value[3]
+                    
+                    _logger.info("adjust_line.account_id: %s", str(adjust_line.account_id))
+                    _logger.info("adjust_line.product_id: %s", str(adjust_line.product_id))
+                    _logger.info("adjust_line.asset_name: %s", str(adjust_line.asset_name))
+                    _logger.info("adjust_line.invoice_line_id: %s", str(adjust_line.invoice_line_id))
+                    _logger.info("adjust_line.chartfield_id: %s", str(adjust_line.chartfield_id))
+                    _logger.info("quantity: %s", str(quantity))
+                    
                     for i in range(quantity):
+                        _logger.info("i: %s", i)
                         self.adjust_expense_to_asset_ids += adjust_line
             else:
                 _logger.info("else")
