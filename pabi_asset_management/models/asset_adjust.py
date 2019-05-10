@@ -635,11 +635,14 @@ class AccountAssetAdjust(models.Model):
             
         values = self._context.get('expense_to_asset_dict', {})
         _logger.info("values: %s", str(values))
-        invoice_line_id = values[0][2]
+        i = 0
         
         # --
         for line in self.adjust_expense_to_asset_ids:
             _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
+            invoice_line_id = values[i][2]
+            i = i + 1
+            
             line.account_analytic_id = Analytic.create_matched_analytic(line)
             line.invoice_line_id = invoice_line_id
             _logger.info("line.id: %s", str(line.id))
