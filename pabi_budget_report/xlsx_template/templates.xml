@@ -722,7 +722,7 @@
                     '__EXPORT__': {
                         'Commit': {
                             '_HEAD_': {
-                                'C2': 'budget_view${value or ""}',
+                                'C2': 'chart_view${value or ""}',
                                 'C3': 'budget_method${value or ""}',
                                 'C4': 'fiscalyear_id.name${value or ""}',
                             },
@@ -838,7 +838,7 @@
                     '__EXPORT__': {
                         'Actual': {
                             '_HEAD_': {
-                                'C2': 'budget_view${value or ""}',
+                                'C2': 'chart_view${value or ""}',
                                 'C3': 'budget_method${value or ""}',
                             },
                             'results': {
