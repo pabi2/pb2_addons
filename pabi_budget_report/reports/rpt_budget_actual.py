@@ -101,7 +101,10 @@ class RPTBudgetActual(models.TransientModel):
         
         Result = self.env['rpt.budget.actual.line']
         
-        dom = [('fisyear', '=', self.fiscalyear_id.name)]
+        dom = [('document','!=',False)]
+        
+        if self.fiscalyear_id:
+            dom += [('fisyear', '=', self.fiscalyear_id.name)]
         
         if self.chartfield_ids:
             chartfield = self.chartfield_ids
@@ -152,9 +155,9 @@ class RPTBudgetActual(models.TransientModel):
             asset = [x.code for x in search]
             
             dom += [('source_budget_code', 'in', asset)]
-            
+        
         self.results = Result.search(dom)
-    
+        
     
     @api.multi
     def run_jasper_report(self, data):
