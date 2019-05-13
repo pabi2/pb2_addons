@@ -722,9 +722,9 @@
                     '__EXPORT__': {
                         'Commit': {
                             '_HEAD_': {
-                                'C2': 'report_type${value or ""}',
-                                'C3': 'fiscalyear_id.name${value or ""}',
-                                'C4': 'org_id.operating_unit_id.name${value or ""}',
+                                'C2': 'budget_view${value or ""}',
+                                'C3': 'budget_method${value or ""}',
+                                'C4': 'fiscalyear_id.name${value or ""}',
                             },
                             'results': {
                                 'A7' : 'fisyear${value or ""}',
@@ -837,6 +837,10 @@
                 {
                     '__EXPORT__': {
                         'Actual': {
+                            '_HEAD_': {
+                                'C2': 'budget_view${value or ""}',
+                                'C3': 'budget_method${value or ""}',
+                            },
                             'results': {
                                 'A7' : 'doc_date${value or ""}',
 								'B7' : 'posting_date${value or ""}',
