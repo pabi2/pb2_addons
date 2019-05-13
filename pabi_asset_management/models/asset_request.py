@@ -56,12 +56,13 @@ class AccountAssetRequest(models.Model):
         states={'draft': [('readonly', False)]},
         help="Default purchase request user, but can change."
     )
-    boss_ids = fields.One2many(
-        'wkf.cmd.boss.level.approval', 
-        'section_id',
-        string='Boss Level Approver',
-        compute='_compute_boss_ids'
-    )
+    supervisor_res_id = fields.Many2one(
+        'hr.employee', 
+        string="Requester's Supervisor",
+        #compute='_compute_supervisor_res_id',
+        store=True,
+        readonly=True,
+    )    
     request_asset_ids = fields.One2many(
         'account.asset.request.line',
         'request_id',
@@ -106,18 +107,16 @@ class AccountAssetRequest(models.Model):
         states={'draft': [('readonly', False)]},
         ondelete='restrict',
     )
-    
-    @api.one
+
+    @api.multi
+    @api.constrains('responsible_user_id')
     @api.onchange('responsible_user_id')
-    def _compute_boss_ids(self):
+    def _onchange_supervisor_res_id(self):
         if self.responsible_user_id:
-            boss = self.responsible_user_id.employee_id.section_id.boss_ids
-            if self.responsible_user_id.employee_id not in [x.employee_id for x in boss]:
-                self.boss_ids = boss.ids
-            else:
-                fund=self.env['wkf.cmd.boss.level.approval'].search([('employee_id','=',self.responsible_user_id.employee_id.id)]) 
-                self.boss_ids = [ x.id for x in boss if x.level.id > fund.level.id ]
-                
+            boss = self.responsible_user_id.employee_id.id
+            BossLevel = self.env['wkf.cmd.boss.level.approval']
+            self.supervisor_res_id = BossLevel.get_supervisor(boss)        
+              
     # Building / Floor / Room
     @api.multi
     @api.constrains('building_id', 'floor_id', 'room_id')
@@ -203,10 +202,10 @@ class AccountAssetRequest(models.Model):
         for rec in self:
             assets = rec.request_asset_ids.mapped('asset_id')
             assets.validate_asset_to_request()
-            if self.env.user.partner_id.employee_id not in [x.employee_id for x in rec.boss_ids]:
+            if self.env.user.partner_id.employee_id != rec.supervisor_res_id:
                 raise ValidationError(
                     _('Only %s can approve this document!') %
-                    (", ".join([x.employee_id.first_name for x in rec.boss_ids])))
+                    (rec.supervisor_res_id.name))
         self.write({'state': 'ready'}) 
      
         

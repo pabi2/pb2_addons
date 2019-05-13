@@ -40,7 +40,7 @@
                               <field name="user_id"/>
                               <field name="approve_user_id"/>
                               <field name="date_request"/>
-                              <field name="boss_ids"/>
+                              <field name="supervisor_res_id"/>
                             </group>
                             <group>
                               <field name="responsible_user_id" on_change="1"/>
