@@ -99,7 +99,7 @@ class ReportBudgetCommonMulti(ChartField, models.AbstractModel):
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
         string='Fiscal Year',
-        required=True,  # Overwrite as requried field.
+        #required=True,  # Overwrite as requried field.
         default=lambda self: self._get_fiscalyear(),
     )
     # ------------ SEARCH ------------
