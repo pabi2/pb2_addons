@@ -220,8 +220,17 @@ class PurchaseInvoicePlan(models.Model):
         compute='_compute_results',
         readonly=True,
     )
+    fiscalyear_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Fiscal Year',
+    )
 
-        
+
+    @api.onchange('order_line_id')
+    def _onchange_order_line_id(self):
+        self.fiscalyear_id = self.order_line_id.fiscalyear_id
+         
+         
     @api.multi
     def _compute_results(self):
         for line in self:
@@ -229,11 +238,5 @@ class PurchaseInvoicePlan(models.Model):
             line.order_line_fiscalyear_id = line.order_line_id.fiscalyear_id
             line.order_line_docline_seq = line.order_line_id.docline_seq
             line.order_line_budget_id = line.order_line_id.chartfield_id
-        
-        
-        
-        
-        
-        
-        
+
         
