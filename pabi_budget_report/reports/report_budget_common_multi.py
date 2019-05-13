@@ -144,6 +144,10 @@ class ReportBudgetCommonMulti(ChartField, models.AbstractModel):
         'res.invest.construction',
         string='Project (C)',
     )
+    invest_construction_phase_id = fields.Many2one(
+        'res.invest.construction.phase',
+        string='Project (C)',
+    )
     # For unit_base and invest_asset
     activity_group_id = fields.Many2one(
         'account.activity.group',
@@ -330,6 +334,7 @@ class ReportBudgetCommonMulti(ChartField, models.AbstractModel):
         self.project_group_id = False
         self.project_id = False
         self.invest_construction_id = False
+        self.invest_construction_phase_id = False
         self.chartfield_id = False
         self.chartfield_ids = False
         self.section_program_id = False

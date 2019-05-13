@@ -5,7 +5,7 @@
 		<record id="view_rpt_budget_commit_wizard" model="ir.ui.view">
             <field name="name">view.rpt.budget.commit.wizard</field>
             <field name="model">rpt.budget.commit</field>
-            <field name="inherit_id" ref="pabi_budget_report.view_report_budget_common_multi_form"/>
+            <field name="inherit_id" ref="pabi_budget_report.view_report_budget_common_multi_form_by_chart_view"/>
             <field name="arch" type="xml">
             	<group name="report_type" position="replace">
 	               	<group name="report_type" string="Report type">

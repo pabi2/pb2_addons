@@ -5,7 +5,7 @@
 		<record id="view_rpt_budget_future_commit_wizard" model="ir.ui.view">
             <field name="name">view.rpt.budget.future.commit.wizard</field>
             <field name="model">rpt.budget.future.commit</field>
-            <field name="inherit_id" ref="pabi_budget_report.view_report_budget_common_multi_form"/>
+            <field name="inherit_id" ref="pabi_budget_report.view_report_budget_common_multi_form_by_report_type"/>
             <field name="arch" type="xml">
             	<field name="fiscalyear_id" position="after">
             		<field name="date_report"/>

@@ -5,11 +5,8 @@
 		<record id="view_rpt_budget_future_commit_summary_wizard" model="ir.ui.view">
             <field name="name">view.rpt.budget.future.commit.summary.wizard</field>
             <field name="model">rpt.budget.future.commit.summary</field>
-            <field name="inherit_id" ref="pabi_budget_report.view_report_budget_common_multi_form"/>
+            <field name="inherit_id" ref="pabi_budget_report.view_report_budget_common_multi_form_by_report_type"/>
             <field name="arch" type="xml">
-            	<field name="budget_method" position="attributes">
-                	<attribute name="invisible">1</attribute>
-            	</field>
             	<field name="chartfield_id" position="attributes">
                 	<attribute name="invisible">1</attribute>
             	</field>
