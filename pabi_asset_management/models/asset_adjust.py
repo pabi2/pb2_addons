@@ -1308,11 +1308,11 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values["document_id"] = invl_analytic_line.document_id
         values["document_line"] = invl_analytic_line.document_line
         values["product_id"] = invl_analytic_line.product_id.id
+        values["account_id"] = invl_analytic_line.account_id.id
         # follow by line_analytic_line
         values["write_uid"] = line_analytic_line.write_uid.id
         values["create_uid"] = line_analytic_line.create_uid.id
         values["user_id"] = line_analytic_line.user_id.id
-        values["account_id"] = line_analytic_line.account_id.id
         values["company_id"] = line_analytic_line.company_id.id
         values["amount"] = line_analytic_line.amount * -1
         values["date"] = line_analytic_line.date
