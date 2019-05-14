@@ -48,6 +48,12 @@
                         </group>
                     </page>
                 </xpath>
+                <xpath expr="//notebook/page/group[@string='Periods']" position="after">
+                    <group string="Clearing date" attrs="{'invisible': [('filter', '!=', 'filter_clearing_date')], 'required': [('filter', '=', 'filter_clearing_date')]}">
+                          <field name="cleaning_date_start"/>
+                          <field name="cleaning_date_end"/>
+                    </group>
+                </xpath>
             </field>
         </record>
 
