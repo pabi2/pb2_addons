@@ -107,7 +107,7 @@ class AccountMoveLine(models.Model):
 
     @api.model
     def create(self, vals):
-        try:
+        """try:
             if (not vals['org_id'] or not vals['fund_id']) and vals['ref']: pass
         except :
             vals['ref'] = vals['ref'] if ('ref' in vals) else False
@@ -128,7 +128,7 @@ class AccountMoveLine(models.Model):
                     vals['cost_control_id'] = line.cost_control_id.id
                     vals['sector_id'] = line.sector_id.id
                     vals['costcenter_id'] = line.costcenter_id.id
-                    vals['subsector_id'] = line.subsector_id.id
+                    vals['subsector_id'] = line.subsector_id.id"""
             
         move_line = super(AccountMoveLine, self).create(vals)
         if move_line.asset_id and (move_line.asset_id.code or '/') == '/':
