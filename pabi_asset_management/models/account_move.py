@@ -106,30 +106,7 @@ class AccountMoveLine(models.Model):
         return vals
 
     @api.model
-    def create(self, vals):
-        """try:
-            if (not vals['org_id'] or not vals['fund_id']) and vals['ref']: pass
-        except :
-            vals['ref'] = vals['ref'] if ('ref' in vals) else False
-            vals['org_id'] = vals['org_id'] if ('org_id' in vals) else False
-            vals['fund_id'] = vals['fund_id'] if ('fund_id' in vals) else False
-            
-        if (not vals['org_id'] or not vals['fund_id']) and vals['ref']:
-            search_pcking_id = self.env['stock.picking'].search([('name', '=', str(vals['ref']))])
-            for line in search_pcking_id.move_lines:
-                if line.product_id.id == vals['product_id']: 
-                    vals['org_id'] = line.org_id.id
-                    vals['fund_id'] = line.fund_id.id
-                    vals['section_id'] = line.section_id.id
-                    vals['invest_construction_phase_id'] = line.invest_construction_phase_id.id
-                    vals['personnel_costcenter_id'] = line.personnel_costcenter_id.id
-                    vals['invest_construction_id'] = line.invest_construction_id.id
-                    vals['invest_asset_id'] = line.invest_asset_id.id
-                    vals['cost_control_id'] = line.cost_control_id.id
-                    vals['sector_id'] = line.sector_id.id
-                    vals['costcenter_id'] = line.costcenter_id.id
-                    vals['subsector_id'] = line.subsector_id.id"""
-            
+    def create(self, vals):       
         move_line = super(AccountMoveLine, self).create(vals)
         if move_line.asset_id and (move_line.asset_id.code or '/') == '/':
             if move_line.asset_profile_id and move_line.asset_id:
