@@ -4,6 +4,9 @@ from openerp import models, fields, api, _
 from openerp.addons.account_budget_activity.models.account_activity \
     import ActivityCommon
 from openerp.exceptions import ValidationError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class CreateAssetAdjustWizard(models.TransientModel):
