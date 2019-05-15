@@ -21,7 +21,8 @@ class THB_getter(Currency_getter_interface):
                              max_delta_days):
         """implementation of abstract method of Curreny_getter_interface"""
         # LastA.xml is always the most recent one
-        url = 'http://www2.bot.or.th/RSS/fxrates/fxrate-%s.xml'
+        #url = 'http://www2.bot.or.th/RSS/fxrates/fxrate-%s.xml'
+        url = 'https://www.bot.or.th/App/RSS/fxrate-%s.xml'
         if main_currency in currency_array:
             currency_array.remove(main_currency)
 
