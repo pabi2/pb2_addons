@@ -12,7 +12,7 @@
                         <label for="by_fiscalyear"/>
                     </div>
                 </xpath>
-            	<xpath expr="//field[@name='taxbranch_id']" position="after">
+            	<xpath expr="//form/sheet/group/group[1]" position="inside">
                     <field name="currency_rate" readonly="1" groups="base.group_multi_currency"/>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
