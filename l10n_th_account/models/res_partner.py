@@ -16,3 +16,6 @@ class ResPartner(models.Model):
         string='Income Tax Form',
         help="Default Income Tax Form for this Supplier in Supplier Payment",
     )
+    sign_image = fields.Binary(
+        string='Signature Image'
+    )
