@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_xlsx_report_purchase_invoice_plan_form" model="ir.ui.view">
+            <field name="name">view.xlsx.report.purchase.invoice.plan.form</field>
+            <field name="model">xlsx.report.purchase.invoice.plan</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <field name="fiscalyear_start_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="fiscalyear_end_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <group name="criteria" position="after">
+                	<group name="invoice_plan" states="choose">
+                		<group>
+                			<field name="date_invoice_plan_start"/>
+                			<field name="date_contract_action_start"/>
+                			<field name="org_ids" widget="many2many_tags"/>
+                			<field name="purchase_ids" widget="many2many_tags"/>
+                			<field name="contract_ids" widget="many2many_tags"/>
+                			<field name="account_ids" widget="many2many_tags"/>
+                		</group>
+                		<group>
+                			<field name="date_invoice_plan_end"/>
+                			<field name="date_contract_action_end"/>
+                		</group>
+                	</group>
+                </group>
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Budget Filters">
+                    	<group>
+                            <group string="Paste list of code to search">
+                                <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1" context="{'active_test': False}"  />
+                            </group>
+                            <group string="Print only">
+                                <field name="chartfield_ids" nolabel="1" />
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_purchase_invoice_plan_form" model="ir.actions.act_window">
+            <field name="name">Purchase Invoice Plan</field>
+            <field name="res_model">xlsx.report.purchase.invoice.plan</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'lang': 'th_TH'}</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_purchase_invoice_plan"
+            name="Purchase Invoice Plan"
+            parent="menu_pabi_payable_report"
+            action="action_xlsx_report_purchase_invoice_plan_form"
+            sequence="130"/>
+    </data>
+</openerp>

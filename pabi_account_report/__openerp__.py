@@ -51,6 +51,7 @@
         'reports/xlsx_report_supplier_receipt_follow_up.xml',
         'reports/qweb_report_payable_confirmation_letter_template.xml',
         'reports/qweb_report_payable_confirmation_letter.xml',
+        'reports/xlsx_report_purchase_invoice_plan.xml',
         # Receivable Reports
         'reports/xlsx_report_output_tax.xml',
         'reports/xlsx_report_cd_receivable_confirmation.xml',

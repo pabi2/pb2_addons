@@ -26,6 +26,10 @@ class PurchaseOrder(models.Model):
         help="This account will be used as default for invoices created by "
         "invoice plan. You can change it."
     )
+    currency_rate = fields.Float(
+        string='Currency Rate',
+        compute='_compute_currency_rate'
+    )
 
     @api.multi
     def wkf_confirm_order(self):
@@ -42,7 +46,38 @@ class PurchaseOrder(models.Model):
                     Fiscal = self.env['account.fiscalyear']
                     lines.write({'fiscalyear_id': Fiscal.find()})
         return super(PurchaseOrder, self).wkf_confirm_order()
-
+    
+    @api.multi
+    @api.depends('currency_id')
+    def _compute_currency_rate(self):
+        for rec in self:
+            date = False
+            for inv_plan in rec.invoice_plan_ids:
+                for commit in inv_plan.ref_invoice_id.budget_commit_ids:
+                    if commit.amount < 0 and (date == False or commit.date > date):
+                        date = commit.date
+                    
+            if date:
+                search = self.env['res.currency.rate'].search([['currency_id','=',rec.currency_id.id],['name','<=',date]], order="name DESC", limit=1)
+                print 'Search: '+str(search)
+                rec.currency_rate = search and search.rate_input or 1
+            else:
+                rec.currency_rate = False
+            
+            
+            """date = False
+            for commit in rec.budget_commit_ids:
+                if commit.amount < 0 and (date == False or commit.date > date):
+                    date = commit.date
+                    
+            if date:
+                search = self.env['res.currency.rate'].search([['currency_id','=',rec.currency_id.id],['name','<=',date]], order="name DESC", limit=1)
+                print 'Search: '+str(search)
+                rec.currency_rate = search and search.rate_input or 1
+            else:
+                rec.currency_rate = 1
+    """
+    
     # @api.constrains('use_invoice_plan', 'by_fiscalyear', 'order_line')
     # def _check_by_fiscalyear(self):
     #     for order in self:
