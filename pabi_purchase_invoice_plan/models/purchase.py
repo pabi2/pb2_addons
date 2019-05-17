@@ -59,10 +59,10 @@ class PurchaseOrder(models.Model):
                     
             if date:
                 search = self.env['res.currency.rate'].search([['currency_id','=',rec.currency_id.id],['name','<=',date]], order="name DESC", limit=1)
-                print 'Search: '+str(search)
-                rec.currency_rate = search and search.rate_input or 1
+                rec.currency_rate = search and search.rate_input or False
             else:
-                rec.currency_rate = False
+                search = self.env['res.currency.rate'].search([['currency_id','=',rec.currency_id.id],['name','<=',rec.date_order]], order="name DESC", limit=1)
+                rec.currency_rate = search and search.rate_input or False
             
             
             """date = False
