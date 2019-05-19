@@ -369,6 +369,7 @@ class AccountAssetAdjust(models.Model):
             return
         # Check if this adjustment is created from Suplier Invoice action
         src_invoice_id = self._context.get('default_invoice_id', False)
+        _logger.info("src_invoice_id: %s", str(src_invoice_id))
         status_cancel = self.env.ref('pabi_asset_management.'
                                      'asset_status_cancel')
         # Change Asset Type
@@ -420,6 +421,7 @@ class AccountAssetAdjust(models.Model):
         elif self.adjust_type == 'expense_to_asset':
             if src_invoice_id:
                 values = self._context.get('expense_to_asset_dict', {})
+                _logger.info("values: %s", str(values))
                 for value in values:
                     adjust_line = \
                         self.env['account.asset.adjust.expense_to_asset'].new()
@@ -620,6 +622,7 @@ class AccountAssetAdjust(models.Model):
                 'ship_purchase_id': self.ship_purchase_id.id, })
             
         values = self._context.get('expense_to_asset_dict', {})
+        _logger.info("values: %s", str(values))
         i = 0
         
         # --
