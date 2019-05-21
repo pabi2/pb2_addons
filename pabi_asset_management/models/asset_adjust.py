@@ -266,17 +266,6 @@ class AccountAssetAdjust(models.Model):
 #         
 #         values = self._context.get('expense_to_asset_dict', {})
 #         _logger.info("expense_to_asset_dict: %s", str(values))
-        
-        _logger.info("vals['adjust_expense_to_asset_ids']: %s", \
-                     str(vals['adjust_expense_to_asset_ids']))
-        _logger.info("vals['adjust_expense_to_asset_ids'][0]: %s", \
-                     str(vals['adjust_expense_to_asset_ids'][0]))
-        _logger.info("vals['adjust_expense_to_asset_ids'][0][0]: %s", \
-                     str(vals['adjust_expense_to_asset_ids'][0][0]))
-        _logger.info("vals['adjust_expense_to_asset_ids'][0][1]: %s", \
-                     str(vals['adjust_expense_to_asset_ids'][0][1]))
-        _logger.info("vals['adjust_expense_to_asset_ids'][0][2]: %s", \
-                     str(vals['adjust_expense_to_asset_ids'][0][2]))
         _logger.info("vals['adjust_expense_to_asset_ids'][0][2]['account_id']: %s", \
                      str(vals['adjust_expense_to_asset_ids'][0][2]['account_id']))
         if vals.get('name', '/') == '/':
@@ -474,6 +463,7 @@ class AccountAssetAdjust(models.Model):
                 for line in self.adjust_expense_to_asset_ids:
                     _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
             else:
+                _logger.info("else")
                 accounts = self.invoice_id.invoice_line.\
                     filtered(lambda l: not l.product_id).mapped('account_id')
                 for account in accounts:
@@ -1245,6 +1235,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
     @api.model
     def create(self, vals):
         _logger.info("------- create line3 -------")
+        _logger.info("vals: %s", str(vals))
         asset = super(AccountAssetAdjustExpenseToAsset, self).create(vals)
         asset.update_related_dimension(vals)
         return asset
