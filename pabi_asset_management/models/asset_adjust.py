@@ -267,8 +267,14 @@ class AccountAssetAdjust(models.Model):
                      str(vals['adjust_expense_to_asset_ids']))
         _logger.info("vals['adjust_expense_to_asset_ids'][0]: %s", \
                      str(vals['adjust_expense_to_asset_ids'][0]))
-        _logger.info("vals['adjust_expense_to_asset_ids'][0]['account_id']: %s", \
-                     str(vals['adjust_expense_to_asset_ids'][0]['account_id']))
+        _logger.info("vals['adjust_expense_to_asset_ids'][0][0]: %s", \
+                     str(vals['adjust_expense_to_asset_ids'][0][0]))
+        _logger.info("vals['adjust_expense_to_asset_ids'][0][1]: %s", \
+                     str(vals['adjust_expense_to_asset_ids'][0][1]))
+        _logger.info("vals['adjust_expense_to_asset_ids'][0][2]: %s", \
+                     str(vals['adjust_expense_to_asset_ids'][0][2]))
+        _logger.info("vals['adjust_expense_to_asset_ids'][0][2]['account_id']: %s", \
+                     str(vals['adjust_expense_to_asset_ids'][0][2]['account_id']))
         if vals.get('name', '/') == '/':
             vals['name'] = self.env['ir.sequence'].\
                 get('account.asset.adjust') or '/'
