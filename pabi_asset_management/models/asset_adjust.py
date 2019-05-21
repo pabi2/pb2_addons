@@ -426,7 +426,7 @@ class AccountAssetAdjust(models.Model):
             _logger.info("------- adjust_type == 'expense_to_asset' -------")
             if src_invoice_id:
                 values = self._context.get('expense_to_asset_dict', {})
-                _logger.info("values: %s", str(values))
+                _logger.info("expense_to_asset_dict: %s", str(values))
                 for value in values:
                     adjust_line = \
                         self.env['account.asset.adjust.expense_to_asset'].new()
@@ -440,8 +440,9 @@ class AccountAssetAdjust(models.Model):
                     
                     for i in range(quantity):
                         self.adjust_expense_to_asset_ids += adjust_line
-                        _logger.info("self.adjust_expense_to_asset_ids: %s", \
-                                     str(self.adjust_expense_to_asset_ids))
+                        
+                    for line in self.adjust_expense_to_asset_ids:
+                        _logger.info("invoice_line_id: %s", str(invoice_line_id))
             else:
                 accounts = self.invoice_id.invoice_line.\
                     filtered(lambda l: not l.product_id).mapped('account_id')
