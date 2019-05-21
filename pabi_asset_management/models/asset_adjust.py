@@ -250,6 +250,25 @@ class AccountAssetAdjust(models.Model):
     def create(self, vals):
         _logger.info("------- create -------")
         _logger.info("vals: %s", str(vals))
+        
+        
+#         ctx.update({'default_adjust_type': self.adjust_type,
+#                     'default_invoice_id': invoice_id,
+#                     'default_ship_purchase_id': self.ship_purchase_id.id,
+#                     'adjust_asset_type_dict': dict(adjust_asset_types),
+#                     'asset_to_expense_dict': dict(asset_to_expenses),
+#                     'expense_to_asset_dict': expense_to_assets,
+#                     'default_limit_asset_value': limit_asset_value})
+#         
+#         values = self._context.get('expense_to_asset_dict', {})
+#         _logger.info("expense_to_asset_dict: %s", str(values))
+        
+        _logger.info("vals['adjust_expense_to_asset_ids']: %s", \
+                     vals['adjust_expense_to_asset_ids'])
+        _logger.info("vals['adjust_expense_to_asset_ids'][0]: %s", \
+                     vals['adjust_expense_to_asset_ids'][0])
+        _logger.info("vals['adjust_expense_to_asset_ids'][0]['account_id']: %s", \
+                     vals['adjust_expense_to_asset_ids'][0]['account_id'])
         if vals.get('name', '/') == '/':
             vals['name'] = self.env['ir.sequence'].\
                 get('account.asset.adjust') or '/'
@@ -441,8 +460,8 @@ class AccountAssetAdjust(models.Model):
                     for i in range(quantity):
                         self.adjust_expense_to_asset_ids += adjust_line
                         
-                    for line in self.adjust_expense_to_asset_ids:
-                        _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
+                for line in self.adjust_expense_to_asset_ids:
+                    _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
             else:
                 accounts = self.invoice_id.invoice_line.\
                     filtered(lambda l: not l.product_id).mapped('account_id')
