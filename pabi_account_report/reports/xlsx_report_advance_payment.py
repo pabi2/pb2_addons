@@ -57,7 +57,7 @@ class XLSXReportAdvancePayment(models.TransientModel):
         elif not self.account_ids:
             dom += [('account_id', 'in', self._get_account_ids())]
             
-        self.results = Result.search(dom, order='account_id')
+        self.results = Result.search(dom).sorted(key=lambda l: (l.org_id, l.partner_id.search_key,))
         
         
         
