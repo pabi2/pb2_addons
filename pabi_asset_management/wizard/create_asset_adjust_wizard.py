@@ -119,6 +119,8 @@ class CreateAssetAdjustWizard(models.TransientModel):
                     'expense_to_asset_dict': expense_to_assets,
                     'default_limit_asset_value': limit_asset_value})
         result['context'] = ctx
+        _logger.info("------- create_asset_adjust -------")
+        _logger.info("context: %s", str(result['context']))
         return result
 
     @api.onchange('adjust_type')

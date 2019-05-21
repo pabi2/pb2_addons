@@ -248,6 +248,8 @@ class AccountAssetAdjust(models.Model):
 
     @api.model
     def create(self, vals):
+        _logger.info("------- create -------")
+        _logger.info("vals: %s", str(vals))
         if vals.get('name', '/') == '/':
             vals['name'] = self.env['ir.sequence'].\
                 get('account.asset.adjust') or '/'
@@ -259,6 +261,7 @@ class AccountAssetAdjust(models.Model):
 
     @api.multi
     def action_done(self):
+        _logger.info("------- action_done -------")
         for rec in self:
             if rec.adjust_type == 'asset_type':
                 rec.adjust_asset_type()
@@ -362,6 +365,7 @@ class AccountAssetAdjust(models.Model):
 
     @api.onchange('adjust_type', 'invoice_id')
     def _onchange_adjust_type_invoice(self):
+        _logger.info("------- _onchange_adjust_type_invoice -------")
         self.adjust_line_ids = False
         self.adjust_asset_to_expense_ids = False
         self.adjust_expense_to_asset_ids = False
@@ -419,6 +423,7 @@ class AccountAssetAdjust(models.Model):
                 self.adjust_asset_to_expense_ids += adjust_line
         # Expense => Asset
         elif self.adjust_type == 'expense_to_asset':
+            _logger.info("------- adjust_type == 'expense_to_asset' -------")
             if src_invoice_id:
                 values = self._context.get('expense_to_asset_dict', {})
                 _logger.info("values: %s", str(values))
@@ -432,10 +437,11 @@ class AccountAssetAdjust(models.Model):
                     adjust_line.chartfield_id = \
                         adjust_line.invoice_line_id.chartfield_id
                     quantity = value[3]
-                    _logger.info("adjust_line: %s", str(adjust_line))
                     
                     for i in range(quantity):
                         self.adjust_expense_to_asset_ids += adjust_line
+                        _logger.info("self.adjust_expense_to_asset_ids: %s", \
+                                     str(self.adjust_expense_to_asset_ids))
             else:
                 accounts = self.invoice_id.invoice_line.\
                     filtered(lambda l: not l.product_id).mapped('account_id')
@@ -603,6 +609,7 @@ class AccountAssetAdjust(models.Model):
         * Create new asset
         * Create collective moves
         """
+        _logger.info("------- adjust_expense_to_asset -------")
         self.ensure_one()
         value = sum(self.adjust_expense_to_asset_ids.mapped('amount'))
         if float_compare(self.limit_asset_value, value, 2) == -1:
