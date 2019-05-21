@@ -670,19 +670,17 @@ class AccountAssetAdjust(models.Model):
         # --
         for line in self.adjust_expense_to_asset_ids:
             _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
-            if not line.invoice_line_id:
-#                 domain = []
-#                 domain.append(("move_id", "=", inv_movl_id))
+#             if not line.invoice_line_id:
+#                 invoice_line_id = values[i][2]
+#                 line.invoice_line_id = invoice_line_id
 #                 
-#                 invoice_line_id  self.invoice_id.invoice_line
-                invoice_line_id = values[i][2]
-                line.invoice_line_id = invoice_line_id
-                
-            i = i + 1
+#             i = i + 1
             
             line.account_analytic_id = Analytic.create_matched_analytic(line)
             _logger.info("line.id: %s", str(line.id))
             _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
+            _logger.info("line.account_analytic_id.line_ids: %s", \
+                         str(line.account_analytic_id.line_ids))
                 
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,
@@ -1332,7 +1330,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         invoice_line_id = self.invoice_line_id
         _logger.info("invoice_line_id: %s", str(invoice_line_id))
         invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
-        _logger.info("invoice_line_id.account_analytic_id.line_ids: %s", str(invoice_line_id.account_analytic_id.line_ids))
+        _logger.info("invoice_line_id.account_analytic_id.line_ids: %s", str(invl_analytic_lines))
         invl_analytic_line = invl_analytic_lines.search(domain)
         _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         
