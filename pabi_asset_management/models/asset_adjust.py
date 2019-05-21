@@ -432,6 +432,7 @@ class AccountAssetAdjust(models.Model):
                     adjust_line.chartfield_id = \
                         adjust_line.invoice_line_id.chartfield_id
                     quantity = value[3]
+                    _logger.info("adjust_line: %s", str(adjust_line))
                     
                     for i in range(quantity):
                         self.adjust_expense_to_asset_ids += adjust_line
@@ -629,6 +630,10 @@ class AccountAssetAdjust(models.Model):
         for line in self.adjust_expense_to_asset_ids:
             _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
             if not line.invoice_line_id:
+#                 domain = []
+#                 domain.append(("move_id", "=", inv_movl_id))
+#                 
+#                 invoice_line_id  self.invoice_id.invoice_line
                 invoice_line_id = values[i][2]
                 line.invoice_line_id = invoice_line_id
                 
