@@ -264,10 +264,17 @@ class AccountAssetAdjust(models.Model):
 #                     'expense_to_asset_dict': expense_to_assets,
 #                     'default_limit_asset_value': limit_asset_value})
 #         
-#         values = self._context.get('expense_to_asset_dict', {})
-#         _logger.info("expense_to_asset_dict: %s", str(values))
-        _logger.info("vals['adjust_expense_to_asset_ids'][0][2]['account_id']: %s", \
-                     str(vals['adjust_expense_to_asset_ids'][0][2]['account_id']))
+        values = self._context.get('expense_to_asset_dict', {})
+        _logger.info("expense_to_asset_dict: %s", str(values))
+        i = 0
+        for value in values:
+            vals['adjust_expense_to_asset_ids'][i][2]['invoice_line_id'] = value[2]
+            i = i + 1
+        
+#         _logger.info("vals['adjust_expense_to_asset_ids'][0][2]['account_id']: %s", \
+#                      str(vals['adjust_expense_to_asset_ids'][0][2]['account_id']))
+
+        _logger.info("vals: %s", str(vals))
         if vals.get('name', '/') == '/':
             vals['name'] = self.env['ir.sequence'].\
                 get('account.asset.adjust') or '/'
