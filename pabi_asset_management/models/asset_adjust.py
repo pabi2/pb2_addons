@@ -442,7 +442,7 @@ class AccountAssetAdjust(models.Model):
                         self.adjust_expense_to_asset_ids += adjust_line
                         
                     for line in self.adjust_expense_to_asset_ids:
-                        _logger.info("invoice_line_id: %s", str(invoice_line_id))
+                        _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
             else:
                 accounts = self.invoice_id.invoice_line.\
                     filtered(lambda l: not l.product_id).mapped('account_id')
