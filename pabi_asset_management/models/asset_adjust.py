@@ -264,11 +264,11 @@ class AccountAssetAdjust(models.Model):
 #         _logger.info("expense_to_asset_dict: %s", str(values))
         
         _logger.info("vals['adjust_expense_to_asset_ids']: %s", \
-                     vals['adjust_expense_to_asset_ids'])
+                     str(vals['adjust_expense_to_asset_ids']))
         _logger.info("vals['adjust_expense_to_asset_ids'][0]: %s", \
-                     vals['adjust_expense_to_asset_ids'][0])
+                     str(vals['adjust_expense_to_asset_ids'][0]))
         _logger.info("vals['adjust_expense_to_asset_ids'][0]['account_id']: %s", \
-                     vals['adjust_expense_to_asset_ids'][0]['account_id'])
+                     str(vals['adjust_expense_to_asset_ids'][0]['account_id']))
         if vals.get('name', '/') == '/':
             vals['name'] = self.env['ir.sequence'].\
                 get('account.asset.adjust') or '/'
