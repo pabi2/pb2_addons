@@ -401,4 +401,5 @@ class AccountAnalyticAccount(models.Model):
             _logger.info("vals: %s", str(vals))
             return Analytic.create(vals)
         else:
+            _logger.info("exist analytic: %s", str(analytics[0]))
             return analytics[0]
