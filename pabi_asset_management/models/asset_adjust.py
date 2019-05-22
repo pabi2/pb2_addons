@@ -1289,19 +1289,26 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                                                      period, adjust_date,
                                                      amount_depre)
         move.write({'line_id': line_dict})
-        _logger.info("ctx: %s", str(ctx))
         if adjust.journal_id.entry_posted:
             del ctx['novalidate']
-            aaa = move.with_context(ctx).post()
+            move.with_context(ctx).post()
             _logger.info("move.id: %s", str(move.id))
-        _logger.info("self.account_analytic_id: %s", str(self.account_analytic_id))
-        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         self.write({'move_id': move.id})
         
         # update activity_id = activity_rpt_id
         for movl in move.line_id:
             if movl.debit:
                 movl.write({"activity_id": movl.activity_rpt_id.id})
+                
+        # if have no asset analytic line
+        _logger.info("self.account_analytic_id: %s", str(self.account_analytic_id))
+        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
+        if not self.account_analytic_id.line_ids:
+            analyticLine = self.env['account.analytic.line']
+            analytic_line_ids = analyticLine.search([('account_id', '=', 
+                                                      self.account_analytic_id)])
+            _logger.info("analytic_line_ids: %s", str(analytic_line_ids))
+#             self._create_asset_analytic_line
 
         # assign invoice_line's data to move_line's credit line
         self._assign_move_line_with_invoice_line(move)
@@ -1317,6 +1324,60 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         self._create_expense_analytic_line()
         
         return move
+    
+    @api.model
+    def _create_asset_analytic_line(self):
+        analytic_line = self.env['account.analytic.line']
+        values = {}
+        # follow by invl_analytic_line
+        values["name"] = invl_analytic_line.name
+        values["journal_id"] = invl_analytic_line.journal_id.id
+        values["general_account_id"] = invl_analytic_line.general_account_id.id
+#         values["product_uom_id"] = invl_analytic_line.product_uom_id.id
+        values["journal_id"] = invl_analytic_line.journal_id.id
+        values["product_id"] = invl_analytic_line.product_id.id
+        values["activity_group_id"] = invl_analytic_line.activity_group_id.id
+        values["activity_rpt_id"] = invl_analytic_line.activity_rpt_id.id
+        values["section_program_id"] = invl_analytic_line.section_program_id.id
+        values["sector_id"] = invl_analytic_line.sector_id.id
+        values["subsector_id"] = invl_analytic_line.subsector_id.id
+        values["costcenter_id"] = invl_analytic_line.costcenter_id.id
+        values["taxbranch_id"] = invl_analytic_line.taxbranch_id.id
+        values["division_id"] = invl_analytic_line.division_id.id
+        values["section_id"] = invl_analytic_line.section_id.id
+        values["mission_id"] = invl_analytic_line.mission_id.id
+        values["chart_view"] = invl_analytic_line.chart_view
+        values["org_id"] = invl_analytic_line.org_id.id
+        values["fund_id"] = invl_analytic_line.fund_id.id
+        values["document_id"] = invl_analytic_line.document_id
+        values["document_line"] = invl_analytic_line.document_line
+        values["product_id"] = invl_analytic_line.product_id.id
+        values["account_id"] = invl_analytic_line.account_id.id
+        # follow by line_analytic_line
+        values["write_uid"] = line_analytic_line.write_uid.id
+        values["create_uid"] = line_analytic_line.create_uid.id
+        values["user_id"] = line_analytic_line.user_id.id
+        values["company_id"] = line_analytic_line.company_id.id
+        values["amount"] = line_analytic_line.amount * -1
+        values["date"] = line_analytic_line.date
+        values["create_date"] = line_analytic_line.create_date
+        values["write_date"] = line_analytic_line.write_date
+        values["ref"] = line_analytic_line.ref
+        values["fiscalyear_id"] = line_analytic_line.fiscalyear_id.id
+        values["monitor_fy_id"] = line_analytic_line.monitor_fy_id.id
+        values["period_id"] = line_analytic_line.period_id.id
+        values["quarter"] = line_analytic_line.quarter
+        values["doctype"] = line_analytic_line.doctype
+        values["move_id"] = line_analytic_line.move_id.id
+        
+        values["unit_amount"] = 0
+        values["amount_currency"] = 0
+        values["charge_type"] = "external"
+        values["has_commit_amount"] = False
+        values["require_chartfield"] = True
+         
+        expense_analytic_line_id = analytic_line.create(values)
+        _logger.info("expense_analytic_line_id: %s", str(expense_analytic_line_id))
     
     @api.model
     def _create_expense_analytic_line(self):
