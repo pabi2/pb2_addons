@@ -1306,7 +1306,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         if not self.account_analytic_id.line_ids:
             analyticLine = self.env['account.analytic.line']
             analytic_line_ids = analyticLine.search([('account_id', '=', 
-                                                      self.account_analytic_id)])
+                                                      self.account_analytic_id.id)])
             _logger.info("analytic_line_ids: %s", str(analytic_line_ids))
 #             self._create_asset_analytic_line
 
