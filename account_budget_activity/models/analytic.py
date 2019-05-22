@@ -373,6 +373,7 @@ class AccountAnalyticAccount(models.Model):
         domain.append(('type', '=', 'normal'))  # remove this line if use above
         #
         # *************************** End *******************************
+        _logger.info("domain: %s", str(domain))
         analytics = Analytic.search(domain)
         if not analytics:
             vals = dict((x[0], x[2]) for x in domain)
