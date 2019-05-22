@@ -1304,6 +1304,15 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         self._assign_move_line_with_invoice_line(move)
         
         # create analytic line for expense
+        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
+        _logger.info("self.invoice_line_id.account_analytic_id.line_ids: %s", str(self.invoice_line_id.account_analytic_id.line_ids))
+        self_ana_lines = self.account_analytic_id.line_ids or False
+        invl_ana_lines = self.invoice_line_id.account_analytic_id.line_ids or False
+        _logger.info("self_ana_lines: %s", str(self_ana_lines))
+        _logger.info("invl_ana_lines: %s", str(invl_ana_lines))
+        
+#         if self_ana_lines and invl_ana_lines:  # check existing of analytic line
+#             self._create_expense_analytic_line()
         self._create_expense_analytic_line()
         
         return move
@@ -1319,7 +1328,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                 inv_movl_id = inv_movl.id
                 break
         _logger.info("inv_number: %s", str(inv_number))
-        _logger.info("inv_movl_ids: %s", str(inv_movl_ids))
+#         _logger.info("inv_movl_ids: %s", str(inv_movl_ids))
         _logger.info("inv_movl_id: %s", str(inv_movl_id))
         
         domain = []
@@ -1330,7 +1339,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         invoice_line_id = self.invoice_line_id
         _logger.info("invoice_line_id: %s", str(invoice_line_id))
         invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
-        _logger.info("invoice_line_id.account_analytic_id.line_ids: %s", str(invl_analytic_lines))
+#         _logger.info("invoice_line_id.account_analytic_id.line_ids: %s", str(invl_analytic_lines))
         invl_analytic_line = invl_analytic_lines.search(domain)
         _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         
@@ -1353,9 +1362,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
 #         values["product_uom_id"] = invl_analytic_line.product_uom_id.id
         values["journal_id"] = invl_analytic_line.journal_id.id
         values["product_id"] = invl_analytic_line.product_id.id
-        
-        _logger.info("invl_analytic_line.product_id.id: %s", str(invl_analytic_line.product_id.id))
-        _logger.info("line_analytic_line.product_id.id: %s", str(line_analytic_line.product_id.id))
         values["activity_group_id"] = invl_analytic_line.activity_group_id.id
         values["activity_rpt_id"] = invl_analytic_line.activity_rpt_id.id
         values["section_program_id"] = invl_analytic_line.section_program_id.id
