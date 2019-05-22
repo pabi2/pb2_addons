@@ -441,14 +441,18 @@
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{type_6_tax} > 0.0 ? $F{type_6_tax} : ($F{type_7_tax} > 0.0 ? $F{type_7_tax} : ($F{type_8_tax} > 0.0 ? $F{type_8_tax} : ''))]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="334" y="565" width="120" height="35"/>
+				<reportElement x="334" y="565" width="120" height="35">
+					<printWhenExpression><![CDATA[$F{type_6_tax} > 0.0 || $F{type_7_tax} > 0.0 || $F{type_8_tax} > 0.0]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="1_1_2">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{type_6_base} > 0.0 ? $F{type_6_base} : ($F{type_7_base} > 0.0 ? $F{type_7_base} : ($F{type_8_base} > 0.0 ? $F{type_8_base} : ''))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="95" y="565" width="420" height="35"/>
+				<reportElement x="95" y="565" width="420" height="35">
+					<printWhenExpression><![CDATA[$F{type_6_tax} > 0.0 || $F{type_7_tax} > 0.0 || $F{type_8_tax} > 0.0]]></printWhenExpression>
+				</reportElement>
 				<textElement verticalAlignment="Bottom" lineSpacing="1_1_2">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
