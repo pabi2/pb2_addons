@@ -1291,12 +1291,13 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
             self._prepare_move_line_expense_to_asset(new_asset, exp_acc,
                                                      period, adjust_date,
                                                      amount_depre)
-        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         move.write({'line_id': line_dict})
         _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
+        _logger.info("adjust.journal_id.entry_posted: %s", str(adjust.journal_id.entry_posted))
         if adjust.journal_id.entry_posted:
             del ctx['novalidate']
-            move.with_context(ctx).post()
+            aaa = move.with_context(ctx).post()
+            _logger.info("aaa: %s", str(aaa))
         _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         self.write({'move_id': move.id})
         _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
