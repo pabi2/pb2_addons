@@ -233,12 +233,15 @@ class AccountAnalyticLine(models.Model):
                 vals.update(dict((x[0], x[2]) for x in domain))
         # Prepare period_id for reporting purposes
         date = vals.get('date', fields.Date.context_today(self))
-        _logger.info("date: %s", str(date))
         if date:
             periods = self.env['account.period'].find(date)
             period = periods and periods[0] or False
             vals.update({'period_id': period.id})
-        return super(AccountAnalyticLine, self).create(vals)
+        analytic_line = super(AccountAnalyticLine, self).create(vals)
+        _logger.info("vals: %s", str(vals))
+        _logger.info("analytic_line: %s", str(analytic_line))
+         
+        return analytic_line
 
     @api.multi
     def write(self, vals):
