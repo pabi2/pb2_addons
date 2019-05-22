@@ -346,6 +346,7 @@ class AccountAnalyticAccount(models.Model):
 
     @api.model
     def create_matched_analytic(self, rec):
+        _logger.info("rec: %s", str(rec))
         # Not allow product and activity at the same time.
         if ('product_id' in rec._fields) and ('activity_id' in rec._fields):
             if rec.product_id and rec.activity_id:
@@ -397,6 +398,7 @@ class AccountAnalyticAccount(models.Model):
             vals['type'] = 'normal'
             #
             # *************************** End *******************************
+            _logger.info("vals: %s", str(vals))
             return Analytic.create(vals)
         else:
             return analytics[0]

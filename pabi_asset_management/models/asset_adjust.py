@@ -1292,20 +1292,23 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         if adjust.journal_id.entry_posted:
             del ctx['novalidate']
             move.with_context(ctx).post()
-            _logger.info("move.id: %s", str(move.id))
         self.write({'move_id': move.id})
         
         # update activity_id = activity_rpt_id
+        analytic = None
         for movl in move.line_id:
             if movl.debit:
                 movl.write({"activity_id": movl.activity_rpt_id.id})
+                analytic = movl.analytic_account_id
+                _logger.info("analytic: %s", str(analytic))
                 
         # if have no asset analytic line
-        _logger.info("self.account_analytic_id: %s", str(self.account_analytic_id))
+        _logger.info("move.id: %s", str(move.id))
+        _logger.info("self.account_analytic_id.id: %s", str(self.account_analytic_id.id))
         _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         if not self.account_analytic_id.line_ids:
-            analyticLine = self.env['account.analytic.line']
-            analytic_line_ids = analyticLine.search([('account_id', '=', 
+            analyticLine = self.env["account.analytic.line"]
+            analytic_line_ids = analyticLine.search([("account_id", "=", 
                                                       self.account_analytic_id.id)])
             _logger.info("analytic_line_ids: %s", str(analytic_line_ids))
 #             self._create_asset_analytic_line
