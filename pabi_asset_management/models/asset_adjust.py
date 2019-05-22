@@ -1253,6 +1253,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
     @api.multi
     def create_account_move_expense_to_asset(self, amount_depre):
         _logger.info("------- create_account_move_expense_to_asset -------")
+        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         """
         Dr: new asset - expense value
             Cr: expense - expense value
@@ -1281,19 +1282,22 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         # --
         am_vals = AssetAdjust._setup_move_data(adjust.journal_id,
                                                adjust_date, period, ref)
+        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         move = self.env['account.move'].with_context(ctx).create(am_vals)
+        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         
         # Prepare move lines
         line_dict = \
             self._prepare_move_line_expense_to_asset(new_asset, exp_acc,
                                                      period, adjust_date,
                                                      amount_depre)
+        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         move.write({'line_id': line_dict})
         if adjust.journal_id.entry_posted:
             del ctx['novalidate']
             move.with_context(ctx).post()
         self.write({'move_id': move.id})
-#         _logger.info("move_id: %s", str(move.id))
+        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         
         # update activity_id = activity_rpt_id
         for movl in move.line_id:
@@ -1409,7 +1413,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
     def _assign_move_line_with_invoice_line(self, move):
         _logger.info("------- _assign_move_line_with_invoice_line -------")
         invoice_line = self.invoice_line_id
-        _logger.info("self.invoice_line_id: %s", str(invoice_line))
+#         _logger.info("self.invoice_line_id: %s", str(invoice_line))
         for movl in move.line_id:
 #             _logger.info("movl_id: %s", str(movl.id))
             if movl.credit:
