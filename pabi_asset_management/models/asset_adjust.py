@@ -1311,9 +1311,9 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         _logger.info("self_ana_lines: %s", str(self_ana_lines))
         _logger.info("invl_ana_lines: %s", str(invl_ana_lines))
         
-        if self_ana_lines and invl_ana_lines:  # check existing of analytic line
-            self._create_expense_analytic_line()
-#         self._create_expense_analytic_line()
+#         if self_ana_lines and invl_ana_lines:  # check existing of analytic line
+#             self._create_expense_analytic_line()
+        self._create_expense_analytic_line()
         
         return move
     
