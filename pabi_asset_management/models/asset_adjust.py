@@ -1253,7 +1253,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
     @api.multi
     def create_account_move_expense_to_asset(self, amount_depre):
         _logger.info("------- create_account_move_expense_to_asset -------")
-        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         """
         Dr: new asset - expense value
             Cr: expense - expense value
@@ -1282,9 +1281,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         # --
         am_vals = AssetAdjust._setup_move_data(adjust.journal_id,
                                                adjust_date, period, ref)
-        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         move = self.env['account.move'].with_context(ctx).create(am_vals)
-        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         
         # Prepare move lines
         line_dict = \
@@ -1292,15 +1289,14 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                                                      period, adjust_date,
                                                      amount_depre)
         move.write({'line_id': line_dict})
-        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
-        _logger.info("adjust.journal_id.entry_posted: %s", str(adjust.journal_id.entry_posted))
+        _logger.info("ctx: %s", str(ctx))
         if adjust.journal_id.entry_posted:
             del ctx['novalidate']
             aaa = move.with_context(ctx).post()
-            _logger.info("aaa: %s", str(aaa))
+            _logger.info("move.id: %s", str(move.id))
+        _logger.info("self.account_analytic_id: %s", str(self.account_analytic_id))
         _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         self.write({'move_id': move.id})
-        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
         
         # update activity_id = activity_rpt_id
         for movl in move.line_id:
@@ -1311,8 +1307,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         self._assign_move_line_with_invoice_line(move)
         
         # create analytic line for expense
-        _logger.info("self.account_analytic_id.line_ids: %s", str(self.account_analytic_id.line_ids))
-        _logger.info("self.invoice_line_id.account_analytic_id.line_ids: %s", str(self.invoice_line_id.account_analytic_id.line_ids))
         self_ana_lines = self.account_analytic_id.line_ids or False
         invl_ana_lines = self.invoice_line_id.account_analytic_id.line_ids or False
         _logger.info("self_ana_lines: %s", str(self_ana_lines))
