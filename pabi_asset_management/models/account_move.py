@@ -45,7 +45,7 @@ class AccountMoveLine(models.Model):
         readonly=True,
         help="If in purchase order line, parent asset is specified.",
     )
-
+    
     @api.model
     def _prepare_asset_vals(self, move_line):
         sequence = move_line.product_id.sequence_id
@@ -108,14 +108,28 @@ class AccountMoveLine(models.Model):
     
     @api.multi
     def _check_account_move_line(self):
-        search = self.env['account.move.line'].search([['move_id','=',self.move_id.id],['costcenter_id','=',False]])
-        
-        for rec in search:
-            rec.costcenter_id = self.costcenter_id.id
-            rec.org_id = self.org_id.id
-            rec.fund_id = self.fund_id.id
-            rec.chartfield_id = self.chartfield_id.id
-    
+        if self.document_id:
+            if self.chartfield_id:
+                search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],['origin','like','POS']])
+                if search_picking:
+                    search = self.env['account.move.line'].search([['move_id','=',self.move_id.id]])
+                    for rec in search:
+                        if not rec.chartfield_id:
+                            rec.costcenter_id = self.costcenter_id.id
+                            rec.org_id = self.org_id.id
+                            rec.fund_id = self.fund_id.id
+                            rec.chartfield_id = self.chartfield_id.id
+            else:
+                search = self.env['account.move.line'].search([['move_id','=',self.move_id.id],
+                                                               ['costcenter_id','!=',False],
+                                                               ['org_id','!=',False]],limit=1)
+                if search:
+                    self.costcenter_id = search.costcenter_id.id
+                    self.org_id = search.org_id.id
+                    self.fund_id = search.fund_id.id
+                    self.chartfield_id = search.chartfield_id.id
+                    
+        self._get_detail_chartfield_id()
     
     @api.model
     def create(self, vals):
@@ -130,7 +144,19 @@ class AccountMoveLine(models.Model):
                     move_line.asset_id.account_analytic_id = \
                         Analytic.create_matched_analytic(move_line.asset_id)
                 # --
-        if move_line.costcenter_id:
-            move_line._check_account_move_line()
-            
+        #if move_line.chartfield_id:
+        move_line._check_account_move_line()
         return move_line
+    
+    @api.multi
+    def write(self, vals):
+        if vals.get('chartfield_id') and not vals.get('costcenter_id') and not vals.get('org_id'):
+            search = self._get_record_chartfield(vals.get('chartfield_id'))
+            if search:
+                vals['costcenter_id'] = search.costcenter_id.id
+                vals['org_id'] = search.org_id.id
+                
+        res = super(AccountMoveLine, self).write(vals)
+        return res
+        
+    

@@ -297,6 +297,46 @@ class AccountMoveLine(MergedChartField, models.Model):
                 self.invest_asset_id = res_id
             elif self.chartfield_id.model == 'res.personnel.costcenter':
                 self.personnel_costcenter_id = res_id
+                
+        if self.chartfield_id:
+            self._get_detail_chartfield_id()
+            
+            
+    @api.multi
+    def _get_record_chartfield(self, chartfield):
+        search = False
+        if chartfield:
+            chartfield_id = self.env['chartfield.view'].browse(chartfield)
+            if self.chartfield_id.type == 'pj:':
+                search = self.env['res.project'].search([['id','=',chartfield_id.res_id]])
+            if self.chartfield_id.type == 'sc:':
+                search = self.env['res.section'].search([['id','=',chartfield_id.res_id]])
+            if self.chartfield_id.type == 'cp:':
+                search = self.env['res.invest.construction.phase'].search([['id','=',chartfield_id.res_id]])
+            if self.chartfield_id.type == 'pc:':
+                search = self.env['res.personnel.costcenter'].search([['id','=',chartfield_id.res_id]])
+            if self.chartfield_id.type == 'ia:':
+                search = self.env['res.invest.asset'].search([['id','=',chartfield_id.res_id]])
+                
+        return search
+        
+    @api.multi
+    def _get_detail_chartfield_id(self):
+        if self.chartfield_id:
+            search = self._get_record_chartfield(self.chartfield_id.id)
+            if search:
+                self.costcenter_id = search.costcenter_id.id
+                self.org_id = search.org_id.id
+                self.fund_id = search.fund_ids and search.fund_ids[0].id or False
+        else:
+            search = self.env['account.move.line'].search([['move_id','=',self.move_id.id],
+                                                           ['costcenter_id','!=',False],
+                                                           ['org_id','!=',False]],limit=1)
+            if search:
+                self.costcenter_id = search.costcenter_id.id
+                self.org_id = search.org_id.id
+                self.fund_id = search.fund_id.id
+                self.chartfield_id = search.chartfield_id.id
 
     @api.multi
     @api.constrains('activity_group_id', 'activity_id')
