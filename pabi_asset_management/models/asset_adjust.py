@@ -1273,7 +1273,9 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         inv_movl_ids = self.adjust_id.invoice_id.move_id.line_id
         inv_movl_id = ""
         for inv_movl in inv_movl_ids:
-            if inv_movl.analytic_account_id:
+            if inv_movl.analytic_account_id and \
+                (inv_movl.account_id == self.account_id):
+                
                 inv_movl_id = inv_movl.id
                 break
         _logger.info("inv_number: %s", str(inv_number))
