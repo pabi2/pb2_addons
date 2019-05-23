@@ -1280,14 +1280,18 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         _logger.info("inv_movl_id: %s", str(inv_movl_id))
         
         domain = []
-#         domain.append(("document", "=", inv_number))
         domain.append(("move_id", "=", inv_movl_id))
-                
+        _logger.info("domain: %s", str(domain))
+        
         analytic_line = self.env['account.analytic.line']
         invoice_line_id = self.invoice_line_id
-        invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
-        invl_analytic_line = invl_analytic_lines.search(domain)
         _logger.info("invoice_line_id: %s", str(invoice_line_id))
+        invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
+        i = 0
+        for line in invl_analytic_lines:
+            _logger.info("invl_analytic_lines[%s]: %s", i, str(line))
+            i = i +1
+        invl_analytic_line = invl_analytic_lines.search(domain)
         _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         
         domain = []
