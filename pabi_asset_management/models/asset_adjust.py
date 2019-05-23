@@ -1325,7 +1325,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         
 #         if self_ana_lines and invl_ana_lines:  # check existing of analytic line
 #             self._create_expense_analytic_line()
-        self._create_expense_analytic_line(move)
+        self._create_expense_analytic_line(analytic.line_ids)
         
         return move
     
@@ -1384,7 +1384,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         _logger.info("expense_analytic_line_id: %s", str(expense_analytic_line_id))
     
     @api.model
-    def _create_expense_analytic_line(self, move):
+    def _create_expense_analytic_line(self, analytic_line_ids):
         _logger.info("------- _create_expense_analytic_line -------")
         inv_number = self.adjust_id.invoice_id.number
         inv_movl_ids = self.adjust_id.invoice_id.move_id.line_id
@@ -1414,8 +1414,10 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         domain.append(("amount", "=", (self.amount * -1)))
         domain.append(("name", "=", self.ref_asset_id.code))
         _logger.info("domain: %s", str(domain))
-        line_analytic_line = self.account_analytic_id.line_ids
         _logger.info("self.account_analytic_id: %s", str(self.account_analytic_id))
+        line_analytic_line = self.account_analytic_id.line_ids
+        if not line_analytic_line:
+            line_analytic_line = analytic_line_ids
         _logger.info("line_analytic_line: %s", str(line_analytic_line))
         line_analytic_line = line_analytic_line.search(domain)
         _logger.info("line_analytic_line: %s", str(line_analytic_line))
