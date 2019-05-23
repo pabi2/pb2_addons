@@ -1301,6 +1301,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                 movl.write({"activity_id": movl.activity_rpt_id.id})
                 analytic = movl.analytic_account_id
                 _logger.info("analytic: %s", str(analytic))
+                _logger.info("analytic.line_ids: %s", str(analytic.line_ids))
                 
         # if have no asset analytic line
         _logger.info("move.id: %s", str(move.id))
@@ -1324,7 +1325,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         
 #         if self_ana_lines and invl_ana_lines:  # check existing of analytic line
 #             self._create_expense_analytic_line()
-        self._create_expense_analytic_line()
+        self._create_expense_analytic_line(move)
         
         return move
     
@@ -1383,7 +1384,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         _logger.info("expense_analytic_line_id: %s", str(expense_analytic_line_id))
     
     @api.model
-    def _create_expense_analytic_line(self):
+    def _create_expense_analytic_line(self, move):
         _logger.info("------- _create_expense_analytic_line -------")
         inv_number = self.adjust_id.invoice_id.number
         inv_movl_ids = self.adjust_id.invoice_id.move_id.line_id
