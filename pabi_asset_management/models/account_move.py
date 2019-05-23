@@ -130,7 +130,7 @@ class AccountMoveLine(models.Model):
                     move_line.asset_id.account_analytic_id = \
                         Analytic.create_matched_analytic(move_line.asset_id)
                 # --
-        if move_line.costcenter_id and 'POS' in move_line.document_id.origin:
+        if move_line.costcenter_id:
             move_line._check_account_move_line()
             
         return move_line
