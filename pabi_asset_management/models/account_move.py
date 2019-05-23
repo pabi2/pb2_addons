@@ -104,7 +104,19 @@ class AccountMoveLine(models.Model):
             raise ValidationError(
                 _('Project/Section owner of asset not specified!'))
         return vals
-
+    
+    
+    @api.multi
+    def _check_account_move_line(self):
+        search = self.env['account.move.line'].search([['move_id','=',self.move_id.id],['costcenter_id','=',False]])
+        
+        for rec in search:
+            rec.costcenter_id = self.costcenter_id.id
+            rec.org_id = self.org_id.id
+            rec.fund_id = self.fund_id.id
+            rec.chartfield_id = self.chartfield_id.id
+    
+    
     @api.model
     def create(self, vals):
         move_line = super(AccountMoveLine, self).create(vals)
@@ -118,4 +130,7 @@ class AccountMoveLine(models.Model):
                     move_line.asset_id.account_analytic_id = \
                         Analytic.create_matched_analytic(move_line.asset_id)
                 # --
+        if move_line.costcenter_id and 'POS' in move_line.document_id.origin:
+            move_line._check_account_move_line()
+            
         return move_line
