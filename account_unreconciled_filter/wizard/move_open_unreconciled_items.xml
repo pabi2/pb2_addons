@@ -22,13 +22,24 @@
                     <group>
                         <group name="type">
                             <field name="account_id"/>
-                            <field name="move_ids" widget='many2many_tags'/>
                             <field name="account_move_name"/>
                             <field name="move_line_ref"/>
                         </group>
                         <group name="extra">
                         </group>
                     </group>
+                    <notebook>
+	                    <page string="Journal Entries Filters">
+	                        <group>
+	                            <group string="Paste list of code to search">
+	                                <field name="line_filter" placeholder="Paste list of Journal Entries" nolabel="1" context="{'active_test': False}"/>
+	                            </group>
+	                            <group string="Print only">
+	                                <field name="move_ids" nolabel="1" context="{'active_test': False}"/>
+	                            </group>
+	                        </group>
+	                    </page>
+                    </notebook>
                     <footer>
                         <button name="action_open_unreconciled_items" type="object"
                           string="Open Items to Reconcile" class="oe_highlight"/>
