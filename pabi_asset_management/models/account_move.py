@@ -127,7 +127,7 @@ class AccountMoveLine(models.Model):
     def _check_account_move_line(self):
         if self.document_id:
             #if self.chartfield_id:
-            search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],['origin','like','POS']])
+            search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],'|',['origin','like','POS'],['origin','like','SR']])
             if search_picking:
                 search = self.env['account.move.line'].search([['move_id','=',self.move_id.id],['chartfield_id','=',False]])
 
