@@ -47,12 +47,12 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
             operating_unit_ids = self.env['operating.unit'].search([('id', 'in', res)])
             dom += [('operating_unit_id', 'in', operating_unit_ids.ids)]
         if self.chartfield_ids:
-            res = []
+            """res = []
             costcenter_ids = []
             for bud in self.chartfield_ids:
                 res += [bud.costcenter_id.id]
-            costcenter_ids = self.env['res.costcenter'].search([('id', 'in', res)])
-            dom += [('line_ids.costcenter_id', 'in', costcenter_ids.ids)]
+            costcenter_ids = self.env['res.costcenter'].search([('id', 'in', res)])"""
+            dom += [('line_ids.chartfield_id', 'in', self.chartfield_ids.ids)]
         if self.pr_date_from:
             dom += [('date_approve', '>=', self.pr_date_from)]
         if self.pr_date_to:
@@ -75,12 +75,12 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
             operating_unit_ids = self.env['operating.unit'].search([('id', 'in', res)])
             dom += [('operating_unit_id', 'in', operating_unit_ids.ids)]
         if self.chartfield_ids:
-            res = []
+            """res = []
             costcenter_ids = []
             for bud in self.chartfield_ids:
                 res += [bud.costcenter_id.id]
-            costcenter_ids = self.env['res.costcenter'].search([('id', 'in', res)])
-            dom += [('order_line.costcenter_id', 'in', costcenter_ids.ids)]
+            costcenter_ids = self.env['res.costcenter'].search([('id', 'in', res)])"""
+            dom += [('order_line.chartfield_id', 'in', self.chartfield_ids.ids)]
         if self.po_date_from:
             dom += [('date_reference', '>=', self.po_date_from)]
         if self.po_date_to:
@@ -101,7 +101,7 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
         for prg in self.chartfield_ids:
             if res_bud != '':
                 res_bud += ', '
-            res_bud += '['+str(prg.costcenter_id.code)+'] '+str(prg.costcenter_id.name_short)
+            res_bud += '['+str(prg.code)+'] '+str(prg.name_short or prg.name)
         self.budget_name = res_bud
         
     @api.onchange('pr_ids','pr_requester_ids', 'pr_responsible_ids', 'pr_date_from', 'pr_date_to')  
@@ -165,10 +165,7 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
         if self.org_ids:
             dom += [('org_id', 'in', self.org_ids.ids)]
         if self.chartfield_ids:
-            res = []
-            for cct in self.chartfield_ids:
-                res += [cct.costcenter_id.id]
-            dom += [('costcenter_id', 'in', res)]
+            dom += ['|', ('prl_budget', 'in', self.chartfield_ids.ids), ('pol_budget', 'in', self.chartfield_ids.ids)]
         if self.pr_ids:
             dom += [('pr_id', 'in', self.pr_ids.ids)]
         if self.pr_date_from:
@@ -187,8 +184,10 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
             dom += [('po_date', '<=', self.po_date_to)]
         if self.po_responsible_ids:
             dom += [('po_responsible_id', 'in', self.po_responsible_ids.ids)]
+            
+        dom += ['|', ('po_name', 'like', 'PO'), ('po_id', '=', False)]
         self.results = Result.search(dom)
-
+        
 
 
 class XLSXReportPabiPurchaseRequestTracking(models.Model):
@@ -197,17 +196,20 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
     _description = 'Temp table as ORM holder'
 
     org_id = fields.Many2one('res.org', string='Org',)
-    costcenter_id = fields.Many2one('res.costcenter', string='Costcenter',)
     pr_id = fields.Many2one( 'purchase.request', string='PR doc',)
     pr_date = fields.Date( string='PR Date',)
     pr_requester_id = fields.Many2one('res.partner', string='Requested by(PR)',)
     pr_responsible_id = fields.Many2one('res.partner', string='Responsible Person(PR)',)
     prl_id = fields.Many2one('purchase.request.line', string='PR line',)
+    prl_budget = fields.Many2one('chartfield.view', string='PR line Budget',)
     pd_id = fields.Many2one('purchase.requisition', string='PD id',)
     po_id = fields.Many2one('purchase.order', string='PO doc',)
+    po_name = fields.Char(string='PO number',)
     po_date = fields.Date(string='PO Date',)
     po_responsible_id = fields.Many2one('res.partner', string='Responsible Person(PO)',)
     pol_id = fields.Many2one('purchase.order.line', string='PO line',)
+    pol_budget = fields.Many2one('chartfield.view', string='PO line Budget',)
+    pol_state = fields.Char(string='PO line State',)
     poc_id = fields.Many2one('purchase.contract', string='POC id',)
     pwa_id = fields.Many2one('purchase.work.acceptance', string='PWA id',)
     sp_id = fields.Many2one('stock.picking', string='SP id',)
@@ -219,7 +221,7 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
         SELECT row_number() over (order by pr.id) as id,
-        org.id as "org_id", cct.id as "costcenter_id", pr.id as "pr_id", pr.date_start as "pr_date", pr.name as "pr_name", 
+        org.id as "org_id", pr.id as "pr_id", pr.date_start as "pr_date", pr.name as "pr_name", 
         (SELECT part.id FROM res_users uer left join res_partner part on part.id = uer.partner_id
         WHERE uer.id = pr.requested_by) as "pr_requester_id",
         (SELECT part.display_name2 FROM res_users uer left join res_partner part on part.id = uer.partner_id
@@ -231,36 +233,41 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         prl.id as "prl_id",
         (CASE
             WHEN prl.section_id is not null THEN (
-                select concat('[',cos.code, ']', cos.name_short)
+                select chv.id --concat('[',chv.code, ']', chv.name_short)
                 from purchase_request_line
                 left join res_section sect on sect.id = prl.section_id 
-                left join res_costcenter cos on cos.id = sect.costcenter_id
-                LIMIT 1)
-            WHEN prl.project_id is not null THEN (
-                select concat('[',cos.code, ']', cos.name)
-                from purchase_request_line
-                left join res_project pro on pro.id = prl.project_id
-                left join res_costcenter cos on cos.id = pro.costcenter_id                                
-                LIMIT 1)                    
-            WHEN prl.invest_asset_id is not null THEN (
-                select concat('[',cos.code, ']', cos.name)
-                from purchase_request_line  
-                left join res_invest_asset asset on asset.id = prl.invest_asset_id
-                left join res_costcenter cos on cos.id = asset.costcenter_id
+                left join chartfield_view chv on chv.code = sect.code
+                left join res_costcenter cos on cos.id = chv.costcenter_id
                 LIMIT 1)
             WHEN prl.invest_construction_phase_id is not null THEN (
-                select concat('[',cos.code, ']', cos.name)
-                from purchase_request_line  
+                select chv.id --concat('[',chv.code, ']', chv.name_short)
+                from purchase_request_line
                 left join res_invest_construction_phase icp on icp.id = prl.invest_construction_phase_id
-                left join res_costcenter cos on cos.id = icp.costcenter_id
+                left join chartfield_view chv on chv.code = icp.code
+                left join res_costcenter cos on cos.id = chv.costcenter_id
+                LIMIT 1)
+            WHEN prl.project_id is not null THEN (
+                select chv.id --concat('[',chv.code, ']', chv.name)
+                from purchase_request_line
+                left join res_project pro on pro.id = prl.project_id
+                left join chartfield_view chv on chv.code = pro.code
+                left join res_costcenter cos on cos.id = chv.costcenter_id                                
+                LIMIT 1)                    
+            WHEN prl.invest_asset_id is not null THEN (
+                select chv.id --concat('[',chv.code, ']', chv.name)
+                from purchase_request_line
+                left join res_invest_asset iat on iat.id = prl.invest_asset_id
+                left join chartfield_view chv on chv.code = iat.code
+                left join res_costcenter cos on cos.id = chv.costcenter_id
                 LIMIT 1)
             WHEN prl.personnel_costcenter_id is not null THEN (
-                select concat('[',cos.code, ']', cos.name) 
+                select chv.id --concat('[',chv.code, ']', chv.name) 
                 from purchase_request_line
                 left join res_personnel_costcenter rpc on rpc.id = prl.personnel_costcenter_id
-                left join res_costcenter cos on cos.id = rpc.costcenter_id
+                left join chartfield_view chv on chv.code = rpc.code
+                left join res_costcenter cos on cos.id = chv.costcenter_id
                 LIMIT 1)
-        END) as "pr_budget", pd.id as "pd_id", pd.name as "pd_name", pd.ordering_date as "pd_ordering_date", pd.date_doc_approve as "pd_date_doc_approve",
+        END) as "prl_budget", pd.id as "pd_id", pd.name as "pd_name", pd.ordering_date as "pd_ordering_date", pd.date_doc_approve as "pd_date_doc_approve",
         po.id as "po_id", po.name as "po_name", po.date_order as "po_date", po.date_contract_start as "po_date_contract_start", 
         po.date_contract_end as "po_date_contract_end", poc.id as "poc_id", poc.display_code as "po_display_code", poc.start_date as "poc_start_date", 
         poc.end_date as "po_end_date",
@@ -271,41 +278,46 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         pol.date_planned as "pol_date_planned", 
         (CASE
             WHEN pol.section_id is not null THEN (
-                select concat('[',cos.code, ']', cos.name_short)
+                select chv.id --concat('[',chv.code, ']', chv.name_short)
                 from purchase_order_line
                 left join res_section sect on sect.id = pol.section_id 
-                left join res_costcenter cos on cos.id = sect.costcenter_id
-                LIMIT 1)
-            WHEN pol.project_id is not null THEN (
-                select concat('[',cos.code, ']', cos.name)
-                from purchase_order_line
-                left join res_project pro on pro.id = pol.project_id
-                left join res_costcenter cos on cos.id = pro.costcenter_id                                
-                LIMIT 1)                    
-            WHEN pol.invest_asset_id is not null THEN (
-                select concat('[',cos.code, ']', cos.name)
-                from purchase_order_line  
-                left join res_invest_asset asset on asset.id = pol.invest_asset_id
-                left join res_costcenter cos on cos.id = asset.costcenter_id
+                left join chartfield_view chv on chv.code = sect.code
+                left join res_costcenter cos on cos.id = chv.costcenter_id
                 LIMIT 1)
             WHEN pol.invest_construction_phase_id is not null THEN (
-                select concat('[',cos.code, ']', cos.name)
-                from purchase_order_line  
+                select chv.id --concat('[',chv.code, ']', chv.name_short)
+                from purchase_order_line
                 left join res_invest_construction_phase icp on icp.id = pol.invest_construction_phase_id
-                left join res_costcenter cos on cos.id = icp.costcenter_id
+                left join chartfield_view chv on chv.code = icp.code
+                left join res_costcenter cos on cos.id = chv.costcenter_id
+                LIMIT 1)
+            WHEN pol.project_id is not null THEN (
+                select chv.id --concat('[',chv.code, ']', chv.name)
+                from purchase_order_line
+                left join res_project pro on pro.id = pol.project_id
+                left join chartfield_view chv on chv.code = pro.code
+                left join res_costcenter cos on cos.id = chv.costcenter_id                                
+                LIMIT 1)                    
+            WHEN pol.invest_asset_id is not null THEN (
+                select chv.id --concat('[',chv.code, ']', chv.name)
+                from purchase_order_line
+                left join res_invest_asset iat on iat.id = pol.invest_asset_id
+                left join chartfield_view chv on chv.code = iat.code
+                left join res_costcenter cos on cos.id = chv.costcenter_id
                 LIMIT 1)
             WHEN pol.personnel_costcenter_id is not null THEN (
-                select concat('[',cos.code, ']', cos.name) 
+                select chv.id --concat('[',chv.code, ']', chv.name) 
                 from purchase_order_line
                 left join res_personnel_costcenter rpc on rpc.id = pol.personnel_costcenter_id
-                left join res_costcenter cos on cos.id = rpc.costcenter_id
+                left join chartfield_view chv on chv.code = rpc.code
+                left join res_costcenter cos on cos.id = chv.costcenter_id
                 LIMIT 1)
-        END) as "po_budget", (SELECT fund.name FROM res_fund fund WHERE fund.id = pol.fund_id) as "pol_fund", 
+        END) as "pol_budget", (SELECT fund.name FROM res_fund fund WHERE fund.id = pol.fund_id) as "pol_fund", 
         (SELECT cct.name FROM cost_control cct WHERE cct.id = pol.cost_control_id) as "pol_cost_control", pol.product_qty as "pol_product_qty", 
         (SELECT uom.name FROM product_uom uom WHERE uom.id = pol.product_uom) as "pol_product_uom", 
         pol.price_unit as "pol_price_unit", pol.price_unit*pol.product_qty as "pol_sub_total", 
         (SELECT cur.name FROM res_currency cur WHERE cur.id = po.currency_id) as "pol_currency", 
-        (SELECT fyear.name FROM account_fiscalyear fyear WHERE fyear.id = pol.fiscalyear_id) as "pol_fiscalyear", 
+        (SELECT fyear.name FROM account_fiscalyear fyear WHERE fyear.id = pol.fiscalyear_id) as "pol_fiscalyear", pol.state as "pol_state",
         (SELECT part.display_name2 FROM res_partner part WHERE part.id = po.responsible_uid) as "po_responsible",
         (SELECT payterm.name FROM account_payment_term payterm WHERE payterm.id = po.payment_term_id) as "po_payment_term", 
         pwa.id as "pwa_id", pwa.name as "pwa_name", sp.id as "sp_id", sp.name as "sp_name", pwa.date_accept as "pwq_date_accept", pb.id as "pb_id", pb.name as "pb_name", 
@@ -314,36 +326,20 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
          WHERE uer.id = inv.user_id) as "inv_user", vou.id as "vou_id", vou.number as "vou_name", vou.date as "vou_date", vou.date_value as "vou_date_value"
         
         FROM purchase_request pr
-        LEFT join purchase_request_line prl
-        ON prl.request_id = pr.id 
-        LEFT JOIN purchase_request_purchase_requisition_line_rel prpdrel
-        ON prpdrel.purchase_request_line_id = prl.id
-        LEFT JOIN purchase_requisition_line pdl
-        ON prpdrel.purchase_requisition_line_id = pdl.id
-        LEFT JOIN purchase_requisition pd
-        ON pd.id = pdl.requisition_id
-        LEFT JOIN purchase_contract poc
-        ON poc.requisition_id = pd.id
-        LEFT JOIN purchase_order po
-        ON po.requisition_id = pd.id
-        LEFT JOIN purchase_order_line pol
-        ON pol.requisition_line_id = pdl.id
-        LEFT JOIN purchase_work_acceptance pwa
-        ON pwa.order_id = po.id
-        LEFT JOIN stock_picking sp
-        ON sp.acceptance_id = pwa.id
-        LEFT JOIN account_invoice inv
-        ON inv.source_document = po.name
-        LEFT JOIN account_invoice_line invl
-        ON invl.invoice_id = inv.id
-        LEFT JOIN purchase_billing pb
-        ON pb.id = inv.purchase_billing_id
-        left join account_voucher_line voul 
-        on voul.invoice_id = inv.id 
-        LEFT JOIN account_voucher vou
-        ON vou.id = voul.voucher_id
-        LEFT JOIN operating_unit org
-        ON org.id = pr.operating_unit_id or org.id = po.operating_unit_id
-        LEFT JOIN res_costcenter cct
-        ON cct.id = prl.costcenter_id or cct.id = pol.costcenter_id
+        LEFT join purchase_request_line prl ON prl.request_id = pr.id 
+        LEFT JOIN purchase_request_purchase_requisition_line_rel prpdrel ON prpdrel.purchase_request_line_id = prl.id
+        LEFT JOIN purchase_requisition_line pdl ON prpdrel.purchase_requisition_line_id = pdl.id
+        LEFT JOIN purchase_requisition pd ON pd.id = pdl.requisition_id
+        LEFT JOIN purchase_contract poc ON poc.requisition_id = pd.id
+        LEFT JOIN purchase_order po ON po.requisition_id = pd.id
+        LEFT JOIN purchase_order_line pol ON pol.requisition_line_id = pdl.id
+        LEFT JOIN purchase_work_acceptance pwa ON pwa.order_id = po.id
+        LEFT JOIN stock_picking sp ON sp.acceptance_id = pwa.id
+        LEFT JOIN account_invoice inv ON inv.source_document = po.name
+        LEFT JOIN account_invoice_line invl ON invl.invoice_id = inv.id
+        LEFT JOIN purchase_billing pb ON pb.id = inv.purchase_billing_id 
+        left join account_voucher_line voul on voul.invoice_id = inv.id 
+        LEFT JOIN account_voucher vou ON vou.id = voul.voucher_id
+        LEFT JOIN operating_unit org ON org.id = pr.operating_unit_id or org.id = po.operating_unit_id
+        where pol.state != 'cancel' or po.id is null
         order by pr.id, po.id, inv.name, vou.name)""" % (self._table, ))

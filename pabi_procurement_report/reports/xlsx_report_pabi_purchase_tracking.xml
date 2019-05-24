@@ -60,6 +60,5 @@
 
         <menuitem id="menu_xlsx_report_pabi_purchase_tracking" name="Purchase Tracking" parent="menu_procurement_report" action="action_xlsx_report_pabi_purchase_tracking" sequence="99"/>
 
-
     </data>
 </openerp>
