@@ -43,3 +43,5 @@ from . import asset_repair_report
 from . import asset_register_report
 # PND Reports
 from . import xlsx_report_pnd1
+#Expense Small Amount
+from . import xlsx_report_expense_small_amount

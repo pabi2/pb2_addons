@@ -1976,6 +1976,41 @@ result = pd.pivot_table(df, index=groupby,
             </field>
         </record>
 
+        # Expense Small Amount
+        <record id="xlsx_report_expense_small_amount" model="ir.attachment">
+            <field name="res_model">xlsx.report.expense.small.amount</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_expense_small_amount.xlsx</field>
+            <field name="name">Expense Small Amount</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Expense Small Amount': {
+                            '_HEAD_': {
+                                 'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}',
+                                 'C3': 'period_start_id.name${value or ""}#{align=left;number_format=text}',
+                                 'E3': 'period_end_id.name${value or ""}#{align=left;number_format=text}',
+                                 'C4': 'partner_ids${value and ", ".join([x.name for x in value]) or ""}#{align=left;number_format=text}',
+
+                            },
+                            'results': {
+	                            'A8': '${"=ROW()-7"}',
+	                            'B8': 'partner_taxid${value or ""}#{align=left;number_format=text}',
+	                            'C8': 'partner_name${value or ""}#{align=left;number_format=text}',
+	                            'D8': 'name${value or ""}#{align=left;number_format=text}',
+	                        	'E8': 'debit${value or ""}',
+	                        	'F8': 'invoice_date${value and value.strftime("%d-%m-%Y") or ""}',   
+	                        	'G8': 'partner_invoice_number${value or ""}#{align=left;number_format=text}',
+	                        	#H
+	                        	'I8': 'partner_id${value and value.id or ""}',
+	                        	'J8': 'ref${value or ""}#{align=left;number_format=text}',
+	                         },
+                        },
+                    }
+                }
+            </field>
+        </record>
      
      
 

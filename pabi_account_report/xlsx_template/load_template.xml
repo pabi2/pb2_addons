@@ -37,6 +37,7 @@
                 ref('xlsx_report_asset_repair'),
                 ref('xlsx_report_asset_register'),
                 ref('xlsx_report_pnd1'),
+                ref('xlsx_report_expense_small_amount'),
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>

@@ -77,6 +77,8 @@
         'reports/asset_register_report.xml',
         # PND Reports
         'reports/xlsx_report_pnd1.xml',
+        #Expense Small Amount
+        'reports/xlsx_report_expense_small_amount.xml',
     ],
     'demo': [
     ],
