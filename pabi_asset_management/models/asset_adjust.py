@@ -1255,8 +1255,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
             if movl.debit:
                 movl.write({"activity_id": movl.activity_rpt_id.id})
                 analytic = movl.analytic_account_id
-                _logger.info("analytic: %s", str(analytic))
-                _logger.info("analytic.line_ids: %s", str(analytic.line_ids))
 
         # assign invoice_line's data to move_line's credit line
         self._assign_move_line_with_invoice_line(move)
@@ -1270,6 +1268,9 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
     def _create_expense_analytic_line(self, analytic_line_ids):
         _logger.info("------- _create_expense_analytic_line -------")
         inv_number = self.adjust_id.invoice_id.number
+        _logger.info("inv_number: %s", str(inv_number))
+        
+        # find move_line_id of invoice_id to domain invoice's analytic_line
         inv_movl_ids = self.adjust_id.invoice_id.move_id.line_id
         inv_movl_id = ""
         for inv_movl in inv_movl_ids:
@@ -1278,7 +1279,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                 
                 inv_movl_id = inv_movl.id
                 break
-        _logger.info("inv_number: %s", str(inv_number))
         _logger.info("inv_movl_id: %s", str(inv_movl_id))
         
         domain = []
@@ -1289,10 +1289,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         invoice_line_id = self.invoice_line_id
         _logger.info("invoice_line_id: %s", str(invoice_line_id))
         invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
-        i = 0
-        for line in invl_analytic_lines:
-            _logger.info("invl_analytic_lines[%s]: %s", i, str(line))
-            i = i +1
+        _logger.info("invl_analytic_lines: %s", str(invl_analytic_lines))
         invl_analytic_line = invl_analytic_lines.search(domain)
         _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
         

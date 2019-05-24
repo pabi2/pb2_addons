@@ -237,7 +237,7 @@ class AccountAnalyticLine(models.Model):
             periods = self.env['account.period'].find(date)
             period = periods and periods[0] or False
             vals.update({'period_id': period.id})
-        _logger.info("vals2: %s", str(vals))
+        _logger.info("vals: %s", str(vals))
         analytic_line = super(AccountAnalyticLine, self).create(vals)
         _logger.info("analytic_line: %s", str(analytic_line))
          
@@ -345,7 +345,6 @@ class AccountAnalyticAccount(models.Model):
 
     @api.model
     def create_matched_analytic(self, rec):
-        _logger.info("rec: %s", str(rec))
         # Not allow product and activity at the same time.
         if ('product_id' in rec._fields) and ('activity_id' in rec._fields):
             if rec.product_id and rec.activity_id:
