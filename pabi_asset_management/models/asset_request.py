@@ -75,7 +75,6 @@ class AccountAssetRequest(models.Model):
         [('draft', 'Draft'),
          ('confirm', 'Waiting Approval'),
          ('approve', 'Approved'),
-         ('verify', 'Verify'),
          ('ready', 'Ready to Request'),
          ('done', 'Requested'),
          ('cancel', 'Cancelled')],
@@ -191,23 +190,11 @@ class AccountAssetRequest(models.Model):
         for rec in self:
             assets = rec.request_asset_ids.mapped('asset_id')
             assets.validate_asset_to_request()
-            if self.env.user != rec.approve_user_id:
-                raise ValidationError(
-                    _('Only %s can approve this document!') %
-                    (rec.approve_user_id.name,))
-        self.write({'state': 'verify'})
-      
-    @api.multi    
-    def action_ready(self):
-        for rec in self:
-            assets = rec.request_asset_ids.mapped('asset_id')
-            assets.validate_asset_to_request()
             if self.env.user.partner_id.employee_id != rec.supervisor_res_id:
                 raise ValidationError(
                     _('Only %s can approve this document!') %
                     (rec.supervisor_res_id.name))
-        self.write({'state': 'ready'}) 
-     
+        self.write({'state': 'ready'})      
         
     @api.multi
     def action_done(self):

@@ -17,15 +17,13 @@
                           
                         <button name="action_verify" states="approve" string="Verify" type="object" class="oe_highlight"
                           groups="purchase.group_purchase_user,pabi_asset_management.group_assets_report"/>  
-                        <button name="action_ready" states="verify" string="Ready" type="object" class="oe_highlight"
-                          groups="purchase.group_purchase_user,pabi_asset_management.group_assets_report"/>  
                           
                         <button name="action_done" states="ready" string="Request" type="object" class="oe_highlight"
                           groups="purchase.group_purchase_user,pabi_asset_management.group_assets_report"/>
                           
-                        <button name="action_cancel" states="draft,confirm,approve,verify,ready,done" string="Cancel" type="object"
+                        <button name="action_cancel" states="draft,confirm,approve,ready,done" string="Cancel" type="object"
                           groups="purchase.group_purchase_user,pabi_asset_management.group_assets_report"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve,verify,ready,done"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve,ready,done"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box oe_right"></div>
