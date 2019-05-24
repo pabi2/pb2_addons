@@ -183,12 +183,12 @@ class AccountMoveLine(models.Model):
     
     @api.model
     def create(self, vals):
-        if vals.get('chartfield_id') == False:
+        """if vals.get('chartfield_id') == False:
             get_chartfield = self._get_column_chartfield(vals.get('move_id'))
             vals['chartfield_id'] = get_chartfield['chartfield_id']
             vals['costcenter_id'] = get_chartfield['costcenter_id']
             vals['org_id'] = get_chartfield['org_id']
-            vals['fund_id'] = get_chartfield['fund_id']
+            vals['fund_id'] = get_chartfield['fund_id']"""
             
         if vals.get('chartfield_id') != False and not vals.get('costcenter_id'):# and not vals.get('costcenter_id'):# and not vals.get('org_id'):
             get_chartfield = self._get_detail_chartfield(vals.get('chartfield_id'))
