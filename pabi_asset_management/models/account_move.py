@@ -127,23 +127,18 @@ class AccountMoveLine(models.Model):
     def _check_account_move_line(self):
         if self.document_id:
             #if self.chartfield_id:
-            search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],['origin','like','POS']])
+            search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],'|',['origin','like','POS'],['origin','like','SR']])
             if search_picking:
                 search = self.env['account.move.line'].search([['move_id','=',self.move_id.id],['chartfield_id','=',False]])
 
                 for rec in search:
-                    #rec.costcenter_id = self.costcenter_id.id
-                    #rec.org_id = self.org_id.id
-                    #rec.fund_id = self.fund_id.id
-                    #rec.chartfield_id = self.chartfield_id.id
                     rec.write({
                                 'costcenter_id':self.costcenter_id.id,
                                 'org_id':self.org_id.id,
                                 'fund_id':self.fund_id.id,
                                 'chartfield_id':self.chartfield_id.id
                         })
-        
-       
+                    
         
     @api.multi
     def _get_detail_chartfield(self, chartfield_id):
@@ -190,7 +185,7 @@ class AccountMoveLine(models.Model):
             vals['org_id'] = get_chartfield['org_id']
             vals['fund_id'] = get_chartfield['fund_id']"""
             
-        if vals.get('chartfield_id') != False and not vals.get('costcenter_id'):# and not vals.get('costcenter_id'):# and not vals.get('org_id'):
+        if vals.get('chartfield_id') and not vals.get('costcenter_id'):# and not vals.get('costcenter_id'):# and not vals.get('org_id'):
             get_chartfield = self._get_detail_chartfield(vals.get('chartfield_id'))
             vals['costcenter_id'] = get_chartfield['costcenter_id']
             vals['org_id'] = get_chartfield['org_id']
