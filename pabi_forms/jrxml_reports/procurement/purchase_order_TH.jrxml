@@ -694,7 +694,7 @@ WHERE $X{IN, po.id, PIDS}
 ($F{vendor_branch} != null ? "สาขา " + $F{vendor_branch} : "")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="132" y="150" width="117" height="20" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="81" y="148" width="117" height="20" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
