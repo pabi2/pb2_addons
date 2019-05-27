@@ -145,9 +145,6 @@ class AccountAssetRemoval(models.Model):
                 if asset.value_residual and not asset.no_depreciation:
                     ctx.update({'early_removal': True})
                 line.with_context(ctx).remove() 
-                #create move line replace same data  
-#                 asset.depreciation_line_ids[0].move_id.line_id
-#                 asset.status = line.target_status
 
     @api.multi
     def action_done(self):
