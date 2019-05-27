@@ -70,6 +70,15 @@ class AccountAssetRemoval(models.Model):
         required=True,
         help="Asset Journal (No-Budget)",
     )
+    deliver_to = fields.Char(
+        string='Deliver to',
+        size=500,
+        help="If status is chagned to 'delivery', this field is required",
+    )
+    deliver_date = fields.Date(
+        string='Delivery date',
+        help="If status is chagned to 'delivery', this field is required",
+    )
 
     @api.multi
     @api.depends('removal_asset_ids')
@@ -135,13 +144,19 @@ class AccountAssetRemoval(models.Model):
                        'overwrite_journal_id': removal.journal_id.id}
                 if asset.value_residual and not asset.no_depreciation:
                     ctx.update({'early_removal': True})
-                line.with_context(ctx).remove()
-                asset.status = line.target_status
+                line.with_context(ctx).remove() 
+                #create move line replace same data  
+#                 asset.depreciation_line_ids[0].move_id.line_id
+#                 asset.status = line.target_status
 
     @api.multi
     def action_done(self):
         for rec in self:
             assets = rec.removal_asset_ids.mapped('asset_id')
+            if rec.target_status.code == 'deliver':
+                for asset in assets:
+                    asset.deliver_to = rec.deliver_to
+                    asset.deliver_date = rec.deliver_date
             assets.validate_asset_to_removal()
         self._remove_confirmed_assets()
         self.write({'state': 'done'})
@@ -161,8 +176,7 @@ class AccountAssetRemoval(models.Model):
                                                                 asset_ids)])
         dom = [('id', 'in', assets.ids)]
         result.update({'domain': dom})
-        return result
-
+        return result            
 
 class AccountAssetRemovalLine(models.Model):
     _name = 'account.asset.removal.line'
@@ -210,3 +224,9 @@ class AccountAssetRemovalLine(models.Model):
             self.account_residual_value_id = \
                 Remove._default_account_residual_value_id()
             self.posting_regime = Remove._get_posting_regime()
+            
+
+    @api.onchange('posting_regime')
+    def _onchange_posting_regime(self):
+        if self.posting_regime == 'residual_value' and not (self.account_residual_value_id):
+            self.account_residual_value_id = self.env['account.account'].search([('code','=','5206060002')])
