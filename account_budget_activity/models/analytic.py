@@ -221,6 +221,7 @@ class AccountAnalyticLine(models.Model):
 
     @api.model
     def create(self, vals):
+        _logger.info("------- create analytic line -------")
         """ Add posting dimension """
         if vals.get('account_id', False):
             Analytic = self.env['account.analytic.account']
@@ -236,7 +237,11 @@ class AccountAnalyticLine(models.Model):
             periods = self.env['account.period'].find(date)
             period = periods and periods[0] or False
             vals.update({'period_id': period.id})
-        return super(AccountAnalyticLine, self).create(vals)
+        _logger.info("vals: %s", str(vals))
+        analytic_line = super(AccountAnalyticLine, self).create(vals)
+        _logger.info("analytic_line: %s", str(analytic_line))
+         
+        return analytic_line
 
     @api.multi
     def write(self, vals):
@@ -391,6 +396,8 @@ class AccountAnalyticAccount(models.Model):
             vals['type'] = 'normal'
             #
             # *************************** End *******************************
+            _logger.info("vals: %s", str(vals))
             return Analytic.create(vals)
         else:
+            _logger.info("exist analytic: %s", str(analytics[0]))
             return analytics[0]

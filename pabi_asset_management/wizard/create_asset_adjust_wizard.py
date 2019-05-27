@@ -107,7 +107,7 @@ class CreateAssetAdjustWizard(models.TransientModel):
                              for x in self.asset_to_expense_ids]
         # Expense to Asset
         expense_to_assets = [(x.from_account_id.id, x.to_product_id.id,
-                              x.invoice_line_id.id, x.quantity)
+                              x.invoice_line_id.id, x.quantity, x.id)
                              for x in self.expense_to_asset_ids]
         limit_asset_value = sum([x.invoice_line_id.price_subtotal
                                  for x in self.expense_to_asset_ids])
@@ -119,6 +119,8 @@ class CreateAssetAdjustWizard(models.TransientModel):
                     'expense_to_asset_dict': expense_to_assets,
                     'default_limit_asset_value': limit_asset_value})
         result['context'] = ctx
+        _logger.info("------- create_asset_adjust -------")
+        _logger.info("context: %s", str(result['context']))
         return result
 
     @api.onchange('adjust_type')
