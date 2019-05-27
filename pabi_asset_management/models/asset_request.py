@@ -56,6 +56,13 @@ class AccountAssetRequest(models.Model):
         states={'draft': [('readonly', False)]},
         help="Default purchase request user, but can change."
     )
+    supervisor_res_id = fields.Many2one(
+        'hr.employee', 
+        string="Requester's Supervisor",
+        #compute='_compute_supervisor_res_id',
+        store=True,
+        readonly=True,
+    )    
     request_asset_ids = fields.One2many(
         'account.asset.request.line',
         'request_id',
@@ -68,6 +75,7 @@ class AccountAssetRequest(models.Model):
         [('draft', 'Draft'),
          ('confirm', 'Waiting Approval'),
          ('approve', 'Approved'),
+         ('ready', 'Ready to Request'),
          ('done', 'Requested'),
          ('cancel', 'Cancelled')],
         string='Status',
@@ -99,6 +107,15 @@ class AccountAssetRequest(models.Model):
         ondelete='restrict',
     )
 
+    @api.multi
+    @api.constrains('responsible_user_id')
+    @api.onchange('responsible_user_id')
+    def _onchange_supervisor_res_id(self):
+        if self.responsible_user_id:
+            boss = self.responsible_user_id.employee_id.id
+            BossLevel = self.env['wkf.cmd.boss.level.approval']
+            self.supervisor_res_id = BossLevel.get_supervisor(boss)        
+              
     # Building / Floor / Room
     @api.multi
     @api.constrains('building_id', 'floor_id', 'room_id')
@@ -167,7 +184,18 @@ class AccountAssetRequest(models.Model):
                     _('Only %s can approve this document!') %
                     (rec.approve_user_id.name,))
         self.write({'state': 'approve'})
-
+        
+    @api.multi
+    def action_verify(self):
+        for rec in self:
+            assets = rec.request_asset_ids.mapped('asset_id')
+            assets.validate_asset_to_request()
+            if self.env.user.partner_id.employee_id != rec.supervisor_res_id:
+                raise ValidationError(
+                    _('Only %s can approve this document!') %
+                    (rec.supervisor_res_id.name))
+        self.write({'state': 'ready'})      
+        
     @api.multi
     def action_done(self):
         for rec in self:
