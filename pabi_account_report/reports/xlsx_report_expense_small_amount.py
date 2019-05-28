@@ -100,8 +100,7 @@ class AssetRepairView(models.Model):
                     ref
                 FROM public.account_invoice_tax_report iv1 
                 LEFT JOIN account_invoice_line_tax_focus iv2 on iv2.move_id = iv1.move_id
-                WHERE iv1.period_id =46
-                and name is not null
+                WHERE name is not null
                 and debit = base
                 AND source_document like 'EX%'
                 order by source_document,invoice_date
