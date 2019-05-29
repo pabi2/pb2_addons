@@ -146,7 +146,13 @@ class AccountModel(models.Model):
             ('order_id.order_type', '=', 'purchase_order'),
             ('order_id.is_fin_lease', '=', False),  # For non-fin-lease
         ])
-        for line in invoice_plans:
+        invoice_plans_test = InvoicePlan.search([
+            ('id', 'in', invoice_plans.ids),
+        ], limit=10)
+        len_invoice_plans = len(invoice_plans)
+        len_invoice_plans_test = len(invoice_plans_test)
+        print 'len', len_invoice_plans, 'test', len_invoice_plans_test
+        for line in invoice_plans_test:
             if line.installment == 0:
                 continue
             po_line = line.order_line_id
