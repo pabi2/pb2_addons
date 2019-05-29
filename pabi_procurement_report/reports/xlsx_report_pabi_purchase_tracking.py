@@ -93,9 +93,11 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
     def onchange_org_id(self):
         res_org, res_bud = '', ''
         for org in self.org_ids:
-            if res_org != '':
-                res_org += ', '
-            res_org += str(org.name_short)
+            name = self.env['operating.unit'].search([('id', '=', org.operating_unit_id.id)]).name
+            if res_org != '': 
+                res_org += ', '+name
+            else: res_org += name
+        ##org_name
         self.org_name = res_org
 
         for prg in self.chartfield_ids:
@@ -163,7 +165,12 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
         Result = self.env['xlsx.report.pabi.purchase.tracking.results']
         dom = []
         if self.org_ids:
-            dom += [('org_id', 'in', self.org_ids.ids)]
+            res = []
+            operating_unit_ids = []
+            for org in self.org_ids:
+                res += [org.operating_unit_id.id]
+            operating_unit_ids = self.env['operating.unit'].search([('id', 'in', res)])
+            dom += [('org_id', 'in', operating_unit_ids.ids)]
         if self.chartfield_ids:
             dom += ['|', ('prl_budget', 'in', self.chartfield_ids.ids), ('pol_budget', 'in', self.chartfield_ids.ids)]
         if self.pr_ids:
@@ -177,17 +184,18 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
         if self.pr_responsible_ids:
             dom += [('pr_responsible_id', 'in', self.pr_responsible_ids.ids)]
         if self.po_ids:
-            dom += [('po_id', 'in', self.pr_ids._ids)]
+            dom += [('po_id', 'in', self.po_ids.ids)]
         if self.po_date_from:
             dom += [('po_date', '>=', self.po_date_from)]
         if self.po_date_to:
             dom += [('po_date', '<=', self.po_date_to)]
         if self.po_responsible_ids:
             dom += [('po_responsible_id', 'in', self.po_responsible_ids.ids)]
-            
-        dom += ['|', ('po_name', 'like', 'PO'), ('po_id', '=', False)]
-        self.results = Result.search(dom)
         
+        dom += ['|', ('po_name', 'like', 'PO'), ('po_id', '=', False)]
+        
+        self.results = Result.search(dom)
+
 
 
 class XLSXReportPabiPurchaseRequestTracking(models.Model):
@@ -195,7 +203,8 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
     _auto = False
     _description = 'Temp table as ORM holder'
 
-    org_id = fields.Many2one('res.org', string='Org',)
+    org_id = fields.Many2one('operating.unit', string='Org',)
+    costcenter_id = fields.Many2one('res.costcenter', string='Costcenter',)
     pr_id = fields.Many2one( 'purchase.request', string='PR doc',)
     pr_date = fields.Date( string='PR Date',)
     pr_requester_id = fields.Many2one('res.partner', string='Requested by(PR)',)
@@ -342,4 +351,9 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         LEFT JOIN account_voucher vou ON vou.id = voul.voucher_id
         LEFT JOIN operating_unit org ON org.id = pr.operating_unit_id or org.id = po.operating_unit_id
         where pol.state != 'cancel' or po.id is null
-        order by pr.id, po.id, inv.name, vou.name)""" % (self._table, ))
+        order by pr.id, po.id, inv.name, vou.name
+        )""" % (self._table, ))
+        
+        
+        
+        
