@@ -384,7 +384,7 @@ class AccountVoucherLine(models.Model):
                  _(('{:,.2f}'.format(income) + ' บาท').rjust(30))),
                 (_('เงินต้น' + ' ' * 21),
                  _(('{:,.2f}'.format(calc_principal) + ' บาท').rjust(30))),
-                (_('ยอดหนี้คงเหลือ' + ' ' * 10),
+                (_('เงินต้นคงเหลือ' + ' ' * 10),
                  _(('{:,.2f}'.format(remain_principal) + ' บาท').rjust(30)))]
             description = ''
             for desc in desc_dict:
