@@ -39,6 +39,7 @@ class AccountModel(models.Model):
         domain=[('type', '!=', 'view')],
     )
 
+
     @api.onchange('special_type')
     def _onchange_special_type(self):
         if self.special_type:
@@ -142,17 +143,21 @@ class AccountModel(models.Model):
             ('ref_invoice_id', '!=', False),
             ('state', '=', 'draft'),
             ('date_invoice', '<', date),
+            ('prepare_move_line', '!=', True),
             ('order_id.state', '=', 'approved'),
             ('order_id.order_type', '=', 'purchase_order'),
             ('order_id.is_fin_lease', '=', False),  # For non-fin-lease
-        ])
-        invoice_plans_test = InvoicePlan.search([
-            ('id', 'in', invoice_plans.ids),
         ], limit=10)
+        invoice_plans_to_order_id = [id.order_id.id for id in invoice_plans]
+        search_invoice_plans = InvoicePlan.search([('order_id', 'in', sorted(set(invoice_plans_to_order_id))), 
+                                                   ('ref_invoice_id', '!=', False),
+                                                   ('state', '=', 'draft'),
+                                                   ('date_invoice', '<', date),
+                                                   ('prepare_move_line', '!=', True),])
         len_invoice_plans = len(invoice_plans)
-        len_invoice_plans_test = len(invoice_plans_test)
-        print 'len', len_invoice_plans, 'test', len_invoice_plans_test
-        for line in invoice_plans_test:
+        len_search_invoice_plans = len(search_invoice_plans)
+        print len_invoice_plans, len_search_invoice_plans
+        for line in search_invoice_plans:
             if line.installment == 0:
                 continue
             po_line = line.order_line_id
@@ -213,7 +218,25 @@ class AccountModel(models.Model):
                 'amount_currency': -amount_currency,
             })
             move_lines.append((0, 0, val2))
+            line.prepare_move_line = True
+            
         return move_lines
+
+
+
+class PurchaseInvoicePlan(models.Model):
+    _inherit = 'purchase.invoice.plan'
+
+    order_line_docline_seq = fields.Char(
+        string='#',
+        compute='_compute_results',
+        readonly=True,
+    )
+    prepare_move_line = fields.Boolean(
+        string='Create Move Line',
+        default=False,
+    )
+    
 
 
 class AccountSubscription(models.Model):
