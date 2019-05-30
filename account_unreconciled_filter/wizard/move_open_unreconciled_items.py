@@ -21,6 +21,23 @@ class MoveOpenUnreconciledItems(models.TransientModel):
         'account.move',
         string='Journal Entries',
     )
+    line_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    
+
+    @api.onchange('line_filter')
+    def _onchange_line_filter(self):
+        self.move_ids = []
+        Move_id = self.env['account.move']
+        dom = []
+        if self.line_filter:
+            names = self.line_filter.split('\n')
+            names = [x.strip() for x in names]
+            names = ','.join(names)
+            dom.append(('name', 'ilike', names))
+            self.move_ids = Move_id.search(dom, order='id')
 
     @api.multi
     def action_open_unreconciled_items(self):
