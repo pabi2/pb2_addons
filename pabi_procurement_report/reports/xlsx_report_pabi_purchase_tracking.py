@@ -204,7 +204,7 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
     _description = 'Temp table as ORM holder'
 
     org_id = fields.Many2one('operating.unit', string='Org',)
-    costcenter_id = fields.Many2one('res.costcenter', string='Costcenter',)
+    #costcenter_id = fields.Many2one('res.costcenter', string='Costcenter',)
     pr_id = fields.Many2one( 'purchase.request', string='PR doc',)
     pr_date = fields.Date( string='PR Date',)
     pr_requester_id = fields.Many2one('res.partner', string='Requested by(PR)',)
