@@ -86,9 +86,10 @@ class XLSXReportAdvancePayment(models.TransientModel):
             left join account_move mov on mov.id = mol.move_id
             left join res_partner part on part.id = mol.partner_id
             left join account_move_reconcile mov_rec on mov_rec.id = mol.reconcile_id
+            left join account_account acc on acc.id = mol.account_id
             left join res_currency cur on cur.id = mol.currency_id
             where mol.id in """+(res_ids)+"""
-            order by part.search_key
+            order by acc.code, part.search_key
         """)
 
         results = self._cr.dictfetchall()
@@ -100,7 +101,7 @@ class XLSXReportAdvancePayment(models.TransientModel):
             
             line['operating_unit'] = mol.invoice.operating_unit_id.id or mol.org_id.operating_unit_id.id or False
             res += [line]   
-        res = sorted(res, key=lambda k: k['operating_unit'])
+        res = sorted(res, key=lambda k: (k['account_id'], k['operating_unit']))
         
         for line in res:
             self.results += ReportLine.new(line)
