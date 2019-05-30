@@ -156,7 +156,7 @@ class AccountModel(models.Model):
             ('order_id.state', '=', 'approved'),
             ('order_id.order_type', '=', 'purchase_order'),
             ('order_id.is_fin_lease', '=', False),  # For non-fin-lease
-        ], limit=200)
+        ], limit=50)
         invoice_plans_to_order_id = [id.order_id.id for id in invoice_plans]
         res_invoice_plans = InvoicePlan.search([('order_id', 'in', sorted(set(invoice_plans_to_order_id))), 
                                                    ('ref_invoice_id', '!=', False),
@@ -166,6 +166,7 @@ class AccountModel(models.Model):
         len_invoice_plans = len(invoice_plans)
         len_res_invoice_plans = len(res_invoice_plans)
         len_seach_invoice_plans = len(seach_invoice_plans)
+        print 'Invoice Plan Id', invoice_plans.ids
         print 'All Search Invoice Plan', len_seach_invoice_plans, 'Use Search Invoice Plan', len_invoice_plans, 'Use Invoice Plan', len_res_invoice_plans
         for line in res_invoice_plans:
             if line.installment == 0:
