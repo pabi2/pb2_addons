@@ -375,7 +375,10 @@ class AccountVoucherLine(models.Model):
             plan = Plan.search([('move_line_id', '=', rec.move_line_id.id)])
             if plan:
                 calc_principal = plan[0].calc_principal
-                remain_principal = plan[0].remain_principal
+                #remain_principal = plan[0].remain_principal
+                remain_principal = plan[0].loan_install_id.amount_latest_principal
+                
+                
             desc_dict = [
                 (_('ดอกเบี้ย' + ' ' * 20),
                  _(('{:,.2f}'.format(income) + ' บาท').rjust(30))),
