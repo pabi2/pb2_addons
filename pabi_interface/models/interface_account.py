@@ -680,18 +680,18 @@ class InterfaceAccountEntry(models.Model):
         
         # if system_id = "mySales" do check exists
         # if system_id != "mySales" and type != "Reverse" do check exists 
-        ia_data = None
         dom = [("name", "=", data_dict["name"])]
-        if data_dict["system_id"] == "mySales":
-            ia_data = ia_table.search(dom)  # check_existing
-        else:
-            if data_dict["type"] != "Reverse":
-                ia_data = ia_table.search(dom)  # check_existing
+        ia_data = ia_table.search(dom)
         
-        if ia_data:
-            return True
-        else:
+        if not ia_data:
             return False
+        else:
+            system = ia_data.system_id.name
+            if system == "mySales":
+                return True  # check_existing
+            else:
+                if data_dict["type"] != "Reverse":
+                    return True  # check_existing
 
     @api.model
     def _pre_process_interface_account_entry(self, data_dict):
