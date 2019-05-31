@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api
 from openerp.tools.amount_to_text_en import amount_to_text
+from pychart.arrow import default
 
 
 class PABIPartnerDunningLetter(models.Model):
@@ -39,6 +40,7 @@ class PABIPartnerDunningLetter(models.Model):
     to_whom_title = fields.Char(
         string='To Whom',
         size=500,
+        default='ผศจ. ผ่าน ผอ.ฝ่ายบริหารธุรกิจอุทยานวิทยาศาสตร์ประเทศไทย'
     )
     partner_id = fields.Many2one(
         'res.partner',
