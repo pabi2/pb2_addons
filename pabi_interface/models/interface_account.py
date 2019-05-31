@@ -554,6 +554,21 @@ class InterfaceAccountEntry(models.Model):
     # ==========================================================
     #                  INTERFACE OTHER SYSEM
     # ==========================================================
+    @api.multi
+    def test_reverse_account_entry(self, name, to_reverse, date):
+        data_dict = {
+            'number': u'/',
+            'name': name,
+            'type': u'Reverse',
+            'to_reverse_entry_id': to_reverse,
+            'validate_user_id': u'004010',
+            'reversed_date': date,
+            'validate_date': date,
+            'journal_id': u'Sales Journal',
+            'cancel_reason': u'ยกเลิก',
+        }
+            
+        return self.generate_interface_account_entry(data_dict)
 
     @api.multi
     def test_generate_interface_account_entry(self):
@@ -659,10 +674,20 @@ class InterfaceAccountEntry(models.Model):
         return self.generate_interface_account_entry(data_dict)
 
     @api.model
-    def _is_document_origin_exists(self, doc_origin):
+    #def _is_document_origin_exists(self, doc_origin):
+    def _is_document_origin_exists(self, data_dict):
         ia_table = self.env["interface.account.entry"]
+        
+        # if system_id = "mySales" do check exists
+        # if system_id != "mySales" and type != "Reverse" do check exists 
+        ia_data = None
         dom = [("name", "=", doc_origin)]
-        ia_data = ia_table.search(dom)
+        if data_dict["system_id"] == "mySales":
+            ia_data = ia_table.search(dom)  # check_existing
+        else:
+            if data_dict["type"] != "Reverse":
+                ia_data = ia_table.search(dom)  # check_existing
+        
         if ia_data:
             return True
         else:
@@ -677,24 +702,29 @@ class InterfaceAccountEntry(models.Model):
         _logger.info("IA - Input: %s" % data_dict)
         
         # if origin document exists
-        if data_dict["type"] != "Reverse" and \
-            self._is_document_origin_exists(data_dict["name"]):
-            
+        if self._is_document_origin_exists(data_dict):
             ia_table = self.env["interface.account.entry"]
             dom = [("name", "=", data_dict["name"])]
             ia_data = ia_table.search(dom)
-            
-            # return exists IA document number
-            message = "Record created successfully"
-            res = {}
+            err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
             res = {
-                "is_success": True,
-                "messages": message,
-                "result": {}
+                'is_success': False,
+                'result': False,
+                'messages': _(err_message) %
+                            (data_dict["name"], ia_data.number)
                 }
-            res["result"]["id"] = ia_data.id
-            res["result"]["number"] = ia_data.number
-            res["result"]["fiscalyear"] = ia_data.move_id.period_id.fiscalyear_id.name
+            
+#             # return exists IA document number
+#             message = "Record created successfully"
+#             res = {}
+#             res = {
+#                 "is_success": True,
+#                 "messages": message,
+#                 "result": {}
+#                 }
+#             res["result"]["id"] = ia_data.id
+#             res["result"]["number"] = ia_data.number
+#             res["result"]["fiscalyear"] = ia_data.move_id.period_id.fiscalyear_id.name
             _logger.info("IA - Output: %s" % res)
             return res
         
