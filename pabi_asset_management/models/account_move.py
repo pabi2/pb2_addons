@@ -8,6 +8,80 @@ class AccountMove(models.Model):
 
     ref = fields.Char(index=True)
     narration = fields.Text(index=True)
+    
+    
+    @api.multi
+    def _check_account_analytic_line(self):
+        Analytic = self.env['account.analytic.line']
+        if self.document_id:
+            search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],['origin','like','SR']])#'|',['origin','like','POS'],
+            if search_picking:
+                #if len()
+                for rec in self.line_id:
+                    if rec.analytic_account_id:
+                        search = Analytic.search([('move_id', '=', rec.id)])
+                        if not search:
+                            credit = False
+                            if rec.stock_move_id.sale_line_id:
+                                credit = True
+                            
+                            Analytic.create({'account_id': rec.analytic_account_id.id,
+                                             'amount': credit and rec.credit or rec.debit * -1,
+                                             'unit_amount': rec.quantity,
+                                             'date': rec.date,
+                                             'name': rec.name,
+                                             'general_account_id': rec.account_id.id,
+                                             'product_uom_id': rec.product_uom_id.id,
+                                             'journal_id': rec.journal_id.analytic_journal_id.id,
+                                             'currency_id': rec.currency_id.id,
+                                             'product_id': rec.product_id.id,
+                                             'amount_currency': rec.amount_currency,
+                                             'ref': rec.ref,
+                                             'move_id': rec.id,
+                                             'fiscalyear_id': rec.period_id.fiscalyear_id.id,
+                                             'monitor_fy_id': rec.period_id.fiscalyear_id.id,
+                                             'charge_type': rec.charge_type,
+                                             #'sale_line_id': ,
+                                             #'sale_id': ,
+                                             #'purchase_line_id': ,
+                                             #'purchase_id': ,
+                                             'activity_id': rec.activity_id.id,
+                                             'activity_group_id': rec.activity_group_id.id,
+                                             'period_id': rec.period_id.id,
+                                             #'quarter': ,
+                                             'activity_rpt_id': rec.activity_rpt_id.id,
+                                             'spa_id': rec.spa_id.id,
+                                             'invest_construction_id': rec.invest_construction_id.id,
+                                             'section_program_id': rec.section_program_id.id,
+                                             'program_group_id': rec.program_group_id.id,
+                                             'sector_id': rec.sector_id.id,
+                                             'subsector_id': rec.subsector_id.id,
+                                             'costcenter_id': rec.costcenter_id.id,
+                                             'taxbranch_id': rec.taxbranch_id.id,
+                                             'tag_type_id': rec.tag_type_id.id,
+                                             'project_id': rec.project_id.id,
+                                             'invest_construction_phase_id': rec.invest_construction_phase_id.id,
+                                             'division_id': rec.division_id.id,
+                                             'cost_control_id': rec.cost_control_id.id,
+                                             'section_id': rec.section_id.id,
+                                             'program_id': rec.program_id.id,
+                                             'mission_id': rec.mission_id.id,
+                                             'chart_view': rec.chart_view,
+                                             'tag_id': rec.tag_id.id,
+                                             'cost_control_type_id': rec.cost_control_type_id.id,
+                                             'personnel_costcenter_id': rec.personnel_costcenter_id.id,
+                                             #'require_chartfield'
+                                             'functional_area_id': rec.functional_area_id.id,
+                                             'org_id': rec.org_id.id,
+                                             'invest_asset_id': rec.invest_asset_id.id,
+                                             'fund_id': rec.fund_id.id,
+                                             'project_group_id': rec.project_group_id.id,
+                                             'document': rec.document,
+                                             'document_id': rec.document_id,
+                                             'doctype': rec.doctype,
+                                             'document_line': rec.name
+                                })
+                
 
     @api.model
     def create(self, vals):
@@ -23,7 +97,14 @@ class AccountMove(models.Model):
         # Move name to '/'
         if self._context.get('overwrite_move_name', False):
             vals['name'] = '/'
-        return super(AccountMove, self).create(vals)
+            
+        #self._check_account_analytic_line()
+        
+        res = super(AccountMove, self).create(vals)
+            
+        res._check_account_analytic_line()
+        
+        return res
 
 
 class AccountMoveLine(models.Model):
@@ -126,19 +207,41 @@ class AccountMoveLine(models.Model):
     @api.multi
     def _check_account_move_line(self):
         if self.document_id:
-            #if self.chartfield_id:
             search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],'|',['origin','like','POS'],['origin','like','SR']])
             if search_picking:
-                search = self.env['account.move.line'].search([['move_id','=',self.move_id.id],['chartfield_id','=',False]])
-
-                for rec in search:
-                    rec.write({
-                                'costcenter_id':self.costcenter_id.id,
-                                'org_id':self.org_id.id,
-                                'fund_id':self.fund_id.id,
-                                'chartfield_id':self.chartfield_id.id
-                        })
-                    
+                if not self.chartfield_id:
+                    search = self.search([['move_id','=',self.move_id.id],
+                                          #['costcenter_id','!=',False],
+                                          #['org_id','!=',False]
+                                          ['id','!=',self.id],
+                                          ['chartfield_id','!=',False]],limit=1)
+                    if search:
+                        self.chartfield_id = search.chartfield_id.id
+                        self.costcenter_id = search.costcenter_id.id
+                        self.org_id = search.org_id.id
+                        self.fund_id = search.fund_id.id
+                    else:
+                        search = self.search([['move_id','!=',self.move_id.id],
+                                              ['document_id','=',self.document_id.id],
+                                              ['product_id','=',self.product_id.id],
+                                              #['chartfield_id','!=',False],
+                                              ['docline_seq','=',self.docline_seq]],limit=1)
+                        if search:
+                            self.chartfield_id = search.chartfield_id.id
+                            self.costcenter_id = search.costcenter_id.id
+                            self.org_id = search.org_id.id
+                            self.fund_id = search.fund_id.id
+                            
+                if self.chartfield_id:
+                    search = self.search([['move_id','=',self.move_id.id],['chartfield_id','=',False]])
+    
+                    for rec in search:
+                        rec.write({
+                                    'costcenter_id':self.costcenter_id.id,
+                                    'org_id':self.org_id.id,
+                                    'fund_id':self.fund_id.id,
+                                    'chartfield_id':self.chartfield_id.id
+                            })
         
     @api.multi
     def _get_detail_chartfield(self, chartfield_id):
