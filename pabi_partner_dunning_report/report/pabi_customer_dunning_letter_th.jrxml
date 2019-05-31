@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="customer_dunning_report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="495" leftMargin="60" rightMargin="40" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
-	<property name="ireport.zoom" value="1.0000000000000022"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="1.4641000000000037"/>
+	<property name="ireport.x" value="356"/>
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
 	<style name="border_box" lineSpacing="Single">
@@ -199,15 +199,6 @@ $F{partner_name} + "\n" +
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA["ใบแจ้งหนี้เลขที่"]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement x="33" y="101" width="353" height="21">
-						<printWhenExpression><![CDATA[$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
-					</reportElement>
-					<textElement lineSpacing="1_1_2" markup="none">
-						<font size="11" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-					</textElement>
-					<text><![CDATA[ผศจ. ผ่าน ผอ.ฝ่ายบริหารธุรกิจอุทยานวิทยาศาสตร์ประเทศไทย]]></text>
-				</staticText>
 				<textField pattern="dd/MM/yyyy">
 					<reportElement mode="Transparent" x="218" y="53" width="261" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -222,6 +213,15 @@ $F{partner_name} + "\n" +
 					</textElement>
 					<text><![CDATA[วันที่]]></text>
 				</staticText>
+				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="false">
+					<reportElement style="box" mode="Transparent" x="28" y="101" width="300" height="16" forecolor="#000000" backcolor="#FFFFFF">
+						<printWhenExpression><![CDATA[$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="1_1_2" markup="none">
+						<font fontName="SansSerif" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[($F{to_whom_title}.toString().equals("") ? "" : $F{to_whom_title}+ "\n")]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
