@@ -109,7 +109,7 @@
                         </t>
                         <t t-if="o.letter_type == 'l3'">
                             <!-- <span>ผศจ. ผ่าน ผอ.ฝ่ายบริหารธุรกิจอุทยานวิทยาศาสตร์ประเทศไทย<br/></span> -->
-                            <t t-esc="o.to_whom_title"/>
+                            <t t-esc="o.to_whom_title" />
                         </t>
                     </div>
                 </div>
