@@ -42,7 +42,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
         states={'1_draft': [('readonly', False)],
                 '2_submit': [('readonly', False)],
                 '3_approve': [('readonly', False)]},
-        domain=[('budget_method', '=', 'revenue')],  # Have domain
+        domain=[('budget_method', '=', 'revenue'), ('activity_group_id.budget_method', '=', 'revenue')],  # Have domain
     )
     plan_expense_line_ids = fields.One2many(
         'budget.plan.unit.line',
@@ -53,7 +53,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
         states={'1_draft': [('readonly', False)],
                 '2_submit': [('readonly', False)],
                 '3_approve': [('readonly', False)]},
-        domain=[('budget_method', '=', 'expense')],  # Have domain
+        domain=[('budget_method', '=', 'expense'), ('activity_group_id.budget_method', '=', 'expense')],  # Have domain
     )
     plan_summary_revenue_line_ids = fields.One2many(
         'budget.plan.unit.summary',
@@ -242,6 +242,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
                                           'activity_group_id')}
         PlanLine = self.env['budget.plan.unit.line']
         messages = PlanLine._change_content(vals, todo)
+        print 'messages', messages
         for message in messages:
             self.message_post(body=message)
 
