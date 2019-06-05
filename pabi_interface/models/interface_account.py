@@ -682,18 +682,14 @@ class InterfaceAccountEntry(models.Model):
         # if system_id != "mySales" and type != "Reverse" do check exists 
         dom = [("name", "=", data_dict["name"])]
         ia_data = ia_table.search(dom)
-        _logger.info("ia_data: %s", str(ia_data))
         
         if not ia_data:
-            _logger.info("not exists")
             return False
         else:
-            _logger.info("exists")
             if len(ia_data) > 1:
                 system = ia_data[0].system_id.name
             else:
                 system = ia_data.system_id.name
-            _logger.info("system: %s", str(system))
             if system == "mySales":
                 return True  # check_existing
             else:
@@ -721,18 +717,7 @@ class InterfaceAccountEntry(models.Model):
                             (data_dict["name"], ia_data.number)
                 }
             
-#             # return exists IA document number
-#             message = "Record created successfully"
-#             res = {}
-#             res = {
-#                 "is_success": True,
-#                 "messages": message,
-#                 "result": {}
-#                 }
-#             res["result"]["id"] = ia_data.id
-#             res["result"]["number"] = ia_data.number
-#             res["result"]["fiscalyear"] = ia_data.move_id.period_id.fiscalyear_id.name
-            _logger.info("IA - Output: %s" % res)
+            # _logger.info("IA - Output: %s" % res)
             return res
         
         # if origin not exists
