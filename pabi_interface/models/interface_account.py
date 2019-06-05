@@ -690,6 +690,7 @@ class InterfaceAccountEntry(models.Model):
         else:
             _logger.info("exists")
             system = ia_data.system_id.name
+            _logger.info("aaa")
             _logger.info("system: %s", str(system))
             if system == "mySales":
                 return True  # check_existing
