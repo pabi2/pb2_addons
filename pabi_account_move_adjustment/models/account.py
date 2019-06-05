@@ -283,8 +283,8 @@ class AccountMoveLine(MergedChartField, models.Model):
         if self._context.get('default_doctype', False) == 'adjustment':
             self.fund_id = False
             # display costcenter only if avail.
-            if 'costcenter_id' in self and self.chartfield_id.costcenter_id:
-                self.costcenter_id = self.chartfield_id.costcenter_id
+            #if 'costcenter_id' in self and self.chartfield_id.costcenter_id:
+            #    self.costcenter_id = self.chartfield_id.costcenter_id
             # Change other chartfield, we need it to set domain on Fund
             res_id = self.chartfield_id.res_id
             if self.chartfield_id.model == 'res.section':
@@ -297,6 +297,25 @@ class AccountMoveLine(MergedChartField, models.Model):
                 self.invest_asset_id = res_id
             elif self.chartfield_id.model == 'res.personnel.costcenter':
                 self.personnel_costcenter_id = res_id
+                
+        if self.chartfield_id:
+            if self.chartfield_id:
+                search = self._get_record_chartfield(self.chartfield_id.id)
+                if search:
+                    self.costcenter_id = search.costcenter_id.id
+                    self.org_id = search.org_id.id
+                    self.fund_id = search.fund_ids and search.fund_ids[0].id or False
+                    
+            else:
+                search = self.env['account.move.line'].search([['move_id','=',self.move_id.id],
+                                                               ['costcenter_id','!=',False],
+                                                               ['org_id','!=',False]],limit=1)
+                if search:
+                    self.chartfield_id = search.chartfield_id.id
+                    self.costcenter_id = search.costcenter_id.id
+                    self.org_id = search.org_id.id
+                    self.fund_id = search.fund_id.id
+    
 
     @api.multi
     @api.constrains('activity_group_id', 'activity_id')
