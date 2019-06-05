@@ -169,7 +169,7 @@ class XLSXReportReceivableDetail(models.TransientModel):
         res_ids = list(filter(lambda l: l != False, res_ids))
         #self.results = Result.search(res).sorted(
         #    key=lambda l: (l.partner_id.search_key, l.date, l.move_id.name))
-        res_ids = str(tuple(res_ids))
+        res_ids = str(tuple(res_ids + [0]))
         self._cr.execute("""
             select mol.id as move_line_id, mol.date as date, mol.date_maturity as date_maturity,
             mol.move_id as move_id, mol.partner_id as partner_id,
