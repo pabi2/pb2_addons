@@ -28,10 +28,26 @@
             </field>
         </record>
 
-        <record id="view_budget_plan_unit_line_tree_inside" model="ir.ui.view">
-            <field name="name">view.budget.plan.unit.line.tree.inside</field>
+        <record id="view_budget_plan_unit_line_tree_expense" model="ir.ui.view">
+            <field name="name">view.budget.plan.unit.line.tree.expense</field>
             <field name="model">budget.plan.unit.line</field>
-            <field name="inherit_id" ref="pabi_budget_plan.view_budget_plan_unit_line_tree_inside"/>
+            <field name="inherit_id" ref="pabi_budget_plan.view_budget_plan_unit_line_tree_expense"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree/field[@name='budget_method']" position="after">
+                    <field name="charge_type" invisible="0"/>
+                    <!-- <field name="income_section_id" attrs="{'required': [('charge_type', '=', 'internal')]}"/> -->
+                    <field name="income_section_id"/>
+                </xpath>
+                <xpath expr="/tree" position="attributes">
+                    <attribute name="colors">blue:(charge_type == 'external');green:(charge_type == 'internal')</attribute>
+                </xpath>
+            </field>
+        </record>
+  
+        <record id="view_budget_plan_unit_line_tree_revenue" model="ir.ui.view">
+            <field name="name">view.budget.plan.unit.line.tree.revenue</field>
+            <field name="model">budget.plan.unit.line</field>
+            <field name="inherit_id" ref="pabi_budget_plan.view_budget_plan_unit_line_tree_revenue"/>
             <field name="arch" type="xml">
                 <xpath expr="/tree/field[@name='budget_method']" position="after">
                     <field name="charge_type" invisible="0"/>
