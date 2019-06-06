@@ -246,12 +246,77 @@ class AccountMove(models.Model):
 
 
 class AccountMoveLine(MergedChartField, models.Model):
-    _inherit = 'account.move.line'
+    _inherit = 'account.move.line'   
+
+    def _get_default_account_id(self, cr, uid, context=None):
+        move_line = False
+        move_line_obj = self.pool['account.move.line']
+        line = context['line_id']
+        if context.get('line_id'):
+            move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
+
+        return move_line and move_line.account_id.id or False
+
+    def _get_default_taxbranch_id(self, cr, uid, context=None):
+        move_line = False
+        move_line_obj = self.pool['account.move.line']
+        if context.get('line_id'):
+            move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
+
+        return move_line and move_line.taxbranch_id.id or False
+
+    def _get_default_project_id(self, cr, uid, context=None):
+        move_line = False
+        move_line_obj = self.pool['account.move.line']
+        if context.get('line_id'):
+            move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
+
+        return move_line and move_line.project_id.id or False
+
+    def _get_default_section_id(self, cr, uid, context=None):
+        move_line = False
+        move_line_obj = self.pool['account.move.line']
+        if context.get('line_id'):
+            move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
+
+        return move_line and move_line.section_id.id or False
+
+    def _get_default_costcenter_id(self, cr, uid, context=None):
+        move_line = False
+        move_line_obj = self.pool['account.move.line']
+        if context.get('line_id'):
+            move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
+
+        return move_line and move_line.costcenter_id.id or False
+
+    def _get_default_org_id(self, cr, uid, context=None):
+        move_line = False
+        move_line_obj = self.pool['account.move.line']
+        if context.get('line_id'):
+            move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
+
+        return move_line and move_line.org_id.id or False
+    
 
     is_tax_line = fields.Boolean(
         string='Is Tax Line',
         help="Flag to mark this line as require tax detial on adjustment",
     )
+    is_require_activity = fields.Boolean(
+        string='Require AG&A',
+        related='account_id.is_require_activity',
+    )
+
+
+    _defaults = {
+        'account_id': _get_default_account_id,
+        'taxbranch_id': _get_default_taxbranch_id,
+        'project_id': _get_default_project_id,
+        'section_id': _get_default_section_id,
+        #'costcenter_id': _get_default_costcenter_id,
+        #'org_id': _get_default_org_id,
+    }
+    
 
     @api.multi
     @api.onchange('account_id')

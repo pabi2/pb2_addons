@@ -155,6 +155,9 @@ class AccountAccount(models.Model):
     type = fields.Selection(
         index=True,
     )
+    is_require_activity = fields.Boolean(
+        string='Require AG&A',
+    )
 
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=80):

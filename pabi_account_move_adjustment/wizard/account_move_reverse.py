@@ -5,6 +5,7 @@ from openerp.exceptions import RedirectWarning
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import RetryableJobError
+from datetime import datetime
 
 @job
 def action_reverse_async_process(session, model_name, res_id, move_ids):
@@ -29,6 +30,11 @@ class AccountMoveReverse(models.TransientModel):
 #             return False
         return False
     
+    date = fields.Date(
+        string='Reversal Date',
+        default=datetime.today(),
+        required=True,
+    )
     reverse_temp_acive_ids = fields.Text(
         string='Active Ids',
         default=get_active_ids
