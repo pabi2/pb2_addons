@@ -242,7 +242,6 @@ class BudgetPlanUnit(BPCommon, models.Model):
                                           'activity_group_id')}
         PlanLine = self.env['budget.plan.unit.line']
         messages = PlanLine._change_content(vals, todo)
-        print 'messages', messages
         for message in messages:
             self.message_post(body=message)
 
