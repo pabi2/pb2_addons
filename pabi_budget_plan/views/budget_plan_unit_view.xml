@@ -29,15 +29,49 @@
             </field>
         </record>
 
-        <record model="ir.ui.view" id="view_budget_plan_unit_line_tree_inside">
-            <field name="name">view.budget.plan.unit.line.tree.inside</field>
+        <record model="ir.ui.view" id="view_budget_plan_unit_line_tree_expense">
+            <field name="name">view.budget.plan.unit.line.tree.expense</field>
             <field name="model">budget.plan.unit.line</field>
             <field name="arch" type="xml">
                 <tree editable="bottom">
                     <field name="budget_method" invisible="1"/>
                     <field name="section_id" invisible="1"/>
                     <field name="fund_id" invisible="1"/>
-                    <field name="activity_group_id"/>
+                    <field name="activity_group_id" domain="[('budget_method', '=', 'expense')]"/>
+                    <field name="cost_control_id"/>
+                    <field name="unit"/>
+                    <field name="activity_unit_price"/>
+                    <field name="activity_unit"/>
+                    <field name="total_budget"/>
+                    <field name="description"/>
+                    <field name="reason"/>
+                    <field name="m0"/>
+                    <field name="next_fy_commitment" sum="Next FY Commitment"/>
+                    <field name="m1"/>
+                    <field name="m2"/>
+                    <field name="m3"/>
+                    <field name="m4"/>
+                    <field name="m5"/>
+                    <field name="m6"/>
+                    <field name="m7"/>
+                    <field name="m8"/>
+                    <field name="m9"/>
+                    <field name="m10"/>
+                    <field name="m11"/>
+                    <field name="m12"/>
+                    <field name="planned_amount" sum="Planned Amount"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_budget_plan_unit_line_tree_revenue">
+            <field name="name">view.budget.plan.unit.line.tree.revenue</field>
+            <field name="model">budget.plan.unit.line</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="budget_method" invisible="1"/>
+                    <field name="section_id" invisible="1"/>
+                    <field name="fund_id" invisible="1"/>
+                    <field name="activity_group_id" domain="[('budget_method', '=', 'revenue')]"/>
                     <field name="cost_control_id"/>
                     <field name="unit"/>
                     <field name="activity_unit_price"/>
@@ -122,11 +156,11 @@
                                 <!-- <button name="compute_prev_fy_performance" string="Prev.FY Performance" type="object" icon="terp-stock_format-scientific"
                                   attrs="{'invisible': [('state', '!=', '1_draft')]}" class="oe_right"/> -->
                                 <div name="expense_extra"></div>
-                                <field name="plan_expense_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'expense', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
+                                <field name="plan_expense_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'expense', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_expense'}"/>
                             </page>
                             <page string="Revenue Plan" name="revenue">
                                 <div name="revenue_extra"></div>
-                                <field name="plan_revenue_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'revenue', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_inside'}"/>
+                                <field name="plan_revenue_line_ids" colspan="4" nolabel="1" context="{'default_budget_method': 'revenue', 'tree_view_ref': 'pabi_budget_plan.view_budget_plan_unit_line_tree_revenue'}"/>
                             </page>
                             <page string="Summary">
                                 <separator string="Planned Revenue"/>
