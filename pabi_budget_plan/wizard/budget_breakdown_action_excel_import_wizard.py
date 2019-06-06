@@ -77,13 +77,10 @@ class BudgetBreakdownActionExcelImportWizard(models.TransientModel):
         extra_columns = IMPORT_ACTION[import_action].get('extra_columns',
                                                          False)
         xls_file = self._prepare_xls_file(self.import_file)
-        
         res = self.env['pabi.utils.xls'].\
             import_xls(model, xls_file, header_map=header_map,
                        extra_columns=extra_columns, auto_id=False,
                        force_id=True)
-        print 'model', model, 'header_map', header_map, 'extra_columns', extra_columns
-        print 'xls_file', xls_file, 'res', res
         return res
 
 
