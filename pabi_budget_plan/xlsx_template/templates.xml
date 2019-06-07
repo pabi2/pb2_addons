@@ -27,7 +27,7 @@
                             'D3': 'org_id.name_short',
                             'D4': 'section_id.display_name',
                             'D5': '${time.strftime("%d/%m/%Y")}',
-                            'D6': 'user_id.name${value or ""}'
+                            'D6': '${env.user.with_context(lang="th_TH").display_name}'
                         },
                         'plan_expense_line_ids[150]': {
                             'B12': 'charge_type${value and value.title() or ""}',
@@ -60,9 +60,9 @@
                         '_HEAD_': {
                             'D2': 'fiscalyear_id.name',
                             'D3': 'org_id.name_short${value or ""}',
-                            'D4': 'section_id.code',
+                            'D4': 'section_id.display_name',
                             'D5': '${time.strftime("%d/%m/%Y")}',
-                            'D6': 'user_id.name${value or ""}'
+                            'D6': '${env.user.with_context(lang="th_TH").display_name}'
                         },
                         'plan_revenue_line_ids[150]': {
                             'B12': 'charge_type${value and value.title() or ""}',
