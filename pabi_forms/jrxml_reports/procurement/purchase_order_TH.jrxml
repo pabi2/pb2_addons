@@ -22,7 +22,7 @@ FROM purchase_order_line pol
 LEFT JOIN product_uom pu
 ON pu.id = pol.product_uom
 WHERE pol.order_id = $P{ids}
-GROUP BY pol.name,pu.id]]>
+GROUP BY pol.id,pu.id]]>
 		</queryString>
 		<field name="pol_count" class="java.lang.Long"/>
 		<field name="name" class="java.lang.String"/>
