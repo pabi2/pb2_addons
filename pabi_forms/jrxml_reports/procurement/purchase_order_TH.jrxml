@@ -9,7 +9,7 @@
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT DISTINCT
-row_number() over (order by pol.name) as pol_count,
+row_number() over (order by pol.docline_seq) as pol_count,
 pol.name,
 SUM(pol.product_qty) price_unit,
 SUM(pol.price_unit) price_unit,
