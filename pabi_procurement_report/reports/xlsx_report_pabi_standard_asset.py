@@ -162,10 +162,6 @@ class XLSXReportPabiStandardAssetResults(models.Model):
         string='Supplier',
         readonly=True,
     )
-    brand = fields.Char(
-        string='Brand',
-        readonly=True,
-    )
     province = fields.Char(
         string='Province',
         readonly=True,
@@ -209,6 +205,10 @@ class XLSXReportPabiStandardAssetResults(models.Model):
         'purchase.order',
         string='Purchase Order',
     )
+    order_line_id = fields.Many2one(
+        'purchase.order.line',
+        string='Purchase Order Line',
+    )
     tag_id = fields.Many2one(
         'res.partner.tag',
         string='Tag',
@@ -216,6 +216,10 @@ class XLSXReportPabiStandardAssetResults(models.Model):
     category_id = fields.Many2one(
         'res.partner.category',
         string='Category',
+    )
+    asset_id = fields.Many2one(
+        'account.asset',
+        string='Asset',
     )
 
     def init(self, cr):
@@ -251,7 +255,9 @@ class XLSXReportPabiStandardAssetResults(models.Model):
 	    LEFT JOIN res_partner rp on rp.category_id = rpc.id
 	    WHERE rp.id = po.partner_id
         ) as category_id,
-        rpt.id as tag_id
+        rpt.id as tag_id,
+        pol.id AS order_line_id,
+        aaa.id AS asset_id
         FROM
         account_asset aaa
         LEFT JOIN product_product pp ON pp.id = aaa.product_id
