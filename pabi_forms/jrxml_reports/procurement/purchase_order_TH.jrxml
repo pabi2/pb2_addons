@@ -25,7 +25,6 @@ WHERE pol.order_id = $P{ids}
 GROUP BY pol.id,pu.id]]>
 		</queryString>
 		<field name="pol_id" class="java.lang.Integer"/>
-		<field name="pol_count" class="java.lang.Long"/>
 		<field name="name" class="java.lang.String"/>
 		<field name="price_unit" class="java.math.BigDecimal">
 			<fieldDescription><![CDATA[Unit Price]]></fieldDescription>
@@ -308,7 +307,6 @@ WHERE $X{IN, po.id, PIDS}
 	<field name="vendor_tax" class="java.lang.String"/>
 	<field name="vendor_branch" class="java.lang.String"/>
 	<field name="fine_month" class="java.lang.Integer"/>
-	<field name="pol_count" class="java.lang.Long"/>
 	<field name="pol_id" class="java.lang.Integer"/>
 	<field name="name" class="java.lang.String"/>
 	<field name="price_unit" class="java.math.BigDecimal">
