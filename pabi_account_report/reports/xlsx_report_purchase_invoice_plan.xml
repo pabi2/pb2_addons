@@ -16,17 +16,14 @@
                 <group name="criteria" position="after">
                 	<group name="invoice_plan" states="choose">
                 		<group>
-                			<field name="date_invoice_plan_start"/>
-                			<field name="date_contract_action_start"/>
+                			<!-- <field name="date_po_start"/>
+                			<field name="date_contract_action_start"/> -->
                 			<field name="org_ids" widget="many2many_tags"/>
-                			<field name="purchase_ids" widget="many2many_tags"/>
-                			<field name="contract_ids" widget="many2many_tags"/>
-                			<field name="account_ids" widget="many2many_tags"/>
                 		</group>
-                		<group>
-                			<field name="date_invoice_plan_end"/>
+                		<!-- <group>
+                			<field name="date_po_end"/>
                 			<field name="date_contract_action_end"/>
-                		</group>
+                		</group> -->
                 	</group>
                 </group>
                 <xpath expr="//notebook[@name='additional_criteria']" position="inside">
@@ -37,6 +34,44 @@
                             </group>
                             <group string="Print only">
                                 <field name="chartfield_ids" nolabel="1" />
+                            </group>
+                        </group>
+                    </page>
+                    <page string="PO Filters">
+                    	<group>
+                            <group string="Paste list of PO code to search">
+                                <field name="line_po_filter" placeholder="Paste list of PO" nolabel="1" context="{'active_test': False}" on_change="1" />
+                            </group>
+                            <group string="Print only">
+                                <!-- <field name="purchase_ids" nolabel="1" />-->
+	                        	<field colspan="4" name="purchase_ids" nolabel="1" >
+									<tree string="po" editable="bottom">
+							             <field name="name"/>
+							             <field name="date_order"/>
+							             <field name="partner_id" />
+							             <field name="state"/>
+							        </tree>
+								</field>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Contract Filters">
+                    	<group>
+                            <group string="Paste list of Contract code to search">
+                                <field name="line_ct_filter" placeholder="Paste list of Contract" nolabel="1" context="{'active_test': False}" on_change="1" />
+                            </group>
+                            <group string="Print only">
+                                <field name="contract_ids" nolabel="1" />
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Account Filters">
+                    	<group>
+                            <group string="Paste list of Account code to search">
+                                <field name="line_acc_filter" placeholder="Paste list of Account" nolabel="1" context="{'active_test': False}" on_change="1" />
+                            </group>
+                            <group string="Print only">
+                                <field name="account_ids" nolabel="1" />
                             </group>
                         </group>
                     </page>

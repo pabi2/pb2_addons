@@ -11,11 +11,11 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         'res.org',
         string='Org',
     )
-    date_invoice_plan_start = fields.Date(
-        string='Start Invoice Plan Date',
+    date_po_start = fields.Date(
+        string='Start PO Date',
     )
-    date_invoice_plan_end = fields.Date(
-        string='End Invoice Plan Date',
+    date_po_end = fields.Date(
+        string='End PO Date',
     )
     purchase_ids = fields.Many2many(
         'purchase.order',
@@ -36,6 +36,18 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         string='Account',
     )
     line_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    line_po_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    line_ct_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    line_acc_filter = fields.Text(
         string='Filter',
         help="More filter. You can use complex search with comma and between.",
     )
@@ -62,6 +74,42 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             codes = ','.join(codes)
             dom.append(('code', 'ilike', codes))
             self.chartfield_ids = Chartfield.search(dom, order='id')
+    
+    @api.onchange('line_po_filter')
+    def _onchange_line_po_filter(self):
+        self.purchase_ids = []
+        Purchase = self.env['purchase.order']
+        dom = []
+        if self.line_po_filter:
+            codes = self.line_po_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('name', 'ilike', codes))
+            self.purchase_ids = Purchase.search(dom, order='id')
+    
+    @api.onchange('line_ct_filter')
+    def _onchange_line_ct_filter(self):
+        self.contract_ids = []
+        Contract = self.env['purchase.contract']
+        dom = []
+        if self.line_ct_filter:
+            codes = self.line_ct_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('poc_code', 'ilike', codes))
+            self.contract_ids = Contract.search(dom, order='id')
+    
+    @api.onchange('line_acc_filter')
+    def _onchange_line_acc_filter(self):
+        self.account_ids = []
+        Account = self.env['account.account']
+        dom = []
+        if self.line_acc_filter:
+            codes = self.line_acc_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.account_ids = Account.search(dom, order='id')
             
 
     @api.multi
@@ -83,10 +131,18 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         if self.chartfield_ids:
             dom += [('order_line_id.chartfield_id', 'in', self.chartfield_ids.ids)]
         
-        if self.date_invoice_plan_start:
-            dom += [('order_id.date_order','>=',self.date_invoice_plan_start)]
-        if self.date_invoice_plan_end:
-            dom += [('order_id.date_order','<=',self.date_invoice_plan_end)]
+        #if self.date_po_start:
+        #    dom += [('order_id.date_order','>=',self.date_po_start)]
+        #if self.date_po_end:
+        #    dom += [('order_id.date_order','<=',self.date_po_end)]
+        if self.date_start:
+            dom += [('order_id.date_order','>=',self.date_start)]
+        if self.date_end:
+            dom += [('order_id.date_order','<=',self.date_end)]
+        if self.period_start_id:
+            dom += [('order_id.date_order','>=',self.period_start_id.date_start)]
+        if self.period_end_id:
+            dom += [('order_id.date_order','<=',self.period_end_id.date_stop)]
         if self.date_contract_action_start:
             dom += [('order_id.contract_id.action_date','>=',self.date_contract_action_start)]
         if self.date_contract_action_end:
