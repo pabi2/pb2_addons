@@ -784,7 +784,7 @@ WHERE $X{IN, po.id, PIDS}
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{pol_count}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{pol_id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="50" y="0" width="181" height="18" isPrintWhenDetailOverflows="true"/>
