@@ -9,7 +9,7 @@
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT DISTINCT
-row_number() over (order by pol.id) as pol_seq,
+row_number() over (order by pol.id) as pol_id,
 pol.name,
 SUM(pol.product_qty) price_unit,
 SUM(pol.price_unit) price_unit,
@@ -24,7 +24,7 @@ ON pu.id = pol.product_uom
 WHERE pol.order_id = $P{ids}
 GROUP BY pol.id,pu.id]]>
 		</queryString>
-        <field name="pol_seq" class="java.lang.Long"/>
+		<field name="pol_id" class="java.lang.Integer"/>
 		<field name="pol_count" class="java.lang.Long"/>
 		<field name="name" class="java.lang.String"/>
 		<field name="price_unit" class="java.math.BigDecimal">
@@ -164,7 +164,7 @@ FROM purchase_order_taxe pot
 LEFT JOIN account_tax at
 ON at.id = pot.tax_id
 WHERE ord_id = po.id limit 1) percentvat,
-row_number() over (order by pol.id) as pol_seq,
+row_number() over (order by pol.id) as pol_id,
 pol.name,
 pol.price_unit,
 SUM(pol.product_qty) product_qty,
@@ -309,7 +309,7 @@ WHERE $X{IN, po.id, PIDS}
 	<field name="vendor_branch" class="java.lang.String"/>
 	<field name="fine_month" class="java.lang.Integer"/>
 	<field name="pol_count" class="java.lang.Long"/>
-    <field name="pol_seq" class="java.lang.Long"/>
+	<field name="pol_id" class="java.lang.Integer"/>
 	<field name="name" class="java.lang.String"/>
 	<field name="price_unit" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[Unit Price]]></fieldDescription>
@@ -784,7 +784,7 @@ WHERE $X{IN, po.id, PIDS}
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{pol_seq}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{pol_id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="50" y="0" width="181" height="18" isPrintWhenDetailOverflows="true"/>
