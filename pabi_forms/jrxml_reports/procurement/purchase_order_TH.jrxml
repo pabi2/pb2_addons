@@ -24,6 +24,7 @@ ON pu.id = pol.product_uom
 WHERE pol.order_id = $P{ids}
 GROUP BY pol.id,pu.id]]>
 		</queryString>
+        <field name="pol_seq" class="java.lang.Long"/>
 		<field name="pol_count" class="java.lang.Long"/>
 		<field name="name" class="java.lang.String"/>
 		<field name="price_unit" class="java.math.BigDecimal">
@@ -163,7 +164,7 @@ FROM purchase_order_taxe pot
 LEFT JOIN account_tax at
 ON at.id = pot.tax_id
 WHERE ord_id = po.id limit 1) percentvat,
-row_number() over (order by pol.name) as pol_count,
+row_number() over (order by pol.docline_seq) as pol_seq,
 pol.name,
 pol.price_unit,
 SUM(pol.product_qty) product_qty,
@@ -308,6 +309,7 @@ WHERE $X{IN, po.id, PIDS}
 	<field name="vendor_branch" class="java.lang.String"/>
 	<field name="fine_month" class="java.lang.Integer"/>
 	<field name="pol_count" class="java.lang.Long"/>
+    <field name="pol_seq" class="java.lang.Long"/>
 	<field name="name" class="java.lang.String"/>
 	<field name="price_unit" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[Unit Price]]></fieldDescription>
@@ -317,7 +319,6 @@ WHERE $X{IN, po.id, PIDS}
 		<fieldDescription><![CDATA[UoM]]></fieldDescription>
 	</field>
 	<field name="tax_branch_org" class="java.lang.String"/>
-	<field name="pol_seq" class="java.lang.String"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
