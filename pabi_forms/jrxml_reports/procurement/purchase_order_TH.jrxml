@@ -9,7 +9,7 @@
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT DISTINCT
-row_number() over (order by pol.docline_seq) as pol_seq,
+row_number() over (order by pol.id) as pol_seq,
 pol.name,
 SUM(pol.product_qty) price_unit,
 SUM(pol.price_unit) price_unit,
@@ -164,7 +164,7 @@ FROM purchase_order_taxe pot
 LEFT JOIN account_tax at
 ON at.id = pot.tax_id
 WHERE ord_id = po.id limit 1) percentvat,
-row_number() over (order by pol.docline_seq) as pol_seq,
+row_number() over (order by pol.id) as pol_seq,
 pol.name,
 pol.price_unit,
 SUM(pol.product_qty) product_qty,
