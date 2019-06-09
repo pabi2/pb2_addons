@@ -65,11 +65,12 @@
                             <page string="Journal Items">
                                 <field name="line_id" widget="one2many_list" context="{'line_id': line_id , 'journal_id': journal_id, 'default_doctype': context.get('default_doctype')}">
                                     <tree colors="blue:state == 'draft';black:state == 'posted'" editable="top" string="Journal Items">
+                                        <field name="is_require_activity" invisible="1"/>
                                         <field name="ref"/>
                                         <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
                                         <field name="product_id" invisible="1"/>
-                                        <field name="activity_group_id"/>
-                                        <field name="activity_id" domain="[('activity_group_ids', 'in', activity_group_id)]"/>
+                                        <field name="activity_group_id" attrs="{'required': [('is_require_activity', '=', True)]}" />
+                                        <field name="activity_id" domain="[('activity_group_ids','in',activity_group_id)]" attrs="{'required': [('is_require_activity', '=', True),('activity_rpt_id', '=', False)]}" />
                                         <field name="activity_rpt_id" readonly="1"/>
                                         <field name="name" string="Description"/>
                                         <button name="%(action_edit_desc)d" string="Edit" type="action" icon="gtk-justify-fill"/>
@@ -82,7 +83,7 @@
                                         <field name="costcenter_id" readonly="1"/>
                                         <field name="analytic_account_id" groups="analytic.group_analytic_accounting" invisible="1"/>
                                         <field name="org_id" readonly="1"/>
-                                        <field name="chartfield_id" required="0"/>
+                                        <field name="chartfield_id" attrs="{'required': [('is_require_activity', '=', True)]}" />
                                         <field name="project_id" invisible="1"/>
                                         <field name="section_id" invisible="1"/>
                                         <field name="invest_asset_id" invisible="1"/>

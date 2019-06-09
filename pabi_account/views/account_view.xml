@@ -178,5 +178,16 @@
           parent="account.periodical_processing_reconciliation" sequence="30"
           groups="account.group_account_manager"/>
 
+        <record id="view_account_form" model="ir.ui.view">
+            <field name="name">account.account.form</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+            	<field name="active" position="after">
+                    <field name="is_require_activity"/>
+                </field>
+            </field>
+        </record>
+
     </data>
 </openerp>
