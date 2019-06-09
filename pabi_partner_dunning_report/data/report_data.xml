@@ -42,12 +42,15 @@
 					<field name="force_locale">th_TH</field>
 				</record>
 
+				<!-- 
 				<record id="pabi_customer_dunning_letter_values" model="ir.values">
 					<field name="name">Customer Dunning Letter (TH)</field>
 					<field name="model">pabi.partner.dunning.letter</field>
 					<field name="key2" eval="'client_print_multi'"/>
 					<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(pabi_customer_dunning_letter)"/>
-				</record>
+				</record> 
+				-->
+				
 				<!-- EN -->
 				<record id="pabi_customer_dunning_letter_en" model="ir.actions.report.xml">
 					<field name="string">Customer Dunning Letter (EN)</field>
