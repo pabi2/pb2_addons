@@ -266,7 +266,7 @@ class XLSXReportPabiStandardAssetResults(models.Model):
         LEFT JOIN purchase_order po ON po.name = sp.origin
         LEFT JOIN res_partner rp ON rp.id = po.partner_id
         LEFT JOIN res_country_province rcp ON rcp.id = rp.province_id
-        LEFT JOIN purchase_order_line pol ON pol.order_id = po.id
+        LEFT JOIN purchase_order_line pol ON pol.order_id = po.id and pol.product_id = aaa.product_id
         LEFT JOIN purchase_requisition_line prl
             ON pol.requisition_line_id = prl.id
         LEFT JOIN purchase_requisition prq
