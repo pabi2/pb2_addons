@@ -253,7 +253,7 @@ class AccountMoveLine(MergedChartField, models.Model):
         move_line_obj = self.pool['account.move.line']
         journal_adjust_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_budget')[1]
         journal_adjust_no_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_no_budget')[1]
-        line = context['line_id']
+        #line = context['line_id']
         if context.get('line_id'):
             move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
             doc = move_line.doctype
@@ -268,7 +268,7 @@ class AccountMoveLine(MergedChartField, models.Model):
         move_line_obj = self.pool['account.move.line']
         journal_adjust_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_budget')[1]
         journal_adjust_no_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_no_budget')[1]
-        line = context['line_id']
+        #line = context['line_id']
         if context.get('line_id'):
             move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
             if move_line.doctype == 'adjustment' and (move_line.journal_id.id == journal_adjust_budget or move_line.journal_id.id == journal_adjust_no_budget):
@@ -281,7 +281,7 @@ class AccountMoveLine(MergedChartField, models.Model):
         move_line_obj = self.pool['account.move.line']
         journal_adjust_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_budget')[1]
         journal_adjust_no_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_no_budget')[1]
-        line = context['line_id']
+        #line = context['line_id']
         if context.get('line_id'):
             move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
             if move_line.doctype == 'adjustment' and (move_line.journal_id.id == journal_adjust_budget or move_line.journal_id.id == journal_adjust_no_budget):
@@ -294,7 +294,7 @@ class AccountMoveLine(MergedChartField, models.Model):
         move_line_obj = self.pool['account.move.line']
         journal_adjust_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_budget')[1]
         journal_adjust_no_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_no_budget')[1]
-        line = context['line_id']
+        #line = context['line_id']
         if context.get('line_id'):
             move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
             if move_line.doctype == 'adjustment' and (move_line.journal_id.id == journal_adjust_budget or move_line.journal_id.id == journal_adjust_no_budget):
@@ -307,7 +307,7 @@ class AccountMoveLine(MergedChartField, models.Model):
         move_line_obj = self.pool['account.move.line']
         journal_adjust_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_budget')[1]
         journal_adjust_no_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_no_budget')[1]
-        line = context['line_id']
+        #line = context['line_id']
         if context.get('line_id'):
             move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
             if move_line.doctype == 'adjustment' and (move_line.journal_id.id == journal_adjust_budget or move_line.journal_id.id == journal_adjust_no_budget):
@@ -320,7 +320,7 @@ class AccountMoveLine(MergedChartField, models.Model):
         move_line_obj = self.pool['account.move.line']
         journal_adjust_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_budget')[1]
         journal_adjust_no_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_no_budget')[1]
-        line = context['line_id']
+        #line = context['line_id']
         if context.get('line_id'):
             move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
             if move_line.doctype == 'adjustment' and (move_line.journal_id.id == journal_adjust_budget or move_line.journal_id.id == journal_adjust_no_budget):
