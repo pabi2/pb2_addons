@@ -133,7 +133,7 @@
                             # Determine if charge type has value, so this too
                             'B12${value and "expense" or ""}': 'budget_method',
                             'B12${value and value.lower() or ""}': 'charge_type',
-                            'C12': 'income_section_id${value and value.split("-")[1] or ""}',
+                            'C12': 'income_section_id${value and value [value .find("-")+1:value .find("-")+8] or ""}',
                             'D12': 'activity_group_id',
                             'E12${value and value[0:value.find("-")] or ""}': 'cost_control_id',
                             'F12': 'description',
