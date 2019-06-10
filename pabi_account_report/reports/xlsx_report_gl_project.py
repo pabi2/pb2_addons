@@ -55,8 +55,10 @@ class AccountMoveLine(models.Model):
                 for line in lines.line_ids:
                     if line.tax_id.id:
                         move.vat_amount = line.credit
-            else:
-                move.vat_amount = abs(sum(move.move_id.invoice_ids.tax_line.mapped("amount")))
+            else: #1080789
+                #move.vat_amount = abs(sum(move.move_id.invoice_ids.tax_line.mapped("amount")))
+                if move.move_id.tax_detail_ids:
+                    move.vat_amount = abs(sum(move.move_id.tax_detail_ids.mapped("amount")))
                 
     @api.multi
     def _compute_base_amount(self):
@@ -69,7 +71,9 @@ class AccountMoveLine(models.Model):
                     if line.tax_id.id:
                         move.base_amount = line.tax_base_amount
             else:
-                move.base_amount = abs(sum(move.move_id.invoice_ids.tax_line.mapped("base")))
+                if move.move_id.tax_detail_ids:
+                    move.base_amount = abs(sum(move.move_id.tax_detail_ids.mapped("base")))
+                #move.base_amount = abs(sum(move.move_id.invoice_ids.tax_line.mapped("base")))
                              
     @api.multi
     def _compute_budget_fund_rule_line(self):
