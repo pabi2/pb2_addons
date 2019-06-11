@@ -92,6 +92,6 @@
             name="Purchase no Invoice Plan"
             parent="menu_pabi_payable_report"
             action="action_xlsx_report_purchase_no_invoice_plan_form"
-            sequence="130"/>
+            sequence="131"/>
     </data>
 </openerp>
