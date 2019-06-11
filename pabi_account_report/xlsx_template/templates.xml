@@ -2049,7 +2049,7 @@ result = pd.pivot_table(df, index=groupby,
         </record>
      	
 		
-        # Purchase Invoice Plan
+        # Purchase no Invoice Plan
         <record id="xlsx_report_purchase_no_invoice_plan" model="ir.attachment">
             <field name="res_model">xlsx.report.purchase.no.invoice.plan</field>
             <field name="datas"></field>
