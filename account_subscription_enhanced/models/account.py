@@ -383,7 +383,7 @@ class AccountModel(models.Model):
         vals = {}
         Use_Model = self.env['account.use.model'].create(vals)
         Use_Model.create_entries()   
-        return res
+        return True
 
   ###########################--------------------------------- end job backgruond ------------------------------- #######################
 
