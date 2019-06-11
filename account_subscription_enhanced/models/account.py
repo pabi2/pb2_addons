@@ -379,11 +379,10 @@ class AccountModel(models.Model):
 
     @api.multi
     def button_background(self):
-        self = self.with_context(active_ids=self.id, active_model='account.model')
-        res = super(AccountUseModel, self).create_entries()
-        #vals = {}
-        #Use_Model = self.env['account.use.model'].create(vals)
-        #Use_Model.create_entries()  
+        self = self.with_context(active_ids=self.ids, active_id=self.id, active_model='account.model', search_disable_custom_filters= True)
+        vals = {}
+        Use_Model = self.env['account.use.model'].create(vals)
+        Use_Model.create_entries()   
         return res
 
   ###########################--------------------------------- end job backgruond ------------------------------- #######################
