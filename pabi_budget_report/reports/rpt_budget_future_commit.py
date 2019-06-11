@@ -209,6 +209,7 @@ class RPTBudgetFutureCommitLine(models.Model):
     pm_project_c_name = fields.Char('PM Project-C Name')
     po_status = fields.Char('po_status')
     
+    invoice_line_id = fields.Many2one('account.invoice.line')
     activity_group_id = fields.Many2one('account.activity.group')
     activity_rpt_id = fields.Many2one('account.activity')
     contract_id = fields.Many2one('purchase.contract')
