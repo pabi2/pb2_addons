@@ -156,7 +156,7 @@ class AccountModel(models.Model):
             ('order_id.state', '=', 'approved'),
             ('order_id.order_type', '=', 'purchase_order'),
             ('order_id.is_fin_lease', '=', False),  # For non-fin-lease
-        ], limit=300)
+        ], limit=100)
         invoice_plans_to_order_id = [id.order_id.id for id in invoice_plans]
         res_invoice_plans = InvoicePlan.search([('order_id', 'in', sorted(set(invoice_plans_to_order_id))), 
                                                    ('ref_invoice_id', '!=', False),
