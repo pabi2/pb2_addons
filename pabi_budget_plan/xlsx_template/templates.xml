@@ -27,7 +27,7 @@
                             'D3': 'org_id.name_short',
                             'D4': 'section_id.display_name',
                             'D5': '${time.strftime("%d/%m/%Y")}',
-                            'D6': 'user_id.name${value or ""}'
+                            'D6': '${env.user.with_context(lang="th_TH").display_name}'
                         },
                         'plan_expense_line_ids[150]': {
                             'B12': 'charge_type${value and value.title() or ""}',
@@ -60,9 +60,9 @@
                         '_HEAD_': {
                             'D2': 'fiscalyear_id.name',
                             'D3': 'org_id.name_short${value or ""}',
-                            'D4': 'section_id.code',
+                            'D4': 'section_id.display_name',
                             'D5': '${time.strftime("%d/%m/%Y")}',
-                            'D6': 'user_id.name${value or ""}'
+                            'D6': '${env.user.with_context(lang="th_TH").display_name}'
                         },
                         'plan_revenue_line_ids[150]': {
                             'B12': 'charge_type${value and value.title() or ""}',
@@ -133,7 +133,7 @@
                             # Determine if charge type has value, so this too
                             'B12${value and "expense" or ""}': 'budget_method',
                             'B12${value and value.lower() or ""}': 'charge_type',
-                            'C12': 'income_section_id${value and value.split("-")[1] or ""}',
+                            'C12': 'income_section_id${value and value [value .find("-")+1:value .find("-")+8] or ""}',
                             'D12': 'activity_group_id',
                             'E12${value and value[0:value.find("-")] or ""}': 'cost_control_id',
                             'F12': 'description',
