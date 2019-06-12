@@ -136,11 +136,13 @@ class DocumentExportParser(models.TransientModel):
                                     line['default_value'] or ''
                                 line.update({'value': value})
                         data_list006.append(line_invoice_detail_config_lines)
-
+                        
         len_list = data_list003 if (len(data_list003) >= len(data_list006)) else data_list006
         for list in range(len(len_list)):
-            data_list.append(data_list003[list-1])
-            data_list.append(data_list006[list-1])
+            try: data_list.append(data_list003[list-1])
+            except : pass
+            try: data_list.append(data_list006[list-1])
+            except : pass
 
         # If not use footer
         if config_id.footer_disabled:
