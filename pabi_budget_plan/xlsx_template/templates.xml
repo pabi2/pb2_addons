@@ -368,7 +368,7 @@
           </field>
         </record>
 
-        <!--Inest Construction Template -->
+        <!--Invest Construction Template -->
         <record id="budget_plan_invest_construction_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.invest.construction</field>
             <field name="datas"></field>
@@ -385,7 +385,7 @@
                             'C4': '${time.strftime("%d/%m/%Y")}',
                             'C5': 'user_id.name${value or ""}'
                         },
-                        'plan_expense_line_ids: {
+                        'plan_line_ids': {
                             'B11': 'c_or_n${value == "continue" and "ต่อเนื่อง" or "ใหม่"}',
                             'C11': 'name${value or ""}',
                             'D11': 'month_duration',
@@ -396,7 +396,9 @@
                             'I11': 'reason${value or ""}',
                             'J11': 'expected_result${value or ""}',
                             'K11': 'pm_employee_id.name${value or ""}',
-                            # L11, M11, N11
+                            # 'L11': '',
+                            # 'M11': '',
+                            # 'N11': '',
                             'O11': 'amount_before',
                             'P11': 'amount_fy1',
                             'Q11': 'amount_fy2',
@@ -412,7 +414,7 @@
                             # 'AB11': 'overall_consumed',
                             # 'AC11': 'overall_balance',
                             'AC11': 'next_fy_commitment',
-                        }
+                        },
                     },
                     'TAB_List': {
                         'master_employee_ids': {
@@ -424,7 +426,7 @@
                 },
                 '__IMPORT__': {
                     'Construction Project': {
-                        'plan_expense_line_ids': {
+                        'plan_line_ids': {
                             'B11': 'c_or_n',
                             'C11': 'name',
                             'D11': 'month_duration',
