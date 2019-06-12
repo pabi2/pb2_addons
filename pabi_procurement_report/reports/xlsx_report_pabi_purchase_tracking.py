@@ -192,8 +192,6 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
         if self.po_responsible_ids:
             dom += [('po_responsible_id', 'in', self.po_responsible_ids.ids)]
         
-        dom += ['|', ('po_name', 'like', 'PO'), ('po_id', '=', False)]
-        
         self.results = Result.search(dom)
 
 
@@ -350,7 +348,7 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         left join account_voucher_line voul on voul.invoice_id = inv.id 
         LEFT JOIN account_voucher vou ON vou.id = voul.voucher_id
         LEFT JOIN operating_unit org ON org.id = pr.operating_unit_id or org.id = po.operating_unit_id
-        where pol.state != 'cancel' or po.id is null
+        where (pol.state != 'cancel' and po.name like 'PO%%') or po.id is null
         order by pr.id, po.id, inv.name, vou.name
         )""" % (self._table, ))
         
