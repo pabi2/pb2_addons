@@ -327,6 +327,10 @@ class AccountModel(models.Model):
           'e.g. ${object.name} will get the name of Define Recurring\n'),
         size=1000,
     )
+    chk_use_model = fields.Char(
+        string='Invoice Plan',
+        compute='chk_invoice_plan_line',
+    )
     button_use_model_job_id = fields.Many2one(
         'queue.job',
         string='Use Model Job',
@@ -386,7 +390,13 @@ class AccountModel(models.Model):
         return True
 
   ###########################--------------------------------- end job backgruond ------------------------------- #######################
-
+    
+    @api.multi
+    def chk_invoice_plan_line(self):
+        if self.name == 'Purchase Invoice Plan':
+            InvoicePlan = self.env['account.model']
+            self.chk_use_model = len(InvoicePlan.chk_invoice_plan(10000))
+    
     @api.multi
     def copy(self, default=None):
         self.ensure_one()
