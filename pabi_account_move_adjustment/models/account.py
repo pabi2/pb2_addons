@@ -210,9 +210,10 @@ class AccountMove(models.Model):
             # For case adjustment journal only, create analytic when posted
             Analytic = self.env['account.analytic.account']
             # Only direct creation of account move, we will recompute dimension
-#             if (self._context.get('direct_create', False) and \
-#                     move.doctype == 'adjustment'):
-            if (move.doctype == 'adjustment'):
+            if ((self._context.get('direct_create', False) and \
+                    move.doctype == 'adjustment')) or \
+                    (self.env['account.move'].search([('reversal_id','=',move.id)]).id \
+                    and move.doctype == 'adjustment'):
                 # if move.doctype == 'adjustment':
                 # Analytic
                 for line in move.line_id:
@@ -516,6 +517,7 @@ class AccountAnalyticAccount(models.Model):
   
     @api.constrains('taxbranch_id')
     def check_taxbranch(self):
+        print ("check_taxbranch")
         if self.move_id.doctype == "adjustment":
             pass
         elif not self.taxbranch_id :
