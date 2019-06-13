@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
+import datetime
 import time
 import pandas as pd
+import re
 
 
 class XLSXReportReceivableDetail(models.TransientModel):
@@ -44,7 +46,7 @@ class XLSXReportReceivableDetail(models.TransientModel):
         compute='_compute_date_real',
     )
     results = fields.Many2many(
-        'account.move.line',
+        'xlsx.report.receivable.detail.view',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
@@ -107,13 +109,14 @@ class XLSXReportReceivableDetail(models.TransientModel):
         except Exception:
             self.date_start_real = self.date_end_real = False
 
+
     @api.multi
     def _compute_results(self):
         self.ensure_one()
-        Result = self.env['account.move.line']
+        Moveline = self.env['account.move.line']
         dom = [('account_id.type', '=', 'receivable'),
-               ('date_maturity', '!=', False),
-               ('move_id.state', '=', 'posted')]
+               ('move_id.state', '=', 'posted'),]
+               #('date_maturity', '!=', False),]
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
         if self.partner_ids:
@@ -136,5 +139,10 @@ class XLSXReportReceivableDetail(models.TransientModel):
             dom += [('date', '<=', self.date_end)]
         if self.as_of_date:
             dom += [('date', '<=', self.as_of_date)]
-        self.results = Result.search(dom).sorted(
+        res_ids = []
+        for x in Moveline.search(dom):
+            res_ids += [x.id if x.move_id.doctype == 'adjustment' or x.date_maturity else False]
+        res_ids = list(filter(lambda l: l != False, res_ids))
+        self.results = Result.search(res_ids).sorted(
             key=lambda l: (l.partner_id.search_key, l.date, l.move_id.name))
+
