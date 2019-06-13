@@ -73,12 +73,13 @@
                     <header>
                         <button name="action_submit" string="Submit" type="object" states="draft" class="oe_highlight"/>
                         <button name="action_approve" string="Approve" type="object" states="submit,unapprove" class="oe_highlight" groups="pabi_base.group_cooperate_budget"/>
-                        <button name="action_unapprove" string="Un-Approve" type="object" states="approve" />
+                        <button name="action_unapprove" string="Un-Approve" type="object" states="approve" groups="pabi_base.group_cooperate_budget" />
                         <button name="action_reject" string="Reject" type="object" states="submit"/>
-                        <button name="action_close" string="Close" type="object" states="approve" class="oe_highlight"/>
-                        <button name="action_delete" string="Delete" type="object" states="approve"/>
-                        <button name="action_cancel" string="Cancel" type="object" states="approve"/>
-                        <button name="action_draft" string="Reset to Draft" type="object" states="reject,delete,cancel,close,unapprove"/>
+                        <button name="action_close" string="Close" type="object" states="approve" class="oe_highlight" groups="pabi_base.group_cooperate_budget" />
+                        <button name="action_delete" string="Delete" type="object" states="approve" groups="pabi_base.group_cooperate_budget" />
+                        <button name="action_cancel" string="Cancel" type="object" states="approve" groups="pabi_base.group_cooperate_budget" />
+                        <button name="action_draft" string="Reset to Draft" type="object" states="delete,cancel,close,unapprove" groups="pabi_base.group_cooperate_budget" />
+                        <button name="action_draft" string="Reset to Draft" type="object" states="reject"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,close" readonly="1"/>
                     </header>
                     <sheet string="Project (C)">
@@ -273,13 +274,14 @@
                 <form string="Phase" create="0">
                     <header>
                         <button name="action_submit" string="Submit" type="object" states="draft" class="oe_highlight"/>
-                        <button name="action_approve" string="Approve" type="object" states="submit,unapprove" class="oe_highlight" groups="pabi_base.group_cooperate_budget"/>
-                        <button name="action_unapprove" string="Un-Approve" type="object" states="approve" />
+                        <button name="action_approve" string="Approve" type="object" states="submit,unapprove" class="oe_highlight" groups="pabi_base.group_cooperate_budget" />
+                        <button name="action_unapprove" string="Un-Approve" type="object" states="approve" groups="pabi_base.group_cooperate_budget" />
                         <button name="action_reject" string="Reject" type="object" states="submit"/>
-                        <button name="action_close" string="Close" type="object" states="approve" class="oe_highlight"/>
-                        <button name="action_delete" string="Delete" type="object" states="approve"/>
-                        <button name="action_cancel" string="Cancel" type="object" states="approve"/>
-                        <button name="action_draft" string="Reset to Draft" type="object" states="reject,delete,cancel,close,unapprove"/>
+                        <button name="action_close" string="Close" type="object" states="approve" class="oe_highlight" groups="pabi_base.group_cooperate_budget" />
+                        <button name="action_delete" string="Delete" type="object" states="approve" groups="pabi_base.group_cooperate_budget" />
+                        <button name="action_cancel" string="Cancel" type="object" states="approve" groups="pabi_base.group_cooperate_budget" />
+                        <button name="action_draft" string="Reset to Draft" type="object" states="delete,cancel,close,unapprove" groups="pabi_base.group_cooperate_budget" />
+                        <button name="action_draft" string="Reset to Draft" type="object" states="reject"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,submit,approve,close" readonly="1"/>
                     </header>
                     <sheet string="Phase">
