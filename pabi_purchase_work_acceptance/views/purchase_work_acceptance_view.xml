@@ -28,8 +28,8 @@
                             <field name="date_scheduled_end" string="Contract End Date" readonly="1"/>
                             <field name="date_contract_end" invisible="1"/>
                             <field name="total_fine" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="overdue_day" string="No. of Day (Fine)" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="fine_per_day" invisible="1"/>
-                            <field name="overdue_day" invisible="1"/>
                             <field name="order_method" invisible="1"/>
                             <field name="invoice_created" invisible="1"/>
                             <field name="total_fine_cal" invisible="1"/>
