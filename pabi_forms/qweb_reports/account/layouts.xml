@@ -574,6 +574,9 @@
                                 </t>
                             </t>
                         </t>
+                        <t t-if="o.doctype in ['adjustment']">
+                            <span t-field="o.ref"/>
+                        </t>
                     </div>
                 </div>
 
