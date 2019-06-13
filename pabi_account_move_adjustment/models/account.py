@@ -210,8 +210,9 @@ class AccountMove(models.Model):
             # For case adjustment journal only, create analytic when posted
             Analytic = self.env['account.analytic.account']
             # Only direct creation of account move, we will recompute dimension
-            if self._context.get('direct_create', False) and \
-                    move.doctype == 'adjustment':
+#             if (self._context.get('direct_create', False) and \
+#                     move.doctype == 'adjustment'):
+            if (move.doctype == 'adjustment'):
                 # if move.doctype == 'adjustment':
                 # Analytic
                 for line in move.line_id:
@@ -500,3 +501,23 @@ class AccountMoveDueHistory(models.Model):
         string='Reason',
         size=500,
     )
+    
+class AccountAnalyticAccount(models.Model):
+    _inherit = 'account.analytic.account'
+    
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        required=False,  # Some error on adjust asset -> expense, temp remove
+    )
+    move_id = fields.Many2one(
+        'account.move',
+        string='Journal Entry',
+    )
+  
+    @api.constrains('taxbranch_id')
+    def check_taxbranch(self):
+        if self.move_id.doctype == "adjustment":
+            pass
+        elif not self.taxbranch_id :
+            raise ValidationError(
+                            _("Please check Tax branch is null"))
