@@ -55,6 +55,7 @@ class AccountAssetReverse(models.TransientModel):
             # Reverse entry
             move_dict = move.copy_data({})[0]
             move_dict['ref'] = _(u'ยกเลิกเลขครุภัณฑ์: %s') % asset.display_name
+            move_dict['journal_id'] = 417   #change Asset Journal => Asset Journal (No-Budget)
             for line in move_dict.get('line_id', []):
                 line[2]['asset_profile_id'] = False
             move_dict = AccountMove._switch_move_dict_dr_cr(move_dict)
