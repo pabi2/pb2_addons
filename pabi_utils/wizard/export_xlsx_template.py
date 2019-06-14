@@ -22,6 +22,17 @@ from openerp.tools.float_utils import float_compare
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
 from openerp.tools.safe_eval import safe_eval
+from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import RetryableJobError
+
+@job
+def action_done_async_process(session, model_name, res_id):
+    try:
+        res = session.pool[model_name].action_done_background(session.cr, session.uid, [res_id], session.context)
+        return {'result': res}
+    except Exception, e:
+        raise RetryableJobError(e)
 
 
 def adjust_cell_formula(value, k):
@@ -326,11 +337,17 @@ class ExportXlsxTemplate(models.TransientModel):
         required=True,
         size=500,
     )
+    async_process = fields.Boolean(
+        string='Run task in background?',
+        default=False,
+    )
     state = fields.Selection(
         [('choose', 'choose'),
          ('get', 'get')],
         default='choose',
     )
+
+
 
     @api.model
     def _get_template_fname(self):
@@ -785,6 +802,20 @@ class ExportXlsxTemplate(models.TransientModel):
             out_file = csv_from_excel(out_file, delimiter, csv_quote)
             out_ext = csv_extension
         return (out_file, '%s.%s' % (out_name, out_ext))
+
+
+    @api.multi
+    def action_export(self):
+        self.ensure_one()
+        if self.async_process == True:
+            if self._context.get('job_uuid', False):  # Called from @job
+                return self.act_getfile()
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = 'Export Xlsx - %s' % (self.res_model or self.name)
+            uuid = action_done_async_process.delay(session, self._name, self.id, description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+        else:
+            return self.act_getfile()
 
     @api.multi
     def act_getfile(self):
