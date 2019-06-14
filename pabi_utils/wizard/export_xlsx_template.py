@@ -297,6 +297,7 @@ class ExportXlsxTemplate(models.TransientModel):
     """ This wizard is used with the template (ir.attachment) to export
     xlsx template filled with data form the active record """
     _name = 'export.xlsx.template'
+    _inherit = 'xlsx.report'
 
     name = fields.Char(
         string='File Name',
