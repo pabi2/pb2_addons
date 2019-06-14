@@ -29,7 +29,7 @@ from openerp.addons.connector.exception import RetryableJobError
 @job
 def action_done_async_process(session, model_name, res_id):
     try:
-        res = session.pool[model_name].action_done_background(session.cr, session.uid, [res_id], session.context)
+        res = session.pool[model_name].action_export(session.cr, session.uid, [res_id], session.context)
         return {'result': res}
     except Exception, e:
         raise RetryableJobError(e)
