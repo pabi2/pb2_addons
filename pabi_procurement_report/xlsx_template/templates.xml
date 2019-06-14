@@ -92,7 +92,7 @@
                             'K12': 'asset_id.name${value or ""}',
                             'L12': 'asset_id.asset_brand${value or ""}',
                             'M12': 'asset_id.asset_model${value or ""}',
-                            'N12': 'prl_price#{number_format=number}',
+                            'N12': 'order_id.requisition_id.amount_company#{number_format=number}',
                             'O12': 'pol_price#{number_format=number}',
                             'P12': 'order_id.amount_total${value or ""}#{number_format=number}',
                             'Q12': 'order_line_id.product_qty${value or ""}#{number_format=number}',
