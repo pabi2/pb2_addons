@@ -842,7 +842,6 @@ class ExportXlsxTemplate(models.TransientModel):
     def action_export(self):
         self.ensure_one()
         if self.async_process == True:
-            
             Job = self.env['queue.job']
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Excel Report - %s' % (self.res_model or self.name)
@@ -851,6 +850,8 @@ class ExportXlsxTemplate(models.TransientModel):
             # Process Name
             job.process_id = self.env.ref('pabi_utils.xlsx_report')
             self.write({'state': 'get', 'uuid': uuid})
+            return self.act_getfile()
+            return self.act_getfile()
             return self.act_getfile()
         else:
             out_file, out_name = self._export_template(self.template_id,
