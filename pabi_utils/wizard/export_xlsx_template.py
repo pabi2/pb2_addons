@@ -808,12 +808,11 @@ class ExportXlsxTemplate(models.TransientModel):
     def action_export(self):
         self.ensure_one()
         if self.async_process == True:
-            if self._context.get('job_uuid', False):  # Called from @job
-                return self.act_getfile()
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Export Xlsx - %s' % (self.res_model or self.name)
             uuid = action_done_async_process.delay(session, self._name, self.id, description=description)
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+            return self.act_getfile()
         else:
             return self.act_getfile()
 
