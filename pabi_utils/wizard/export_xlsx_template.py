@@ -388,7 +388,6 @@ class ExportXlsxTemplate(models.TransientModel):
     )
 
 
-
     @api.model
     def _get_template_fname(self):
         """ By default, get template_fname from context """
