@@ -26,7 +26,7 @@ from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import RetryableJobError
 
-@job(default_channel='root.xlsx_report')
+@job
 def action_done_async_process(session, model_name, res_id, lang=False):
     """try:
         # Update context
