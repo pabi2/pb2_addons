@@ -26,6 +26,28 @@ class PurchaseOrder(models.Model):
         help="This account will be used as default for invoices created by "
         "invoice plan. You can change it."
     )
+    currency_rate = fields.Float(
+        string='Currency Rate',
+        compute='_compute_currency_rate'
+    )
+    
+    
+    @api.multi
+    @api.depends('currency_id')
+    def _compute_currency_rate(self):
+        for rec in self:
+            date = False
+            for inv_plan in rec.invoice_plan_ids:
+                for commit in inv_plan.ref_invoice_id.budget_commit_ids:
+                    if commit.amount < 0 and (date == False or commit.date < date):
+                        date = commit.date
+                    
+            if date:
+                search = self.env['res.currency.rate'].search([['currency_id','=',rec.currency_id.id],['name','<=',date]], order="name DESC", limit=1)
+                rec.currency_rate = search and search.rate_input or False
+            else:
+                search = self.env['res.currency.rate'].search([['currency_id','=',rec.currency_id.id],['name','<=',rec.date_order]], order="name DESC", limit=1)
+                rec.currency_rate = search and search.rate_input or False
 
     @api.multi
     def wkf_confirm_order(self):
