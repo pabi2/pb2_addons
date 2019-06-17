@@ -850,15 +850,14 @@ class ExportXlsxTemplate(models.TransientModel):
             Job = self.env['queue.job']
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Excel Report - %s' % (self.res_model or self.name)
-            uuid = get_report_job.delay(session, self._name, self.id, description=description, lang=session.context.get('lang', False))
+            uuid = action_done_async_process.delay(session, self._name, self.id, description=description, lang=session.context.get('lang', False))
             job = Job.search([('uuid', '=', uuid)], limit=1)
             # Process Name
             job.process_id = self.env.ref('pabi_utils.xlsx_report')
             self.write({'state': 'get', 'uuid': uuid})
             return self.act_getfile()
         else:
-            out_file, out_name = self._export_template(self.template_id,
-                                                       self.res_model, self.res_id)
+            out_file, out_name = self._export_template(self.template_id, self.res_model, self.res_id)
             self.write({'state': 'get', 'data': out_file, 'name': out_name})
             return self.act_getfile()
 
