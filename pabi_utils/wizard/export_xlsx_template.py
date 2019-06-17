@@ -28,7 +28,7 @@ from openerp.addons.connector.exception import RetryableJobError
 
 @job(default_channel='root.xlsx_report')
 def action_done_async_process(session, model_name, res_id, lang=False):
-    try:
+    """try:
         # Update context
         ctx = session.context.copy()
         if lang:
@@ -60,13 +60,13 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         result = _('Successfully created excel report : %s') % out_name
         return result
     except Exception, e:
-        raise FailedJobError(e)
+        raise FailedJobError(e)"""
 
-    """try:
+    try:
         res = session.pool[model_name].action_export(session.cr, session.uid, [res_id], session.context)
         return {'result': res}
     except Exception, e:
-        raise RetryableJobError(e)"""
+        raise RetryableJobError(e)
 
 
 def adjust_cell_formula(value, k):
