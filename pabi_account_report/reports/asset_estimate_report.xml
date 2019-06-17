@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      <record id="view_asset_estimate_report_form" model="ir.ui.view">
+          <field name="name">view.asset.estimate.report.form</field>
+          <field name="model">asset.estimate.report</field>
+          <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+          <field name="mode">primary</field>
+          <field name="arch" type="xml">
+              <field name="fiscalyear_start_id" position="attributes">
+                  <attribute name="required">True</attribute>
+              </field>
+              <field name="fiscalyear_end_id" position="attributes">
+                  <attribute name="required">True</attribute>
+              </field>
+              <xpath expr="/form//group[@name='criteria']/group" position="inside">
+                  <field name="account_ids" widget="many2many_tags"/>
+                  <field name="asset_state"  widget="many2many_tags"/>
+                  <field name="asset_profile_ids" widget="many2many_tags"/>
+                  <field name="asset_status_ids" widget="many2many_tags"/>
+                  <field name="asset_active"/>
+              </xpath>
+              <page name="time_filters" position="replace">
+                  <page string="Asset Filters" name="asset_filters">
+                      <group>
+                          <field name="count_asset"/>
+                      </group>
+                      <group>
+                          <group string="Paste list of code to search">
+                              <field name="asset_filter" placeholder="Paste list of asset codes" nolabel="1"/>
+                          </group>
+                          <group string="Assets">
+                              <field name="asset_ids" nolabel="1">
+                                  <tree editable="bottom">
+                                      <field name="code" readonly="1"/>
+                                      <field name="name" readonly="1"/>
+                                      <field name="status" readonly="1"/>
+                                      <field name="state" readonly="1"/>
+                                  </tree>
+                              </field>
+                          </group>
+                      </group>
+                  </page>
+                  <page string="Budget Filters" name="budget_filters">
+                      <group>
+                          <field name="count_budget"/>
+                      </group>
+                      <group>
+                          <group string="Paste list of code to search">
+                              <field name="budget_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                          </group>
+                          <group string="Source of Budget">
+                              <field name="budget" nolabel="1"/>
+                          </group>
+                      </group>
+                      <group>
+                          <field name="count_owner_budget"/>
+                      </group>
+                      <group>
+                          <group string="Paste list of code to search">
+                              <field name="owner_budget_filter" placeholder="Paste list of Budget Costcenter" nolabel="1"/>
+                          </group>
+                          <group string="Owner Budget">
+                              <field name="owner_budget" nolabel="1"/>
+                          </group>
+                      </group>
+                  </page>
+                  <page string="Report Setting">
+                      <group>
+                          <p class="oe_grey" colspan="4">
+                            Define account type for accumulated depreciation account, to be used in report query SQL (one time setup).
+                          </p>
+                          <group>
+                              <field name="accum_depre_account_type"/>
+                          </group>
+                          <group>
+                              <field name="depre_account_type"/>
+                          </group>
+                      </group>
+                  </page>
+              </page>
+
+          </field>
+      </record>
+
+      <record id="action_asset_estimate_report_form" model="ir.actions.act_window">
+          <field name="name">Asset Estimate</field>
+          <field name="res_model">asset.estimate.report</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">form</field>
+          <field name="target">new</field>
+          <field name="context">{'lang': 'th_TH'}</field>
+      </record>
+
+      <menuitem id="menu_asset_estimate_report"
+          name="Asset Estimate Report"
+          parent="menu_account_asset_report"
+          action="action_asset_estimate_report_form"
+          sequence="30"/>
+
+    </data>
+</openerp>
