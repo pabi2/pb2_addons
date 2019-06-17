@@ -20,8 +20,22 @@
                       </group>
                   </group>
                   <div states="get">
-                      <h2>Complete Prepare File (.xlsx)</h2>
-                      <p>Here is the exported file: <field name="data" readonly="1" filename="name"/></p>
+                      <h2 attrs="{'invisible': [('async_process', '=', True)]}">
+                          Complete Prepare Report (.xlsx)
+                      </h2>
+                      <h2 attrs="{'invisible': [('async_process', '=', False)]}">
+                          Report Enqueued (.xlsx)
+                      </h2>
+                      <p attrs="{'invisible': [('async_process', '=', True)]}" colspan="4">
+                          Here is the report file:
+                          <field name="data" filename="name" class="oe_inline"/>
+                      </p>
+                      <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
+                          Report UUID:
+                          <field name="uuid" class="oe_inline"/>
+                      </p>
+                      <!-- <h2>Complete Prepare File (.xlsx)</h2>
+                      <p>Here is the exported file: <field name="data" readonly="1" filename="name"/></p> -->
                   </div>
                   <footer states="choose">
                       <button name="act_getfile" string="Export" type="object" class="oe_highlight"/> or

@@ -60,7 +60,7 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         result = _('Successfully created excel report : %s') % out_name
         return result
     except Exception, e:
-        raise FailedJobError(e)
+        raise RetryableJobError(e)
 
     """try:
         res = session.pool[model_name].action_export(session.cr, session.uid, [res_id], session.context)
