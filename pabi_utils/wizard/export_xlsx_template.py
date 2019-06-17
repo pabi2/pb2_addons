@@ -22,6 +22,51 @@ from openerp.tools.float_utils import float_compare
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
 from openerp.tools.safe_eval import safe_eval
+from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import RetryableJobError
+
+@job
+def action_done_async_process(session, model_name, res_id, lang=False):
+    try:
+        # Update context
+        ctx = session.context.copy()
+        if lang:
+            ctx.update({'lang': lang})
+        out_file, out_name = session.pool[model_name].act_getfile(
+            session.cr, session.uid, [res_id], ctx)
+        # Make attachment and link ot job queue
+        job_uuid = session.context.get('job_uuid')
+        job = session.env['queue.job'].search([('uuid', '=', job_uuid)],
+                                              limit=1)
+        # Get init time
+        date_created = fields.Datetime.from_string(job.date_created)
+        ts = fields.Datetime.context_timestamp(job, date_created)
+        init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
+        # Create output report place holder
+        desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
+        session.env['ir.attachment'].create({
+            'name': out_name,
+            'datas': out_file,
+            'datas_fname': out_name,
+            'res_model': 'queue.job',
+            'res_id': job.id,
+            'type': 'binary',
+            'parent_id': session.env.ref('pabi_utils.dir_spool_report').id,
+            'description': desc,
+            'user_id': job.user_id.id,
+        })
+        # Result Description
+        result = _('Successfully created excel report : %s') % out_name
+        return result
+    except Exception, e:
+        raise RetryableJobError(e)
+
+    """try:
+        res = session.pool[model_name].action_export(session.cr, session.uid, [res_id], session.context)
+        return {'result': res}
+    except Exception, e:
+        raise RetryableJobError(e)"""
 
 
 def adjust_cell_formula(value, k):
@@ -298,6 +343,7 @@ class ExportXlsxTemplate(models.TransientModel):
     xlsx template filled with data form the active record """
     _name = 'export.xlsx.template'
 
+
     name = fields.Char(
         string='File Name',
         readonly=True,
@@ -325,11 +371,22 @@ class ExportXlsxTemplate(models.TransientModel):
         required=True,
         size=500,
     )
+    async_process = fields.Boolean(
+        string='Run task in background?',
+        default=False,
+    )
+    uuid = fields.Char(
+        string='UUID',
+        readonly=True,
+        size=500,
+        help="Job queue unique identifier",
+    )
     state = fields.Selection(
         [('choose', 'choose'),
          ('get', 'get')],
         default='choose',
     )
+
 
     @api.model
     def _get_template_fname(self):
@@ -785,12 +842,45 @@ class ExportXlsxTemplate(models.TransientModel):
             out_ext = csv_extension
         return (out_file, '%s.%s' % (out_name, out_ext))
 
+
+    """@api.multi
+    def action_export(self):
+        self.ensure_one()
+        if self.async_process == True:
+            if self._context.get('job_uuid', False):  # Called from @job
+                return self.act_getfile()
+            Job = self.env['queue.job']
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = 'Excel Report - %s' % (self.res_model or self.name)
+            uuid = action_done_async_process.delay(session, self._name, self.id, description=description, lang=session.context.get('lang', False))
+            job = Job.search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            job.process_id = self.env.ref('pabi_utils.xlsx_report')
+            self.write({'state': 'get', 'uuid': uuid})
+        else:
+            out_file, out_name = self._export_template(self.template_id, self.res_model, self.res_id)
+            self.write({'state': 'get', 'data': out_file, 'name': out_name})
+            return self.act_getfile()"""
+
+
+
     @api.multi
     def act_getfile(self):
         self.ensure_one()
-        out_file, out_name = self._export_template(self.template_id,
-                                                   self.res_model, self.res_id)
-        self.write({'state': 'get', 'data': out_file, 'name': out_name})
+        if self.async_process == True:
+            #if self._context.get('job_uuid', False):  # Called from @job
+            #    return self.act_getfile()
+            Job = self.env['queue.job']
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = 'Excel Report - %s' % (self.res_model or self.name)
+            uuid = action_done_async_process.delay(session, self._name, self.id, description=description, lang=session.context.get('lang', False))
+            job = Job.search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            job.process_id = self.env.ref('pabi_utils.xlsx_report')
+            self.write({'state': 'get', 'uuid': uuid})
+        else:
+            out_file, out_name = self._export_template(self.template_id, self.res_model, self.res_id)
+            self.write({'state': 'get', 'data': out_file, 'name': out_name})
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'export.xlsx.template',
