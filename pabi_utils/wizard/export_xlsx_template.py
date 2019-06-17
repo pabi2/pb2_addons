@@ -33,7 +33,7 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         ctx = session.context.copy()
         if lang:
             ctx.update({'lang': lang})
-        out_file, out_name = session.pool[model_name].action_export(
+        out_file, out_name = session.pool[model_name].act_getfile(
             session.cr, session.uid, [res_id], ctx)
         # Make attachment and link ot job queue
         job_uuid = session.context.get('job_uuid')
