@@ -28,7 +28,7 @@ from openerp.addons.connector.exception import RetryableJobError
 
 @job
 def action_done_async_process(session, model_name, res_id, lang=False):
-    """try:
+    try:
         # Update context
         ctx = session.context.copy()
         if lang:
@@ -60,13 +60,13 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         result = _('Successfully created excel report : %s') % out_name
         return result
     except Exception, e:
-        raise FailedJobError(e)"""
+        raise FailedJobError(e)
 
-    try:
+    """try:
         res = session.pool[model_name].action_export(session.cr, session.uid, [res_id], session.context)
         return {'result': res}
     except Exception, e:
-        raise RetryableJobError(e)
+        raise RetryableJobError(e)"""
 
 
 def adjust_cell_formula(value, k):
@@ -843,7 +843,7 @@ class ExportXlsxTemplate(models.TransientModel):
         return (out_file, '%s.%s' % (out_name, out_ext))
 
 
-    @api.multi
+    """@api.multi
     def action_export(self):
         self.ensure_one()
         if self.async_process == True:
@@ -860,13 +860,27 @@ class ExportXlsxTemplate(models.TransientModel):
         else:
             out_file, out_name = self._export_template(self.template_id, self.res_model, self.res_id)
             self.write({'state': 'get', 'data': out_file, 'name': out_name})
-            return self.act_getfile()
+            return self.act_getfile()"""
 
 
 
     @api.multi
     def act_getfile(self):
         self.ensure_one()
+        if self.async_process == True:
+            if self._context.get('job_uuid', False):  # Called from @job
+                return self.act_getfile()
+            Job = self.env['queue.job']
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = 'Excel Report - %s' % (self.res_model or self.name)
+            uuid = action_done_async_process.delay(session, self._name, self.id, description=description, lang=session.context.get('lang', False))
+            job = Job.search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            job.process_id = self.env.ref('pabi_utils.xlsx_report')
+            self.write({'state': 'get', 'uuid': uuid})
+        else:
+            out_file, out_name = self._export_template(self.template_id, self.res_model, self.res_id)
+            self.write({'state': 'get', 'data': out_file, 'name': out_name})
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'export.xlsx.template',
