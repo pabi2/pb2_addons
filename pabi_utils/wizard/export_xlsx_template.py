@@ -868,8 +868,8 @@ class ExportXlsxTemplate(models.TransientModel):
     def act_getfile(self):
         self.ensure_one()
         if self.async_process == True:
-            if self._context.get('job_uuid', False):  # Called from @job
-                return self.act_getfile()
+            #if self._context.get('job_uuid', False):  # Called from @job
+            #    return self.act_getfile()
             Job = self.env['queue.job']
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Excel Report - %s' % (self.res_model or self.name)
