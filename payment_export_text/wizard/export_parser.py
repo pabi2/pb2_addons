@@ -52,6 +52,8 @@ class DocumentExportParser(models.TransientModel):
         active_id = self._context.get('active_id', False)
         payment_export_record = self.env[active_model.model].browse(active_id)
         data_list = []
+        data_list003 = []
+        data_list006 = []
         # for header part
         header_config_lines =\
             config_id.header_config_line_ids.read(config_fields_to_read)
@@ -104,7 +106,7 @@ class DocumentExportParser(models.TransientModel):
                         value = line['default_value'] and\
                             line['default_value'] or ''
                         line.update({'value': value})
-                data_list.append(line_detail_config_lines)
+                data_list003.append(line_detail_config_lines)
 
         # If use invoice_detail
         if not config_id.invoice_detail_disabled:
@@ -133,7 +135,14 @@ class DocumentExportParser(models.TransientModel):
                                 value = line['default_value'] and\
                                     line['default_value'] or ''
                                 line.update({'value': value})
-                        data_list.append(line_invoice_detail_config_lines)
+                        data_list006.append(line_invoice_detail_config_lines)
+                        
+        len_list = data_list003 if (len(data_list003) >= len(data_list006)) else data_list006
+        for list in range(len(len_list)):
+            try: data_list.append(data_list003[list-1])
+            except : pass
+            try: data_list.append(data_list006[list-1])
+            except : pass
 
         # If not use footer
         if config_id.footer_disabled:
