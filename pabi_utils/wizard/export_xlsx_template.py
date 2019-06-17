@@ -375,6 +375,12 @@ class ExportXlsxTemplate(models.TransientModel):
         string='Run task in background?',
         default=False,
     )
+    uuid = fields.Char(
+        string='UUID',
+        readonly=True,
+        size=500,
+        help="Job queue unique identifier",
+    )
     state = fields.Selection(
         [('choose', 'choose'),
          ('get', 'get')],
@@ -850,8 +856,6 @@ class ExportXlsxTemplate(models.TransientModel):
             # Process Name
             job.process_id = self.env.ref('pabi_utils.xlsx_report')
             self.write({'state': 'get', 'uuid': uuid})
-            return self.act_getfile()
-            return self.act_getfile()
             return self.act_getfile()
         else:
             out_file, out_name = self._export_template(self.template_id,
