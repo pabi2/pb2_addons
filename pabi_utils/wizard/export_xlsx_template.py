@@ -28,14 +28,14 @@ from openerp.addons.connector.exception import FailedJobError
 from openerp.addons.connector.exception import RetryableJobError
 
 @job(default_channel='root.xlsx_report')
-def action_done_async_process(session, template_id, model_name, res_id, lang=False):
+def action_done_async_process(session, model_name, res_id, lang=False):
     try:
         # Update context
         ctx = session.context.copy()
         if lang:
             ctx.update({'lang': lang})
-        print '++++++++++++++++++++++++++++++++++', session, template_id, model_name, res_id
-        out_file, out_name = session.pool[model_name]._export_template(template_id, model_name, res_id,
+        print '++++++++++++++++++++++++++++++++++', session, model_name, res_id
+        out_file, out_name = session.pool[model_name].get_report(
             session.cr, session.uid, ctx)
         print '------------------------------out_file', out_file, out_name
         # Make attachment and link ot job queue
@@ -815,7 +815,7 @@ class ExportXlsxTemplate(models.TransientModel):
         ptemp = ConfParam.get_param('path_temp_file') or '/temp'
         stamp = dt.utcnow().strftime('%H%M%S%f')[:-3]
         ftemp = '%s/temp%s.xlsx' % (ptemp, stamp)
-        f = open(ftemp, 'wb')
+        f = open(ftemp, 'w')
         f.write(decoded_data)
         f.seek(0)
         f.close()
@@ -848,6 +848,28 @@ class ExportXlsxTemplate(models.TransientModel):
         return (out_file, '%s.%s' % (out_name, out_ext))
 
 
+
+    @api.multi
+    def get_report(self):
+        self.ensure_one()
+        Export = self.env['export.xlsx.template']
+        Attachment = self.env['ir.attachment']
+        template = []
+        # By default, use template by model
+        if self.template_id:
+            template = self.template_id
+        else:
+            template = Attachment.search([('res_model', '=', self._name)])
+        if len(template) != 1:
+            raise ValidationError(
+                _('No one template selected for "%s"') % self._name)
+        return Export._export_template(
+            template, self._name, self.id,
+            to_csv=self.to_csv,
+            csv_delimiter=self.csv_delimiter,
+            csv_extension=self.csv_extension,
+            csv_quote=self.csv_quote)
+
     @api.multi
     def act_getfile(self):
         self.ensure_one()
@@ -857,7 +879,7 @@ class ExportXlsxTemplate(models.TransientModel):
             Job = self.env['queue.job']
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Excel Report - %s' % (self.res_model or self.name)
-            uuid = action_done_async_process.delay(session, self.template_id, self._name, self.id, description=description, lang=session.context.get('lang', False))
+            uuid = action_done_async_process.delay(session, self._name, self.id, description=description, lang=session.context.get('lang', False))
             job = Job.search([('uuid', '=', uuid)], limit=1)
             # Process Name
             job.process_id = self.env.ref('pabi_utils.xlsx_report')
