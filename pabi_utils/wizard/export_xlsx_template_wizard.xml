@@ -12,7 +12,7 @@
                   <group states="choose">
                       <group>
                           <field name="template_id" widget="selection"/>
-                          <!-- <field name="async_process"/> -->
+                          <field name="async_process"/>
                       </group>
                       <group>
                           <field name="res_model" invisible="1"/>
