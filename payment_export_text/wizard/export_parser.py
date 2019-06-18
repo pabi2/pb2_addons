@@ -106,7 +106,7 @@ class DocumentExportParser(models.TransientModel):
                         value = line['default_value'] and\
                             line['default_value'] or ''
                         line.update({'value': value})
-                #data_list.append(line_detail_config_lines)
+                data_list.append(line_detail_config_lines)
                 
                 # If use invoice_detail
                 voucher_lines = export_line.voucher_id.line_ids
@@ -135,7 +135,7 @@ class DocumentExportParser(models.TransientModel):
                                 line.update({'value': value})
             
             
-                        data_list.append(line_detail_config_lines)
+                        #data_list.append(line_detail_config_lines)
                         data_list.append(line_invoice_detail_config_lines)
 
 
