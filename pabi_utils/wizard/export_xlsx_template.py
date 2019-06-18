@@ -34,21 +34,18 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         ctx = session.context.copy()
         if lang:
             ctx.update({'lang': lang})
-        print '++++++++++++++++++++++++++++++++++', session, model_name, res_id
-        out_file, out_name = session.pool[model_name].get_report(session.cr, session.uid)
-        print '------------------------------out_file', out_file, out_name
+        out_file, out_name = session.pool[model_name].get_report(
+            session.cr, session.uid, ctx)
         # Make attachment and link ot job queue
         job_uuid = session.context.get('job_uuid')
         job = session.env['queue.job'].search([('uuid', '=', job_uuid)],
                                               limit=1)
         # Get init time
-        print '------------------------------job_uuid', job_uuid, job
         date_created = fields.Datetime.from_string(job.date_created)
         ts = fields.Datetime.context_timestamp(job, date_created)
         init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
         # Create output report place holder
         desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
-        print '---------', out_name,'-', out_file, '-', job.id, '-', desc
         session.env['ir.attachment'].create({
             'name': out_name,
             'datas': out_file,
@@ -850,12 +847,10 @@ class ExportXlsxTemplate(models.TransientModel):
 
     @api.multi
     def get_report(self):
-        print '****************************************', self
         self.ensure_one()
         Attachment = self.env['ir.attachment']
         template = []
         # By default, use template by model
-        print '**---------*****----------***------------***'
         if self.template_id:
             template = self.template_id
         else:
@@ -863,7 +858,6 @@ class ExportXlsxTemplate(models.TransientModel):
         if len(template) != 1:
             raise ValidationError(
                 _('No one template selected for "%s"') % self._name)
-        print '****+++++++++*****++++++++*****+++++++++***', template
         return self._export_template(
             template, self._name, self.id,
             to_csv=self.to_csv,
@@ -888,7 +882,6 @@ class ExportXlsxTemplate(models.TransientModel):
         else:
             out_file, out_name = self._export_template(self.template_id, self.res_model, self.res_id)
             self.write({'state': 'get', 'data': out_file, 'name': out_name})
-        print '--++--++--++--++---++----++----++----++--++---++---++--++--', self.id, self._name
         return {
             'type': 'ir.actions.act_window',
             'res_model': self._name, #'export.xlsx.template',
