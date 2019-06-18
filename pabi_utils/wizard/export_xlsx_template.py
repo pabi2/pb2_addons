@@ -24,9 +24,10 @@ from openerp.exceptions import except_orm, ValidationError
 from openerp.tools.safe_eval import safe_eval
 from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import FailedJobError
 from openerp.addons.connector.exception import RetryableJobError
 
-@job
+@job(default_channel='root.xlsx_report')
 def action_done_async_process(session, model_name, res_id, lang=False):
     try:
         # Update context
@@ -45,6 +46,7 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
         # Create output report place holder
         desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
+        print '---------', out_name,'-', out_file, '-', job.id, '-', desc
         session.env['ir.attachment'].create({
             'name': out_name,
             'datas': out_file,
@@ -60,7 +62,7 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         result = _('Successfully created excel report : %s') % out_name
         return result
     except Exception, e:
-        raise RetryableJobError(e)
+        raise FailedJobError(e)
 
     """try:
         res = session.pool[model_name].action_export(session.cr, session.uid, [res_id], session.context)
@@ -841,27 +843,6 @@ class ExportXlsxTemplate(models.TransientModel):
             out_file = csv_from_excel(out_file, delimiter, csv_quote)
             out_ext = csv_extension
         return (out_file, '%s.%s' % (out_name, out_ext))
-
-
-    """@api.multi
-    def action_export(self):
-        self.ensure_one()
-        if self.async_process == True:
-            if self._context.get('job_uuid', False):  # Called from @job
-                return self.act_getfile()
-            Job = self.env['queue.job']
-            session = ConnectorSession(self._cr, self._uid, self._context)
-            description = 'Excel Report - %s' % (self.res_model or self.name)
-            uuid = action_done_async_process.delay(session, self._name, self.id, description=description, lang=session.context.get('lang', False))
-            job = Job.search([('uuid', '=', uuid)], limit=1)
-            # Process Name
-            job.process_id = self.env.ref('pabi_utils.xlsx_report')
-            self.write({'state': 'get', 'uuid': uuid})
-        else:
-            out_file, out_name = self._export_template(self.template_id, self.res_model, self.res_id)
-            self.write({'state': 'get', 'data': out_file, 'name': out_name})
-            return self.act_getfile()"""
-
 
 
     @api.multi
