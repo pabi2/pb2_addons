@@ -35,8 +35,7 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         if lang:
             ctx.update({'lang': lang})
         print '++++++++++++++++++++++++++++++++++', session, model_name, res_id
-        out_file, out_name = session.pool[model_name].get_report(
-            session.cr, session.uid, ctx)
+        out_file, out_name = session.pool[model_name].get_report(session.cr, session.uid)
         print '------------------------------out_file', out_file, out_name
         # Make attachment and link ot job queue
         job_uuid = session.context.get('job_uuid')
