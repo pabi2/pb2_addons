@@ -225,6 +225,32 @@ class AccountMoveLine(models.Model):
                     move_line.asset_id.account_analytic_id = \
                         Analytic.create_matched_analytic(move_line.asset_id)
         move_line._check_account_move_line()
+        #update move line               
+        if move_line.move_id.name =='/' and ('taxbranch_id' in vals):
+            move_line_ids = self.env['account.move.line'].search([('asset_id','=',vals['asset_id'])])
+            move_ids = [x for x in move_line_ids if x.doctype =='adjustment']
+            if len(move_ids) == 2:
+                #Debug err activity 
+                move_ids[1].activity_rpt_id = move_ids[0].activity_rpt_id.id
+                if not move_ids[1].activity_id:
+                    data = {
+                            #Activity Group
+                            'activity_group_id': move_ids[0].activity_group_id.id,
+                            #Activity Rpt
+                            'activity_rpt_id': move_ids[0].activity_rpt_id.id,
+                            #Costcenter
+                            'costcenter_id': move_ids[0].costcenter_id.id,
+                            #budget 
+                            'chartfield_id': move_ids[0].chartfield_id.id,
+                            #org 
+                            'org_id': move_ids[0].org_id.id,
+                            #fund
+                            'fund_id': move_ids[0].fund_id.id,
+                            #tax branch
+                            'taxbranch_id':move_ids[0].taxbranch_id.id
+                            }
+                    move_ids[1].update(data)
+        
         return move_line
     
     
