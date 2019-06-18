@@ -37,12 +37,13 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         print '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
         out_file, out_name = session.pool[model_name].act_getfile(
             session.cr, session.uid, [res_id], ctx)
-        print '------------------------------', out_file, out_name
+        print '------------------------------out_file', out_file, out_name
         # Make attachment and link ot job queue
         job_uuid = session.context.get('job_uuid')
         job = session.env['queue.job'].search([('uuid', '=', job_uuid)],
                                               limit=1)
         # Get init time
+        print '------------------------------job_uuid', job_uuid, job
         date_created = fields.Datetime.from_string(job.date_created)
         ts = fields.Datetime.context_timestamp(job, date_created)
         init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
@@ -814,7 +815,7 @@ class ExportXlsxTemplate(models.TransientModel):
         ptemp = ConfParam.get_param('path_temp_file') or '/temp'
         stamp = dt.utcnow().strftime('%H%M%S%f')[:-3]
         ftemp = '%s/temp%s.xlsx' % (ptemp, stamp)
-        f = open(ftemp, 'w')
+        f = open(ftemp, 'wb')
         f.write(decoded_data)
         f.seek(0)
         f.close()
@@ -864,10 +865,11 @@ class ExportXlsxTemplate(models.TransientModel):
         else:
             out_file, out_name = self._export_template(self.template_id, self.res_model, self.res_id)
             self.write({'state': 'get', 'data': out_file, 'name': out_name})
-        print '------------------------------------------------------'
+        print '--++--++--++--++---++----++----++----++--++---++---++--++--'
+        print self.id
         return {
             'type': 'ir.actions.act_window',
-            'res_model': 'export.xlsx.template',
+            'res_model': self._name, #'export.xlsx.template',
             'view_mode': 'form',
             'view_type': 'form',
             'res_id': self.id,
