@@ -851,11 +851,12 @@ class ExportXlsxTemplate(models.TransientModel):
 
     @api.multi
     def get_report(self):
+        print '****************************************', self
         self.ensure_one()
-        Export = self.env['export.xlsx.template']
         Attachment = self.env['ir.attachment']
         template = []
         # By default, use template by model
+        print '**---------*****----------***------------***'
         if self.template_id:
             template = self.template_id
         else:
@@ -863,7 +864,8 @@ class ExportXlsxTemplate(models.TransientModel):
         if len(template) != 1:
             raise ValidationError(
                 _('No one template selected for "%s"') % self._name)
-        return Export._export_template(
+        print '****+++++++++*****++++++++*****+++++++++***', template
+        return self._export_template(
             template, self._name, self.id,
             to_csv=self.to_csv,
             csv_delimiter=self.csv_delimiter,
