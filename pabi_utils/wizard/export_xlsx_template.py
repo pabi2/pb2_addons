@@ -28,15 +28,15 @@ from openerp.addons.connector.exception import FailedJobError
 from openerp.addons.connector.exception import RetryableJobError
 
 @job(default_channel='root.xlsx_report')
-def action_done_async_process(session, model_name, res_id, lang=False):
+def action_done_async_process(session, template_id, model_name, res_id, lang=False):
     try:
         # Update context
         ctx = session.context.copy()
         if lang:
             ctx.update({'lang': lang})
-        print '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-        out_file, out_name = session.pool[model_name].act_getfile(
-            session.cr, session.uid, [res_id], ctx)
+        print '++++++++++++++++++++++++++++++++++', session, template_id, model_name, res_id
+        out_file, out_name = session.pool[model_name]._export_template(template_id, model_name, res_id,
+            session.cr, session.uid, ctx)
         print '------------------------------out_file', out_file, out_name
         # Make attachment and link ot job queue
         job_uuid = session.context.get('job_uuid')
@@ -857,7 +857,7 @@ class ExportXlsxTemplate(models.TransientModel):
             Job = self.env['queue.job']
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Excel Report - %s' % (self.res_model or self.name)
-            uuid = action_done_async_process.delay(session, self._name, self.id, description=description, lang=session.context.get('lang', False))
+            uuid = action_done_async_process.delay(session, self.template_id, self._name, self.id, description=description, lang=session.context.get('lang', False))
             job = Job.search([('uuid', '=', uuid)], limit=1)
             # Process Name
             job.process_id = self.env.ref('pabi_utils.xlsx_report')
@@ -865,8 +865,7 @@ class ExportXlsxTemplate(models.TransientModel):
         else:
             out_file, out_name = self._export_template(self.template_id, self.res_model, self.res_id)
             self.write({'state': 'get', 'data': out_file, 'name': out_name})
-        print '--++--++--++--++---++----++----++----++--++---++---++--++--'
-        print self.id
+        print '--++--++--++--++---++----++----++----++--++---++---++--++--', self.id, self._name
         return {
             'type': 'ir.actions.act_window',
             'res_model': self._name, #'export.xlsx.template',
