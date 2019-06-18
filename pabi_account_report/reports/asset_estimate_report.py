@@ -159,7 +159,118 @@ class AssetRegisterReport(models.TransientModel):
             [('user_type', '=', self.depre_account_type.id)]).ids
         where_str = self._domain_to_where_str(dom)
         if where_str:
-            where_str = 'where ' + where_str
+            where_str = 'where ' + where_str 
+        self._cr.execute("""
+            select *
+            from (
+                select a.*, a.id asset_id, aap.account_asset_id,
+                aa.code as account_code, aa.name as account_name,
+                -- purchase_bf_current
+                case when date_part('year', a.date_start+92) !=
+                 date_part('year', CURRENT_DATE+92) then a.purchase_value
+                 else null end as purchase_before_current,
+                -- purchase_current
+                case when date_part('year', a.date_start+92) =
+                 date_part('year', CURRENT_DATE+92) then a.purchase_value
+                 else null end as purchase_current,
+                -- net_book_value
+                (select a.purchase_value - coalesce(sum(credit-debit), 0.0)
+                 from account_move_line ml
+                 where account_id in %s  -- accumulated account
+                 and ml.date <= %s -- date end
+                 and asset_id = a.id) net_book_value,
+                -- budget_type
+                case when a.section_id is not null then 'Section'
+                     when a.project_id is not null then 'Project'
+                     when a.invest_asset_id is not null then 'Invest Asset'
+                     when a.invest_construction_phase_id is not null
+                        then 'Invest Construction Phase'
+                    else null end as budget_type,
+                -- budget
+                case when a.section_id is not null then
+                        concat('res.section,', a.section_id)
+                     when a.project_id is not null then
+                        concat('res.project,', a.project_id)
+                     when a.invest_asset_id is not null then
+                        concat('res.invest.asset,', a.invest_asset_id)
+                     when a.invest_construction_phase_id is not null then
+                        concat('res.invest.construction.phase,',
+                               a.invest_construction_phase_id)
+                     else null end as budget,
+                -- owner_budget
+                case when a.owner_section_id is not null then
+                        concat('res.section,', a.owner_section_id)
+                     when a.owner_project_id is not null then
+                        concat('res.project,', a.owner_project_id)
+                     when a.owner_invest_asset_id is not null then
+                        concat('res.invest.asset,', a.owner_invest_asset_id)
+                     when a.owner_invest_construction_phase_id is not null
+                        then concat('res.invest.construction.phase,',
+                                     a.owner_invest_construction_phase_id)
+                     else null end as owner_budget,
+                -- owner_costcenter
+                case when a.owner_section_id is not null then
+                        rs.costcenter_id
+                     when a.owner_project_id is not null then
+                        rp.costcenter_id
+                     when a.owner_invest_asset_id is not null then
+                        ria.costcenter_id
+                     when a.owner_invest_construction_phase_id is not null then
+                        ricp.costcenter_id
+                     else null end as owner_costcenter_id,
+                -- owner_division
+                case when a.owner_section_id is not null then
+                        rs.division_id
+                     else null end as owner_division_id,
+                -- owner_sector
+                case when a.owner_section_id is not null then
+                        rs.sector_id
+                     else null end as owner_sector_id,
+                -- owner_subsector
+                case when a.owner_section_id is not null then
+                        rs.subsector_id
+                     else null end as owner_subsector_id,
+                -- depreciation
+                (select coalesce(sum(debit-credit), 0.0)
+                 from account_move_line ml
+                 where account_id in %s  -- depreciation account
+                 and ml.date between %s and %s
+                 and asset_id = a.id) depreciation,
+                -- accumulated_cf
+                (select coalesce(sum(credit-debit), 0.0)
+                 from account_move_line ml
+                 where account_id in %s  -- accumulated account
+                 and ml.date <= %s -- date end
+                 and asset_id = a.id) accumulated_cf,
+                -- accumulated_bf
+                (select coalesce(sum(credit-debit), 0.0)
+                 from account_move_line ml
+                 where account_id in %s  -- accumulatedp account
+                 and ml.date < %s -- date start
+                 and asset_id = a.id) accumulated_bf
+            from
+            account_asset a
+            left join account_asset_profile aap on a.profile_id = aap.id
+            left join res_section rs on a.owner_section_id = rs.id
+            left join res_project rp on a.owner_project_id = rp.id
+            left join res_invest_asset ria on a.owner_invest_asset_id = ria.id
+            left join res_invest_construction_phase ricp on
+            a.owner_invest_construction_phase_id = ricp.id
+            left join account_account aa on aap.account_asset_id = aa.id
+            ) asset
+        """ + where_str + 'order by asset.account_code, asset.code',
+                         (tuple(accum_depre_account_ids), date_end,
+                          tuple(depre_account_ids), date_start, date_end,
+                          tuple(accum_depre_account_ids), date_end,
+                          tuple(accum_depre_account_ids), date_start)
+            + ' limit 100')   
+        
+        results = self._cr.dictfetchall()
+        ReportLine = self.env['asset.register.view']
+        for line in results:
+            self.results += ReportLine.new(line)
+        return True
+            
     @api.multi
     @api.depends('asset_ids')
     def _compute_count_asset(self):

@@ -1890,6 +1890,40 @@ result = pd.pivot_table(df, index=groupby,
             }
          </field>
      </record>
+     # Asset Estimate Report
+     <record id="xlsx_report_asset_estimate" model="ir.attachment">
+         <field name="res_model">asset.estimate.report</field>
+         <field name="datas"></field>
+         <field name="datas_fname">xlsx_report_asset_estimate.xlsx</field>
+         <field name="name">Asset Estimate Report</field>
+         <field name="parent_id" eval="ref('dir_account_reports')"/>
+         <field name="description">
+             {
+                 '__EXPORT__': {
+                     'Asset Estimate Report': {
+                         '_HEAD_': {
+                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}#{number_format=text}',
+                             'B4': 'fiscalyear_start_id.name${value or ""}#{number_format=text}',
+                             'D4': 'fiscalyear_end_id.name${value or ""}#{number_format=text}',
+                             'B5': 'account_ids${value and ", ".join([x.code for x in value]) or ""}#{number_format=text}',
+                             'D5': 'asset_state${value and ", ".join([x.name for x in value]) or ""}#{number_format=text}',
+                             'B6': 'asset_profile_ids${value and ", ".join([x.name for x in value]) or ""}#{number_format=text}',
+                             'D6': 'asset_status_ids${value and ", ".join([x.name for x in value]) or ""}#{number_format=text}',
+                             'D7': 'asset_active${value or ""}#{number_format=text}',
+                             'AT9': 'fiscalyear_start_id.name${value and "Depreciation FY"+value or ""}#{number_format=text}',
+                             'AU9': 'fiscalyear_start_id.name${value and "Depreciation FY"+str(int(value)+1) or ""}#{number_format=text}',
+                             'AU9': 'fiscalyear_start_id.name${value and "Depreciation FY"+str(int(value)+1) or ""}#{number_format=text}',
+                             'AU9': 'fiscalyear_start_id.name${value and "Depreciation FY"+str(int(value)+1) or ""}#{number_format=text}',
+                             'AU9': 'fiscalyear_start_id.name${value and "Depreciation FY"+str(int(value)+1) or ""}#{number_format=text}',
+                           
+                         },
+
+                     },
+
+                }
+            }
+         </field>
+     </record>
 
      # PND1
      <record id="xlsx_report_pnd1" model="ir.attachment">
