@@ -878,7 +878,7 @@ class ExportXlsxTemplate(models.TransientModel):
                 _('No one template selected for "%s"') % self._name)
             
         print '*****************************************************', template
-        return self._export_template(template, self._name, self.id)
+        return self._export_template(template, self.res_model, self.res_id)
 
     @api.multi
     def act_getfile(self):
@@ -899,7 +899,7 @@ class ExportXlsxTemplate(models.TransientModel):
         else:
             print 'self.res_model', self.res_model, 'self._name', self._name
             print 'self.res_id', self.res_id, 'self.id', self.id
-            out_file, out_name = self._export_template(self.template_id, self._name, self.id)
+            out_file, out_name = self._export_template(self.template_id, self.res_model, self.res_id)
             self.write({'state': 'get', 'data': out_file, 'name': out_name})
         return {
             'type': 'ir.actions.act_window',
