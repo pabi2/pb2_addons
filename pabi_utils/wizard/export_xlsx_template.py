@@ -28,19 +28,19 @@ from openerp.addons.connector.exception import FailedJobError
 from openerp.addons.connector.exception import RetryableJobError
 
 @job(default_channel='root.xlsx_report')
-def action_done_async_process(session, model_name, res_id):
+def action_done_async_process(session, model_name, res_id, lang=False):
     try:
         # Update context
-        #ctx = session.context.copy()
-        #if lang:
-        #    ctx.update({'lang': lang})
+        ctx = session.context.copy()
+        if lang:
+            ctx.update({'lang': lang})
         print '++++++++++++++++++++++++++++++++++++++++++++++++++++'
         print session, session.pool[model_name]
         print session.cr, session.uid
-        print '++++++++++++++++++++++++++++++++++++++++++++++++++++'
-        out_file, out_name = session.pool[model_name].get_report(
-            session.cr, session.uid)
         
+        out_file, out_name = session.pool[model_name].get_report(
+            session.cr, session.uid, [res_id], ctx)
+        print '++++++++++++++++++++++++++++++++++++++++++++++++++++'
         # Make attachment and link ot job queue
         job_uuid = session.context.get('job_uuid')
         job = session.env['queue.job'].search([('uuid', '=', job_uuid)],
@@ -883,7 +883,7 @@ class ExportXlsxTemplate(models.TransientModel):
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Excel Report - %s' % (self.res_model or self.name)
             print '-------------------------------------------------------------'
-            uuid = action_done_async_process.delay(session, self._name, self.id, description=description)#, lang=session.context.get('lang', False))
+            uuid = action_done_async_process.delay(session, self._name, self.id, description=description, lang=session.context.get('lang', False))
             print '-------------------------------------------------------------'
             job = Job.search([('uuid', '=', uuid)], limit=1)
             # Process Name
