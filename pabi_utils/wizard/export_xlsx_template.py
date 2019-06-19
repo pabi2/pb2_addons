@@ -34,13 +34,8 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         ctx = session.context.copy()
         if lang:
             ctx.update({'lang': lang})
-        print '++++++++++++++++++++++++++++++++++++++++++++++++++++'
-        print session, session.pool[model_name]
-        print session.cr, session.uid
-        
         out_file, out_name = session.pool[model_name].get_report(
             session.cr, session.uid, [res_id], ctx)
-        print '++++++++++++++++++++++++++++++++++++++++++++++++++++'
         # Make attachment and link ot job queue
         job_uuid = session.context.get('job_uuid')
         job = session.env['queue.job'].search([('uuid', '=', job_uuid)],
@@ -67,12 +62,6 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         return result
     except Exception, e:
         raise FailedJobError(e)
-
-    """try:
-        res = session.pool[model_name].action_export(session.cr, session.uid, [res_id], session.context)
-        return {'result': res}
-    except Exception, e:
-        raise RetryableJobError(e)"""
 
 
 def adjust_cell_formula(value, k):
@@ -803,69 +792,56 @@ class ExportXlsxTemplate(models.TransientModel):
     def _export_template(self, template, res_model, res_id,
                          to_csv=False, csv_delimiter=',',
                          csv_extension='csv', csv_quote=True):
-        print '_export_template-----****-----***-------***--------***------***----'
         data_dict = literal_eval(template.description.strip())
         export_dict = data_dict.get('__EXPORT__', False)
         out_name = template.name
-        print '_export_template-----+++++-----+++++-----++++++----+++++-----+++++----'
         if not export_dict:  # If there is not __EXPORT__ formula, just export
             out_name = template.datas_fname
             out_file = template.datas
             return (out_file, out_name)
         # Prepare temp file (from now, only xlsx file works for openpyxl)
-        print '_export_template----------------------------'
         decoded_data = base64.decodestring(template.datas)
         ConfParam = self.env['ir.config_parameter']
         ptemp = ConfParam.get_param('path_temp_file') or '/temp'
         stamp = dt.utcnow().strftime('%H%M%S%f')[:-3]
         ftemp = '%s/temp%s.xlsx' % (ptemp, stamp)
-        print '_export_template+++++++++++++++++++++++++++++'
         f = open(ftemp, 'w')
         f.write(decoded_data)
         f.seek(0)
         f.close()
         # Workbook created, temp fie removed
-        print '_export_template******************************'
         wb = load_workbook(ftemp)
         os.remove(ftemp)
         # ============= Start working with workbook =============
-        print '_export_template1111111111111111111111111111111'
         record = res_model and self.env[res_model].browse(res_id) or False
         self._fill_workbook_data(wb, record, export_dict)
         # =======================================================
         # Return file as .xlsx
-        print '_export_template222222222222222222222222222222'
         content = cStringIO.StringIO()
         wb.save(content)
         content.seek(0)  # Set index to 0, and start reading
         out_file = base64.encodestring(content.read())
-        print '_export_template333333333333333333333333333333'
         if record and 'name' in record and record.name:
             out_name = record.name.replace(' ', '').replace('/', '')
         else:
             fname = out_name.replace(' ', '').replace('/', '')
             ts = fields.Datetime.context_timestamp(self, dt.now())
             out_name = '%s_%s' % (fname, ts.strftime('%Y%m%d_%H%M%S'))
-        print '_export_template44444444444444444444444444444'
         if not out_name or len(out_name) == 0:
             out_name = 'noname'
         out_ext = 'xlsx'
         # CSV (convert only 1st sheet)
-        print '_export_template55555555555555555555555555'
         if to_csv:
             delimiter = csv_delimiter.encode("utf-8")
             out_file = csv_from_excel(out_file, delimiter, csv_quote)
             out_ext = csv_extension
-        print '_export_template66666666666666666666666666666'
         return (out_file, '%s.%s' % (out_name, out_ext))
 
 
 
     @api.multi
     def get_report(self):
-        print '-----++++++--------+++++++----------++++++++-------++++++-------'
         self.ensure_one()
-        print '**-------***-----****-----***-------***--------***------***----'
         Attachment = self.env['ir.attachment']
         template = []
         # By default, use template by model
@@ -876,9 +852,8 @@ class ExportXlsxTemplate(models.TransientModel):
         if len(template) != 1:
             raise ValidationError(
                 _('No one template selected for "%s"') % self._name)
-            
-        print '*****************************************************', template
         return self._export_template(template, self.res_model, self.res_id)
+
 
     @api.multi
     def act_getfile(self):
@@ -889,16 +864,12 @@ class ExportXlsxTemplate(models.TransientModel):
             Job = self.env['queue.job']
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Excel Report - %s' % (self.res_model or self.name)
-            print '-------------------------------------------------------------'
             uuid = action_done_async_process.delay(session, self._name, self.id, description=description, lang=session.context.get('lang', False))
-            print '-------------------------------------------------------------'
             job = Job.search([('uuid', '=', uuid)], limit=1)
             # Process Name
             job.process_id = self.env.ref('pabi_utils.xlsx_report')
             self.write({'state': 'get', 'uuid': uuid})
         else:
-            print 'self.res_model', self.res_model, 'self._name', self._name
-            print 'self.res_id', self.res_id, 'self.id', self.id
             out_file, out_name = self._export_template(self.template_id, self.res_model, self.res_id)
             self.write({'state': 'get', 'data': out_file, 'name': out_name})
         return {
