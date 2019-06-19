@@ -1,11 +1,74 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from .budget_plan_common import PrevFYCommon
+from openerp.exceptions import ValidationError
+from openerp.exceptions import RedirectWarning
+from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import RetryableJobError
+
+
+@job
+def action_done_async_process(session, model_name, res_id):
+    try:
+        res = session.pool[model_name].action_done_background(
+            session.cr, session.uid, [res_id], session.context)
+        return {'result': res}
+    except Exception, e:
+        raise RetryableJobError(e)
 
 
 class BudgetPlanProject(models.Model):
     _inherit = 'budget.plan.project'
 
+    job_id = fields.Many2one(
+        'queue.job',
+        string='Model Job',
+        compute='_compute_button_job_uuid',
+    )
+    job_uuid = fields.Char(
+        string='Job UUID',
+        compute='_compute_button_job_uuid',
+    )
+    
+    ###########################--------------------------------- start job backgruond ------------------------------- #######################
+
+    @api.multi
+    def _compute_button_job_uuid(self):      
+        for rec in self:
+            task_name = "%s('%s', %s)" % \
+                ('action_done_async_process', self._name, rec.id)
+            jobs = self.env['queue.job'].search([
+                ('func_string', 'like', task_name),
+                ('state', '!=', 'done')],
+                order='id desc', limit=1)
+            rec.job_id = jobs and jobs[0] or False
+            rec.job_uuid = jobs and jobs[0].uuid or False
+        return True
+
+    @api.multi
+    def action_done_background(self):
+        if self._context.get('button_use_model_async_process', False):
+            self.ensure_one()
+            if self._context.get('job_uuid', False):  # Called from @job
+                return self.compute_prev_fy_performance()
+            if self.job_id:
+                message = _('Budget Plan Project')
+                action = self.env.ref('pabi_utils.action_my_queue_job')
+                raise RedirectWarning(message, action.id, _('Go to My Jobs'))
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = 'Budget Plan Project - %s' % (self.name or self._name)
+            uuid = action_done_async_process.delay(
+                session, self._name, self.id, description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+
+        else:
+            return self.compute_prev_fy_performance()
+
+
+  ###########################--------------------------------- end job backgruond ------------------------------- #######################
+
+    
     @api.multi
     def compute_prev_fy_performance(self):
         """ Prepre actual/commit amount from previous year from PR/PO/EX """
