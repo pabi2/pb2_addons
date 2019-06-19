@@ -28,14 +28,19 @@ from openerp.addons.connector.exception import FailedJobError
 from openerp.addons.connector.exception import RetryableJobError
 
 @job(default_channel='root.xlsx_report')
-def action_done_async_process(session, model_name, res_id, lang=False):
+def action_done_async_process(session, model_name, res_id):
     try:
         # Update context
-        ctx = session.context.copy()
-        if lang:
-            ctx.update({'lang': lang})
+        #ctx = session.context.copy()
+        #if lang:
+        #    ctx.update({'lang': lang})
+        print '++++++++++++++++++++++++++++++++++++++++++++++++++++'
+        print session, session.pool[model_name]
+        print session.cr, session.uid
+        print '++++++++++++++++++++++++++++++++++++++++++++++++++++'
         out_file, out_name = session.pool[model_name].get_report(
-            session.cr, session.uid, ctx)
+            session.cr, session.uid)
+        
         # Make attachment and link ot job queue
         job_uuid = session.context.get('job_uuid')
         job = session.env['queue.job'].search([('uuid', '=', job_uuid)],
@@ -847,7 +852,9 @@ class ExportXlsxTemplate(models.TransientModel):
 
     @api.multi
     def get_report(self):
+        print '-----++++++--------+++++++----------++++++++-------++++++-------'
         self.ensure_one()
+        print '**-------***-----****-----***-------***--------***------***----'
         Attachment = self.env['ir.attachment']
         template = []
         # By default, use template by model
@@ -858,6 +865,7 @@ class ExportXlsxTemplate(models.TransientModel):
         if len(template) != 1:
             raise ValidationError(
                 _('No one template selected for "%s"') % self._name)
+        print '*****************************************************'
         return self._export_template(
             template, self._name, self.id,
             to_csv=self.to_csv,
@@ -874,7 +882,9 @@ class ExportXlsxTemplate(models.TransientModel):
             Job = self.env['queue.job']
             session = ConnectorSession(self._cr, self._uid, self._context)
             description = 'Excel Report - %s' % (self.res_model or self.name)
-            uuid = action_done_async_process.delay(session, self._name, self.id, description=description, lang=session.context.get('lang', False))
+            print '-------------------------------------------------------------'
+            uuid = action_done_async_process.delay(session, self._name, self.id, description=description)#, lang=session.context.get('lang', False))
+            print '-------------------------------------------------------------'
             job = Job.search([('uuid', '=', uuid)], limit=1)
             # Process Name
             job.process_id = self.env.ref('pabi_utils.xlsx_report')
