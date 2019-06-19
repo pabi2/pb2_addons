@@ -387,15 +387,12 @@ class AccountVoucherLine(models.Model):
                         a= ''
                 
             desc_dict = [
-                (_('ดอกเบี้ย' + ' ' * 20),
-                 _(('{:,.2f}'.format(income) + ' บาท').rjust(30))),
-                (_('เงินต้น' + ' ' * 21),
-                 _(('{:,.2f}'.format(calc_principal) + ' บาท').rjust(30))),
-                (_('เงินต้นคงเหลือ' + ' ' * 10),
-                 _(('{:,.2f}'.format(remain_principal2) + ' บาท').rjust(30)))]
+                (_('{:,.2f}'.format(income) + ' บาท').rjust(30)),
+                (_('{:,.2f}'.format(calc_principal) + ' บาท').rjust(30)),
+                (_('{:,.2f}'.format(remain_principal2) + ' บาท').rjust(30))]
             description = ''
             for desc in desc_dict:
-                description += desc[0] + desc[1]
+                description += desc#[0]# + desc[1]
                 if desc_dict.index(desc) + 1 != len(desc_dict):
                     description += '\n'
             rec.loan_installment_description = description

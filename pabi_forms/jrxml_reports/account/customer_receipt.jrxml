@@ -2,8 +2,8 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voucher" language="groovy" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
 	<property name="ireport.zoom" value="1.239669421487624"/>
-	<property name="ireport.x" value="50"/>
-	<property name="ireport.y" value="529"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="143"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -325,8 +325,8 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 		<band height="37">
 			<printWhenExpression><![CDATA[$F{invoice_description} != null]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="76" y="0" width="323" height="37"/>
-				<textElement verticalAlignment="Top" lineSpacing="Single">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="76" y="0" width="184" height="37"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{account_id} != $F{loan_installment_account_id} ? $F{invoice_description} :
@@ -334,6 +334,13 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 ($F{loan_agreement_description} != null && $F{loan_agreement_description} != "" ? $F{loan_agreement_description} + "\n" : "") +
 ($F{loan_installment_description} != null && $F{loan_installment_description} != "" ? $F{loan_installment_description} : ""))) +
 ($F{loan_agreement_id} != null ? $F{bank_name} : "")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="76" y="0" width="106" height="37"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["ดอกเบี้ย\nเงินต้น\nเงินต้นคงเหลือ"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
