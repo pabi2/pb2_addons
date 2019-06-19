@@ -865,13 +865,9 @@ class ExportXlsxTemplate(models.TransientModel):
         if len(template) != 1:
             raise ValidationError(
                 _('No one template selected for "%s"') % self._name)
-        print '*****************************************************'
-        return self._export_template(
-            template, self._name, self.id,
-            to_csv=self.to_csv,
-            csv_delimiter=self.csv_delimiter,
-            csv_extension=self.csv_extension,
-            csv_quote=self.csv_quote)
+            
+        print '*****************************************************', template
+        return self._export_template(template, self._name, self.id)
 
     @api.multi
     def act_getfile(self):
