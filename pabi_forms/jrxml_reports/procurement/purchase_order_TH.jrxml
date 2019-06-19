@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="576"/>
+	<property name="ireport.zoom" value="2.1961500000000007"/>
+	<property name="ireport.x" value="73"/>
+	<property name="ireport.y" value="313"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT DISTINCT
-row_number() over (order by pol.id) as pol_id,
+row_number() over (order by pol.name) as pol_count,
 pol.name,
 SUM(pol.product_qty) price_unit,
 SUM(pol.price_unit) price_unit,
@@ -22,9 +22,9 @@ FROM purchase_order_line pol
 LEFT JOIN product_uom pu
 ON pu.id = pol.product_uom
 WHERE pol.order_id = $P{ids}
-GROUP BY pol.id,pu.id]]>
+GROUP BY pol.name,pu.id]]>
 		</queryString>
-		<field name="pol_id" class="java.lang.Integer"/>
+		<field name="pol_count" class="java.lang.Long"/>
 		<field name="name" class="java.lang.String"/>
 		<field name="price_unit" class="java.math.BigDecimal">
 			<fieldDescription><![CDATA[Unit Price]]></fieldDescription>
@@ -81,6 +81,7 @@ vendor.zip vendor_zip,
 vendor.phone vendor_phone,
 vendor.fax vendor_fax,
 vendor.vat vendor_tax,
+vendor.search_key vendor_search_key,
 (Case when vendor.taxbranch = '00000'
 then
 'สำนักงานใหญ่'
@@ -163,7 +164,7 @@ FROM purchase_order_taxe pot
 LEFT JOIN account_tax at
 ON at.id = pot.tax_id
 WHERE ord_id = po.id limit 1) percentvat,
-row_number() over (order by pol.id) as pol_id,
+row_number() over (order by pol.name) as pol_count,
 pol.name,
 pol.price_unit,
 SUM(pol.product_qty) product_qty,
@@ -221,7 +222,7 @@ ON pu.id = pol.product_uom
  LEFT JOIN res_org ro
  ON ro.operating_unit_id = ou.id
 WHERE $X{IN, po.id, PIDS}
- GROUP BY po.id,pol.id,ou.id,ou_partner.image,ou_partner.street,ou_partner.street2,ou_township.name,ou_district.name,ou_province.name,ou_partner.vat,ou_partner.taxbranch
+ GROUP BY po.id,ou.id,ou_partner.image,ou_partner.street,ou_partner.street2,ou_township.name,ou_district.name,ou_province.name,ou_partner.vat,ou_partner.taxbranch
  ,ou_partner.zip,ou_partner.phone,ou_partner.fax,vendor.title,vendor.id,vendor_country.name,apt.id,he.title_id,he.id,verify_hr.title_id,verify_hr.id,
  validator_hr.title_id,validator_hr.id,validater.phone,validater.email,taxbranch.id,vendor_township.name,vendor_district.name,vendor_province.name,
  pol.name,pol.price_unit,pu.id,ro.id]]>
@@ -307,8 +308,10 @@ WHERE $X{IN, po.id, PIDS}
 	<field name="vendor_tax" class="java.lang.String"/>
 	<field name="vendor_branch" class="java.lang.String"/>
 	<field name="fine_month" class="java.lang.Integer"/>
-	<field name="pol_id" class="java.lang.Integer"/>
-	<field name="name" class="java.lang.String"/>
+	<field name="pol_count" class="java.lang.Long"/>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="price_unit" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[Unit Price]]></fieldDescription>
 	</field>
@@ -317,6 +320,7 @@ WHERE $X{IN, po.id, PIDS}
 		<fieldDescription><![CDATA[UoM]]></fieldDescription>
 	</field>
 	<field name="tax_branch_org" class="java.lang.String"/>
+	<field name="vendor_search_key" class="java.lang.String"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -689,6 +693,13 @@ WHERE $X{IN, po.id, PIDS}
  +
 ($F{vendor_branch} != null ? "สาขา " + $F{vendor_branch} : "")]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="88" y="148" width="117" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement lineSpacing="Single">
+					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{vendor_search_key} == null ? "" : $F{vendor_search_key})]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -782,7 +793,7 @@ WHERE $X{IN, po.id, PIDS}
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{pol_id}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{pol_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="50" y="0" width="181" height="18" isPrintWhenDetailOverflows="true"/>
