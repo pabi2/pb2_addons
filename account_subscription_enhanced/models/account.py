@@ -377,7 +377,7 @@ class AccountModel(models.Model):
             uuid = action_done_async_process.delay(
                 session, self._name, self.id, description=description)
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
-
+            job.process_id = 8
         else:
             return self.action_done()
 
