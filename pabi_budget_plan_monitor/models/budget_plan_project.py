@@ -23,7 +23,7 @@ def action_done_async_process(session, model_name, res_id):
         # Create output report place holder
         desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
         
-        result = _('Successfully : %s') % model_name
+        result = ('Successfully : ' + str(model_name))
         return result
     except Exception, e:
         raise RetryableJobError(e)
