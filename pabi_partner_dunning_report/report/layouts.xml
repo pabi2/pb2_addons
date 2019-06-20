@@ -72,14 +72,14 @@
                 <t t-set="subject" t-value="o.subject.encode('utf-8').replace(' ', '&#160;&#160;&#160;')"/>
                 <t t-set="amount_total" t-value="o.amount_total"/>
                 <t t-if="o.letter_type == 'l3'">
-                    <p class="center_report_customer_dunning_letter" style="font-size:28px;">
-                        บันทึกข้อความ
-                    </p>
+                    <p class="center_report_customer_dunning_letter" style="font-size:28px;">บันทึกข้อความ</p>
                 </t>
-                <div>ที่ &#160;&#160;&#160;&#160;&#160;อว 6001/ <t t-esc="number"/>
+                <div>ที่ &#160;&#160;&#160;&#160;&#160;อว 6001/ <t t-esc="number"/></div>
+                <div>
                 	<t t-if="o.date_letter">
                    		<span style="text-align:right;" t-esc="o.date_letter" /><br/>
-                    </t></div>
+                    </t>
+                </div>
                 <div class="center_report_customer_dunning_letter" style="margin-top: 20px;visibility: hidden;">วันที่ <t t-esc='full_report_date'/></div>
                 <div class="newline_report_customer_dunning_letter"><t t-esc='subject'/></div>
                 <div class="row newline_report_customer_dunning_letter">
