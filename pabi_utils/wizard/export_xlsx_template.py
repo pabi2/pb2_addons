@@ -415,7 +415,7 @@ class ExportXlsxTemplate(models.TransientModel):
         """ Get values of this field from record set """
         line_field, max_row = get_line_max(line_field)
         lines = record[line_field]
-        if max_row > 0 and len(lines) > 3000 :#and len(lines) > max_row:
+        if max_row > 0 and len(lines) > 4000 :#and len(lines) > max_row:
             raise Exception(
                 _('Records in %s exceed max record allowed!') % line_field)
         vals = dict([(field, []) for field in fields])
