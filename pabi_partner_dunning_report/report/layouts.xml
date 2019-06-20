@@ -94,7 +94,7 @@
 		                        '12': 'ธันวาคม'}"/>
 	                	<t t-set="current_date" t-value="datetime.datetime.strptime(o.date_letter, '%Y-%m-%d')"/>               
 	               		<t t-set="full_current_date" t-value="' '.join([current_date.strftime('%d'), month_dict[current_date.strftime('%m')], str(int(current_date.strftime('%Y')) + 543)])"/>              		
-                   		<span class = "pull-right" t-esc='current_date' /><br/>
+                   		<span class = "pull-right" t-esc='full_current_date' /><br/>
                     </t>
                 </div>
 
