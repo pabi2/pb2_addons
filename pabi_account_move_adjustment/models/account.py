@@ -303,6 +303,7 @@ class AccountMoveLine(MergedChartField, models.Model):
     def _check_activity_group(self):
         for rec in self:
             if rec.activity_group_id and not (rec.activity_id or rec.activity_rpt_id):
+                print rec.invoice, '|', rec.partner_id, '|', rec.credit, '|', rec.debit, '|', rec.journal_id, '|', rec.ref, '|', rec.account_id, '|', rec.period_id, '|', rec.move_id, '|', rec.name, '|', rec.product_id, '|', rec.account_tax_id, '|', rec.asset_id, '|', rec.charge_type, '|', rec.activity_id, '|', rec.activity_group_id, '|', rec.activity_rpt_id, '|', rec.costcenter_id, '|', rec.org_id, '|', rec.document, '|', rec.document_id,  '|',rec.doctype, '|', rec.origin
                 raise ValidationError(
                     _('Actvitiy is required for activity group! in %s' % rec))
 
