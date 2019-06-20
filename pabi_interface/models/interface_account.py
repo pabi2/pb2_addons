@@ -71,6 +71,7 @@ class InterfaceAccountEntry(models.Model):
         [('internal', 'Internal'),
          ('external', 'External')],
         string='Charge Type',
+        compute='_onchange_to_reverse_entry_id',
         required=True,
         help="Specify whether the move line is for Internal Charge or "
         "External Charge. Only expense internal charge to be set as internal",
