@@ -13,7 +13,6 @@ def action_done_async_process(session, model_name, res_id):
     try:
         res = session.pool[model_name].action_done_background(
             session.cr, session.uid, [res_id], session.context)
-        
         result = ('Successfully : ' + str(model_name))
         return result
     except Exception, e:
@@ -63,9 +62,7 @@ class BudgetPlanProject(models.Model):
             uuid = action_done_async_process.delay(
                 session, self._name, self.id, description=description)
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
-            # Process Name
             job.process_id = 7
-            self.write({'state': 'get', 'uuid': uuid})
         else:
             return self.compute_prev_fy_performance()
 
