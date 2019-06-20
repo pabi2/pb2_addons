@@ -370,25 +370,29 @@ class AccountVoucherLine(models.Model):
             move_line = rec.voucher_id.move_ids.filtered(
                 lambda l: l.account_id == income_account)
             income = calc_principal = remain_principal = 0
+            
             if move_line:
                 income = move_line[0].credit - move_line[0].debit
             plan = Plan.search([('move_line_id', '=', rec.move_line_id.id)])
             if plan:
+                remain_principal2 = plan.loan_install_id.amount_receivable
+                installment_ids = plan[0].loan_install_id.installment_ids
+                remains = installment_ids.filtered('remain_principal')#.mapped('remain_principal')
                 calc_principal = plan[0].calc_principal
                 #remain_principal = plan[0].remain_principal
                 remain_principal = plan[0].loan_install_id.amount_latest_principal
-                
+                for ins in remains:
+                    if ins.id <= plan.id:
+                        remain_principal2 -= ins.calc_principal
+                        a= ''
                 
             desc_dict = [
-                (_('ดอกเบี้ย' + ' ' * 20),
-                 _(('{:,.2f}'.format(income) + ' บาท').rjust(30))),
-                (_('เงินต้น' + ' ' * 21),
-                 _(('{:,.2f}'.format(calc_principal) + ' บาท').rjust(30))),
-                (_('เงินต้นคงเหลือ' + ' ' * 10),
-                 _(('{:,.2f}'.format(remain_principal) + ' บาท').rjust(30)))]
+                (_('{:,.2f}'.format(income) + ' บาท').rjust(30)),
+                (_('{:,.2f}'.format(calc_principal) + ' บาท').rjust(30)),
+                (_('{:,.2f}'.format(remain_principal2) + ' บาท').rjust(30))]
             description = ''
             for desc in desc_dict:
-                description += desc[0] + desc[1]
+                description += desc#[0]# + desc[1]
                 if desc_dict.index(desc) + 1 != len(desc_dict):
                     description += '\n'
             rec.loan_installment_description = description
