@@ -13,15 +13,6 @@ def action_done_async_process(session, model_name, res_id):
     try:
         res = session.pool[model_name].action_done_background(
             session.cr, session.uid, [res_id], session.context)
-        job_uuid = session.context.get('job_uuid')
-        job = session.env['queue.job'].search([('uuid', '=', job_uuid)],
-                                              limit=1)
-        # Get init time
-        date_created = fields.Datetime.from_string(job.date_created)
-        ts = fields.Datetime.context_timestamp(job, date_created)
-        init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
-        # Create output report place holder
-        desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
         
         result = ('Successfully : ' + str(model_name))
         return result
@@ -72,7 +63,9 @@ class BudgetPlanProject(models.Model):
             uuid = action_done_async_process.delay(
                 session, self._name, self.id, description=description)
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
-
+            # Process Name
+            job.process_id = 7
+            self.write({'state': 'get', 'uuid': uuid})
         else:
             return self.compute_prev_fy_performance()
 
