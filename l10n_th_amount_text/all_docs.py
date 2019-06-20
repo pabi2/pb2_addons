@@ -39,6 +39,18 @@ class AmountToWord(object):
             if obj.currency_id.name == 'EUR':
                 a = 'Euro'
                 b = 'Cent'
+            if obj.currency_id.name == 'SGD':
+                a = 'Dollar'
+                b = 'Cent'
+            if obj.currency_id.name == 'CHF':
+                a = 'Franc'
+                b = 'Cent'
+            if obj.currency_id.name == 'AUD':
+                a = 'Dollar'
+                b = 'Cent'
+            if obj.currency_id.name == 'CNY':
+                a = 'Yuan'
+                b = ' '
             amount_total = self._get_amount_total(obj)
             if amount_total < 0:
                 minus = True
