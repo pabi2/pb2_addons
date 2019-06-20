@@ -13,7 +13,18 @@ def action_done_async_process(session, model_name, res_id):
     try:
         res = session.pool[model_name].action_done_background(
             session.cr, session.uid, [res_id], session.context)
-        return {'result': res}
+        job_uuid = session.context.get('job_uuid')
+        job = session.env['queue.job'].search([('uuid', '=', job_uuid)],
+                                              limit=1)
+        # Get init time
+        date_created = fields.Datetime.from_string(job.date_created)
+        ts = fields.Datetime.context_timestamp(job, date_created)
+        init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
+        # Create output report place holder
+        desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
+        
+        result = _('Successfully : %s') % model_name
+        return result
     except Exception, e:
         raise RetryableJobError(e)
 
