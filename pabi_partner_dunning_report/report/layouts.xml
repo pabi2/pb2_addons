@@ -70,30 +70,29 @@
                 <t t-set="report_date" t-value="datetime.datetime.strptime(o.date_run, '%Y-%m-%d')"/>
                 <t t-set="full_report_date" t-value="report_date.strftime('%d/%m/%Y')"/>
                 <t t-set="subject" t-value="o.subject.encode('utf-8').replace(' ', '&#160;&#160;&#160;')"/>
-                <t t-set="amount_total" t-value="o.amount_total"/>
-                <t t-set="month_dict"
-                    t-value="{
-                        '01': 'มกราคม',
-                        '02': 'กุมภาพันธ์',
-                        '03': 'มีนาคม',
-                        '04': 'เมษายน',
-                        '05': 'พฤษภาคม',
-                        '06': 'มิถุนายน',
-                        '07': 'กรกฎาคม',
-                        '08': 'สิงหาคม',
-                        '09': 'กันยายน',
-                        '10': 'ตุลาคม',
-                        '11': 'พฤศจิกายน',
-                        '12': 'ธันวาคม'}"/>   
-                        
-                <t t-set="current_date" t-value="datetime.datetime.strptime(o.date_letter, '%Y-%m-%d')"/>               
-                <t t-set="full_current_date" t-value="' '.join([current_date.strftime('%d'), month_dict[current_date.strftime('%m')], str(int(current_date.strftime('%Y')) + 543)])"/> 
+                <t t-set="amount_total" t-value="o.amount_total"/>               
                            
                 <t t-if="o.letter_type == 'l3'">
                     <p class="center_report_customer_dunning_letter" style="font-size:28px;">บันทึกข้อความ</p>
                 </t>
                 
                 <div style="text-align:left;">ที่ &#160;&#160;&#160;&#160;&#160;อว 6001/<t t-esc="number"/>
+                	<t t-set="month_dict"
+	                    t-value="{
+	                        '01': 'มกราคม',
+	                        '02': 'กุมภาพันธ์',
+	                        '03': 'มีนาคม',
+	                        '04': 'เมษายน',
+	                        '05': 'พฤษภาคม',
+	                        '06': 'มิถุนายน',
+	                        '07': 'กรกฎาคม',
+	                        '08': 'สิงหาคม',
+	                        '09': 'กันยายน',
+	                        '10': 'ตุลาคม',
+	                        '11': 'พฤศจิกายน',
+	                        '12': 'ธันวาคม'}"/>
+                	<t t-set="current_date" t-value="datetime.datetime.strptime(o.date_letter, '%Y-%m-%d')"/>               
+               		<t t-set="full_current_date" t-value="' '.join([current_date.strftime('%d'), month_dict[current_date.strftime('%m')], str(int(current_date.strftime('%Y')) + 543)])"/>
                 	<t t-if="o.date_letter">               		
                    		<span class = "pull-right" t-esc='full_date_letter' /><br/>
                     </t>
