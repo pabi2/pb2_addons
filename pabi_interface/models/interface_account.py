@@ -72,7 +72,6 @@ class InterfaceAccountEntry(models.Model):
          ('external', 'External')],
         string='Charge Type',
         required=True,
-        default='external',
         help="Specify whether the move line is for Internal Charge or "
         "External Charge. Only expense internal charge to be set as internal",
     )
@@ -202,6 +201,7 @@ class InterfaceAccountEntry(models.Model):
     def _onchange_to_reverse_entry_id(self):
         self.journal_id = self.to_reverse_entry_id.journal_id
         self.system_id = self.to_reverse_entry_id.system_id
+        self.charge_type = self.to_reverse_entry_id.charge_type
 
     @api.onchange('type')
     def _onchange_type(self):
