@@ -15,7 +15,8 @@ from openpyxl.utils.exceptions import IllegalCharacterError
 from openpyxl import load_workbook
 import base64
 import cStringIO
-import time
+from datetime import datetime 
+from time import time, ctime
 from datetime import date, datetime as dt
 from ast import literal_eval
 from openerp.tools.float_utils import float_compare
@@ -47,13 +48,13 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         # Create output report place holder
         desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
         session.env['ir.attachment'].create({
-            'name': out_name,
+            'name': str(datetime.now().strftime('%Y-%m-%d/%H:%M/'))+str(out_name),
             'datas': out_file,
             'datas_fname': out_name,
             'res_model': 'queue.job',
             'res_id': job.id,
             'type': 'binary',
-            'parent_id': 12,
+            'parent_id': session.env.ref('pabi_utils.dir_spool_report').id,
             'description': desc,
             'user_id': job.user_id.id,
         })
