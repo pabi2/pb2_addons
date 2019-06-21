@@ -248,10 +248,106 @@ class AccountMove(models.Model):
 class AccountMoveLine(MergedChartField, models.Model):
     _inherit = 'account.move.line'
 
+    def _get_default_account_id(self, cr, uid, context=None):
+        move_line = False
+        move_line_obj = self.pool['account.move.line']
+        journal_adjust_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_budget')[1]
+        journal_adjust_no_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_no_budget')[1]
+        #line = context['line_id']
+        if context.get('line_id'):
+            move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
+            doc = move_line.doctype
+            journal = move_line.journal_id.id
+            if move_line.doctype == 'adjustment' and (move_line.journal_id.id == journal_adjust_budget or move_line.journal_id.id == journal_adjust_no_budget):
+                move_line = False
+
+        return move_line and move_line.account_id.id or False
+
+    def _get_default_taxbranch_id(self, cr, uid, context=None):
+        move_line = False
+        move_line_obj = self.pool['account.move.line']
+        journal_adjust_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_budget')[1]
+        journal_adjust_no_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_no_budget')[1]
+        #line = context['line_id']
+        if context.get('line_id'):
+            move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
+            if move_line.doctype == 'adjustment' and (move_line.journal_id.id == journal_adjust_budget or move_line.journal_id.id == journal_adjust_no_budget):
+                move_line = False
+
+        return move_line and move_line.taxbranch_id.id or False
+
+    def _get_default_project_id(self, cr, uid, context=None):
+        move_line = False
+        move_line_obj = self.pool['account.move.line']
+        journal_adjust_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_budget')[1]
+        journal_adjust_no_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_no_budget')[1]
+        #line = context['line_id']
+        if context.get('line_id'):
+            move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
+            if move_line.doctype == 'adjustment' and (move_line.journal_id.id == journal_adjust_budget or move_line.journal_id.id == journal_adjust_no_budget):
+                move_line = False
+
+        return move_line and move_line.project_id.id or False
+
+    def _get_default_section_id(self, cr, uid, context=None):
+        move_line = False
+        move_line_obj = self.pool['account.move.line']
+        journal_adjust_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_budget')[1]
+        journal_adjust_no_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_no_budget')[1]
+        #line = context['line_id']
+        if context.get('line_id'):
+            move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
+            if move_line.doctype == 'adjustment' and (move_line.journal_id.id == journal_adjust_budget or move_line.journal_id.id == journal_adjust_no_budget):
+                move_line = False
+
+        return move_line and move_line.section_id.id or False
+
+    def _get_default_costcenter_id(self, cr, uid, context=None):
+        move_line = False
+        move_line_obj = self.pool['account.move.line']
+        journal_adjust_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_budget')[1]
+        journal_adjust_no_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_no_budget')[1]
+        #line = context['line_id']
+        if context.get('line_id'):
+            move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
+            if move_line.doctype == 'adjustment' and (move_line.journal_id.id == journal_adjust_budget or move_line.journal_id.id == journal_adjust_no_budget):
+                move_line = False
+
+        return move_line and move_line.costcenter_id.id or False
+
+    def _get_default_org_id(self, cr, uid, context=None):
+        move_line = False
+        move_line_obj = self.pool['account.move.line']
+        journal_adjust_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_budget')[1]
+        journal_adjust_no_budget = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pabi_account_move_adjustment', 'journal_adjust_no_budget')[1]
+        #line = context['line_id']
+        if context.get('line_id'):
+            move_line = move_line_obj.browse(cr, uid, context['line_id'][0][1])
+            if move_line.doctype == 'adjustment' and (move_line.journal_id.id == journal_adjust_budget or move_line.journal_id.id == journal_adjust_no_budget):
+                move_line = False
+
+        return move_line and move_line.org_id.id or False
+    
+
     is_tax_line = fields.Boolean(
         string='Is Tax Line',
         help="Flag to mark this line as require tax detial on adjustment",
     )
+    is_require_activity = fields.Boolean(
+        string='Require AG&A',
+        related='account_id.is_require_activity',
+    )
+
+
+    _defaults = {
+        'account_id': _get_default_account_id,
+        'taxbranch_id': _get_default_taxbranch_id,
+        'project_id': _get_default_project_id,
+        'section_id': _get_default_section_id,
+        #'costcenter_id': _get_default_costcenter_id,
+        #'org_id': _get_default_org_id,
+    }
+    
 
     @api.multi
     @api.onchange('account_id')
@@ -283,8 +379,8 @@ class AccountMoveLine(MergedChartField, models.Model):
         if self._context.get('default_doctype', False) == 'adjustment':
             self.fund_id = False
             # display costcenter only if avail.
-            if 'costcenter_id' in self and self.chartfield_id.costcenter_id:
-                self.costcenter_id = self.chartfield_id.costcenter_id
+            #if 'costcenter_id' in self and self.chartfield_id.costcenter_id:
+            #    self.costcenter_id = self.chartfield_id.costcenter_id
             # Change other chartfield, we need it to set domain on Fund
             res_id = self.chartfield_id.res_id
             if self.chartfield_id.model == 'res.section':
@@ -297,13 +393,32 @@ class AccountMoveLine(MergedChartField, models.Model):
                 self.invest_asset_id = res_id
             elif self.chartfield_id.model == 'res.personnel.costcenter':
                 self.personnel_costcenter_id = res_id
+                
+        if self.chartfield_id:
+            if self.chartfield_id:
+                search = self._get_record_chartfield(self.chartfield_id.id)
+                if search:
+                    self.costcenter_id = search.costcenter_id.id
+                    self.org_id = search.org_id.id
+                    self.fund_id = search.fund_ids and search.fund_ids[0].id or False
+                    
+            else:
+                search = self.env['account.move.line'].search([['move_id','=',self.move_id.id],
+                                                               ['costcenter_id','!=',False],
+                                                               ['org_id','!=',False]],limit=1)
+                if search:
+                    self.chartfield_id = search.chartfield_id.id
+                    self.costcenter_id = search.costcenter_id.id
+                    self.org_id = search.org_id.id
+                    self.fund_id = search.fund_id.id
+    
 
     @api.multi
     @api.constrains('activity_group_id', 'activity_id')
     def _check_activity_group(self):
         for rec in self:
-            if rec.activity_group_id and not (rec.activity_id or rec.activity_rpt_id):
-                print rec.invoice, '|', rec.partner_id, '|', rec.credit, '|', rec.debit, '|', rec.journal_id, '|', rec.ref, '|', rec.account_id, '|', rec.period_id, '|', rec.move_id, '|', rec.name, '|', rec.product_id, '|', rec.account_tax_id, '|', rec.asset_id, '|', rec.charge_type, '|', rec.activity_id, '|', rec.activity_group_id, '|', rec.activity_rpt_id, '|', rec.costcenter_id, '|', rec.org_id, '|', rec.document, '|', rec.document_id,  '|',rec.doctype, '|', rec.origin
+            if rec.activity_group_id and \
+                    not (rec.activity_id or rec.activity_rpt_id):
                 raise ValidationError(
                     _('Actvitiy is required for activity group! in %s' % rec.name))
 
