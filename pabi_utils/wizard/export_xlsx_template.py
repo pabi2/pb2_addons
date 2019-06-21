@@ -53,7 +53,7 @@ def action_done_async_process(session, model_name, res_id, lang=False):
             'res_model': 'queue.job',
             'res_id': job.id,
             'type': 'binary',
-            'parent_id': session.env.ref('pabi_utils.dir_spool_report').id,
+            'parent_id': 12,
             'description': desc,
             'user_id': job.user_id.id,
         })
@@ -805,7 +805,7 @@ class ExportXlsxTemplate(models.TransientModel):
         ptemp = ConfParam.get_param('path_temp_file') or '/temp'
         stamp = dt.utcnow().strftime('%H%M%S%f')[:-3]
         ftemp = '%s/temp%s.xlsx' % (ptemp, stamp)
-        f = open(ftemp, 'w')
+        f = open(ftemp, 'wb')
         f.write(decoded_data)
         f.seek(0)
         f.close()
