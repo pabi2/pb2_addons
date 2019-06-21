@@ -47,8 +47,10 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
         # Create output report place holder
         desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
-        out_name = datetime.now().strftime('%Y-%m-%d/%H:%M/') + str(out_name)
+        print '----------------------------------------------------------------'
+        #out_name = datetime.now().strftime('%Y-%m-%d/%H:%M/') + str(out_name)
         print out_name, datetime.now().strftime('%Y-%m-%d/%H:%M/'), datetime.now()
+        print '----------------------------------------------------------------'
         session.env['ir.attachment'].create({
             'name': out_name,
             'datas': out_file,
