@@ -387,9 +387,10 @@ class AccountVoucherLine(models.Model):
                         a= ''
                 
             desc_dict = [
-                (_('{:,.2f}'.format(income) + ' บาท').rjust(30)),
-                (_('{:,.2f}'.format(calc_principal) + ' บาท').rjust(30)),
-                (_('{:,.2f}'.format(remain_principal2) + ' บาท').rjust(30))]
+                (_('{:,.2f}'.format(income) + ' บาท').rjust(50)),
+                (_('{:,.2f}'.format(calc_principal) + ' บาท').rjust(50)),
+                (_('{:,.2f}'.format(remain_principal2) + ' บาท').rjust(50))]
+            
             description = ''
             for desc in desc_dict:
                 description += desc#[0]# + desc[1]

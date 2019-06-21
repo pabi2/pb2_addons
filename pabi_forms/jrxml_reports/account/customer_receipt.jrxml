@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
 	<property name="ireport.zoom" value="1.239669421487624"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="143"/>
+	<property name="ireport.y" value="197"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -326,7 +326,7 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 			<printWhenExpression><![CDATA[$F{invoice_description} != null]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="76" y="0" width="184" height="37"/>
-				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
+				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{account_id} != $F{loan_installment_account_id} ? $F{invoice_description} :
@@ -342,7 +342,7 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{loan_installment_description} != null && $F{loan_installment_description} != "" ? "ดอกเบี้ย\nเงินต้น\nเงินต้นคงเหลือ" : ""]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["ดอกเบี้ย\nเงินต้น\nเงินต้นคงเหลือ"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
