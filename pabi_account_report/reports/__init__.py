@@ -45,3 +45,5 @@ from . import asset_repair_report
 from . import asset_register_report
 # PND Reports
 from . import xlsx_report_pnd1
+#Preprint Receipt
+from . import xlsx_report_preprint_receipt 
