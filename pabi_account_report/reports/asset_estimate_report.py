@@ -85,7 +85,7 @@ class AssetRegisterReport(models.TransientModel):
     )
     owner_budget = fields.Many2many(
         'chartfield.view',
-        'asset_register_owner_chartfield_rel',
+        'asset_estimate_owner_chartfield_rel',
         'wizard_id', 'chartfield_id',
         string='Owner Budget',
         domain=[('model', '!=', 'res.personnel.costcenter')],
@@ -96,7 +96,7 @@ class AssetRegisterReport(models.TransientModel):
     )
     budget = fields.Many2many(
         'chartfield.view',
-        'asset_register_chartfield_rel',
+        'asset_estimate_chartfield_rel',
         'wizard_id', 'chartfield_id',
         string='Source Budget',
         domain=[('model', '!=', 'res.personnel.costcenter')],
@@ -106,6 +106,7 @@ class AssetRegisterReport(models.TransientModel):
         'account.account.type',
         string='Account Type for Accum.Depre.',
         required=True,
+        default=lambda self: self.env['account.account.type'].search([('name','=','Accumulated Depreciation')]),
         help="Define account type for accumulated depreciation account, "
         "to be used in report query SQL."
     )
@@ -113,8 +114,10 @@ class AssetRegisterReport(models.TransientModel):
         'account.account.type',
         string='Account Type for Depre.',
         required=True,
+        default=lambda self: self.env['account.account.type'].search([('name','=','Depreciation')]),
         help="Define account type for depreciation account, "
         "to be used in report query SQL."
+        
     )
     results = fields.Many2many(
         'asset.register.view',
@@ -197,38 +200,38 @@ class AssetRegisterReport(models.TransientModel):
                 date_start1 = self.cal_year(date_dep_start,x)
                 date_end1 = self.cal_year(date_dep_end,x)
                 whr_depreciation +=  """-- depreciation1
-                    (select coalesce(sum(line.amount))
-                     from account_asset_line line
-                     LEFT JOIN account_asset asset on line.asset_id = a.id
-                     where line.line_date between '%s' and '%s' 
-                     and asset.code = aa.code) depreciation1,""" % (date_start1, date_end1,)
+                (select coalesce(sum(line.amount), 0.0)
+                 from account_asset_line line
+                 left join account_asset asset on line.asset_id = asset.id
+                 where line.line_date between '%s' and '%s' 
+                 and asset.code = a.code) depreciation1,""" % (date_start1, date_end1,)
             elif x==2: #3 year  
                 date_start2 = self.cal_year(date_dep_start,x)
                 date_end2 = self.cal_year(date_dep_end,x)  
                 whr_depreciation +=  """-- depreciation2
-                    (select coalesce(sum(line.amount))
-                     from account_asset_line line
-                     LEFT JOIN account_asset asset on line.asset_id = a.id
-                     where line.line_date between '%s' and '%s' 
-                     and asset.code = aa.code) depreciation2,""" % (date_start2, date_end2,)
+                    (select coalesce(sum(line.amount), 0.0)
+                 from account_asset_line line
+                 left join account_asset asset on line.asset_id = asset.id
+                 where line.line_date between '%s' and '%s' 
+                 and asset.code = a.code) depreciation2,""" % (date_start2, date_end2,)
             elif x==3: #4 year
                 date_start3 = self.cal_year(date_dep_start,x)
                 date_end3 = self.cal_year(date_dep_end,x)
                 whr_depreciation +=  """-- depreciation3
-                    (select coalesce(sum(line.amount))
-                     from account_asset_line line
-                     LEFT JOIN account_asset asset on line.asset_id = a.id
-                     where line.line_date between '%s' and '%s' 
-                     and asset.code = aa.code) depreciation3,""" % (date_start3, date_end3,)
+                    (select coalesce(sum(line.amount), 0.0)
+                 from account_asset_line line
+                 left join account_asset asset on line.asset_id = asset.id
+                 where line.line_date between '%s' and '%s'
+                 and asset.code = a.code) depreciation3,""" % (date_start3, date_end3,)
             elif x==4: #4 year    
                 date_start4 = self.cal_year(date_dep_start,+4)
                 date_end4 = self.cal_year(date_dep_end,+4)
                 whr_depreciation +=  """-- depreciation4
-                    (select coalesce(sum(line.amount))
-                     from account_asset_line line
-                     LEFT JOIN account_asset asset on line.asset_id = a.id
-                     where line.line_date between '%s' and '%s' 
-                     and asset.code = aa.code) depreciation4,""" % (date_start4, date_end4,)
+                    (select coalesce(sum(line.amount), 0.0)
+                 from account_asset_line line
+                 left join account_asset asset on line.asset_id = asset.id
+                 where line.line_date between '%s' and '%s' 
+                 and asset.code = a.code) depreciation4,""" % (date_start4, date_end4,)
                     
         date_bef_start = self.cal_year(date_start,-1)
         date_bef_end  = self.cal_year(date_end,-1)
@@ -250,11 +253,11 @@ class AssetRegisterReport(models.TransientModel):
                  date_part('year', CURRENT_DATE+92) then a.purchase_value
                  else null end as purchase_current,
                 -- net_book_value
-                (select a.purchase_value - coalesce(sum(credit-debit), 0.0)
+                /*(select a.purchase_value - coalesce(sum(credit-debit), 0.0)
                  from account_move_line ml
                  where account_id in %s  -- accumulated account
                  and ml.date <= %s -- date end
-                 and asset_id = a.id) net_book_value,
+                 and asset_id = a.id) net_book_value,*/
                 -- budget_type
                 case when a.section_id is not null then 'Section'
                      when a.project_id is not null then 'Project'
@@ -307,11 +310,12 @@ class AssetRegisterReport(models.TransientModel):
                         rs.subsector_id
                      else null end as owner_subsector_id,
                 -- depreciation
-                (select coalesce(sum(line.amount))
+                (select coalesce(sum(line.amount), 0.0)
                  from account_asset_line line
-                 LEFT JOIN account_asset asset on line.asset_id = a.id
+                 left join account_asset asset on line.asset_id = asset.id
                  where line.line_date between %s and %s 
-                 and asset.code = aa.code) depreciation,
+                 and asset.code = a.code) depreciation,
+
                 """+ whr_depreciation +"""
                 -- accumulated_cf
                 (select coalesce(sum(credit-debit), 0.0)
@@ -320,11 +324,11 @@ class AssetRegisterReport(models.TransientModel):
                  and ml.date <= %s -- date end
                  and asset_id = a.id) accumulated_cf,
                 -- accumulated_bf
-                (select coalesce(sum(credit-debit), 0.0)
-                 from account_move_line ml
-                 where account_id in %s  -- accumulatedp account
-                 and ml.date < %s -- date start
-                 and asset_id = a.id) accumulated_bf
+                (select coalesce(sum(line.amount), 0.0)
+                 from account_asset_line line
+                 left join account_asset asset on line.asset_id = asset.id
+                 where line.line_date < %s
+                 and asset.code = a.code) accumulated_bf
             from
             account_asset a
             left join account_asset_profile aap on a.profile_id = aap.id
@@ -335,12 +339,12 @@ class AssetRegisterReport(models.TransientModel):
             a.owner_invest_construction_phase_id = ricp.id
             left join account_account aa on aap.account_asset_id = aa.id
             ) asset
-        """ + where_str + 'order by asset.account_code, asset.code limit 100',
+        """ + where_str + 'order by asset.account_code, asset.code ',
                          (tuple(accum_depre_account_ids), date_end,
                           #tuple(depre_account_ids), 
                           date_dep_start, date_dep_end,
                           tuple(accum_depre_account_ids), date_end,
-                          tuple(accum_depre_account_ids), date_start)
+                          date_dep_start)
             )   
         
         results = self._cr.dictfetchall()
