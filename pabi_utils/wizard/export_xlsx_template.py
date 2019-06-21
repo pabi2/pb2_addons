@@ -17,7 +17,6 @@ import base64
 import cStringIO
 from time import time, ctime
 from datetime import date, datetime as dt
-from datetime import datetime 
 from ast import literal_eval
 from openerp.tools.float_utils import float_compare
 from openerp import models, fields, api, _
@@ -49,7 +48,7 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
         print '----------------------------------------------------------------'
         #out_name = datetime.now().strftime('%Y-%m-%d/%H:%M/') + str(out_name)
-        print out_name, datetime.now().strftime('%Y-%m-%d/%H:%M/'), datetime.now()
+        print out_name, dt.now().strftime('%Y-%m-%d/%H:%M/'), dt.now()
         print '----------------------------------------------------------------'
         session.env['ir.attachment'].create({
             'name': out_name,
@@ -810,7 +809,7 @@ class ExportXlsxTemplate(models.TransientModel):
         ptemp = ConfParam.get_param('path_temp_file') or '/temp'
         stamp = dt.utcnow().strftime('%H%M%S%f')[:-3]
         ftemp = '%s/temp%s.xlsx' % (ptemp, stamp)
-        f = open(ftemp, 'wb')
+        f = open(ftemp, 'w')
         f.write(decoded_data)
         f.seek(0)
         f.close()
