@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from EpsImagePlugin import field
 from openerp import tools
-from pychart.basecanvas import _compute_bounding_box
-from openerp import pooler
-from openpyxl.worksheet import related
 
 REFERENCE_SELECT = [('account.voucher', 'Receipt'),
                     ('interface.account.entry', 'Account Interface'),
