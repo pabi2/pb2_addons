@@ -15,7 +15,7 @@ from openpyxl.utils.exceptions import IllegalCharacterError
 from openpyxl import load_workbook
 import base64
 import cStringIO
-from time import time, ctime
+import time
 from datetime import date, datetime as dt
 from ast import literal_eval
 from openerp.tools.float_utils import float_compare
@@ -48,7 +48,7 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
         print '----------------------------------------------------------------'
         #out_name = datetime.now().strftime('%Y-%m-%d/%H:%M/') + str(out_name)
-        print out_name, dt.now().strftime('%Y-%m-%d/%H:%M/'), dt.now()
+        #print out_name, dt.now().strftime('%Y-%m-%d/%H:%M/'), dt.now()
         print '----------------------------------------------------------------'
         session.env['ir.attachment'].create({
             'name': out_name,
