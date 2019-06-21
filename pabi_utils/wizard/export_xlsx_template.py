@@ -46,6 +46,7 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
         # Create output report place holder
         desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
+        out_name = dt.now().strftime('%Y-%m-%d/%H:%M/') + str(out_name)
         session.env['ir.attachment'].create({
             'name': out_name,
             'datas': out_file,
@@ -835,10 +836,6 @@ class ExportXlsxTemplate(models.TransientModel):
             delimiter = csv_delimiter.encode("utf-8")
             out_file = csv_from_excel(out_file, delimiter, csv_quote)
             out_ext = csv_extension
-        print '----------------------------------------------------------------'
-        #out_name = datetime.now().strftime('%Y-%m-%d/%H:%M/') + str(out_name)
-        print out_name, dt.now().strftime('%Y-%m-%d/%H:%M/'), dt.now()
-        print '----------------------------------------------------------------'
         return (out_file, '%s.%s' % (out_name, out_ext))
 
 
