@@ -43,6 +43,7 @@ from . import xlsx_report_gl_project
 # Asset Reports
 from . import asset_repair_report
 from . import asset_register_report
+from . import asset_estimate_report
 # PND Reports
 from . import xlsx_report_pnd1
 #Preprint Receipt

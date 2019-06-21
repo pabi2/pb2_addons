@@ -36,6 +36,7 @@
                 ref('xlsx_report_gl_project'),
                 ref('xlsx_report_asset_repair'),
                 ref('xlsx_report_asset_register'),
+                ref('xlsx_report_asset_estimate'),
                 ref('xlsx_report_pnd1'),
                 ref('xlsx_report_preprint_receipt'),
             ]"/>
