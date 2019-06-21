@@ -9,10 +9,16 @@
           <field name="arch" type="xml">
               <field name="fiscalyear_start_id" position="attributes">
                   <attribute name="required">True</attribute>
+                  <!--  <attribute name="invisible">True</attribute>-->
               </field>
               <field name="fiscalyear_end_id" position="attributes">
                   <attribute name="required">True</attribute>
+                  <!--  <attribute name="invisible">True</attribute>-->
               </field>
+              <xpath expr="/form//group[@name='criteria']//field[@name='fiscalyear_end_id']" position="after">
+              		<field name="period_year_id"  />
+               		<field name="number"/>
+              </xpath>
               <xpath expr="/form//group[@name='criteria']/group" position="inside">
                   <field name="account_ids" widget="many2many_tags"/>
                   <field name="asset_state"  widget="many2many_tags"/>

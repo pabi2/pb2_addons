@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
-
+from datetime import datetime
+from __builtin__ import str
+import time
 
 REFERENCE_SELECT = [
     ('res.section', 'Section'),
@@ -14,6 +16,21 @@ class AssetRegisterReport(models.TransientModel):
     _name = 'asset.estimate.report'
     _inherit = 'report.account.common'
 
+    number =  fields.Selection(
+        [(1, '1 ปี'),
+         (2, '2 ปี'),
+         (3, '3 ปี'),
+         (4, '4 ปี'),
+         (5, '5 ปี'),],
+        string='Number of year',
+        default=5,
+        require=True,
+    )
+    period_year_id = fields.Many2one(
+        'account.fiscalyear',
+        string='Start Year',
+        default=lambda self: self._get_fiscalyear(),
+    )
     account_ids = fields.Many2many(
         'account.account',
         string='Account Code',
@@ -106,14 +123,23 @@ class AssetRegisterReport(models.TransientModel):
         help='Use compute fields, so there is nothing store in database',
     )
     
+    @api.model
+    def _domain_to_where_str(self, domain):
+        """ Helper Function for better performance """
+        where_dom = [" %s %s %s " % (x[0], x[1], isinstance(x[2], basestring)
+                     and "'%s'" % x[2] or x[2]) for x in domain]
+        where_str = 'and'.join(where_dom)
+        return where_str
+    
+    def cal_year(self,date,vals):
+        date = date.split('-') #[0]: year [1]: months [2]:Date
+        date[0] = str(int(date[0])+vals)
+        return "-".join(date)
+        
     @api.multi
     def _compute_results(self):
         self.ensure_one()
         dom = []
-        if self.fiscalyear_start_id:
-            dom += [('date', '>=', self.fiscalyear_start_id.date_start)]
-        if self.fiscalyear_end_id:
-            dom += [('date', '<=', self.fiscalyear_end_id.date_stop)] 
         # Prepare DOM to filter assets
         if self.asset_ids:
             dom += [('id', 'in', tuple(self.asset_ids.ids + [0]))]
@@ -147,16 +173,66 @@ class AssetRegisterReport(models.TransientModel):
             dom += [('active', '=', True if (self.asset_active == 'active') else False)]
 
         # Prepare fixed params       
-        date_start = self.fiscalyear_start_id.date_start
-        date_end = self.fiscalyear_end_id.date_stop
+        date_start = self.fiscalyear_start_id.date_start    #'201x-10-01'
+        date_end = self.fiscalyear_start_id.date_stop  #'201x-09-30'
+        date_dep_start = self.period_year_id.date_start
+        date_dep_end = self.period_year_id.date_stop
         
+        if self.date_start:
+            dom += [('date_start', '<=', self.date_end)]
+            
+            
         if not date_start or not date_end:
             raise ValidationError(_('Please provide from and to dates.'))
-        
         accum_depre_account_ids = self.env['account.account'].search(
             [('user_type', '=', self.accum_depre_account_type.id)]).ids
         depre_account_ids = self.env['account.account'].search(
             [('user_type', '=', self.depre_account_type.id)]).ids
+        
+        whr_depreciation = ""
+        for x in range(0,self.number):
+            if x == 0: #1 year
+                pass
+            elif x==1: #2 year
+                date_start1 = self.cal_year(date_dep_start,x)
+                date_end1 = self.cal_year(date_dep_end,x)
+                whr_depreciation +=  """-- depreciation1
+                    (select coalesce(sum(line.amount))
+                     from account_asset_line line
+                     LEFT JOIN account_asset asset on line.asset_id = a.id
+                     where line.line_date between '%s' and '%s' 
+                     and asset.code = aa.code) depreciation1,""" % (date_start1, date_end1,)
+            elif x==2: #3 year  
+                date_start2 = self.cal_year(date_dep_start,x)
+                date_end2 = self.cal_year(date_dep_end,x)  
+                whr_depreciation +=  """-- depreciation2
+                    (select coalesce(sum(line.amount))
+                     from account_asset_line line
+                     LEFT JOIN account_asset asset on line.asset_id = a.id
+                     where line.line_date between '%s' and '%s' 
+                     and asset.code = aa.code) depreciation2,""" % (date_start2, date_end2,)
+            elif x==3: #4 year
+                date_start3 = self.cal_year(date_dep_start,x)
+                date_end3 = self.cal_year(date_dep_end,x)
+                whr_depreciation +=  """-- depreciation3
+                    (select coalesce(sum(line.amount))
+                     from account_asset_line line
+                     LEFT JOIN account_asset asset on line.asset_id = a.id
+                     where line.line_date between '%s' and '%s' 
+                     and asset.code = aa.code) depreciation3,""" % (date_start3, date_end3,)
+            elif x==4: #4 year    
+                date_start4 = self.cal_year(date_dep_start,+4)
+                date_end4 = self.cal_year(date_dep_end,+4)
+                whr_depreciation +=  """-- depreciation4
+                    (select coalesce(sum(line.amount))
+                     from account_asset_line line
+                     LEFT JOIN account_asset asset on line.asset_id = a.id
+                     where line.line_date between '%s' and '%s' 
+                     and asset.code = aa.code) depreciation4,""" % (date_start4, date_end4,)
+                    
+        date_bef_start = self.cal_year(date_start,-1)
+        date_bef_end  = self.cal_year(date_end,-1)
+        
         where_str = self._domain_to_where_str(dom)
         if where_str:
             where_str = 'where ' + where_str 
@@ -231,11 +307,12 @@ class AssetRegisterReport(models.TransientModel):
                         rs.subsector_id
                      else null end as owner_subsector_id,
                 -- depreciation
-                (select coalesce(sum(debit-credit), 0.0)
-                 from account_move_line ml
-                 where account_id in %s  -- depreciation account
-                 and ml.date between %s and %s
-                 and asset_id = a.id) depreciation,
+                (select coalesce(sum(line.amount))
+                 from account_asset_line line
+                 LEFT JOIN account_asset asset on line.asset_id = a.id
+                 where line.line_date between %s and %s 
+                 and asset.code = aa.code) depreciation,
+                """+ whr_depreciation +"""
                 -- accumulated_cf
                 (select coalesce(sum(credit-debit), 0.0)
                  from account_move_line ml
@@ -258,12 +335,13 @@ class AssetRegisterReport(models.TransientModel):
             a.owner_invest_construction_phase_id = ricp.id
             left join account_account aa on aap.account_asset_id = aa.id
             ) asset
-        """ + where_str + 'order by asset.account_code, asset.code',
+        """ + where_str + 'order by asset.account_code, asset.code limit 100',
                          (tuple(accum_depre_account_ids), date_end,
-                          tuple(depre_account_ids), date_start, date_end,
+                          #tuple(depre_account_ids), 
+                          date_dep_start, date_dep_end,
                           tuple(accum_depre_account_ids), date_end,
                           tuple(accum_depre_account_ids), date_start)
-            + ' limit 100')   
+            )   
         
         results = self._cr.dictfetchall()
         ReportLine = self.env['asset.register.view']
@@ -318,4 +396,25 @@ class AssetRegisterReport(models.TransientModel):
             codes = [x.strip() for x in codes]
             codes = ','.join(codes)
             dom.append(('code', 'ilike', codes))
-            self.owner_budget = Chartfield.search(dom, order='id')   
+            self.owner_budget = Chartfield.search(dom, order='id')              
+            
+class AssetRegisterView(models.AbstractModel):
+    """ Add depreciation of 5 years  """
+    _inherit = 'asset.register.view'
+    
+    depreciation1 = fields.Float(
+        # compute='_compute_depreciation',
+        string='Next 1 year of Depreciation',
+    )
+    depreciation2 = fields.Float(
+        # compute='_compute_depreciation',
+        string='Next 2 year of Depreciation',
+    )
+    depreciation3 = fields.Float(
+        # compute='_compute_depreciation',
+        string='Next 3 year of Depreciation',
+    )
+    depreciation4 = fields.Float(
+        # compute='_compute_depreciation',
+        string='Next 4 year of Depreciation',
+    )
