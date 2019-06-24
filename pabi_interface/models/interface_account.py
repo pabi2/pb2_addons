@@ -478,7 +478,7 @@ class InterfaceAccountEntry(models.Model):
                 # For Tax
                 'taxbranch_id': line.taxbranch_id.id,
                 # Charge type
-                'charge_type': self.charge_type or 'expense'  # Default to exp
+                'charge_type': self.charge_type or self.to_reverse_entry_id.charge_type or 'expense'  # Default to exp
             }
             move_line = AccountMoveLine.with_context(ctx).create(vals)
             line.ref_move_line_id = move_line
