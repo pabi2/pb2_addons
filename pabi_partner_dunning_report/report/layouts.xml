@@ -77,7 +77,7 @@
                 </t>
                 
                 <div style="text-align:left;">ที่ &#160;&#160;&#160;&#160;&#160;อว 6001/<t t-esc="number"/></div>         	
-                	<div><t t-if="o.date_letter"> 
+                <div><t t-if="o.date_letter"> 
                 		<t t-set="month_dict"
 		                    t-value="{
 		                        '01': 'มกราคม',
@@ -94,7 +94,7 @@
 		                        '12': 'ธันวาคม'}"/>
 	                	<t t-set="current_date" t-value="datetime.datetime.strptime(o.date_letter, '%Y-%m-%d')"/>               
 	               		<t t-set="full_current_date" t-value="' '.join([current_date.strftime('%d'), month_dict[current_date.strftime('%m')], str(int(current_date.strftime('%Y')) + 543)])"/>              		
-                   		<span class = "pull-right" t-esc='full_current_date' /><br/>
+                   		<span style="margin-left: 53%;" t-esc='full_current_date' /><br/>
                     </t>
                 </div>
 
