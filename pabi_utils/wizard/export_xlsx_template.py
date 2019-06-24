@@ -35,7 +35,7 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         if lang:
             ctx.update({'lang': lang})
         out_file, out_name = session.pool[model_name].get_report(
-            session.cr, session.uid, ctx)
+            session.cr, session.uid, [res_id], ctx)
         # Make attachment and link ot job queue
         job_uuid = session.context.get('job_uuid')
         job = session.env['queue.job'].search([('uuid', '=', job_uuid)],
@@ -46,6 +46,7 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         init_time = ts.strftime('%d/%m/%Y %H:%M:%S')
         # Create output report place holder
         desc = 'INIT: %s\n> UUID: %s' % (init_time, job_uuid)
+        out_name = dt.now().strftime('%Y-%m-%d/%H:%M:%S/') + str(out_name)
         session.env['ir.attachment'].create({
             'name': out_name,
             'datas': out_file,
@@ -62,12 +63,6 @@ def action_done_async_process(session, model_name, res_id, lang=False):
         return result
     except Exception, e:
         raise FailedJobError(e)
-
-    """try:
-        res = session.pool[model_name].action_export(session.cr, session.uid, [res_id], session.context)
-        return {'result': res}
-    except Exception, e:
-        raise RetryableJobError(e)"""
 
 
 def adjust_cell_formula(value, k):
@@ -421,7 +416,7 @@ class ExportXlsxTemplate(models.TransientModel):
         """ Get values of this field from record set """
         line_field, max_row = get_line_max(line_field)
         lines = record[line_field]
-        if max_row > 0 and len(lines) > max_row:
+        if max_row > 0 and len(lines) > 3800 :#and len(lines) > max_row:
             raise Exception(
                 _('Records in %s exceed max record allowed!') % line_field)
         vals = dict([(field, []) for field in fields])
@@ -858,12 +853,8 @@ class ExportXlsxTemplate(models.TransientModel):
         if len(template) != 1:
             raise ValidationError(
                 _('No one template selected for "%s"') % self._name)
-        return self._export_template(
-            template, self._name, self.id,
-            to_csv=self.to_csv,
-            csv_delimiter=self.csv_delimiter,
-            csv_extension=self.csv_extension,
-            csv_quote=self.csv_quote)
+        return self._export_template(template, self.res_model, self.res_id)
+
 
     @api.multi
     def act_getfile(self):

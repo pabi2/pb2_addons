@@ -7,7 +7,13 @@
             <field name="model">budget.plan.project</field>
             <field name="inherit_id" ref="pabi_budget_plan.view_budget_plan_project_form"/>
             <field name="arch" type="xml">
+            	<xpath expr="/form/sheet/group//field[@name='planned_expense']" position="after">
+                    <field name="job_id"/>
+                    <field name="job_uuid"/>
+                </xpath>
                 <notebook position="before">
+                  <button name="action_done_background" string="Prev.FY Performance(background)" type="object" icon="terp-stock_format-scientific"
+                    attrs="{'invisible': [('state', '!=', '1_draft')]}" class="oe_right" confirm="Use model in background?" context="{'button_use_model_async_process': 1}"/>
                   <button name="compute_prev_fy_performance" string="Prev.FY Performance" type="object" icon="terp-stock_format-scientific"
                     attrs="{'invisible': [('state', '!=', '1_draft')]}" class="oe_right"/>
                 </notebook>
