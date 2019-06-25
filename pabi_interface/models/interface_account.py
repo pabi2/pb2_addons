@@ -585,6 +585,7 @@ class InterfaceAccountEntry(models.Model):
             'validate_date': u'2019-03-31',
             'preprint_number': False,
             'date_document': u'2019-03-16',
+            'to_reverse_entry_id' : u'IA19016867',
             'line_ids': [
                 {
                     'name': u'/',
@@ -722,6 +723,13 @@ class InterfaceAccountEntry(models.Model):
             # _logger.info("IA - Output: %s" % res)
             return res
         
+        
+         #to_reverse_entry_id = data_dict['to_reverse_entry_id']
+         #reverse_entry_id = self.env['interface.account.entry'].search([('number','=',to_reverse_entry_id)])
+         #data_dict['charge_type'] = reverse_entry_id.charge_type
+        
+        to_reverse_entry_id = self.env["interface.account.entry"].search([('number', '=', data_dict['to_reverse_entry_id'])], limit=1)
+        data_dict['charge_type'] = to_reverse_entry_id.charge_type
         # if origin not exists
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
