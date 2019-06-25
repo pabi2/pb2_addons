@@ -244,6 +244,14 @@
                         <field name="reverse_type" class="oe_inline" attrs="{'invisible': [('to_be_reversed', '=', False)]}"/>
                     </div>
                 </field>
+ 				<field name="fin_credit_account_id" position="after">
+                	<field name="chk_use_model" attrs="{'invisible': [('name', '!=', 'Purchase Invoice Plan')]}"/>
+                   	<field name="button_use_model_job_id"/>
+                   	<field name="button_use_model_uuid"/>
+                </field>
+                <field name="legend" position="after">
+ 					<button name="action_done_background" string="Create entries(Background)" icon="gtk-execute" confirm="Use model in background?" type="object" context="{'button_use_model_async_process': 1}"/>
+                </field>
             </field>
         </record>
 
