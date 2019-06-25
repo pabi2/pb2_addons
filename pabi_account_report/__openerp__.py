@@ -77,8 +77,11 @@
         # Asset Reports
         'reports/asset_repair_report.xml',
         'reports/asset_register_report.xml',
+        'reports/asset_estimate_report.xml',
         # PND Reports
         'reports/xlsx_report_pnd1.xml',
+        #Preprint Receipt
+        'reports/xlsx_report_preprint_receipt.xml',
     ],
     'demo': [
     ],
