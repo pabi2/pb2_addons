@@ -7,7 +7,7 @@ from . import account_tax_detail
 from . import res_bank
 from . import res_partner
 from . import res_company
-# from . import account_move
+from . import account_move
 from . import account_move_line_v7  # To fix problem about cancel KV (AV)
 from . import account_move_line
 from . import res_structure
