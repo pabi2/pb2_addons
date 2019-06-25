@@ -460,9 +460,6 @@
                             <t t-if="o.document_id and o.document_id.source_document">
                                 <span t-field="o.document_id.source_document"/>
                             </t>
-                            <t t-if="not o.document_id or (o.document_id and not o.document_id.source_document)">
-                                <span t-field="o.ref"/>
-                            </t>
                         </t>
                         <t t-if="o.doctype in ['interface_account']">
                             <span t-field="o.document_id.name"/>
@@ -562,6 +559,9 @@
                             <t t-if="o.doctype in ['receipt']">
                                 <span class="cut-text" t-field="o.document_id.number_preprint"/>
                             </t>
+                            <t t-if="o.doctype in ['adjustment']">
+                                <span t-field="o.ref"/>
+                            </t>
                             <t t-if="o.doctype in ['interface_account']">
                                 <t t-if="o.document_id.type in ['invoice', 'reverse']">
                                     <span class="cut-text" t-field="o.ref"/>
@@ -569,6 +569,11 @@
                                 <t t-if="o.document_id.type in ['voucher']">
                                     <span class="cut-text" t-field="o.document_id.preprint_number"/>
                                 </t>
+                            </t>
+                        </t>
+                        <t t-if="not o.document_id">
+                            <t t-if="o.doctype in ['adjustment']">
+                                <span t-field="o.ref"/>
                             </t>
                         </t>
                     </div>
