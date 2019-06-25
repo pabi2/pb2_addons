@@ -393,9 +393,9 @@ class AccountAnalyticAccount(models.Model):
             #      (rec.activity_id and 'activity') or
             #      'pr_product')
             #
-            if rec.doctype == 'adjustment':
-                vals['type'] = 'normal'
-                vals.update({'move_id':rec.move_id.id}) #update move_id to find doctype in analytic
+#             if rec.doctype == 'adjustment':
+#                 vals['type'] = 'normal'
+#                 vals.update({'move_id':rec.move_id.id}) #update move_id to find doctype in analytic
             #
             # *************************** End *******************************
             _logger.info("vals: %s", str(vals))

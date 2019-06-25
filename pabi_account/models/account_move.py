@@ -53,8 +53,8 @@ class account_move(models.Model):
             'to_be_reversed': False,
         })        
         
-        if self.doctype == 'employee_expense':
-            reversal_move.state = "draft" #add state draft get rid error 
+#         if self.doctype == 'employee_expense':
+#             reversal_move.state = "draft" #add state draft get rid error 
         
         self.with_context(novalidate=True).write({
             'reversal_id': reversal_move.id,
