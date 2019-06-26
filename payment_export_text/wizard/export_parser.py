@@ -110,33 +110,35 @@ class DocumentExportParser(models.TransientModel):
                 
                 # If use invoice_detail
                 voucher_lines = export_line.voucher_id.line_ids
+                
                 for voucher_line in voucher_lines:
                     for invoice_line in voucher_line:
-                        line_invoice_detail_config_lines = config_id.invoice_detail_config_line_ids.read(config_fields_to_read)
-                        for line in line_invoice_detail_config_lines:
-                            model_id = active_model.id
-                            if line.get('model_id', []):
-                                model_id = line['model_id'][0]
-                            if model_id == active_model.id:
-                                eval_context = self._get_eval_context(
-                                    active_model.id, active_id)
-                            else:
-                                eval_context = self._get_eval_context(
-                                    model_id, invoice_line.id)
-                            if line['field_code']:
-                                #eval(line['field_code'], eval_context,
-                                #     mode="exec", nocopy=True)
-                                exec(line['field_code'], eval_context)
-                                value = eval_context.get('value', False)
-                                line.update({'value': value})
-                            else:
-                                value = line['default_value'] and\
-                                    line['default_value'] or ''
-                                line.update({'value': value})
+                        if config_id.invoice_detail_config_line_ids :                           
+                            line_invoice_detail_config_lines = config_id.invoice_detail_config_line_ids.read(config_fields_to_read)
+                            for line in line_invoice_detail_config_lines:
+                                model_id = active_model.id
+                                if line.get('model_id', []):
+                                    model_id = line['model_id'][0]
+                                if model_id == active_model.id:
+                                    eval_context = self._get_eval_context(
+                                        active_model.id, active_id)
+                                else:
+                                    eval_context = self._get_eval_context(
+                                        model_id, invoice_line.id)
+                                if line['field_code']:
+                                    #eval(line['field_code'], eval_context,
+                                    #     mode="exec", nocopy=True)
+                                    exec(line['field_code'], eval_context)
+                                    value = eval_context.get('value', False)
+                                    line.update({'value': value})
+                                else:
+                                    value = line['default_value'] and\
+                                        line['default_value'] or ''
+                                    line.update({'value': value})
             
             
-                        #data_list.append(line_detail_config_lines)
-                        data_list.append(line_invoice_detail_config_lines)
+                            #data_list.append(line_detail_config_lines)
+                            data_list.append(line_invoice_detail_config_lines)
 
 
                         
