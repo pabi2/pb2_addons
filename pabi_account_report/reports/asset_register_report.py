@@ -284,7 +284,7 @@ class AssetRegisterReport(models.TransientModel):
         if self.subsector_ids:
             dom += [('owner_subsector_id', 'in',
                     tuple(self.subsector_ids.ids + [0]))]
-        if self.asset_state:
+        """if self.asset_state:
             res, state_name = [], []
             print self.asset_state
             for state in self.asset_state:
@@ -295,7 +295,7 @@ class AssetRegisterReport(models.TransientModel):
                 print res
             #if len(self.asset_state) == 1 : dom += [('state', '=', str(state_name.status))]
             print res
-            dom += [('state', 'in', tuple(res + ['']))]
+            dom += [('state', 'in', tuple(res + ['']))]"""
 
         if self.building_ids:
             dom += [('building_id', 'in', tuple(self.building_ids.ids + [0]))]
