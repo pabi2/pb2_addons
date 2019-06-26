@@ -118,14 +118,6 @@ class AssetRegisterReport(models.TransientModel):
         domain=[('location', '=', 'asset.register.view')],
         default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', ['draft', 'open', 'close'])]),
     )
-    """asset_state = fields.Selection(
-        [('draft', 'Draft'),
-         ('open', 'Running'),
-         ('close', 'Close'),
-         ('removed', 'Removed')],
-        string='Asset State',
-    )
-    """
     account_ids = fields.Many2many(
         'account.account',
         string='Account Code',
@@ -284,18 +276,13 @@ class AssetRegisterReport(models.TransientModel):
         if self.subsector_ids:
             dom += [('owner_subsector_id', 'in',
                     tuple(self.subsector_ids.ids + [0]))]
-        """if self.asset_state:
-            res, state_name = [], []
-            print self.asset_state
+        if self.asset_state:
+            res, state_name = [], self.asset_state
             for state in self.asset_state:
-                print state
                 state_name = self.env['xlsx.report.status'].search([('id', '=', state.id)])
-                print state_name
                 res += [str(state_name.status)]
-                print res
-            #if len(self.asset_state) == 1 : dom += [('state', '=', str(state_name.status))]
-            print res
-            dom += [('state', 'in', tuple(res + ['']))]"""
+            if len(self.asset_state) == 1 : dom += [('state', '=', str(state_name.status))]
+            else : dom += [('state', 'in', tuple(res))]
 
         if self.building_ids:
             dom += [('building_id', 'in', tuple(self.building_ids.ids + [0]))]
