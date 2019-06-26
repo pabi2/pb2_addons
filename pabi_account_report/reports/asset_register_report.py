@@ -285,12 +285,12 @@ class AssetRegisterReport(models.TransientModel):
             dom += [('owner_subsector_id', 'in',
                     tuple(self.subsector_ids.ids + [0]))]
         if self.asset_state:
-            res, state_name = [], self.asset_state
+            res, state_name = [], []
             for state in self.asset_state:
                 state_name = self.env['xlsx.report.status'].search([('id', '=', state.id)])
-                res += [str(state_name.status)]
-            if len(self.asset_state) == 1 : dom += [('state', '=', str(state_name.status))]
-            else: dom += [('state', 'in', tuple(res))]
+                res += [str(state_name.status + [0])]
+            #if len(self.asset_state) == 1 : dom += [('state', '=', str(state_name.status))]
+            dom += [('state', 'in', tuple(res))]
 
         if self.building_ids:
             dom += [('building_id', 'in', tuple(self.building_ids.ids + [0]))]
