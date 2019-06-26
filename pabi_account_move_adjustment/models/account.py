@@ -515,11 +515,11 @@ class AccountAnalyticAccount(models.Model):
         string='Journal Entry',
     )
   
-    @api.constrains('taxbranch_id')
+    """@api.constrains('taxbranch_id')
     def check_taxbranch(self):
         print ("check_taxbranch")
         if self.move_id.doctype == "adjustment":
             pass
         elif not self.taxbranch_id :
             raise ValidationError(
-                            _("Please check Tax branch is null"))
+                            _("Please check Tax branch is null"))"""
