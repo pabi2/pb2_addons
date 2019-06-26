@@ -42,9 +42,131 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
         help="Use compute fields, so there is nothing store in database",
     )
 
+
+    @api.onchange('org_ids', 'chartfield_ids', 'pr_date_from', 'pr_date_to', 'pr_requester_ids', 'pr_responsible_ids')
+    def onchange_pr_domain(self):
+        dom = []
+        if self.org_ids:
+            res = []
+            operating_unit_ids = []
+            for org in self.org_ids:
+                res += [org.operating_unit_id.id]
+            operating_unit_ids = self.env['operating.unit'].search([('id', 'in', res)])
+            dom += [('operating_unit_id', 'in', operating_unit_ids.ids)]
+        if self.chartfield_ids:
+            """res = []
+            costcenter_ids = []
+            for bud in self.chartfield_ids:
+                res += [bud.costcenter_id.id]
+            costcenter_ids = self.env['res.costcenter'].search([('id', 'in', res)])"""
+            dom += [('line_ids.chartfield_id', 'in', self.chartfield_ids.ids)]
+        if self.pr_date_from:
+            dom += [('date_approve', '>=', self.pr_date_from)]
+        if self.pr_date_to:
+            dom += [('date_approve', '<=', self.pr_date_to)]
+        if self.pr_requester_ids:
+            dom += [('requested_by', 'in', self.pr_requester_ids.ids)]
+        if self.pr_responsible_ids:
+            dom += [('responsible_uid', 'in', self.pr_responsible_ids.ids)]
+        return {'domain': {'pr_ids': (dom)}}
+    
+    
+    @api.onchange('org_ids', 'chartfield_ids', 'po_date_from', 'po_date_to', 'po_responsible_ids')
+    def onchange_po_domain(self):
+        dom = []
+        if self.org_ids:
+            res = []
+            operating_unit_ids = []
+            for org in self.org_ids:
+                res += [org.operating_unit_id.id]
+            operating_unit_ids = self.env['operating.unit'].search([('id', 'in', res)])
+            dom += [('operating_unit_id', 'in', operating_unit_ids.ids)]
+        if self.chartfield_ids:
+            """res = []
+            costcenter_ids = []
+            for bud in self.chartfield_ids:
+                res += [bud.costcenter_id.id]
+            costcenter_ids = self.env['res.costcenter'].search([('id', 'in', res)])"""
+            dom += [('order_line.chartfield_id', 'in', self.chartfield_ids.ids)]
+        if self.po_date_from:
+            dom += [('date_reference', '>=', self.po_date_from)]
+        if self.po_date_to:
+            dom += [('date_reference', '<=', self.po_date_to)]
+        if self.po_responsible_ids:
+            dom += [('responsible_uid', 'in', self.po_responsible_ids.ids)]
+        return {'domain': {'po_ids': (dom)}}
+      
+    @api.onchange('org_ids', 'chartfield_ids')
+    def onchange_org_id(self):
+        res_org, res_bud = '', ''
+        for org in self.org_ids:
+            name = self.env['operating.unit'].search([('id', '=', org.operating_unit_id.id)]).name
+            if res_org != '': 
+                res_org += ', '+name
+            else: res_org += name
+        ##org_name
+        self.org_name = res_org
+
+        for prg in self.chartfield_ids:
+            if res_bud != '':
+                res_bud += ', '
+            res_bud += '['+str(prg.code)+'] '+str(prg.name_short or prg.name)
+        self.budget_name = res_bud
+        
+    @api.onchange('pr_ids','pr_requester_ids', 'pr_responsible_ids', 'pr_date_from', 'pr_date_to')  
+    def onchange_pr_ids(self):
+        res_pr, res_req, res_resp, res_date = '', '', '', ''
+        for pr in self.pr_ids:
+            if res_pr != '':
+                res_pr += ', '
+            res_pr += str(pr.name)
+        self.pr_number = res_pr
+        
+        for pr_req in self.pr_requester_ids:
+            if res_req != '': 
+                res_req += ', '
+            res_req += pr_req.name
+        self.pr_requester_name = res_req
+      
+        for pr_resp in self.pr_responsible_ids:
+            if res_resp != '': 
+                res_resp += ', '
+            res_resp += pr_resp.name
+        self.pr_responsible_name = res_resp
+        
+        if self.pr_date_from and self.pr_date_to:
+            res_date = str(self.pr_date_from)+' - '+str(self.pr_date_to)
+        elif self.pr_date_from:
+            res_date =str(self.pr_date_from)
+        elif self.pr_date_to:
+            res_date = str(self.pr_date_to)
+        self.pr_date = res_date
+         
+    @api.onchange('po_ids', 'po_responsible_ids', 'po_date_from', 'po_date_to')  
+    def onchange_po_ids(self):
+        res_po, res_resp, res_date = '', '', ''
+        for po in self.po_ids:
+            if res_po != '':
+                res_po += ', '
+            res_po += str(po.name)
+        self.po_number = res_po
+
+        for po_resp in self.po_responsible_ids:
+            if res_resp != '':
+                res_resp += ', '
+            res_resp += po_resp.name
+        self.po_responsible_name = res_resp
+    
+        if self.po_date_from and self.po_date_to:
+            res_date = str(self.po_date_from)+' - '+str(self.po_date_to)
+        elif self.po_date_from:
+            res_date =str(self.po_date_from)
+        elif self.po_date_to:
+            res_date = str(self.po_date_to)
+        self.po_date = res_date
        
     @api.onchange('data_view')  
-    def onchange_po_ids(self):
+    def onchange_data_view(self):
     
         if self.data_view == 'po':
             self.pr_ids = False
@@ -56,7 +178,6 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
             self.pr_requester_name = False
             self.pr_responsible_name = False
             self.pr_date = False
-            
         elif self.data_view == 'pr':
             self.po_ids = False
             self.po_responsible_ids = False
