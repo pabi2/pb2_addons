@@ -156,7 +156,7 @@ class AccountModel(models.Model):
             'period_id': period.id
         })
         seach_invoice_plans = self.chk_invoice_plan(10000)
-        seach_invoice_plans_limit = self.chk_invoice_plan(100)
+        seach_invoice_plans_limit = self.chk_invoice_plan(400)
         invoice_plans_to_order_id = [id.order_id.id for id in seach_invoice_plans_limit]
         res_invoice_plans = InvoicePlan.search([('order_id', 'in', sorted(set(invoice_plans_to_order_id))), 
                                                    ('ref_invoice_id', '!=', False),
