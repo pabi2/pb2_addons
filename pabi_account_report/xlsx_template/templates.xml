@@ -318,7 +318,7 @@
                             'results': {
                                 'A9': 'account_id.code${value or ""}#{number_format=text}',
                                 'B9': 'account_id.name${value or ""}#{number_format=text}',
-                                'C9': 'invoice.operating_unit_id.name${value or ""}#{number_format=text}',
+                                'C9': 'id${value and env["account.move.line"].browse(value).invoice.operating_unit_id.name or env["account.move.line"].browse(value).operating_unit_id.name or ""}#{number_format=text}',
                                 'D9': 'partner_id.search_key${value or ""}#{number_format=text}',
                                 'E9': 'partner_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}#{number_format=text}',
                                 'F9': 'partner_id.category_id.name${value or ""}#{number_format=text}',
