@@ -326,7 +326,7 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 			<printWhenExpression><![CDATA[$F{invoice_description} != null]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="76" y="0" width="184" height="37"/>
-				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
+				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{account_id} != $F{loan_installment_account_id} ? $F{invoice_description} :
