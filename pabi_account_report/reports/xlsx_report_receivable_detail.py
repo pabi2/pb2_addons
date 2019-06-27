@@ -46,7 +46,7 @@ class XLSXReportReceivableDetail(models.TransientModel):
         compute='_compute_date_real',
     )
     results = fields.Many2many(
-        'xlsx.report.receivable.detail.view',
+        'account.move.line',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
