@@ -55,6 +55,13 @@ class AccountMoveLine(models.Model):
                 for line in lines.line_ids:
                     if line.tax_id.id:
                         move.vat_amount = line.credit
+            elif move.doctype == 'out_invoice': 
+                Fund = self.env['account.invoice'] 
+                domain = ([('move_id', '=', move.move_id.id)])
+                lines = Fund.search(domain)
+                for line in lines.invoice_line:
+                    line
+                    
             else: #1080789
                 #move.vat_amount = abs(sum(move.move_id.invoice_ids.tax_line.mapped("amount")))
                 if move.move_id.tax_detail_ids:

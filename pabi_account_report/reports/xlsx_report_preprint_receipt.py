@@ -37,7 +37,7 @@ class AccountMove(models.Model):
 class Accountmovepreprint(models.Model):
     _name = 'account.move.preprint'    
     #_auto = False    
-
+ 
     move_id = fields.Many2one(
         'account.move',
         string='Document No',
@@ -59,8 +59,11 @@ class AccountMovePrePrintView(models.AbstractModel):
     number_preprint = fields.Char(
         string='Preprint Number',
     )
-    org_id = fields.Many2one(
-        'res.org',
+    document_origin = fields.Char(
+        string='Preprint Number',
+    )
+    operating_unit = fields.Many2one(
+        'operating.unit',
         string='Org',
     )
     amount = fields.Float(
@@ -73,6 +76,7 @@ class AccountMovePrePrintView(models.AbstractModel):
         'res.taxbranch',
         string='Tax Branch',
     )
+    
     
 class XLSXReportGlProject(models.TransientModel):
     _name = 'xlsx.report.preprint.receipt'
@@ -221,8 +225,9 @@ class XLSXReportGlProject(models.TransientModel):
 #         if domain:
 #             preprint=self.env['account.move.preprint'].search(domain)
 #             dom += [('id', 'in', [x.move_id.id for x in preprint])]
-# 
+#   
 #         self.results = Result.with_context(active=False).search(dom)
+
     @api.model
     def _domain_to_where_str(self, domain):
         """ Helper Function for better performance """
@@ -247,7 +252,7 @@ class XLSXReportGlProject(models.TransientModel):
             dom += [('date', '>=', self.postingdate_start)]
         if self.postingdate_end:
             dom += [('date', '<=', self.postingdate_end)]
-        
+          
         #prefix
         if self.move_id:
             dom += [('id', 'in', self.move_id.ids)]
@@ -255,22 +260,19 @@ class XLSXReportGlProject(models.TransientModel):
             dom += [('org_id', 'in', self.org_ids.ids)]
         if self.preprint_number:
             dom += [('id', 'in', self.preprint_number.ids)]
-        
+                      
         whr_depreciation = ""   
         where_str = self._domain_to_where_str(dom) 
         if where_str:
             where_str = ' and '+ where_str
-        
+           
         self._cr.execute("""
-                    SELECT m.*,pre.number_preprint as number_preprint,org.org_id as org_id,pre.amount,pre.base,pre.taxbranch_id
-                    from account_move m
-                    LEFT JOIN 
-                        ( 
-                        --Search move_id and number_preprint
-                        select c.move_id,c.number_preprint,c.amount,c.base,c.taxbranch_id from
-                        (
-                        -- RC
-                        select account_move.id as move_id,account_voucher.number_preprint as number_preprint,
+                       select m.*,aa.number_preprint,aa.amount,aa.base,aa.taxbranch_id ,
+                       org.operating_unit_id as operating_unit,org.document_origin
+                       from 
+                       (
+                       --RC
+                       select account_move.id as move_id,account_voucher.number_preprint as number_preprint,
                                 account_tax_detail.amount,account_tax_detail.base as base,account_tax_detail.taxbranch_id
                             from account_move 
                             LEFT JOIN account_voucher on account_voucher.move_id = account_move."id"
@@ -279,34 +281,37 @@ class XLSXReportGlProject(models.TransientModel):
                         UNION 
                         -- IA
                         select account_move.id as move_id,interface_account_entry.preprint_number as number_preprint,
-                                account_tax_detail.amount,account_tax_detail.base as base,account_tax_detail.taxbranch_id
-                            from account_move 
-                            LEFT JOIN interface_account_entry on interface_account_entry.move_id = account_move."id"
-                            LEFT JOIN account_move_line on account_move_line.move_id = account_move.id
-                            INNER JOIN account_tax_detail on account_tax_detail.move_line_id = account_move_line.id
-                            WHERE account_tax_detail.doc_type = 'sale'
-                        UNION 
-                        --CV
-                            select account_move.id as move_id,account_tax_detail.number_preprint as number_preprint,
                                     account_tax_detail.amount,account_tax_detail.base as base,account_tax_detail.taxbranch_id
-                            from account_move 
-                            LEFT JOIN account_tax_detail on account_tax_detail.ref_move_id = account_move."id"
-                            WHERE account_tax_detail.doc_type = 'sale'
-                        )as c
-                        where c.number_preprint!=''
-                        ) pre ON m.id = pre.move_id
-                    -- Search org
-                    LEFT JOIN 
-                        (
-                        SELECT DISTINCT m.id,m.name,l.org_id
-                        from account_move m
-                        LEFT JOIN account_move_line l ON l.move_id = m.id
-                        where m.doctype in ('receipt','interface_account') and l.org_id != 0
-                        ) org on org."id" = m."id"
-                    where m.doctype in ('adjustment','receipt','interface_account') and pre.number_preprint!=''
-                  
-        """  + where_str + ' order by pre.number_preprint ' )     
-        
+                                from account_move 
+                                LEFT JOIN interface_account_entry on interface_account_entry.move_id = account_move."id"
+                                LEFT JOIN account_move_line on account_move_line.move_id = account_move.id
+                                INNER JOIN account_tax_detail on account_tax_detail.ref_move_id = account_move."id"
+                                WHERE account_tax_detail.doc_type = 'sale'
+                            UNION 
+                            --CV
+                            select account_move.id as move_id,account_tax_detail.number_preprint as number_preprint,
+                                        account_tax_detail.amount,account_tax_detail.base as base,account_tax_detail.taxbranch_id
+                                from account_move 
+                                LEFT JOIN account_tax_detail on account_tax_detail.ref_move_id = account_move."id"
+                                WHERE account_tax_detail.doc_type = 'sale')aa
+       
+                            LEFT JOIN 
+                            (
+                            --SELECT DISTINCT m.id,m.name,l.org_id as org_id  from account_move m
+                             --   LEFT JOIN account_move_line l ON l.move_id = m.id
+                             --   where l.org_id is not null
+                            --UNION
+                                select am.id,am.name,am.operating_unit_id as operating_unit_id,
+                                interface_account_entry.name as document_origin  
+                                from account_move am
+                                LEFT JOIN interface_account_entry on interface_account_entry.move_id = am."id"
+                            ) org on org."id" = aa.move_id
+                            LEFT JOIN account_move m on m.id = aa.move_id
+   
+                        where aa.number_preprint!=''
+                     
+        """  + where_str + ' order by aa.number_preprint ' )     
+           
         results = self._cr.dictfetchall()
         ReportLine = self.env['account.move.preprint.view']
         for line in results:
