@@ -109,10 +109,10 @@ class DocumentExportParser(models.TransientModel):
                 data_list.append(line_detail_config_lines)
                 
                 # If use invoice_detail
-                voucher_lines = export_line.voucher_id.line_ids
-                for voucher_line in voucher_lines:
-                    for invoice_line in voucher_line:
-                        if not config_id.invoice_detail_config_line_ids :                           
+                if not config_id.invoice_detail_disabled:
+                    voucher_lines = export_line.voucher_id.line_ids
+                    for voucher_line in voucher_lines:
+                        for invoice_line in voucher_line:
                             line_invoice_detail_config_lines = config_id.invoice_detail_config_line_ids.read(config_fields_to_read)
                             for line in line_invoice_detail_config_lines:
                                 model_id = active_model.id
@@ -134,8 +134,7 @@ class DocumentExportParser(models.TransientModel):
                                     value = line['default_value'] and\
                                         line['default_value'] or ''
                                     line.update({'value': value})
-                
-                
+    
                             #data_list.append(line_detail_config_lines)
                             data_list.append(line_invoice_detail_config_lines)
 
