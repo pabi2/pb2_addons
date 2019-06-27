@@ -87,7 +87,7 @@ class AccountMoveLine(models.Model):
             else:
                 if move.move_id.tax_detail_ids:
                     move.base_amount = abs(sum(move.move_id.tax_detail_ids.mapped("base")))
-                #move.base_amount = abs(sum(move.move_id.invoice_ids.tax_line.mapped("base")))
+                #move.base_amount = abs(sum(move.move_id.invoice_ids.tax_line.mapped("base"))) 
                              
     @api.multi
     def _compute_budget_fund_rule_line(self):
