@@ -60,7 +60,7 @@ class AccountMoveLine(models.Model):
                 domain = ([('move_id', '=', move.move_id.id)])
                 lines = Fund.search(domain)
                 for line in lines.invoice_line:
-                    if line.invoice_line_tax_id.id:
+                    if line.invoice_line_tax_id:
                         move.vat_amount = lines.amount_tax
                         
             else: #1080789
@@ -83,7 +83,7 @@ class AccountMoveLine(models.Model):
                 domain = ([('move_id', '=', move.move_id.id)])
                 lines = Fund.search(domain)
                 for line in lines.invoice_line:
-                    if line.invoice_line_tax_id.id:
+                    if line.invoice_line_tax_id:
                         move.base_amount = lines.amount_untaxed
             else:
                 if move.move_id.tax_detail_ids:
