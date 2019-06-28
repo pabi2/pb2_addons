@@ -2206,7 +2206,7 @@ result = pd.pivot_table(df, index=groupby,
 	         </field>
 	     </record>
 
-        # Preprint Receipt
+         # Preprint Receipt
         <record id="xlsx_report_preprint_receipt" model="ir.attachment">
             <field name="res_model">xlsx.report.preprint.receipt</field>
             <field name="datas"></field>
@@ -2223,28 +2223,29 @@ result = pd.pivot_table(df, index=groupby,
                                 'D3': 'fiscalyear_end_id.name${value or ""}#{align=left;number_format=text}',
                                 'B4': 'period_start_id.name${value or ""}#{align=left;number_format=text}',
                                 'D4': 'period_end_id.name${value or ""}#{align=left;number_format=text}',
-                                'B5': 'postingdate_start${value or ""}#{align=left;number_format=text}',
-                                'B5': 'postingdate_end${value or ""}#{align=left;number_format=text}',
-                                'B6': 'org_ids${value and ", ".join([x.name_short for x in value]) or ""}#{align=left;number_format=text}',
+                                'B5': 'postingdate_start${value and value.strftime("%d/%m/%Y") or ""}#{align=left;number_format=text}',
+                                'D5': 'postingdate_end${value and value.strftime("%d/%m/%Y") or ""}#{align=left;number_format=text}',
+                                'B6': 'operating_unit_ids${value and ", ".join([x.name for x in value]) or ""}#{align=left;number_format=text}',
                                 'B7': 'preprint_number${value and ", ".join([x.name for x in value]) or ""}#{align=left;number_format=text}',
                                 'B8': 'move_id${value and ", ".join([x.name for x in value]) or ""}#{align=left;number_format=text}',
                             },
 	                        'results': {
-	                            'A11': 'preprint_number${value or ""}#{align=left;number_format=text}',
+	                            'A11': 'number_preprint${value or ""}#{align=left;number_format=text}',
 	                            'B11': 'name${value or ""}#{align=left;number_format=text}',
 	                         	'C11': 'period_id.fiscalyear_id.name${value or ""}',
 	                            'D11': 'period_id.name${value or ""}#{number_format=text}',
 	                            'E11': 'date${value and value.strftime("%d/%m/%Y") or ""}',
 	                            'F11': 'date_document${value and value.strftime("%d/%m/%Y") or ""}',
-	                            'G11': 'id${value and "" if env["account.move"].browse(value).doctype=="adjustment" else env["account.move"].browse(value).line_id[0].org_id.name_short or ""}#{align=left;number_format=text}',
-	                            'H11': 'id${value and env["account.move"].browse(value).ref if env["account.move"].browse(value).doctype=="adjustment" else env["account.move"].browse(value).line_id[0].name or ""}#{number_format=text}',
-	                            'I11': 'partner_id${value and value.search_key or ""}#{align=left;number_format=text}',
-	                            'J11': 'partner_id${value and value.display_name2 or ""}#{align=left;number_format=text}',
-	                            'K11': 'id${value and env["interface.account.entry"].search([("move_id", "=", value)]).name if env["account.move"].browse(value).doctype=="interface_account" else "" or ""}#{align=left;number_format=text}',
-	                            'L11': 'system_id${value and value.name or ""}#{align=left;number_format=text}',
-	                            'M11': 'amount${value or ""}',
-	                            'N11': 'journal_id${value and value.currency.name or ""}#{align=left;number_format=text}',
-	                            'O11': 'create_uid${value and value.name or ""}#{align=left;number_format=text}',
+	                            'G11': 'operating_unit_id${value and value.name or  ""}',
+	                            'H11': 'taxbranch_id${value and value.code or ""}#{align=left;number_format=text}',
+	                            'I11': 'narration${value or ""}#{align=left;number_format=text}',
+	                            'J11': 'partner_id${value and value.search_key or ""}#{align=left;number_format=text}',
+	                            'K11': 'partner_id${value and value.display_name2 or ""}#{align=left;number_format=text}',
+	                            'L11': 'document_origin${value or ""}#{align=left;number_format=text}',
+	                            'M11': 'system_id${value and value.name or ""}#{align=left;number_format=text}',
+	                            'N11': 'base${value or ""}',
+	                            'O11': 'amount${value or ""}',
+	                            'P11': 'create_uid${value and value.name or ""}#{align=left;number_format=text}',
 	                         },
                          }
                     }

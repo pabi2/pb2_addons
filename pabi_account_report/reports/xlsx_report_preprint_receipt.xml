@@ -22,7 +22,7 @@
                             <field name="fiscalyear_end_id" domain="[('company_id', '=', company_id)]"/>
                             <field name="fiscalyear_date_end" invisible="1"/>
                             <field name="postingdate_end" />
-                            <field name="org_ids" widget="many2many_tags"/>
+                            <field name="operating_unit_ids" widget="many2many_tags"/>
                         </group>
                     </group>
                 </xpath>
