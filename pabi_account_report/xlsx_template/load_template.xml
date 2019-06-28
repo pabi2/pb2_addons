@@ -36,9 +36,11 @@
                 ref('xlsx_report_gl_project'),
                 ref('xlsx_report_asset_repair'),
                 ref('xlsx_report_asset_register'),
+                ref('xlsx_report_asset_estimate'),
                 ref('xlsx_report_pnd1'),
                 ref('xlsx_report_purchase_invoice_plan'),
                 ref('xlsx_report_purchase_no_invoice_plan'),
+                ref('xlsx_report_preprint_receipt'),
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>
