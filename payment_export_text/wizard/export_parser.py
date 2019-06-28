@@ -2,9 +2,12 @@
 import os
 import base64
 import tempfile
+import logging
 from openerp import api, fields, models, _
 from openerp.tools.safe_eval import safe_eval as eval
 from openerp.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class DocumentExportParser(models.TransientModel):
@@ -112,9 +115,11 @@ class DocumentExportParser(models.TransientModel):
                 if not config_id.invoice_detail_disabled:
                     voucher_lines = export_line.voucher_id.line_ids
                     for voucher_line in voucher_lines:
+                        _logger.info("voucher_line: %s", str(voucher_line))
                         for invoice_line in voucher_line:
                             line_invoice_detail_config_lines = config_id.invoice_detail_config_line_ids.read(config_fields_to_read)
                             for line in line_invoice_detail_config_lines:
+                                _logger.info("line: %s", str(line))
                                 model_id = active_model.id
                                 if line.get('model_id', []):
                                     model_id = line['model_id'][0]
@@ -124,10 +129,13 @@ class DocumentExportParser(models.TransientModel):
                                 else:
                                     eval_context = self._get_eval_context(
                                         model_id, invoice_line.id)
+                                _logger.info("eval_context: %s", str(eval_context))
+                                _logger.info("line['field_code']: %s", str(line['field_code']))
                                 if line['field_code']:
                                     #eval(line['field_code'], eval_context,
                                     #     mode="exec", nocopy=True)
                                     exec(line['field_code'], eval_context)
+                                    _logger.info("done exec")
                                     value = eval_context.get('value', False)
                                     line.update({'value': value})
                                 else:
