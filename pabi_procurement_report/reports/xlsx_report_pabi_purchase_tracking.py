@@ -14,7 +14,7 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
     pr_date_to = fields.Date(string='PR Date To',)
     pr_requester_ids = fields.Many2many('res.partner', string='Requested by(PR)',)
     pr_responsible_ids = fields.Many2many('res.partner', string='Responsible Person(PR)',)
-    po_ids = fields.Many2many('purchase.order', string='PO doc',)
+    po_ids = fields.Many2many('purchase.order', string='PO doc', domain="[('name','not like', 'RFQ%')]",)
     po_date_from = fields.Date(string='PO Date From',)
     po_date_to = fields.Date(string='PO Date To',)
     po_responsible_ids = fields.Many2many('res.partner', string='Responsible Person(PO)',)
@@ -42,59 +42,6 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
         help="Use compute fields, so there is nothing store in database",
     )
 
-
-    @api.onchange('org_ids', 'chartfield_ids', 'pr_date_from', 'pr_date_to', 'pr_requester_ids', 'pr_responsible_ids')
-    def onchange_pr_domain(self):
-        dom = []
-        if self.org_ids:
-            res = []
-            operating_unit_ids = []
-            for org in self.org_ids:
-                res += [org.operating_unit_id.id]
-            operating_unit_ids = self.env['operating.unit'].search([('id', 'in', res)])
-            dom += [('operating_unit_id', 'in', operating_unit_ids.ids)]
-        if self.chartfield_ids:
-            """res = []
-            costcenter_ids = []
-            for bud in self.chartfield_ids:
-                res += [bud.costcenter_id.id]
-            costcenter_ids = self.env['res.costcenter'].search([('id', 'in', res)])"""
-            dom += [('line_ids.chartfield_id', 'in', self.chartfield_ids.ids)]
-        if self.pr_date_from:
-            dom += [('date_approve', '>=', self.pr_date_from)]
-        if self.pr_date_to:
-            dom += [('date_approve', '<=', self.pr_date_to)]
-        if self.pr_requester_ids:
-            dom += [('requested_by', 'in', self.pr_requester_ids.ids)]
-        if self.pr_responsible_ids:
-            dom += [('responsible_uid', 'in', self.pr_responsible_ids.ids)]
-        return {'domain': {'pr_ids': (dom)}}
-    
-    
-    @api.onchange('org_ids', 'chartfield_ids', 'po_date_from', 'po_date_to', 'po_responsible_ids')
-    def onchange_po_domain(self):
-        dom = []
-        if self.org_ids:
-            res = []
-            operating_unit_ids = []
-            for org in self.org_ids:
-                res += [org.operating_unit_id.id]
-            operating_unit_ids = self.env['operating.unit'].search([('id', 'in', res)])
-            dom += [('operating_unit_id', 'in', operating_unit_ids.ids)]
-        if self.chartfield_ids:
-            """res = []
-            costcenter_ids = []
-            for bud in self.chartfield_ids:
-                res += [bud.costcenter_id.id]
-            costcenter_ids = self.env['res.costcenter'].search([('id', 'in', res)])"""
-            dom += [('order_line.chartfield_id', 'in', self.chartfield_ids.ids)]
-        if self.po_date_from:
-            dom += [('date_reference', '>=', self.po_date_from)]
-        if self.po_date_to:
-            dom += [('date_reference', '<=', self.po_date_to)]
-        if self.po_responsible_ids:
-            dom += [('responsible_uid', 'in', self.po_responsible_ids.ids)]
-        return {'domain': {'po_ids': (dom)}}
       
     @api.onchange('org_ids', 'chartfield_ids')
     def onchange_org_id(self):
