@@ -26,8 +26,9 @@
                 <form string="Carry Over">
                     <header>
                         <button name="action_carry_over" class="oe_highlight" type="object" states="draft" string="Carry Over" groups="base.group_user"
-                          confirm="This will carry over committed budget of following documents to specified fiscal year."/>
-                        <button name="action_carry_over_background" string="Set Background" class="oe_highlight" confirm="Set Background?" type="object" states="draft" context="{'button_carry_over_async_process': 1}"/>
+                          	confirm="This will carry over committed budget of following documents to specified fiscal year." attrs="{'invisible': ['|', '|', ('button_carry_over_uuid', '!=', False)]}"/>
+                        <button name="action_carry_over_background" string="Set Background" class="oe_highlight" confirm="Set Background?" type="object" states="draft" 
+                        	context="{'button_carry_over_async_process': 1}" attrs="{'invisible': ['|', '|', ('button_carry_over_uuid', '!=', False)]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>
