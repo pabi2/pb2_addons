@@ -394,10 +394,11 @@ class AccountAnalyticAccount(models.Model):
             #      'pr_product')
             #
             vals['type'] = 'normal'
-            #vals.update({'move_id':rec.move_id.id}) #update move_id to find doctype in analytic
+            if rec.doctype == 'adjustment' and rec._name == 'account.move.line':
+                vals.update({'move_id':rec.move_id.id}) #update move_id to find doctype in analytic
             #
             # *************************** End *******************************
-            _logger.info("vals: %s", str(vals))
+            _logger.info("vals...: %s", str(vals))
             return Analytic.create(vals)
         else:
             _logger.info("exist analytic: %s", str(analytics[0]))
