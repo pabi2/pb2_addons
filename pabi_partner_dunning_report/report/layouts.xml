@@ -19,6 +19,10 @@
             .center_report_customer_dunning_letter {
                 text-align: center !important;
             }
+            .center_report_customer_dunning_letter_name {
+                text-align: center;
+                margin-left: 50%;
+            }
             .right_report_customer_dunning_letter {
                 text-align: right !important;
             }
@@ -94,7 +98,7 @@
 		                        '12': 'ธันวาคม'}"/>
 	                	<t t-set="current_date" t-value="datetime.datetime.strptime(o.date_letter, '%Y-%m-%d')"/>               
 	               		<t t-set="full_current_date" t-value="' '.join([current_date.strftime('%d'), month_dict[current_date.strftime('%m')], str(int(current_date.strftime('%Y')) + 543)])"/>              		
-                   		<span class = "pull-right" t-esc='full_current_date' /><br/>
+                   		<span style="margin-left: 50%;" t-esc='full_current_date' /><br/>
                     </t>
                 </div>
 
@@ -218,7 +222,7 @@
                         </p>
                         <t t-if="o.to_whom_title and (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip)">
                             <t t-if="(len(o.line_ids.ids) &gt;= 3 and len(o.line_ids.ids) &lt;= 8) or (len(o.line_ids.ids) &gt;= 33 and len(o.line_ids.ids) &lt;= 38)">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -231,7 +235,7 @@
                                 </div>
                             </t>
                             <t t-if="len(o.line_ids.ids) &lt; 3 or (len(o.line_ids.ids) &gt; 8 and len(o.line_ids.ids) &lt; 33) or len(o.line_ids.ids) &gt; 38">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -246,7 +250,7 @@
                         </t>
                         <t t-if="(not o.to_whom_title and (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip))">
                             <t t-if="(len(o.line_ids.ids) &gt;= 3 and len(o.line_ids.ids) &lt;= 9) or (len(o.line_ids.ids) &gt;= 34 and len(o.line_ids.ids) &lt;= 39)">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -259,7 +263,7 @@
                                 </div>
                             </t>
                             <t t-if="len(o.line_ids.ids) &lt; 3 or (len(o.line_ids.ids) &gt; 9 and len(o.line_ids.ids) &lt; 34) or len(o.line_ids.ids) &gt; 39">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -274,7 +278,7 @@
                         </t>
                         <t t-if="o.to_whom_title and not (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip)">
                             <t t-if="(len(o.line_ids.ids) &gt;= 4 and len(o.line_ids.ids) &lt;= 9) or (len(o.line_ids.ids) &gt;= 34 and len(o.line_ids.ids) &lt;= 39)">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -287,7 +291,7 @@
                                 </div>
                             </t>
                             <t t-if="len(o.line_ids.ids) &lt; 4 or (len(o.line_ids.ids) &gt; 9 and len(o.line_ids.ids) &lt; 34) or len(o.line_ids.ids) &gt; 39">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -302,7 +306,7 @@
                         </t>
                         <t t-if="not o.to_whom_title and not (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip)">
                             <t t-if="(len(o.line_ids.ids) &gt;= 5 and len(o.line_ids.ids) &lt;= 10) or (len(o.line_ids.ids) &gt;= 35 and len(o.line_ids.ids) &lt;= 40)">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -315,7 +319,7 @@
                                 </div>
                             </t>
                             <t t-if="len(o.line_ids.ids) &lt; 5 or (len(o.line_ids.ids) &gt; 10 and len(o.line_ids.ids) &lt; 35) or len(o.line_ids.ids) &gt; 40">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -343,7 +347,7 @@
                         </p>
                         <t t-if="o.to_whom_title and (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip)">
                             <t t-if="len(o.line_ids.ids) &lt;= 5 or (len(o.line_ids.ids) &gt;= 31 and len(o.line_ids.ids) &lt;= 36)">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -356,7 +360,7 @@
                                 </div>
                             </t>
                             <t t-if="(len(o.line_ids.ids) &gt; 5 and len(o.line_ids.ids) &lt; 31) or (len(o.line_ids.ids) &gt; 36)">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -371,7 +375,7 @@
                         </t>
                         <t t-if="(not o.to_whom_title and (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip))">
                             <t t-if="len(o.line_ids.ids) &lt;= 6 or (len(o.line_ids.ids) &gt;= 32 and len(o.line_ids.ids) &lt;= 37)">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -384,7 +388,7 @@
                                 </div>
                             </t>
                             <t t-if="(len(o.line_ids.ids) &gt; 6 and len(o.line_ids.ids) &lt; 32) or (len(o.line_ids.ids) &gt; 37)">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -399,7 +403,7 @@
                         </t>
                         <t t-if="o.to_whom_title and not (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip)">
                             <t t-if="(len(o.line_ids.ids) &gt;= 2 and len(o.line_ids.ids) &lt;= 7) or (len(o.line_ids.ids) &gt;= 33 and len(o.line_ids.ids) &lt;= 38)">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -412,7 +416,7 @@
                                 </div>
                             </t>
                             <t t-if="len(o.line_ids.ids) &lt; 2 or (len(o.line_ids.ids) &gt; 7 and len(o.line_ids.ids) &lt; 33) or len(o.line_ids.ids) &gt; 38">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -427,7 +431,7 @@
                         </t>
                         <t t-if="not o.to_whom_title and not (o.partner_id.street or o.partner_id.street2 or o.partner_id.township_id or o.partner_id.district_id or o.partner_id.province_id or o.partner_id.zip)">
                             <t t-if="(len(o.line_ids.ids) &gt;= 3 and len(o.line_ids.ids) &lt;= 8) or (len(o.line_ids.ids) &gt;= 33 and len(o.line_ids.ids) &lt;= 39)">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -440,7 +444,7 @@
                                 </div>
                             </t>
                             <t t-if="len(o.line_ids.ids) &lt; 3 or (len(o.line_ids.ids) &gt; 8 and len(o.line_ids.ids) &lt; 33) or len(o.line_ids.ids) &gt; 39">
-                                <div class="center_report_customer_dunning_letter">
+                                <div class="center_report_customer_dunning_letter_name">
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
@@ -461,7 +465,7 @@
                             <p class="text_indent_report_customer_dunning_letter">
                                 จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ และ ขอให้ดําเนินการยกเลิกสัญญา (หากมี) เพื่อให้ฝ่ายกฎหมาย ดําเนินการตามขั้นตอนต่อไป
                             </p>
-                            <p class="center_report_customer_dunning_letter" style="margin-top: 70px;">
+                            <p class="center_report_customer_dunning_letter_name" style="margin-top: 70px;">
                                 (นางสาวศิรินาถ แถบทอง) <br/>
                                 ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                             </p>
@@ -470,7 +474,7 @@
                             <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
                                 จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ และ ขอให้ดําเนินการยกเลิกสัญญา (หากมี) เพื่อให้ฝ่ายกฎหมาย ดําเนินการตามขั้นตอนต่อไป
                             </p>
-                            <p class="center_report_customer_dunning_letter" style="margin-top: 70px;">
+                            <p class="center_report_customer_dunning_letter_name" style="margin-top: 70px;">
                                 (นางสาวศิรินาถ แถบทอง) <br/>
                                 ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                             </p>
