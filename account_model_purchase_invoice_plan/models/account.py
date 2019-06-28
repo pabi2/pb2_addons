@@ -124,6 +124,23 @@ class AccountModel(models.Model):
             move_lines.append((0, 0, val2))
         return move_lines
 
+
+    @api.multi
+    def chk_invoice_plan(self, limits):
+        InvoicePlan = self.env['purchase.invoice.plan']
+        context = self._context.copy()
+        date = context.get('date', fields.Date.context_today(self))
+        seach_invoice_plans = InvoicePlan.search([
+            ('ref_invoice_id', '!=', False),
+            ('state', '=', 'draft'),
+            ('date_invoice', '<', date),
+            ('prepare_move_line', '!=', True),
+            ('order_id.state', '=', 'approved'),
+            ('order_id.order_type', '=', 'purchase_order'),
+            ('order_id.is_fin_lease', '=', False),  # For non-fin-lease
+        ], limit=limits)
+        return seach_invoice_plans
+
     @api.model
     def _prepare_move_line_by_invoice_plan(self, model):
         Period = self.env['account.period']
@@ -138,15 +155,19 @@ class AccountModel(models.Model):
             'journal_id': model.journal_id.id,
             'period_id': period.id
         })
-        invoice_plans = InvoicePlan.search([
-            ('ref_invoice_id', '!=', False),
-            ('state', '=', 'draft'),
-            ('date_invoice', '<', date),
-            ('order_id.state', '=', 'approved'),
-            ('order_id.order_type', '=', 'purchase_order'),
-            ('order_id.is_fin_lease', '=', False),  # For non-fin-lease
-        ])
-        for line in invoice_plans:
+        seach_invoice_plans = self.chk_invoice_plan(10000)
+        seach_invoice_plans_limit = self.chk_invoice_plan(400)
+        invoice_plans_to_order_id = [id.order_id.id for id in seach_invoice_plans_limit]
+        res_invoice_plans = InvoicePlan.search([('order_id', 'in', sorted(set(invoice_plans_to_order_id))), 
+                                                   ('ref_invoice_id', '!=', False),
+                                                   ('state', '=', 'draft'),
+                                                   ('date_invoice', '<', date),
+                                                   ('prepare_move_line', '!=', True),])
+        len_invoice_plans = len(seach_invoice_plans_limit)
+        len_res_invoice_plans = len(res_invoice_plans)
+        len_seach_invoice_plans = len(seach_invoice_plans)
+        print 'All Invoice Plan', len_seach_invoice_plans, 'Search Invoice Plan limit', len_invoice_plans, 'Use Invoice Plan', len_res_invoice_plans
+        for line in res_invoice_plans:
             if line.installment == 0:
                 continue
             po_line = line.order_line_id
@@ -207,7 +228,23 @@ class AccountModel(models.Model):
                 'amount_currency': -amount_currency,
             })
             move_lines.append((0, 0, val2))
+            line.prepare_move_line = True
         return move_lines
+
+
+
+class PurchaseInvoicePlan(models.Model):
+    _inherit = 'purchase.invoice.plan'
+
+    order_line_docline_seq = fields.Char(
+        string='#',
+        compute='_compute_results',
+        readonly=True,
+    )
+    prepare_move_line = fields.Boolean(
+        string='Create Move Line',
+        default=False,
+    )
 
 
 class AccountSubscription(models.Model):

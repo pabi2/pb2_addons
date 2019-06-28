@@ -5,11 +5,27 @@ from dateutil.relativedelta import relativedelta
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, ValidationError
 from openerp.tools.safe_eval import safe_eval as eval
+from openerp.exceptions import ValidationError
+from openerp.exceptions import RedirectWarning
+from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import RetryableJobError
 
 import dateutil
 import openerp
 from openerp import workflow
 
+
+@job
+def action_done_async_process(session, model_name, res_id):
+    try:
+        res = session.pool[model_name].action_done_background(
+            session.cr, session.uid, [res_id], session.context)
+        return {'result': res}
+    except Exception, e:
+        raise RetryableJobError(e)
+    
+    
 
 class AccountSubscription(models.Model):
     _inherit = 'account.subscription'
@@ -311,7 +327,76 @@ class AccountModel(models.Model):
           'e.g. ${object.name} will get the name of Define Recurring\n'),
         size=1000,
     )
+    chk_use_model = fields.Char(
+        string='Invoice Plan',
+        compute='chk_invoice_plan_line',
+    )
+    button_use_model_job_id = fields.Many2one(
+        'queue.job',
+        string='Use Model Job',
+        compute='_compute_button_use_model_job_uuid',
+    )
+    button_use_model_uuid = fields.Char(
+        string='Use Model Job UUID',
+        compute='_compute_button_use_model_job_uuid',
+    )
 
+     ###########################--------------------------------- start job backgruond ------------------------------- #######################
+
+    @api.multi
+    def _compute_button_use_model_job_uuid(self):      
+        for rec in self:
+            task_name = "%s('%s', %s)" % \
+                ('action_done_async_process', self._name, rec.id)
+            jobs = self.env['queue.job'].search([
+                ('func_string', 'like', task_name),
+                ('state', '!=', 'done')],
+                order='id desc', limit=1)
+            rec.button_use_model_job_id = jobs and jobs[0] or False
+            rec.button_use_model_uuid = jobs and jobs[0].uuid or False
+        return True
+    
+    @api.multi
+    def action_done(self):
+        for rec in self:
+            rec.button_background()
+        return True
+
+    @api.multi
+    def action_done_background(self):
+        if self._context.get('button_use_model_async_process', False):
+            self.ensure_one()
+            if self._context.get('job_uuid', False):  # Called from @job
+                return self.action_done()
+            if self.button_use_model_job_id:
+                message = _('Use Model')
+                action = self.env.ref('pabi_utils.action_my_queue_job')
+                raise RedirectWarning(message, action.id, _('Go to My Jobs'))
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = '%s - Use Model' % (self.special_type or self.name)
+            uuid = action_done_async_process.delay(
+                session, self._name, self.id, description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+            job.process_id = 8
+        else:
+            return self.action_done()
+
+    @api.multi
+    def button_background(self):
+        self = self.with_context(active_ids=self.ids, active_id=self.id, active_model='account.model', search_disable_custom_filters= True)
+        vals = {}
+        Use_Model = self.env['account.use.model'].create(vals)
+        Use_Model.create_entries()   
+        return True
+
+   ###########################--------------------------------- end job backgruond ------------------------------- #######################
+
+    @api.multi
+    def chk_invoice_plan_line(self):
+        if self.name == 'Purchase Invoice Plan':
+            InvoicePlan = self.env['account.model']
+            self.chk_use_model = len(InvoicePlan.chk_invoice_plan(10000))
+    
     @api.multi
     def copy(self, default=None):
         self.ensure_one()
