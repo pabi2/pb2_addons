@@ -46,7 +46,7 @@ class XLSXReportReceivableDetail(models.TransientModel):
         compute='_compute_date_real',
     )
     results = fields.Many2many(
-        'xlsx.report.receivable.detail.view',
+        'account.move.line',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
@@ -143,6 +143,6 @@ class XLSXReportReceivableDetail(models.TransientModel):
         for x in Moveline.search(dom):
             res_ids += [x.id if x.move_id.doctype == 'adjustment' or x.date_maturity else False]
         res_ids = list(filter(lambda l: l != False, res_ids))
-        self.results = Result.search(res_ids).sorted(
+        self.results = Moveline.search([('id', 'in', res_ids)]).sorted(
             key=lambda l: (l.partner_id.search_key, l.date, l.move_id.name))
 

@@ -55,6 +55,14 @@ class AccountMoveLine(models.Model):
                 for line in lines.line_ids:
                     if line.tax_id.id:
                         move.vat_amount = line.credit
+            elif move.doctype == 'out_invoice' or move.doctype == 'in_invoice' : 
+                Fund = self.env['account.invoice'] 
+                domain = ([('move_id', '=', move.move_id.id)])
+                lines = Fund.search(domain)
+                for line in lines.invoice_line:
+                    if line.invoice_line_tax_id:
+                        move.vat_amount = lines.amount_tax
+                        
             else: #1080789
                 #move.vat_amount = abs(sum(move.move_id.invoice_ids.tax_line.mapped("amount")))
                 if move.move_id.tax_detail_ids:
@@ -70,10 +78,17 @@ class AccountMoveLine(models.Model):
                 for line in lines.line_ids:
                     if line.tax_id.id:
                         move.base_amount = line.tax_base_amount
+            elif move.doctype == 'out_invoice' or move.doctype == 'in_invoice' : 
+                Fund = self.env['account.invoice'] 
+                domain = ([('move_id', '=', move.move_id.id)])
+                lines = Fund.search(domain)
+                for line in lines.invoice_line:
+                    if line.invoice_line_tax_id:
+                        move.base_amount = lines.amount_untaxed
             else:
                 if move.move_id.tax_detail_ids:
                     move.base_amount = abs(sum(move.move_id.tax_detail_ids.mapped("base")))
-                #move.base_amount = abs(sum(move.move_id.invoice_ids.tax_line.mapped("base")))
+                #move.base_amount = abs(sum(move.move_id.invoice_ids.tax_line.mapped("base"))) 
                              
     @api.multi
     def _compute_budget_fund_rule_line(self):
