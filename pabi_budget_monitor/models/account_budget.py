@@ -327,7 +327,8 @@ class AccountBudgetLine(models.Model):
                 _('This budget (%s) can not use release by rolling') %
                 (self.chart_view, ))
         dimension = budget_type_dict[self.chart_view]
-        dom = [('chart_view', '=', self.chart_view),
+        dom = [('budget_method', '=', 'expense'),
+               ('chart_view', '=', self.chart_view),
                ('fiscalyear_id', '=', self.fiscalyear_id.id),
                (dimension, '=', self[dimension].id),
                ]
