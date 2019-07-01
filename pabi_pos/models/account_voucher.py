@@ -1,0 +1,23 @@
+# -*- coding: utf-8 -*-
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
+
+
+class AccountVoucher(models.Model):
+    _inherit = 'account.voucher'
+
+    @api.multi
+    def proforma_voucher(self):
+        result = super(AccountVoucher, self).proforma_voucher()
+        for voucher in self:
+            #raise ValidationError(_('--- %s ---') % str(voucher.line_cr_ids[0].move_line_id.move_id.document_id.source_document_id.name))
+            if 'POS' in voucher.line_cr_ids[0].move_line_id.move_id.document_id.source_document_id.name:
+                picking = self.env['stock.picking'].search([('origin','=',voucher.line_cr_ids[0].move_line_id.move_id.document_id.source_document_id.name)])
+                for pick in picking:
+                    """res = pick.do_enter_transfer_details()
+                    Transfer = self.env['stock.transfer_details']
+                    transfer = Transfer.browse(res['res_id'])
+                    res = transfer.do_detailed_transfer()"""
+                    pick.validate_picking()
+        return result
+
