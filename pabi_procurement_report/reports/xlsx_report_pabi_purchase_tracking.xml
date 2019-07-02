@@ -7,45 +7,44 @@
             <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <xpath expr="//group[@name='criteria']" position="inside">
-                	<sheet>
-                		<group>
+                <xpath expr="//group[@name='criteria']" position="before">
+                    <group>
+                        <group>
 		                    <field name="org_ids" widget="many2many_tags"/>
 		                    <field name="chartfield_ids" widget="many2many_tags"/>
+		                    <field name="data_view"/>
 		                    <field name="org_name" invisible="1"/>
 		                    <field name="budget_name" invisible="1"/>
-		                </group>
-                       	<div>
-                        	<h1><label string="PR"/></h1>
-                       	</div>
-	                    <group>
-	                        <group>
-		                        <field name="pr_ids" widget="many2many_tags"/>
-		                        <field name="pr_requester_ids" widget="many2many_tags"/>
-		                        <field name="pr_responsible_ids" widget="many2many_tags"/>
-		                        <field name="pr_date_from"/>
-		                        <field name="pr_date_to"/>
-		                        <field name="pr_number" invisible="1"/>
-		                        <field name="pr_requester_name" invisible="1"/>
-		                        <field name="pr_responsible_name" invisible="1"/>
-		                        <field name="pr_date" invisible="1"/>
-		                    </group>
-		                </group>  
-                       	<div>
-                        	<h1><label string="PO"/></h1>
-                        </div>  
-	                    <group>
-	                        <group>
-		                        <field name="po_ids" widget="many2many_tags"/>
-		                        <field name="po_responsible_ids" widget="many2many_tags"/>
-		                        <field name="po_date_from"/>
-		                        <field name="po_date_to"/>
-		                        <field name="po_number" invisible="1"/>
-		                        <field name="po_responsible_name" invisible="1"/>
-		                        <field name="po_date" invisible="1"/>
-	                        </group>
-	                    </group>
-	            	</sheet>
+                        </group>
+                    </group>
+					<notebook name="additional_criteria">
+						<page string="Purchase Requests">
+							<separator string="Purchase Requests" colspan="4"/>
+							<group>
+								<field name="pr_ids" widget="many2many_tags" attrs="{'readonly': [('data_view','!=', 'pr')]}"/>
+								<field name="pr_requester_ids" widget="many2many_tags" attrs="{'readonly': [('data_view','!=', 'pr')]}"/>
+								<field name="pr_responsible_ids" widget="many2many_tags" attrs="{'readonly': [('data_view','!=', 'pr')]}"/>
+								<field name="pr_date_from" attrs="{'readonly': [('data_view','!=', 'pr')]}"/>
+								<field name="pr_date_to" attrs="{'readonly': [('data_view','!=', 'pr')]}"/>
+								<field name="pr_number" invisible="1"/>
+								<field name="pr_requester_name" invisible="1"/>
+								<field name="pr_responsible_name" invisible="1"/>
+								<field name="pr_date" invisible="1"/>
+							</group>
+						</page>
+						<page string="Purchase Order">
+							<separator string="Purchase Order" colspan="4"/>
+							<group>
+							    <field name="po_ids" widget="many2many_tags" attrs="{'readonly': [('data_view','!=', 'po')]}"/>
+							    <field name="po_responsible_ids" widget="many2many_tags" attrs="{'readonly': [('data_view','!=', 'po')]}"/>
+							    <field name="po_date_from" attrs="{'readonly': [('data_view','!=', 'po')]}"/>
+							    <field name="po_date_to" attrs="{'readonly': [('data_view','!=', 'po')]}"/>
+							    <field name="po_number" invisible="1"/>
+							    <field name="po_responsible_name" invisible="1"/>
+							    <field name="po_date" invisible="1"/>
+							</group>
+						</page>
+					</notebook>
                 </xpath>
             </field>
         </record>
