@@ -2134,7 +2134,124 @@ result = pd.pivot_table(df, index=groupby,
             </field>
         </record> 
 
+	     # Asset Estimate Report
+	     <record id="xlsx_report_asset_estimate" model="ir.attachment">
+	         <field name="res_model">asset.estimate.report</field>
+	         <field name="datas"></field>
+	         <field name="datas_fname">xlsx_report_asset_estimate.xlsx</field>
+	         <field name="name">Asset Estimate Report</field>
+	         <field name="parent_id" eval="ref('dir_account_reports')"/>
+	         <field name="description">
+	             {
+	                 '__EXPORT__': {
+	                     'Asset Estimate Report': {
+	                         '_HEAD_': {
+	                             'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}#{number_format=text}',
+	                             'B4': 'fiscalyear_start_id.name${value or ""}#{number_format=text}',
+	                             'D4': 'fiscalyear_end_id.name${value or ""}#{number_format=text}',
+	                             'B5': 'account_ids${value and ", ".join([x.code for x in value]) or ""}#{number_format=text}',
+	                             'D5': 'asset_state${value and ", ".join([x.name for x in value]) or ""}#{number_format=text}',
+	                             'B6': 'asset_profile_ids${value and ", ".join([x.name for x in value]) or ""}#{number_format=text}',
+	                             'D6': 'asset_status_ids${value and ", ".join([x.name for x in value]) or ""}#{number_format=text}',
+	                             'D7': 'asset_active${value or ""}#{number_format=text}',
+	                             'X9': 'period_year_id.name${value and "Depreciation FY"+value or ""}#{number_format=text}',
+	                             'Y9': 'period_year_id.name${value and "Depreciation FY"+str(int(value)+1) or ""}#{number_format=text}',
+	                             'Z9': 'period_year_id.name${value and "Depreciation FY"+str(int(value)+2) or ""}#{number_format=text}',
+	                             'AA9': 'period_year_id.name${value and "Depreciation FY"+str(int(value)+3) or ""}#{number_format=text}',
+	                             'AB9': 'period_year_id.name${value and "Depreciation FY"+str(int(value)+4) or ""}#{number_format=text}',
+	
+	                           },
+	                         'results': {
+								 'A10': 'budget${value and value.org_id.name_short or ""}#{number_format=text}',
+								 'B10': 'account_code${value or ""}#{number_format=text}',
+								 'C10': 'account_name${value or ""}#{number_format=text}',
+								 'D10': 'profile_id.product_categ_id${value and value.name or ""}#{number_format=text}',
+								 'E10': 'profile_id${value and value.code or ""}#{number_format=text}',
+	                             'F10': 'profile_id${value and value.name or ""}#{number_format=text}',
+	                             'G10': 'code${value or ""}#{number_format=text}',
+	                             'H10': 'name${value or ""}#{number_format=text}',
+	                             'I10': 'parent_id${value and value.name or ""}#{number_format=text}',
+	                             'J10': 'picking_id${value and value.acceptance_id and value.acceptance_id.date_accept or ""}#{number_format=date}',
+	                             'K10': 'date_start${value or ""}#{number_format=date}',
+	                             'L10': 'budget_type${value or ""}#{number_format=text}',
+	                             'M10': 'budget${value and value.code or ""}#{number_format=text}',
+	                             'N10': 'budget${value and value.name or ""}#{number_format=text}',
+	                             'O10': 'owner_budget${value and value.code or ""}#{number_format=text}',
+	                             'P10': 'owner_budget${value and value.name or ""}#{number_format=text}',
+	                             'Q10': 'owner_budget${value and value.costcenter_id.code or ""}#{number_format=text}',
+	                             'R10': 'owner_budget${value and value.costcenter_id.name or ""}#{number_format=text}',
+	                             'S10': 'partner_id${value and value.search_key or ""}#{number_format=text}',
+	                             'T10': 'partner_id${value and value.name or ""}#{number_format=text}',
+	                             'U10': 'date_start${value and env["account.fiscalyear"].browse(env["account.fiscalyear"].find(value)).name or ""}#{number_format=text}',
+	                             'V10': 'purchase_value${value or 0}#{number_format=number}',
+	                             'W10': 'accumulated_bf${value or 0}#{number_format=number}',
+	                             'X10': 'depreciation${value or 0}#{number_format=number}',
+	                             'Y10': 'depreciation1${value or 0}#{number_format=number}',
+	                             'Z10': 'depreciation2${value or 0}#{number_format=number}',
+	                             'AA10': 'depreciation3${value or 0}#{number_format=number}',
+	                             'AB10': 'depreciation4${value or 0}#{number_format=number}',
+	                             'AC10': 'accumulated_cf${value or 0}#{number_format=number}',
+	                             'AD10': 'net_book_value${value or 0}#{number_format=number}',
+	                             'AE10': 'method_number${value or 0}#{number_format=text}',
+	                             'AF10': 'adjust_id${value and value.name or ""}#{number_format=text}',
+	                             'AG10': 'status${value and value.name or ""}#{number_format=text}',
+	                             'AH10': 'date_remove${value or ""}#{number_format=date}',
+	                             'AI10': 'state${value and ("running" if value == "open" else value) or ""}#{number_format=text}',
+	                         }
+	
+	                       },
+	
+	                  }
+	            }
+	         </field>
+	     </record>
 
+         # Preprint Receipt
+        <record id="xlsx_report_preprint_receipt" model="ir.attachment">
+            <field name="res_model">xlsx.report.preprint.receipt</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_preprint_receipt.xlsx</field>
+            <field name="name">Preprint Receipt</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Preprint Receipt': {
+                            '_HEAD_': {
+                                'A1': '${env.user.with_context(lang="en_US").company_id.partner_id.name}#{align=left;number_format=text}',
+                                'B3': 'fiscalyear_start_id.name${value or ""}#{align=left;number_format=text}',
+                                'D3': 'fiscalyear_end_id.name${value or ""}#{align=left;number_format=text}',
+                                'B4': 'period_start_id.name${value or ""}#{align=left;number_format=text}',
+                                'D4': 'period_end_id.name${value or ""}#{align=left;number_format=text}',
+                                'B5': 'postingdate_start${value and value.strftime("%d/%m/%Y") or ""}#{align=left;number_format=text}',
+                                'D5': 'postingdate_end${value and value.strftime("%d/%m/%Y") or ""}#{align=left;number_format=text}',
+                                'B6': 'operating_unit_ids${value and ", ".join([x.name for x in value]) or ""}#{align=left;number_format=text}',
+                                'B7': 'preprint_number${value and ", ".join([x.name for x in value]) or ""}#{align=left;number_format=text}',
+                                'B8': 'move_id${value and ", ".join([x.name for x in value]) or ""}#{align=left;number_format=text}',
+                            },
+	                        'results': {
+	                            'A11': 'number_preprint${value or ""}#{align=left;number_format=text}',
+	                            'B11': 'name${value or ""}#{align=left;number_format=text}',
+	                         	'C11': 'period_id.fiscalyear_id.name${value or ""}',
+	                            'D11': 'period_id.name${value or ""}#{number_format=text}',
+	                            'E11': 'date${value and value.strftime("%d/%m/%Y") or ""}',
+	                            'F11': 'date_document${value and value.strftime("%d/%m/%Y") or ""}',
+	                            'G11': 'operating_unit_id${value and value.name or  ""}',
+	                            'H11': 'taxbranch_id${value and value.code or ""}#{align=left;number_format=text}',
+	                            'I11': 'narration${value or ""}#{align=left;number_format=text}',
+	                            'J11': 'partner_id${value and value.search_key or ""}#{align=left;number_format=text}',
+	                            'K11': 'partner_id${value and value.display_name2 or ""}#{align=left;number_format=text}',
+	                            'L11': 'document_origin${value or ""}#{align=left;number_format=text}',
+	                            'M11': 'system_id${value and value.name or ""}#{align=left;number_format=text}',
+	                            'N11': 'base${value or ""}',
+	                            'O11': 'amount${value or ""}',
+	                            'P11': 'create_uid${value and value.name or ""}#{align=left;number_format=text}',
+	                         },
+                         }
+                    }
+                }
+            </field>
+        </record>
 
     </data>
 </openerp>
