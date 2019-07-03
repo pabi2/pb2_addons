@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<openerp>
+	<data noupdate="0">
+		<record id="demo_res_users_test_report_pdf" model="ir.actions.report.xml">
+			<field name="string">demo_res_users_test_report_pdf</field>
+			<field name="auto">True</field>
+			<field name="model">res.users</field>
+			<field name="jasper_model_id" ref="base.model_res_users" />
+			<field name="name">demo_res_users_test_report_pdf</field>
+			<field name="report_name">demo_res_users_test_report_pdf</field>
+			<field name="menu">False</field>
+			<field name="header">False</field>
+			<field name="report_type">jasperserver_rest_v2</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="jasper_report_path">/Reports/pabi2o_test_28049_intra_nstda_or_th/res_users_test_report_pdf</field>
+			<field name="criteria_field">id</field>
+		</record>
+		<record id="demo_res_users_test_report_pdf_values" model="ir.values">
+			<field name="name">demo_res_users_test_report_pdf_values</field>
+			<field name="model">res.users</field>
+			<field name="key2" eval="'client_print_multi'" />
+			<field name="value_unpickle"
+				eval="'ir.actions.report.xml, ' +str(demo_res_users_test_report_pdf)" />
+		</record>
+		
+	</data>
+</openerp>

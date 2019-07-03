@@ -11,6 +11,7 @@
         "ir_report_view.xml",
         "nstdaconf_report_view.xml",
         "ir_config_parameter.xml",
+        "reports/jasper_data.xml",
     ],
     # ----------------------- NOT Edit --------------
     'category': 'NSTDA',

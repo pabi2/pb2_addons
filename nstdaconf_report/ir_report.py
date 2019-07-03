@@ -87,14 +87,14 @@ class ir_actions_report_xml(orm.Model):
         if context is None:
             context = {}
         params = {}
-        params['ids'] = [1,2,3,4,5,6,7,8,9]
+        params['ids'] = [2392,2396,239,240,2982,1357,3120,241,242]
         params['aaa'] = 'aaa'
         params['bbb'] = 'bbb'
         params['ccc'] = 'ccc'
         
         return {
             'type': 'ir.actions.report.xml',
-            'report_name': "nstda_gnc_test_report_pdf",
+            'report_name': "res_users_test_report_pdf",
             'datas': params,
         }
         
