@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<!-- Configuration Tree -->
+		<record model="ir.ui.view" id="view_nstdaconf_report_config_tree">
+			<field name="name">nstdaconf.report.config.tree</field>
+			<field name="model">nstdaconf.report.config</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Configuration">
+					<field name="name" />
+					<field name="report_id" />
+					<field name="description" />
+					<field name="type" />
+					<field name="host" />
+				</tree>
+			</field>
+		</record>
+
+		<!-- Configuration Form -->
+		<record model="ir.ui.view" id="view_nstdaconf_report_config_form">
+			<field name="name">nstdaconf.report.config.form</field>
+			<field name="model">nstdaconf.report.config</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Configuration">
+					<group>
+						<group>
+							<field name="name"/>
+							<field name="report_id"/>
+							<field name="description" />
+							<field name="host" />
+							<field name="report_user" />
+							<field name="report_password" />
+							<field name="type" readonly="1" />
+							<field name="active" />
+						</group>
+						<group>
+						</group>
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<!-- Configuration Action -->
+		<record model="ir.actions.act_window" id="action_nstdaconf_report_config">
+			<field name="name">Report Jasperserver Configuration</field>
+			<field name="res_model">nstdaconf.report.config</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem name="Report Jasperserver Configuration" id="menu_nstdaconf_report_config"
+			parent="base.menu_config" action="action_nstdaconf_report_config" />
+
+	</data>
+</openerp>

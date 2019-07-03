@@ -1,0 +1,32 @@
+<openerp>
+    <data>
+        <record id="act_report_xml_view" model="ir.ui.view">
+            <field name="name">ir.actions.report.xml.inherit</field>
+            <field name="model">ir.actions.report.xml</field>
+            <field name="inherit_id" ref="base.act_report_xml_view"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="/form/notebook/page[@string='Security']" position="before" >          
+                    <page string="Jasperserver RESTv2" attrs="{'invisible':[('report_type','!=','jasperserver_rest_v2')]}">
+                    	<group>
+                    		<group string="Parameters">
+<!-- 		                        <field name="jasper_url"/> -->
+<!-- 		                        <field name="jasper_username" /> -->
+<!-- 		                        <field name="jasper_password" /> -->
+<!-- 		                        <field name="parameter_name" string="Jasper Report Parameter IDS" /> -->
+		                        <field name="jasper_report_path" string="Jaser Report Path (Fix #SERVER_URL# for Dynamic Server)" />
+		                        <field name="criteria_field" string="SQL Primary Key (*ให้เลือก PK ที่มาจาก Table หลัก)"/>
+		                        <div>
+	                        		<button icon="gtk-ok" name="start_report" string="Start Report" type="object"/>
+	                        		<button icon="gtk-ok" name="export_service" string="Export Service(gnc)" type="object"/>
+	                        		<button icon="gtk-ok" name="modify_zip" string="Modify Zip" type="object"/>
+	                        		<button icon="gtk-ok" name="import_service" string="Import Service" type="object"/>
+		                        </div>
+                    		</group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
