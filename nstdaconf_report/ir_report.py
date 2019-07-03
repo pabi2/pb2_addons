@@ -94,7 +94,7 @@ class ir_actions_report_xml(orm.Model):
         
         return {
             'type': 'ir.actions.report.xml',
-            'report_name': "res_users_test_report_pdf",
+            'report_name': "demo_res_users_test_report_pdf",
             'datas': params,
         }
         
