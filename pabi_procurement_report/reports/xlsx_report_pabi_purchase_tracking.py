@@ -28,6 +28,7 @@ class XLSXReportPabiPurchaseTracking(models.TransientModel):
     pr_date = fields.Char(string='PO Date',)
     po_date = fields.Char(string='PO Date',)
     data_view = fields.Selection([('pr', 'Purchase Requests'),('po', 'Purchase Order'),], string='Data From', default='pr', required=True)
+    
     # Report Result
     pr_results = fields.Many2many(
         'xlsx.report.pabi.purchase.tracking.results',
