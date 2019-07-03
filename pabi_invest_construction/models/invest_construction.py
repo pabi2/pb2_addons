@@ -564,13 +564,30 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
     @api.multi
     @api.constrains('phase_plan_ids')
     def _check_fiscalyear_unique(self):
+        fiscalyear = self.env['account.fiscalyear'].search([('name','=',(datetime.today() + relativedelta(months=3)).strftime('%Y'))])
         for rec in self:
             period_ids = [x.calendar_period_id.id for x in rec.phase_plan_ids]
             for x in period_ids:
                 if period_ids.count(x) > 1:
                     raise ValidationError(
                         _('Duplicate period in budget plan!'))
-
+            
+            
+            for expense in rec.monitor_expense_ids:
+                phase_summary = rec.summary_ids.filtered(lambda l: l.fiscalyear_id == expense.fiscalyear_id)
+                phase_consumed = rec.monitor_expense_ids.filtered(lambda l: l.fiscalyear_id == expense.fiscalyear_id)
+                
+                summary_amount = sum([x.amount_plan for x in phase_summary])
+                consumed_amount = sum([x.amount_consumed for x in phase_consumed])
+                
+                if float_compare(consumed_amount, summary_amount, 2) == 1 and phase_summary:
+                    raise ValidationError(
+                        _('Yearly Summary (%s) < Consumed Amount (%s)!' %
+                          ('{:,.2f}'.format(summary_amount),
+                           '{:,.2f}'.format(consumed_amount))))
+            
+    
+    
     @api.multi
     @api.constrains('date_expansion', 'date_start', 'date_end')
     def _check_date(self):
@@ -1013,7 +1030,11 @@ class ResInvestConstructionPhasePlan(models.Model):
                     rec.calendar_period_id.date_start > date_end:
                 raise ValidationError(
                     _('Period must be within start and date!'))
-
+                
+            
+    
+    
+    
     # This will help protect user from edit past date
     # @api.multi
     # def write(self, vals):
