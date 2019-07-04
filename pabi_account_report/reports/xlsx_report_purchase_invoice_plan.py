@@ -131,10 +131,10 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         if self.chartfield_ids:
             dom += [('order_line_id.chartfield_id', 'in', self.chartfield_ids.ids)]
         
-        #if self.date_po_start:
-        #    dom += [('order_id.date_order','>=',self.date_po_start)]
-        #if self.date_po_end:
-        #    dom += [('order_id.date_order','<=',self.date_po_end)]
+        if self.date_po_start and not self.date_po_end:
+            dom += [('order_id.date_order','=',self.date_po_start)]
+        if self.date_po_start and self.date_po_end:
+            dom += [('order_id.date_order','>=',self.date_po_start),('order_id.date_order','<=',self.date_po_end)]
         if self.date_start:
             dom += [('order_id.date_order','>=',self.date_start)]
         if self.date_end:

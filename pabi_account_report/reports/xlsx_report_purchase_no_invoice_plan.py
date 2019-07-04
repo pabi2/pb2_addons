@@ -206,16 +206,16 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
             #dom += [('inv_po_line.chartfield_id', 'in', self.chartfield_ids.ids)]
             dom += [('chartfield_id', 'in', self.chartfield_ids.ids)]
         
-        if self.date_po_start:
+        if self.date_po_start and not self.date_po_end:
             #dom += [('order_id.date_order','>=',self.date_po_start)]
-            search = self.env['purchase.order'].search([('date_order', '>=', self.date_po_start)])
+            search = self.env['purchase.order'].search([('date_order', '=', self.date_po_start)])
             po_name = search.filtered('name').mapped('name')
             
             dom += [('invoice_id.source_document','in',po_name)]
             
-        if self.date_po_end:
+        if self.date_po_start and self.date_po_end:
             #dom += [('order_id.date_order','<=',self.date_po_end)]
-            search = self.env['purchase.order'].search([('date_order','<=',self.date_po_end)])
+            search = self.env['purchase.order'].search([('date_order', '>=', self.date_po_start),('date_order','<=',self.date_po_end)])
             po_name = search.filtered('name').mapped('name')
             
             dom += [('invoice_id.source_document','in',po_name)]
