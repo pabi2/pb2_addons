@@ -7,75 +7,75 @@ REFERENCE_SELECT = [('account.voucher', 'Receipt'),
                     ('account.tax.detail', 'Adjustment'),
                     ]
 
-class AccountMove(models.Model):
-    _inherit = 'account.move'
+# class AccountMove(models.Model):
+#     _inherit = 'account.move'
+# 
+#     preprint_number = fields.Char(
+#         string='Preprint Number',
+#         compute='_compute_preprint_number',
+#     )
+# 
+#     @api.multi
+#     def _compute_preprint_number(self):
+#         for move in self:
+#             if move.doctype == 'receipt':
+#                 Fund = self.env['account.voucher'] 
+#                 domain = ([('move_id', '=', move.id)])
+#                 lines = Fund.search(domain)
+#                 move.preprint_number = lines.number_preprint
+#             if move.doctype == 'interface_account': 
+#                 Fund = self.env['interface.account.entry'] 
+#                 domain = ([('move_id', '=', move.id)])
+#                 lines = Fund.search(domain)
+#                 move.preprint_number = lines.preprint_number
+#             if move.doctype == 'adjustment': 
+#                 Fund = self.env['account.tax.detail'] 
+#                 domain = ([('ref_move_id', '=', move.id),('amount', '=', 0)])
+#                 lines = Fund.search(domain)
+#                 move.preprint_number = lines.invoice_number                                        
 
-    preprint_number = fields.Char(
-        string='Preprint Number',
-        compute='_compute_preprint_number',
-    )
-
-    @api.multi
-    def _compute_preprint_number(self):
-        for move in self:
-            if move.doctype == 'receipt':
-                Fund = self.env['account.voucher'] 
-                domain = ([('move_id', '=', move.id)])
-                lines = Fund.search(domain)
-                move.preprint_number = lines.number_preprint
-            if move.doctype == 'interface_account': 
-                Fund = self.env['interface.account.entry'] 
-                domain = ([('move_id', '=', move.id)])
-                lines = Fund.search(domain)
-                move.preprint_number = lines.preprint_number
-            if move.doctype == 'adjustment': 
-                Fund = self.env['account.tax.detail'] 
-                domain = ([('ref_move_id', '=', move.id),('amount', '=', 0)])
-                lines = Fund.search(domain)
-                move.preprint_number = lines.invoice_number                                        
-
-class Accountmovepreprint(models.Model):
-    _name = 'account.move.preprint'    
-    #_auto = False    
- 
-    move_id = fields.Many2one(
-        'account.move',
-        string='Document No',
-    )
-    name = fields.Char(
-        string='Preprint Number',
-        readonly=True,
-    )
-    org_id = fields.Many2one(
-        'res.org',
-        string='Org',
-    )
-    
-class AccountMovePrePrintView(models.AbstractModel):
-    """ Contrast to normal view, this will be used as mock temp table only """
-    _name = 'account.move.preprint.view'
-    _inherit = 'account.move'
-    
-    number_preprint = fields.Char(
-        string='Preprint Number',
-    )
-    document_origin = fields.Char(
-        string='Preprint Number',
-    )
-    operating_unit = fields.Many2one(
-        'operating.unit',
-        string='Org',
-    )
-    amount = fields.Float(
-        string='Amount',
-    )
-    base = fields.Float(
-        string='Base Code Amount',
-    )
-    taxbranch_id = fields.Many2one(
-        'res.taxbranch',
-        string='Tax Branch',
-    )
+# class Accountmovepreprint(models.Model):
+#     _name = 'account.move.preprint'    
+#     #_auto = False    
+#  
+#     move_id = fields.Many2one(
+#         'account.move',
+#         string='Document No',
+#     )
+#     name = fields.Char(
+#         string='Preprint Number',
+#         readonly=True,
+#     )
+#     org_id = fields.Many2one(
+#         'res.org',
+#         string='Org',
+#     )
+#     
+# class AccountMovePrePrintView(models.AbstractModel):
+#     """ Contrast to normal view, this will be used as mock temp table only """
+#     _name = 'account.move.preprint.view'
+#     _inherit = 'account.move'
+#     
+#     number_preprint = fields.Char(
+#         string='Preprint Number',
+#     )
+#     document_origin = fields.Char(
+#         string='Preprint Number',
+#     )
+#     operating_unit = fields.Many2one(
+#         'operating.unit',
+#         string='Org',
+#     )
+#     amount = fields.Float(
+#         string='Amount',
+#     )
+#     base = fields.Float(
+#         string='Base Code Amount',
+#     )
+#     taxbranch_id = fields.Many2one(
+#         'res.taxbranch',
+#         string='Tax Branch',
+#     )
     
     
 class XLSXReportGlProject(models.TransientModel):
