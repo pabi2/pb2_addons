@@ -51,31 +51,31 @@ class Accountmovepreprint(models.Model):
         string='Org',
     )
        
-# class AccountMovePrePrintView(models.AbstractModel):
-#     """ Contrast to normal view, this will be used as mock temp table only """
-#     _name = 'account.move.preprint.view'
+class AccountMovePrePrintView(models.AbstractModel):
+    """ Contrast to normal view, this will be used as mock temp table only """
+    _name = 'account.move.preprint.view'
 #     _inherit = 'account.move'
-#      
-#     number_preprint = fields.Char(
-#         string='Preprint Number',
-#     )
-#     document_origin = fields.Char(
-#         string='Preprint Number',
-#     )
-#     operating_unit = fields.Many2one(
-#         'operating.unit',
-#         string='Org',
-#     )
-#     amount = fields.Float(
-#         string='Amount',
-#     )
-#     base = fields.Float(
-#         string='Base Code Amount',
-#     )
-#     taxbranch_id = fields.Many2one(
-#         'res.taxbranch',
-#         string='Tax Branch',
-#     )
+      
+    number_preprint = fields.Char(
+        string='Preprint Number',
+    )
+    document_origin = fields.Char(
+        string='Preprint Number',
+    )
+    operating_unit = fields.Many2one(
+        'operating.unit',
+        string='Org',
+    )
+    amount = fields.Float(
+        string='Amount',
+    )
+    base = fields.Float(
+        string='Base Code Amount',
+    )
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        string='Tax Branch',
+    )
     
     
 class XLSXReportGlProject(models.TransientModel):
