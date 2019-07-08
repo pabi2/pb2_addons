@@ -141,7 +141,7 @@ class AccountMovePrePrintView(models.AbstractModel):
     document_id = fields.Char(string='document_id')
     doctype = fields.Char(string='doctype')
     date_value = fields.Date(string='date_value')
-    message_last_post = fields.DateTime(string='message_last_post')
+    message_last_post = fields.Date(string='message_last_post')
     auto_reconcile_id = fields.Many2one(
         'account.auto.reconcile',
         string='auto_reconcile_id'
