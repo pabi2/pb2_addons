@@ -63,7 +63,7 @@ class AccountMovePrePrintView(models.AbstractModel):
         string='Preprint Number',
     )
     document_origin = fields.Char(
-        string='Preprint Number',
+        string='Document Origin',
     )
     operating_unit = fields.Many2one(
         'operating.unit',
@@ -79,6 +79,8 @@ class AccountMovePrePrintView(models.AbstractModel):
         'res.taxbranch',
         string='Tax Branch',
     )
+    
+    # Add
     partner_id = fields.Many2one(
         'res.partner',
         string='Partner',
@@ -87,7 +89,15 @@ class AccountMovePrePrintView(models.AbstractModel):
         'account.period',
         string='Period',
     )
-    date = fields.Date(string='Date',)
+    date = fields.Date(string='Posting Date')
+    date_document = fields.Date(string='Doc Date')
+    line_item_summary = fields.Text(string='Items Summary')
+    narration = fields.Text(string='Additonal Information')
+    name = fields.Char(string='Document No')
+    system_id = fields.Many2one(
+        'interface.system',
+        string='System Origin',
+    )
     
     
 class XLSXReportPreprintReceipt(models.TransientModel):
