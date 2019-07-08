@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp import tools
+import logging
+
+_logger = logging.getLogger(__name__)
 
 REFERENCE_SELECT = [('account.voucher', 'Receipt'),
                     ('interface.account.entry', 'Account Interface'),
@@ -54,7 +57,7 @@ class Accountmovepreprint(models.Model):
 class AccountMovePrePrintView(models.AbstractModel):
     """ Contrast to normal view, this will be used as mock temp table only """
     _name = 'account.move.preprint.view'
-    _inherit = 'account.move'
+#     _inherit = 'account.move'
       
     number_preprint = fields.Char(
         string='Preprint Number',
@@ -280,13 +283,14 @@ class XLSXReportPreprintReceipt(models.TransientModel):
             #dom += [('m.id', 'in', tuple(self.preprint_number.ids))]
                       
         whr_depreciation = ""   
-        where_str = self._domain_to_where_str(dom) 
+        where_str = self._domain_to_where_str(dom)
         if where_str:
             where_str = ' and '+ where_str
         if whr_prefix and where_str:
            where_str = where_str + ' and ' + whr_prefix   
         if whr_prefix and(not where_str):
             where_str = ' and ' + whr_prefix   
+        _logger.info("where_str: %s", str(where_str))
            
         self._cr.execute("""
                        select m.*,aa.number_preprint,aa.amount,aa.base,aa.taxbranch_id ,
@@ -335,7 +339,10 @@ class XLSXReportPreprintReceipt(models.TransientModel):
         """  + where_str + ' order by aa.number_preprint ' )     
            
         results = self._cr.dictfetchall()
+        _logger.info("results: %s", str(results))
         ReportLine = self.env['account.move.preprint.view']
         for line in results:
             self.results += ReportLine.new(line)
+        
+        _logger.info("ReportLine: %s", str(ReportLine))
         return True
