@@ -83,11 +83,11 @@ class AccountMovePrePrintView(models.AbstractModel):
     # Add
     partner_id = fields.Many2one(
         'res.partner',
-        string='Partner',
+        string='Partner'
     )
     period_id = fields.Many2one(
         'account.period',
-        string='Period',
+        string='Period'
     )
     date = fields.Date(string='Posting Date')
     date_document = fields.Date(string='Doc Date')
@@ -96,8 +96,18 @@ class AccountMovePrePrintView(models.AbstractModel):
     name = fields.Char(string='Document No')
     system_id = fields.Many2one(
         'interface.system',
-        string='System Origin',
+        string='System Origin'
     )
+    create_uid = fields.Many2one(
+        'res.users',
+        string='Created By'
+    )
+    write_uid = fields.Many2one(
+        'res.users',
+        string='Updated By'
+    )
+    create_date = fields.Date(string='Created Date')
+    write_date = fields.Date(string='Updated Date')
     
     
 class XLSXReportPreprintReceipt(models.TransientModel):
