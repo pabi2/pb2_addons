@@ -93,7 +93,7 @@ class AccountMovePrePrintView(models.AbstractModel):
     date_document = fields.Date(string='Doc Date')
     line_item_summary = fields.Text(string='Items Summary')
     narration = fields.Text(string='Additonal Information')
-    name = fields.Char(string='Document No')
+    document = fields.Char(string='Document No')
     system_id = fields.Many2one(
         'interface.system',
         string='System Origin'
@@ -108,7 +108,48 @@ class AccountMovePrePrintView(models.AbstractModel):
     )
     create_date = fields.Date(string='Created Date')
     write_date = fields.Date(string='Updated Date')
-    
+    operating_unit_id = fields.Many2one(
+        'operating.unit',
+        string='operating_unit_id'
+    )
+    company_id = fields.Many2one(
+        'res.company',
+        string='company_id'
+    )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='journal_id'
+    )
+    state = fields.Char(string='state')
+    balance = fields.Float(string='balance')
+    ref = fields.Char(string='ref')
+    to_check = fields.Boolean(string='to_check')
+    reversal_id = fields.Many2one(
+        'account.move',
+        string='reversal_id'
+    )
+    to_be_reversed = fields.Boolean(string='to_be_reversed')
+    bank_receipt_id = fields.Many2one(
+        'account.bank.receipt',
+        string='bank_receipt_id'
+    )
+    model_id = fields.Many2one(
+        'account.model',
+        string='model_id'
+    )
+    cancel_entry = fields.Boolean(string='cancel_entry')
+    document_id = fields.Char(string='document_id')
+    doctype = fields.Char(string='doctype')
+    date_value = fields.Date(string='date_value')
+    message_last_post = fields.DateTime(string='message_last_post')
+    auto_reconcile_id = fields.Many2one(
+        'account.auto.reconcile',
+        string='auto_reconcile_id'
+    )
+    asset_depre_batch_id = fields.Many2one(
+        'pabi.asset.depre.batch',
+        string='asset_depre_batch_id'
+    )
     
 class XLSXReportPreprintReceipt(models.TransientModel):
     _name = 'xlsx.report.preprint.receipt'
