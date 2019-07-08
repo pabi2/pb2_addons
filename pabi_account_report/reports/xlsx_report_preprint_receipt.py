@@ -54,7 +54,7 @@ class Accountmovepreprint(models.Model):
 class AccountMovePrePrintView(models.AbstractModel):
     """ Contrast to normal view, this will be used as mock temp table only """
     _name = 'account.move.preprint.view'
-#     _inherit = 'account.move'
+    _inherit = 'account.move'
       
     number_preprint = fields.Char(
         string='Preprint Number',
@@ -78,7 +78,7 @@ class AccountMovePrePrintView(models.AbstractModel):
     )
     
     
-class XLSXReportGlProject(models.TransientModel):
+class XLSXReportPreprintReceipt(models.TransientModel):
     _name = 'xlsx.report.preprint.receipt'
     _inherit = 'report.account.common'
 
