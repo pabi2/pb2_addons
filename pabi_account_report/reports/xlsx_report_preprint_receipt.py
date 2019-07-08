@@ -94,6 +94,7 @@ class AccountMovePrePrintView(models.AbstractModel):
     line_item_summary = fields.Text(string='Items Summary')
     narration = fields.Text(string='Additonal Information')
     document = fields.Char(string='Document No')
+    name = fields.Char(string='name')
     system_id = fields.Many2one(
         'interface.system',
         string='System Origin'
