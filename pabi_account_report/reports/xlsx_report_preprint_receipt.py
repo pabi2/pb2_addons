@@ -87,6 +87,7 @@ class AccountMovePrePrintView(models.AbstractModel):
         'account.period',
         string='Period',
     )
+    date = fields.Date(string='Date',)
     
     
 class XLSXReportPreprintReceipt(models.TransientModel):
