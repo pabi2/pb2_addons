@@ -83,6 +83,10 @@ class AccountMovePrePrintView(models.AbstractModel):
         'res.partner',
         string='Partner',
     )
+    period_id = fields.Many2one(
+        'account.period',
+        string='Period',
+    )
     
     
 class XLSXReportPreprintReceipt(models.TransientModel):
