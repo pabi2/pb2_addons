@@ -79,6 +79,10 @@ class AccountMovePrePrintView(models.AbstractModel):
         'res.taxbranch',
         string='Tax Branch',
     )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Partner',
+    )
     
     
 class XLSXReportPreprintReceipt(models.TransientModel):
@@ -336,7 +340,8 @@ class XLSXReportPreprintReceipt(models.TransientModel):
    
                         where aa.number_preprint!=''
                      
-        """  + where_str + ' order by aa.number_preprint ' )     
+        """  + where_str + ' order by aa.number_preprint ' )    
+        _logger.info("executed") 
            
         results = self._cr.dictfetchall()
         _logger.info("results: %s", str(results))
