@@ -7,6 +7,13 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
     _inherit = 'report.account.common'
     
     
+    filter = fields.Selection(
+        [('filter_no', 'No Filters'),
+         ('filter_period', 'Periods')],
+        string='Filter by',
+        required=True,
+        default='filter_no',
+    )
     org_ids = fields.Many2many(
         'res.org',
         string='Org',
@@ -117,7 +124,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         self.ensure_one()
         
         Result = self.env['purchase.invoice.plan']
-        dom = [('state','in',('paid','open'))]
+        dom = [('order_id.state','!=','cancel')]
         
         if self.org_ids:
             dom += [('order_line_id.org_id', 'in', self.org_ids.ids)]
@@ -131,10 +138,10 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         if self.chartfield_ids:
             dom += [('order_line_id.chartfield_id', 'in', self.chartfield_ids.ids)]
         
-        #if self.date_po_start:
-        #    dom += [('order_id.date_order','>=',self.date_po_start)]
-        #if self.date_po_end:
-        #    dom += [('order_id.date_order','<=',self.date_po_end)]
+        if self.date_po_start and not self.date_po_end:
+            dom += [('order_id.date_order','=',self.date_po_start)]
+        if self.date_po_start and self.date_po_end:
+            dom += [('order_id.date_order','>=',self.date_po_start),('order_id.date_order','<=',self.date_po_end)]
         if self.date_start:
             dom += [('order_id.date_order','>=',self.date_start)]
         if self.date_end:
@@ -150,3 +157,4 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         
         self.results = Result.search(dom)
         print '\n Result: '+str(self.results)
+        
