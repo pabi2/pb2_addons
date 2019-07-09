@@ -1992,8 +1992,8 @@ result = pd.pivot_table(df, index=groupby,
                         'Purchase Invoice Plan Report': {
                             '_HEAD_': {
                                 'B2': 'org_ids${value and ", ".join([x.operating_unit_id.name for x in value]) or ""}#{number_format=text}',
-                                'D3': 'date_start${value or ""}#{number_format=date}',
-                                'F3': 'date_end${value or ""}#{number_format=date}',
+                                'D3': 'date_po_start${value or ""}#{number_format=date}',
+                                'F3': 'date_po_end${value or ""}#{number_format=date}',
                                 'B4': 'purchase_ids${value and ", ".join([x.name for x in value]) or ""}#{number_format=text}',
                                 'B5': 'contract_ids${value and ", ".join([x.poc_code for x in value]) or ""}#{number_format=text}',
                                 'D6': 'date_contract_action_start${value or ""}#{number_format=date}',
@@ -2076,8 +2076,8 @@ result = pd.pivot_table(df, index=groupby,
                         'Purchase no Invoice Plan Report': {
                             '_HEAD_': {
                                 'B2': 'org_ids${value and ", ".join([x.operating_unit_id.name for x in value]) or ""}#{number_format=text}',
-                                'D3': 'date_start${value or ""}#{number_format=date}',
-                                'F3': 'date_end${value or ""}#{number_format=date}',
+                                'D3': 'date_po_start${value or ""}#{number_format=date}',
+                                'F3': 'date_po_end${value or ""}#{number_format=date}',
                                 'B4': 'purchase_ids${value and ", ".join([x.name for x in value]) or ""}#{number_format=text}',
                                 'B5': 'contract_ids${value and ", ".join([x.poc_code for x in value]) or ""}#{number_format=text}',
                                 'D6': 'date_contract_action_start${value or ""}#{number_format=date}',
