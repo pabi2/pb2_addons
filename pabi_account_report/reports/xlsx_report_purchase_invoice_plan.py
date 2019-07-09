@@ -7,6 +7,13 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
     _inherit = 'report.account.common'
     
     
+    filter = fields.Selection(
+        [('filter_no', 'No Filters'),
+         ('filter_period', 'Periods')],
+        string='Filter by',
+        required=True,
+        default='filter_no',
+    )
     org_ids = fields.Many2many(
         'res.org',
         string='Org',
