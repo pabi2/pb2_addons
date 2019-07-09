@@ -124,7 +124,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         self.ensure_one()
         
         Result = self.env['purchase.invoice.plan']
-        dom = [('order_id.state','!=','cancel')]
+        dom = [('order_id.state','!=','cancel'),('order_id.order_type','=','purchase_order')]
         
         if self.org_ids:
             dom += [('order_line_id.org_id', 'in', self.org_ids.ids)]

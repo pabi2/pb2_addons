@@ -172,7 +172,7 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
         
         Result = self.env['account.invoice.line']
         dom = [('invoice_id','!=',False),('invoice_id.source_document_type','=','purchase'),
-               ('invoice_id.state','!=','cancel'),('invoice_id.is_invoice_plan','!=',True)]
+               ('invoice_id.state','!=','cancel'),('invoice_id.is_invoice_plan','!=',True),('invoice_id.source_document','like','PO')]
                #('inv_po_line.order_id.use_invoice_plan','!=',True)]
                #('invoice_id.source_document_id.use_invoice_plan','!=',True)]
                #('purchase_line_id.order_id.use_invoice_plan','!=',True)]
