@@ -1,43 +1,46 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp import tools
+import logging
+
+_logger = logging.getLogger(__name__)
 
 REFERENCE_SELECT = [('account.voucher', 'Receipt'),
                     ('interface.account.entry', 'Account Interface'),
                     ('account.tax.detail', 'Adjustment'),
                     ]
 
-class AccountMove(models.Model):
-    _inherit = 'account.move'
-
-    preprint_number = fields.Char(
-        string='Preprint Number',
-        compute='_compute_preprint_number',
-    )
-
-    @api.multi
-    def _compute_preprint_number(self):
-        for move in self:
-            if move.doctype == 'receipt':
-                Fund = self.env['account.voucher'] 
-                domain = ([('move_id', '=', move.id)])
-                lines = Fund.search(domain)
-                move.preprint_number = lines.number_preprint
-            if move.doctype == 'interface_account': 
-                Fund = self.env['interface.account.entry'] 
-                domain = ([('move_id', '=', move.id)])
-                lines = Fund.search(domain)
-                move.preprint_number = lines.preprint_number
-            if move.doctype == 'adjustment': 
-                Fund = self.env['account.tax.detail'] 
-                domain = ([('ref_move_id', '=', move.id),('amount', '=', 0)])
-                lines = Fund.search(domain)
-                move.preprint_number = lines.invoice_number                                        
+# class AccountMove(models.Model):
+#     _inherit = 'account.move'
+# 
+#     preprint_number = fields.Char(
+#         string='Preprint Number',
+#         compute='_compute_preprint_number',
+#     )
+# 
+#     @api.multi
+#     def _compute_preprint_number(self):
+#         for move in self:
+#             if move.doctype == 'receipt':
+#                 Fund = self.env['account.voucher'] 
+#                 domain = ([('move_id', '=', move.id)])
+#                 lines = Fund.search(domain)
+#                 move.preprint_number = lines.number_preprint
+#             if move.doctype == 'interface_account': 
+#                 Fund = self.env['interface.account.entry'] 
+#                 domain = ([('move_id', '=', move.id)])
+#                 lines = Fund.search(domain)
+#                 move.preprint_number = lines.preprint_number
+#             if move.doctype == 'adjustment': 
+#                 Fund = self.env['account.tax.detail'] 
+#                 domain = ([('ref_move_id', '=', move.id),('amount', '=', 0)])
+#                 lines = Fund.search(domain)
+#                 move.preprint_number = lines.invoice_number                                        
 
 class Accountmovepreprint(models.Model):
     _name = 'account.move.preprint'    
     #_auto = False    
- 
+  
     move_id = fields.Many2one(
         'account.move',
         string='Document No',
@@ -50,17 +53,17 @@ class Accountmovepreprint(models.Model):
         'res.org',
         string='Org',
     )
-    
+       
 class AccountMovePrePrintView(models.AbstractModel):
     """ Contrast to normal view, this will be used as mock temp table only """
     _name = 'account.move.preprint.view'
-    _inherit = 'account.move'
-    
+#     _inherit = 'account.move'
+      
     number_preprint = fields.Char(
         string='Preprint Number',
     )
     document_origin = fields.Char(
-        string='Preprint Number',
+        string='Document Origin',
     )
     operating_unit = fields.Many2one(
         'operating.unit',
@@ -77,8 +80,79 @@ class AccountMovePrePrintView(models.AbstractModel):
         string='Tax Branch',
     )
     
+    # Add
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Partner'
+    )
+    period_id = fields.Many2one(
+        'account.period',
+        string='Period'
+    )
+    date = fields.Date(string='Posting Date')
+    date_document = fields.Date(string='Doc Date')
+    line_item_summary = fields.Text(string='Items Summary')
+    narration = fields.Text(string='Additonal Information')
+    document = fields.Char(string='Document No')
+    name = fields.Char(string='name')
+    system_id = fields.Many2one(
+        'interface.system',
+        string='System Origin'
+    )
+    create_uid = fields.Many2one(
+        'res.users',
+        string='Created By'
+    )
+    write_uid = fields.Many2one(
+        'res.users',
+        string='Updated By'
+    )
+    create_date = fields.Date(string='Created Date')
+    write_date = fields.Date(string='Updated Date')
+    operating_unit_id = fields.Many2one(
+        'operating.unit',
+        string='operating_unit_id'
+    )
+    company_id = fields.Many2one(
+        'res.company',
+        string='company_id'
+    )
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='journal_id'
+    )
+    state = fields.Char(string='state')
+    balance = fields.Float(string='balance')
+    ref = fields.Char(string='ref')
+    to_check = fields.Boolean(string='to_check')
+    reversal_id = fields.Many2one(
+        'account.move',
+        string='reversal_id'
+    )
+    to_be_reversed = fields.Boolean(string='to_be_reversed')
+    bank_receipt_id = fields.Many2one(
+        'account.bank.receipt',
+        string='bank_receipt_id'
+    )
+    model_id = fields.Many2one(
+        'account.model',
+        string='model_id'
+    )
+    cancel_entry = fields.Boolean(string='cancel_entry')
+    document_id = fields.Char(string='document_id')
+    doctype = fields.Char(string='doctype')
+    date_value = fields.Date(string='date_value')
+    message_last_post = fields.Date(string='message_last_post')
+    auto_reconcile_id = fields.Many2one(
+        'account.auto.reconcile',
+        string='auto_reconcile_id'
+    )
+    asset_depre_batch_id = fields.Many2one(
+        'pabi.asset.depre.batch',
+        string='asset_depre_batch_id'
+    )
     
-class XLSXReportGlProject(models.TransientModel):
+class XLSXReportPreprintReceipt(models.TransientModel):
     _name = 'xlsx.report.preprint.receipt'
     _inherit = 'report.account.common'
 
@@ -280,13 +354,14 @@ class XLSXReportGlProject(models.TransientModel):
             #dom += [('m.id', 'in', tuple(self.preprint_number.ids))]
                       
         whr_depreciation = ""   
-        where_str = self._domain_to_where_str(dom) 
+        where_str = self._domain_to_where_str(dom)
         if where_str:
             where_str = ' and '+ where_str
         if whr_prefix and where_str:
            where_str = where_str + ' and ' + whr_prefix   
         if whr_prefix and(not where_str):
             where_str = ' and ' + whr_prefix   
+        _logger.info("where_str: %s", str(where_str))
            
         self._cr.execute("""
                        select m.*,aa.number_preprint,aa.amount,aa.base,aa.taxbranch_id ,
@@ -332,10 +407,14 @@ class XLSXReportGlProject(models.TransientModel):
    
                         where aa.number_preprint!=''
                      
-        """  + where_str + ' order by aa.number_preprint ' )     
+        """  + where_str + ' order by aa.number_preprint ' )    
+        _logger.info("executed") 
            
         results = self._cr.dictfetchall()
+        _logger.info("results: %s", str(results))
         ReportLine = self.env['account.move.preprint.view']
         for line in results:
             self.results += ReportLine.new(line)
+        
+        _logger.info("ReportLine: %s", str(ReportLine))
         return True
