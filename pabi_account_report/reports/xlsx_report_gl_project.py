@@ -190,6 +190,16 @@ class XLSXReportGlProject(models.TransientModel):
     cleaning_date_end = fields.Date(
         string='End Date',
     )
+    
+    line_filter_job = fields.Text(
+        string='Job',
+        help="More filter Job. You can use complex search with comma and between.",
+    )
+
+    job_order_ids = fields.Many2many(
+        'cost.control',
+        string='Job Order',
+    )
 
     @api.onchange('chart_view')
     def _onchange_chart_view(self):
@@ -211,6 +221,8 @@ class XLSXReportGlProject(models.TransientModel):
         self.ensure_one()
         Result = self.env['account.move.line']
         dom = []
+        if self.job_order_ids:
+            dom += [('cost_control_id', 'in', self.job_order_ids.ids)]
         if self.account_type_id:
             dom += [('account_id.user_type', '=', self.account_type_id.id)]
         if self.account_ids:
@@ -317,6 +329,18 @@ class XLSXReportGlProject(models.TransientModel):
             dom.append(('code', 'ilike', codes))
             self.chartfield_ids = Chartfield.search(dom, order='id')
 
+    @api.onchange('line_filter_job')
+    def _onchange_line_filter_job(self):
+        self.job_order_ids = []
+        Cost = self.env['cost.control']
+        dom = []
+        if self.line_filter_job:
+            codes = self.line_filter_job.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.job_order_ids = Cost.search(dom, order='id')
+            
     @api.onchange('account_type_id')
     def _onchange_account_type(self):
         self.account_ids = False
