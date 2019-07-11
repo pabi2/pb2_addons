@@ -261,6 +261,8 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
             
         print 'Dom: '+str(dom)
         
-        self.results = Result.search(dom)#, order="invoice_id.source_document_id,invoice_id")
+        #self.results = Result.search(dom, order="inv_po_line.org_id,inv_po_line.fiscalyear_id.name,inv_po_line.order_id.date_order,inv_po_line.order_id.name,inv_po_line.docline_seq")
+        self.results = Result.search(dom)
         print '\n Result: '+str(self.results)
+        
         
