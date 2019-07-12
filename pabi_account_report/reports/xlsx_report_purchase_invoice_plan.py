@@ -170,30 +170,29 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             dom += [('contract.action_date','>=',self.date_contract_action_start)]
         if self.date_contract_action_end:
             dom += [('contract.action_date','<=',self.date_contract_action_end)]
-        
-        """
-        
+            
         where_str = self._domain_to_where_str(dom)
         
-        self._cr.execute(""
-            select 
-            from
-            where
-            order by 
-        ""  + where_str + ' order by aa.number_preprint ' )
+        self._cr.execute("""
+            select
+                *
+            from purchase_invoice_plan pip
+                left join purchase_order_line pol on pol.id = pip.order_line_id
+                left join purchase_order po on po.id = pip.order_id
+                left join res_org org on org.id = pol.org_id
+            where 
+        """  + where_str + ' order by org.name, pol.fiscalyear_id, po.date_order, po.name, pol.docline_seq ' )
+        print where_str
         
-        
-        """
-        
-        
-        
-        
+        results = self._cr.dictfetchall()
+        self.results = results
         
         
         
         
         
         #self.results = Result.search(dom, order="order_line_id.org_id,order_line_id.fiscalyear_id.name,order_id.date_order,order_id.name,order_line_id.docline_seq")
-        self.results = Result.search(dom)
-        print '\n Result: '+str(self.results)
+        #self.results = Result.search(dom)
+        #print '\n Result: '+str(self.results)
+        
         
