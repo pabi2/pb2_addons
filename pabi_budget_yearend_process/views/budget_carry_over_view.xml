@@ -27,7 +27,8 @@
                     <header>
                         <button name="action_carry_over" class="oe_highlight" type="object" states="draft" string="Carry Over" groups="base.group_user"
                           confirm="This will carry over committed budget of following documents to specified fiscal year."/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                        <button name="action_carry_over_background" string="Run Background" class="oe_highlight" confirm="Run Background?" type="object" states="draft" context="{'button_carry_over_async_process': 1}"/>
+                       	<field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>
                         <h1>
@@ -43,6 +44,8 @@
                             <group>
                                 <field name="write_uid" readonly="1"/>
                                 <field name="write_date" readonly="1"/>
+                                <field name="button_carry_over_job_id"/>
+                                <field name="button_carry_over_uuid"/>
                             </group>
                         </group>
                           <!-- <field name="line_ids">
