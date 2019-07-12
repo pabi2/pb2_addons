@@ -19,7 +19,7 @@ def action_done_async_process(session, model_name, res_id):
 @job
 def action_done_save_async_process(session, model_name, res_id):
     try:
-        res = session.pool[model_name].action_save_carry_over_background(
+        res = session.pool[model_name].action_done_save(
             session.cr, session.uid, [res_id], session.context)
         return {'result': res}
     except Exception, e:
@@ -107,7 +107,7 @@ class BudgetCarryOver(models.Model):
         return True
 
     @api.multi
-    def action_svae_carry_over_background(self):
+    def action_carry_over_background(self):
         if self._context.get('button_carry_over_async_process', False):
             self.ensure_one()
             self.name = '{:03d}'.format(self.id)
@@ -153,6 +153,7 @@ class BudgetCarryOver(models.Model):
 
     @api.multi
     def action_done_save(self):
+        print "action_done_save 1 : " + str(self)
         for rec in self:
             rec.compute_commit_docs()
         return True
@@ -160,16 +161,20 @@ class BudgetCarryOver(models.Model):
     @api.multi
     def action_save_carry_over_background(self):
         #if self._context.get('button_carry_over_async_process', False):
+        print "action_save_carry_over_background 1"
         self.ensure_one()
         self.name = '{:03d}'.format(self.id)
-        if self._context.get('job_uuid', False):  # Called from @job
-            return self.action_done_save()
+        """if self._context.get('job_uuid', False):  # Called from @job
+            print "action_save_carry_over_background 2"
+            return self.action_done_save()"""
         if self.button_carry_over_job_id:
+            print "action_save_carry_over_background 3"
             message = ('Save Carry Over')
             action = self.env.ref('pabi_utils.action_my_queue_job')
             raise RedirectWarning(message, action.id, ('Go to My Jobs'))
         session = ConnectorSession(self._cr, self._uid, self._context)
         description = '%s - Commitment Save Carry Over' % (self.doctype)
+        print "action_save_carry_over_background 4"
         uuid = action_done_save_async_process.delay(
             session, self._name, self.id, description=description)
         job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
@@ -206,7 +211,6 @@ class BudgetCarryOver(models.Model):
     def create(self, vals):
         res = super(BudgetCarryOver, self).create(vals)
         res.name = '{:03d}'.format(res.id)
-        
         res.action_save_carry_over_background()
         return res
 
