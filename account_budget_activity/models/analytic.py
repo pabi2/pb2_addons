@@ -394,7 +394,10 @@ class AccountAnalyticAccount(models.Model):
             #      'pr_product')
             #
             vals['type'] = 'normal'
-            if rec.doctype == 'adjustment' and rec._name == 'account.move.line':
+            if rec.doctype and \
+                rec.doctype == 'adjustment' and \
+                rec._name == 'account.move.line':
+                
                 vals.update({'move_id':rec.move_id.id}) #update move_id to find doctype in analytic
             #
             # *************************** End *******************************
