@@ -806,7 +806,7 @@ class ExportXlsxTemplate(models.TransientModel):
         ptemp = ConfParam.get_param('path_temp_file') or '/temp'
         stamp = dt.utcnow().strftime('%H%M%S%f')[:-3]
         ftemp = '%s/temp%s.xlsx' % (ptemp, stamp)
-        f = open(ftemp, 'w')
+        f = open(ftemp, 'wb')
         f.write(decoded_data)
         f.seek(0)
         f.close()
