@@ -101,11 +101,11 @@ class PurchaseOrder(models.Model):
             'domain': "[('order_type', '=', 'purchase_order')]",
             'res_id': self.order_id and self.order_id.id or False,
         }
-
-
+        
+    
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
-
+    
     quo_line_id = fields.Many2one(
         'purchase.order.line',
         string='Quotation Line Reference',
@@ -118,3 +118,41 @@ class PurchaseOrderLine(models.Model):
         readonly=True,
         ondelete='set null',
     )
+               
+    def _default_fiscalyear_id(self, cr, uid, context=None):
+        a=context
+        print str(a)
+        order_line_obj = self.pool['purchase.order.line']
+        if context.get('order_line'):
+            order_line = order_line_obj.browse(cr, uid, context['order_line'][0][1])
+        #product=self.search([('', '=', 'value' )]).field2
+        return order_line.fiscalyear_id.id
+    
+    def _default_activity_group_id(self, cr, uid, context=None):
+        a=context
+        print str(a)
+        order_line_obj = self.pool['purchase.order.line']
+        if context.get('order_line'):
+            order_line = order_line_obj.browse(cr, uid, context['order_line'][0][1])
+        #product=self.search([('', '=', 'value' )]).field2
+        return order_line.activity_group_id.id
+    
+    def _default_fund_id(self, cr, uid, context=None):
+        a=context
+        print str(a)
+        order_line_obj = self.pool['purchase.order.line']
+        if context.get('order_line'):
+            order_line = order_line_obj.browse(cr, uid, context['order_line'][0][1])
+        #product=self.search([('', '=', 'value' )]).field2
+        return order_line.fund_id.id
+    
+    
+    #product_id = fields.Many2one('product.product', 'Product', domain=[('purchase_ok','=',True)], change_default=True,default=_default_product)
+    
+    _defaults = {
+        'fiscalyear_id' : _default_fiscalyear_id,
+        'activity_group_id': _default_activity_group_id,
+        'fund_id' : _default_fund_id
+        #'costcenter_id': _get_default_cost _default_fund_idcenter_id,
+        #'org_id': _get_default_org_id,
+    }

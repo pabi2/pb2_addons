@@ -70,7 +70,7 @@
                 	<label string="Purchase Order " attrs="{'invisible': [('order_type','=','quotation')]}"/>
                 </label>
                 <xpath expr="/form/sheet/notebook/page/field[@name='order_line']" position="attributes" >
-            		<attribute name="context">{'order_type': order_type}</attribute>
+            		<attribute name="context">{'order_type': order_type,'order_line': order_line}</attribute>
                 </xpath>
         	</field>
         </record>
