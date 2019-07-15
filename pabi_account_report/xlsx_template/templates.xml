@@ -332,7 +332,7 @@
                                 'N9': 'id${value and env["account.move.line"].browse(value).debit - env["account.move.line"].browse(value).credit or ""}#{number_format=number}',
                                 'O9': 'invoice.payment_ids${value and "".join(value.filtered(lambda l: l.doctype == "payment")[0].move_id.name) or ""}#{number_format=text}',
                                 'P9': 'invoice.payment_ids${value and "".join(value.filtered(lambda l: l.doctype == "payment")[0].move_id.date_document) or ""}#{number_format=date}',
-                                'Q9': "${'=IF(?(P9)&lt;&gt;\"\",?(P9)+IF(?(H9)=\"ต่างประเทศ\",60,18),\"\")'}#{number_format=date}",
+                                'Q9': "${'=IF(?(P18)&lt;&gt;\"\",?(P18)+IF(?(F18)=\"ต่างประเทศ\",60,18),\"\")'}#{number_format=date}",
                                 'R9': "${'=IF(AND(B4&lt;&gt;\"\",?(Q9)&lt;&gt;\"\"),B4-?(Q9),\"\")'}#{number_format=number}",
                                 'S9': "${'=IF(AND(?(R9)&lt;&gt;\"\",?(R9)&lt;=0),?(N9),\"\")'}#{number_format=number}",
                                 'T9': "${'=IF(AND(?(R9)&lt;&gt;\"\",?(R9)&gt;=1,?(R9)&lt;=30),?(N9),\"\")'}#{number_format=number}",
