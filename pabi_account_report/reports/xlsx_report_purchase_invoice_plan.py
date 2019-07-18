@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from Scripts.runxlrd import result
 
 
 class XLSXReportPurchaseInvoicePlan(models.TransientModel):
@@ -138,7 +137,11 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
     
     @api.multi
     def get_model_chartfield(self):
-        section = project = asset = phase = personnel = []
+        section = []
+        project = []
+        asset = []
+        phase = []
+        personnel = []
         result = []
         """model = [('res.section', 'section'),
                  ('res.project', 'project'),
@@ -147,59 +150,66 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                  ('res.personnel.costcenter', 'personnel')]"""
         for chartfield in self.chartfield_ids:
             #result[model[chartfield.model]].append(chartfield.res_id)
-            
+            print 'Chartfield model: '+str(chartfield.model)
             if chartfield.model == 'res.section':
                 section.append(chartfield.res_id)
-            if chartfield.model == 'res.project':
+            elif chartfield.model == 'res.project':
                 project.append(chartfield.res_id)
-            if chartfield.model == 'res.invest.asset':
+            elif chartfield.model == 'res.invest.asset':
                 asset.append(chartfield.res_id)
-            if chartfield.model == 'res.invest.construction.phase':
+            elif chartfield.model == 'res.invest.construction.phase':
                 phase.append(chartfield.res_id)
-            if chartfield.model == 'res.personnel.costcenter':
+            elif chartfield.model == 'res.personnel.costcenter':
                 personnel.append(chartfield.res_id)
         
-        result.append(('section',section))
+        """result.append(('section',section))
         result.append(('project',project))
         result.append(('asset',asset))
         result.append(('phase',phase))
-        result.append(('personnel',personnel))
+        result.append(('personnel',personnel))"""
         
-        print 'Result: '+str(result)
-        return result
-    
-    
-    @api.multi
-    def get_array_list(self, ids):
-        arr = []
-        tt = ''
-        for id in ids:
-            arr.append(id)
-        ids = str(ids).replace('[','').replace(']','')
-        ids = ids.split(',')
-        codes = [x.strip() for x in ids]
-        codes = tuple(codes)
-        return codes
+        return {
+                'section': section,
+                'project': project,
+                'asset': asset,
+                'phase': phase,
+                'personnel': personnel
+            }
     
     
     @api.multi
     def _compute_results(self):
         self.ensure_one()
-        ids = []
+        plan_ids = []
         InvoicePlan = self.env['purchase.invoice.plan']
         dom = [('po.state','!=','cancel'),('po.order_type','=','purchase_order')]
         
         if self.org_ids:
-            dom += [('org.id', 'in', self.get_array_list(self.org_ids.ids))]
+            dom += [('org.id', 'in', tuple(self.org_ids.ids))]
         if self.purchase_ids:
-            dom += [('po.id', 'in', self.get_array_list(self.purchase_ids.ids))]
+            dom += [('po.id', 'in', tuple(self.purchase_ids.ids))]
         if self.contract_ids:
-            dom += [('pct.id', 'in', self.get_array_list(self.contract_ids.ids))]
+            dom += [('pct.id', 'in', tuple(self.contract_ids.ids))]
             #dom += ['|',('order_id.contract_id', 'in', self.contract_ids.ids),('order_id.po_contract_type_id.contract_id', 'in', self.contract_ids.ids)]
         if self.account_ids:
-            dom += [('rpt.account_id', 'in', self.get_array_list(self.account_ids.ids))]
+            dom += [('rpt.account_id', 'in', tuple(self.account_ids.ids))]
         if self.chartfield_ids:
-            dom += [('pol.chartfield_id', 'in', self.get_array_list(self.chartfield_ids.ids))]
+            #dom += [('pol.chartfield_id', 'in', tuple(self.chartfield_ids.ids))]
+            chartfield = self.get_model_chartfield()
+            print 'Chartfield dom: '+str(chartfield)
+            print 'Chartfield section: '+str(chartfield['section'])
+            if chartfield['section']:
+                dom += [('pol.section_id','in',tuple(chartfield['section']))]
+            if chartfield['project']:
+                dom += [('pol.project_id','in',tuple(chartfield['project']))]
+            if chartfield['asset']:
+                dom += [('pol.invest_asset_id','in',tuple(chartfield['asset']))]
+            if chartfield['phase']:
+                dom += [('pol.invest_construction_phase_id','in',tuple(chartfield['phase']))]
+            if chartfield['personnel']:
+                dom += [('pol.personnel_costcenter_id','in',tuple(chartfield['personnel']))]
+                
+            print 'Chartfield dom2: '+str(dom)
         
         if self.date_po_start and not self.date_po_end:
             dom += [('po.date_order','=',self.date_po_start)]
@@ -218,10 +228,10 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         if self.date_contract_action_end:
             dom += [('pct.action_date','<=',self.date_contract_action_end)]
         
-        self.get_model_chartfield()
+        #self.get_model_chartfield()
         
         where_str = self._domain_to_where_str(dom)
-        print 'WHERE: '+where_str
+        
         self._cr.execute("""
             select
                 pip.id
@@ -232,25 +242,15 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 left join purchase_contract pct on pct.id = po.contract_id
                 left join account_activity rpt on rpt.id = pol.activity_rpt_id
             where 
-        """  + where_str + ' order by org.name, pol.fiscalyear_id, po.date_order, po.name, pol.docline_seq ' )
-        
-        #order.state != 'cancel' and order.order_type = 'purchase_order' and order_id in [8316] 
+        """  + where_str + ' order by org.name, pol.fiscalyear_id, po.date_order, po.name, pol.docline_seq ')
         
         invoice_plans = self._cr.dictfetchall()
         
-        """for plan in invoice_plans:
-            ids.append(plan['id'])
-        results = InvoicePlan.browse(ids)
-        print 'results2: '+str(results)"""
-        
+        for plan in invoice_plans:
+            plan_ids.append(plan['id'])
+            
+        results = InvoicePlan.browse(plan_ids)
+        print 'results: '+str(results)
         self.results = results
-        
-        
-        
-        
-        
-        #self.results = Result.search(dom, order="order_line_id.org_id,order_line_id.fiscalyear_id.name,order_id.date_order,order_id.name,order_line_id.docline_seq")
-        #self.results = Result.search(dom)
-        #print '\n Result: '+str(self.results)
         
         
