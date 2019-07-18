@@ -130,6 +130,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         """ Helper Function for better performance """
         where_dom = [" %s %s %s " % (x[0], x[1], isinstance(x[2], basestring)
                      and "'%s'" % x[2] or x[2]) for x in domain]
+        
         where_str = 'and'.join(where_dom)
         where_str = where_str.replace(',)',')')
         return where_str
@@ -137,20 +138,9 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
     
     @api.multi
     def get_model_chartfield(self):
-        section = []
-        project = []
-        asset = []
-        phase = []
-        personnel = []
-        result = []
-        """model = [('res.section', 'section'),
-                 ('res.project', 'project'),
-                 ('res.invest.asset', 'asset'),
-                 ('res.invest.construction.phase', 'phase'),
-                 ('res.personnel.costcenter', 'personnel')]"""
+        result = section = project = asset = phase = personnel = []
+        
         for chartfield in self.chartfield_ids:
-            #result[model[chartfield.model]].append(chartfield.res_id)
-            print 'Chartfield model: '+str(chartfield.model)
             if chartfield.model == 'res.section':
                 section.append(chartfield.res_id)
             elif chartfield.model == 'res.project':
@@ -162,12 +152,6 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             elif chartfield.model == 'res.personnel.costcenter':
                 personnel.append(chartfield.res_id)
         
-        """result.append(('section',section))
-        result.append(('project',project))
-        result.append(('asset',asset))
-        result.append(('phase',phase))
-        result.append(('personnel',personnel))"""
-        
         return {
                 'section': section,
                 'project': project,
@@ -176,11 +160,37 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 'personnel': personnel
             }
     
+    @api.multi
+    def get_where_str_chartfield(self):
+        dom = []
+        chartfield_dom = []
+        
+        chartfield = self.get_model_chartfield()
+        if chartfield['section']:
+            chartfield_dom += [('pol.section_id','in',tuple(chartfield['section']))]
+        if chartfield['project']:
+            chartfield_dom += [('pol.project_id','in',tuple(chartfield['project']))]
+        if chartfield['asset']:
+            chartfield_dom += [('pol.invest_asset_id','in',tuple(chartfield['asset']))]
+        if chartfield['phase']:
+            chartfield_dom += [('pol.invest_construction_phase_id','in',tuple(chartfield['phase']))]
+        if chartfield['personnel']:
+            chartfield_dom += [('pol.personnel_costcenter_id','in',tuple(chartfield['personnel']))]
+            
+        where_dom = [" %s %s %s " % (x[0], x[1], isinstance(x[2], basestring)
+                     and "'%s'" % x[2] or x[2]) for x in chartfield_dom]
+        
+        where_str = 'or'.join(where_dom)
+        where_str = 'and (' + where_str.replace(',)',')') + ') '
+        return where_str
+    
+    
     
     @api.multi
     def _compute_results(self):
         self.ensure_one()
         plan_ids = []
+        chartfield_dom = ''
         InvoicePlan = self.env['purchase.invoice.plan']
         dom = [('po.state','!=','cancel'),('po.order_type','=','purchase_order')]
         
@@ -190,26 +200,11 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             dom += [('po.id', 'in', tuple(self.purchase_ids.ids))]
         if self.contract_ids:
             dom += [('pct.id', 'in', tuple(self.contract_ids.ids))]
-            #dom += ['|',('order_id.contract_id', 'in', self.contract_ids.ids),('order_id.po_contract_type_id.contract_id', 'in', self.contract_ids.ids)]
         if self.account_ids:
             dom += [('rpt.account_id', 'in', tuple(self.account_ids.ids))]
         if self.chartfield_ids:
-            #dom += [('pol.chartfield_id', 'in', tuple(self.chartfield_ids.ids))]
-            chartfield = self.get_model_chartfield()
-            print 'Chartfield dom: '+str(chartfield)
-            print 'Chartfield section: '+str(chartfield['section'])
-            if chartfield['section']:
-                dom += [('pol.section_id','in',tuple(chartfield['section']))]
-            if chartfield['project']:
-                dom += [('pol.project_id','in',tuple(chartfield['project']))]
-            if chartfield['asset']:
-                dom += [('pol.invest_asset_id','in',tuple(chartfield['asset']))]
-            if chartfield['phase']:
-                dom += [('pol.invest_construction_phase_id','in',tuple(chartfield['phase']))]
-            if chartfield['personnel']:
-                dom += [('pol.personnel_costcenter_id','in',tuple(chartfield['personnel']))]
-                
-            print 'Chartfield dom2: '+str(dom)
+            
+            chartfield_dom = self.get_where_str_chartfield()
         
         if self.date_po_start and not self.date_po_end:
             dom += [('po.date_order','=',self.date_po_start)]
@@ -228,9 +223,8 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         if self.date_contract_action_end:
             dom += [('pct.action_date','<=',self.date_contract_action_end)]
         
-        #self.get_model_chartfield()
-        
         where_str = self._domain_to_where_str(dom)
+        where_str += chartfield_dom
         
         self._cr.execute("""
             select
