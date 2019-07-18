@@ -109,6 +109,7 @@ class DocumentExportParser(models.TransientModel):
                 data_list.append(line_detail_config_lines)
                 
                 # If use invoice_detail
+                
                 if not config_id.invoice_detail_disabled:
                     voucher_lines = export_line.voucher_id.line_ids
                     for voucher_line in voucher_lines:
