@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <act_window id="action_change_invoice_date"
+        name="Change Invoice Date"
+        src_model="sale.order"
+        res_model="change.invoice.date"
+        view_type="form"
+        view_mode="form"
+        view_id="wizard_change_invoice_date"
+        key2="client_action_multi"
+        target="new"
+    />
+
+    <record id="wizard_change_invoice_date" model="ir.ui.view">
+        <field name="name">change.invoice.date.wizard</field>
+        <field name="model">change.invoice.date</field>
+        <field name="arch" type="xml">
+            <form string="Select invoice date">
+                <p>Please select date for Posting date, Due date, Document date of invoice</p>
+                <group>
+                    <group>
+                        <field name="invoice_date" />
+                    </group>
+                    <group>
+                        <field name="reason"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_change_invoice_date"
+                            type="object"
+                            string="Ok"
+                            class="oe_highlight"/>
+                    or
+                    <button special="cancel" class="oe_link"
+                            string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</data>
+</openerp>

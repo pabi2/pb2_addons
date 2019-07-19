@@ -12,7 +12,12 @@ class SaleOrder(HeaderTaxBranch, models.Model):
     len_taxbranch = fields.Integer(
         compute='_compute_taxbranch_ids',
     )
-
+    reason = fields.Char(
+        string="Reason",
+        readonly=True,
+        
+    )
+    
     @api.one
     @api.depends('order_line')
     def _compute_taxbranch_ids(self):
