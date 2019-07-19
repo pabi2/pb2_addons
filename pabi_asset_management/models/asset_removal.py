@@ -70,6 +70,15 @@ class AccountAssetRemoval(models.Model):
         required=True,
         help="Asset Journal (No-Budget)",
     )
+    deliver_to = fields.Char(
+        string='Deliver to',
+        size=500,
+        help="If status is chagned to 'delivery', this field is required",
+    )
+    deliver_date = fields.Date(
+        string='Delivery date',
+        help="If status is chagned to 'delivery', this field is required",
+    )
 
     @api.multi
     @api.depends('removal_asset_ids')
@@ -142,6 +151,10 @@ class AccountAssetRemoval(models.Model):
     def action_done(self):
         for rec in self:
             assets = rec.removal_asset_ids.mapped('asset_id')
+            if rec.target_status.code == 'deliver':
+                for asset in assets:
+                    asset.deliver_to = rec.deliver_to
+                    asset.deliver_date = rec.deliver_date
             assets.validate_asset_to_removal()
         self._remove_confirmed_assets()
         self.write({'state': 'done'})
@@ -210,3 +223,8 @@ class AccountAssetRemovalLine(models.Model):
             self.account_residual_value_id = \
                 Remove._default_account_residual_value_id()
             self.posting_regime = Remove._get_posting_regime()
+
+    @api.onchange('posting_regime')
+    def _onchange_posting_regime(self):
+        if self.posting_regime == 'residual_value' and not (self.account_residual_value_id):
+            self.account_residual_value_id = self.env['account.account'].search([('code','=','5206060002')])
