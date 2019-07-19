@@ -223,7 +223,7 @@ class AssetRegisterReport(models.TransientModel):
                  left join account_asset asset on line.asset_id = asset.id
                  where line.line_date between '%s' and '%s'
                  and asset.code = a.code) depreciation3,""" % (date_start3, date_end3,)
-            elif x==4: #4 year    
+            elif x==4: #5 year    
                 date_start4 = self.cal_year(date_dep_start,+4)
                 date_end4 = self.cal_year(date_dep_end,+4)
                 whr_depreciation +=  """-- depreciation4
@@ -234,7 +234,8 @@ class AssetRegisterReport(models.TransientModel):
                  and asset.code = a.code) depreciation4,""" % (date_start4, date_end4,)
                     
         date_bef_start = self.cal_year(date_start,-1)
-        date_bef_end  = self.cal_year(date_end,-1)
+        #date_bef_end  = self.cal_year(date_end,-1)
+        date_bef_end  = self.cal_year(date_dep_end,-1)
         
         where_str = self._domain_to_where_str(dom)
         if where_str:
@@ -314,7 +315,7 @@ class AssetRegisterReport(models.TransientModel):
                  from account_asset_line line
                  left join account_asset asset on line.asset_id = asset.id
                  where line.line_date between %s and %s 
-                 and asset.code = a.code) depreciation,
+                 and asset.code = a.code and line.type = 'depreciate') depreciation,
                 """+ whr_depreciation +"""
                 -- accumulated_cf
                 (select coalesce(sum(credit-debit), 0.0)
@@ -323,11 +324,11 @@ class AssetRegisterReport(models.TransientModel):
                  and ml.date <= %s -- date end
                  and asset_id = a.id) accumulated_cf,
                 -- accumulated_bf
-                (select coalesce(sum(debit-credit), 0.0)
-                 from account_move_line ml
-                 where account_id in (select id from account_account where user_type = (select id from account_account_type where name = 'Depreciation'))  -- depreciation account
-                 and ml.date between %s and %s
-                 and asset_id = a.id) accumulated_bf
+                (select coalesce(sum(line.amount), 0.0)
+                 from account_asset_line line
+                 left join account_asset asset on line.asset_id = asset.id
+                 where line.line_date between %s and %s 
+                 and asset.id = a.id and line.type = 'depreciate') accumulated_bf
             from
             account_asset a
             left join account_asset_profile aap on a.profile_id = aap.id
