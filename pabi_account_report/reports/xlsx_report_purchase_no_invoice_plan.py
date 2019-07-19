@@ -163,106 +163,154 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
         if self.line_acc_filter:
             dom = self.get_domain_filter('code', self.line_acc_filter)
             self.account_ids = Account.search(dom, order='id')
+    
+    
+    @api.model
+    def _domain_to_where_str(self, domain):
+        """ Helper Function for better performance """
+        where_dom = [" %s %s %s " % (x[0], x[1], isinstance(x[2], basestring)
+                     and "'%s'" % x[2] or x[2]) for x in domain]
+        
+        where_str = 'and'.join(where_dom)
+        where_str = where_str.replace(',)',')')
+        return where_str
+    
+    
+    @api.multi
+    def get_model_chartfield(self):
+        result = section = project = asset = phase = personnel = []
+        
+        for chartfield in self.chartfield_ids:
+            if chartfield.model == 'res.section':
+                section.append(chartfield.res_id)
+            elif chartfield.model == 'res.project':
+                project.append(chartfield.res_id)
+            elif chartfield.model == 'res.invest.asset':
+                asset.append(chartfield.res_id)
+            elif chartfield.model == 'res.invest.construction.phase':
+                phase.append(chartfield.res_id)
+            elif chartfield.model == 'res.personnel.costcenter':
+                personnel.append(chartfield.res_id)
+        
+        return {
+                'section': section,
+                'project': project,
+                'asset': asset,
+                'phase': phase,
+                'personnel': personnel
+            }
+    
+    @api.multi
+    def get_where_str_chartfield(self):
+        dom = []
+        chartfield_dom = []
+        
+        chartfield = self.get_model_chartfield()
+        if chartfield['section']:
+            chartfield_dom += [('pol.section_id','in',tuple(chartfield['section']))]
+        if chartfield['project']:
+            chartfield_dom += [('pol.project_id','in',tuple(chartfield['project']))]
+        if chartfield['asset']:
+            chartfield_dom += [('pol.invest_asset_id','in',tuple(chartfield['asset']))]
+        if chartfield['phase']:
+            chartfield_dom += [('pol.invest_construction_phase_id','in',tuple(chartfield['phase']))]
+        if chartfield['personnel']:
+            chartfield_dom += [('pol.personnel_costcenter_id','in',tuple(chartfield['personnel']))]
             
+        where_dom = [" %s %s %s " % (x[0], x[1], isinstance(x[2], basestring)
+                     and "'%s'" % x[2] or x[2]) for x in chartfield_dom]
+        
+        where_str = 'or'.join(where_dom)
+        where_str = 'and (' + where_str.replace(',)',')') + ') '
+        return where_str
+    
 
     @api.multi
     def _compute_results(self):
         self.ensure_one()
-        po_dom = []
+        line_ids = []
+        chartfield_dom = ''
         
-        Result = self.env['account.invoice.line']
-        dom = [('invoice_id','!=',False),('invoice_id.source_document_type','=','purchase'),
-               ('invoice_id.state','!=','cancel'),('invoice_id.is_invoice_plan','!=',True),('invoice_id.source_document','like','PO')]
-               #('inv_po_line.order_id.use_invoice_plan','!=',True)]
-               #('invoice_id.source_document_id.use_invoice_plan','!=',True)]
-               #('purchase_line_id.order_id.use_invoice_plan','!=',True)]
+        InvoiceLine = self.env['account.invoice.line']
+        dom = [('av.source_document_type','=','purchase'),('av.state','!=','cancel'),('av.is_invoice_plan','!=',True),('po.order_type','=','purchase_order')]
         
         if self.org_ids:
-            #dom += [('inv_po_line.org_id', 'in', self.org_ids.ids)]
-            #dom += [('invoice_id.source_document_id.org_id', 'in', self.org_ids.ids)]
-            search = self.env['purchase.order'].search([('operating_unit_id.org_id', 'in', self.org_ids.ids)])
-            po_name = search.filtered('name').mapped('name')
-            
-            dom += [('invoice_id.source_document','in',po_name)]
+            dom += [('org.id','in',tuple(self.org_ids.ids))]
             
         if self.purchase_ids:
-            #dom += [('inv_po_line.order_id', 'in', self.purchase_ids.ids)]\
-            po_name = self.purchase_ids.filtered('name').mapped('name')
-            #po_name = [x.strip() for x in po_name]
-            #po_name = ','.join(po_name)
-                
-            dom += [('invoice_id.source_document','in',po_name)]
+            dom += [('po.id','in',tuple(self.purchase_ids.ids))]
             
         if self.contract_ids:
-            #dom += [('inv_po_line.order_id.contract_id', 'in', self.contract_ids.ids)]
-            #dom += ['|',('order_id.contract_id', 'in', self.contract_ids.ids),('order_id.po_contract_type_id.contract_id', 'in', self.contract_ids.ids)]
-            search = self.env['purchase.order'].search([('contract_id', 'in', self.contract_ids.ids)])
-            po_name = search.filtered('name').mapped('name')
-            
-            dom += [('invoice_id.source_document','in',po_name)]
+            dom += [('po.contract_id', 'in', tuple(self.contract_ids.ids))]
             
         if self.account_ids:
-            #dom += [('inv_po_line.activity_rpt_id.account_id', 'in', self.account_ids.ids)]
-            po_line = self.env['purchase.order.line'].search([('activity_rpt_id.account_id', 'in', self.account_ids.ids)])
-            po_line = po_line.filtered('order_id')#.mapped('name')
-            po_name = po_line.filtered('name').mapped('name')
-            
-            dom += [('invoice_id.source_document','in',po_name)]
+            dom += [('rpt.account_id', 'in', tuple(self.account_ids.ids))]
             
         if self.chartfield_ids:
-            #dom += [('inv_po_line.chartfield_id', 'in', self.chartfield_ids.ids)]
-            dom += [('chartfield_id', 'in', self.chartfield_ids.ids)]
+            chartfield_dom = self.get_where_str_chartfield()
         
         if self.date_po_start and not self.date_po_end:
-            #dom += [('order_id.date_order','>=',self.date_po_start)]
-            search = self.env['purchase.order'].search([('date_order', '=', self.date_po_start)])
-            po_name = search.filtered('name').mapped('name')
-            
-            dom += [('invoice_id.source_document','in',po_name)]
+            dom += [('po.date_order', '=', self.date_po_start)]
             
         if self.date_po_start and self.date_po_end:
-            #dom += [('order_id.date_order','<=',self.date_po_end)]
-            search = self.env['purchase.order'].search([('date_order', '>=', self.date_po_start),('date_order','<=',self.date_po_end)])
-            po_name = search.filtered('name').mapped('name')
-            
-            dom += [('invoice_id.source_document','in',po_name)]
+            dom += [('po.date_order', '>=', self.date_po_start),('po.date_order','<=',self.date_po_end)]
             
         if self.date_start:
-            dom += [('invoice_id.date_document','>=',self.date_start)]
+            dom += [('av.date_document','>=',self.date_start)]
         if self.date_end:
-            dom += [('invoice_id.date_document','<=',self.date_end)]
+            dom += [('av.date_document','<=',self.date_end)]
         if self.period_start_id:
-            #dom += [('inv_po_line.order_id.date_order','>=',self.period_start_id.date_start)]
-            search = self.env['purchase.order'].search([('date_order','>=',self.period_start_id.date_start)])
-            po_name = search.filtered('name').mapped('name')
-            
-            dom += [('invoice_id.source_document','in',po_name)]
+            dom += [('po.date_order','>=',self.period_start_id.date_start)]
             
         if self.period_end_id:
-            #dom += [('inv_po_line.order_id.date_order','<=',self.period_end_id.date_stop)]
-            search = self.env['purchase.order'].search([('date_order','<=',self.period_end_id.date_stop)])
-            po_name = search.filtered('name').mapped('name')
-            
-            dom += [('invoice_id.source_document','in',po_name)]
+            dom += [('po.date_order','<=',self.period_end_id.date_stop)]
             
         if self.date_contract_action_start:
-            #dom += [('inv_po_line.order_id.contract_id.action_date','>=',self.date_contract_action_start)]
-            search = self.env['purchase.order'].search([('contract_id.action_date','>=',self.date_contract_action_start)])
-            po_name = search.filtered('name').mapped('name')
-            
-            dom += [('invoice_id.source_document','in',po_name)]
+            dom += [('pct.action_date','>=',self.date_contract_action_start)]
             
         if self.date_contract_action_end:
-            #dom += [('inv_po_line.order_id.contract_id.action_date','<=',self.date_contract_action_end)]
-            search = self.env['purchase.order'].search([('contract_id.action_date','<=',self.date_contract_action_end)])
-            po_name = search.filtered('name').mapped('name')
-            
-            dom += [('invoice_id.source_document','in',po_name)]
-            
-        print 'Dom: '+str(dom)
+            dom += [('pct.action_date','<=',self.date_contract_action_end)]
         
-        #self.results = Result.search(dom, order="inv_po_line.org_id,inv_po_line.fiscalyear_id.name,inv_po_line.order_id.date_order,inv_po_line.order_id.name,inv_po_line.docline_seq")
-        self.results = Result.search(dom)
-        print '\n Result: '+str(self.results)
+        where_str = self._domain_to_where_str(dom)
+        where_str += chartfield_dom
+        
+        self._cr.execute("""
+            (select
+                avl.id
+            from account_invoice_line avl
+                left join account_invoice av on av.id = avl.invoice_id
+                left join purchase_order_line pol on pol.id = avl.purchase_line_id
+                left join purchase_order po on po.id = pol.order_id
+                left join res_org org on org.id = pol.org_id
+                left join purchase_contract pct on pct.id = po.contract_id
+                left join account_activity rpt on rpt.id = pol.activity_rpt_id
+            where avl.purchase_line_id is not null and avl.invoice_id is not null and %s
+            order by org.name, pol.fiscalyear_id, po.date_order, po.name, pol.docline_seq
+            )
+            union
+            (select
+                avl.id
+            from account_invoice_line avl
+                left join account_invoice av on av.id = avl.invoice_id
+                left join purchase_order_line pol on pol.id = 
+                    (select avl2.purchase_line_id from account_invoice_line avl2 where avl2.invoice_id = avl.invoice_id and avl2.purchase_line_id is not null limit 1)
+                left join purchase_order po on po.id = pol.order_id
+                left join res_org org on org.id = pol.org_id
+                left join purchase_contract pct on pct.id = po.contract_id
+                left join account_activity rpt on rpt.id = pol.activity_rpt_id
+            where avl.purchase_line_id is null and pol.id is not null and avl.invoice_id is not null and %s
+            order by org.name, pol.fiscalyear_id, po.date_order, po.name, pol.docline_seq
+            )
+        """ % (where_str,where_str))
+        #search = rec.search([('invoice_id','=',rec.invoice_id.id),('purchase_line_id','!=',False)], limit=1)
+        
+        invoice_lines = self._cr.dictfetchall()
+        
+        for lines in invoice_lines:
+            line_ids.append(lines['id'])
+            
+        results = InvoiceLine.browse(line_ids)
+        print 'results: '+str(results)
+        self.results = results
         
         
