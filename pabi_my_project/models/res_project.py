@@ -516,8 +516,8 @@ class ResProject(LogCommon, models.Model):
                 raise ValidationError(
                     _('Not allow to release budget for fiscalyear %s!\nOnly '
                       'current year budget is allowed.' % fiscalyear.name))
-            budget_plans = project.budget_plan_ids.\
-                filtered(lambda l: l.fiscalyear_id == fiscalyear)
+            budget_plans = project.budget_plan_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear)
+            budget_monitor = project.monitor_expense_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear)
             budget_plans.write({'released_amount': 0.0})  # Set zero
             if release_external_budget:  # Only for external charge
                 budget_plans = budget_plans.\
@@ -526,11 +526,17 @@ class ResProject(LogCommon, models.Model):
                 raise ValidationError(
                     _('Not allow to release budget for project without plan!'))
             planned_amount = sum([x.planned_amount for x in budget_plans])
+            consumed_amount = sum([x.amount_consumed for x in budget_monitor])
             if float_compare(released_amount, planned_amount, 2) == 1:
                 raise ValidationError(
                     _('Releasing budget (%s) > planned (%s)!' %
                       ('{:,.2f}'.format(released_amount),
                        '{:,.2f}'.format(planned_amount))))
+            if float_compare(released_amount, consumed_amount, 2) == -1:
+                raise ValidationError(
+                    _('Releasing budget (%s) < Consumed Amount (%s)!' %
+                      ('{:,.2f}'.format(released_amount),
+                       '{:,.2f}'.format(consumed_amount))))
             remaining = released_amount
             update_vals = []
             for budget_plan in budget_plans:
