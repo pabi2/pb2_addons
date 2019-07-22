@@ -190,6 +190,19 @@ class XLSXReportGlProject(models.TransientModel):
     cleaning_date_end = fields.Date(
         string='End Date',
     )
+    line_filter_job = fields.Text(
+        string='Job',
+        help="More filter Job. You can use complex search with comma and between.",
+    )
+
+    job_order_ids = fields.Many2many(
+        'cost.control',
+        string='Job Order',
+    )
+    count_job_order = fields.Integer(
+        compute='_compute_job_order',
+        string='Job Order Count',
+    )
 
     @api.onchange('chart_view')
     def _onchange_chart_view(self):
@@ -205,6 +218,12 @@ class XLSXReportGlProject(models.TransientModel):
     def _compute_count_chartfield(self):
         for rec in self:
             rec.count_chartfield = len(rec.chartfield_ids)
+            
+    @api.multi
+    @api.depends('job_order_ids')
+    def _compute_job_order(self):
+        for rec in self:
+            rec.count_job_order = len(rec.job_order_ids)
 
     @api.multi
     def _compute_results(self):
@@ -245,6 +264,10 @@ class XLSXReportGlProject(models.TransientModel):
         if self.invest_construction_ids:
             dom += [('invest_construction_id', 'in',
                      self.invest_construction_ids.ids)]
+            
+        if self.job_order_ids:
+            dom += [('cost_control_id', 'in', self.job_order_ids.ids)]
+            
         if self.chartfield_ids:
             # map beetween chartfield_id with chartfield type
             chartfields = [('section_id', 'sc:'),
@@ -316,6 +339,25 @@ class XLSXReportGlProject(models.TransientModel):
             codes = ','.join(codes)
             dom.append(('code', 'ilike', codes))
             self.chartfield_ids = Chartfield.search(dom, order='id')
+            
+    @api.onchange('line_filter_job')
+    def _onchange_line_filter_job(self):
+        self.job_order_ids = []
+        Cost = self.env['cost.control']
+        dom = []
+        n=0
+        if self.line_filter_job:
+            codes = self.line_filter_job.replace(' ','').replace('\n',',').replace(',,',',').replace(',\n','').split(',')
+            if '' in codes:
+                codes.remove('')
+            codes = [x.strip() for x in codes]
+            for rec in codes:
+                n += 1
+                if rec != '':
+                    if n != len(codes):
+                        dom.append('|')
+                    dom.append(('code', 'ilike', rec))
+            self.job_order_ids = Cost.search(dom, order='id')
 
     @api.onchange('account_type_id')
     def _onchange_account_type(self):
