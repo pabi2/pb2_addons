@@ -341,7 +341,7 @@
                                 'W9': "${'=IF(AND(?(R9)&lt;&gt;\"\",?(R9)&gt;=91,?(R9)&lt;=180),?(N9),\"\")'}#{number_format=number}",
                                 'X9': "${'=IF(AND(?(R9)&lt;&gt;\"\",?(R9)&gt;=181,?(R9)&lt;=365),?(N9),\"\")'}#{number_format=number}",
                                 'Y9': "${'=IF(AND(?(R9)&lt;&gt;\"\",?(R9)&gt;365),?(N9),\"\")'}#{number_format=number}",
-                            },
+                            }, 
                             '_GROUPBY_results["account_id"]': {  # groupby
                                 'N9': '@{sum}#{font=bold;number_format=number}',
                             },
