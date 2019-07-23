@@ -217,6 +217,10 @@ class XLSXReportPreprintReceipt(models.TransientModel):
                         select account_move.id as move_id,account_tax_detail.number_preprint as number_preprint
                         from account_move 
                         LEFT JOIN account_tax_detail on account_tax_detail.ref_move_id = account_move."id"
+                        UNION 
+                        select account_move.id as move_id,account_tax_detail.invoice_number as number_preprint
+                        from account_move 
+                        LEFT JOIN account_tax_detail on account_tax_detail.ref_move_id = account_move."id"
                         )as c
                         where c.number_preprint!=''
                         ) pre ON m.id = pre.move_id
@@ -259,6 +263,10 @@ class XLSXReportPreprintReceipt(models.TransientModel):
                         LEFT JOIN interface_account_entry on interface_account_entry.move_id = account_move."id"
                         UNION 
                         select account_move.id as move_id,account_tax_detail.number_preprint as number_preprint
+                        from account_move 
+                        LEFT JOIN account_tax_detail on account_tax_detail.ref_move_id = account_move."id"
+                        UNION 
+                        select account_move.id as move_id,account_tax_detail.invoice_number as number_preprint
                         from account_move 
                         LEFT JOIN account_tax_detail on account_tax_detail.ref_move_id = account_move."id"
                         )as c
@@ -388,6 +396,13 @@ class XLSXReportPreprintReceipt(models.TransientModel):
                             --CV
                             select account_move.id as move_id,account_tax_detail.number_preprint as number_preprint,
                                         account_tax_detail.amount,account_tax_detail.base as base,account_tax_detail.taxbranch_id
+                                from account_move 
+                                LEFT JOIN account_tax_detail on account_tax_detail.ref_move_id = account_move."id"
+                                WHERE account_tax_detail.doc_type = 'sale'
+                                
+                                UNION 
+                                select account_move.id as move_id,account_tax_detail.invoice_number as number_preprint,
+                                account_tax_detail.amount,account_tax_detail.base as base,account_tax_detail.taxbranch_id
                                 from account_move 
                                 LEFT JOIN account_tax_detail on account_tax_detail.ref_move_id = account_move."id"
                                 WHERE account_tax_detail.doc_type = 'sale')aa
