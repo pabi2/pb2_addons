@@ -517,7 +517,7 @@ class ResProject(LogCommon, models.Model):
                     _('Not allow to release budget for fiscalyear %s!\nOnly '
                       'current year budget is allowed.' % fiscalyear.name))
             budget_plans = project.budget_plan_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear)
-            budget_monitor = project.monitor_expense_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear)
+            budget_monitor = project.monitor_expense_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear and l.budget_method=='expense')
             budget_plans.write({'released_amount': 0.0})  # Set zero
             if release_external_budget:  # Only for external charge
                 budget_plans = budget_plans.\
