@@ -71,8 +71,8 @@ class InterfaceAccountEntry(models.Model):
         [('internal', 'Internal'),
          ('external', 'External')],
         string='Charge Type',
-        required=True,
         default='external',
+        required=True,
         help="Specify whether the move line is for Internal Charge or "
         "External Charge. Only expense internal charge to be set as internal",
     )
@@ -202,6 +202,8 @@ class InterfaceAccountEntry(models.Model):
     def _onchange_to_reverse_entry_id(self):
         self.journal_id = self.to_reverse_entry_id.journal_id
         self.system_id = self.to_reverse_entry_id.system_id
+        self.charge_type = self.to_reverse_entry_id.charge_type
+
 
     @api.onchange('type')
     def _onchange_type(self):
@@ -476,7 +478,7 @@ class InterfaceAccountEntry(models.Model):
                 # For Tax
                 'taxbranch_id': line.taxbranch_id.id,
                 # Charge type
-                'charge_type': self.charge_type or 'expense'  # Default to exp
+                'charge_type': self.charge_type or self.to_reverse_entry_id.charge_type or 'expense'  # Default to exp
             }
             move_line = AccountMoveLine.with_context(ctx).create(vals)
             line.ref_move_line_id = move_line
@@ -583,6 +585,7 @@ class InterfaceAccountEntry(models.Model):
             'validate_date': u'2019-03-31',
             'preprint_number': False,
             'date_document': u'2019-03-16',
+            'to_reverse_entry_id' : u'IA19016867',
             'line_ids': [
                 {
                     'name': u'/',
@@ -719,6 +722,15 @@ class InterfaceAccountEntry(models.Model):
             
             # _logger.info("IA - Output: %s" % res)
             return res
+        
+        
+        #to_reverse_entry_id = data_dict['to_reverse_entry_id']
+        #reverse_entry_id = self.env['interface.account.entry'].search([('number','=',to_reverse_entry_id)])
+        #data_dict['charge_type'] = reverse_entry_id.charge_type
+       
+        if data_dict["type"] == "Reverse": 
+            to_reverse_entry_id = self.env["interface.account.entry"].search([('number', '=', data_dict['to_reverse_entry_id'])], limit=1)
+            data_dict['charge_type'] = to_reverse_entry_id.charge_type
         
         # if origin not exists
         try:
