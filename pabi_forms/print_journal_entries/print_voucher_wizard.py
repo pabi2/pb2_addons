@@ -27,7 +27,7 @@ DOCTYPE_REPORT_MAP = {
     },
     'qweb': {
         'incoming_shipment': False,
-        'delivery_order': False,
+        'delivery_order': 'pabi_forms.report_delivery_order_voucher',
         'internal_transfer': False,
         'bank_receipt': 'pabi_forms.report_bank_receipt_voucher',
         'out_invoice': 'pabi_forms.report_invoice_voucher',
@@ -38,7 +38,7 @@ DOCTYPE_REPORT_MAP = {
         'in_invoice_debitnote': False,
         'receipt': 'pabi_forms.report_receipt_voucher',
         'payment': 'pabi_forms.report_payment_voucher',
-        'employee_expense': False,
+        'employee_expense': 'pabi_forms.report_employee_expense_voucher',
         'interface_account': 'pabi_forms.report_interface_account_voucher',
         'purchase_request': False,
         'purchase_order': False,

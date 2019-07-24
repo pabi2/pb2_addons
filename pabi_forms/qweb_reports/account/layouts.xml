@@ -384,6 +384,12 @@
                         <t t-if="o.doctype in ['bank_receipt']">
                             <strong>Received Voucher</strong>
                         </t>
+                        <t t-if="o.doctype in ['employee_expense']">
+                            <strong>Employee Expense</strong>
+                        </t>
+                        <t t-if="o.doctype in ['delivery_order']">
+                            <strong>Delivery Order</strong>
+                        </t>
                     </div>
                 </div>
                 <div class="row">

@@ -35,6 +35,8 @@
         'qweb_reports/account/receipt_voucher.xml',
         'qweb_reports/account/salary_expense_voucher.xml',
         'qweb_reports/account/interface_account_voucher.xml',
+        'qweb_reports/account/employee_expense_voucher.xml',
+        'qweb_reports/account/delivery_order_voucher.xml',
         'print_journal_entries/print_voucher_wizard.xml',
         'print_payment_export/print_payment_export_wizard.xml',
         'print_account_invoice/print_account_invoice_wizard.xml',
