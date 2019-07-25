@@ -193,7 +193,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         chartfield_dom = ''
         InvoicePlan = self.env['purchase.invoice.plan']
         Reports = self.env['report.purchase.invoice.plan.view']
-        dom = [('po.state','!=','cancel'),('po.order_type','=','purchase_order')]
+        dom = [('po.state','!=','cancel'),('po.order_type','=','purchase_order'),('po.use_invoice_plan','=',True)]
         
         if self.org_ids:
             dom += [('org.id', 'in', tuple(self.org_ids.ids))]
@@ -208,17 +208,17 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             chartfield_dom = self.get_where_str_chartfield()
         
         if self.date_po_start and not self.date_po_end:
-            dom += [('po.date_order','=',self.date_po_start)]
+            dom += [('cast(po.date_order as date)','=',self.date_po_start)]
         if self.date_po_start and self.date_po_end:
-            dom += [('po.date_order','>=',self.date_po_start),('po.date_order','<=',self.date_po_end)]
+            dom += [('cast(po.date_order as date)','>=',self.date_po_start),('cast(po.date_order as date)','<=',self.date_po_end)]
         if self.date_start:
-            dom += [('po.date_order','>=',self.date_start)]
+            dom += [('cast(po.date_order as date)','>=',self.date_start)]
         if self.date_end:
-            dom += [('po.date_order','<=',self.date_end)]
+            dom += [('cast(po.date_order as date)','<=',self.date_end)]
         if self.period_start_id:
-            dom += [('po.date_order','>=',self.period_start_id.date_start)]
+            dom += [('po.date_order as date)','>=',self.period_start_id.date_start)]
         if self.period_end_id:
-            dom += [('po.date_order','<=',self.period_end_id.date_stop)]
+            dom += [('cast(po.date_order as date)','<=',self.period_end_id.date_stop)]
         if self.date_contract_action_start:
             dom += [('pct.action_date','>=',self.date_contract_action_start)]
         if self.date_contract_action_end:
@@ -229,7 +229,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         
         self._cr.execute("""
             select 
-                pol.org_id, po.id as purchase_id, pct.id as contract_id, aa.id as account_id,
+                pol.org_id as purchase_id, po.id as purchase_id, pct.id as contract_id, aa.id as account_id,
                 ou.name as org, fis.name as po_fiscalyear,
                 cast(po.date_order as date) as po_order_date, 
                 po.name as po_number, pol.docline_seq as item, 
@@ -264,7 +264,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     when pol.personnel_costcenter_id is not null then rpc.name
                     else ''
                 end as budget_name,
-                fund.name as fund, fis.name as fiscal_year_by_invoice_plan, ROUND(pol.product_qty,2) as quantity, 
+                fund.name as fund, fis.name as fiscal_year_by_invoice_plan, ROUND(pol.product_qty,2) as product_qty, 
                 pol.price_unit as unit_price, pip.installment, pip.description as inv_plan_description, 
                 to_char(pip.date_invoice, 'DD/MM/YYYY') as invoice_date, pip.deposit_amount as advance, 
                 pip.deposit_percent, pip.invoice_amount as plan_amount, cur.name as currency, 
@@ -327,17 +327,14 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 left join res_currency cur on cur.id = po.currency_id
                 left join account_account ads on ads.id = po.account_deposit_supplier
             where 
-        """  + where_str + ' order by org.name, pol.fiscalyear_id, po.date_order, po.name, pol.docline_seq ')
+        """  + where_str + ' order by ou.name, pol.fiscalyear_id, po.date_order, po.name, pol.docline_seq ')
         
         invoice_plans = self._cr.dictfetchall()
-        print 'invoice_plans: '+str(invoice_plans)
         
         for line in invoice_plans:
             self.results += Reports.new(line)
         
-        
-        #results = InvoicePlan.browse(plan_ids)
-        #self.results = results
+        print 'results: '+str(self.results)
         
         
         
