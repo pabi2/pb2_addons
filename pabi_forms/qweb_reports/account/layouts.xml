@@ -451,7 +451,7 @@
                             </t>
                             <t t-if="not o.document_id or (o.document_id and not o.document_id.source_document)">
                                 <span t-field="o.ref"/>
-                            </t>
+                            </t> 
                         </t>
                         <t t-if="o.doctype in ['receipt', 'bank_receipt']">
                             <span t-field="o.ref"/>
