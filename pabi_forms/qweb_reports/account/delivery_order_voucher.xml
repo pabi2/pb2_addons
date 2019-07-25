@@ -46,11 +46,6 @@
 						                                    <tr>
 						                                        <td></td>
 						                                        <td style="width: 200px; border-bottom: 1px solid; padding-top: 10px;">
-						                                            <t t-if="o.doctype not in ['salary_expense']">
-						                                                <t t-if="o.document_id">
-						                                                    <span t-field="o.document_id.validate_date"/>
-						                                                </t>
-						                                            </t>
 						                                            <t t-if="not o.document_id">
 						                                                <span t-esc="datetime.datetime.strptime(o.create_date, '%Y-%m-%d %H:%M:%S').strftime('%d/%m/%Y')"/>
 						                                            </t>
