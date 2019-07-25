@@ -6,9 +6,9 @@ from openerp.addons.pabi_account_move_document_ref.models.account_move \
 
 DOCTYPE_REPORT_MAP = {
     'jasper': {
-        'incoming_shipment': False,
-        'delivery_order': False,
-        'internal_transfer': False,
+        'incoming_shipment': 'adjustment.voucher',
+        'delivery_order': 'adjustment.voucher',
+        'internal_transfer': 'adjustment.voucher',
         'bank_receipt': 'bank.receipt.voucher',
         'out_invoice': 'invoice.voucher',
         'out_refund': 'invoice.voucher',
@@ -18,7 +18,7 @@ DOCTYPE_REPORT_MAP = {
         'in_invoice_debitnote': False,
         'receipt': 'receipt.voucher',
         'payment': 'payment.voucher',
-        'employee_expense': False,
+        'employee_expense': 'adjustment.voucher',
         'interface_account': False,
         'purchase_request': False,
         'purchase_order': False,
@@ -26,9 +26,9 @@ DOCTYPE_REPORT_MAP = {
         'adjustment': 'adjustment.voucher'
     },
     'qweb': {
-        'incoming_shipment': False,
+        'incoming_shipment': 'pabi_forms.report_incoming_shipment_voucher',
         'delivery_order': 'pabi_forms.report_delivery_order_voucher',
-        'internal_transfer': False,
+        'internal_transfer': 'pabi_forms.report_internal_transfer_voucher',
         'bank_receipt': 'pabi_forms.report_bank_receipt_voucher',
         'out_invoice': 'pabi_forms.report_invoice_voucher',
         'out_refund': 'pabi_forms.report_invoice_voucher',

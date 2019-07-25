@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <template id="report_delivery_order_voucher">
+        <template id="report_incoming_shipment_voucher">
             <t t-call="report.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-call="pabi_forms.account_layout">

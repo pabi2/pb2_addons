@@ -390,6 +390,12 @@
                         <t t-if="o.doctype in ['delivery_order']">
                             <strong>Delivery Order</strong>
                         </t>
+                        <t t-if="o.doctype in ['incoming_shipment']">
+                            <strong>Incoming Shipment</strong>
+                        </t>
+                        <t t-if="o.doctype in ['internal_transfer']">
+                            <strong>Internal Transfer</strong>
+                        </t>
                     </div>
                 </div>
                 <div class="row">
