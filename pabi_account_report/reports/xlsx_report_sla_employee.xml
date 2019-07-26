@@ -17,6 +17,11 @@
                             <field name="source_document_type"/>
                         </group>
                     </page>
+                    <page string="Supplier Category">
+                    	<group>
+                            <field name="supplier_category_name"/>
+                        </group>
+                    </page>
                 </xpath>
             </field>
         </record>
