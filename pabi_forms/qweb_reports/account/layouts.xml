@@ -459,7 +459,7 @@
                                 <span t-field="o.ref"/>
                             </t>
                         </t>
-                        <t t-if="o.doctype in ['receipt', 'bank_receipt', 'incoming_shipment', 'internal_transfer', 'delivery_order', 'employee_expense']">
+                        <t t-if="o.doctype in ['receipt', 'bank_receipt', 'employee_expense']">
                             <span t-field="o.ref"/>
                         </t>
                         <t t-if="o.doctype in ['adjustment']">
@@ -467,7 +467,7 @@
                                 <span t-field="o.document_id.source_document"/>
                             </t>
                         </t>
-                        <t t-if="o.doctype in ['interface_account', 'incoming_shipment', 'internal_transfer', 'delivery_order', 'employee_expense']">
+                        <t t-if="o.doctype in ['interface_account', 'incoming_shipment', 'internal_transfer', 'delivery_order']">
                             <span t-field="o.document_id.name"/>
                         </t>
                     </div>
