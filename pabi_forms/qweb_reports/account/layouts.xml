@@ -385,16 +385,10 @@
                             <strong>Received Voucher</strong>
                         </t>
                         <t t-if="o.doctype in ['employee_expense']">
-                            <strong>Employee Expense</strong>
+                            <strong>Internal Charge Voucher</strong>
                         </t>
-                        <t t-if="o.doctype in ['delivery_order']">
-                            <strong>Delivery Order</strong>
-                        </t>
-                        <t t-if="o.doctype in ['incoming_shipment']">
-                            <strong>Incoming Shipment</strong>
-                        </t>
-                        <t t-if="o.doctype in ['internal_transfer']">
-                            <strong>Internal Transfer</strong>
+                        <t t-if="o.doctype in ['delivery_order','incoming_shipment','internal_transfer']">
+                            <strong>Internal Transfer Voucher</strong>
                         </t>
                     </div>
                 </div>
@@ -427,7 +421,7 @@
                                 <span t-field="o.document_id.currency_id.name"/>
                             </t>
                         </t>
-                        <t t-if="o.doctype in ['adjustment', 'interface_account']">
+                        <t t-if="o.doctype in ['adjustment', 'interface_account', 'incoming_shipment', 'internal_transfer', 'delivery_order', 'employee_expense']">
                             <span>THB</span>
                         </t>
                     </div>
@@ -438,7 +432,7 @@
                                 <span t-esc="'{:,.2f}'.format(o.document_id.currency_id.rate_input_silent)"/>
                             </t>
                         </t>
-                        <t t-if="o.doctype in ['adjustment', 'interface_account']">
+                        <t t-if="o.doctype in ['adjustment', 'interface_account', 'incoming_shipment', 'internal_transfer', 'delivery_order', 'employee_expense']">
                             <span t-esc="'{:,.2f}'.format(1.0)"/>
                         </t>
                     </div>
@@ -465,7 +459,7 @@
                                 <span t-field="o.ref"/>
                             </t>
                         </t>
-                        <t t-if="o.doctype in ['receipt', 'bank_receipt']">
+                        <t t-if="o.doctype in ['receipt', 'bank_receipt', 'incoming_shipment', 'internal_transfer', 'delivery_order', 'employee_expense']">
                             <span t-field="o.ref"/>
                         </t>
                         <t t-if="o.doctype in ['adjustment']">
@@ -473,7 +467,7 @@
                                 <span t-field="o.document_id.source_document"/>
                             </t>
                         </t>
-                        <t t-if="o.doctype in ['interface_account']">
+                        <t t-if="o.doctype in ['interface_account', 'incoming_shipment', 'internal_transfer', 'delivery_order', 'employee_expense']">
                             <span t-field="o.document_id.name"/>
                         </t>
                     </div>
@@ -571,7 +565,7 @@
                             <t t-if="o.doctype in ['receipt']">
                                 <span class="cut-text" t-field="o.document_id.number_preprint"/>
                             </t>
-                            <t t-if="o.doctype in ['adjustment']">
+                            <t t-if="o.doctype in ['adjustment', 'incoming_shipment', 'internal_transfer', 'delivery_order', 'employee_expense']">
                                 <span t-field="o.ref"/>
                             </t>
                             <t t-if="o.doctype in ['interface_account']">
@@ -584,7 +578,7 @@
                             </t>
                         </t>
                         <t t-if="not o.document_id">
-                            <t t-if="o.doctype in ['adjustment']">
+                            <t t-if="o.doctype in ['adjustment', 'incoming_shipment', 'internal_transfer', 'delivery_order', 'employee_expense']">
                                 <span t-field="o.ref"/>
                             </t>
                         </t>
