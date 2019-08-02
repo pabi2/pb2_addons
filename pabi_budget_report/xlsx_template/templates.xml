@@ -125,8 +125,8 @@
                             'B8': '${env.user.name}',
                         },
                         'results': {
-                            'A11': 'functional_area_id.name${value or ""}',
-                            'B11': 'program_group_id.name${value or ""}',
+                            'A11': 'program_id.functional_area_id.name${value or ""}',
+                            'B11': 'program_id.program_group_id.name${value or ""}',
                             'C11': 'program_id.code${value or ""}',
                             'D11': 'program_id.name${value or ""}',
                             'E11': 'project_group_id.code${value or ""}',
