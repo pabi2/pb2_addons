@@ -47,6 +47,25 @@
                             </group>
                         </group>
                     </page>
+                    <page string="Job Order" name="job_order">
+                    	<group>
+                            <field name="count_job_order"/>
+                        </group>
+                        <group>
+                            <group string="Paste list of code to search">
+                            	<field name="line_filter_job" placeholder="Paste list of Job Order" nolabel="1" context="{'active_test': False}"/>
+                            </group>
+                            <group string="Print only">
+                            	<field colspan="4" name="job_order_ids" nolabel="1" context="{'active_test': False}">
+									<tree string="po" editable="bottom">
+										 <field name="code"/>
+										 <field name="name"/>
+										 <field name="name_short"/>
+									</tree>
+								</field>
+                            </group>
+                        </group>                
+                    </page>
                 </xpath>
                 <xpath expr="//notebook/page/group[@string='Periods']" position="after">
                     <group string="Clearing date" attrs="{'invisible': [('filter', '!=', 'filter_clearing_date')], 'required': [('filter', '=', 'filter_clearing_date')]}">
