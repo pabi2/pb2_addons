@@ -16,14 +16,14 @@
                 <group name="criteria" position="after">
                 	<group name="invoice_plan" states="choose">
                 		<group>
-                			<!-- <field name="date_po_start"/>
-                			<field name="date_contract_action_start"/> -->
+                			<field name="date_po_start"/>
+                			<field name="date_contract_action_start"/>
                 			<field name="org_ids" widget="many2many_tags"/>
                 		</group>
-                		<!-- <group>
+                		<group>
                 			<field name="date_po_end"/>
                 			<field name="date_contract_action_end"/>
-                		</group> -->
+                		</group>
                 	</group>
                 </group>
                 <xpath expr="//notebook[@name='additional_criteria']" position="inside">
