@@ -59,9 +59,9 @@ class XLSXReportBudgetPlanProjectAnalysis(models.TransientModel):
         Result = self.env['budget.plan.project.line']
         dom = [('fiscalyear_id', '=', self.fiscalyear_id.id)]
         if self.functional_area_id:
-            dom += [('functional_area_id', '=', self.functional_area_id.id)]
+            dom += [('program_id.functional_area_id', '=', self.functional_area_id.id)]
         if self.program_group_id:
-            dom += [('program_group_id', '=', self.program_group_id.id)]
+            dom += [('program_id.program_group_id', '=', self.program_group_id.id)]
         if self.program_id:
             dom += [('program_id', '=', self.program_id.id)]
         if self.project_group_id:
