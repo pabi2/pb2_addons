@@ -379,14 +379,15 @@
                         },
                         'results': {
                             'A5': 'pr_name${value or ""}',
-                            'B5': 'ou_name${value or ""}',
-                            'C5': 'pr_total#{number_format=number}',
-                            'D5': 'po_name${value or ""}',
-                            'E5': 'partner_name${value or ""}',
-                            'F5': 'po_no_vat#{number_format=number}',
-                            'G5': 'po_tax#{number_format=number}',
-                            'H5': 'po_vat#{number_format=number}',
-                            'I5': 'diff#{number_format=number}',
+                            'B5': 'date_start${value or ""}#{number_format=date}',
+                            'C5': 'ou_name${value or ""}',
+                            'D5': 'pr_total#{number_format=number}',
+                            'E5': 'po_name${value or ""}',
+                            'F5': 'partner_name${value or ""}',
+                            'G5': 'po_no_vat#{number_format=number}',
+                            'H5': 'po_tax#{number_format=number}',
+                            'I5': 'po_vat#{number_format=number}',
+                            'J5': 'diff#{number_format=number}',
                         },
                         '_TAIL_0': {
                         }

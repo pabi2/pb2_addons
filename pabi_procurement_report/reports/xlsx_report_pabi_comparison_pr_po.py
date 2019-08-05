@@ -16,7 +16,10 @@ class XLSXReportPabiComparisonPrPo(models.TransientModel):
         'res.org',
         string='Org',
     )
-
+    date_start = fields.Date(
+        string='PR Create Date',
+        required=True,
+    )
     # Report Result
     results = fields.Many2many(
         'xlsx.report.pabi.comparison.pr.po.results',
@@ -58,6 +61,9 @@ class XLSXReportPabiComparisonPrPoResults(models.Model):
         string='PR',
         readonly=True,
     )
+    date_start = fields.Date(
+        readonly=True,
+    )
     po_name = fields.Char(
         string='PO',
         readonly=True,
@@ -93,6 +99,7 @@ class XLSXReportPabiComparisonPrPoResults(models.Model):
     ou_name = fields.Char(
         string='OU',
     )
+    
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -101,6 +108,7 @@ class XLSXReportPabiComparisonPrPoResults(models.Model):
             pr.id as id,
             prl.name as pr_header,
             pr.name as pr_name,
+            pr.date_start,  
             prl.price_subtotal as pr_total,
             pol.name,
             po.name as po_name,
