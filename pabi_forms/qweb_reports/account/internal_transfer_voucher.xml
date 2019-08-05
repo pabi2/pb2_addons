@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="report_internal_transfer_voucher">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="pabi_forms.account_layout">
+                        <div class="page pabi-page">
+                            <table class="table table-condensed">
+                                <!-- Naration -->
+                                <t t-call="pabi_forms.account_naration_header"/>
+                            </table>
+                            <table class="table table-condensed">
+                                <thead>
+                                    <!-- Column Header -->
+                                    <t t-call="pabi_forms.account_column_header"/>
+                                </thead>
+                                <tbody>
+                                    <!-- Column Detail -->
+                                    <t t-call="pabi_forms.account_column_detail"/>
+
+                                    <!-- Summary -->
+                                    <t t-call="pabi_forms.account_summary_footer"/>
+
+                                    <!-- Last Page Footer -->
+                                    <tr>
+						                <td t-att-colspan="o.line_id.mapped('asset_id') and 12 or 11" style="border: 0px; padding-left: 0px; padding: 0px;">
+						                    <div class="pabi-footer">
+						                        <div class="row">
+						                            <div class="col-xs-12">
+						                                <table>
+						                                    <tr>
+						                                        <td style="width: 120px; text-align: right; padding-right: 10px; padding-top: 10px;">Accounted by</td>
+						                                        <td style="width: 200px; border-bottom: 1px solid; padding-top: 10px;">
+						                                            <t t-if="o.create_uid">
+				                                                    	<span t-field="o.create_uid.display_name"/>
+				                                               		</t>
+						                                        </td>
+						                                        <td style="width: 200px;"></td>
+						                                        <td style="width: 120px; text-align: right; padding-right: 10px; padding-top: 10px;">Approved by</td>
+						                                        <td colspan="5" style="width: 200px; border-bottom: 1px solid; padding: 10px;"></td>
+						                                    </tr>
+						                                    <tr>
+						                                        <td></td>
+						                                        <td style="width: 200px; border-bottom: 1px solid; padding-top: 10px;">
+						                                        	<t t-if="o.doctype not in ['salary_expense']">
+						                                                <t t-if="o.document_id">
+						                                                    <span t-field="o.date"/>
+						                                                </t>
+						                                            </t>
+						                                            <t t-if="not o.document_id">
+						                                                <span t-esc="datetime.datetime.strptime(o.create_date, '%Y-%m-%d %H:%M:%S').strftime('%d/%m/%Y')"/>
+						                                            </t>
+						                                        </td>
+						                                        <td colspan="2"></td>
+						                                        <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
+						                                        <td style="width: 1px; padding-top: 10px;">/</td>
+						                                        <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
+						                                        <td style="width: 1px; padding-top: 10px;">/</td>
+						                                        <td style="width: 66px; border-bottom: 1px solid; padding-top: 10px;"></td>
+						                                    </tr>
+						                                </table>
+						                            </div>
+						                        </div>
+						                    </div>
+						                </td>
+						            </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</openerp>
