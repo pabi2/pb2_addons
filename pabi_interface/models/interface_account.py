@@ -723,6 +723,7 @@ class InterfaceAccountEntry(models.Model):
         # if origin not exists
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
+            _logger.info("pre_dict: %s" % data_dict)
             # For migration period, payment reconicle can be entry or item
             # so, we need to manually check it
             Move = self.env['account.move']
