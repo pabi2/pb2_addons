@@ -79,16 +79,23 @@ class XLSXReportSLASupplier(models.TransientModel):
         string='Validated By',
     )
     source_document_type = fields.Selection(
-        [('nothing', 'Nothing'),
+        [('nothing', 'ตั้งหนี้ตรง'),
          ('expense', 'Expense'),
-         ('purchase', 'Purchase Order')],
+         ('purchase', 'Purchase Order'),
+         ('nothing_purchase', 'Purchase Order & ตั้งหนี้ตรง')],
         string='Source Document Ref.',
+        default='nothing_purchase',
+        required=True,
     )
     results = fields.Many2many(
         'sla.supplier.view',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
+    )
+    async_process = fields.Boolean(
+        string='Run task in background?',
+        default=True,
     )
 
     @api.multi
@@ -100,10 +107,10 @@ class XLSXReportSLASupplier(models.TransientModel):
         """
         self.ensure_one()
         Result = self.env['sla.supplier.view']
-        dom = [('source_document_type', '=',
-                not self.source_document_type and 'all' or
-                (self.source_document_type != 'nothing' and
-                 self.source_document_type or False))]
+        dom = [('source_document_type', 'in',
+                not self.source_document_type and ('all') or
+                (self.source_document_type == 'nothing_purchase' and ('purchase', False)) or
+                (self.source_document_type != 'nothing' and (self.source_document_type) or (False)))]
         if self.user_ids:
             dom += [('voucher_id.validate_user_id', 'in', self.user_ids.ids)]
         if self.fiscalyear_start_id:
