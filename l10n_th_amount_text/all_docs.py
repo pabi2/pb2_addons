@@ -212,7 +212,7 @@ class PurchaseOrder(AmountToWord, osv.osv):
             _amount_total_text_en, string='Amount Total (EN)', type='char',
             store={
                 'purchase.order': (lambda self, cr, uid, ids, c={}:
-                                   ids, ['order_line', 'currency_id'], 1000),
+                                   ids, ['order_line', 'currency_id','round_total'], 1000),
                 'purchase.order.line': (_get_order,
                                         ['price_unit', 'taxes_id',
                                          'product_qty'], 1000),
@@ -221,9 +221,10 @@ class PurchaseOrder(AmountToWord, osv.osv):
             _amount_total_text_th, string='Amount Total (TH)', type='char',
             store={
                 'purchase.order': (lambda self, cr, uid, ids, c={}:
-                                   ids, ['order_line'], 1000),
+                                   ids, ['order_line','round_total'], 1000),
                 'purchase.order.line': (_get_order,
                                         ['price_unit', 'taxes_id',
                                          'product_qty'], 1000),
             }),
     }
+    
