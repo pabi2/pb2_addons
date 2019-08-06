@@ -6,7 +6,7 @@ from openerp import models, fields, api
 class XLSXReportPabiComparisonPrPo(models.TransientModel):
     _name = 'xlsx.report.pabi.comparison.pr.po'
     _inherit = 'xlsx.report'
-
+    
     # Search Criteria
     partner_id = fields.Many2one(
         'res.partner',
@@ -37,8 +37,10 @@ class XLSXReportPabiComparisonPrPo(models.TransientModel):
             dom += [('partner_id', '=', self.partner_id.id)]
         if self.org_ids:
             dom += [('org_id', 'in', self.org_ids._ids)]
+        if self.date_start:
+            dom += [('date_start', '=', self.date_start)]
         self.results = Result.search(dom)
-
+        
 
 class XLSXReportPabiComparisonPrPoResults(models.Model):
     _name = 'xlsx.report.pabi.comparison.pr.po.results'
