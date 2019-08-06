@@ -704,7 +704,6 @@ class InterfaceAccountEntry(models.Model):
     @api.model
     def generate_interface_account_entry(self, data_dict):
         _logger.info("IA - Input: %s" % data_dict)
-        time.sleep(10)
         
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
