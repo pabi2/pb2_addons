@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Supplier Retention Form" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="40" bottomMargin="40">
 	<property name="ireport.zoom" value="1.0245201830476287"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="431"/>
+	<property name="ireport.y" value="229"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
@@ -144,6 +144,9 @@
 	<field name="invoice_description" class="java.lang.String">
 		<fieldDescription><![CDATA[line_cr_ids/invoice_description]]></fieldDescription>
 	</field>
+	<field name="amount_voucher" class="java.lang.Number">
+		<fieldDescription><![CDATA[amount]]></fieldDescription>
+	</field>
 	<variable name="purchase_number" class="java.lang.String">
 		<variableExpression><![CDATA[$F{receivable_type} == "late_work_acceptance" ? $F{late_wa_purchase_number} :
 (($F{amount_retention} != null && $F{amount_retention} > 0) ? $F{source_document} : "")]]></variableExpression>
@@ -174,7 +177,7 @@ $V{total}
 			</rectangle>
 			<staticText>
 				<reportElement style="table" mode="Opaque" x="421" y="240" width="114" height="50" backcolor="#D3D3D3"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[จำนวนเงิน (บาท)
@@ -185,7 +188,7 @@ Amount (THB)]]></text>
 			</rectangle>
 			<staticText>
 				<reportElement style="table" mode="Opaque" x="0" y="240" width="421" height="50" backcolor="#D3D3D3"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[รายการ
@@ -379,7 +382,6 @@ Banch]]></text>
 			</textField>
 			<image>
 				<reportElement x="431" y="0" width="104" height="41"/>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "logo_nstda.gif"]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement mode="Transparent" x="131" y="107" width="273" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -390,14 +392,14 @@ Banch]]></text>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="424" y="126" width="75" height="15"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" lineSpacing="Single">
 					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["หน้า/Page " + $V{PAGE_NUMBER} + " / "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="502" y="126" width="30" height="15"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
@@ -441,7 +443,7 @@ Banch]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_voucher}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement style="pading_2" mode="Transparent" x="248" y="145" width="283" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -454,7 +456,7 @@ Banch]]></text>
 				<reportElement x="10" y="5" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "cash"]]></printWhenExpression>
 				</reportElement>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[X]]></text>
@@ -463,7 +465,7 @@ Banch]]></text>
 				<reportElement x="84" y="5" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "credit"]]></printWhenExpression>
 				</reportElement>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[X]]></text>
@@ -472,7 +474,7 @@ Banch]]></text>
 				<reportElement x="158" y="5" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "transfer"]]></printWhenExpression>
 				</reportElement>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[X]]></text>
@@ -481,7 +483,7 @@ Banch]]></text>
 				<reportElement x="232" y="5" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "cheque"]]></printWhenExpression>
 				</reportElement>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[X]]></text>
