@@ -703,7 +703,7 @@ class InterfaceAccountEntry(models.Model):
         
         dom = [("name", "=", str_doc_origin)]
         ia_datas = ia_table.search(dom)
-        _logger.info(str(ia_data))
+        _logger.info("_is_create_data_exists %s" % ia_datas)
         
         return False
 
