@@ -48,6 +48,10 @@ class XLSXReportSLAReceipt(models.TransientModel):
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
+    async_process = fields.Boolean(
+        string='Run task in background?',
+        default=True,
+    )
 
     @api.multi
     def _compute_results(self):
