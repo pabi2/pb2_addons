@@ -675,27 +675,37 @@ class InterfaceAccountEntry(models.Model):
         return self.generate_interface_account_entry(data_dict)
 
     @api.model
-    #def _is_document_origin_exists(self, doc_origin):
-    def _is_document_origin_exists(self, data_dict):
+    def _is_document_origin_exists(self, str_doc_origin, str_type):
         ia_table = self.env["interface.account.entry"]
         
         # if system_id = "mySales" do check exists
         # if system_id != "mySales" and type != "Reverse" do check exists 
-        dom = [("name", "=", data_dict["name"])]
-        ia_data = ia_table.search(dom)
+        dom = [("name", "=", str_doc_origin)]
+        ia_datas = ia_table.search(dom)
         
-        if not ia_data:
+        if not ia_datas:
             return False
         else:
-            if len(ia_data) > 1:
-                system = ia_data[0].system_id.name
+            if len(ia_datas) > 1:
+                system = ia_datas[0].system_id.name
             else:
-                system = ia_data.system_id.name
+                system = ia_datas.system_id.name
+                
             if system == "mySales":
                 return True  # check_existing
             else:
-                if data_dict["type"] != "Reverse":
+                if str_type != "Reverse":
                     return True  # check_existing
+
+    @api.model
+    def _is_create_data_exists(self, str_doc_origin, str_type, res_id):
+        ia_table = self.env["interface.account.entry"]
+        
+        dom = [("name", "=", str_doc_origin)]
+        ia_datas = ia_table.search(dom)
+        _logger.info(str(ia_data))
+        
+        return False
 
     @api.model
     def _pre_process_interface_account_entry(self, data_dict):
@@ -721,9 +731,11 @@ class InterfaceAccountEntry(models.Model):
                     del l['reconcile_move_id']
                     
             # if origin document exists
-            if self._is_document_origin_exists(data_dict):
+            str_doc_origin = data_dict["name"]
+            str_type = data_dict["type"]
+            if self._is_document_origin_exists(str_doc_origin, str_type):
                 ia_table = self.env["interface.account.entry"]
-                dom = [("name", "=", data_dict["name"])]
+                dom = [("name", "=", str_doc_origin)]
                 ia_data = ia_table.search(dom)
                 err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
                 res = {
@@ -732,15 +744,36 @@ class InterfaceAccountEntry(models.Model):
                     'messages': _(err_message) %
                                 (data_dict["name"], ia_data.number)
                     }
-                
+                _logger.info("IA - Output: %s" % res)
+
                 return res
-        
+
             # -
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
             if res['is_success']:
                 res_id = res['result']['id']
                 document = self.browse(res_id)
                 document.execute()
+                
+                # if origin document exists
+                if self._is_create_data_exists(str_doc_origin,
+                                               str_type,
+                                               res_id):
+                    ia_table = self.env["interface.account.entry"]
+#                     dom = [("name", "=", str_doc_origin)]
+#                     ia_data = ia_table.search(dom)
+#                     err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
+#                     res = {
+#                         'is_success': False,
+#                         'result': False,
+#                         'messages': _(err_message) %
+#                                     (data_dict["name"], ia_data.number)
+#                         }
+#                     self._cr.rollback()
+#                     _logger.info("IA - Output: %s" % res)
+#                     
+#                     return res
+                
                 # More info
                 res['result']['number'] = document.number
                 res['result']['fiscalyear'] = \
