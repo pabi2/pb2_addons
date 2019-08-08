@@ -695,6 +695,8 @@ class InterfaceAccountEntry(models.Model):
         str_type = data_dict["type"]
         str_system = data_dict["system_id"]
         
+        time.sleep(10)
+        
         # 1. check existing doc_origin in check existing table
         # for check double interface of document at same time
         check_table = self.env["interface.account.entry.check.existing"]
