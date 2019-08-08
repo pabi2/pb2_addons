@@ -708,7 +708,9 @@ class InterfaceAccountEntry(models.Model):
             values["system"] = data_dict["system_id"]
             res = check_table.create(values)
             self._cr.commit()
+            _logger.info("not found: created new record")
         else:
+            _logger.info("exists sleep for 30 seconds")
             time.sleep(30)
         
         # 2. check existing doc_origin in interface table
@@ -744,7 +746,7 @@ class InterfaceAccountEntry(models.Model):
         # if origin document exists
         if self._is_document_origin_exists(data_dict):
             ia_table = self.env["interface.account.entry"]
-            dom = [("name", "=", str_doc_origin)]
+            dom = [("name", "=", data_dict["name"])]
             ia_data = ia_table.search(dom)
             err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
             res = {
