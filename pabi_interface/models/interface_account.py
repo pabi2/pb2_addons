@@ -709,7 +709,7 @@ class InterfaceAccountEntry(models.Model):
             res = check_table.create(values)
             self._cr.commit()
         else:
-            time.delay(30)
+            time.sleep(30)
         
         # 2. check existing doc_origin in interface table
         ia_table = self.env["interface.account.entry"]
