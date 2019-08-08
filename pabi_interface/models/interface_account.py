@@ -712,6 +712,7 @@ class InterfaceAccountEntry(models.Model):
         else:
             _logger.info("exists sleep for 30 seconds")
             time.sleep(30)
+            _logger.info("awake")
         
         # 2. check existing doc_origin in interface table
         ia_table = self.env["interface.account.entry"]
@@ -720,6 +721,8 @@ class InterfaceAccountEntry(models.Model):
         # if system_id != "mySales" and type != "Reverse" do check exists 
         dom = [("name", "=", str_doc_origin)]
         ia_datas = ia_table.search(dom)
+        _logger.info("dom: %s" % dom)
+        _logger.info("ia_datas: %s" % ia_datas)
         
         if not ia_datas:
             _logger.info("not found ia_datas")
