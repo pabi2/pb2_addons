@@ -17,7 +17,11 @@ class XLSXReportPabiComparisonPrPo(models.TransientModel):
         string='Org',
     )
     date_start = fields.Date(
-        string='PR Create Date',
+        string='PR Create From Date',
+        required=True,
+    )
+    date_to = fields.Date(
+        string='PR Create To Date',
         required=True,
     )
     # Report Result
@@ -38,7 +42,9 @@ class XLSXReportPabiComparisonPrPo(models.TransientModel):
         if self.org_ids:
             dom += [('org_id', 'in', self.org_ids._ids)]
         if self.date_start:
-            dom += [('date_start', '=', self.date_start)]
+            dom += [('date_start', '>=', self.date_start)]
+        if self.date_to:
+            dom += [('date_start', '<=', self.date_to)]
         self.results = Result.search(dom)
         
 
