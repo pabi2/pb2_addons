@@ -722,8 +722,10 @@ class InterfaceAccountEntry(models.Model):
         ia_datas = ia_table.search(dom)
         
         if not ia_datas:
+            _logger.info("not found ia_datas")
             return False
         else:
+            _logger.info("exists ia_datas")
             if len(ia_datas) > 1:
                 system = ia_datas[0].system_id.name
             else:
