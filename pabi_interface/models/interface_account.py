@@ -798,6 +798,7 @@ class InterfaceAccountEntry(models.Model):
             }
             self._cr.rollback()
         _logger.info("IA - Output: %s" % res)
+        self._cr.commit()
         return res
 
 
