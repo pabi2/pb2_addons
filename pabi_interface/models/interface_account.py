@@ -718,6 +718,7 @@ class InterfaceAccountEntry(models.Model):
         
         # 2. check existing doc_origin in interface table
         ia_table = self.env["interface.account.entry"]
+        _logger.info("len(ia_data): %s" % len(ia_data))
         
         # if system_id = "mySales" do check exists
         # if system_id != "mySales" and type != "Reverse" do check exists 
