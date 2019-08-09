@@ -182,6 +182,12 @@ class XLSXReportPabiMonthlyWorkAcceptanceResults(models.Model):
         string='Category name',
         readonly=True,
     )
+    supplier_invoice = fields.Char(
+        readonly=True,
+    )
+    date_receive = fields.Date(
+        readonly=True,
+    )
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -252,6 +258,8 @@ class XLSXReportPabiMonthlyWorkAcceptanceResults(models.Model):
         po.partner_id,
         pd.date_doc_approve,
         wa.name wa_name,
+        wa.supplier_invoice,
+        wa.date_receive,
         wa.date_receive date_accept,
         rpc.id as category_id,
         (
