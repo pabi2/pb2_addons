@@ -12,6 +12,7 @@
                         <field name="org_ids" widget="many2many_tags"/>
                         <field name="partner_id"/>
                         <field name="date_start"/>
+                        <field name="date_to"/>
                     </group>
                     <group>
                     </group>
