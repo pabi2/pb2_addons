@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="withholding_cert" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1074"/>
+	<property name="ireport.y" value="768"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir") + "/../../../pb2_generic/l10n_th_account/report/"]]></defaultValueExpression>
 	</parameter>
@@ -260,25 +260,25 @@ select id from res_company limit 1;]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{COPY} == 1 ? "ต้นฉบับ" : "สำเนา"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="226" y="712" width="319" height="35"/>
+				<reportElement isPrintRepeatedValues="false" x="215" y="713" width="319" height="35"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{signature}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement isPrintRepeatedValues="false" x="388" y="584" width="120" height="35"/>
+				<reportElement isPrintRepeatedValues="false" x="401" y="584" width="120" height="35"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{total_tax}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$P{total_tax}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="321" y="584" width="120" height="35"/>
+				<reportElement x="334" y="584" width="120" height="35"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{total_base}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$P{total_base}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement isPrintRepeatedValues="false" x="76" y="605" width="518" height="35"/>
@@ -295,74 +295,86 @@ select id from res_company limit 1;]]>
 				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="319" y="270" width="120" height="35"/>
+				<reportElement x="334" y="270" width="120" height="35">
+					<printWhenExpression><![CDATA[$P{type2_base} > 0.0]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{type2_base}.intValue() == 0.0 ? " " : $P{type2_base}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$P{type2_base}]]></textFieldExpression>
 			</textField>
 			<textField pattern="MMMMM" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="319" y="727" width="120" height="35"/>
+				<reportElement isPrintRepeatedValues="false" x="302" y="727" width="120" height="35"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[(new Date()).getYear() + 543]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[(new Date())]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="305" y="727" width="44" height="35"/>
+				<reportElement isPrintRepeatedValues="false" x="299" y="727" width="44" height="35"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[new Date()]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="401" y="727" width="61" height="35"/>
+				<reportElement isPrintRepeatedValues="false" x="385" y="727" width="61" height="35"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[new Date()]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement x="233" y="270" width="120" height="35"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="233" y="270" width="120" height="35">
+					<printWhenExpression><![CDATA[$P{type2_base} > 0.0 & $P{type2_tax} > 0.0]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{type2_base}.intValue() == 0.0 ? " " :  $P{type2_tax}.intValue() == 0.0 ? " " : $P{buddha_year}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{buddha_year}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement isPrintRepeatedValues="false" x="79" y="661" width="17" height="25"/>
+				<reportElement isPrintRepeatedValues="false" x="79" y="660" width="17" height="25"/>
 				<textElement lineSpacing="Single" markup="none">
 					<font size="12" pdfFontName="THSarabun.ttf"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement x="381" y="255" width="120" height="35"/>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement x="384" y="255" width="137" height="35">
+					<printWhenExpression><![CDATA[$P{type1_tax} > 0.0]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{type1_tax}.intValue() == 0.0 ? " " : $P{type1_tax}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$P{type1_tax}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement x="381" y="270" width="120" height="35"/>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement x="384" y="270" width="136" height="35">
+					<printWhenExpression><![CDATA[$P{type2_tax} > 0.0]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{type2_tax}.intValue() == 0.0 ? " " : $P{type2_tax}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$P{type2_tax}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement x="233" y="255" width="120" height="35"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="233" y="255" width="120" height="35">
+					<printWhenExpression><![CDATA[$P{type1_base} > 0.0 & $P{type1_tax} > 0.0]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{type1_base}.intValue() == 0.0 ? " " :  $P{type1_tax}.intValue() == 0.0 ? " " : $P{buddha_year}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{buddha_year}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="319" y="255" width="120" height="35"/>
+				<reportElement x="334" y="255" width="120" height="35">
+					<printWhenExpression><![CDATA[$P{type1_base} > 0.0]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{type1_base}.intValue() == 0.0 ? " " : $P{type1_base}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$P{type1_base}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Middle" isUsingCache="true">
 				<reportElement x="305" y="686" width="158" height="41"/>
