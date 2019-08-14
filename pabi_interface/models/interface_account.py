@@ -695,8 +695,6 @@ class InterfaceAccountEntry(models.Model):
         str_type = data_dict["type"]
         str_system = data_dict["system_id"]
         
-        time.sleep(10)
-        
         # 1. check existing doc_origin in check existing table
         # for check double interface of document at same time
         check_table = self.env["interface.account.entry.check.existing"]
@@ -712,9 +710,10 @@ class InterfaceAccountEntry(models.Model):
             self._cr.commit()
             _logger.info("not found: created new record")
         else:
-            _logger.info("exists sleep for 30 seconds")
-            time.sleep(30)
-            _logger.info("awake")
+            return True
+#             _logger.info("exists sleep for 30 seconds")
+#             time.sleep(30)
+#             _logger.info("awake")
         
         # 2. check existing doc_origin in interface table
         ia_table = self.env["interface.account.entry"]
@@ -722,8 +721,7 @@ class InterfaceAccountEntry(models.Model):
         # if system_id = "mySales" do check exists
         # if system_id != "mySales" and type != "Reverse" do check exists 
         dom = [("name", "=", str_doc_origin)]
-#         ia_datas = ia_table.search(dom)
-        ia_datas = self.search(dom)
+        ia_datas = ia_table.search(dom)
         _logger.info("dom: %s" % dom)
         _logger.info("ia_datas: %s" % ia_datas)
         
@@ -756,13 +754,22 @@ class InterfaceAccountEntry(models.Model):
             ia_table = self.env["interface.account.entry"]
             dom = [("name", "=", data_dict["name"])]
             ia_data = ia_table.search(dom)
-            err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
-            res = {
-                'is_success': False,
-                'result': False,
-                'messages': _(err_message) %
-                            (data_dict["name"], ia_data.number)
-                }
+            if ia_data:
+                err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
+                res = {
+                    'is_success': False,
+                    'result': False,
+                    'messages': _(err_message) %
+                                (data_dict["name"], ia_data.number)
+                    }
+            else:
+                err_message = "ไม่สามารถ Interface ได้"
+                res = {
+                    'is_success': False,
+                    'result': False,
+                    'messages': _(err_message)
+                    }
+                
             _logger.info("IA - Output: %s" % res)
 
             return res
@@ -801,7 +808,6 @@ class InterfaceAccountEntry(models.Model):
             }
             self._cr.rollback()
         _logger.info("IA - Output: %s" % res)
-        self._cr.commit()
         return res
 
 
