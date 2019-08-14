@@ -21,7 +21,7 @@
             }
             .center_report_customer_dunning_letter_name {
                 text-align: center;
-                margin-left: 50%;
+                margin-left: 0%;
             }
             .right_report_customer_dunning_letter {
                 text-align: right !important;
