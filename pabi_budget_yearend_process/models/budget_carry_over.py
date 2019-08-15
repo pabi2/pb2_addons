@@ -2,7 +2,28 @@
 import time
 from openerp import fields, models, api
 from openerp import tools
+from openerp.exceptions import RedirectWarning
+from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import RetryableJobError
 
+@job
+def action_done_async_process(session, model_name, res_id):
+    try:
+        res = session.pool[model_name].action_carry_over_background(
+            session.cr, session.uid, [res_id], session.context)
+        return {'result': res}
+    except Exception, e:
+        raise RetryableJobError(e)
+    
+@job
+def action_done_save_async_process(session, model_name, res_id):
+    try:
+        res = session.pool[model_name].action_done_save(
+            session.cr, session.uid, [res_id], session.context)
+        return {'result': res}
+    except Exception, e:
+        raise RetryableJobError(e)
 
 class BudgetCarryOver(models.Model):
     _name = 'budget.carry.over'
@@ -55,6 +76,112 @@ class BudgetCarryOver(models.Model):
         string='Total Amount',
         compute='_compute_amount_total',
     )
+    button_carry_over_job_id = fields.Many2one(
+        'queue.job',
+        string='Carry Over Job',
+        compute='_compute_button_carry_over_job_uuid',
+    )
+    button_carry_over_uuid = fields.Char(
+        string='Carry Over Job UUID',
+        compute='_compute_button_carry_over_job_uuid',
+    )
+    ###########################--------------------------------- start job Run backgruond ------------------------------- #######################
+
+    @api.multi
+    def _compute_button_carry_over_job_uuid(self):
+        for rec in self:
+            task_name = "%s('%s', %s)" % \
+                ('action_done_async_process', self._name, rec.id)
+            jobs = self.env['queue.job'].search([
+                ('func_string', 'like', task_name),
+                ('state', '!=', 'done')],
+                order='id desc', limit=1)
+            rec.button_carry_over_job_id = jobs and jobs[0] or False
+            rec.button_carry_over_uuid = jobs and jobs[0].uuid or False
+        return True
+
+    @api.multi
+    def action_done(self):
+        for rec in self:
+            rec.action_carry_over()
+        return True
+
+    @api.multi
+    def action_carry_over_background(self):
+        if self._context.get('button_carry_over_async_process', False):
+            self.ensure_one()
+            self.name = '{:03d}'.format(self.id)
+            if self._context.get('job_uuid', False):  # Called from @job
+                return self.action_done()
+            if self.button_carry_over_job_id:
+                message = ('Carry Over')
+                action = self.env.ref('pabi_utils.action_my_queue_job')
+                raise RedirectWarning(message, action.id, ('Go to My Jobs'))
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = '%s - Commitment Carry Over' % (self.doctype)
+            uuid = action_done_async_process.delay(
+                session, self._name, self.id, description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+        else:
+            return self.action_done()
+
+###########################--------------------------------- end job Run backgruond ------------------------------- #######################
+    
+    button_save_carry_over_id = fields.Many2one(
+        'queue.job',
+        string='Save Carry Over Job',
+        compute='_compute_button_save_carry_over_uuid',
+    )
+    button_save_carry_over_uuid = fields.Char(
+        string='Save Carry Over Job UUID',
+        compute='_compute_button_save_carry_over_uuid',
+    )
+    ###########################--------------------------------- start job Save Run backgruond ------------------------------- #######################
+
+    @api.multi
+    def _compute_button_save_carry_over_uuid(self):
+        for rec in self:
+            task_name = "%s('%s', %s)" % \
+                ('action_done_save_async_process', self._name, rec.id)
+            jobs = self.env['queue.job'].search([
+                ('func_string', 'like', task_name),
+                ('state', '!=', 'done')],
+                order='id desc', limit=1)
+            rec.button_save_carry_over_id = jobs and jobs[0] or False
+            rec.button_save_carry_over_uuid = jobs and jobs[0].uuid or False
+        return True
+
+    @api.multi
+    def action_done_save(self):
+        print "action_done_save 1 : " + str(self)
+        for rec in self:
+            rec.compute_commit_docs()
+        return True
+
+    @api.multi
+    def action_save_carry_over_background(self):
+        #if self._context.get('button_carry_over_async_process', False):
+        print "action_save_carry_over_background 1"
+        self.ensure_one()
+        self.name = '{:03d}'.format(self.id)
+        """if self._context.get('job_uuid', False):  # Called from @job
+            print "action_save_carry_over_background 2"
+            return self.action_done_save()"""
+        if self.button_carry_over_job_id:
+            print "action_save_carry_over_background 3"
+            message = ('Save Carry Over')
+            action = self.env.ref('pabi_utils.action_my_queue_job')
+            raise RedirectWarning(message, action.id, ('Go to My Jobs'))
+        session = ConnectorSession(self._cr, self._uid, self._context)
+        description = '%s - Commitment Save Carry Over' % (self.doctype)
+        print "action_save_carry_over_background 4"
+        uuid = action_done_save_async_process.delay(
+            session, self._name, self.id, description=description)
+        job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+        #else:
+            #return self.action_done_save()
+
+###########################--------------------------------- end job Save Run backgruond ------------------------------- #######################
 
     @api.multi
     def _compute_amount_total(self):
@@ -84,7 +211,7 @@ class BudgetCarryOver(models.Model):
     def create(self, vals):
         res = super(BudgetCarryOver, self).create(vals)
         res.name = '{:03d}'.format(res.id)
-        res.compute_commit_docs()
+        res.action_save_carry_over_background()
         return res
 
     @api.multi
@@ -134,6 +261,8 @@ class BudgetCarryOver(models.Model):
     @api.multi
     def action_carry_over(self):
         self = self.sudo()
+        self.name = '{:03d}'.format(self.id)
+        self.compute_commit_docs()
         for rec in self:
             sale_lines = rec.line_ids.mapped('sale_line_id')
             request_lines = \
@@ -147,7 +276,7 @@ class BudgetCarryOver(models.Model):
                 expense_lines.mapped('budget_commit_ids')
             commits.write({'monitor_fy_id': rec.fiscalyear_id.id})
         self.write({'state': 'done'})
-
+        
 
 class BudgetCarryOverLine(models.Model):
     _name = 'budget.carry.over.line'
@@ -206,6 +335,7 @@ class BudgetCarryOverLine(models.Model):
         string='Commitment',
         readonly=True,
     )
+    
 
     @api.multi
     @api.depends('purchase_request_line_id', 'sale_line_id',
