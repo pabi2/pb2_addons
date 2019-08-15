@@ -124,9 +124,10 @@ class SLAEmployeeView(models.Model):
             LEFT JOIN hr_expense_expense ex ON ai.expense_id = ex.id
             LEFT JOIN hr_salary_expense sl ON sl.move_id = am_line.move_id
             WHERE av.type = 'payment' AND av.state = 'posted'
-                AND pe.state = 'done' AND ex.pay_to != 'supplier'
+                AND pe.state = 'done' 
                 OR am_line.doctype = 'salary_expense'
         """ % (self._get_sql_select())
+        #2019-07-20 AND ex.pay_to != 'supplier'
         return sql_select
 
     def init(self, cr):
@@ -183,12 +184,18 @@ class XLSXReportSLAEmployee(models.TransientModel):
          ('advance', 'Advance')],
         string='Source Document Ref.',
     )
+    supplier_category_name = fields.Selection(
+        [('employee', 'พนักงาน สวทช'),
+         ('supplier', 'Supplier ภายนอก')],
+        string='Supplier Category',
+    )
     results = fields.Many2many(
         'sla.employee.view',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
+    
 
     @api.multi
     def _compute_results(self):
@@ -225,5 +232,13 @@ class XLSXReportSLAEmployee(models.TransientModel):
             dom += [('voucher_id.date', '>=', self.date_start)]
         if self.date_end:
             dom += [('voucher_id.date', '<=', self.date_end)]
+       
+        #2019-07-19 yam
+        if self.supplier_category_name:
+            if self.supplier_category_name == 'employee':
+                dom += [('pay_to', '=', 'employee')]
+            else:
+                dom += [('pay_to', '!=', 'employee')] 
+
         self.results = Result.search(
             dom, order="fiscalyear,voucher_number,invoice_number")
