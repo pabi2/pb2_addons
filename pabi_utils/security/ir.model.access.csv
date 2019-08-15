@@ -4,3 +4,4 @@ access_pabi_data_map_type_no_one,access_pabi_data_map_type_no_one,model_pabi_dat
 access_pabi_data_map_user,access_pabi_data_map_user,model_pabi_data_map,base.group_user,1,0,0,0
 access_pabi_data_map_type_user,access_pabi_data_map_type_user,model_pabi_data_map_type,base.group_user,1,0,0,0
 access_queue_job_spool_report,access_queue_job_spool_report,connector.model_queue_job,group_see_own_spool_report,1,1,1,1
+xlsx_report_sla_receipt,xlsx_report_sla_receipt_view,model_pabi_process,,1,1,1,0
