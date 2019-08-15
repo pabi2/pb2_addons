@@ -2,7 +2,19 @@
 import time
 from openerp import fields, models, api
 from openerp import tools
+from openerp.exceptions import RedirectWarning
+from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import RetryableJobError
 
+@job
+def action_done_async_process(session, model_name, res_id):
+    try:
+        res = session.pool[model_name].action_carry_over_background(
+            session.cr, session.uid, [res_id], session.context)
+        return {'result': res}
+    except Exception, e:
+        raise RetryableJobError(e)
 
 class BudgetCarryOver(models.Model):
     _name = 'budget.carry.over'
@@ -80,12 +92,12 @@ class BudgetCarryOver(models.Model):
             self.compute_commit_docs()
         return res
 
-    @api.model
+    """@api.model
     def create(self, vals):
         res = super(BudgetCarryOver, self).create(vals)
         res.name = '{:03d}'.format(res.id)
         res.compute_commit_docs()
-        return res
+        return res"""
 
     @api.multi
     def compute_commit_docs(self):
@@ -134,6 +146,8 @@ class BudgetCarryOver(models.Model):
     @api.multi
     def action_carry_over(self):
         self = self.sudo()
+        self.name = '{:03d}'.format(self.id)
+        self.compute_commit_docs()
         for rec in self:
             sale_lines = rec.line_ids.mapped('sale_line_id')
             request_lines = \
@@ -148,6 +162,61 @@ class BudgetCarryOver(models.Model):
             commits.write({'monitor_fy_id': rec.fiscalyear_id.id})
         self.write({'state': 'done'})
 
+    button_carry_over_job_id = fields.Many2one(
+        'queue.job',
+        string='Carry Over Job',
+        compute='_compute_button_carry_over_job_uuid',
+    )
+    button_carry_over_uuid = fields.Char(
+        string='Carry Over Job UUID',
+        compute='_compute_button_carry_over_job_uuid',
+    )
+
+
+###########################--------------------------------- start job backgruond ------------------------------- #######################
+
+    @api.multi
+    def _compute_button_carry_over_job_uuid(self):
+        for rec in self:
+            task_name = "%s('%s', %s)" % \
+                ('action_done_async_process', self._name, rec.id)
+            jobs = self.env['queue.job'].search([
+                ('func_string', 'like', task_name),
+                ('state', '!=', 'done')],
+                order='id desc', limit=1)
+            rec.button_carry_over_job_id = jobs and jobs[0] or False
+            rec.button_carry_over_uuid = jobs and jobs[0].uuid or False
+        return True
+    
+    @api.multi
+    def action_done(self):
+        for rec in self:
+            rec.action_carry_over()
+        return True
+
+    @api.multi
+    def action_carry_over_background(self):
+        if self._context.get('button_carry_over_async_process', False):
+            self.ensure_one()
+            self.name = '{:03d}'.format(self.id)
+            if self._context.get('job_uuid', False):  # Called from @job
+                return self.action_done()
+            if self.button_carry_over_job_id:
+                message = ('Carry Over')
+                action = self.env.ref('pabi_utils.action_my_queue_job')
+                raise RedirectWarning(message, action.id, ('Go to My Jobs'))
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = '%s - Commitment Carry Over' % (self.doctype)
+            uuid = action_done_async_process.delay(
+                session, self._name, self.id, description=description)
+            job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+            # Process Name
+            #job.process_id = self.env.ref('pabi_async_process.'
+            #                              'confirm_pos_order')
+        else:
+            return self.action_done()
+        
+###########################--------------------------------- end job backgruond ------------------------------- #######################
 
 class BudgetCarryOverLine(models.Model):
     _name = 'budget.carry.over.line'
