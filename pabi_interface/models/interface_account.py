@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import time
 import logging
 from openerp import fields, models, api, _
 import openerp.addons.decimal_precision as dp
@@ -10,6 +11,21 @@ PURCHASE_JOURNAL = ['purchase', 'purchase_refund', 'purchase_debitnote']
 BANK_CASH = ['bank', 'cash']
 
 _logger = logging.getLogger(__name__)
+
+
+class InterfaceAccountEntryCheckExisting(models.TransientModel):
+    _name = 'interface.account.entry.check.existing'
+
+    doc_origin = fields.Char(
+        string='Document Origin',
+        required=True,
+        readonly=True
+    )
+    system = fields.Char(
+        string='System',
+        required=True,
+        readonly=True
+    )
 
 
 class InterfaceAccountEntry(models.Model):
@@ -674,26 +690,47 @@ class InterfaceAccountEntry(models.Model):
         return self.generate_interface_account_entry(data_dict)
 
     @api.model
-    #def _is_document_origin_exists(self, doc_origin):
     def _is_document_origin_exists(self, data_dict):
+        str_doc_origin = data_dict["name"]
+        str_type = data_dict["type"]
+        str_system = data_dict["system_id"]
+        
+        # 1. check existing doc_origin in check existing table
+        # for check double interface of document at same time
+        check_table = self.env["interface.account.entry.check.existing"]
+        dom = [("doc_origin", "=", str_doc_origin), 
+               ("system", "=", str_system)]
+        check_datas = check_table.search(dom)
+        
+        if not check_datas:
+            values = {}
+            values["doc_origin"] = data_dict["name"]
+            values["system"] = data_dict["system_id"]
+            res = check_table.create(values)
+            self._cr.commit()
+        else:
+            return True
+        
+        # 2. check existing doc_origin in interface table
         ia_table = self.env["interface.account.entry"]
         
         # if system_id = "mySales" do check exists
         # if system_id != "mySales" and type != "Reverse" do check exists 
-        dom = [("name", "=", data_dict["name"])]
-        ia_data = ia_table.search(dom)
+        dom = [("name", "=", str_doc_origin)]
+        ia_datas = ia_table.search(dom)
         
-        if not ia_data:
+        if not ia_datas:
             return False
         else:
-            if len(ia_data) > 1:
-                system = ia_data[0].system_id.name
+            if len(ia_datas) > 1:
+                system = ia_datas[0].system_id.name
             else:
-                system = ia_data.system_id.name
+                system = ia_datas.system_id.name
+                
             if system == "mySales":
                 return True  # check_existing
             else:
-                if data_dict["type"] != "Reverse":
+                if str_type != "Reverse":
                     return True  # check_existing
 
     @api.model
@@ -703,24 +740,32 @@ class InterfaceAccountEntry(models.Model):
     @api.model
     def generate_interface_account_entry(self, data_dict):
         _logger.info("IA - Input: %s" % data_dict)
-        
+                    
         # if origin document exists
         if self._is_document_origin_exists(data_dict):
             ia_table = self.env["interface.account.entry"]
             dom = [("name", "=", data_dict["name"])]
             ia_data = ia_table.search(dom)
-            err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
-            res = {
-                'is_success': False,
-                'result': False,
-                'messages': _(err_message) %
-                            (data_dict["name"], ia_data.number)
-                }
-            
-            # _logger.info("IA - Output: %s" % res)
+            if ia_data:
+                err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
+                res = {
+                    'is_success': False,
+                    'result': False,
+                    'messages': _(err_message) %
+                                (data_dict["name"], ia_data.number)
+                    }
+            else:
+                err_message = "ไม่สามารถ Interface ได้"
+                res = {
+                    'is_success': False,
+                    'result': False,
+                    'messages': _(err_message)
+                    }
+                
+            _logger.info("IA - Output: %s" % res)
+
             return res
         
-        # if origin not exists
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
             # For migration period, payment reconicle can be entry or item
@@ -735,12 +780,14 @@ class InterfaceAccountEntry(models.Model):
                     # Auto reassign to reconcile_move_line_id
                     l['reconcile_move_line_ref'] = l['reconcile_move_id']
                     del l['reconcile_move_id']
+
             # -
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
             if res['is_success']:
                 res_id = res['result']['id']
                 document = self.browse(res_id)
                 document.execute()
+                
                 # More info
                 res['result']['number'] = document.number
                 res['result']['fiscalyear'] = \
@@ -1122,3 +1169,4 @@ class InterfaceAccountChecker(models.AbstractModel):
         if float_compare(debit, credit, prec) != 0:
             raise ValidationError(
                 _('Interface Entry, %s, not balanced!') % inf.name)
+
