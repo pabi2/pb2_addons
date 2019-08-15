@@ -123,12 +123,16 @@ class SLAEmployeeView(models.Model):
             LEFT JOIN payment_export pe ON av.payment_export_id = pe.id
             LEFT JOIN hr_expense_expense ex ON ai.expense_id = ex.id
             LEFT JOIN hr_salary_expense sl ON sl.move_id = am_line.move_id
+            
+            LEFT JOIN res_partner rp ON ai.partner_id = rp.id
+            LEFT JOIN res_partner_category rpc ON rp.category_id = rpc.id
+            
             WHERE av.type = 'payment' AND av.state = 'posted'
-                AND pe.state = 'done' AND ex.pay_to != 'supplier'
+                AND pe.state = 'done' AND rpc.name in ('Supplier-ภาครัฐ','Supplier-ภาคเอกชน','พนักงาน สวทช.')
                 OR am_line.doctype = 'salary_expense'
         """ % (self._get_sql_select())
+        #AND ex.pay_to != 'supplier' 
         return sql_select
-
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
@@ -189,6 +193,15 @@ class XLSXReportSLAEmployee(models.TransientModel):
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
+    supplier_category_name = fields.Selection(
+        [('employee', 'พนักงาน สวทช'),
+         ('supplier', 'Supplier ภายนอก')],
+        string='Supplier Category',
+    )
+    async_process = fields.Boolean(
+        string='Run task in background?',
+        default=True,
+    )
 
     @api.multi
     def _compute_results(self):
@@ -204,6 +217,11 @@ class XLSXReportSLAEmployee(models.TransientModel):
         # dom = [('invoice_id.source_document_type', 'in',
         # ['advance', 'expense']),
         # ('expense_id.pay_to', '!=', 'supplier')]
+        if self.supplier_category_name:
+            if self.supplier_category_name == 'employee':
+                dom += [('pay_to', '=', 'employee')]
+            else:
+                dom += [('pay_to', '!=', 'employee')]
         if self.user_ids:
             dom += [('voucher_id.validate_user_id', 'in', self.user_ids.ids)]
         if self.source_document_type:
