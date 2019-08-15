@@ -204,8 +204,8 @@
                         'results': {
                             'A7': 'sr_name${value or ""}',
                             'B7': 'requester${value or ""}',
-                            'C7': 'project${value or ""}',
-                            'D7': 'section${value or ""}',
+                            'C7': 'section${value or ""}',
+							'D7': 'project_id${value or ""}',
                             'E7': 'requester_ou_name${value or ""}',
                             'F7': 'date_request${value or ""}#{number_format=date}',
                             'G7': 'date_confirm${value or ""}#{number_format=date}',

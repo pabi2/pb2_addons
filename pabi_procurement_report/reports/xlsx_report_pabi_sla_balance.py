@@ -115,6 +115,10 @@ class XLSXReportPabiSlaBalanceResults(models.Model):
         string='Date to Approve',
         readonly=True,
     )
+    project_id = fields.Char(
+        string='Project ID',
+        readonly=True,)
+    
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -124,37 +128,28 @@ class XLSXReportPabiSlaBalanceResults(models.Model):
         sr.operating_unit_id,
         org.id as org_id,
         sr.name as sr_name,
-        CONCAT(
-        COALESCE((SELECT value FROM ir_translation it
-        WHERE it.res_id = (SELECT rpt.id FROM res_users ru
-        LEFT JOIN hr_employee he
-        ON ru.login = he.employee_code
-        LEFT JOIN res_partner_title rpt
-        ON rpt.id = he.title_id
-        WHERE ru.id = sr.employee_id LIMIT 1) AND
-            it.name LIKE 'res.partner.title,name') || ' ', ''),
+        CONCAT((SELECT value FROM ir_translation it
+        Where it.res_id = hr.title_id AND
+            it.name LIKE 'res.partner.title,name' LIMIT 1),
+        ' ',
         (SELECT value FROM ir_translation it
-        WHERE it.res_id = (SELECT he.id FROM res_users ru
-        LEFT JOIN hr_employee he
-        ON ru.login = he.employee_code
-        WHERE ru.id = sr.employee_id) AND
+        WHERE it.res_id = sr.employee_id AND
             it.name LIKE 'hr.employee,first_name' LIMIT 1),
         ' ',
         (SELECT value FROM ir_translation it
-        WHERE it.res_id = (SELECT he.id FROM res_users ru
-        LEFT JOIN hr_employee he
-        ON ru.login = he.employee_code
-        WHERE ru.id = sr.employee_id) AND it.name LIKE 'hr.employee,last_name' LIMIT 1) 
+        WHERE it.res_id =  sr.employee_id AND it.name LIKE 'hr.employee,last_name' LIMIT 1) 
         ) as requester,
-         (
-        SELECT value FROM ir_translation it
-        WHERE it.res_id = (SELECT he.id FROM res_users ru
-        LEFT JOIN hr_employee he
-        ON ru.login = he.employee_code
-        LEFT JOIN res_section rs
-        ON  rs.id = he.section_id
-        WHERE ru.id = sr.employee_id  LIMIT 1) AND it.name LIKE 'res.section,name' LIMIT 1
-        ) as project,
+        prj.code as project_id,
+        prj.name as project,
+        --(
+        --SELECT value FROM ir_translation it
+        --WHERE it.res_id = (SELECT he.id FROM res_users ru
+        --LEFT JOIN hr_employee he
+        --ON ru.login = he.employee_code
+        --LEFT JOIN res_section rs
+        --ON  rs.id = he.section_id
+        --WHERE ru.id = sr.employee_id  LIMIT 1) AND it.name LIKE 'res.section,name' LIMIT 1
+        --) as project,
         (SELECT value FROM ir_translation it
         WHERE it.name LIKE 'res.section,name' AND it.res_id=sec.id LIMIT 1) as section,
         ou.name as requester_ou_name,
