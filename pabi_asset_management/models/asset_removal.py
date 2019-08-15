@@ -58,6 +58,10 @@ class AccountAssetRemoval(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
+    target_status_code = fields.Char(
+        string='Asset Status Code',
+        related = 'target_status.code'
+    )
     asset_count = fields.Integer(
         string='New Asset Count',
         compute='_compute_assset_count',
@@ -129,6 +133,23 @@ class AccountAssetRemoval(models.Model):
     @api.multi
     def action_draft(self):
         self.write({'state': 'draft'})
+        
+    @api.multi
+    def auto_post_account_move(self):
+        Asset = self.env['account.asset']
+        action = self.env.ref('account_asset_management.account_asset_action')
+        for removal in self:
+            asset_ids = removal.removal_asset_ids.mapped('asset_id').ids
+            assets_id = Asset.with_context(active_test=False).search([('id', 'in',
+                                                                    asset_ids)])
+            
+            for asset in assets_id:
+                res = asset.open_entries()
+                move_id = self.env['account.move'].search(res['domain'])
+                for move in move_id:
+                    if move.state == 'draft':
+                        move.line_id._check_account_move_line2()
+                        move.button_validate()
 
     @api.multi
     def _remove_confirmed_assets(self):
@@ -156,8 +177,10 @@ class AccountAssetRemoval(models.Model):
                     asset.deliver_to = rec.deliver_to
                     asset.deliver_date = rec.deliver_date
             assets.validate_asset_to_removal()
+            
         self._remove_confirmed_assets()
         self.write({'state': 'done'})
+        self.auto_post_account_move()
 
     @api.multi
     def action_cancel(self):

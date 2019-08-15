@@ -123,6 +123,75 @@ class AccountMoveLine(models.Model):
                 
         return search
     
+    
+    @api.multi
+    def _check_account_move_line2(self):
+        for rec in self:
+            #if rec.document_id:
+                #search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],'|',['origin','like','POS'],['origin','like','SR']])
+                #if search_picking:
+            #if ('asset_id' in vals) and (not move_line.taxbranch_id or not move_line.chartfield_id)
+            if rec.asset_id and (not rec.taxbranch_id or not rec.chartfield_id):
+                #move_line_ids = self.env['account.move.line'].search([('asset_id','=',rec.asset_id.id),('doctype','=','adjustment')],limit=1)
+                move_line_ids = self.env['account.move.line'].search([('asset_id','=',rec.asset_id.id),
+                                                                      ('move_id','=',rec.move_id.id),
+                                                                      ('taxbranch_id','!=',False),
+                                                                      ('id','!=',rec.id)], limit=1)
+                #move_ids = [x for x in move_line_ids if x.doctype =='adjustment']
+                if move_line_ids:#len(move_ids) == 2:
+                    #Debug err activity 
+                    rec.activity_id = move_line_ids.activity_id.id
+                    rec.activity_group_id = move_line_ids.activity_group_id.id,
+                    rec.activity_rpt_id = move_line_ids.activity_rpt_id.id,
+                    rec.costcenter_id = move_line_ids.costcenter_id.id,
+                    rec.chartfield_id = move_line_ids.chartfield_id.id,
+                    rec.org_id = move_line_ids.org_id.id,
+                    rec.fund_id = move_line_ids.fund_id.id,
+                    rec.taxbranch_id = move_line_ids.taxbranch_id.id
+            
+                    
+            """if not rec.chartfield_id:
+                search = self.search([['move_id','=',rec.move_id.id],
+                                      #['costcenter_id','!=',False],
+                                      #['org_id','!=',False]
+                                      #['chartfield_id','!=',False],
+                                      ['id','!=',rec.id]])#,limit=1)
+                for line in search:
+                    if line.chartfield_id and not rec.chartfield_id:
+                        rec.chartfield_id = line.chartfield_id.id
+                        rec.costcenter_id = line.costcenter_id.id
+                        rec.org_id = line.org_id.id
+                        rec.fund_id = line.fund_id.id
+                
+                if search:
+                    rec.chartfield_id = search.chartfield_id.id
+                    rec.costcenter_id = search.costcenter_id.id
+                    rec.org_id = search.org_id.id
+                    rec.fund_id = search.fund_id.id
+                else:
+                    search = self.search([['move_id','!=',rec.move_id.id],
+                                          ['document_id','=',rec.document_id.id],
+                                          ['product_id','=',rec.product_id.id],
+                                          #['chartfield_id','!=',False],
+                                          ['docline_seq','=',rec.docline_seq]],limit=1)
+                    if search:
+                        rec.chartfield_id = search.chartfield_id.id
+                        rec.costcenter_id = search.costcenter_id.id
+                        rec.org_id = search.org_id.id
+                        rec.fund_id = search.fund_id.id"""
+            """
+            if rec.chartfield_id:
+                search = self.search([['move_id','=',rec.move_id.id],['chartfield_id','=',False]])
+    
+                for record in search:
+                    record.write({
+                                'costcenter_id':rec.costcenter_id.id,
+                                'org_id':rec.org_id.id,
+                                'fund_id':rec.fund_id.id,
+                                'chartfield_id':rec.chartfield_id.id
+                        })
+            """
+    
     @api.multi
     def _check_account_move_line(self):
         if self.document_id:
@@ -226,30 +295,34 @@ class AccountMoveLine(models.Model):
                         Analytic.create_matched_analytic(move_line.asset_id)
         move_line._check_account_move_line()
         #update move line               
-        if move_line.move_id.name =='/' and ('taxbranch_id' in vals) and ('asset_id' in vals):
-            move_line_ids = self.env['account.move.line'].search([('asset_id','=',vals['asset_id'])])
-            move_ids = [x for x in move_line_ids if x.doctype =='adjustment']
-            if len(move_ids) == 2:
+        #if move_line.move_id.name =='/' and ('taxbranch_id' in vals) and ('asset_id' in vals):
+        """if ('asset_id' in vals) and (not move_line.taxbranch_id or not move_line.chartfield_id):
+            #if not move_line.taxbranch_id or not move_line.chartfield_id:
+            aa = move_line.asset_id.id
+            bb = move_line.move_id.id
+            cc = move_line.id
+            move_line_ids = self.env['account.move.line'].search([('asset_id','=', move_line.asset_id.id),
+                                                                  ('taxbranch_id','!=', False),
+                                                                  ('id','!=', move_line.id)], limit=1)
+            #move_ids = [x for x in move_line_ids if x.doctype =='adjustment']
                 #Debug err activity 
-                move_ids[1].activity_rpt_id = move_ids[0].activity_rpt_id.id
-                if not move_ids[1].activity_id:
-                    data = {
-                            #Activity Group
-                            'activity_group_id': move_ids[0].activity_group_id.id,
-                            #Activity Rpt
-                            'activity_rpt_id': move_ids[0].activity_rpt_id.id,
-                            #Costcenter
-                            'costcenter_id': move_ids[0].costcenter_id.id,
-                            #budget 
-                            'chartfield_id': move_ids[0].chartfield_id.id,
-                            #org 
-                            'org_id': move_ids[0].org_id.id,
-                            #fund
-                            'fund_id': move_ids[0].fund_id.id,
-                            #tax branch
-                            'taxbranch_id':move_ids[0].taxbranch_id.id
-                            }
-                    move_ids[1].update(data)
+            data = {
+                    #Activity Group
+                    'activity_group_id': move_line_ids.activity_group_id.id,
+                    #Activity Rpt
+                    'activity_rpt_id': move_line_ids.activity_rpt_id.id,
+                    #Costcenter
+                    'costcenter_id': move_line_ids.costcenter_id.id,
+                    #budget 
+                    'chartfield_id': move_line_ids.chartfield_id.id,
+                    #org 
+                    'org_id': move_line_ids.org_id.id,
+                    #fund
+                    'fund_id': move_line_ids.fund_id.id,
+                    #tax branch
+                    'taxbranch_id':move_line_ids.taxbranch_id.id
+                    }
+            move_line.update(data)"""
         return move_line
     
     
