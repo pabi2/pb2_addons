@@ -325,7 +325,7 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 		<band height="37">
 			<printWhenExpression><![CDATA[$F{invoice_description} != null]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="76" y="0" width="184" height="37"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="76" y="0" width="314" height="37"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -336,7 +336,7 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 ($F{loan_agreement_id} != null ? $F{bank_name} : "")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="76" y="0" width="106" height="37">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="76" y="0" width="313" height="37">
 					<printWhenExpression><![CDATA[$F{loan_installment_description} != null && $F{loan_installment_description} != ""]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Single">
