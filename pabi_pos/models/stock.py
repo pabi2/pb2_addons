@@ -16,3 +16,4 @@ class StockMove(models.Model):
                 picking.move_lines.write({
                     'location_id': picking.workflow_process_id.location_id.id})
         return res
+
