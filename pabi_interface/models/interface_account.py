@@ -697,7 +697,6 @@ class InterfaceAccountEntry(models.Model):
     def _is_document_origin_exists(self, data_dict):
         str_doc_origin = data_dict["name"]
         str_type = data_dict["type"]
-        str_system = data_dict["system_id"]
         
         # 1. check existing doc_origin in check existing table
         # for check double interface of document at same time
@@ -709,7 +708,7 @@ class InterfaceAccountEntry(models.Model):
         else:
             dom = [("doc_origin", "=", str_doc_origin),
                    ("type", "=", "post")
-                   ("system", "=", str_system)]
+                   ("system", "=", data_dict["system_id"])]
             
         check_datas = check_table.search(dom)
         
@@ -720,7 +719,7 @@ class InterfaceAccountEntry(models.Model):
                 values["type"] = "reverse"
             else:
                 values["type"] = "post"
-                values["system"] = str_system
+                values["system"] = data_dict["system_id"]
             res = check_table.create(values)
             self._cr.commit()
         else:
