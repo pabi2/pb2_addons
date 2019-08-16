@@ -707,7 +707,7 @@ class InterfaceAccountEntry(models.Model):
                    ("type", "=", "reverse")]
         else:
             dom = [("doc_origin", "=", str_doc_origin),
-                   ("type", "=", "post")
+                   ("type", "=", "post"),
                    ("system", "=", data_dict["system_id"])]
             
         check_datas = check_table.search(dom)
