@@ -174,8 +174,8 @@
                             'N9': 'product_category_name${value or ""}',
                             'O9': 'wa_name${value or ""}',
                             'P9': 'date_accept${value or ""}#{number_format=date}',
-                            'O9': 'supplier_invoice${value or ""}',
-                            'P9': 'date_receive${value or ""}#{number_format=date}',
+                            'Q9': 'supplier_invoice${value or ""}',
+                            'R9': 'date_receive${value or ""}#{number_format=date}',
                         },
                         '_TAIL_0': {
                         }
