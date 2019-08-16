@@ -23,6 +23,10 @@ class InterfaceAccountEntryCheckExisting(models.TransientModel):
     )
     system = fields.Char(
         string='System',
+        readonly=True
+    )
+    type = fields.Char(
+        string='Type',
         required=True,
         readonly=True
     )
@@ -693,19 +697,29 @@ class InterfaceAccountEntry(models.Model):
     def _is_document_origin_exists(self, data_dict):
         str_doc_origin = data_dict["name"]
         str_type = data_dict["type"]
-        str_system = data_dict["system_id"]
         
         # 1. check existing doc_origin in check existing table
         # for check double interface of document at same time
         check_table = self.env["interface.account.entry.check.existing"]
-        dom = [("doc_origin", "=", str_doc_origin), 
-               ("system", "=", str_system)]
+        
+        if str_type == "Reverse":
+            dom = [("doc_origin", "=", str_doc_origin),
+                   ("type", "=", "reverse")]
+        else:
+            dom = [("doc_origin", "=", str_doc_origin),
+                   ("type", "=", "post"),
+                   ("system", "=", data_dict["system_id"])]
+            
         check_datas = check_table.search(dom)
         
         if not check_datas:
             values = {}
-            values["doc_origin"] = data_dict["name"]
-            values["system"] = data_dict["system_id"]
+            values["doc_origin"] = str_doc_origin
+            if str_type == "Reverse":
+                values["type"] = "reverse"
+            else:
+                values["type"] = "post"
+                values["system"] = data_dict["system_id"]
             res = check_table.create(values)
             self._cr.commit()
         else:
