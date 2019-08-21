@@ -2,6 +2,9 @@
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from openerp.tools.float_utils import float_compare
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountAssetTransfer(models.Model):
@@ -263,6 +266,8 @@ class AccountAssetTransfer(models.Model):
 
     @api.multi
     def action_done(self):
+        _logger.info("----------------------------------------")
+        _logger.info(self)
         for rec in self:
             rec._validate_asset_values()
             rec._transfer_new_asset()
