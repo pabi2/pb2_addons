@@ -174,8 +174,8 @@
                             'N9': 'product_category_name${value or ""}',
                             'O9': 'wa_name${value or ""}',
                             'P9': 'date_accept${value or ""}#{number_format=date}',
-                            'O9': 'supplier_invoice${value or ""}',
-                            'P9': 'date_receive${value or ""}#{number_format=date}',
+                            'Q9': 'supplier_invoice${value or ""}',
+                            'R9': 'date_receive${value or ""}#{number_format=date}',
                         },
                         '_TAIL_0': {
                         }
@@ -492,16 +492,17 @@
                         },
                         'results': {
                             'A8': '${"=ROW()-7"}',
-                            'B8': 'po_name${value or ""}',
-                            'C8': 'po_date${value or ""}#{number_format=date}',
-                            'D8': 'pol_name${value or ""}',
-                            'E8': 'product_qty${value or ""}',
-                            'F8': 'uom_name${value or ""}',
-                            'G8': 'amount_total#{number_format=number}',
-                            'H8': '${"=?(G8)*?(E8)"}',
-                            'I8': 'currency#{number_format=number}',
-                            'J8': 'is_green_product${value or ""}',
-                            'K8': 'is_innovation${value or ""}',
+                            'B8': 'operating_unit_id.name${value or ""}#{number_format=text}',
+                            'C8': 'po_name${value or ""}',
+                            'D8': 'po_date${value or ""}#{number_format=date}',
+                            'E8': 'pol_name${value or ""}',
+                            'F8': 'product_qty${value or ""}',
+                            'G8': 'uom_name${value or ""}',
+                            'H8': 'amount_total#{number_format=number}',
+                            'I8': '${"=?(H8)*?(F8)"}',
+                            'J8': 'currency#{number_format=number}',
+                            'K8': 'is_green_product${value or ""}',
+                            'L8': 'is_innovation${value or ""}',
                         },
                         '_TAIL_0': {
                         }
