@@ -186,4 +186,5 @@ class XLSXReportPabiGreenProductSummaryResults(models.Model):
         WHERE rp.supplier = True
         AND rp.employee = False
         AND po.state not in ('cancel' ,'draft')
+        AND po.order_type = 'purchase_order' 
         )""" % (self._table, ))
