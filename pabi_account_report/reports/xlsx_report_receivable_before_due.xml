@@ -43,6 +43,7 @@
             name="Receivable Before Due"
             parent="menu_pabi_receivable_report"
             action="action_xlsx_report_receivable_before_due_form"
+            groups="account.group_account_manager,account.group_account_user"
             sequence="108"/>
     </data>
 </openerp>

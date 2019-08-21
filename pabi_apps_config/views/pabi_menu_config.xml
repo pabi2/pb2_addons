@@ -211,13 +211,15 @@
         # Move Bank Receipt to under Customers
         <menuitem name="Accounting"
             id="account.menu_finance"
-            groups="account.group_account_manager,account.group_account_user"
+            groups="account.group_account_manager,account.group_account_user,group_cd_report"
             sequence="50"/>
 
         <menuitem id="account.menu_finance_receivables" name="Customers"
-          parent="account.menu_finance" sequence="1"/>
+          parent="account.menu_finance" sequence="1"
+          groups="account.group_account_user,account.group_account_manager"/>
         <menuitem id="account.menu_finance_payables" name="Suppliers"
-          parent="account.menu_finance" sequence="2"/>
+          parent="account.menu_finance" sequence="2"
+          groups="account.group_account_user,account.group_account_manager"/>
         <menuitem id="payment_export.menu_payment_export" name="Payment Exports"
           parent="account.menu_finance" sequence="3"
           groups="account.group_account_user,account.group_account_manager"/>

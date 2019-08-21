@@ -29,6 +29,7 @@
             name="SLA Receipt"
             parent="menu_pabi_receivable_report"
             action="action_xlsx_report_sla_receipt_form"
+            groups="account.group_account_manager,account.group_account_user"
             sequence="101"/>
     </data>
 </openerp>

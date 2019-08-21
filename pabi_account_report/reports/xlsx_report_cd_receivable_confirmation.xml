@@ -42,6 +42,7 @@
             name="CD Receivable Confirmation"
             parent="menu_pabi_receivable_report"
             action="action_xlsx_report_cd_receivable_confirmation_form"
+            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"
             sequence="30"/>
     </data>
 </openerp>

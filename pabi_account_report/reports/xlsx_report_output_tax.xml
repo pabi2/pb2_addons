@@ -42,6 +42,7 @@
             name="Output Tax"
             parent="menu_pabi_receivable_report"
             action="action_xlsx_report_output_tax_form"
+            groups="account.group_account_manager,account.group_account_user"
             sequence="10"/>
     </data>
 </openerp>

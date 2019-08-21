@@ -8,5 +8,12 @@
             <field name="category_id" ref="pabi_base.module_category_nstda_admin"/>
         </record>
 
+		#CD Receivable
+		<record id="group_cd_report" model="res.groups">
+            <field name="name">CD Receivable Reports</field>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="category_id" ref="base.module_category_accounting_and_finance"/> 	
+        </record>
+		
     </data>
 </openerp>

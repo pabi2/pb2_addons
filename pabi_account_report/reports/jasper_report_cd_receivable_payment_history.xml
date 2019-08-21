@@ -48,6 +48,7 @@
             name="CD Receivable Payment History"
             parent="menu_pabi_receivable_report"
             action="action_jasper_report_cd_receivable_payment_history_form"
+            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"
             sequence="10"/>
     </data>
 </openerp>

@@ -1,3 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_loan_bank_mou,access_loan_bank_mou,model_loan_bank_mou,account.group_account_user,1,1,1,1
 access_loan_customer_agreement,access_loan_customer_agreement,model_loan_customer_agreement,account.group_account_user,1,1,1,1
+access_loan_customer_agreement,access_loan_customer_agreement,model_loan_customer_agreement,pabi_apps_config.group_cd_report,1,0,0,0
+access_sale_order,access_sale_order,model_sale_order,pabi_apps_config.group_cd_report,1,0,0,0
+access_account_invoice_uinvoice,access_account_invoice_uinvoice,model_account_invoice,pabi_apps_config.group_cd_report,1,0,0,0
+access_loan_bank_mou,access_loan_bank_mou,model_loan_bank_mou,pabi_apps_config.group_cd_report,1,0,0,0

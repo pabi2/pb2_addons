@@ -40,6 +40,7 @@
             name="Preprint Receipt"
             parent="menu_pabi_receivable_report"
             action="action_xlsx_report_preprint_receipt_form"
+            groups="account.group_account_manager,account.group_account_user"
             sequence="130"/>
     </data>
 </openerp>
