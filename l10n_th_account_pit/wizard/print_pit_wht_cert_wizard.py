@@ -77,12 +77,13 @@ class PrintPITWhtCertWizard(models.TransientModel):
         pit_lines = self.supplier_partner_id.pit_line.filtered(
             lambda l: l.calendar_year == self.calendaryear_id.calendar_name)
         for line in pit_lines.filtered(lambda l:
-                                       l.voucher_id.state == 'posted'):
+                                       l.voucher_id.state == 'posted'): #line == personal_income_type
             wht_line = WHTLine.new()
             wht_line.voucher_id = line.voucher_id
             wht_line.date = line.date
             wht_line.base = line.amount_income
             wht_line.amount = -line.amount_wht
+            wht_line.income_type = line.wht_cert_income_type
             self.wht_line += wht_line
 
     @api.multi
@@ -107,8 +108,8 @@ class PrintPITWhtCertWizard(models.TransientModel):
         supplier = self.supplier_partner_id
         if not company.vat or not supplier.vat:
             raise ValidationError(_('No Tax ID on Company or Supplier'))
-        data['company_name'] = company.display_name
-        data['supplier_name'] = supplier.display_name
+        data['company_name'] = company.display_name2
+        data['supplier_name'] = supplier.display_name2
         company_taxid = len(company.vat) == 13 and company.vat or ''
         data['company_taxid'] = list(company_taxid)
         supplier_taxid = len(supplier.vat) == 13 and supplier.vat or ''
@@ -116,21 +117,35 @@ class PrintPITWhtCertWizard(models.TransientModel):
         data['company_address'] = self.company_address
         data['supplier_address'] = self.supplier_address
         data['buddha_year'] = int(self.calendaryear_id.calendar_name) + 543
+        data['type1_tax'] = self._get_summary_by_type('tax','1')
+        data['type2_tax'] = self._get_summary_by_type('tax','2')
+        data['type1_base'] = self._get_summary_by_type('base','1')
+        data['type2_base'] = self._get_summary_by_type('base','2')
         data['total_base'] = self._get_summary_by_type('base')
         data['total_tax'] = self._get_summary_by_type('tax')
-        data['signature'] = self.with_context(TH).env.user.display_name
+        data['signature'] = self.with_context(TH).env.user.display_name2
+        if self.with_context(TH).env.user.partner_id.sign_image  == None:
+            data['sign_image'] = ""
+        else:
+            data['sign_image'] = self.with_context(TH).env.user.partner_id.sign_image 
+#         data['sign_image'] =   supplier.sign_image
         return data
 
     @api.model
     def _get_summary_by_type(self, column, ttype='all'):
         wht_lines = self.wht_line
+        if ttype != 'all':
+            wht_lines = wht_lines.filtered(lambda l:
+                                           l.income_type == ttype)
         if column == 'base':
             return abs(sum(wht_lines.filtered(
                 lambda l: l.voucher_id.state == 'posted').mapped('base')))
         if column == 'tax':
             return abs(sum(wht_lines.filtered(
                 lambda l: l.voucher_id.state == 'posted').mapped('amount')))
-
+    
+  
+            
     @api.model
     def _prepare_address(self, partner):
         address_list = [partner.street, partner.street2, partner.city,
@@ -164,5 +179,9 @@ class PITWhtCertTaxLine(models.TransientModel):
     )
     amount = fields.Float(
         string='Tax Amount',
+        readonly=True,
+    )
+    income_type = fields.Char(
+        string='Income Type',
         readonly=True,
     )
