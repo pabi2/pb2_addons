@@ -36,8 +36,11 @@
                                 <field name="journal_id"/>
                                 <field name="date_remove"/>
                                 <field name="target_status"/>
-                                <field name="deliver_to" attrs="{'invisible': [('target_status', '!=', 2)], 'required': [('target_status', '=', 2)]}" />
-                                <field name="deliver_date" attrs="{'invisible': [('target_status', '!=', 2)], 'required': [('target_status', '=', 2)]}"/>
+                                <field name="target_status_code" invisible="1"/>
+                                <field name="deliver_to" attrs="{'invisible': [('target_status_code', '!=', 'deliver')], 
+                                							'required': [('target_status_code', '=', 'deliver')]}" />
+                                <field name="deliver_date" attrs="{'invisible': [('target_status_code', '!=', 'deliver')], 
+                                								'required': [('target_status_code', '=', 'deliver')]}"/>
                             </group>
                         </group>
                         <notebook>
