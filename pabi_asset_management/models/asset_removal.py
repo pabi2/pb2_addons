@@ -148,7 +148,7 @@ class AccountAssetRemoval(models.Model):
                 move_id = self.env['account.move'].search(res['domain'])
                 for move in move_id:
                     if move.state == 'draft':
-                        move.line_id._check_account_move_line2()
+                        move.line_id._check_asset_move_line()
                         move.button_validate()    
     
     @api.multi
