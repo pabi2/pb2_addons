@@ -59,4 +59,5 @@ class StockTransferDetails(models.TransientModel):
                                       'installment': wa.installment,
                                       'num_installment': wa.num_installment})
         res = super(StockTransferDetails, self).do_detailed_transfer()
+        _logger.info("res: %s", str(res))
         return res
