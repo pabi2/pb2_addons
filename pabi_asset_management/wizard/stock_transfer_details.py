@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
 from openerp.exceptions import ValidationError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class StockTransferDetails(models.TransientModel):
@@ -46,6 +49,7 @@ class StockTransferDetails(models.TransientModel):
 
     @api.multi
     def do_detailed_transfer(self):
+        _logger.info("pabi_asset_management/wizard/stock_transfer_details")
         self.ensure_one()
         self._validate_asset_line()
         # Pass Installament information to Asset

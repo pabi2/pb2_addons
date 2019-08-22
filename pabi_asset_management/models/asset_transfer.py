@@ -266,8 +266,6 @@ class AccountAssetTransfer(models.Model):
 
     @api.multi
     def action_done(self):
-        _logger.info("----------------------------------------")
-        _logger.info(self)
         for rec in self:
             rec._validate_asset_values()
             rec._transfer_new_asset()
@@ -445,14 +443,6 @@ class AccountAssetTransfer(models.Model):
             if asset.partner_id:
                 partner_ids.append(asset.partner_id.id)
             if asset.purchase_value:
-                _logger.info("project: %s", 
-                             str(asset.owner_project_id.id))
-                _logger.info("section: %s", 
-                             str(asset.owner_section_id.id))
-                _logger.info("invest_asset: %s", 
-                             str(asset.owner_invest_asset_id.id))
-                _logger.info("invest_construction_phase: %s", 
-                             str(asset.owner_invest_construction_phase_id.id))
                 move_lines += [
                     # -------------------- OLD OWNER ----------------------
                     # Cr Asset Value (Old)
@@ -497,7 +487,6 @@ class AccountAssetTransfer(models.Model):
                         asset.owner_invest_construction_phase_id.id,
                      },
                 ]
-            _logger.info("move_lines: %s", str(move_lines))
         # All source assset must has single partner
         partner_ids = list(set(partner_ids))
         if len(partner_ids) != 1:
@@ -568,7 +557,6 @@ class AccountAssetTransfer(models.Model):
                 move_lines.append(new_depre_dict)
         # Finalize all moves before create it.
         final_move_lines = [(0, 0, x) for x in move_lines]
-        _logger.info("final_move_lines: %s", str(final_move_lines))
         move_dict = {'journal_id': new_journal.id,
                      'line_id': final_move_lines,
                      'period_id': Period.find(self.date).id,

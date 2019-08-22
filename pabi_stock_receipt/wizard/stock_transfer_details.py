@@ -2,6 +2,9 @@
 
 from openerp import models, api, _
 from openerp.exceptions import ValidationError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class StockTransferDetails(models.TransientModel):
@@ -9,6 +12,7 @@ class StockTransferDetails(models.TransientModel):
 
     @api.one
     def do_detailed_transfer(self):
+        _logger.info("pabi_stock_receipt/wizard/stock_transfer_details")
         skip_wa = self._context.get('skip_work_acceptance', False) or \
             self._context.get('order_type') == 'sale_order'  # No WA in SO
         picking = self.picking_id

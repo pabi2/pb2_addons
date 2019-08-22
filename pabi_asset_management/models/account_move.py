@@ -51,15 +51,6 @@ class AccountMoveLine(models.Model):
     
     @api.model
     def _prepare_asset_vals(self, move_line):
-        _logger.info("move_line: %s", str(move_line))
-        _logger.info("move_line.section_id.id: %s", 
-                     str(move_line.section_id.id))
-        _logger.info("move_line.project_id.id: %s", 
-                     str(move_line.project_id.id))
-        _logger.info("move_line.invest_asset_id.id: %s", 
-                     str(move_line.invest_asset_id.id))
-        _logger.info("move_line.invest_construction_phase_id.id: %s", 
-                     str(move_line.invest_construction_phase_id.id))
         sequence = move_line.product_id.sequence_id
         if not sequence:
             raise ValidationError(_('No asset sequence setup!'))
@@ -107,7 +98,6 @@ class AccountMoveLine(models.Model):
             vals.update({'installment': installment,
                          'num_installment': num_installment,
                          })
-        _logger.info("vals: %s", str(vals))
         # --
         if not (vals['section_id'] or vals['project_id'] or
                 vals['invest_asset_id'] or
