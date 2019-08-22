@@ -51,6 +51,12 @@ class BudgetCarryOver(models.Model):
         required=True,
         states={'draft': [('readonly', False)]},
     )
+    org_id = fields.Many2one(
+        'res.org',
+        string='Org',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     line_ids = fields.One2many(
         'budget.carry.over.line',
         'carry_over_id',
@@ -225,10 +231,13 @@ class BudgetCarryOver(models.Model):
         for rec in self:
             rec.line_ids.unlink()
             lines = []
+            org = ''
             doctypes = [rec.doctype]
             if rec.doctype == 'all':
                 doctypes = ['purchase_request', 'sale_order',
                             'purchase_order', 'employee_expense']
+            if rec.org_id:
+                org = 'org_id = '+str(rec.org_id.id)
             self._cr.execute("""
             select * from (
                 select doctype, document, document_line,
@@ -238,12 +247,12 @@ class BudgetCarryOver(models.Model):
                 from budget_consume_report rpt
                 join account_fiscalyear fiscal
                     on rpt.fiscalyear_id = fiscal.id
-                where fiscal.date_start < %s and doctype in %s
+                where fiscal.date_start < %s and doctype in %s %s
                 and rpt.budget_commit_type != 'actual'
                 group by doctype, document, document_line,
                     purchase_request_line_id, sale_line_id,
                     purchase_line_id, expense_line_id) a
-            """, (rec.fiscalyear_id.date_start, tuple(doctypes)))
+            """, (rec.fiscalyear_id.date_start, tuple(doctypes), org))
             result = self._cr.dictfetchall()
             for r in result:
                 vals = {
@@ -262,7 +271,6 @@ class BudgetCarryOver(models.Model):
     def action_carry_over(self):
         self = self.sudo()
         self.name = '{:03d}'.format(self.id)
-        self.compute_commit_docs()
         for rec in self:
             sale_lines = rec.line_ids.mapped('sale_line_id')
             request_lines = \
