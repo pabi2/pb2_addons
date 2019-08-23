@@ -500,10 +500,10 @@ class AccountAsset(ChartFieldAction, models.Model):
     @api.multi
     def validate_asset_to_removal(self):
         invalid_assets = len(self.filtered(lambda l: l.type != 'normal' or
-                                           l.state != 'open'))
+                                           l.state not in ('open','close')))
         if invalid_assets > 0:
             raise ValidationError(
-                _('Please select only running assets!'))
+                _('Please select running or close assets!'))
         return True
 
     @api.multi

@@ -157,7 +157,7 @@ class AccountAssetRemoval(models.Model):
             if not removal.removal_asset_ids:
                 raise ValidationError(_('No asset to remove!'))
             for line in removal.removal_asset_ids:
-                if line.asset_id.state != 'open':
+                if line.asset_id.state not in ('open','close'):
                     continue
                 asset = line.asset_id
                 ctx = {'active_ids': [asset.id], 'active_id': asset.id,
