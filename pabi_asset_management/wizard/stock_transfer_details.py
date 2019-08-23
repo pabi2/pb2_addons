@@ -67,4 +67,17 @@ class StockTransferDetails(models.TransientModel):
         
         account_asset = self.env["account.asset"]
         asset_ids = account_asset.search([["picking_id", "=", picking.id]])
+        _logger.info("asset_ids: %s", str(asset_ids))
+        
+        assets = account_asset.browse(asset_ids)
+        for asset in assets:
+            _logger.info("section_id: %s", str(asset.section_id))
+            _logger.info("project_id: %s", str(asset.project_id))
+            _logger.info("invest_asset_id", str(asset.invest_asset_id))
+            _logger.info("invest_construction_phase_id", str(asset.invest_construction_phase_id))
+            
+            _logger.info("owner_section_id: %s", str(asset.owner_section_id))
+            _logger.info("owner_project_id: %s", str(asset.owner_project_id))
+            _logger.info("owner_invest_asset_id", str(asset.owner_invest_asset_id))
+            _logger.info("owner_invest_construction_phase_id", str(asset.owner_invest_construction_phase_id))
         return res
