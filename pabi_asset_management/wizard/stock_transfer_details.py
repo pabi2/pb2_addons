@@ -56,8 +56,15 @@ class StockTransferDetails(models.TransientModel):
         # Pass Installament information to Asset
         wa = self.picking_id.acceptance_id
         if wa:
-            self = self.with_context({'work_acceptance_id': wa.id,
-                                      'installment': wa.installment,
-                                      'num_installment': wa.num_installment})
+            self = self.with_context({"work_acceptance_id": wa.id,
+                                      "installment": wa.installment,
+                                      "num_installment": wa.num_installment})
         res = super(StockTransferDetails, self).do_detailed_transfer()
+        
+        picking = self.picking_id
+        _logger.info("picking_id: %s", str(picking.id))
+        _logger.info("picking.move_lines: %s", str(picking.move_lines))
+        
+        account_asset = self.env["account.asset"]
+        asset_ids = account_asset.search([["picking_id", "=", picking.id]])
         return res

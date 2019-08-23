@@ -32,7 +32,6 @@ class StockTransferDetails(models.TransientModel):
                 item['quantity'] = new_qty
                 new_item_ids.append(item)
             res['item_ids'] = new_item_ids
-        _logger.info("res: %s", str(res))
         return res
 
     @api.model
@@ -50,8 +49,6 @@ class StockTransferDetails(models.TransientModel):
         skip_wa = self._context.get('skip_work_acceptance', False) or \
             self._context.get('order_type') == 'sale_order'  # No WA in SO
         picking = self.picking_id
-        _logger.info("picking: %s", str(picking))
-        _logger.info("picking.move_lines: %s", str(picking.move_lines))
         if picking.picking_type_code == 'incoming' and not skip_wa:
             transfer_qty = self._product_summary_qty(self.item_ids,
                                                      'quantity')
