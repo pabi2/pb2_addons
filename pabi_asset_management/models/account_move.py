@@ -134,9 +134,9 @@ class AccountMoveLine(models.Model):
                 
                 if move_line_ids:
                     rec.update({
-                                'activity_group_id': move_line_ids.activity_group_id.id,
-                                'activity_rpt_id': move_line_ids.activity_rpt_id.id,
-                                'activity_id': move_line_ids.activity_id.id,
+                                #'activity_rpt_id': move_line_ids.activity_rpt_id.id,
+                                #'activity_id': move_line_ids.activity_id.id,
+                                #'activity_group_id': move_line_ids.activity_group_id.id,
                                 'costcenter_id': move_line_ids.costcenter_id.id,
                                 'chartfield_id': move_line_ids.chartfield_id.id,
                                 'org_id': move_line_ids.org_id.id,
