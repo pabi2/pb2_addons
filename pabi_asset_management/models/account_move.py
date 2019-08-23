@@ -132,16 +132,16 @@ class AccountMoveLine(models.Model):
                                                                       ('taxbranch_id','!=',False),
                                                                       ('id','!=',rec.id)], limit=1)
                 
-                if move_line_ids:#len(move_ids) == 2:
-                    #Debug err activity 
-                    rec.activity_id = move_line_ids.activity_id.id
-                    rec.activity_group_id = move_line_ids.activity_group_id.id,
-                    rec.activity_rpt_id = move_line_ids.activity_rpt_id.id,
-                    rec.costcenter_id = move_line_ids.costcenter_id.id,
-                    rec.chartfield_id = move_line_ids.chartfield_id.id,
-                    rec.org_id = move_line_ids.org_id.id,
-                    rec.fund_id = move_line_ids.fund_id.id,
-                    rec.taxbranch_id = move_line_ids.taxbranch_id.id
+                if move_line_ids:
+                    move_line.update({
+                                    'activity_group_id': move_line_ids.activity_group_id.id,
+                                    'activity_rpt_id': move_line_ids.activity_rpt_id.id,
+                                    'costcenter_id': move_line_ids.costcenter_id.id,
+                                    'chartfield_id': move_line_ids.chartfield_id.id,
+                                    'org_id': move_line_ids.org_id.id,
+                                    'fund_id': move_line_ids.fund_id.id,
+                                    'taxbranch_id': move_line_ids.taxbranch_id.id
+                    })
     
     
     @api.multi
