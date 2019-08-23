@@ -41,8 +41,6 @@ class StockTransferDetails(models.TransientModel):
     def _validate_asset_line(self):
         for rec in self:
             for line in rec.item_ids:
-                _logger.info("line.product_id.asset: %s",
-                             str(line.product_id.asset))
                 if line.product_id.asset and line.quantity and \
                         not line.quantity.is_integer():
                     raise ValidationError(_('For asset, quantity '
@@ -69,8 +67,10 @@ class StockTransferDetails(models.TransientModel):
         asset_ids = account_asset.search([["picking_id", "=", picking.id]])
         _logger.info("asset_ids: %s", str(asset_ids))
         
-        assets = account_asset.browse(asset_ids)
-        for asset in assets:
+        for asset_id in asset_ids:
+            _logger.info("asset_id: %s", str(asset_id.id))
+            asset = account_asset.browse(asset_id.id)
+            
             _logger.info("section_id: %s", str(asset.section_id))
             _logger.info("project_id: %s", str(asset.project_id))
             _logger.info("invest_asset_id", str(asset.invest_asset_id))
