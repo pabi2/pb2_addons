@@ -71,6 +71,29 @@ class StockTransferDetails(models.TransientModel):
             _logger.info("asset_id: %s", str(asset_id.id))
             asset = account_asset.browse(asset_id.id)
             
+            _logger.info("")
+            _logger.info("--------------------- BEFORE ---------------------")
+            _logger.info("section_id: %s", str(asset.section_id.id))
+            _logger.info("project_id: %s", str(asset.project_id.id))
+            _logger.info("invest_asset_id")
+            _logger.info(asset.invest_asset_id.id)
+            _logger.info("invest_construction_phase_id")
+            _logger.info(asset.invest_construction_phase_id.id)
+            
+            _logger.info("owner_section_id: %s", str(asset.owner_section_id.id))
+            _logger.info("owner_project_id: %s", str(asset.owner_project_id.id))
+            _logger.info("owner_invest_asset_id")
+            _logger.info(asset.owner_invest_asset_id.id)
+            _logger.info("owner_invest_construction_phase_id")
+            _logger.info(asset.owner_invest_construction_phase_id.id)
+            
+            asset.write({"owner_section_id": asset.section_id.id,
+                         "owner_project_id": asset.project_id.id,
+                         "owner_invest_asset_id": asset.invest_asset_id.id,
+                         "owner_invest_construction_phase_id": asset.invest_construction_phase_id.id,})
+            
+            _logger.info("")
+            _logger.info("--------------------- AFTER ---------------------")
             _logger.info("section_id: %s", str(asset.section_id.id))
             _logger.info("project_id: %s", str(asset.project_id.id))
             _logger.info("invest_asset_id")
