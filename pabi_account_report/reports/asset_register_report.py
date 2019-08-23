@@ -385,18 +385,21 @@ class AssetRegisterReport(models.TransientModel):
                 case when a.owner_section_id is not null then
                         rs.subsector_id
                      else null end as owner_subsector_id,
+                     
                 -- depreciation
-                (select coalesce(sum(debit-credit), 0.0)
-                 from account_move_line ml
-                 where account_id in %s  -- depreciation account
-                 and ml.date between %s and %s
-                 and asset_id = a.id) depreciation,
+                (select coalesce(sum(line.amount), 0.0)
+                 from account_asset asset
+                 left join account_asset_line line on line.asset_id = asset.id
+                 where line.line_date between %s and %s and move_check = 'true'
+                 and asset.code = a.code and line.type = 'depreciate') depreciation,
+                 
                 -- accumulated_cf
                 (select coalesce(sum(credit-debit), 0.0)
                  from account_move_line ml
                  where account_id in %s  -- accumulated account
                  and ml.date <= %s -- date end
                  and asset_id = a.id) accumulated_cf,
+                 
                 -- accumulated_bf
                 (select coalesce(sum(credit-debit), 0.0)
                  from account_move_line ml
@@ -405,6 +408,7 @@ class AssetRegisterReport(models.TransientModel):
                  and asset_id = a.id) accumulated_bf
             from
             account_asset a
+            
             left join account_asset_profile aap on a.profile_id = aap.id
             left join res_section rs on a.owner_section_id = rs.id
             left join res_project rp on a.owner_project_id = rp.id
@@ -415,7 +419,8 @@ class AssetRegisterReport(models.TransientModel):
             ) asset
         """ + where_str + 'order by asset.account_code, asset.code',
                          (tuple(accum_depre_account_ids), date_end,
-                          tuple(depre_account_ids), date_start, date_end,
+                          #tuple(depre_account_ids), 
+                          date_start, date_end,
                           tuple(accum_depre_account_ids), date_end,
                           tuple(accum_depre_account_ids), date_start))
 
