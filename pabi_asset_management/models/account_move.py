@@ -133,14 +133,14 @@ class AccountMoveLine(models.Model):
                                                                       ('id','!=',rec.id)], limit=1)
                 
                 if move_line_ids:
-                    move_line.update({
-                                    'activity_group_id': move_line_ids.activity_group_id.id,
-                                    'activity_rpt_id': move_line_ids.activity_rpt_id.id,
-                                    'costcenter_id': move_line_ids.costcenter_id.id,
-                                    'chartfield_id': move_line_ids.chartfield_id.id,
-                                    'org_id': move_line_ids.org_id.id,
-                                    'fund_id': move_line_ids.fund_id.id,
-                                    'taxbranch_id': move_line_ids.taxbranch_id.id
+                    rec.update({
+                                'activity_group_id': move_line_ids.activity_group_id.id,
+                                'activity_rpt_id': move_line_ids.activity_rpt_id.id,
+                                'costcenter_id': move_line_ids.costcenter_id.id,
+                                'chartfield_id': move_line_ids.chartfield_id.id,
+                                'org_id': move_line_ids.org_id.id,
+                                'fund_id': move_line_ids.fund_id.id,
+                                'taxbranch_id': move_line_ids.taxbranch_id.id
                     })
     
     
