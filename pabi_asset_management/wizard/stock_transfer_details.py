@@ -41,6 +41,8 @@ class StockTransferDetails(models.TransientModel):
     def _validate_asset_line(self):
         for rec in self:
             for line in rec.item_ids:
+                _logger.info("line.product_id.asset: %s",
+                             str(line.product_id.asset))
                 if line.product_id.asset and line.quantity and \
                         not line.quantity.is_integer():
                     raise ValidationError(_('For asset, quantity '
@@ -49,7 +51,6 @@ class StockTransferDetails(models.TransientModel):
 
     @api.multi
     def do_detailed_transfer(self):
-        _logger.info("pabi_asset_management/wizard/stock_transfer_details")
         self.ensure_one()
         self._validate_asset_line()
         # Pass Installament information to Asset
@@ -59,5 +60,4 @@ class StockTransferDetails(models.TransientModel):
                                       'installment': wa.installment,
                                       'num_installment': wa.num_installment})
         res = super(StockTransferDetails, self).do_detailed_transfer()
-        _logger.info("res: %s", str(res))
         return res
