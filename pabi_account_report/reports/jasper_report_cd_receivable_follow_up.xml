@@ -54,6 +54,7 @@
             name="CD Receivable Follow Up"
             parent="menu_pabi_receivable_report"
             action="action_jasper_report_cd_receivable_follow_up_form"
+            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"
             sequence="20"/>
     </data>
 </openerp>

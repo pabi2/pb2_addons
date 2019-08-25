@@ -56,6 +56,7 @@
             name="Receivable Confirmation Letter"
             parent="menu_pabi_receivable_report"
             action="action_qweb_report_receivable_confirmation_letter_form"
+            groups="account.group_account_manager,account.group_account_user"
             sequence="120"/>
     </data>
 </openerp>

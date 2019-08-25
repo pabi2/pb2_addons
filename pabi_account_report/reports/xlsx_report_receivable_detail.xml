@@ -55,6 +55,7 @@
             name="Receivable Detail"
             parent="menu_pabi_receivable_report"
             action="action_report_receivable_detail"
+            groups="account.group_account_manager,account.group_account_user"
             sequence="60"/>
     </data>
 </openerp>

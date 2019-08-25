@@ -37,6 +37,7 @@
             name="CD Receivable Balance Sheet Detail"
             parent="menu_pabi_receivable_report"
             action="action_xlsx_report_cd_receivable_balance_sheet_detail_form"
+            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"
             sequence="50"/>
     </data>
 </openerp>
