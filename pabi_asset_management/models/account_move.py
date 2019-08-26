@@ -297,11 +297,11 @@ class AccountMoveLine(models.Model):
     
     @api.multi
     def write(self, vals, check=True, update_check=True):
-        if vals.get('chartfield_id') and not vals.get('costcenter_id'):
+        """if vals.get('chartfield_id') and not vals.get('costcenter_id'):
             search = self._get_record_chartfield(vals.get('chartfield_id'))
             if search:
                 vals['costcenter_id'] = search.costcenter_id.id
-                vals['org_id'] = search.org_id.id
+                vals['org_id'] = search.org_id.id"""
                 
         res = super(AccountMoveLine, self).write(vals, check=check, update_check=True)
         return res
