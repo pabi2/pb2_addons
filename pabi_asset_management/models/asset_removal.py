@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
-from datetime import datetime 
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 class AccountAssetRemoval(models.Model):
