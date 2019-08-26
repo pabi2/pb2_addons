@@ -109,7 +109,7 @@ class AccountMoveLine(models.Model):
     def _get_record_chartfield(self, chartfield):
         search = False
         if chartfield:
-            chartfield_id = self.env['chartfield.view'].browse(chartfield)
+            chartfield_id = self.env['chartfield.view'].search([['res_id','=',chartfield]])
             if chartfield_id.type == 'pj:':
                 search = self.env['res.project'].search([['id','=',chartfield_id.res_id]])
             if chartfield_id.type == 'sc:':
@@ -245,12 +245,12 @@ class AccountMoveLine(models.Model):
             vals['org_id'] = get_chartfield['org_id']
             vals['fund_id'] = get_chartfield['fund_id']"""
             
-        if vals.get('chartfield_id') and not vals.get('costcenter_id'):# and not vals.get('costcenter_id'):# and not vals.get('org_id'):
+        """if vals.get('chartfield_id') and not vals.get('costcenter_id'):# and not vals.get('costcenter_id'):# and not vals.get('org_id'):
             get_chartfield = self._get_detail_chartfield(vals.get('chartfield_id'))
             vals['costcenter_id'] = get_chartfield['costcenter_id']
             vals['org_id'] = get_chartfield['org_id']
             if not vals.get('fund_id'):
-                vals['fund_id'] = get_chartfield['fund_id']
+                vals['fund_id'] = get_chartfield['fund_id']"""
             
         move_line = super(AccountMoveLine, self).create(vals)
         if move_line.asset_id and (move_line.asset_id.code or '/') == '/':
