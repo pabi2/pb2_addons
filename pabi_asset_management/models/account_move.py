@@ -131,8 +131,24 @@ class AccountMoveLine(models.Model):
                                                                       ('move_id','=',rec.move_id.id),
                                                                       ('taxbranch_id','!=',False),
                                                                       ('id','!=',rec.id)], limit=1)
-                
-                if move_line_ids:
+                if not move_line_ids:
+                    chartfield_id = rec.asset_id.owner_section_id \
+                                    or rec.asset_id.owner_project_id \
+                                    or rec.asset_id.owner_invest_asset_id \
+                                    or rec.asset_id.owner_invest_construction_phase_id \
+                                    or False
+                    if chartfield_id:
+                        rec.update({
+                                    #'activity_rpt_id': move_line_ids.activity_rpt_id.id,
+                                    #'activity_id': move_line_ids.activity_id.id,
+                                    #'activity_group_id': move_line_ids.activity_group_id.id,
+                                    'costcenter_id': rec.asset_id.costcenter_id.id,
+                                    'chartfield_id': chartfield_id.id,
+                                    'org_id': rec.asset_id.org_id.id,
+                                    'fund_id': rec.asset_id.fund_id.id,
+                                    'taxbranch_id': rec.asset_id.taxbranch_id.id
+                        })
+                else:
                     rec.update({
                                 #'activity_rpt_id': move_line_ids.activity_rpt_id.id,
                                 #'activity_id': move_line_ids.activity_id.id,
