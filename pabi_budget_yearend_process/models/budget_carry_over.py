@@ -209,7 +209,7 @@ class BudgetCarryOver(models.Model):
     @api.multi
     def write(self, vals):
         res = super(BudgetCarryOver, self).write(vals)
-        if 'doctype' in vals or 'fiscalyear_id' in vals:
+        if 'doctype' in vals or 'fiscalyear_id' in vals or 'org_id' in vals:
             self.compute_commit_docs()
         return res
 
