@@ -237,7 +237,10 @@ class BudgetCarryOver(models.Model):
                 doctypes = ['purchase_request', 'sale_order',
                             'purchase_order', 'employee_expense']
             if rec.org_id:
-                org = 'and org_id = '+str(rec.org_id.id)
+                org = [rec.org_id.id]
+            else:
+                orgs = self.env['res.org'].search([])
+                org = orgs.ids
             self._cr.execute("""
             select * from (
                 select doctype, document, document_line,
@@ -247,12 +250,12 @@ class BudgetCarryOver(models.Model):
                 from budget_consume_report rpt
                 join account_fiscalyear fiscal
                     on rpt.fiscalyear_id = fiscal.id
-                where fiscal.date_start < '%s' and doctype in %s %s
+                where fiscal.date_start < %s and doctype in %s and org_id in %s
                 and rpt.budget_commit_type != 'actual'
                 group by doctype, document, document_line,
                     purchase_request_line_id, sale_line_id,
                     purchase_line_id, expense_line_id) a
-            """ % (rec.fiscalyear_id.date_start, tuple(doctypes), org))
+            """, (rec.fiscalyear_id.date_start, tuple(doctypes), org))
             result = self._cr.dictfetchall()
             for r in result:
                 vals = {
