@@ -237,7 +237,7 @@ class BudgetCarryOver(models.Model):
                 doctypes = ['purchase_request', 'sale_order',
                             'purchase_order', 'employee_expense']
             if rec.org_id:
-                org = 'org_id = '+str(rec.org_id.id)
+                org = 'and org_id = '+str(rec.org_id.id)
             self._cr.execute("""
             select * from (
                 select doctype, document, document_line,
@@ -282,6 +282,7 @@ class BudgetCarryOver(models.Model):
                 purchase_lines.mapped('budget_commit_ids') + \
                 request_lines.mapped('budget_commit_ids') + \
                 expense_lines.mapped('budget_commit_ids')
+            print '\nCommits: '+str(commits)
             commits.write({'monitor_fy_id': rec.fiscalyear_id.id})
         self.write({'state': 'done'})
         
