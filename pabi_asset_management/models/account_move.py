@@ -124,6 +124,44 @@ class AccountMoveLine(models.Model):
         return search
     
     @api.multi
+    def _check_asset_move_line(self):
+        for rec in self:
+            if rec.asset_id and (not rec.taxbranch_id or not rec.chartfield_id):
+                move_line_ids = self.env['account.move.line'].search([('asset_id','=',rec.asset_id.id),
+                                                                      ('move_id','=',rec.move_id.id),
+                                                                      ('taxbranch_id','!=',False),
+                                                                      ('id','!=',rec.id)], limit=1)
+                if not move_line_ids:
+                    chartfield_id = rec.asset_id.owner_section_id \
+                                    or rec.asset_id.owner_project_id \
+                                    or rec.asset_id.owner_invest_asset_id \
+                                    or rec.asset_id.owner_invest_construction_phase_id \
+                                    or False
+                    if chartfield_id:
+                        rec.update({
+                                    #'activity_rpt_id': move_line_ids.activity_rpt_id.id,
+                                    #'activity_id': move_line_ids.activity_id.id,
+                                    #'activity_group_id': move_line_ids.activity_group_id.id,
+                                    'costcenter_id': rec.asset_id.costcenter_id.id,
+                                    'chartfield_id': chartfield_id.id,
+                                    'org_id': rec.asset_id.org_id.id,
+                                    'fund_id': rec.asset_id.fund_id.id,
+                                    'taxbranch_id': rec.asset_id.taxbranch_id.id
+                        })
+                else:
+                    rec.update({
+                                #'activity_rpt_id': move_line_ids.activity_rpt_id.id,
+                                #'activity_id': move_line_ids.activity_id.id,
+                                #'activity_group_id': move_line_ids.activity_group_id.id,
+                                'costcenter_id': move_line_ids.costcenter_id.id,
+                                'chartfield_id': move_line_ids.chartfield_id.id,
+                                'org_id': move_line_ids.org_id.id,
+                                'fund_id': move_line_ids.fund_id.id,
+                                'taxbranch_id': move_line_ids.taxbranch_id.id
+                    })
+    
+    
+    @api.multi
     def _check_account_move_line(self):
         if self.document_id:
             search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],'|',['origin','like','POS'],['origin','like','SR']])
@@ -226,30 +264,34 @@ class AccountMoveLine(models.Model):
                         Analytic.create_matched_analytic(move_line.asset_id)
         move_line._check_account_move_line()
         #update move line               
-        """if move_line.move_id.name =='/' and ('taxbranch_id' in vals):
-            move_line_ids = self.env['account.move.line'].search([('asset_id','=',vals['asset_id'])])
-            move_ids = [x for x in move_line_ids if x.doctype =='adjustment']
-            if len(move_ids) == 2:
+        #if move_line.move_id.name =='/' and ('taxbranch_id' in vals) and ('asset_id' in vals):
+        """if ('asset_id' in vals) and (not move_line.taxbranch_id or not move_line.chartfield_id):
+            #if not move_line.taxbranch_id or not move_line.chartfield_id:
+            aa = move_line.asset_id.id
+            bb = move_line.move_id.id
+            cc = move_line.id
+            move_line_ids = self.env['account.move.line'].search([('asset_id','=', move_line.asset_id.id),
+                                                                  ('taxbranch_id','!=', False),
+                                                                  ('id','!=', move_line.id)], limit=1)
+            #move_ids = [x for x in move_line_ids if x.doctype =='adjustment']
                 #Debug err activity 
-                move_ids[1].activity_rpt_id = move_ids[0].activity_rpt_id.id
-                if not move_ids[1].activity_id:
-                    data = {
-                            #Activity Group
-                            'activity_group_id': move_ids[0].activity_group_id.id,
-                            #Activity Rpt
-                            'activity_rpt_id': move_ids[0].activity_rpt_id.id,
-                            #Costcenter
-                            'costcenter_id': move_ids[0].costcenter_id.id,
-                            #budget 
-                            'chartfield_id': move_ids[0].chartfield_id.id,
-                            #org 
-                            'org_id': move_ids[0].org_id.id,
-                            #fund
-                            'fund_id': move_ids[0].fund_id.id,
-                            #tax branch
-                            'taxbranch_id':move_ids[0].taxbranch_id.id
-                            }
-                    move_ids[1].update(data)"""
+                data = {
+                    #Activity Group
+                    'activity_group_id': move_line_ids.activity_group_id.id,
+                    #Activity Rpt
+                    'activity_rpt_id': move_line_ids.activity_rpt_id.id,
+                    #Costcenter
+                    'costcenter_id': move_line_ids.costcenter_id.id,
+                    #budget 
+                    'chartfield_id': move_line_ids.chartfield_id.id,
+                    #org 
+                    'org_id': move_line_ids.org_id.id,
+                    #fund
+                    'fund_id': move_line_ids.fund_id.id,
+                    #tax branch
+                    'taxbranch_id':move_line_ids.taxbranch_id.id
+                    }
+            move_line.update(data)"""
         return move_line
     
     
