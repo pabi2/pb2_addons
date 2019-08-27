@@ -3,6 +3,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from openerp.exceptions import Warning as UserError
 
 
 class AccountAssetRemoval(models.Model):
