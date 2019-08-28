@@ -111,14 +111,6 @@ class XLSXReportPabiSupplierListResults(models.Model):
         string='Branch ID',
         readonly=True,
     )
-    tag_id = fields.Many2one(
-        'res.partner.tag',
-        string='Tag ID',
-    )
-    tag_name = fields.Float(
-        string='Tag Name',
-        readonly=True,
-    )
     phone = fields.Char(
         string='Phone',
         readonly=True,
@@ -127,12 +119,29 @@ class XLSXReportPabiSupplierListResults(models.Model):
         string='Email',
         readonly=True,
     )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Partner',
+    )
+    account_number = fields.Integer(
+        string='Account Number',
+        readonly=True,
+    )
+    bank_name = fields.Char(
+        string='Bank Name',
+        readonly=True,
+    )
+    account_owner_name = fields.Char(
+        string='Account Owner Name',
+        readonly=True,
+    )
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
         SELECT 
         row_number() over (order by rp.id) as id,
+        rp.id as partner_id,
         rpc.id as category_id,
         rpc.name as category_name,
         rp.name as supplier_name,
@@ -153,13 +162,14 @@ class XLSXReportPabiSupplierListResults(models.Model):
         ) as address,
         rp.vat as vat,
         rp.taxbranch as taxbranch,
-        rpt.id as tag_id,
-        rpt.name as tag_name,
         CONCAT(
         COALESCE(rp.phone||' ',''),
         COALESCE(rp.mobile,'')
         ) as phone,
-        rp.email as email
+        rp.email as email,
+        rpb.acc_number as account_number,
+        rpb.bank_name as bank_name,
+        rpb.owner_name as account_owner_name
         FROM res_partner rp
         LEFT JOIN res_partner_res_partner_tag_rel rprptl
         ON rprptl.res_partner_id = rp.id
@@ -167,6 +177,18 @@ class XLSXReportPabiSupplierListResults(models.Model):
         ON rprptl.res_partner_tag_id = rpt.id
         LEFT JOIN res_partner_category rpc
         ON rp.category_id = rpc.id
+        LEFT JOIN res_partner_bank rpb
+        ON rp.id = rpb.partner_id 
         WHERE rp.supplier = True
         AND rp.employee = False
+        AND rpb.active = True 
+        AND rpb.default = True 
+        GROUP BY 
+        rp.id,
+        rpc.id,
+        rpb.acc_number,
+        rpb.bank_name,
+        rpb.owner_name
         )""" % (self._table, ))
+        
+   
