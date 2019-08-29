@@ -464,14 +464,14 @@ Banch]]></text>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_number}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_number}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement style="pading_2" mode="Transparent" x="428" y="184" width="169" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{doc_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_payment}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Transparent" x="0" y="61" width="535" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -522,9 +522,7 @@ Banch]]></text>
 ($F{invoice_type} == "out_refund" ? -$F{invoice_amount_total} : $F{invoice_amount_total})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="131" y="0" width="273" height="27">
-					<printWhenExpression><![CDATA[$F{loan_installment_description} != null && $F{loan_installment_description} != ""]]></printWhenExpression>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="84" y="0" width="273" height="27"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
