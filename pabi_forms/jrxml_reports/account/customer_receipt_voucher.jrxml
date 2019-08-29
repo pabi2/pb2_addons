@@ -142,7 +142,7 @@
 		<fieldDescription><![CDATA[amount_total_text_th]]></fieldDescription>
 	</field>
 	<field name="invoice_description" class="java.lang.String">
-		<fieldDescription><![CDATA[line_cr_ids/invoice_description]]></fieldDescription>
+		<fieldDescription><![CDATA[line_ids/move_line_id/name]]></fieldDescription>
 	</field>
 	<field name="invoice_amount_total" class="java.lang.Number">
 		<fieldDescription><![CDATA[line_ids/amount]]></fieldDescription>
@@ -526,8 +526,7 @@ Banch]]></text>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{account_id} != $F{loan_installment_account_id} ? $F{invoice_description} :
-(($F{invoice_description} != null && $F{invoice_description} != "" ? $F{invoice_description} + "\n" : "")))]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_description}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="11" y="0" width="175" height="27"/>
