@@ -16,3 +16,5 @@ access_asset_register_view,access_asset_register_view,model_asset_register_view,
 access_sla_employee_view,access_sla_employee_view,model_sla_employee_view,,1,0,0,0
 xlsx_report_status_view,xlsx_report_status_view,model_xlsx_report_status,,1,1,1,0
 account_move_preprint,account_move_preprint_view,model_account_move_preprint,account.group_account_user,1,1,1,0
+xlsx_report_output_tax_view,xlsx_report_output_tax_view,model_xlsx_report_output_tax,,1,1,1,0
+account_tax_report_outtax_view,account_tax_report_outtax_view,model_account_tax_report_outtax,,1,1,1,0
