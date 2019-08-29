@@ -87,6 +87,10 @@ class XLSXReportPabiSlaBalanceResults(models.Model):
         string='Section',
         readonly=True,
     )
+    section_id = fields.Char(
+        string='Section ID',
+        readonly=True,
+    )
     select_status = fields.Char(
         string='Status',
         readonly=True,
@@ -128,6 +132,7 @@ class XLSXReportPabiSlaBalanceResults(models.Model):
         sr.operating_unit_id,
         org.id as org_id,
         sr.name as sr_name,
+        sec.code as section_id,
         CONCAT((SELECT value FROM ir_translation it
         Where it.res_id = hr.title_id AND
             it.name LIKE 'res.partner.title,name' LIMIT 1),
