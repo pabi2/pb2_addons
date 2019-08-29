@@ -88,7 +88,7 @@
 		<fieldDescription><![CDATA[line_ids/move_line_id/invoice/receivable_type]]></fieldDescription>
 	</field>
 	<field name="invoice_number" class="java.lang.String">
-		<fieldDescription><![CDATA[line_ids/move_line_id/invoice/number]]></fieldDescription>
+		<fieldDescription><![CDATA[line_ids/move_line_id/move_id/name]]></fieldDescription>
 	</field>
 	<field name="retention_purchase_number" class="java.lang.String">
 		<fieldDescription><![CDATA[line_ids/move_line_id/invoice/retention_purchase_id/name]]></fieldDescription>
@@ -173,6 +173,81 @@
 	</field>
 	<field name="loan_agreement_id" class="java.lang.String">
 		<fieldDescription><![CDATA[line_ids/invoice_id/loan_agreement_id]]></fieldDescription>
+	</field>
+	<field name="currency" class="java.lang.String">
+		<fieldDescription><![CDATA[journal_id/currency/name]]></fieldDescription>
+	</field>
+	<field name="company_currency" class="java.lang.String">
+		<fieldDescription><![CDATA[company_id/currency_id/name]]></fieldDescription>
+	</field>
+	<field name="customer_name" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/name]]></fieldDescription>
+	</field>
+	<field name="customer_code" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/search_key]]></fieldDescription>
+	</field>
+	<field name="doc_number" class="java.lang.String">
+		<fieldDescription><![CDATA[number]]></fieldDescription>
+	</field>
+	<field name="date_payment" class="java.util.Date">
+		<fieldDescription><![CDATA[date_document]]></fieldDescription>
+	</field>
+	<field name="street" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/street]]></fieldDescription>
+	</field>
+	<field name="street2" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/street2]]></fieldDescription>
+	</field>
+	<field name="city" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/city]]></fieldDescription>
+	</field>
+	<field name="country" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/country_id/name]]></fieldDescription>
+	</field>
+	<field name="zip" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/zip]]></fieldDescription>
+	</field>
+	<field name="district" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/district_id/name]]></fieldDescription>
+	</field>
+	<field name="township" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/township_id/name]]></fieldDescription>
+	</field>
+	<field name="province" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/province_id/name]]></fieldDescription>
+	</field>
+	<field name="vat" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/vat]]></fieldDescription>
+	</field>
+	<field name="invoice_amount_untaxed" class="java.lang.Number">
+		<fieldDescription><![CDATA[line_ids/invoice_id/amount_untaxed]]></fieldDescription>
+	</field>
+	<field name="taxbranch" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/taxbranch]]></fieldDescription>
+	</field>
+	<field name="org_address_text" class="java.lang.String">
+		<fieldDescription><![CDATA[taxbranch_id/org_id/address_print_text]]></fieldDescription>
+	</field>
+	<field name="branch_address_text" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/move_line_id/invoice/taxbranch_id/address_print_text_receipt]]></fieldDescription>
+	</field>
+	<field name="branch_200" class="java.lang.String">
+		<fieldDescription><![CDATA[taxbranch_id/org_id/branch_200]]></fieldDescription>
+	</field>
+	<field name="first_product_categ" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/invoice_id/invoice_line/categ_id/name]]></fieldDescription>
+	</field>
+	<field name="invoice_amount_retention" class="java.lang.Number">
+		<fieldDescription><![CDATA[line_ids/amount_retention]]></fieldDescription>
+	</field>
+	<field name="branch_cheque" class="java.lang.String">
+		<fieldDescription><![CDATA[branch_cheque]]></fieldDescription>
+	</field>
+	<field name="amount_total_text_en" class="java.lang.String">
+		<fieldDescription><![CDATA[amount_total_text_en]]></fieldDescription>
+	</field>
+	<field name="journal_code" class="java.lang.String">
+		<fieldDescription><![CDATA[journal_id/code]]></fieldDescription>
 	</field>
 	<variable name="purchase_number" class="java.lang.String">
 		<variableExpression><![CDATA[$F{receivable_type} == "late_work_acceptance" ? $F{late_wa_purchase_number} :
@@ -447,7 +522,9 @@ Banch]]></text>
 ($F{invoice_type} == "out_refund" ? -$F{invoice_amount_total} : $F{invoice_amount_total})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="11" y="0" width="393" height="27"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="131" y="0" width="273" height="27">
+					<printWhenExpression><![CDATA[$F{loan_installment_description} != null && $F{loan_installment_description} != ""]]></printWhenExpression>
+				</reportElement>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -456,6 +533,13 @@ Banch]]></text>
 ($F{loan_agreement_description} != null && $F{loan_agreement_description} != "" ? $F{loan_agreement_description} + "\n" : "") +
 ($F{loan_installment_description} != null && $F{loan_installment_description} != "" ? $F{loan_installment_description} : ""))) +
 ($F{loan_agreement_id} != null ? $F{bank_name} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="11" y="0" width="175" height="27"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_number}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
