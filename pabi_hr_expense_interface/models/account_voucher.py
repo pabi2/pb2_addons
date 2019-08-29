@@ -30,8 +30,7 @@ class AccountVoucher(models.Model):
     @api.multi
     def proforma_voucher(self):
         res = super(AccountVoucher, self).proforma_voucher()
-        if self.id not in (67427,67428,67423):
-            self._send_comment_onchange_date_value()
+        self._send_comment_onchange_date_value()
         return res
 
     @api.multi
