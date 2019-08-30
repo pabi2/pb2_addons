@@ -526,11 +526,11 @@ Banch]]></text>
 ($F{invoice_type} == "out_refund" ? -$F{invoice_amount_total} : $F{invoice_amount_total})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="10" y="1" width="358" height="26"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="10" y="0" width="358" height="27"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_description}!= null && $F{invoice_description} != ""  ? $F{invoice_description} : $F{journal_description}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{journal_description}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
