@@ -142,7 +142,7 @@
 		<fieldDescription><![CDATA[amount_total_text_th]]></fieldDescription>
 	</field>
 	<field name="invoice_description" class="java.lang.String">
-		<fieldDescription><![CDATA[line_cr_ids/invoice_description]]></fieldDescription>
+		<fieldDescription><![CDATA[line_ids/invoice_description]]></fieldDescription>
 	</field>
 	<field name="invoice_amount_total" class="java.lang.Number">
 		<fieldDescription><![CDATA[line_ids/amount]]></fieldDescription>
@@ -250,7 +250,10 @@
 		<fieldDescription><![CDATA[journal_id/code]]></fieldDescription>
 	</field>
 	<field name="journal_description" class="java.lang.String">
-		<fieldDescription><![CDATA[line_cr_ids/journal_description]]></fieldDescription>
+		<fieldDescription><![CDATA[line_ids/journal_description]]></fieldDescription>
+	</field>
+	<field name="type" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/type]]></fieldDescription>
 	</field>
 	<variable name="purchase_number" class="java.lang.String">
 		<variableExpression><![CDATA[$F{receivable_type} == "late_work_acceptance" ? $F{late_wa_purchase_number} :
@@ -526,11 +529,13 @@ Banch]]></text>
 ($F{invoice_type} == "out_refund" ? -$F{invoice_amount_total} : $F{invoice_amount_total})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="10" y="0" width="358" height="27"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="10" y="0" width="358" height="27">
+					<printWhenExpression><![CDATA[$F{type} == "cr"]]></printWhenExpression>
+				</reportElement>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{journal_description}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_description}!= null && $F{invoice_description} != ""  ? $F{invoice_description} : $F{journal_description}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
