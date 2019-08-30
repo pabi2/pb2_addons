@@ -142,7 +142,7 @@
 		<fieldDescription><![CDATA[amount_total_text_th]]></fieldDescription>
 	</field>
 	<field name="invoice_description" class="java.lang.String">
-		<fieldDescription><![CDATA[line_ids/voucher_id/move_id/line_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[line_cr_ids/invoice_description]]></fieldDescription>
 	</field>
 	<field name="invoice_amount_total" class="java.lang.Number">
 		<fieldDescription><![CDATA[line_ids/amount]]></fieldDescription>
@@ -248,6 +248,9 @@
 	</field>
 	<field name="journal_code" class="java.lang.String">
 		<fieldDescription><![CDATA[journal_id/code]]></fieldDescription>
+	</field>
+	<field name="journal_description" class="java.lang.String">
+		<fieldDescription><![CDATA[line_cr_ids/journal_description]]></fieldDescription>
 	</field>
 	<variable name="purchase_number" class="java.lang.String">
 		<variableExpression><![CDATA[$F{receivable_type} == "late_work_acceptance" ? $F{late_wa_purchase_number} :
@@ -479,7 +482,7 @@ Banch]]></text>
 					<font fontName="Monospaced" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_LOCALE}.toString().equals("th_TH") ?
-"โทรศัพท ์" + $F{validate_user_phone} + " เลขประจำตัวผู้เสียภาษีอากร 0994000165668" :
+"โทรศัพท์" + $F{validate_user_phone} + " เลขประจำตัวผู้เสียภาษีอากร 0994000165668" :
 "Tel. " + $F{validate_user_phone} + " Tax id. 0994000165668"]]></textFieldExpression>
 			</textField>
 			<image>
@@ -513,6 +516,7 @@ Banch]]></text>
 	</columnHeader>
 	<detail>
 		<band height="27">
+			<printWhenExpression><![CDATA[$F{invoice_description} != null]]></printWhenExpression>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="408" y="0" width="122" height="27" isPrintInFirstWholeBand="true"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
@@ -522,15 +526,11 @@ Banch]]></text>
 ($F{invoice_type} == "out_refund" ? -$F{invoice_amount_total} : $F{invoice_amount_total})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="10" y="0" width="377" height="27"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="10" y="1" width="358" height="26"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{account_id} != $F{loan_installment_account_id} ? $F{invoice_description} :
-(($F{invoice_description} != null && $F{invoice_description} != "" ? $F{invoice_description} + "\n" : "") +
-($F{loan_agreement_description} != null && $F{loan_agreement_description} != "" ? $F{loan_agreement_description} + "\n" : "") +
-($F{loan_installment_description} != null && $F{loan_installment_description} != "" ? $F{loan_installment_description} : ""))) +
-($F{loan_agreement_id} != null ? $F{bank_name} : "")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_description}!= null && $F{invoice_description} != ""  ? $F{invoice_description} : $F{journal_description}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
