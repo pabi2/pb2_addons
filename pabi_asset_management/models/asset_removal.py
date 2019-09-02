@@ -210,17 +210,17 @@ class AccountAssetRemoval(models.Model):
         self.ensure_one()
         if self._context.get('job_uuid', False):  # Called from @job
             return self.action_done()
-        if self.queue_job_id:
+        """if self.queue_job_id:
             message = ('Remove Asset')
             action = self.env.ref('pabi_utils.action_my_queue_job')
-            raise RedirectWarning(message, action.id, ('Go to My Jobs'))
+            raise RedirectWarning(message, action.id, ('Go to My Jobs'))"""
         session = ConnectorSession(self._cr, self._uid, self._context)
         description = '%s - Commitment Asset Removal' % (self.name)
         uuid = action_done_async_process.delay(
             session, self._name, self.id, description=description)
         job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
-        self.queue_job_id = job.id
-        self.queue_job_uuid = uuid
+        #self.queue_job_id = job.id
+        #self.queue_job_uuid = uuid
     
 
     @api.multi
