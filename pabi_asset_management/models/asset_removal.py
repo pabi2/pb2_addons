@@ -100,9 +100,11 @@ class AccountAssetRemoval(models.Model):
     queue_job_id = fields.Many2one(
         'queue.job',
         string='Queue Job',
+        store=True,
     )
     queue_job_uuid = fields.Char(
         string='Queue Job UUID',
+        store=True,
     )
 
     @api.multi
