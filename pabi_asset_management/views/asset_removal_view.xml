@@ -10,7 +10,8 @@
                 <form string="Asset">
                     <header>
                         <button name="action_draft" states="cancel" string="Set to Draft" type="object"/>
-                        <button name="action_done" states="draft" string="Remove Assets" type="object" class="oe_highlight"/>
+                        <button name="action_done" states="draft" string="Remove Assets" confirm="Remove Assets?" type="object" class="oe_highlight"/>
+                        <button name="action_done_background" states="draft" string="Remove Assets(Run Background)" confirm="Remove Assets(Run Background)?"  type="object" class="oe_highlight"/>
                         <button name="action_cancel" states="draft" string="Cancel" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
@@ -41,6 +42,9 @@
                                 							'required': [('target_status_code', '=', 'deliver')]}" />
                                 <field name="deliver_date" attrs="{'invisible': [('target_status_code', '!=', 'deliver')], 
                                 								'required': [('target_status_code', '=', 'deliver')]}"/>
+                                
+                                <field name="queue_job_id" attrs="{'invisible': [('queue_job_id', '=', False)]}" readonly="1" />
+                                <field name="queue_job_uuid" attrs="{'invisible': [('queue_job_uuid', '=', False)]}" readonly="1" />
                             </group>
                         </group>
                         <notebook>

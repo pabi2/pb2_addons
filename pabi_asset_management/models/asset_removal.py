@@ -4,8 +4,19 @@ from openerp.exceptions import ValidationError
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp.exceptions import Warning as UserError
+from openerp.exceptions import RedirectWarning
+from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import RetryableJobError
 
-
+@job
+def action_done_async_process(session, model_name, res_id):
+    try:
+        res = session.pool[model_name].action_done_background(
+            session.cr, session.uid, [res_id], session.context)
+        return {'result': res}
+    except Exception, e:
+        raise RetryableJobError(e)
 class AccountAssetRemoval(models.Model):
     _name = 'account.asset.removal'
     _inherit = ['mail.thread']
@@ -85,6 +96,13 @@ class AccountAssetRemoval(models.Model):
     deliver_date = fields.Date(
         string='Delivery date',
         help="If status is chagned to 'delivery', this field is required",
+    )
+    queue_job_id = fields.Many2one(
+        'queue.job',
+        string='Queue Job',
+    )
+    queue_job_uuid = fields.Char(
+        string='Carry Over Job UUID',
     )
 
     @api.multi
@@ -183,6 +201,25 @@ class AccountAssetRemoval(models.Model):
         self._remove_confirmed_assets()
         self.write({'state': 'done'})
         self.auto_post_account_move()
+        
+    
+    @api.multi
+    def action_done_background(self):
+        self.ensure_one()
+        if self._context.get('job_uuid', False):  # Called from @job
+            return self.action_done()
+        if self.queue_job_id:
+            message = ('Remove Asset')
+            action = self.env.ref('pabi_utils.action_my_queue_job')
+            raise RedirectWarning(message, action.id, ('Go to My Jobs'))
+        session = ConnectorSession(self._cr, self._uid, self._context)
+        description = '%s - Commitment Asset Removal' % (self.name)
+        uuid = action_done_async_process.delay(
+            session, self._name, self.id, description=description)
+        job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+        self.queue_job_id = job.id
+        self.queue_job_uuid = uuid
+    
 
     @api.multi
     def action_cancel(self):
