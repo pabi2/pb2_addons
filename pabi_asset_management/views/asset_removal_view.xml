@@ -43,8 +43,8 @@
                                 <field name="deliver_date" attrs="{'invisible': [('target_status_code', '!=', 'deliver')], 
                                 								'required': [('target_status_code', '=', 'deliver')]}"/>
                                 
-                                <field name="queue_job_id" attrs="{'invisible': [('queue_job_id', '=', False)]}" readonly="1" />
-                                <field name="queue_job_uuid" attrs="{'invisible': [('queue_job_uuid', '=', False)]}" readonly="1" />
+                                <!-- <field name="queue_job_id" attrs="{'invisible': [('queue_job_id', '=', False)]}" readonly="1" />
+                                <field name="queue_job_uuid" attrs="{'invisible': [('queue_job_uuid', '=', False)]}" readonly="1" /> -->
                             </group>
                         </group>
                         <notebook>
