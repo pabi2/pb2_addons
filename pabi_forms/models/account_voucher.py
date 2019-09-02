@@ -137,3 +137,23 @@ class AccountVoucher(models.Model):
             comment_from_diff = ', '.join(diff_lines.mapped('note'))
             rec.retention_diff_comment = comment_from_diff
         return True
+    
+class AccountVoucherLine_Des(models.Model):
+    _inherit = 'account.voucher.line'
+
+    journal_description = fields.Text(
+        string='Journal Description',
+        compute='_compute_journal_description',
+        readonly=True,
+        size=1000,
+    )
+    
+    @api.multi
+    def _compute_journal_description(self):
+        for rec in self:
+            move_line = self.env['account.move.line'].search([('move_id','=',rec.voucher_id.move_id.id),
+                                                         ('account_id','=',rec.account_id.id),('credit','=',rec.amount)])
+            rec.journal_description = move_line.name
+        
+       
+        

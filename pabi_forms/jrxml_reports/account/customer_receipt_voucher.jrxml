@@ -88,7 +88,7 @@
 		<fieldDescription><![CDATA[line_ids/move_line_id/invoice/receivable_type]]></fieldDescription>
 	</field>
 	<field name="invoice_number" class="java.lang.String">
-		<fieldDescription><![CDATA[line_ids/move_line_id/invoice/number]]></fieldDescription>
+		<fieldDescription><![CDATA[line_ids/move_line_id/move_id/name]]></fieldDescription>
 	</field>
 	<field name="retention_purchase_number" class="java.lang.String">
 		<fieldDescription><![CDATA[line_ids/move_line_id/invoice/retention_purchase_id/name]]></fieldDescription>
@@ -142,7 +142,7 @@
 		<fieldDescription><![CDATA[amount_total_text_th]]></fieldDescription>
 	</field>
 	<field name="invoice_description" class="java.lang.String">
-		<fieldDescription><![CDATA[line_cr_ids/invoice_description]]></fieldDescription>
+		<fieldDescription><![CDATA[line_ids/invoice_description]]></fieldDescription>
 	</field>
 	<field name="invoice_amount_total" class="java.lang.Number">
 		<fieldDescription><![CDATA[line_ids/amount]]></fieldDescription>
@@ -155,6 +155,105 @@
 	</field>
 	<field name="origin_invoice" class="java.lang.String">
 		<fieldDescription><![CDATA[line_ids/invoice_id/origin_invoice_id/number]]></fieldDescription>
+	</field>
+	<field name="bank_name" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/invoice_id/loan_agreement_id/partner_id/name]]></fieldDescription>
+	</field>
+	<field name="account_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[line_ids/account_id/id]]></fieldDescription>
+	</field>
+	<field name="loan_installment_account_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[company_id/loan_installment_account_id/id]]></fieldDescription>
+	</field>
+	<field name="loan_installment_description" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/loan_installment_description]]></fieldDescription>
+	</field>
+	<field name="loan_agreement_description" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/loan_agreement_description]]></fieldDescription>
+	</field>
+	<field name="loan_agreement_id" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/invoice_id/loan_agreement_id]]></fieldDescription>
+	</field>
+	<field name="currency" class="java.lang.String">
+		<fieldDescription><![CDATA[journal_id/currency/name]]></fieldDescription>
+	</field>
+	<field name="company_currency" class="java.lang.String">
+		<fieldDescription><![CDATA[company_id/currency_id/name]]></fieldDescription>
+	</field>
+	<field name="customer_name" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/name]]></fieldDescription>
+	</field>
+	<field name="customer_code" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/search_key]]></fieldDescription>
+	</field>
+	<field name="doc_number" class="java.lang.String">
+		<fieldDescription><![CDATA[number]]></fieldDescription>
+	</field>
+	<field name="date_payment" class="java.util.Date">
+		<fieldDescription><![CDATA[date_document]]></fieldDescription>
+	</field>
+	<field name="street" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/street]]></fieldDescription>
+	</field>
+	<field name="street2" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/street2]]></fieldDescription>
+	</field>
+	<field name="city" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/city]]></fieldDescription>
+	</field>
+	<field name="country" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/country_id/name]]></fieldDescription>
+	</field>
+	<field name="zip" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/zip]]></fieldDescription>
+	</field>
+	<field name="district" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/district_id/name]]></fieldDescription>
+	</field>
+	<field name="township" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/township_id/name]]></fieldDescription>
+	</field>
+	<field name="province" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/province_id/name]]></fieldDescription>
+	</field>
+	<field name="vat" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/vat]]></fieldDescription>
+	</field>
+	<field name="invoice_amount_untaxed" class="java.lang.Number">
+		<fieldDescription><![CDATA[line_ids/invoice_id/amount_untaxed]]></fieldDescription>
+	</field>
+	<field name="taxbranch" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/taxbranch]]></fieldDescription>
+	</field>
+	<field name="org_address_text" class="java.lang.String">
+		<fieldDescription><![CDATA[taxbranch_id/org_id/address_print_text]]></fieldDescription>
+	</field>
+	<field name="branch_address_text" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/move_line_id/invoice/taxbranch_id/address_print_text_receipt]]></fieldDescription>
+	</field>
+	<field name="branch_200" class="java.lang.String">
+		<fieldDescription><![CDATA[taxbranch_id/org_id/branch_200]]></fieldDescription>
+	</field>
+	<field name="first_product_categ" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/invoice_id/invoice_line/categ_id/name]]></fieldDescription>
+	</field>
+	<field name="invoice_amount_retention" class="java.lang.Number">
+		<fieldDescription><![CDATA[line_ids/amount_retention]]></fieldDescription>
+	</field>
+	<field name="branch_cheque" class="java.lang.String">
+		<fieldDescription><![CDATA[branch_cheque]]></fieldDescription>
+	</field>
+	<field name="amount_total_text_en" class="java.lang.String">
+		<fieldDescription><![CDATA[amount_total_text_en]]></fieldDescription>
+	</field>
+	<field name="journal_code" class="java.lang.String">
+		<fieldDescription><![CDATA[journal_id/code]]></fieldDescription>
+	</field>
+	<field name="journal_description" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/journal_description]]></fieldDescription>
+	</field>
+	<field name="type" class="java.lang.String">
+		<fieldDescription><![CDATA[line_ids/type]]></fieldDescription>
 	</field>
 	<variable name="purchase_number" class="java.lang.String">
 		<variableExpression><![CDATA[$F{receivable_type} == "late_work_acceptance" ? $F{late_wa_purchase_number} :
@@ -371,14 +470,14 @@ Banch]]></text>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_number}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_number}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement style="pading_2" mode="Transparent" x="428" y="184" width="169" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{doc_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_payment}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Transparent" x="0" y="61" width="535" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -386,7 +485,7 @@ Banch]]></text>
 					<font fontName="Monospaced" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_LOCALE}.toString().equals("th_TH") ?
-"โทรศัพท ์" + $F{validate_user_phone} + " เลขประจำตัวผู้เสียภาษีอากร 0994000165668" :
+"โทรศัพท์" + $F{validate_user_phone} + " เลขประจำตัวผู้เสียภาษีอากร 0994000165668" :
 "Tel. " + $F{validate_user_phone} + " Tax id. 0994000165668"]]></textFieldExpression>
 			</textField>
 			<image>
@@ -420,20 +519,23 @@ Banch]]></text>
 	</columnHeader>
 	<detail>
 		<band height="27">
+			<printWhenExpression><![CDATA[$F{invoice_description} != null]]></printWhenExpression>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="408" y="0" width="122" height="27" isPrintInFirstWholeBand="true"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_amount_total} == null ? 0.0 :
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{invoice_amount_total} == null ? 0.0 :
 ($F{invoice_type} == "out_refund" ? -$F{invoice_amount_total} : $F{invoice_amount_total})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="11" y="0" width="378" height="27"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="10" y="0" width="358" height="27">
+					<printWhenExpression><![CDATA[$F{type} == "cr"]]></printWhenExpression>
+				</reportElement>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_description}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_description}!= null && $F{invoice_description} != ""  ? $F{invoice_description} : $F{journal_description}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -536,12 +638,12 @@ Banch]]></text>
 "ผู้มีอำนาจ Authorized/ผู้รับเงิน Cashier":
 ""]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement mode="Transparent" x="410" y="30" width="115" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="410" y="30" width="120" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_total}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
