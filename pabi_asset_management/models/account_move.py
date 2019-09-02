@@ -110,16 +110,18 @@ class AccountMoveLine(models.Model):
         search = False
         if chartfield:
             chartfield_id = self.env['chartfield.view'].browse(chartfield)
-            if chartfield_id.type == 'pj:':
-                search = self.env['res.project'].search([['id','=',chartfield_id.res_id]])
-            if chartfield_id.type == 'sc:':
-                search = self.env['res.section'].search([['id','=',chartfield_id.res_id]])
-            if chartfield_id.type == 'cp:':
-                search = self.env['res.invest.construction.phase'].search([['id','=',chartfield_id.res_id]])
-            if chartfield_id.type == 'pc:':
-                search = self.env['res.personnel.costcenter'].search([['id','=',chartfield_id.res_id]])
-            if chartfield_id.type == 'ia:':
-                search = self.env['res.invest.asset'].search([['id','=',chartfield_id.res_id]])
+            
+            if chartfield_id:
+                if chartfield_id.type == 'pj:':
+                    search = self.env['res.project'].search([['id','=',chartfield_id.res_id]])
+                if chartfield_id.type == 'sc:':
+                    search = self.env['res.section'].search([['id','=',chartfield_id.res_id]])
+                if chartfield_id.type == 'cp:':
+                    search = self.env['res.invest.construction.phase'].search([['id','=',chartfield_id.res_id]])
+                if chartfield_id.type == 'pc:':
+                    search = self.env['res.personnel.costcenter'].search([['id','=',chartfield_id.res_id]])
+                if chartfield_id.type == 'ia:':
+                    search = self.env['res.invest.asset'].search([['id','=',chartfield_id.res_id]])
                 
         return search
     
@@ -142,11 +144,15 @@ class AccountMoveLine(models.Model):
                                     #'activity_rpt_id': move_line_ids.activity_rpt_id.id,
                                     #'activity_id': move_line_ids.activity_id.id,
                                     #'activity_group_id': move_line_ids.activity_group_id.id,
-                                    'costcenter_id': rec.asset_id.costcenter_id.id,
-                                    'chartfield_id': chartfield_id.id,
-                                    'org_id': rec.asset_id.org_id.id,
+                                    'costcenter_id': chartfield_id.costcenter_id.id,
+                                    #'chartfield_id': chartfield_id.id,
+                                    'org_id': chartfield_id.org_id.id,
                                     'fund_id': rec.asset_id.fund_id.id,
-                                    'taxbranch_id': rec.asset_id.taxbranch_id.id
+                                    'taxbranch_id': rec.asset_id.taxbranch_id.id,
+                                    'section_id': rec.asset_id.owner_section_id.id,
+                                    'project_id': rec.asset_id.owner_project_id.id,
+                                    'invest_asset_id': rec.asset_id.owner_invest_asset_id.id,
+                                    'invest_construction_phase_id': rec.asset_id.owner_invest_construction_phase_id.id
                         })
                 else:
                     rec.update({
@@ -211,7 +217,7 @@ class AccountMoveLine(models.Model):
             fund = search.fund_ids and search.fund_ids[0].id or False
             
         return {
-                'chartfield_id':chartfield,
+                'chartfield_id':search,
                 'costcenter_id':costcenter,
                 'org_id':org,
                 'fund_id':fund

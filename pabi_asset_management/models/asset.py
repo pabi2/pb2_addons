@@ -499,12 +499,12 @@ class AccountAsset(ChartFieldAction, models.Model):
 
     @api.multi
     def validate_asset_to_removal(self):
-        invalid_assets = len(self.filtered(lambda l: l.type != 'normal' or
-                                           l.state not in ('open','close')))
-        if invalid_assets > 0:
+        invalid_assets = self.filtered(lambda l: l.type != 'normal' or l.state not in ('open','close')).mapped('code')
+        
+        if len(invalid_assets) > 0:
             raise ValidationError(
-                _('Please select running or close assets!'))
-        return True
+                _('Please select running or close assets!\n'
+                  'Asset error : %s'%str(tuple(invalid_assets))))
 
     @api.multi
     def action_undeliver_assets(self):
