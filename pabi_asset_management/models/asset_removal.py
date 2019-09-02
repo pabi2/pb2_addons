@@ -102,7 +102,7 @@ class AccountAssetRemoval(models.Model):
         string='Queue Job',
     )
     queue_job_uuid = fields.Char(
-        string='Carry Over Job UUID',
+        string='Queue Job UUID',
     )
 
     @api.multi
