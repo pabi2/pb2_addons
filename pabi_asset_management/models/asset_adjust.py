@@ -1300,10 +1300,14 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         _logger.info("domain: %s", str(domain))
         _logger.info("self.account_analytic_id: %s", str(self.account_analytic_id))
         line_analytic_line = self.account_analytic_id.line_ids
+        
+        if line_analytic_line:
+            line_analytic_line = line_analytic_line.search(domain)
+        
         if not line_analytic_line:
             line_analytic_line = analytic_line_ids[0]
-        else:
-            line_analytic_line = line_analytic_line.search(domain)
+        #else:
+        #    line_analytic_line = line_analytic_line.search(domain)
         _logger.info("line_analytic_line: %s", str(line_analytic_line))
 
         values = {}
