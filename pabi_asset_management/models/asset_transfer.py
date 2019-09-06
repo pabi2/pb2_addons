@@ -574,8 +574,9 @@ class AccountAssetTransfer(models.Model):
         _logger.info("move: %s", str(move))
         _logger.info("new_assets: %s", str(new_assets))
         for asset in new_assets:
-            _logger.info("code: %s", str(asset.code))
             asset.source_asset_ids = self.asset_ids
+            _logger.info("code: %s", str(asset.code))
+            _logger.info("asset.source_asset_ids: %s", str(asset.source_asset_ids))
         self.asset_ids.write({
             'active': False,
             'target_asset_ids': [(4, x) for x in new_assets.ids],
