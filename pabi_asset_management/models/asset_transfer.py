@@ -584,16 +584,22 @@ class AccountAssetTransfer(models.Model):
                     'move_id': move.id})
         
         # copy owner data from source to target asset
-        _logger.info("self.asset_ids: %s", str(self.asset_ids[0].id))
-        _logger.info("self.asset_ids: %s", str(self.asset_ids[0].owner_section_id))
-        _logger.info("self.asset_ids: %s", str(self.asset_ids[0].owner_project_id))
-        _logger.info("self.asset_ids: %s", str(self.asset_ids[0].owner_invest_asset_id))
-        _logger.info("self.asset_ids: %s", str(self.asset_ids[0].owner_invest_construction_phase_id))
-#         for asset in new_assets: 
-#             asset.owner_section_id
-#             asset.owner_project_id 
-#             asset.owner_invest_asset_id
-#             asset.owner_invest_construction_phase_id
+        src_asset = self.asset_ids[0]
+        _logger.info("self.asset_ids: %s", str(src_asset.id))
+        _logger.info("self.owner_section_id: %s", str(src_asset.owner_section_id))
+        _logger.info("self.owner_project_id: %s", str(src_asset.owner_project_id))
+        _logger.info("self.owner_invest_asset_id: %s", str(src_asset.owner_invest_asset_id))
+        _logger.info("self.owner_invest_construction_phase_id: %s", str(src_asset.owner_invest_construction_phase_id))
+        src_owner_section_id = src_asset.owner_section_id
+        src_owner_project_id = src_asset.owner_project_id
+        src_owner_invest_asset_id = src_asset.owner_invest_asset_id
+        src_owner_invest_construction_phase_id = src_asset.owner_invest_construction_phase_id
+        for new_asset in new_assets: 
+            new_asset.owner_section_id = src_owner_section_id
+            new_asset.owner_project_id = src_owner_project_id
+            new_asset.owner_invest_asset_id = src_owner_invest_asset_id
+            new_asset.owner_invest_construction_phase_id = \
+                                        src_owner_invest_construction_phase_id
         
         
         return True
