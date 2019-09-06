@@ -25,6 +25,12 @@
                         <field name="count_acceptance" widget="statinfo" string="Work Accept."/>
                     </button>
                 </xpath>
+                                
+                <xpath expr="//field[@name='order_line']" position="attributes">
+                    <attribute name="context">"{'order_line': order_line,'active_id':active_id}"</attribute>
+                </xpath>
+                
+                 
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Fine">
                         <group>

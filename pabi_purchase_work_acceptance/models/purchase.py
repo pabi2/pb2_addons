@@ -161,3 +161,41 @@ class PurchaseType(models.Model):
     to_receive = fields.Boolean(
         string='To Receive Product',
     )
+
+class PurchaseOrderLine(models.Model):
+    _inherit = 'purchase.order.line'
+  
+
+    @api.multi
+    def onchange_product_id(
+            self, pricelist_id, product_id, qty, uom_id, partner_id,
+            date_order=False, fiscal_position_id=False, date_planned=False,
+            name=False, price_unit=False, state='draft'):
+        res = super(PurchaseOrderLine, self).onchange_product_id(
+            pricelist_id, product_id, qty, uom_id, partner_id,
+            date_order=date_order, fiscal_position_id=fiscal_position_id,
+            date_planned=date_planned, name=name,
+            price_unit=price_unit, state=state)
+        
+        active_id = self._context.get('active_id')
+        if self.browse(active_id)._context.get('order_line') is not None:
+            order_id = max(self.browse(active_id)._context.get('order_line'))[1]
+            last_rec = self.search([('id','=',order_id)], order='id desc', limit=1)
+            date_now = datetime.datetime.now().strftime('%Y-%m-%d')
+            if last_rec:
+                res['value']['product_id'] = last_rec.product_id.id
+                res['value']['name'] = last_rec.name
+                res['value']['date_planned'] = date_now
+                res['value']['activity_group_id'] = last_rec.activity_group_id.id
+                res['value']['activity_rpt_id'] = last_rec.activity_rpt_id.id
+                res['value']['chartfield_id'] = last_rec.chartfield_id.id
+                res['value']['fund_id'] = last_rec.fund_id.id
+                res['value']['cost_control_id'] = last_rec.cost_control_id.id
+                res['value']['product_qty'] = last_rec.product_qty
+                res['value']['product_uom'] = last_rec.product_uom.id
+                res['value']['price_unit'] = last_rec.price_unit
+                res['value']['taxes_id'] = last_rec.taxes_id.ids
+                res['value']['price_subtotal'] = last_rec.price_subtotal
+                res['value']['fiscalyear_id'] = last_rec.fiscalyear_id.id
+            
+        return res
