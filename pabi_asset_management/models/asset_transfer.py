@@ -3,7 +3,6 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from openerp.tools.float_utils import float_compare
 import logging
-from pandas.tests.io.test_gbq import PROJECT_ID
 
 _logger = logging.getLogger(__name__)
 
