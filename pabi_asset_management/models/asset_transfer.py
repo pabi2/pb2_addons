@@ -3,6 +3,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from openerp.tools.float_utils import float_compare
 import logging
+from pandas.tests.io.test_gbq import PROJECT_ID
 
 _logger = logging.getLogger(__name__)
 
@@ -571,7 +572,6 @@ class AccountAssetTransfer(models.Model):
             raise ValidationError(
                 _('%s asset(s) should be created, something went wrong!') %
                 len(self.target_asset_ids))
-        _logger.info("move: %s", str(move))
         _logger.info("new_assets: %s", str(new_assets))
         for asset in new_assets:
             asset.source_asset_ids = self.asset_ids
@@ -583,6 +583,19 @@ class AccountAssetTransfer(models.Model):
             'status': AssetStatus.search([('code', '=', 'transfer')]).id})
         self.write({'new_asset_ids': [(4, x) for x in new_assets.ids],
                     'move_id': move.id})
+        
+        # copy owner data from source to target asset
+        _logger.info("self.asset_ids: %s", str(self.asset_ids[0].id))
+        _logger.info("self.asset_ids: %s", str(self.asset_ids[0].owner_section_id))
+        _logger.info("self.asset_ids: %s", str(self.asset_ids[0].owner_project_id))
+        _logger.info("self.asset_ids: %s", str(self.asset_ids[0].owner_invest_asset_id))
+        _logger.info("self.asset_ids: %s", str(self.asset_ids[0].owner_invest_construction_phase_id))
+#         for asset in new_assets: 
+#             asset.owner_section_id
+#             asset.owner_project_id 
+#             asset.owner_invest_asset_id
+#             asset.owner_invest_construction_phase_id
+        
         
         return True
 
