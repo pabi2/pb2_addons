@@ -99,6 +99,9 @@ class ProjectBalanceCarryForward(models.Model):
                      or coalesce(amount_actual, 0.0) != 0.0)
                 group by project_id,  program_id
             ) a
+                inner join res_project prj
+                    on prj.id = a.project_id
+                    and prj.state <> 'approve'
             where balance_amount > 0.0
         """ % (self.from_fiscalyear_id.id, where_ext)
         self._cr.execute(sql)
