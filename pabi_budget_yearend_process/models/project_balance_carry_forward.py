@@ -104,7 +104,7 @@ class ProjectBalanceCarryForward(models.Model):
             ) a
                 inner join res_project prj
                     on prj.id = a.project_id
-                    and prj.state <> 'approve'
+                    and prj.state = 'approve'
             where a.balance_amount > 0.0
         """ % (self.from_fiscalyear_id.id, where_ext)
         _logger.info(str(sql))
