@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import time
 from openerp import fields, models, api
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class ProjectBalanceCarryForward(models.Model):
@@ -86,7 +89,7 @@ class ProjectBalanceCarryForward(models.Model):
         if self.from_fiscalyear_id.control_ext_charge_only:
             where_ext = "and charge_type = 'external'"
         sql = """
-            select project_id, program_id, balance_amount
+            select a.project_id, a.program_id, a.balance_amount
             from (
                 select project_id, program_id,
                 sum(released_amount - amount_actual) balance_amount
@@ -102,8 +105,9 @@ class ProjectBalanceCarryForward(models.Model):
                 inner join res_project prj
                     on prj.id = a.project_id
                     and prj.state <> 'approve'
-            where balance_amount > 0.0
+            where a.balance_amount > 0.0
         """ % (self.from_fiscalyear_id.id, where_ext)
+        _logger.info(str(sql))
         self._cr.execute(sql)
         projects = [(0, 0, project) for project in self._cr.dictfetchall()]
         self.write({'line_ids': projects})
