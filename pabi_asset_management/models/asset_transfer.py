@@ -575,6 +575,19 @@ class AccountAssetTransfer(models.Model):
             'status': AssetStatus.search([('code', '=', 'transfer')]).id})
         self.write({'new_asset_ids': [(4, x) for x in new_assets.ids],
                     'move_id': move.id})
+        
+        # copy owner data from source to target asset
+        src_owner_section_id = src_asset.owner_section_id
+        src_owner_project_id = src_asset.owner_project_id
+        src_owner_invest_asset_id = src_asset.owner_invest_asset_id
+        src_owner_invest_construction_phase_id = src_asset.owner_invest_construction_phase_id
+        for new_asset in new_assets: 
+            new_asset.owner_section_id = src_owner_section_id
+            new_asset.owner_project_id = src_owner_project_id
+            new_asset.owner_invest_asset_id = src_owner_invest_asset_id
+            new_asset.owner_invest_construction_phase_id = \
+                                        src_owner_invest_construction_phase_id
+
         return True
 
     @api.multi
