@@ -21,7 +21,7 @@ class StockPicking(models.Model):
 
     _inherit = 'stock.picking'
 
-    @api.one
+    @api.multi
     def do_enter_transfer_details(self):
         if 'POS' in self.origin:
             #self.validate_picking()
