@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 from openerp import fields, models, api
+from openerp.tools.float_utils import float_compare
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -107,7 +108,6 @@ class ProjectBalanceCarryForward(models.Model):
                     and prj.state = 'approve'
             where a.balance_amount > 0.0
         """ % (self.from_fiscalyear_id.id, where_ext)
-        _logger.info(str(sql))
         self._cr.execute(sql)
         projects = [(0, 0, project) for project in self._cr.dictfetchall()]
         self.write({'line_ids': projects})
@@ -120,11 +120,17 @@ class ProjectBalanceCarryForward(models.Model):
         for rec in self:
             fiscalyear = rec.to_fiscalyear_id
             for line in rec.line_ids:
+                _logger.info("fiscalyear: %s", str(fiscalyear.id))
+                _logger.info("project_id: %s", str(line.project_id.id))
                 budget_lines = BudgetLine.search(
                     [('fiscalyear_id', '=', fiscalyear.id),
-                     ('project_id', '=', line.project_id.id)])
+                     ('project_id', '=', line.project_id.id),
+                     ('charge_type', '=', 'external'),
+                     ('budget_method', '=', 'expense')])
+                _logger.info("budget_lines: %s", str(budget_lines))
                 if len(budget_lines) == 1:
                     budget_lines.released_amount = line.balance_amount
+                    _logger.info("balance_amount: %s", str(line.balance_amount))
                     line.write({'state': 'success'})
                 elif not budget_lines:
                     line.write({'reason': '1',
@@ -132,7 +138,66 @@ class ProjectBalanceCarryForward(models.Model):
                 elif len(budget_lines) > 1:
                     line.write({'reason': '2',
                                 'state': 'fail'})
+                _logger.info("state: %s", str(line.state))
+                
+        # update project released amount
+        fiscalyear = self.to_fiscalyear_id
+        for line in self.line_ids:
+            project = line.project_id
+            self.update_project_released_amount(project, fiscalyear, line.balance_amount)
+
         self.write({'state': 'done'})
+
+    def update_project_released_amount(self, project, fiscalyear, balance_amount):
+        budget_plans = project.budget_plan_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear 
+                                                        and l.budget_method=='expense' 
+                                                        and l.charge_type=='external')
+        if not budget_plans:
+            raise ValidationError(
+                _('Not allow to release budget for project without plan!'))
+             
+        update_vals = []
+        for budget_plan in budget_plans:
+            if float_compare(balance_amount, budget_plan.planned_amount, 2) == 1:
+                update = {'released_amount': budget_plan.planned_amount}
+                balance_amount -= budget_plan.planned_amount
+                update_vals.append((1, budget_plan.id, update))
+            else:
+                update = {'released_amount': balance_amount}
+                balance_amount = 0.0
+                update_vals.append((1, budget_plan.id, update))
+                break
+        if update_vals:
+            project.write({'budget_plan_ids': update_vals})
+
+        return True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class ProjectBalanceCarryForwardLine(models.Model):
