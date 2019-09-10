@@ -12,13 +12,14 @@ class AccountVoucher(models.Model):
         #for voucher in self:
             #raise ValidationError(_('--- %s ---') % str(voucher.line_cr_ids[0].move_line_id.move_id.document_id.source_document_id.name))
         print '--------------Test POS Validate Payments-----------------'
-        if self.line_ids and \
-            self.line_ids[0].move_line_id and \
-            self.line_ids[0].move_line_id.move_id.document_id and \
-            self.line_ids[0].move_line_id.move_id.document_id.source_document_id and \
-            'POS' in self.line_ids[0].move_line_id.move_id.document_id.source_document_id.name:
-            picking = self.env['stock.picking'].search([('origin','=',self.line_ids[0].move_line_id.move_id.document_id.source_document_id.name)])
-            for pick in picking:
-                pick.validate_picking()
+        for voucher in self:
+            if voucher.line_ids and \
+                voucher.line_ids[0].move_line_id and \
+                voucher.line_ids[0].move_line_id.move_id.document_id and \
+                voucher.line_ids[0].move_line_id.move_id.document_id.source_document_id and \
+                'POS' in voucher.line_ids[0].move_line_id.move_id.document_id.source_document_id.name:
+                picking = self.env['stock.picking'].search([('origin','=',voucher.line_ids[0].move_line_id.move_id.document_id.source_document_id.name)])
+                for pick in picking:
+                    pick.validate_picking()
         return result
 
