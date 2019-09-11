@@ -577,6 +577,7 @@ class AccountAssetTransfer(models.Model):
                     'move_id': move.id})
         
         # copy owner data from source to target asset
+        src_asset = self.asset_ids[0]
         src_owner_section_id = src_asset.owner_section_id
         src_owner_project_id = src_asset.owner_project_id
         src_owner_invest_asset_id = src_asset.owner_invest_asset_id
