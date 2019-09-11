@@ -35,5 +35,7 @@ class StockPicking(models.Model):
             if to_force:
                 #to_force.force_assign()
                 to_force.do_transfer()
-
-        return super(StockPicking, self).do_enter_transfer_details()
+        else:
+            return super(StockPicking, self).do_enter_transfer_details()
+        
+        
