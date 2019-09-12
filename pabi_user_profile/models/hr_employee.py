@@ -94,7 +94,19 @@ class HREmployee(models.Model):
         'employee_id',
         'section_id',
         string='Section')
-
+    
+    report_project = fields.Boolean(
+        string='All Project'
+        ,default=False,store=True)
+    report_section = fields.Boolean(
+        string='All Section'
+        ,default=False,store=True)
+    report_construction = fields.Boolean(
+        string='All Investment construction'
+        ,default=False,store=True)
+    report_invest_asset = fields.Boolean(
+        string='All Investment asset'
+        ,default=False,store=True)
     @api.multi
     @api.depends('employee_code', 'title_id',
                  'first_name', 'mid_name', 'last_name',)
