@@ -456,6 +456,8 @@ class ExportXlsxTemplate(models.TransientModel):
                     # Test removing str(), coz some case, need resulting number
                     value = eval(eval_cond, eval_context)
                 # --
+                if type(value) == type(''):
+                    value = re.sub(r"[^a-zA-Z0-9\W]+", ' ', value)
                 vals[field[0]].append(value)
         return (vals, aggre_func_dict, field_format_dict)
 

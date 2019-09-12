@@ -232,7 +232,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 (select pol.org_id as org_id, po.id as purchase_id, pct.id as contract_id, pip.id as inv_plan_id, av.id as invoice_id, 
                     av.purchase_billing_id as billing_id, pol.id as purchase_line_id, po.account_deposit_supplier as account_id, 
                     prod.id as product_id, po.partner_id as supplier_id,
-                    fis.name as po_fiscalyear,
+                    fis.name as po_fiscalyear, ou.name as org, po.date_order po.name as po_number, pol.docline_seq, pip.installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
                         when po.contract_id is not null then pct_t.name
@@ -337,7 +337,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 (select pol.org_id as org_id, po.id as purchase_id, pct.id as contract_id, pip.id as inv_plan_id, av.id as invoice_id, 
                     av.purchase_billing_id as billing_id, pol.id as purchase_line_id, po.account_deposit_supplier as account_id, 
                     prod.id as product_id, po.partner_id as supplier_id,
-                    fis.name as po_fiscalyear,
+                    fis.name as po_fiscalyear, ou.name as org, po.date_order po.name as po_number, pol.docline_seq, pip.installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
                         when po.contract_id is not null then pct_t.name
@@ -438,7 +438,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 where po.state not in ('except_picking','except_invoice','cancel') and po.order_type = 'purchase_order' and po.use_invoice_plan = True
                     and pol.active = True and %s)
             ) as new
-            order by org_id.operating_unit_id.name, po_fiscalyear, purchase_id.date_order, purchase_id.name, purchase_line_id.docline_seq, inv_plan_id.installment
+            order by org, po_fiscalyear, date_order, po_number, docline_seq, installment
         """  % (where_str,where_str))
         
         invoice_plans = self._cr.dictfetchall()
