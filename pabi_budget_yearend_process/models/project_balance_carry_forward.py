@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 from openerp import fields, models, api
+from openerp.exceptions import ValidationError
 from openerp.tools.float_utils import float_compare
 import logging
 
@@ -162,7 +163,7 @@ class ProjectBalanceCarryForward(models.Model):
                                                         and l.charge_type=='external')
         if not budget_plans:
             raise ValidationError(
-                _('Not allow to release budget for project without plan!'))
+                _("Not allow to release budget for %s without plan!" % project.code))
               
         update_vals = []
         released_amount = balance_amount
