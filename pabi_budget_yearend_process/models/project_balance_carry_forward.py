@@ -118,9 +118,17 @@ class ProjectBalanceCarryForward(models.Model):
         """ For each project, inject the balance amount to the released amount
         in related account.budget.line """
         BudgetLine = self.env['account.budget.line']
+        errors = ""
+        error = ""
+        countOut = 1
         for rec in self:
+            _logger.info("roundOut: %s", str(countOut))
+            countOut += 1
             fiscalyear = rec.to_fiscalyear_id
+            countIn = 1
             for line in rec.line_ids:
+                _logger.info("roundIn: %s", str(countIn))
+                countIn += 1
                 budget_lines = BudgetLine.search(
                     [('fiscalyear_id', '=', fiscalyear.id),
                      ('project_id', '=', line.project_id.id),
@@ -129,6 +137,13 @@ class ProjectBalanceCarryForward(models.Model):
                 if len(budget_lines) == 1:
                     budget_lines.released_amount = line.balance_amount
                     line.write({'state': 'success'})
+                    
+                    project = line.project_id
+                    error = self.update_project_released_amount(project, fiscalyear, line.balance_amount)
+                    if error:
+                        errors += error + "\r\n"
+                        error = ""
+                    
                 elif not budget_lines:
                     line.write({'reason': '1',
                                 'state': 'fail'})
@@ -147,12 +162,29 @@ class ProjectBalanceCarryForward(models.Model):
                             break
                         
                     line.write({'state': 'success'})
+                    
+                    project = line.project_id
+                    error = self.update_project_released_amount(project, fiscalyear, line.balance_amount)
+                    if error:
+                        errors += error + "\r\n"
+                        error = ""
                 
         # update project released amount
-        fiscalyear = self.to_fiscalyear_id
-        for line in self.line_ids:
-            project = line.project_id
-            self.update_project_released_amount(project, fiscalyear, line.balance_amount)
+#         errors = ""
+#         error = ""
+#         fiscalyear = self.to_fiscalyear_id
+#         for line in self.line_ids:
+#             if line.state == "success":
+#                 project = line.project_id
+#                 error = self.update_project_released_amount(project, fiscalyear, line.balance_amount)
+#                 if error:
+#                     errors += error + "\r\n"
+#                     error = ""
+#             else:
+#                 _logger.info("project: %s state: %s", str(line.project_id.code), str(line.state))
+                
+        if errors:
+            raise ValidationError(errors)
 
         self.write({'state': 'done'})
 
@@ -162,8 +194,7 @@ class ProjectBalanceCarryForward(models.Model):
                                                         and l.budget_method=='expense' 
                                                         and l.charge_type=='external')
         if not budget_plans:
-            raise ValidationError(
-                _("Not allow to release budget for %s without plan!" % project.code))
+            return "Not allow to release budget for " + str(project.code) + " without plan!"
               
         update_vals = []
         released_amount = balance_amount
@@ -191,8 +222,6 @@ class ProjectBalanceCarryForward(models.Model):
 #                  "project_id":project.id,
 #                  "released_amount":released_amount
 #                  })
-
-        return True
 
 
 class ProjectBalanceCarryForwardLine(models.Model):
