@@ -232,7 +232,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 (select pol.org_id as org_id, po.id as purchase_id, pct.id as contract_id, pip.id as inv_plan_id, av.id as invoice_id, 
                     av.purchase_billing_id as billing_id, pol.id as purchase_line_id, po.account_deposit_supplier as account_id, 
                     prod.id as product_id, po.partner_id as supplier_id,
-                    fis.name as po_fiscalyear, ou.name as org, po.date_order po.name as po_number, pol.docline_seq, pip.installment,
+                    fis.name as po_fiscalyear, ou.name as org, po.date_order, po.name as po_number, pol.docline_seq, pip.installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
                         when po.contract_id is not null then pct_t.name
@@ -337,7 +337,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 (select pol.org_id as org_id, po.id as purchase_id, pct.id as contract_id, pip.id as inv_plan_id, av.id as invoice_id, 
                     av.purchase_billing_id as billing_id, pol.id as purchase_line_id, po.account_deposit_supplier as account_id, 
                     prod.id as product_id, po.partner_id as supplier_id,
-                    fis.name as po_fiscalyear, ou.name as org, po.date_order po.name as po_number, pol.docline_seq, pip.installment,
+                    fis.name as po_fiscalyear, ou.name as org, po.date_order, po.name as po_number, pol.docline_seq, pip.installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
                         when po.contract_id is not null then pct_t.name
