@@ -15,6 +15,7 @@ class AccountVoucher(models.Model):
         for voucher in self:
             if voucher.line_ids and \
                 voucher.line_ids[0].move_line_id and \
+                'DV' in voucher.line_ids[0].move_line_id.move_id.document and \
                 voucher.line_ids[0].move_line_id.move_id.document_id and \
                 voucher.line_ids[0].move_line_id.move_id.document_id.source_document_id and \
                 'POS' in voucher.line_ids[0].move_line_id.move_id.document_id.source_document_id.name:
