@@ -204,10 +204,11 @@ class PurchaseOrderLine(models.Model):
                 res['value']['chartfield_id'] = last_rec.chartfield_id.id
                 res['value']['fund_id'] = last_rec.fund_id.id
                 res['value']['cost_control_id'] = last_rec.cost_control_id.id
-                res['value']['product_qty'] = last_rec.product_qty
-                res['value']['product_uom'] = last_rec.product_uom.id
                 res['value']['price_unit'] = last_rec.price_unit
                 res['value']['taxes_id'] = last_rec.taxes_id.ids
                 res['value']['price_subtotal'] = last_rec.price_subtotal
-                res['value']['fiscalyear_id'] = last_rec.fiscalyear_id.id             
+                res['value']['fiscalyear_id'] = last_rec.fiscalyear_id.id
+                if ('product_qty' in res['value']) == False:
+                    res['value']['product_qty'] = last_rec.product_qty                    
+                    res['value']['product_uom'] = last_rec.product_uom.id
         return res
