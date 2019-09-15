@@ -23,8 +23,17 @@ class AccountMove(models.Model):
             lines = rec.line_id
             if not lines:
                 continue
-            debit = sum(lines.mapped('debit'))
-            credit = sum(lines.mapped('credit'))
+            # kittiu: change from using mapped to direct sql for more accuracy
+            # --
+            # debit = sum(lines.mapped('debit'))
+            # credit = sum(lines.mapped('credit'))
+            self._cr.execute("""
+                select sum(debit), sum(credit)
+                from account_move_line where move_id = %s
+            """, (rec.id, ))
+            res = self._cr.fetchall()[0]
+            debit, credit = res[0], res[1]
+            # --
             if float_compare(debit, credit, prec) != 0:
                 raise ValidationError(
                     _('Entry not balance, %s') % rec.ref)
