@@ -438,7 +438,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 where po.state not in ('except_picking','except_invoice','cancel') and po.order_type = 'purchase_order' and po.use_invoice_plan = True
                     and pol.active = True and %s)
             ) as new
-            order by org, po_fiscalyear, date_order, po_number, docline_seq, installment
+            order by org_id, po_fiscalyear, date_order, po_number, docline_seq, installment
         """  % (where_str,where_str))
         
         invoice_plans = self._cr.dictfetchall()

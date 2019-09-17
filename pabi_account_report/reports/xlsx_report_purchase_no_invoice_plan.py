@@ -348,7 +348,7 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
                 left join account_account ads on ads.id = po.account_deposit_supplier
             where po.state not in ('except_picking','except_invoice','cancel') and po.order_type = 'purchase_order'
                 and pol.active = True and
-        """  + where_str + ' order by ou.name, pol.fiscalyear_id, po.date_order, po.name, pol.docline_seq')
+        """  + where_str + ' order by pol.org_id, pol.fiscalyear_id, po.date_order, po.name, pol.docline_seq')
         #search = rec.search([('invoice_id','=',rec.invoice_id.id),('purchase_line_id','!=',False)], limit=1)
         
         invoice_lines = self._cr.dictfetchall()
