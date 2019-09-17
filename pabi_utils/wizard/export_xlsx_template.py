@@ -459,7 +459,7 @@ class ExportXlsxTemplate(models.TransientModel):
                 if type(value) == type(''):
                     #value = re.sub(r"[^a-zA-Z0-9\W]+", ' ', value)
                     #value = re.sub(r"[^\u0E00-\u0E7F\w\d\s(),-@#$%^&*-_+=+!\n]+", ' ', value)๑-๙\p{Thai}
-                    value = re.sub(r"[^a-zA-Z0-9\W]+", ' ', value)
+                    value = re.sub(r"[^่-๋ก-ฮ๑-๙ะ-์\w\d\s(),-@#$%^&*-_+=+!\n]+", ' ', value)
                 vals[field[0]].append(value)
         return (vals, aggre_func_dict, field_format_dict)
 
