@@ -74,3 +74,33 @@ class PrintPNDFormWizard(models.TransientModel):
             'context': {'lang': 'th_TH'},
         }
         return res
+
+    @api.multi
+    def run_report_pnd3(self):
+        report_name = REPORT_NAMES[self.income_tax_form][self.print_format]
+        if not report_name:
+            raise ValidationError(_('Selected form not found!'))
+        company = self.env.user.company_id.partner_id
+        company_taxid = len(company.vat or '') == 13 and company.vat or ''
+        company_branch = \
+            len(company.taxbranch or '') == 5 and company.taxbranch or ''
+        # Params to Jasper
+        data_dict = {
+            'no_header': self.print_format == 'txt_csv' and True or False,
+            'income_tax_form': (self.income_tax_form == 'pnd3a' and
+                                'pnd3' or self.income_tax_form),
+            'fiscalyear_id': self.fiscalyear_id.id,
+            'wht_period_id': self.calendar_period_id.id,
+            'company_taxid': company_taxid,
+            'company_branch': company_branch,
+            'print_name': self.env.user.name or '',
+            'print_position': self.env.user.employee_id.job_id.name or ''
+        }
+        report_name = "report_pnd3_form_jasperserver"
+        res = {
+            'type': 'ir.actions.report.xml',
+            'report_name': report_name,
+            'datas': data_dict,
+            'context': {'lang': 'th_TH'},
+        }
+        return res

@@ -15,6 +15,7 @@
     "depends": [
         "base",
         "account",
+        "purchase",
     ],
     "data": [
         "security/ir.model.access.csv",

@@ -123,6 +123,27 @@
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3_form_txt)"/>
 		</record>
 		
+		# PND3 (Jasperserver)
+		<record id="report_pnd3_form_jasperserver" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd3.form</field>
+			<field name="name">PND3 Form</field>
+			<field name="report_type">jasperserver_rest_v2</field>
+			<field name="report_name">report_pnd3_jasperserver</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="jasper_report_path">/Reports/API/PABI2/pabi2o_test_28049_intra_nstda_or_th</field>
+			<field name="criteria_field"></field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_pnd3_form_jasperserver_values" model="ir.values">
+			<field name="name">PND3 Form</field>
+			<field name="model">report.pnd3.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3_form_jasperserver)"/>
+		</record>
 		###########################################################################
 
 		# PND3A

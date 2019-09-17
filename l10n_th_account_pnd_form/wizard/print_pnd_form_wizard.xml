@@ -18,6 +18,7 @@
                     </group>
                     <footer>
                         <button string="Print" name="run_report" type="object" class="oe_highlight"/>
+                        <button string="Print PND3" name="run_report_pnd3" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
