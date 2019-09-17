@@ -305,6 +305,15 @@ class HRExpenseLine(models.Model):
         related='expense_id.name',
         readonly=True,
     )
+    pay_to = fields.Selection([
+        ('pettycash', 'Petty Cash'),
+        ('internal', 'Internal Charge'),
+        ('employee', 'Employee'),
+        ('supplier', 'Supplier')],
+        related='expense_id.pay_to',
+        store=True,
+        index=True,
+    )
 
     @api.multi
     @api.depends('inrev_activity_id')
