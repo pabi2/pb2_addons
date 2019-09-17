@@ -129,7 +129,7 @@
 			<field name="model">report.pnd3.form</field>
 			<field name="name">PND3 Form</field>
 			<field name="report_type">jasperserver_rest_v2</field>
-			<field name="report_name">report_pnd3_jasperserver</field>
+			<field name="report_name">report_pnd3_form_jasperserver</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
