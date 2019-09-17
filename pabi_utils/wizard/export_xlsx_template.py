@@ -459,8 +459,11 @@ class ExportXlsxTemplate(models.TransientModel):
                 if type(value) == type(''):
                     #value = re.sub(r"[^a-zA-Z0-9\W]+", ' ', value)
                     #value = re.sub(r"[^\u0E00-\u0E7F\w\d\s(),-@#$%^&*-_+=+!\n]+", ' ', value)๑-๙\p{Thai}
-                    value = re.sub(r"[^่-๋ก-ฮ๑-๙ะ-์\w\d\s(),-@#$%^&*-_+=+!\n]+", ' ', value)
-                    value.encode('utf-8')
+                    #value = re.sub(r"[^่-๋ก-ฮ๑-๙ะ-์\w\d\s(),-@#$%^&*-_+=+!\n]+", ' ', value)
+                    #"' “”–
+                    #value = re.sub(r"[' “”–]+", ' ', value)
+                    #value.decode("windows-1252").encode("utf8")#.encode('ascii').decode('cp1252').encode('utf-8')#.encode('utf-8')#.encode('ascii')#('utf-8')
+                    value.replace('“','').replace('”','')
                 vals[field[0]].append(value)
         return (vals, aggre_func_dict, field_format_dict)
 
@@ -507,6 +510,7 @@ class ExportXlsxTemplate(models.TransientModel):
         except KeyError, e:
             raise except_orm(_('Key Error!'), e)
         except IllegalCharacterError, e:
+            print '\nrecord: %s \ndata_dict: %s'%(str(record),str(data_dict))#record, data_dict
             raise except_orm(
                 _('IllegalCharacterError!\n'
                   'Some exporting data may contain special character'), e)
