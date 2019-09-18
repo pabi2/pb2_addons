@@ -24,7 +24,10 @@
                   </p>
                   <group>
                       <group>
+                          <field name="void_date_remove"/>
                           <field name="target_status"/>
+                          <field name="void_posting_regime"/>
+                          <field name="void_account_residual_value_id"/>
                       </group>
                       <group>
                           <field name="note" nolabel="1" placeholder="Reson for remove..."/>
