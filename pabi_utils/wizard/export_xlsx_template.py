@@ -440,8 +440,8 @@ class ExportXlsxTemplate(models.TransientModel):
             for field in pair_fields:  # (field, raw_field)
                 value = self._get_field_data(field[1], line)
                 if type(value) == type(''):
-                    #value = re.sub(r"[^฿ฯะ-ฺเ-์ก-ฮ๐\w\d\s(),-@#$%^&*-_+=+!\n]+", '', value)
-                    value = re.sub(r"[^฿“”ฯะ-ฺเ-์ก-ฮ๐\w\d\s(),-@#$%^&*-_+=+!\n]+", '', value)
+                    value = value.decode('utf-8')
+                    value = re.sub(r"[\u0E01-\u0E5A][^\w\d\s(),-@#$%^&*-_+=+!\n]+", '', value)
                 eval_cond = field_cond_dict[field[0]]
                 if eval_cond:  # Get eval_cond of a raw field
                     eval_context = {'float_compare': float_compare,
