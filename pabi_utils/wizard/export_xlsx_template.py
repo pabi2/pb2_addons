@@ -439,7 +439,8 @@ class ExportXlsxTemplate(models.TransientModel):
         for line in lines:
             for field in pair_fields:  # (field, raw_field)
                 value = self._get_field_data(field[1], line)
-                # Case Eval
+                if type(value) == type(''):
+                    value = re.sub(r"[^฿ฯะ-ฺเ-์ก-ฮ๐\w\d\s(),-@#$%^&*-_+=+!\n]+", '', value)
                 eval_cond = field_cond_dict[field[0]]
                 if eval_cond:  # Get eval_cond of a raw field
                     eval_context = {'float_compare': float_compare,
@@ -455,15 +456,6 @@ class ExportXlsxTemplate(models.TransientModel):
                     # value = str(eval(eval_cond, eval_context))
                     # Test removing str(), coz some case, need resulting number
                     value = eval(eval_cond, eval_context)
-                # --
-                if type(value) == type(''):
-                    #value = re.sub(r"[^a-zA-Z0-9\W]+", ' ', value)
-                    #value = re.sub(r"[^\u0E00-\u0E7F\w\d\s(),-@#$%^&*-_+=+!\n]+", ' ', value)๑-๙\p{Thai}
-                    #value = re.sub(r"[^่-๋ก-ฮ๑-๙ะ-์\w\d\s(),-@#$%^&*-_+=+!\n]+", ' ', value)
-                    #"' “”–
-                    #value = re.sub(r"[' “”–]+", ' ', value)
-                    #value.decode("windows-1252").encode("utf8")#.encode('ascii').decode('cp1252').encode('utf-8')#.encode('utf-8')#.encode('ascii')#('utf-8')
-                    value.replace('“','').replace('”','')
                 vals[field[0]].append(value)
         return (vals, aggre_func_dict, field_format_dict)
 
@@ -532,6 +524,10 @@ class ExportXlsxTemplate(models.TransientModel):
             elif data_type == 'datetime':
                 if line_copy:
                     line_copy = dt.strptime(line_copy, '%Y-%m-%d %H:%M:%S')
+            #if data_type == 'char' and line_copy != False:
+                #3print 'Line1: '+line_copy
+                #line_copy = re.sub(r"[^่-๋ก-ฮ๑-๙ะ-์\w\d\s(),-@#$%^&*-_+=+!\n]+", '', data_type)
+                #print 'Line2: '+line_copy
         if isinstance(line_copy, basestring):
             line_copy = line_copy.encode('utf-8')
         return line_copy
@@ -631,7 +627,7 @@ class ExportXlsxTemplate(models.TransientModel):
             sb_formats = subtotals.get('formats', {})
 
             fields = ws.get(line_field, {}).values()
-            all_rc += ws.get(line_field, {}).keys()
+            all_rc = ws.get(line_field, {}).keys()
             (vals, func, field_format) = \
                 self._get_line_vals(record, line_field, fields)
             # value with '\\skiprow' signify line skipping
@@ -815,7 +811,7 @@ class ExportXlsxTemplate(models.TransientModel):
         ptemp = ConfParam.get_param('path_temp_file') or '/temp'
         stamp = dt.utcnow().strftime('%H%M%S%f')[:-3]
         ftemp = '%s/temp%s.xlsx' % (ptemp, stamp)
-        f = open(ftemp, 'w')
+        f = open(ftemp, 'wb+')
         f.write(decoded_data)
         f.seek(0)
         f.close()
