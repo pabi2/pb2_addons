@@ -439,6 +439,8 @@ class ExportXlsxTemplate(models.TransientModel):
         for line in lines:
             for field in pair_fields:  # (field, raw_field)
                 value = self._get_field_data(field[1], line)
+                if type(value) == type(''):
+                    value = re.sub(r"[^฿ฯะ-ฺเ-์ก-ฮ๐\w\d\s(),-@#$%^&*-_+=+!\n]+", '', value)
                 eval_cond = field_cond_dict[field[0]]
                 if eval_cond:  # Get eval_cond of a raw field
                     eval_context = {'float_compare': float_compare,
@@ -522,8 +524,6 @@ class ExportXlsxTemplate(models.TransientModel):
             elif data_type == 'datetime':
                 if line_copy:
                     line_copy = dt.strptime(line_copy, '%Y-%m-%d %H:%M:%S')
-            if data_type == 'char' and line_copy != False:
-                line_copy = re.sub(r"[^฿ฯะ-ฺเ-์ก-ฮ๐\w\d\s(),-@#$%^&*-_+=+!\n]+", '', line_copy)
         if isinstance(line_copy, basestring):
             line_copy = line_copy.encode('utf-8')
         return line_copy
