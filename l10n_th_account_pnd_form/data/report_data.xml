@@ -124,12 +124,12 @@
 		</record>
 		
 		# PND3 (Jasperserver)
-		<record id="report_pnd3_form_jasperserver" model="ir.actions.report.xml">
+		<record id="report_test" model="ir.actions.report.xml">
 			<field name="auto">True</field>
 			<field name="model">report.pnd3.form</field>
 			<field name="name">PND3 Form</field>
 			<field name="report_type">jasperserver_rest_v2</field>
-			<field name="report_name">report_pnd3_form_jasperserver</field>
+			<field name="report_name">report_test</field>
 			<field name="menu">True</field>
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
@@ -142,7 +142,7 @@
 		<record id="report_pnd3_form_jasperserver_values" model="ir.values">
 			<field name="name">PND3 Form</field>
 			<field name="model">report.pnd3.form</field>
-			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3_form_jasperserver)"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_test)"/>
 		</record>
 		###########################################################################
 
