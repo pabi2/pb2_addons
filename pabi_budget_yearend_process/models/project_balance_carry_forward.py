@@ -199,14 +199,12 @@ class ProjectBalanceCarryForward(models.Model):
                             break
 
                     line.write({'state': 'success'})
-
         # update project released amount
         fiscalyear = self.to_fiscalyear_id
         for line in self.line_ids:
             if line.state == "success":
                 project = line.project_id
                 self.update_project_released_amount(project, fiscalyear, line.balance_amount)
-
         self.write({'state': 'done'})
 
     @api.multi
@@ -239,6 +237,7 @@ class ProjectBalanceCarryForward(models.Model):
                 _("Not allow to release budget for %s without plan!" % project.code))
 
         update_vals = []
+        lock = 0
         released_amount = balance_amount
         for budget_plan in budget_plans:
             if budget_plan.planned_amount == 0.0:
@@ -257,8 +256,14 @@ class ProjectBalanceCarryForward(models.Model):
                     balance_amount = 0.0
                     update_vals.append((1, budget_plan.id, update))
                     break
+        project_lock = project.lock_release
         if update_vals:
+            if project_lock:
+                lock = 1
+                project.write({'lock_release': False})
             project.write({'budget_plan_ids': update_vals})
+            if lock:
+                project.write({'lock_release': True})
 #             project.budget_release_ids.create(
 #                 {"fiscalyear_id":fiscalyear.id,
 #                  "project_id":project.id,
