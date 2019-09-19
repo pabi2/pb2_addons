@@ -935,7 +935,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         if adjust_past_plan or fiscal.date_start > period.date_start:
             return 0
         elif fiscal.date_stop < period.date_start:
-            return 12
+            return 13
         else:
             return self.env['account.period'].get_num_period_by_period()
 
