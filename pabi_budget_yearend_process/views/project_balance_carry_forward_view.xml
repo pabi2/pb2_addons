@@ -25,6 +25,7 @@
                     <header>
                         <button name="action_carry_forward" class="oe_highlight" type="object" states="draft" string="Carry Forward" groups="base.group_user"
                           confirm="This will carry forward project balance of following projects to specified fiscal year."/>
+                        <button name="action_carry_forward_background" string="Run Background" class="oe_highlight" confirm="Run Background?" type="object" states="draft" context="{'button_carry_forward_async_process': 1}"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                     </header>
                     <sheet>
@@ -41,6 +42,8 @@
                             <group>
                                 <field name="write_uid"/>
                                 <field name="write_date"/>
+                                <field name="button_carry_forward_job_id"/>
+                                <field name="button_carry_forward_uuid"/>
                             </group>
                         </group>
                         <field name="line_ids">
