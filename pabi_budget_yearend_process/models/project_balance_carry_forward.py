@@ -118,6 +118,7 @@ class ProjectBalanceCarryForward(models.Model):
         """ For each project, inject the balance amount to the released amount
         in related account.budget.line """
         BudgetLine = self.env['account.budget.line']
+        
         for rec in self:
             fiscalyear = rec.to_fiscalyear_id
             for line in rec.line_ids:
@@ -168,8 +169,11 @@ class ProjectBalanceCarryForward(models.Model):
               
         update_vals = []
         released_amount = balance_amount
+        count_budget = 1
         for budget_plan in budget_plans:
-            if budget_plan.planned_amount == 0.0:
+            if (budget_plan.planned_amount == 0.0) or \
+                (count_budget == len(budget_plans)):
+
                 update = {'released_amount': balance_amount}
                 balance_amount = 0.0
                 update_vals.append((1, budget_plan.id, update))
@@ -185,6 +189,7 @@ class ProjectBalanceCarryForward(models.Model):
                     balance_amount = 0.0
                     update_vals.append((1, budget_plan.id, update))
                     break
+            count_budget += 1
         if update_vals:
             project.write({'budget_plan_ids': update_vals})
 #             project.budget_release_ids.create(
