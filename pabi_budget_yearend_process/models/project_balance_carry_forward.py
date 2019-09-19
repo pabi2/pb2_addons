@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 import time
-from openerp import fields, models, api
+from openerp import fields, models, api, _
+from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_compare
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class ProjectBalanceCarryForward(models.Model):
@@ -86,7 +91,7 @@ class ProjectBalanceCarryForward(models.Model):
         if self.from_fiscalyear_id.control_ext_charge_only:
             where_ext = "and charge_type = 'external'"
         sql = """
-            select project_id, program_id, balance_amount
+            select a.project_id, a.program_id, a.balance_amount
             from (
                 select project_id, program_id,
                 sum(released_amount - amount_actual) balance_amount
@@ -99,7 +104,10 @@ class ProjectBalanceCarryForward(models.Model):
                      or coalesce(amount_actual, 0.0) != 0.0)
                 group by project_id,  program_id
             ) a
-            where balance_amount > 0.0
+                inner join res_project prj
+                    on prj.id = a.project_id
+                    and prj.state = 'approve'
+            where a.balance_amount > 0.0
         """ % (self.from_fiscalyear_id.id, where_ext)
         self._cr.execute(sql)
         projects = [(0, 0, project) for project in self._cr.dictfetchall()]
@@ -115,7 +123,9 @@ class ProjectBalanceCarryForward(models.Model):
             for line in rec.line_ids:
                 budget_lines = BudgetLine.search(
                     [('fiscalyear_id', '=', fiscalyear.id),
-                     ('project_id', '=', line.project_id.id)])
+                     ('project_id', '=', line.project_id.id),
+                     ('charge_type', '=', 'external'),
+                     ('budget_method', '=', 'expense')])
                 if len(budget_lines) == 1:
                     budget_lines.released_amount = line.balance_amount
                     line.write({'state': 'success'})
@@ -123,9 +133,67 @@ class ProjectBalanceCarryForward(models.Model):
                     line.write({'reason': '1',
                                 'state': 'fail'})
                 elif len(budget_lines) > 1:
-                    line.write({'reason': '2',
-                                'state': 'fail'})
+                    balance_amount = line.balance_amount
+                    for budget in budget_lines:
+                        released_amount = 0.0
+                        if float_compare(balance_amount, budget.planned_amount, 2) == 1:
+                            released_amount = budget.planned_amount
+                            balance_amount -= released_amount
+                            budget.write({'released_amount': released_amount})
+                        else:
+                            released_amount = balance_amount
+                            balance_amount = 0.0
+                            budget.write({'released_amount': released_amount})
+                            break
+                        
+                    line.write({'state': 'success'})
+                
+        # update project released amount
+        fiscalyear = self.to_fiscalyear_id
+        for line in self.line_ids:
+            if line.state == "success":
+                project = line.project_id
+                self.update_project_released_amount(project, fiscalyear, line.balance_amount)
+
         self.write({'state': 'done'})
+
+    def update_project_released_amount(self, project, fiscalyear, balance_amount):
+        budget_plans = project.budget_plan_ids.filtered(lambda l: 
+                                                        l.fiscalyear_id == fiscalyear 
+                                                        and l.budget_method=='expense' 
+                                                        and l.charge_type=='external')
+        if not budget_plans:
+            raise ValidationError(
+                _("Not allow to release budget for %s without plan!" % project.code))
+              
+        update_vals = []
+        released_amount = balance_amount
+        for budget_plan in budget_plans:
+            if budget_plan.planned_amount == 0.0:
+                update = {'released_amount': balance_amount}
+                balance_amount = 0.0
+                update_vals.append((1, budget_plan.id, update))
+                break
+            else:
+                # float_compare: 0:equal, 1:first>second, -1:first<second
+                if float_compare(balance_amount, budget_plan.planned_amount, 2) == 1:
+                    update = {'released_amount': budget_plan.planned_amount}
+                    balance_amount -= budget_plan.planned_amount
+                    update_vals.append((1, budget_plan.id, update))
+                else:
+                    update = {'released_amount': balance_amount}
+                    balance_amount = 0.0
+                    update_vals.append((1, budget_plan.id, update))
+                    break
+        if update_vals:
+            project.write({'budget_plan_ids': update_vals})
+#             project.budget_release_ids.create(
+#                 {"fiscalyear_id":fiscalyear.id,
+#                  "project_id":project.id,
+#                  "released_amount":released_amount
+#                  })
+
+        return True
 
 
 class ProjectBalanceCarryForwardLine(models.Model):
