@@ -191,8 +191,11 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         self.ensure_one()
         plan_ids = []
         chartfield_dom = ''
+        where_acc = ''
         InvoicePlan = self.env['purchase.invoice.plan']
         Reports = self.env['report.purchase.invoice.plan.view']
+        
+        dom_acc = []
         dom = [('po.use_invoice_plan','=',True)]
         
         if self.org_ids:
@@ -202,7 +205,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         if self.contract_ids:
             dom += [('pct.id', 'in', tuple(self.contract_ids.ids))]
         if self.account_ids:
-            dom += [('rpt.account_id', 'in', tuple(self.account_ids.ids))]
+            dom_acc += [('account_id', 'in', tuple(self.account_ids.ids))]
         if self.chartfield_ids:
             
             chartfield_dom = self.get_where_str_chartfield()
@@ -216,7 +219,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         if self.date_end:
             dom += [('cast(po.date_order as date)','<=',self.date_end)]
         if self.period_start_id:
-            dom += [('po.date_order as date)','>=',self.period_start_id.date_start)]
+            dom += [('cast(po.date_order as date)','>=',self.period_start_id.date_start)]
         if self.period_end_id:
             dom += [('cast(po.date_order as date)','<=',self.period_end_id.date_stop)]
         if self.date_contract_action_start:
@@ -227,10 +230,18 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         where_str = self._domain_to_where_str(dom)
         where_str += chartfield_dom
         
+        if len(dom_acc) > 0:
+            where_acc = 'where '+(self._domain_to_where_str(dom_acc)).replace('and','')
+        
         self._cr.execute("""
             select * from (
                 (select pol.org_id as org_id, po.id as purchase_id, pct.id as contract_id, pip.id as inv_plan_id, av.id as invoice_id, 
-                    av.purchase_billing_id as billing_id, pol.id as purchase_line_id, po.account_deposit_supplier as account_id, 
+                    av.purchase_billing_id as billing_id, pol.id as purchase_line_id,
+                    case
+                        when prot.type in ('product','consu') then acc_st.id
+                        when prot.type in ('service') then acc_exp.id
+                        else null
+                    end as account_id,
                     prod.id as product_id, po.partner_id as supplier_id,
                     fis.name as po_fiscalyear, ou.name as org, po.date_order, po.name as po_number, pol.docline_seq, pip.installment,
                     case
@@ -318,6 +329,14 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     left join account_activity_group ag on ag.id = pol.activity_group_id
                     left join account_activity rpt on rpt.id = pol.activity_rpt_id
                     left join product_product prod on prod.id = pol.product_id
+                    left join product_template prot on prot.id = prod.product_tmpl_id
+                    left join product_category cate on cate.id = prot.categ_id
+                    left join ir_property ip_exp on ip_exp.res_id = concat('product.category,',cate.id) 
+                        and ip_exp.name = 'property_account_expense_categ'
+                    left join account_account acc_exp on concat('account.account,',acc_exp.id) = ip_exp.value_reference
+                    left join ir_property ip_st on ip_st.res_id = concat('product.category,',cate.id) 
+                        and ip_st.name = 'property_stock_valuation_account_id'
+                    left join account_account acc_st on concat('account.account,',acc_st.id) = ip_st.value_reference
                     left join res_org org on org.id = pol.org_id
                     left join operating_unit ou on ou.id = org.operating_unit_id
                     left join res_fund fund on fund.id = pol.fund_id
@@ -335,7 +354,12 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 )
             union
                 (select pol.org_id as org_id, po.id as purchase_id, pct.id as contract_id, pip.id as inv_plan_id, av.id as invoice_id, 
-                    av.purchase_billing_id as billing_id, pol.id as purchase_line_id, po.account_deposit_supplier as account_id, 
+                    av.purchase_billing_id as billing_id, pol.id as purchase_line_id,
+                    case
+                        when prot.type in ('product','consu') then acc_st.id
+                        when prot.type in ('service') then acc_exp.id
+                        else null
+                    end as account_id,
                     prod.id as product_id, po.partner_id as supplier_id,
                     fis.name as po_fiscalyear, ou.name as org, po.date_order, po.name as po_number, pol.docline_seq, pip.installment,
                     case
@@ -423,6 +447,14 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     left join account_activity_group ag on ag.id = pol.activity_group_id
                     left join account_activity rpt on rpt.id = pol.activity_rpt_id
                     left join product_product prod on prod.id = pol.product_id
+                    left join product_template prot on prot.id = prod.product_tmpl_id
+                    left join product_category cate on cate.id = prot.categ_id
+                    left join ir_property ip_exp on ip_exp.res_id = concat('product.category,',cate.id) 
+                        and ip_exp.name = 'property_account_expense_categ'
+                    left join account_account acc_exp on concat('account.account,',acc_exp.id) = ip_exp.value_reference
+                    left join ir_property ip_st on ip_st.res_id = concat('product.category,',cate.id) 
+                        and ip_st.name = 'property_stock_valuation_account_id'
+                    left join account_account acc_st on concat('account.account,',acc_st.id) = ip_st.value_reference
                     left join res_org org on org.id = pol.org_id
                     left join operating_unit ou on ou.id = org.operating_unit_id
                     left join res_fund fund on fund.id = pol.fund_id
@@ -438,8 +470,9 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 where po.state not in ('except_picking','except_invoice','cancel') and po.order_type = 'purchase_order' and po.use_invoice_plan = True
                     and pol.active = True and %s)
             ) as new
+            %s
             order by org_id, po_fiscalyear, date_order, po_number, docline_seq, installment
-        """  % (where_str,where_str))
+        """  % (where_str,where_str,where_acc))
         
         invoice_plans = self._cr.dictfetchall()
         
