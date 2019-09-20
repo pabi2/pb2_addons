@@ -262,13 +262,14 @@ class ProjectBalanceCarryForward(models.Model):
                 lock = 1
                 project.write({'lock_release': False})
             project.write({'budget_plan_ids': update_vals})
+            # Create release history
+            project.budget_release_ids.create({
+                'fiscalyear_id': fiscalyear.id,
+                'project_id': project.id,
+                'released_amount': update.get('released_amount')
+            })
             if lock:
                 project.write({'lock_release': True})
-#             project.budget_release_ids.create(
-#                 {"fiscalyear_id":fiscalyear.id,
-#                  "project_id":project.id,
-#                  "released_amount":released_amount
-#                  })
 
         return True
 
