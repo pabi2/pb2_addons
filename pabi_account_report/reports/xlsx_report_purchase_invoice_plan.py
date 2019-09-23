@@ -455,4 +455,4 @@ class ReportPurchaseInvoicePlanView(models.AbstractModel):
     plan_unit_price = fields.Char()
     subtotal = fields.Char()
     inv_amount = fields.Float()
-    advance_deposit = fields.Boolean()
+    advance_deposit = fields.Char()
