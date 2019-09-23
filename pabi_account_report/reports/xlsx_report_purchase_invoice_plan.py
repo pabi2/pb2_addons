@@ -243,7 +243,8 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                         else null
                     end as account_id,
                     prod.id as product_id, po.partner_id as supplier_id,
-                    fis.name as po_fiscalyear, ou.name as org, po.date_order, po.name as po_number, pol.docline_seq, pip.installment,
+                    fis.name as po_fiscalyear, ou.name as org, po.date_order, po.name as po_number, pol.docline_seq, 
+                    cast(pip.installment as varchar) as installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
                         when po.contract_id is not null then pct_t.name
@@ -357,7 +358,8 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     av.purchase_billing_id as billing_id, null as purchase_line_id,
                     null as account_id,
                     null as product_id, po.partner_id as supplier_id,
-                    null as po_fiscalyear, ou.name as org, po.date_order, po.name as po_number, null as docline_seq, pip.installment,
+                    null as po_fiscalyear, ou.name as org, po.date_order, po.name as po_number, null as docline_seq, 
+                    cast(pip.installment as varchar) as installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
                         when po.contract_id is not null then pct_t.name
@@ -456,3 +458,5 @@ class ReportPurchaseInvoicePlanView(models.AbstractModel):
     subtotal = fields.Char()
     inv_amount = fields.Float()
     advance_deposit = fields.Char()
+    installment = fields.Char()
+
