@@ -350,7 +350,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     left join res_currency cur_kv on cur_kv.id = av.currency_id
                     left join account_account ads on ads.id = po.account_deposit_supplier
                 where po.state not in ('except_picking','except_invoice','cancel') and po.order_type = 'purchase_order' and po.use_invoice_plan = True
-                    and pip.order_line_id is not null and pol.active = True and %s
+                    and (pip.id is null or pip.order_line_id is not null) and pol.active = True and %s
                 )
             union
                 (select ou.org_id as org_id, po.id as purchase_id, pct.id as contract_id, pip.id as inv_plan_id, av.id as invoice_id, 
