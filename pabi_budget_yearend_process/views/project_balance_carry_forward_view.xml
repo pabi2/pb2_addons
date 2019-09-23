@@ -23,7 +23,7 @@
             <field name="arch" type="xml">
                 <form string="Carry Forward">
                     <header>
-                        <button name="action_carry_forward" class="oe_highlight" type="object" states="draft" string="Carry Forward" groups="base.group_user"
+                        <button name="action_carry_forward" class="oe_highlight" type="object" states="draft" string="Carry Forward" groups="base.group_user" context="{'button_carry_forward': 1}"
                           confirm="This will carry forward project balance of following projects to specified fiscal year."/>
                         <button name="action_carry_forward_background" string="Run Background" class="oe_highlight" confirm="Run Background?" type="object" states="draft" context="{'button_carry_forward_async_process': 1}"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done"/>

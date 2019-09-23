@@ -238,6 +238,7 @@ class ProjectBalanceCarryForward(models.Model):
 
         update_vals = []
         lock = 0
+        current_fy_release_only = 0
         released_amount = balance_amount
         for budget_plan in budget_plans:
             if budget_plan.planned_amount == 0.0:
@@ -263,14 +264,18 @@ class ProjectBalanceCarryForward(models.Model):
                 project.write({'lock_release': False})
             project.write({'budget_plan_ids': update_vals})
             # Create release history
+            if project.current_fy_release_only:
+                current_fy_release_only = 1
+                project.write({'current_fy_release_only': False})
             project.budget_release_ids.create({
-                'fiscalyear_id': fiscalyear.id,
-                'project_id': project.id,
-                'released_amount': update.get('released_amount')
+                 'fiscalyear_id': fiscalyear.id,
+                 'project_id': project.id,
+                 'released_amount': released_amount,
             })
             if lock:
                 project.write({'lock_release': True})
-
+            if current_fy_release_only:
+                project.write({'current_fy_release_only': True})
         return True
 
 
