@@ -786,7 +786,7 @@ class InterfaceAccountEntry(models.Model):
                     
         # if origin document exists
         existing = self._is_document_origin_exists(data_dict)
-        if not existing["is_success"]:
+        if ("is_success" in existing) and (not existing["is_success"]):
             _logger.info("IA - Output: %s" % existing)
             return existing
 #         if self._is_document_origin_exists(data_dict):
