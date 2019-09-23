@@ -75,7 +75,7 @@ class AccountAssetReverse(models.TransientModel):
                     (asset.code, ))
             # Reverse entry
             move_dict = move.copy_data({})[0]
-            move_dict['ref'] = _(u'ยกเลิกเลขครุภัณฑ์: %s') % asset.display_name
+            move_dict['ref'] = _(u'%s / %s') % (asset.code,self.note)
             move_dict['journal_id'] = 417   #change Asset Journal => Asset Journal (No-Budget)
             for line in move_dict.get('line_id', []):
                 line[2]['asset_profile_id'] = False
@@ -89,6 +89,8 @@ class AccountAssetReverse(models.TransientModel):
             move_id = self.env['account.move'].search(res['domain'])
             for move in move_id:
                   move.date = self.void_date_remove
+                  asset.date_remove = self.void_date_remove
+                  asset.note = self.note
             asset.write({'status': self.target_status.id,
                          'state': 'removed'})
             asset.message_post(body=_('-- Void/Removed --\n%s') % self.note)
