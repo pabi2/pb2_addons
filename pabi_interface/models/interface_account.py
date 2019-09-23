@@ -761,13 +761,26 @@ class InterfaceAccountEntry(models.Model):
             dom = [("name", "=", data_dict["name"])]
             ia_data = ia_table.search(dom)
             if ia_data:
-                err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
-                res = {
-                    'is_success': False,
-                    'result': False,
-                    'messages': _(err_message) %
-                                (data_dict["name"], ia_data.number)
-                    }
+                exists = False
+                if len(ia_data) > 1:
+                    system = ia_data[0].system_id.name
+                else:
+                    system = ia_data.system_id.name
+                    
+                if system == "mySales":
+                    exists = True  # check_existing
+                else:
+                    if str_type != "Reverse":
+                        exists = True  # check_existing
+                
+                if exists:
+                    err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
+                    res = {
+                        'is_success': False,
+                        'result': False,
+                        'messages': _(err_message) %
+                                    (data_dict["name"], ia_data.number)
+                        }
             else:
                 err_message = "ไม่สามารถ Interface ได้"
                 res = {
