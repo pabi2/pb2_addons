@@ -761,6 +761,7 @@ class InterfaceAccountEntry(models.Model):
             dom = [("name", "=", data_dict["name"])]
             ia_data = ia_table.search(dom)
             if ia_data:
+                str_type = data_dict["type"]
                 exists = False
                 if len(ia_data) > 1:
                     system = ia_data[0].system_id.name
