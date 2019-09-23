@@ -353,45 +353,22 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     and pip.order_line_id is null and pol.active = True and %s
                 )
             union
-                (select pol.org_id as org_id, po.id as purchase_id, pct.id as contract_id, pip.id as inv_plan_id, av.id as invoice_id, 
-                    av.purchase_billing_id as billing_id, pol.id as purchase_line_id,
-                    case
-                        when prot.type in ('product','consu') then acc_st.id
-                        when prot.type in ('service') then acc_exp.id
-                        else null
-                    end as account_id,
-                    prod.id as product_id, po.partner_id as supplier_id,
-                    fis.name as po_fiscalyear, ou.name as org, po.date_order, po.name as po_number, pol.docline_seq, pip.installment,
+                (select ou.org_id as org_id, po.id as purchase_id, pct.id as contract_id, pip.id as inv_plan_id, av.id as invoice_id, 
+                    av.purchase_billing_id as billing_id, null as purchase_line_id,
+                    null as account_id,
+                    null as product_id, po.partner_id as supplier_id,
+                    null as po_fiscalyear, ou.name as org, po.date_order, po.name as po_number, null as docline_seq, pip.installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
                         when po.contract_id is not null then pct_t.name
                         else ''
                     end as po_contract_type,
-                    ag.name as activity_group, 
-                    rpt.name as activity_rpt,
-                    case
-                        when pol.section_id is not null then sec.code
-                        when pol.project_id is not null then prj.code
-                        when pol.invest_asset_id is not null then asset.code
-                        when pol.invest_construction_phase_id is not null then phase.code
-                        when pol.personnel_costcenter_id is not null then rpc.code
-                        else ''
-                    end as budget_code,
-                    case
-                        when pol.section_id is not null then sec.name
-                        when pol.project_id is not null then prj.name
-                        when pol.invest_asset_id is not null then asset.name
-                        when pol.invest_construction_phase_id is not null then phase.name
-                        when pol.personnel_costcenter_id is not null then rpc.name
-                        else ''
-                    end as budget_name,
-                    fund.name as fund, fis.name as fiscal_year_by_invoice_plan,
+                    null as activity_group, 
+                    null as activity_rpt,
+                    null as budget_code, null as budget_name,
+                    null as fund, null as fiscal_year_by_invoice_plan,
                     cur_po.name as currency, 
-                    (SELECT STRING_AGG(tax.description, ', ') AS tax 
-                     FROM account_tax tax 
-                         LEFT JOIN purchase_order_taxe pot ON pot.tax_id = tax.id
-                     WHERE pot.ord_id = pol.id
-                    ) AS taxes,
+                    null AS taxes,
                     ROUND((CASE
                         WHEN cur_po.name = 'THB' THEN 1
                         WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
@@ -410,65 +387,28 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                         ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
                             WHERE cur_r.currency_id = cur_kv.id and av.date_invoice  = CAST(cur_r.name AS DATE) limit 1)
                     END), 2) as exchange_rate_kv,
-                    (select wa.name from purchase_work_acceptance_line wal 
-                        left join purchase_work_acceptance wa on wa.id = wal.acceptance_id
-                     where wal.line_id = pol.id and wa.state != 'cancel' and wa.installment = pip.installment limit 1
-                    ) as wa_number, 
-                    (select wa.date_accept from purchase_work_acceptance_line wal 
-                        left join purchase_work_acceptance wa on wa.id = wal.acceptance_id
-                     where wal.line_id = pol.id and wa.state != 'cancel' and wa.installment = pip.installment limit 1
-                    ) as acceptance_date,
-                    (select wal.to_receive_qty from purchase_work_acceptance_line wal 
-                        left join purchase_work_acceptance wa on wa.id = wal.acceptance_id
-                     where wal.line_id = pol.id and wa.state != 'cancel' and wa.installment = pip.installment limit 1
-                    ) as plan_qty,
-                    (select wal.price_unit_untaxed from purchase_work_acceptance_line wal 
-                        left join purchase_work_acceptance wa on wa.id = wal.acceptance_id
-                     where wal.line_id = pol.id and wa.state != 'cancel' and wa.installment = pip.installment limit 1
-                    ) as plan_unit_price,
-                    (select wal.price_subtotal from purchase_work_acceptance_line wal 
-                        left join purchase_work_acceptance wa on wa.id = wal.acceptance_id
-                     where wal.line_id = pol.id and wa.state != 'cancel' and wa.installment = pip.installment limit 1
-                    ) as subtotal,
-                    (select invl.price_subtotal from account_invoice_line invl where invl.invoice_id = av.id and 
-                        invl.purchase_line_id = pol.id
-                    ) as inv_amount,
+                    null as wa_number, 
+                    null as acceptance_date,
+                    null as plan_qty,
+                    null as plan_unit_price,
+                    null as subtotal,
+                    null as inv_amount,
                     case
                         when po.use_deposit is False and po.use_advance is False then ''
                         else ads.name
                     end as advance_deposit
                 from purchase_invoice_plan pip
-                    left join purchase_order_line pol on pol.id = pip.order_line_id
                     left join purchase_order po on po.id = pip.order_id
-                    left join account_fiscalyear fis on fis.id = pol.fiscalyear_id
                     left join purchase_contract pct on pct.id = po.contract_id
                     left join purchase_contract_type pct_t on pct_t.id = pct.contract_type_id
                     left join purchase_contract_type po_pct_t on po_pct_t.id = po.po_contract_type_id
-                    left join account_activity_group ag on ag.id = pol.activity_group_id
-                    left join account_activity rpt on rpt.id = pol.activity_rpt_id
-                    left join product_product prod on prod.id = pol.product_id
-                    left join product_template prot on prot.id = prod.product_tmpl_id
-                    left join product_category cate on cate.id = prot.categ_id
-                    left join ir_property ip_exp on ip_exp.res_id = concat('product.category,',cate.id) 
-                        and ip_exp.name = 'property_account_expense_categ'
-                    left join account_account acc_exp on concat('account.account,',acc_exp.id) = ip_exp.value_reference
-                    left join ir_property ip_st on ip_st.res_id = concat('product.category,',cate.id) 
-                        and ip_st.name = 'property_stock_valuation_account_id'
-                    left join account_account acc_st on concat('account.account,',acc_st.id) = ip_st.value_reference
-                    left join res_org org on org.id = pol.org_id
-                    left join operating_unit ou on ou.id = org.operating_unit_id
-                    left join res_fund fund on fund.id = pol.fund_id
-                    left join res_section sec on sec.id = pol.section_id
-                    left join res_project prj on prj.id = pol.project_id
-                    left join res_invest_asset asset on asset.id = pol.invest_asset_id
-                    left join res_invest_construction_phase phase on phase.id = pol.invest_construction_phase_id
-                    left join res_personnel_costcenter rpc on rpc.id = pol.personnel_costcenter_id
+                    left join operating_unit ou on ou.id = po.operating_unit_id
                     left join account_invoice av on av.id = pip.ref_invoice_id
                     left join res_currency cur_po on cur_po.id = po.currency_id
                     left join res_currency cur_kv on cur_kv.id = av.currency_id
                     left join account_account ads on ads.id = po.account_deposit_supplier
                 where po.state not in ('except_picking','except_invoice','cancel') and po.order_type = 'purchase_order' and po.use_invoice_plan = True
-                    and pol.active = True and %s)
+                    and pip.order_line_id is null and %s)
             ) as new
             %s
             order by org_id, po_fiscalyear, date_order, po_number, docline_seq, installment
