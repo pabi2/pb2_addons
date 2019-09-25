@@ -24,7 +24,7 @@
 							<tree default_order='id'>
 								<field name="id"/>
 								<field name="fiscalyear_id"/>
-								<field name="monitor_fy_id"/>
+								<field name="monitor_fy_id" string="Budget Fiscal Year"/>
 								<field name="expense_line_id"/>
 								<field name="create_date"/>
 								<field name="amount" string="Committed Amount" sum="Total Amount"/>
