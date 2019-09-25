@@ -713,7 +713,6 @@ class InterfaceAccountEntry(models.Model):
         check_datas = check_table.search(dom)
         
         if not check_datas:
-            _logger.info("aaa")
             values = {}
             values["doc_origin"] = str_doc_origin
             if str_type == "Reverse":
@@ -724,7 +723,6 @@ class InterfaceAccountEntry(models.Model):
             res = check_table.create(values)
             self._cr.commit()
         else:
-            _logger.info("bbb")
             err_message = "ไม่สามารถ Interface ได้"
             res = {
                 'is_success': False,
@@ -742,7 +740,6 @@ class InterfaceAccountEntry(models.Model):
         ia_datas = ia_table.search(dom)
         
         if ia_datas:
-            _logger.info("ccc")
             ia_number = None
             system = None
             res = None
@@ -754,7 +751,6 @@ class InterfaceAccountEntry(models.Model):
                 ia_number = ia_datas.number
                 
             if system == "mySales":
-                _logger.info("ddd")
                 err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
                 res = {
                     'is_success': False,
@@ -763,9 +759,7 @@ class InterfaceAccountEntry(models.Model):
                             (data_dict["name"], ia_number)
                     }
             else:
-                _logger.info("eee")
                 if str_type != "Reverse":
-                    _logger.info("fff")
                     err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
                     res = {
                         'is_success': False,
@@ -789,45 +783,6 @@ class InterfaceAccountEntry(models.Model):
         if existing and (not existing["is_success"]):
             _logger.info("IA - Output: %s" % existing)
             return existing
-#         if self._is_document_origin_exists(data_dict):
-#             ia_table = self.env["interface.account.entry"]
-#             dom = [("name", "=", data_dict["name"])]
-#             ia_data = ia_table.search(dom)
-#             res = None
-#             if ia_data:
-#                 str_type = data_dict["type"]
-#                 exists = False
-#                 if len(ia_data) > 1:
-#                     system = ia_data[0].system_id.name
-#                 else:
-#                     system = ia_data.system_id.name
-#                     
-#                 if system == "mySales":
-#                     exists = True  # check_existing
-#                 else:
-#                     if str_type != "Reverse":
-#                         exists = True  # check_existing
-#                 
-#                 if exists:
-#                     err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
-#                     res = {
-#                         'is_success': False,
-#                         'result': False,
-#                         'messages': _(err_message) %
-#                                     (data_dict["name"], ia_data.number)
-#                         }
-#             else:
-#                 err_message = "ไม่สามารถ Interface ได้"
-#                 res = {
-#                     'is_success': False,
-#                     'result': False,
-#                     'messages': _(err_message)
-#                     }
-#                 
-#             
-#             _logger.info("IA - Output: %s" % res)
-# 
-#             return res
         
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
