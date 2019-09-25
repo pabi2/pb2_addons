@@ -212,12 +212,16 @@ class AccountAnalyticLine(models.Model):
     def _check_compute_fiscalyear_id(self):
         FiscalYear = self.env['account.fiscalyear']
         for rec in self:
+            fiscalyear_id = FiscalYear.find(rec.date)  # date of analytic.line
             if not rec.fiscalyear_id:  # No fiscal assigned, use rec.date
-                fiscalyear_id = FiscalYear.find(rec.date)
                 rec._write({'fiscalyear_id': fiscalyear_id,
                             'monitor_fy_id': fiscalyear_id, })
-            else:
-                rec._write({'monitor_fy_id': rec.fiscalyear_id.id, })
+            else:  # Has fiscalyear_id but year prior to analytic date
+                fiscal = FiscalYear.browse(fiscalyear_id)
+                if fiscal.date_start > rec.fiscalyear_id.date_start:
+                    rec._write({'monitor_fy_id': fiscal.id, })
+                else:
+                    rec._write({'monitor_fy_id': rec.fiscalyear_id.id, })
 
     @api.model
     def create(self, vals):
@@ -240,7 +244,7 @@ class AccountAnalyticLine(models.Model):
         _logger.info("vals: %s", str(vals))
         analytic_line = super(AccountAnalyticLine, self).create(vals)
         _logger.info("analytic_line: %s", str(analytic_line))
-         
+
         return analytic_line
 
     @api.multi
@@ -397,7 +401,7 @@ class AccountAnalyticAccount(models.Model):
             if ('doctype' in rec._fields) and \
                 (rec.doctype == 'adjustment' and \
                 rec._name == 'account.move.line'):
-                
+
                 vals.update({'move_id':rec.move_id.id}) #update move_id to find doctype in analytic
             #
             # *************************** End *******************************
