@@ -723,7 +723,8 @@ class InterfaceAccountEntry(models.Model):
             res = check_table.create(values)
             self._cr.commit()
         else:
-            err_message = "ไม่สามารถ Interface ได้"
+            err_message = "ไม่สามารถ Interface ได้ เนื่องจาก" + \
+                        "มีการส่งข้อมูลซ้ำ กรุณารอ 10 นาทีแล้วลองอีกครั้ง"
             res = {
                 'is_success': False,
                 'result': False,
@@ -811,10 +812,15 @@ class InterfaceAccountEntry(models.Model):
                 res['result']['fiscalyear'] = \
                     document.move_id.period_id.fiscalyear_id.name
         except Exception, e:
+            err_msg = str(e)
+            if err_msg == "could not serialize access due to concurrent update":
+                err_msg = "ไม่สามารถ Interface ได้ เนื่องจาก" + \
+                        "มีผู้ใช้งานจำนวนมาก กรุณารอ 10 นาทีแล้วลองอีกครั้ง"
+                        
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': _(str(e)),
+                'messages': _(err_msg),
             }
             self._cr.rollback()
         _logger.info("IA - Output: %s" % res)
