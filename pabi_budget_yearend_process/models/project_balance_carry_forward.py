@@ -240,6 +240,7 @@ class ProjectBalanceCarryForward(models.Model):
         lock = 0
         current_fy_release_only = 0
         released_amount = balance_amount
+        last = budget_plans[-1]
         for budget_plan in budget_plans:
             if budget_plan.planned_amount == 0.0:
                 update = {'released_amount': balance_amount}
@@ -248,7 +249,9 @@ class ProjectBalanceCarryForward(models.Model):
                 break
             else:
                 # float_compare: 0:equal, 1:first>second, -1:first<second
-                if float_compare(balance_amount, budget_plan.planned_amount, 2) == 1:
+                if float_compare(balance_amount,
+                                 budget_plan.planned_amount, 2) == 1 \
+                        and budget_plan.id != last.id:
                     update = {'released_amount': budget_plan.planned_amount}
                     balance_amount -= budget_plan.planned_amount
                     update_vals.append((1, budget_plan.id, update))
