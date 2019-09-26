@@ -7,8 +7,8 @@
             <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <xpath expr="//group[@name='criteria']" position="before">
-                    <group>
+                <xpath expr="//group[@name='criteria']" position="replace">
+                    <group name="criteria" states="choose" attrs="{'invisible': ['|',('name','!=',False),('uuid','!=',False)]}">
                         <group>
 		                    <field name="org_ids" widget="many2many_tags"/>
 		                    <field name="chartfield_ids" widget="many2many_tags"/>
@@ -18,27 +18,27 @@
                         </group>
                     </group>
 					<notebook name="additional_criteria">
-						<page string="Purchase Requests">
+						<page string="Purchase Requests" attrs="{'invisible': ['|','|',('data_view','!=', 'pr'),('name','!=',False),('uuid','!=',False)]}">
 							<separator string="Purchase Requests" colspan="4"/>
 							<group>
-								<field name="pr_ids" widget="many2many_tags" attrs="{'readonly': [('data_view','!=', 'pr')]}"/>
-								<field name="pr_requester_ids" widget="many2many_tags" attrs="{'readonly': [('data_view','!=', 'pr')]}"/>
-								<field name="pr_responsible_ids" widget="many2many_tags" attrs="{'readonly': [('data_view','!=', 'pr')]}"/>
-								<field name="pr_date_from" attrs="{'readonly': [('data_view','!=', 'pr')]}"/>
-								<field name="pr_date_to" attrs="{'readonly': [('data_view','!=', 'pr')]}"/>
+								<field name="pr_ids" widget="many2many_tags" />
+								<field name="pr_requester_ids" widget="many2many_tags" />
+								<field name="pr_responsible_ids" widget="many2many_tags" />
+								<field name="pr_date_from" />
+								<field name="pr_date_to" />
 								<field name="pr_number" invisible="1"/>
 								<field name="pr_requester_name" invisible="1"/>
 								<field name="pr_responsible_name" invisible="1"/>
 								<field name="pr_date" invisible="1"/>
 							</group>
 						</page>
-						<page string="Purchase Order">
+						<page string="Purchase Order" attrs="{'invisible': ['|','|',('data_view','!=', 'po'),('name','!=',False),('uuid','!=',False)]}">
 							<separator string="Purchase Order" colspan="4"/>
 							<group>
-							    <field name="po_ids" widget="many2many_tags" attrs="{'readonly': [('data_view','!=', 'po')]}"/>
-							    <field name="po_responsible_ids" widget="many2many_tags" attrs="{'readonly': [('data_view','!=', 'po')]}"/>
-							    <field name="po_date_from" attrs="{'readonly': [('data_view','!=', 'po')]}"/>
-							    <field name="po_date_to" attrs="{'readonly': [('data_view','!=', 'po')]}"/>
+							    <field name="po_ids" widget="many2many_tags"/>
+							    <field name="po_responsible_ids" widget="many2many_tags" />
+							    <field name="po_date_from" />
+							    <field name="po_date_to" />
 							    <field name="po_number" invisible="1"/>
 							    <field name="po_responsible_name" invisible="1"/>
 							    <field name="po_date" invisible="1"/>

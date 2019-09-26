@@ -629,6 +629,8 @@
 							'BD16': 'vou_id.date${value and value.strftime("%d-%m-%Y") or ""}',
 							'BE16': 'inv_id.payment_type${value or ""}',
 							'BF16': 'vou_id.date_value${value and value.strftime("%d-%m-%Y") or ""}',
+							'BG16': 'po_id.state${value and (value == "draft" and "Draft" or value == "confirmed" and "Waiting to Release" or value == "approved" and "PO Released"or value == "done" and "Done" or value) or ""}',
+							'BH16': 'po_id.technical_closed${value and value is True and "X" or ""}',
                         },
 						'po_results': {
 							'A16': 'pr_id.date_start${value and value.strftime("%d-%m-%Y") or ""}',
@@ -689,6 +691,8 @@
 							'BD16': 'vou_id.date${value and value.strftime("%d-%m-%Y") or ""}',
 							'BE16': 'inv_id.payment_type${value or ""}',
 							'BF16': 'vou_id.date_value${value and value.strftime("%d-%m-%Y") or ""}',
+							'BG16': 'po_id.state${value and (value == "draft" and "Draft" or value == "confirmed" and "Waiting to Release" or value == "approved" and "PO Released"or value == "done" and "Done" or value) or ""}',
+							'BH16': 'po_id.technical_closed${value and value is True and "X" or ""}',
                         },
                         '_TAIL_0': {
                         }
