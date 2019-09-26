@@ -213,7 +213,7 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
         SELECT row_number() over (order by pr.id) as id,
-            ou.id as org_id, pr.id as pr_id, pr.date_start as pr_date, 
+            ou.id as org_id, pr.id as pr_id, cast(pr.date_start as date) as pr_date, 
             users.partner_id as pr_requester_id, pr_res.partner_id as pr_responsible_id, prl.id as prl_id,
             (CASE
                 WHEN prl.section_id is not null THEN (
@@ -247,7 +247,7 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
                     left join chartfield_view chv on chv.code = rpc.code
                     LIMIT 1)
             END) as prl_budget,
-            pd.id as pd_id, po.id as po_id, po.name as po_name, po.date_order as po_date, 
+            pd.id as pd_id, po.id as po_id, po.name as po_name, cast(po.date_order as date) as po_date, 
             po_res.partner_id as po_responsible_id, pol.id as pol_id,
             (CASE
                 WHEN pol.section_id is not null THEN (
@@ -339,7 +339,7 @@ class XLSXReportPabiPurchaseRequestTrackingOrder(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
         SELECT row_number() over (order by pr.id) as id,
-            ou.id as org_id, pr.id as pr_id, pr.date_start as pr_date, 
+            ou.id as org_id, pr.id as pr_id, cast(pr.date_start as date) as pr_date, 
             users.partner_id as pr_requester_id, pr_res.partner_id as pr_responsible_id, prl.id as prl_id,
             (CASE
                 WHEN prl.section_id is not null THEN (
@@ -373,7 +373,7 @@ class XLSXReportPabiPurchaseRequestTrackingOrder(models.Model):
                     left join chartfield_view chv on chv.code = rpc.code
                     LIMIT 1)
             END) as prl_budget,
-            pd.id as pd_id, po.id as po_id, po.name as po_name, po.date_order as po_date, 
+            pd.id as pd_id, po.id as po_id, po.name as po_name, cast(po.date_order as date) as po_date, 
             po_res.partner_id as po_responsible_id, pol.id as pol_id,
             (CASE
                 WHEN pol.section_id is not null THEN (
