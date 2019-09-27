@@ -255,7 +255,7 @@ class BudgetCarryOver(models.Model):
                 group by doctype, document, document_line,
                     purchase_request_line_id, sale_line_id,
                     purchase_line_id, expense_line_id) a
-            where a.amount_consumed > 0
+            where a.amount_consumed <> 0
             """, (rec.fiscalyear_id.date_start, tuple(doctypes), tuple(org)))
             result = self._cr.dictfetchall()
             for r in result:
