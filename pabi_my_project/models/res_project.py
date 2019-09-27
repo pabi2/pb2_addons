@@ -1029,7 +1029,11 @@ class ResProjectBudgetRelease(models.Model):
     @api.model
     def create(self, vals):
         rec = super(ResProjectBudgetRelease, self).create(vals)
-        if 'released_amount' in vals:
+        carry_forward = self._context.get('button_carry_forward', False)
+        carry_forward_async = \
+            self._context.get('button_carry_forward_async_process', False)
+        if 'released_amount' in vals and not carry_forward and \
+                not carry_forward_async:
             rec.project_id._release_fiscal_budget(rec.fiscalyear_id,
                                                   rec.released_amount)
         return rec
