@@ -15,7 +15,7 @@ def action_done_async_process(session, model_name, res_id):
         return {'result': res}
     except Exception, e:
         raise RetryableJobError(e)
-    
+
 @job
 def action_done_save_async_process(session, model_name, res_id):
     try:
@@ -132,7 +132,7 @@ class BudgetCarryOver(models.Model):
             return self.action_done()
 
 ###########################--------------------------------- end job Run backgruond ------------------------------- #######################
-    
+
     button_save_carry_over_id = fields.Many2one(
         'queue.job',
         string='Save Carry Over Job',
@@ -255,6 +255,7 @@ class BudgetCarryOver(models.Model):
                 group by doctype, document, document_line,
                     purchase_request_line_id, sale_line_id,
                     purchase_line_id, expense_line_id) a
+            where a.amount_consumed > 0
             """, (rec.fiscalyear_id.date_start, tuple(doctypes), tuple(org)))
             result = self._cr.dictfetchall()
             for r in result:
@@ -288,7 +289,7 @@ class BudgetCarryOver(models.Model):
             print '\nCommits: '+str(commits)
             commits.write({'monitor_fy_id': rec.fiscalyear_id.id})
         self.write({'state': 'done'})
-        
+
 
 class BudgetCarryOverLine(models.Model):
     _name = 'budget.carry.over.line'
@@ -347,7 +348,7 @@ class BudgetCarryOverLine(models.Model):
         string='Commitment',
         readonly=True,
     )
-    
+
 
     @api.multi
     @api.depends('purchase_request_line_id', 'sale_line_id',
