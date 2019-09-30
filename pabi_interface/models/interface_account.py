@@ -196,8 +196,8 @@ class InterfaceAccountEntry(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    _sql_constraints = [('sys_doc_unique', 'unique(name,system_id)',
-                         'Document must be unique per system.')]
+#     _sql_constraints = [('sys_doc_unique', 'unique(name,system_id)',
+#                          'Document must be unique per system.')]
 
     @api.multi
     @api.depends('journal_id')
@@ -724,7 +724,7 @@ class InterfaceAccountEntry(models.Model):
             self._cr.commit()
         else:
             err_message = "ไม่สามารถ Interface ได้ เนื่องจาก" + \
-                        "มีการส่งข้อมูลซ้ำ กรุณารอ 10 นาทีแล้วลองอีกครั้ง"
+                        "มีการส่งข้อมูลซ้ำ กรุณารอสักครู่แล้วลองอีกครั้ง"
             res = {
                 'is_success': False,
                 'result': False,
