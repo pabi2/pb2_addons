@@ -213,110 +213,75 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
         SELECT row_number() over (order by pr.id) as id,
-        org.id as "org_id", pr.id as "pr_id", pr.date_start as "pr_date", pr.name as "pr_name", 
-        (SELECT part.id FROM res_users uer left join res_partner part on part.id = uer.partner_id
-        WHERE uer.id = pr.requested_by) as "pr_requester_id",
-        (SELECT part.display_name2 FROM res_users uer left join res_partner part on part.id = uer.partner_id
-        WHERE uer.id = pr.requested_by) as "pr_requested", pr.date_approve as "pr_date_approve", 
-        (SELECT part.id FROM res_users uer left join res_partner part on part.id = uer.partner_id
-        WHERE uer.id = pr.responsible_uid) as "pr_responsible_id",
-        (SELECT part.display_name2 FROM res_users uer left join res_partner part on part.id = uer.partner_id
-        WHERE uer.id = pr.responsible_uid) as "pr_responsible", pr.objective as "pr_objective", pr.amount_total as "pr_amount_total", 
-        prl.id as "prl_id",
-        (CASE
-            WHEN prl.section_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name_short)
-                from purchase_request_line
-                left join res_section sect on sect.id = prl.section_id 
-                left join chartfield_view chv on chv.code = sect.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-            WHEN prl.invest_construction_phase_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name_short)
-                from purchase_request_line
-                left join res_invest_construction_phase icp on icp.id = prl.invest_construction_phase_id
-                left join chartfield_view chv on chv.code = icp.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-            WHEN prl.project_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name)
-                from purchase_request_line
-                left join res_project pro on pro.id = prl.project_id
-                left join chartfield_view chv on chv.code = pro.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id                                
-                LIMIT 1)                    
-            WHEN prl.invest_asset_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name)
-                from purchase_request_line
-                left join res_invest_asset iat on iat.id = prl.invest_asset_id
-                left join chartfield_view chv on chv.code = iat.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-            WHEN prl.personnel_costcenter_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name) 
-                from purchase_request_line
-                left join res_personnel_costcenter rpc on rpc.id = prl.personnel_costcenter_id
-                left join chartfield_view chv on chv.code = rpc.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-        END) as "prl_budget", pd.id as "pd_id", pd.name as "pd_name", pd.ordering_date as "pd_ordering_date", pd.date_doc_approve as "pd_date_doc_approve",
-        po.id as "po_id", po.name as "po_name", po.date_order as "po_date", po.date_contract_start as "po_date_contract_start", 
-        po.date_contract_end as "po_date_contract_end", poc.id as "poc_id", poc.display_code as "po_display_code", poc.start_date as "poc_start_date", 
-        poc.end_date as "po_end_date",
-        (SELECT part.id FROM res_users uer left join res_partner part on part.id = uer.partner_id
-        WHERE uer.id = po.responsible_uid) as "po_responsible_id", pol.id as "pol_id",
-        (SELECT part.display_name2 FROM res_partner part WHERE part.id = po.partner_id) as "po_partner", pol.docline_seq as "pol_docline_seq", 
-        (SELECT prod.name_template FROM product_product prod WHERE prod.id = pol.product_id) as "pol_product", pol.name as "pol_name",
-        pol.date_planned as "pol_date_planned", 
-        (CASE
-            WHEN pol.section_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name_short)
-                from purchase_order_line
-                left join res_section sect on sect.id = pol.section_id 
-                left join chartfield_view chv on chv.code = sect.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-            WHEN pol.invest_construction_phase_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name_short)
-                from purchase_order_line
-                left join res_invest_construction_phase icp on icp.id = pol.invest_construction_phase_id
-                left join chartfield_view chv on chv.code = icp.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-            WHEN pol.project_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name)
-                from purchase_order_line
-                left join res_project pro on pro.id = pol.project_id
-                left join chartfield_view chv on chv.code = pro.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id                                
-                LIMIT 1)                    
-            WHEN pol.invest_asset_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name)
-                from purchase_order_line
-                left join res_invest_asset iat on iat.id = pol.invest_asset_id
-                left join chartfield_view chv on chv.code = iat.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-            WHEN pol.personnel_costcenter_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name) 
-                from purchase_order_line
-                left join res_personnel_costcenter rpc on rpc.id = pol.personnel_costcenter_id
-                left join chartfield_view chv on chv.code = rpc.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-        END) as "pol_budget", (SELECT fund.name FROM res_fund fund WHERE fund.id = pol.fund_id) as "pol_fund", 
-        (SELECT cct.name FROM cost_control cct WHERE cct.id = pol.cost_control_id) as "pol_cost_control", pol.product_qty as "pol_product_qty", 
-        (SELECT uom.name FROM product_uom uom WHERE uom.id = pol.product_uom) as "pol_product_uom", 
-        pol.price_unit as "pol_price_unit", pol.price_unit*pol.product_qty as "pol_sub_total", 
-        (SELECT cur.name FROM res_currency cur WHERE cur.id = po.currency_id) as "pol_currency", 
-        (SELECT fyear.name FROM account_fiscalyear fyear WHERE fyear.id = pol.fiscalyear_id) as "pol_fiscalyear", pol.state as "pol_state",
-        (SELECT part.display_name2 FROM res_partner part WHERE part.id = po.responsible_uid) as "po_responsible",
-        (SELECT payterm.name FROM account_payment_term payterm WHERE payterm.id = po.payment_term_id) as "po_payment_term", 
-        pwa.id as "pwa_id", pwa.name as "pwa_name", sp.id as "sp_id", sp.name as "sp_name", pwa.date_accept as "pwq_date_accept", pb.id as "pb_id", pb.name as "pb_name", 
-        pb.date_sent as "pb_date_sent", pb.date as "pb_date", inv.id as "inv_id", inv.number as "inv_name", inv.date_invoice as "inv_date_invoice", 
-        (SELECT part.display_name2 FROM res_users uer left join res_partner part on part.id = uer.partner_id 
-         WHERE uer.id = inv.user_id) as "inv_user", vou.id as "vou_id", vou.number as "vou_name", vou.date as "vou_date", vou.date_value as "vou_date_value"
-        
+            ou.id as org_id, pr.id as pr_id, cast(pr.date_start as date) as pr_date, 
+            users.partner_id as pr_requester_id, pr_res.partner_id as pr_responsible_id, prl.id as prl_id,
+            (CASE
+                WHEN prl.section_id is not null THEN (
+                    select chv.id
+                    from purchase_request_line
+                    left join res_section sect on sect.id = prl.section_id 
+                    left join chartfield_view chv on chv.code = sect.code
+                    LIMIT 1)
+                WHEN prl.invest_construction_phase_id is not null THEN (
+                    select chv.id
+                    from purchase_request_line
+                    left join res_invest_construction_phase icp on icp.id = prl.invest_construction_phase_id
+                    left join chartfield_view chv on chv.code = icp.code
+                    LIMIT 1)
+                WHEN prl.project_id is not null THEN (
+                    select chv.id
+                    from purchase_request_line
+                    left join res_project pro on pro.id = prl.project_id
+                    left join chartfield_view chv on chv.code = pro.code                            
+                    LIMIT 1)                    
+                WHEN prl.invest_asset_id is not null THEN (
+                    select chv.id
+                    from purchase_request_line
+                    left join res_invest_asset iat on iat.id = prl.invest_asset_id
+                    left join chartfield_view chv on chv.code = iat.code
+                    LIMIT 1)
+                WHEN prl.personnel_costcenter_id is not null THEN (
+                    select chv.id
+                    from purchase_request_line
+                    left join res_personnel_costcenter rpc on rpc.id = prl.personnel_costcenter_id
+                    left join chartfield_view chv on chv.code = rpc.code
+                    LIMIT 1)
+            END) as prl_budget,
+            pd.id as pd_id, po.id as po_id, po.name as po_name, cast(po.date_order as date) as po_date, 
+            po_res.partner_id as po_responsible_id, pol.id as pol_id,
+            (CASE
+                WHEN pol.section_id is not null THEN (
+                    select chv.id
+                    from purchase_order_line
+                    left join res_section sect on sect.id = pol.section_id 
+                    left join chartfield_view chv on chv.code = sect.code
+                    LIMIT 1)
+                WHEN pol.invest_construction_phase_id is not null THEN (
+                    select chv.id
+                    from purchase_order_line
+                    left join res_invest_construction_phase icp on icp.id = pol.invest_construction_phase_id
+                    left join chartfield_view chv on chv.code = icp.code
+                    LIMIT 1)
+                WHEN pol.project_id is not null THEN (
+                    select chv.id
+                    from purchase_order_line
+                    left join res_project pro on pro.id = pol.project_id
+                    left join chartfield_view chv on chv.code = pro.code                            
+                    LIMIT 1)                    
+                WHEN pol.invest_asset_id is not null THEN (
+                    select chv.id
+                    from purchase_order_line
+                    left join res_invest_asset iat on iat.id = pol.invest_asset_id
+                    left join chartfield_view chv on chv.code = iat.code
+                    LIMIT 1)
+                WHEN pol.personnel_costcenter_id is not null THEN (
+                    select chv.id
+                    from purchase_order_line
+                    left join res_personnel_costcenter rpc on rpc.id = pol.personnel_costcenter_id
+                    left join chartfield_view chv on chv.code = rpc.code
+                    LIMIT 1)
+            END) as pol_budget,
+            pol.state as pol_state, poc.id as poc_id, pwa.id as pwa_id, sp.id as sp_id, inv.id as inv_id, pb.id as pb_id, vou.id as vou_id
         FROM purchase_request pr
         LEFT join purchase_request_line prl ON prl.request_id = pr.id 
         LEFT JOIN purchase_request_purchase_requisition_line_rel prpdrel ON prpdrel.purchase_request_line_id = prl.id
@@ -326,13 +291,15 @@ class XLSXReportPabiPurchaseRequestTracking(models.Model):
         LEFT JOIN purchase_order po ON po.requisition_id = pd.id
         LEFT JOIN purchase_order_line pol ON pol.requisition_line_id = pdl.id
         LEFT JOIN purchase_work_acceptance pwa ON pwa.order_id = po.id
+        LEFT JOIN res_users pr_res ON pr_res.id = pr.responsible_uid
+        LEFT JOIN res_users po_res ON po_res.id = po.responsible_uid
+        LEFT JOIN res_users users ON users.id = pr.requested_by
         LEFT JOIN stock_picking sp ON sp.acceptance_id = pwa.id
         LEFT JOIN account_invoice inv ON inv.source_document = po.name
-        LEFT JOIN account_invoice_line invl ON invl.invoice_id = inv.id
         LEFT JOIN purchase_billing pb ON pb.id = inv.purchase_billing_id 
-        left join account_voucher_line voul on voul.invoice_id = inv.id 
+        LEFT JOIN account_voucher_line voul ON voul.invoice_id = inv.id 
         LEFT JOIN account_voucher vou ON vou.id = voul.voucher_id
-        LEFT JOIN operating_unit org ON org.id = pr.operating_unit_id or org.id = po.operating_unit_id
+        LEFT JOIN operating_unit ou ON ou.id = pr.operating_unit_id or ou.id = po.operating_unit_id
         where (pol.state != 'cancel' and po.name not like 'RFQ%%') or po.id is null
         order by pr.id, po.id, inv.name, vou.name
         )""" % (self._table, ))
@@ -372,127 +339,94 @@ class XLSXReportPabiPurchaseRequestTrackingOrder(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
         SELECT row_number() over (order by pr.id) as id,
-        org.id as "org_id", pr.id as "pr_id", pr.date_start as "pr_date", pr.name as "pr_name", 
-        (SELECT part.id FROM res_users uer left join res_partner part on part.id = uer.partner_id
-        WHERE uer.id = pr.requested_by) as "pr_requester_id",
-        (SELECT part.display_name2 FROM res_users uer left join res_partner part on part.id = uer.partner_id
-        WHERE uer.id = pr.requested_by) as "pr_requested", pr.date_approve as "pr_date_approve", 
-        (SELECT part.id FROM res_users uer left join res_partner part on part.id = uer.partner_id
-        WHERE uer.id = pr.responsible_uid) as "pr_responsible_id",
-        (SELECT part.display_name2 FROM res_users uer left join res_partner part on part.id = uer.partner_id
-        WHERE uer.id = pr.responsible_uid) as "pr_responsible", pr.objective as "pr_objective", pr.amount_total as "pr_amount_total", 
-        prl.id as "prl_id",
-        (CASE
-            WHEN prl.section_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name_short)
-                from purchase_request_line
-                left join res_section sect on sect.id = prl.section_id 
-                left join chartfield_view chv on chv.code = sect.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-            WHEN prl.invest_construction_phase_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name_short)
-                from purchase_request_line
-                left join res_invest_construction_phase icp on icp.id = prl.invest_construction_phase_id
-                left join chartfield_view chv on chv.code = icp.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-            WHEN prl.project_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name)
-                from purchase_request_line
-                left join res_project pro on pro.id = prl.project_id
-                left join chartfield_view chv on chv.code = pro.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id                                
-                LIMIT 1)                    
-            WHEN prl.invest_asset_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name)
-                from purchase_request_line
-                left join res_invest_asset iat on iat.id = prl.invest_asset_id
-                left join chartfield_view chv on chv.code = iat.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-            WHEN prl.personnel_costcenter_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name) 
-                from purchase_request_line
-                left join res_personnel_costcenter rpc on rpc.id = prl.personnel_costcenter_id
-                left join chartfield_view chv on chv.code = rpc.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-        END) as "prl_budget", pd.id as "pd_id", pd.name as "pd_name", pd.ordering_date as "pd_ordering_date", pd.date_doc_approve as "pd_date_doc_approve",
-        po.id as "po_id", po.name as "po_name", po.date_order as "po_date", po.date_contract_start as "po_date_contract_start", 
-        po.date_contract_end as "po_date_contract_end", poc.id as "poc_id", poc.display_code as "po_display_code", poc.start_date as "poc_start_date", 
-        poc.end_date as "po_end_date",
-        (SELECT part.id FROM res_users uer left join res_partner part on part.id = uer.partner_id
-        WHERE uer.id = po.responsible_uid) as "po_responsible_id", pol.id as "pol_id",
-        (SELECT part.display_name2 FROM res_partner part WHERE part.id = po.partner_id) as "po_partner", pol.docline_seq as "pol_docline_seq", 
-        (SELECT prod.name_template FROM product_product prod WHERE prod.id = pol.product_id) as "pol_product", pol.name as "pol_name",
-        pol.date_planned as "pol_date_planned", 
-        (CASE
-            WHEN pol.section_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name_short)
-                from purchase_order_line
-                left join res_section sect on sect.id = pol.section_id 
-                left join chartfield_view chv on chv.code = sect.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-            WHEN pol.invest_construction_phase_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name_short)
-                from purchase_order_line
-                left join res_invest_construction_phase icp on icp.id = pol.invest_construction_phase_id
-                left join chartfield_view chv on chv.code = icp.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-            WHEN pol.project_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name)
-                from purchase_order_line
-                left join res_project pro on pro.id = pol.project_id
-                left join chartfield_view chv on chv.code = pro.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id                                
-                LIMIT 1)                    
-            WHEN pol.invest_asset_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name)
-                from purchase_order_line
-                left join res_invest_asset iat on iat.id = pol.invest_asset_id
-                left join chartfield_view chv on chv.code = iat.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-            WHEN pol.personnel_costcenter_id is not null THEN (
-                select chv.id --concat('[',chv.code, ']', chv.name) 
-                from purchase_order_line
-                left join res_personnel_costcenter rpc on rpc.id = pol.personnel_costcenter_id
-                left join chartfield_view chv on chv.code = rpc.code
-                left join res_costcenter cos on cos.id = chv.costcenter_id
-                LIMIT 1)
-        END) as "pol_budget", (SELECT fund.name FROM res_fund fund WHERE fund.id = pol.fund_id) as "pol_fund", 
-        (SELECT cct.name FROM cost_control cct WHERE cct.id = pol.cost_control_id) as "pol_cost_control", pol.product_qty as "pol_product_qty", 
-        (SELECT uom.name FROM product_uom uom WHERE uom.id = pol.product_uom) as "pol_product_uom", 
-        pol.price_unit as "pol_price_unit", pol.price_unit*pol.product_qty as "pol_sub_total", 
-        (SELECT cur.name FROM res_currency cur WHERE cur.id = po.currency_id) as "pol_currency", 
-        (SELECT fyear.name FROM account_fiscalyear fyear WHERE fyear.id = pol.fiscalyear_id) as "pol_fiscalyear", pol.state as "pol_state",
-        (SELECT part.display_name2 FROM res_partner part WHERE part.id = po.responsible_uid) as "po_responsible",
-        (SELECT payterm.name FROM account_payment_term payterm WHERE payterm.id = po.payment_term_id) as "po_payment_term", 
-        pwa.id as "pwa_id", pwa.name as "pwa_name", sp.id as "sp_id", sp.name as "sp_name", pwa.date_accept as "pwq_date_accept", pb.id as "pb_id", pb.name as "pb_name", 
-        pb.date_sent as "pb_date_sent", pb.date as "pb_date", inv.id as "inv_id", inv.number as "inv_name", inv.date_invoice as "inv_date_invoice", 
-        (SELECT part.display_name2 FROM res_users uer left join res_partner part on part.id = uer.partner_id 
-         WHERE uer.id = inv.user_id) as "inv_user", vou.id as "vou_id", vou.number as "vou_name", vou.date as "vou_date", vou.date_value as "vou_date_value"
-        
+            ou.id as org_id, pr.id as pr_id, cast(pr.date_start as date) as pr_date, 
+            users.partner_id as pr_requester_id, pr_res.partner_id as pr_responsible_id, prl.id as prl_id,
+            (CASE
+                WHEN prl.section_id is not null THEN (
+                    select chv.id
+                    from purchase_request_line
+                    left join res_section sect on sect.id = prl.section_id 
+                    left join chartfield_view chv on chv.code = sect.code
+                    LIMIT 1)
+                WHEN prl.invest_construction_phase_id is not null THEN (
+                    select chv.id
+                    from purchase_request_line
+                    left join res_invest_construction_phase icp on icp.id = prl.invest_construction_phase_id
+                    left join chartfield_view chv on chv.code = icp.code
+                    LIMIT 1)
+                WHEN prl.project_id is not null THEN (
+                    select chv.id
+                    from purchase_request_line
+                    left join res_project pro on pro.id = prl.project_id
+                    left join chartfield_view chv on chv.code = pro.code                            
+                    LIMIT 1)                    
+                WHEN prl.invest_asset_id is not null THEN (
+                    select chv.id
+                    from purchase_request_line
+                    left join res_invest_asset iat on iat.id = prl.invest_asset_id
+                    left join chartfield_view chv on chv.code = iat.code
+                    LIMIT 1)
+                WHEN prl.personnel_costcenter_id is not null THEN (
+                    select chv.id
+                    from purchase_request_line
+                    left join res_personnel_costcenter rpc on rpc.id = prl.personnel_costcenter_id
+                    left join chartfield_view chv on chv.code = rpc.code
+                    LIMIT 1)
+            END) as prl_budget,
+            pd.id as pd_id, po.id as po_id, po.name as po_name, cast(po.date_order as date) as po_date, 
+            po_res.partner_id as po_responsible_id, pol.id as pol_id,
+            (CASE
+                WHEN pol.section_id is not null THEN (
+                    select chv.id
+                    from purchase_order_line
+                    left join res_section sect on sect.id = pol.section_id 
+                    left join chartfield_view chv on chv.code = sect.code
+                    LIMIT 1)
+                WHEN pol.invest_construction_phase_id is not null THEN (
+                    select chv.id
+                    from purchase_order_line
+                    left join res_invest_construction_phase icp on icp.id = pol.invest_construction_phase_id
+                    left join chartfield_view chv on chv.code = icp.code
+                    LIMIT 1)
+                WHEN pol.project_id is not null THEN (
+                    select chv.id
+                    from purchase_order_line
+                    left join res_project pro on pro.id = pol.project_id
+                    left join chartfield_view chv on chv.code = pro.code                            
+                    LIMIT 1)                    
+                WHEN pol.invest_asset_id is not null THEN (
+                    select chv.id
+                    from purchase_order_line
+                    left join res_invest_asset iat on iat.id = pol.invest_asset_id
+                    left join chartfield_view chv on chv.code = iat.code
+                    LIMIT 1)
+                WHEN pol.personnel_costcenter_id is not null THEN (
+                    select chv.id
+                    from purchase_order_line
+                    left join res_personnel_costcenter rpc on rpc.id = pol.personnel_costcenter_id
+                    left join chartfield_view chv on chv.code = rpc.code
+                    LIMIT 1)
+            END) as pol_budget,
+            pol.state as pol_state, poc.id as poc_id, pwa.id as pwa_id, sp.id as sp_id, inv.id as inv_id, pb.id as pb_id, vou.id as vou_id
         FROM purchase_order po
         LEFT JOIN purchase_requisition pd ON pd.id = po.requisition_id
-        LEFT JOIN purchase_requisition_line pdl ON pdl.requisition_id = pd.id
+        LEFT JOIN purchase_contract poc ON poc.requisition_id = pd.id
+        LEFT JOIN purchase_order_line pol ON pol.order_id = po.id
+        LEFT JOIN purchase_requisition_line pdl ON pdl.id = pol.requisition_line_id
         LEFT JOIN purchase_request_purchase_requisition_line_rel prpdrel ON prpdrel.purchase_requisition_line_id = pdl.id
         LEFT join purchase_request_line prl ON prl.id = prpdrel.purchase_request_line_id
-        LEFT join purchase_request pr ON pr.id  = prl.request_id
-        LEFT JOIN purchase_order_line pol ON pol.order_id = po.id
-        LEFT JOIN purchase_contract poc ON poc.requisition_id = pd.id
+        LEFT join purchase_request pr ON pr.id = prl.request_id
         LEFT JOIN purchase_work_acceptance pwa ON pwa.order_id = po.id
+        LEFT JOIN res_users pr_res ON pr_res.id = pr.responsible_uid
+        LEFT JOIN res_users po_res ON po_res.id = po.responsible_uid
+        LEFT JOIN res_users users ON users.id = pr.requested_by
         LEFT JOIN stock_picking sp ON sp.acceptance_id = pwa.id
         LEFT JOIN account_invoice inv ON inv.source_document = po.name
-        LEFT JOIN account_invoice_line invl ON invl.invoice_id = inv.id
         LEFT JOIN purchase_billing pb ON pb.id = inv.purchase_billing_id 
-        left join account_voucher_line voul on voul.invoice_id = inv.id 
+        LEFT JOIN account_voucher_line voul ON voul.invoice_id = inv.id 
         LEFT JOIN account_voucher vou ON vou.id = voul.voucher_id
-        LEFT JOIN operating_unit org ON org.id = pr.operating_unit_id or org.id = po.operating_unit_id
+        LEFT JOIN operating_unit ou ON ou.id = pr.operating_unit_id or ou.id = po.operating_unit_id
+        LEFT JOIN res_org org ON org.id = ou.org_id
         where (pol.state != 'cancel' and po.name not like 'RFQ%%')
         order by pr.id, po.id, inv.name, vou.name
         )""" % (self._table, ))
-
