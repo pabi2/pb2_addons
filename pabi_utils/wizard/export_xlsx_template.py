@@ -440,8 +440,11 @@ class ExportXlsxTemplate(models.TransientModel):
             for field in pair_fields:  # (field, raw_field)
                 value = self._get_field_data(field[1], line)
                 if type(value) == type(''):
+                    print 'Excel export decode'
                     value = value.decode('utf-8')
+                    print 'Excel export decode2'
                     value = re.sub(r"[\u0E01-\u0E3A\u0E3F-\u0E4E\u0E50-\u0E5A][^\w\d\s(),-@#$%^&*-_+=+!\n]+", '', value)
+                    print 'Excel export decode3'
                 # Case Eval
                 eval_cond = field_cond_dict[field[0]]
                 if eval_cond:  # Get eval_cond of a raw field
