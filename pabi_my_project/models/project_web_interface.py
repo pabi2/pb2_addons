@@ -122,6 +122,7 @@ class ResProject(models.Model):
                     rels = Release.browse([x[0] for x in self._cr.fetchall()])
                     _logger.info("rels: %s", str(rels))
                     for rec in rels:
+                        _logger.info("rec.fiscalyear_id: %s", str(rec.fiscalyear_id))
                         project.with_context(ignore_lock_release=True).\
                             _release_fiscal_budget(rec.fiscalyear_id,
                                                    rec.released_amount)
