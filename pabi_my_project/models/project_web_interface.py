@@ -105,11 +105,9 @@ class ResProject(models.Model):
             # Update project, use 'code' as search key
             res = self.env['pabi.utils.ws'].\
                 friendly_update_data(self._name, data_dict, 'code')
-            _logger.info("is_success: %s", str(res['is_success']))
             if res['is_success']:
                 res_id = res['result']['id']
                 project = self.browse(res_id)  # Project
-                _logger.info("res_id: %s", str(res_id))
                 # Release with latest release history (if any)
                 if res_id:
                     self._cr.execute("""
@@ -120,9 +118,7 @@ class ResProject(models.Model):
                     """, (res_id, ))
                     Release = self.env['res.project.budget.release']
                     rels = Release.browse([x[0] for x in self._cr.fetchall()])
-                    _logger.info("rels: %s", str(rels))
                     for rec in rels:
-                        _logger.info("rec.fiscalyear_id: %s", str(rec.fiscalyear_id.name))
                         project.with_context(ignore_lock_release=True).\
                             _release_fiscal_budget(rec.fiscalyear_id,
                                                    rec.released_amount)
