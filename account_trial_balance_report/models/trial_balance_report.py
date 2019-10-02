@@ -81,6 +81,8 @@ class AccountTrailBalanceReport(models.Model):
             """, (tuple(moves.ids), ))
             acct_ids = map(lambda x: x[1], self._cr.fetchall())
             accounts = Account.search([('id', 'in', acct_ids)], order='code')
+        elif not moves and account_id:
+            accounts = Account.search([('id', '=', account_id)])
         else:
             accounts = Account.search([('type', '!=', 'view')], order='code')
         return (accounts, moves)
@@ -89,6 +91,7 @@ class AccountTrailBalanceReport(models.Model):
     def _get_init_moves(self, report, account, target_move, charge_type,org_id,account_id):
         MoveLine = self.env['account.move.line']
         domain = [('account_id', '=', account.id),
+                  ('period_id.fiscalyear_id', '=', report.fiscalyear_id.id),
                   '|', ('journal_id.centralisation', '=', True),
                   '&', ('journal_id.centralisation', '=', False),
                   ('date', '<', report.date_start)]
@@ -154,10 +157,10 @@ class AccountTrailBalanceReport(models.Model):
         for account in accounts:
             init_moves = self._get_init_moves(
                 report, account, target_move, charge_type,
-                org_id,account_id)
+                org_id, account_id)
             focus_moves = self._get_focus_moves(
                 report, account, target_move, charge_type,
-                org_id,account_id)
+                org_id, account_id)
             initial = 0.0
             debit = 0.0
             credit = 0.0
