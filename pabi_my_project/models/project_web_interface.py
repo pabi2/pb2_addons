@@ -106,10 +106,8 @@ class ResProject(models.Model):
             res = self.env['pabi.utils.ws'].\
                 friendly_update_data(self._name, data_dict, 'code')
             # Create fiscalyear today and update release amount
-            fiscal_id = self.env['account.fiscalyear'].search([
-                ('date_start', '<=', fields.date.today()),
-                ('date_stop', '>=', fields.date.today())
-            ])
+            fiscalyear = self.env['account.fiscalyear']
+            fiscalyear_today = fiscalyear.browse(fiscalyear.find())
             if res['is_success']:
                 res_id = res['result']['id']
                 project = self.browse(res_id)  # Project
@@ -125,8 +123,10 @@ class ResProject(models.Model):
                     rels = \
                         Release.browse([x[0] for x in self._cr.fetchall()])
                     for rec in rels:
+                        if fiscalyear_today != rec.fiscalyear_id:
+                            continue
                         project.with_context(ignore_lock_release=True).\
-                            _release_fiscal_budget(fiscal_id,
+                            _release_fiscal_budget(rec.fiscalyear_id,
                                                    rec.released_amount)
                 # Refresh
                 project.refresh_budget_line(data_dict)
