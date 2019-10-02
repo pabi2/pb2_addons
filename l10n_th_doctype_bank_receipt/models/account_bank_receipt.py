@@ -10,7 +10,11 @@ class AccountBankReceipt(models.Model):
         # Find doctype_id
         refer_type = 'bank_receipt'
         doctype = self.env['res.doctype'].get_doctype(refer_type)
-        fiscalyear_id = self.env['account.fiscalyear'].find()
+        # kittiu: use posting date
+        periods = self.env['account.period'].find(receipt.receipt_date)
+        period = periods and periods[0] or False
+        fiscalyear_id = period and period.fiscalyear_id.id or \
+            self.env['account.fiscalyear'].find()
         # --
         self = self.with_context(doctype_id=doctype.id,
                                  fiscalyear_id=fiscalyear_id)
