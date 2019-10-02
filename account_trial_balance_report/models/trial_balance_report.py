@@ -81,7 +81,7 @@ class AccountTrailBalanceReport(models.Model):
             """, (tuple(moves.ids), ))
             acct_ids = map(lambda x: x[1], self._cr.fetchall())
             accounts = Account.search([('id', 'in', acct_ids)], order='code')
-        elif with_movement:
+        elif not moves and account_id:
             accounts = Account.search([('id', '=', account_id)])
         else:
             accounts = Account.search([('type', '!=', 'view')], order='code')
