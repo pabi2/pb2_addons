@@ -91,13 +91,13 @@ class ReportPNDForm(models.Model):
                 from ir_translation
                 where name = 'res.partner.title,name'
                 and type = 'model' and lang='th_TH'
-                and res_id = a.title_id),
+                and res_id = a.title_id limit 1),
                 a.title) as title_th,
                 coalesce((select value
                 from ir_translation
                 where name = 'res.partner,name'
                 and type = 'model' and lang='th_TH'
-                and res_id = a.partner_id),
+                and res_id = a.partner_id limit 1),
                 a.supplier_name) as supplier_name_th
         from (
         select c.id, c.state,
