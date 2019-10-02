@@ -116,12 +116,13 @@ class ResProject(models.Model):
                         where project_id = %s
                         group by fiscalyear_id
                     """, (res_id, ))
-                    Release = self.env['res.project.budget.release']
-                    rels = Release.browse([x[0] for x in self._cr.fetchall()])
-                    for rec in rels:
-                        project.with_context(ignore_lock_release=True).\
-                            _release_fiscal_budget(rec.fiscalyear_id,
-                                                   rec.released_amount)
+                    # Release = self.env['res.project.budget.release']
+                    # rels = \
+                    #     Release.browse([x[0] for x in self._cr.fetchall()])
+                    # for rec in rels:
+                    #     project.with_context(ignore_lock_release=True).\
+                    #         _release_fiscal_budget(rec.fiscalyear_id,
+                    #                                rec.released_amount)
                 # Refresh
                 project.refresh_budget_line(data_dict)
                 project.prepare_fiscal_plan_line(data_dict, force_run=True)
