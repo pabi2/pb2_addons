@@ -512,7 +512,9 @@ class ResProject(LogCommon, models.Model):
         current_fy = self.env['account.fiscalyear'].find()
         release_external_budget = fiscalyear.control_ext_charge_only
         for project in self.sudo():
-            if project.current_fy_release_only and current_fy != fiscalyear.id:
+            if project.current_fy_release_only and \
+                    current_fy != fiscalyear.id and \
+                    not self._context.get('ignore_current_fy_lock', False):
                 raise ValidationError(
                     _('Not allow to release budget for fiscalyear %s!\nOnly '
                       'current year budget is allowed.' % fiscalyear.name))
