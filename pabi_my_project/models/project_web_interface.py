@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-from openerp import models, api, _
+from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 from openerp.tools.float_utils import float_compare
 
@@ -105,6 +105,9 @@ class ResProject(models.Model):
             # Update project, use 'code' as search key
             res = self.env['pabi.utils.ws'].\
                 friendly_update_data(self._name, data_dict, 'code')
+            # Create fiscalyear today and update release amount
+            fiscalyear = self.env['account.fiscalyear']
+            fiscalyear_today = fiscalyear.browse(fiscalyear.find())
             if res['is_success']:
                 res_id = res['result']['id']
                 project = self.browse(res_id)  # Project
@@ -116,13 +119,15 @@ class ResProject(models.Model):
                         where project_id = %s
                         group by fiscalyear_id
                     """, (res_id, ))
-                    # Release = self.env['res.project.budget.release']
-                    # rels = \
-                    #     Release.browse([x[0] for x in self._cr.fetchall()])
-                    # for rec in rels:
-                    #     project.with_context(ignore_lock_release=True).\
-                    #         _release_fiscal_budget(rec.fiscalyear_id,
-                    #                                rec.released_amount)
+                    Release = self.env['res.project.budget.release']
+                    rels = \
+                        Release.browse([x[0] for x in self._cr.fetchall()])
+                    for rec in rels:
+                        if fiscalyear_today != rec.fiscalyear_id:
+                            continue
+                        project.with_context(ignore_lock_release=True).\
+                            _release_fiscal_budget(rec.fiscalyear_id,
+                                                   rec.released_amount)
                 # Refresh
                 project.refresh_budget_line(data_dict)
                 project.prepare_fiscal_plan_line(data_dict, force_run=True)
