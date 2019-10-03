@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-from openerp import models, api, fields, _
+from openerp import models, api, _
 from openerp.exceptions import ValidationError
 from openerp.tools.float_utils import float_compare
 
@@ -105,11 +105,12 @@ class ResProject(models.Model):
             # Update project, use 'code' as search key
             res = self.env['pabi.utils.ws'].\
                 friendly_update_data(self._name, data_dict, 'code')
-            # Create fiscalyear today and update release amount
-            fiscalyear = self.env['account.fiscalyear']
-            fiscalyear_today = fiscalyear.browse(fiscalyear.find())
             if res['is_success']:
                 res_id = res['result']['id']
+                if 'budget_plan_expense_ids' not in data_dict and \
+                   'budget_plan_revenue_ids' not in data_dict and \
+                   'budget_plan_ids' not in data_dict:
+                    return res
                 project = self.browse(res_id)  # Project
                 # Release with latest release history (if any)
                 if res_id:
@@ -123,9 +124,8 @@ class ResProject(models.Model):
                     rels = \
                         Release.browse([x[0] for x in self._cr.fetchall()])
                     for rec in rels:
-                        if fiscalyear_today != rec.fiscalyear_id:
-                            continue
-                        project.with_context(ignore_lock_release=True).\
+                        project.with_context(ignore_lock_release=True,
+                                             ignore_current_fy_lock=True).\
                             _release_fiscal_budget(rec.fiscalyear_id,
                                                    rec.released_amount)
                 # Refresh
