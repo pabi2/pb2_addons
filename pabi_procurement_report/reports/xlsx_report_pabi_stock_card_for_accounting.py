@@ -145,6 +145,45 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
         'product.category',
         string='Category',
     )
+    source_doc = fields.Char(
+        string='Source Doc',
+        readonly=True,
+    )
+    reference_doc = fields.Char(
+        string='Reference Doc',
+        readonly=True,
+    )
+    sm_date = fields.Date(
+        string='Stock Move Date',
+    )
+    scheduled_date = fields.Date(
+        string='Scheduled Date',
+    )
+    stock_move_id = fields.Many2one(
+        'stock.move',
+        string='Stock Move',
+    )
+    uom = fields.Char(
+        string='Uom',
+        readonly=True,
+    )
+    move_id = fields.Many2one(
+        'account.move',
+        string='Account Move ID',
+    )
+    unit = fields.Char(
+        string='unit',
+        readonly=True,
+    )
+    quantity_balance = fields.Float(
+        string='Quantity Balance',
+        readonly=True,
+    )
+    inventory_value = fields.Float(
+        string='Inventory Value',
+        digits=(12,2), 
+        readonly=True,
+    )
 
     def init(self, cr):
         cr.execute("""CREATE or REPLACE VIEW %s as (
@@ -179,7 +218,26 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
         sm.price_unit,
         sm.product_uom_qty,
         0.0 as balance,
-        0.0 as balance_qty
+        0.0 as balance_qty,
+        sp.origin source_doc,
+        sp.name reference_doc,
+        sm.date sm_date,
+        sp.min_date scheduled_date,
+        sm.id stock_move_id,
+        (SELECT value FROM ir_translation it
+        WHERE it.name LIKE 'product.uom,name' AND it.src=pu.name LIMIT 1) unit,
+        (SELECT am.id from account_move am
+        WHERE am.ref = sp.name
+        and am.id = (select aml.move_id 
+                    from account_move_line aml 
+                    where am.id = aml.move_id 
+                    and aml.name =  ptmpl.name 
+                    group by aml.move_id) 
+        and sp.state = 'done' limit 1) move_id,
+        (CASE WHEN dloc.usage = 'internal' THEN sm.product_uom_qty
+        ELSE sm.product_uom_qty*-1 END) quantity_balance,
+        (CASE WHEN dloc.usage = 'internal'THEN sm.product_uom_qty*sm.price_unit 
+        ELSE (sm.product_uom_qty*sm.price_unit)*-1 END) inventory_value
         FROM stock_move sm
         LEFT JOIN stock_picking sp
         ON sp.id = sm.picking_id
