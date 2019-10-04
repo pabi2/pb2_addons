@@ -199,7 +199,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         dom = [('po.use_invoice_plan','=',True)]
         
         if self.org_ids:
-            dom += [('org.id', 'in', tuple(self.org_ids.ids))]
+            dom += [('ou.org_id', 'in', tuple(self.org_ids.ids))]
         if self.purchase_ids:
             dom += [('po.id', 'in', tuple(self.purchase_ids.ids))]
         if self.contract_ids:
@@ -229,7 +229,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         
         where_str = self._domain_to_where_str(dom)
         where_str += chartfield_dom
-        
+        print 'where_str: '+where_str
         if len(dom_acc) > 0:
             where_acc = 'where '+(self._domain_to_where_str(dom_acc)).replace('and','')
         
