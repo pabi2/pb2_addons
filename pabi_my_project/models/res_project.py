@@ -511,10 +511,11 @@ class ResProject(LogCommon, models.Model):
         # Not current year, no budget release allowed
         current_fy = self.env['account.fiscalyear'].find()
         release_external_budget = fiscalyear.control_ext_charge_only
+        ignore_current_fy = self._context.get('ignore_current_fy_lock', False)
         for project in self.sudo():
             if project.current_fy_release_only and \
                     current_fy != fiscalyear.id and \
-                    not self._context.get('ignore_current_fy_lock', False):
+                    not ignore_current_fy:
                 raise ValidationError(
                     _('Not allow to release budget for fiscalyear %s!\nOnly '
                       'current year budget is allowed.' % fiscalyear.name))
@@ -529,12 +530,14 @@ class ResProject(LogCommon, models.Model):
                     _('Not allow to release budget for project without plan!'))
             planned_amount = sum([x.planned_amount for x in budget_plans])
             consumed_amount = sum([x.amount_consumed for x in budget_monitor])
-            if float_compare(released_amount, planned_amount, 2) == 1:
+            if float_compare(released_amount, planned_amount, 2) == 1 and \
+                    not ignore_current_fy:
                 raise ValidationError(
                     _('Releasing budget (%s) > planned (%s)!' %
                       ('{:,.2f}'.format(released_amount),
                        '{:,.2f}'.format(planned_amount))))
-            if float_compare(released_amount, consumed_amount, 2) == -1:
+            if float_compare(released_amount, consumed_amount, 2) == -1 and \
+                    not ignore_current_fy:
                 raise ValidationError(
                     _('Releasing budget (%s) < Consumed Amount (%s)!' %
                       ('{:,.2f}'.format(released_amount),
