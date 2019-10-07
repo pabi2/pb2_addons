@@ -26,7 +26,7 @@ class AccountMove(models.Model):
         results = super(AccountMove, self).create(vals)
         if 'STJ' in results.name:
             for line in results.line_id:
-                line._check_account_move_line()
+                line._get_detail_move_line()
         
         return results
 
@@ -131,7 +131,7 @@ class AccountMoveLine(models.Model):
         return search
     
     @api.multi
-    def _check_asset_move_line(self):
+    def _get_detail_asset_move_line(self):
         for rec in self:
             if rec.asset_id and (not rec.taxbranch_id or not rec.chartfield_id):
                 move_line_ids = self.env['account.move.line'].search([('asset_id','=',rec.asset_id.id),
@@ -179,43 +179,41 @@ class AccountMoveLine(models.Model):
                     rec.costcenter_id = rec.chartfield_id.costcenter_id.id
     
     @api.multi
-    def _check_account_move_line(self):
+    def _get_detail_move_line(self):
         if self.document_id:
-            search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],'|',['origin','like','POS'],['origin','like','SR']])
-            if search_picking or 'STJ' in self.move_id.name:
-                if not self.chartfield_id:
-                    search = self.search([['move_id','=',self.move_id.id],
-                                          #['costcenter_id','!=',False],
-                                          #['org_id','!=',False]
-                                          ['id','!=',self.id],
-                                          ['chartfield_id','!=',False]],limit=1)
+            if not self.chartfield_id:
+                search = self.search([['move_id','=',self.move_id.id],
+                                      #['costcenter_id','!=',False],
+                                      #['org_id','!=',False]
+                                      ['id','!=',self.id],
+                                      ['chartfield_id','!=',False]],limit=1)
+                if search:
+                    self.chartfield_id = search.chartfield_id.id
+                    self.costcenter_id = search.costcenter_id.id
+                    self.org_id = search.org_id.id
+                    self.fund_id = search.fund_id.id
+                else:
+                    search = self.search([['move_id','!=',self.move_id.id],
+                                          ['document_id','=',self.document_id.id],
+                                          ['product_id','=',self.product_id.id],
+                                          #['chartfield_id','!=',False],
+                                          ['docline_seq','=',self.docline_seq]],limit=1)
                     if search:
                         self.chartfield_id = search.chartfield_id.id
                         self.costcenter_id = search.costcenter_id.id
                         self.org_id = search.org_id.id
                         self.fund_id = search.fund_id.id
-                    else:
-                        search = self.search([['move_id','!=',self.move_id.id],
-                                              ['document_id','=',self.document_id.id],
-                                              ['product_id','=',self.product_id.id],
-                                              #['chartfield_id','!=',False],
-                                              ['docline_seq','=',self.docline_seq]],limit=1)
-                        if search:
-                            self.chartfield_id = search.chartfield_id.id
-                            self.costcenter_id = search.costcenter_id.id
-                            self.org_id = search.org_id.id
-                            self.fund_id = search.fund_id.id
-                            
-                if self.chartfield_id:
-                    search = self.search([['move_id','=',self.move_id.id],['chartfield_id','=',False]])
-    
-                    for rec in search:
-                        rec.write({
-                                    'costcenter_id':self.costcenter_id.id,
-                                    'org_id':self.org_id.id,
-                                    'fund_id':self.fund_id.id,
-                                    'chartfield_id':self.chartfield_id.id
-                            })
+                        
+            else:
+                search = self.search([['move_id','=',self.move_id.id],['chartfield_id','=',False]])
+
+                for rec in search:
+                    rec.write({
+                                'costcenter_id':self.costcenter_id.id,
+                                'org_id':self.org_id.id,
+                                'fund_id':self.fund_id.id,
+                                'chartfield_id':self.chartfield_id.id
+                        })
         
     @api.multi
     def _get_detail_chartfield(self, chartfield_id):
@@ -272,7 +270,9 @@ class AccountMoveLine(models.Model):
                     Analytic = self.env['account.analytic.account']
                     move_line.asset_id.account_analytic_id = \
                         Analytic.create_matched_analytic(move_line.asset_id)
-        move_line._check_account_move_line()
+        search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],'|',['origin','like','POS'],['origin','like','SR']])
+        if search_picking:
+            move_line._get_detail_move_line()
         return move_line
     
     
