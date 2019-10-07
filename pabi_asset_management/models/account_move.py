@@ -23,7 +23,12 @@ class AccountMove(models.Model):
         # Move name to '/'
         if self._context.get('overwrite_move_name', False):
             vals['name'] = '/'
-        return super(AccountMove, self).create(vals)
+        results = super(AccountMove, self).create(vals)
+        if 'STJ' in results.name:
+            for line in results.line_id:
+                line._check_account_move_line()
+        
+        return results
 
 
 class AccountMoveLine(models.Model):
@@ -177,7 +182,7 @@ class AccountMoveLine(models.Model):
     def _check_account_move_line(self):
         if self.document_id:
             search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],'|',['origin','like','POS'],['origin','like','SR']])
-            if search_picking:
+            if search_picking or 'STJ' in self.move_id.name:
                 if not self.chartfield_id:
                     search = self.search([['move_id','=',self.move_id.id],
                                           #['costcenter_id','!=',False],
