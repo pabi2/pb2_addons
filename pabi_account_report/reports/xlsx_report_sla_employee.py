@@ -194,7 +194,8 @@ class XLSXReportSLAEmployee(models.TransientModel):
     )
     supplier_category_name = fields.Selection(
         [('employee', 'พนักงาน สวทช'),
-         ('supplier', 'Supplier ภายนอก')],
+         ('supplier', 'Supplier ภายนอก'),
+         ('foreign', 'ต่างประเทศ')],
         string='Supplier Category',
     )
     async_process = fields.Boolean(
@@ -219,8 +220,10 @@ class XLSXReportSLAEmployee(models.TransientModel):
         if self.supplier_category_name:
             if self.supplier_category_name == 'employee':
                 dom += [('pay_to', '=', 'employee')]
-            else:
-                dom += [('pay_to', '!=', 'employee')]
+            elif self.supplier_category_name == 'foreign':
+                dom += [('pay_to', '!=', 'employee'),('invoice_id.partner_id.category_id.name', '=', 'ต่างประเทศ')]
+            elif self.supplier_category_name == 'supplier':
+                dom += [('pay_to', '!=', 'employee'),('invoice_id.partner_id.category_id.name', '!=', 'ต่างประเทศ')]
         if self.user_ids:
             dom += [('voucher_id.validate_user_id', 'in', self.user_ids.ids)]
         if self.source_document_type:
