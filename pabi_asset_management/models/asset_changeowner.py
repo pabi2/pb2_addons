@@ -361,7 +361,7 @@ class AccountAssetChangeownerLine(models.Model):
     asset_id = fields.Many2one(
         'account.asset',
         string='Asset',
-        domain=[('state', '=', 'open')],
+        domain=[('state', 'in', ('open','close'))],
         required=True,
         ondelete='restrict',
     )
