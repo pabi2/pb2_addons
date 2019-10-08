@@ -617,7 +617,7 @@ class PurchaseWorkAcceptance(models.Model):
             for accpt in paid_accpts:
                 wa_total_payment += accpt.amount_total
             if float_compare(wa_total_payment + self.amount_total,
-                             order.amount_total, 2) == 1:
+                             order.amount_total+0.1, 2) == 1:
                 raise ValidationError(
                     _("""Can't evaluate this acceptance.
                          This WA's total amount is over PO's total amount.""")
