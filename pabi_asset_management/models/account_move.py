@@ -270,9 +270,10 @@ class AccountMoveLine(models.Model):
                     Analytic = self.env['account.analytic.account']
                     move_line.asset_id.account_analytic_id = \
                         Analytic.create_matched_analytic(move_line.asset_id)
-        search_picking = self.env['stock.picking'].search([['id','=',self.document_id.id],'|',['origin','like','POS'],['origin','like','SR']])
-        if search_picking:
-            move_line._get_detail_move_line()
+        if move_line.document_id:
+            search_picking = self.env['stock.picking'].search([['id','=',move_line.document_id.id],'|',['origin','like','POS'],['origin','like','SR']])
+            if search_picking:
+                move_line._get_detail_move_line()
         return move_line
     
     
