@@ -227,7 +227,8 @@ class BPCommon(Common):
                 })
             budget_lines.append((0, 0, budget_line_vals))
         budget['budget_line_ids'] = budget_lines
-        return self.env['account.budget'].create(budget)
+        return self.env['account.budget'].\
+            with_context(in_convert_mode=True).create(budget)
 
     # @api.multi
     # def compute_prev_fy_performance(self):

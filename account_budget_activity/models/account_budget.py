@@ -343,6 +343,9 @@ class AccountBudget(models.Model):
                     raise ValidationError(
                         _('%s has no budget lines!\n'
                           'Not allow to allocate amount.') % budget.name)
+                # Skip, if called from function _convert_plan_to_budget_control
+                if self._context.get('in_convert_mode', False):
+                    continue
                 if budget.budget_expense_line_ids:
                     # Refresh all line to zero first
                     budget.budget_expense_line_ids.\
