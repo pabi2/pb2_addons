@@ -128,7 +128,7 @@ class SLAEmployeeView(models.Model):
             LEFT JOIN res_partner_category rpc ON rp.category_id = rpc.id
             
             WHERE av.type = 'payment' AND av.state = 'posted'
-                AND pe.state = 'done' AND rpc.name in ('Supplier-ภาครัฐ','Supplier-ภาคเอกชน','ต่างประเทศ','พนักงาน สวทช.')
+                AND (pe.state = 'done' OR av.payment_export_id is null)  AND rpc.name in ('Supplier-ภาครัฐ','Supplier-ภาคเอกชน','ต่างประเทศ','พนักงาน สวทช.')
                 OR am_line.doctype = 'salary_expense'
         """ % (self._get_sql_select())
         #AND ex.pay_to != 'supplier' 
