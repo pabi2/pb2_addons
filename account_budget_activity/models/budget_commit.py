@@ -66,7 +66,7 @@ class CommitCommon(object):
                     where active = true and id in %s
                 """, (tuple(trans_ids), ))
         return True
-        
+
     @api.multi
     def recreate_all_budget_commitment(self):
         """ This method is used for development only """
@@ -197,7 +197,8 @@ class CommitLineCommon(object):
                                     order='create_date desc', limit=1)
             rec.refresh()  # Clear cache
             if aline and rec.budget_commit_bal:
-                aline.copy({'amount': -rec.budget_commit_bal})
+                aline.copy({'date': fields.Date.context_today(self),
+                            'amount': -rec.budget_commit_bal})
 
     @api.model
     def _price_subtotal(self, line_qty):
