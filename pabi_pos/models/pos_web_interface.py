@@ -48,11 +48,13 @@ class SalesOrder(models.Model):
             res = self.env['pabi.utils.ws'].friendly_create_data(self._name,
                                                                  data_dict)
             pos = self.browse(res['result']['id'])
+            pos._get_pos_receipt()
             pos.post_process_pos_order()
             # auto confirm oder, with async process
             pos.with_context(pos_async_process=False).action_button_confirm()
             # return more data
             res['result']['name'] = pos.name
+            res['result']['origin'] = pos.origin
         except Exception, e:
             res = {
                 'is_success': False,

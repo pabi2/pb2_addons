@@ -161,7 +161,30 @@ class SaleOrder(models.Model):
                 product = line.product_id
                 line.activity_group_id = product.categ_id.activity_group_id
                 line.activity_rpt_id = product.categ_id.activity_id
-
+    
+    def _get_pos_receipt(self):
+        date_now = datetime.today()
+        SEQUENCE = self.env['ir.sequence']
+        date_fis = datetime.now() + relativedelta(months=3)
+        fisyear = str(date_fis.strftime('%y'))
+        if self.amount_tax == 0.00:
+            prefix = 'RC'
+        else:
+            prefix = 'RT'
+        
+        sequence_id = SEQUENCE.search([('code','=','pos.order'),('prefix','=',prefix+'-PS'+fisyear)])
+        if not sequence_id:
+            sequence_id = SEQUENCE.create({'code': 'pos.order',
+                                           'name': 'Pos Order %s %s'%(prefix,fisyear),
+                                           'number_next': 1,
+                                           'implementation': 'standard',
+                                           'padding': 4,
+                                           'number_increment': 1,
+                                           'prefix': prefix+'-PS'+fisyear,
+                                        })
+        receipt_no = sequence.get_id(sequence_no_vat_id.id)
+        self.origin = receipt_no
+        
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
