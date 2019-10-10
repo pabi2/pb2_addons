@@ -182,7 +182,7 @@ class SaleOrder(models.Model):
                                            'number_increment': 1,
                                            'prefix': prefix+'-PS'+fisyear,
                                         })
-        receipt_no = sequence.get_id(sequence_no_vat_id.id)
+        receipt_no = SEQUENCE.get_id(sequence_no_vat_id.id)
         self.origin = receipt_no
         
 
