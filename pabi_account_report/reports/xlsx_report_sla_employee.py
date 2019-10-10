@@ -128,7 +128,7 @@ class SLAEmployeeView(models.Model):
             LEFT JOIN res_partner_category rpc ON rp.category_id = rpc.id
             
             WHERE av.type = 'payment' AND av.state = 'posted'
-                AND pe.state = 'done' AND rpc.name in ('Supplier-ภาครัฐ','Supplier-ภาคเอกชน','พนักงาน สวทช.')
+                AND (pe.state = 'done' OR av.payment_export_id is null)  AND rpc.name in ('Supplier-ภาครัฐ','Supplier-ภาคเอกชน','ต่างประเทศ','พนักงาน สวทช.')
                 OR am_line.doctype = 'salary_expense'
         """ % (self._get_sql_select())
         #AND ex.pay_to != 'supplier' 
@@ -137,7 +137,6 @@ class SLAEmployeeView(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
                    % (self._table, self._get_sql_view()))
-
 
 # class PabiCommonSupplierPaymentReportView(models.Model):
 #     _inherit = 'pabi.common.supplier.payment.report.view'
@@ -195,7 +194,8 @@ class XLSXReportSLAEmployee(models.TransientModel):
     )
     supplier_category_name = fields.Selection(
         [('employee', 'พนักงาน สวทช'),
-         ('supplier', 'Supplier ภายนอก')],
+         ('supplier', 'Supplier ภายนอก'),
+         ('foreign', 'Supplier ต่างประเทศ')],
         string='Supplier Category',
     )
     async_process = fields.Boolean(
@@ -214,14 +214,13 @@ class XLSXReportSLAEmployee(models.TransientModel):
         self.ensure_one()
         Result = self.env['sla.employee.view']
         dom = []
-        # dom = [('invoice_id.source_document_type', 'in',
-        # ['advance', 'expense']),
-        # ('expense_id.pay_to', '!=', 'supplier')]
         if self.supplier_category_name:
             if self.supplier_category_name == 'employee':
                 dom += [('pay_to', '=', 'employee')]
-            else:
-                dom += [('pay_to', '!=', 'employee')]
+            elif self.supplier_category_name == 'supplier':
+                dom += [('pay_to', '!=', 'employee'),('invoice_id.partner_id.category_id.name', '!=', 'ต่างประเทศ')]
+            elif self.supplier_category_name == 'foreign':
+                dom += [('pay_to', '!=', 'employee'),('invoice_id.partner_id.category_id.name', '=', 'ต่างประเทศ')]
         if self.user_ids:
             dom += [('voucher_id.validate_user_id', 'in', self.user_ids.ids)]
         if self.source_document_type:
