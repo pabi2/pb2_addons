@@ -176,7 +176,7 @@ class SaleOrder(models.Model):
         sequence_id = SEQUENCE.search([('name','=','POS Receipt %s %s'%(prefix,fisyear)),('prefix','=',prefix+'-PS'+fisyear)])
         if not sequence_id:
             sequence_id = SEQUENCE.create({'name': 'POS Receipt %s %s'%(prefix,fisyear),
-                                           'number_next': 1,
+                                           'number_next': 1000,
                                            'implementation': 'standard',
                                            'padding': 4,
                                            'number_increment': 1,
