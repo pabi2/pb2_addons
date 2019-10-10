@@ -2,6 +2,7 @@
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
