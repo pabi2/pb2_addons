@@ -173,10 +173,10 @@ class SaleOrder(models.Model):
         else:
             prefix = 'RT'
         
-        sequence_id = SEQUENCE.search([('code','=','pos.order'),('prefix','=',prefix+'-PS'+fisyear)])
+        sequence_id = SEQUENCE.search([('name','=','POS Receipt %s %s'%(prefix,fisyear)),('prefix','=',prefix+'-PS'+fisyear)])
         if not sequence_id:
             sequence_id = SEQUENCE.create({'code': 'pos.order',
-                                           'name': 'Pos Order %s %s'%(prefix,fisyear),
+                                           'name': 'POS Receipt %s %s'%(prefix,fisyear),
                                            'number_next': 1,
                                            'implementation': 'standard',
                                            'padding': 4,
