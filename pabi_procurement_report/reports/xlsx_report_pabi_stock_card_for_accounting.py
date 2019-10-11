@@ -46,21 +46,26 @@ class XLSXReportPabiStockCardForAccounting(models.TransientModel):
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['xlsx.report.pabi.stock.card.for.accounting.results']
-        dom = [
-            ('date_move', '>=', self.date_from),
-            ('date_move', '<=', self.date_to),
-        ]
+        dom = []
+        if self.date_from:
+            dom += [ ('date_move', '>=', self.date_from)]
+        if self.date_to:
+            dom += [('date_move', '<=', self.date_to)]
         if self.operating_unit_id:
             dom += [('operating_unit_id', '=', self.operating_unit_id.id)]
         if self.product_id:
             dom += [('product_id', '=', self.product_id.id)]
         if self.category_id:
-            dom += [('category_id', '=', self.category_id.id)]
+            dom += [
+                '|',
+                ('category_id', '=', self.category_id.id),
+                ('parent_id', '=', self.category_id.id)
+            ]
         if self.location_id:
             dom += [
                 '|',
-                ('src_location_id', '=', self.locaiton_id.id),
-                ('dest_location_id', '=', self.locaiton_id.id),
+                ('src_loc_id', '=', self.location_id.id),
+                ('dest_loc_id', '=', self.location_id.id),
             ]
         self.results = Result.search(dom)
 
@@ -100,10 +105,12 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
     )
     date_move = fields.Date(
         string='Date',
+        readonly=True,
     )
     src_loc_id = fields.Many2one(
         'stock.location',
         string='Source Location ID',
+        readonly=True,
     )
     src_loc_name = fields.Char(
         string='Source Location Name',
@@ -112,6 +119,7 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
     dest_loc_id = fields.Many2one(
         'stock.location',
         string='Destinatio Location ID',
+        readonly=True,
     )
     dest_loc_name = fields.Char(
         string='Destination Location Name',
@@ -136,14 +144,21 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
     operating_unit_id = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
+        readonly=True,
     )
     product_id = fields.Many2one(
         'product.product',
         string='Product',
+        readonly=True,
     )
     category_id = fields.Many2one(
         'product.category',
         string='Category',
+        readonly=True,
+    )
+    parent_id = fields.Integer(
+        string='parent_id',
+        readonly=True,
     )
     source_doc = fields.Char(
         string='Source Doc',
@@ -155,13 +170,16 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
     )
     sm_date = fields.Date(
         string='Stock Move Date',
+        readonly=True,
     )
     scheduled_date = fields.Date(
         string='Scheduled Date',
+        readonly=True,
     )
     stock_move_id = fields.Many2one(
         'stock.move',
         string='Stock Move',
+        readonly=True,
     )
     uom = fields.Char(
         string='Uom',
@@ -170,6 +188,7 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
     move_id = fields.Many2one(
         'account.move',
         string='Account Move ID',
+        readonly=True,
     )
     unit = fields.Char(
         string='unit',
@@ -184,14 +203,23 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
         digits=(12,2), 
         readonly=True,
     )
-
+    move_positive = fields.Float(
+        string='Internal move +',
+        readonly=True,
+    )
+    move_negative = fields.Float(
+        string='Internal move -',
+        readonly=True,
+    )
+    
     def init(self, cr):
         cr.execute("""CREATE or REPLACE VIEW %s as (
-        SELECT DISTINCT
+       SELECT DISTINCT
         row_number() over (order by sm.id) id,
         ou.id operating_unit_id,
         pp.id product_id,
         pc.id category_id,
+        pc.parent_id parent_id,
         rp.name supplier,
         rp.vat tax_id,
         CONCAT(
@@ -228,16 +256,22 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
         WHERE it.name LIKE 'product.uom,name' AND it.src=pu.name LIMIT 1) unit,
         (SELECT am.id from account_move am
         WHERE am.ref = sp.name
+        and am.date = date(sm.date)
         and am.id = (select aml.move_id 
                     from account_move_line aml 
                     where am.id = aml.move_id 
-                    and aml.name =  ptmpl.name 
+                    and aml.name = ptmpl.name
                     group by aml.move_id) 
-        and sp.state = 'done' limit 1) move_id,
-        (CASE WHEN dloc.usage = 'internal' THEN sm.product_uom_qty
-        ELSE sm.product_uom_qty*-1 END) quantity_balance,
+        limit 1) move_id,
+        (CASE  WHEN sloc.usage = 'internal' and dloc.usage = 'internal' THEN 0
+        WHEN dloc.usage = 'internal' THEN sm.product_uom_qty
+        ELSE -sm.product_uom_qty END) quantity_balance,
         (CASE WHEN dloc.usage = 'internal'THEN sm.product_uom_qty*sm.price_unit 
-        ELSE (sm.product_uom_qty*sm.price_unit)*-1 END) inventory_value
+        ELSE -(sm.product_uom_qty*sm.price_unit)END) inventory_value,
+        (CASE WHEN sloc.usage = 'internal' and dloc.usage = 'internal' THEN sm.product_uom_qty
+        ELSE null END) move_positive,
+        (CASE WHEN sloc.usage = 'internal' and dloc.usage = 'internal' THEN -sm.product_uom_qty
+        ELSE null END) move_negative
         FROM stock_move sm
         LEFT JOIN stock_picking sp
         ON sp.id = sm.picking_id
