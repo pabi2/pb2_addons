@@ -156,10 +156,6 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
         string='Category',
         readonly=True,
     )
-    parent_id = fields.Integer(
-        string='parent_id',
-        readonly=True,
-    )
     source_doc = fields.Char(
         string='Source Doc',
         readonly=True,
@@ -211,6 +207,10 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
         string='Internal move -',
         readonly=True,
     )
+    parent_id = fields.Integer(
+        string='parent_id',
+        readonly=True,
+    )
     
     def init(self, cr):
         cr.execute("""CREATE or REPLACE VIEW %s as (
@@ -219,7 +219,6 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
         ou.id operating_unit_id,
         pp.id product_id,
         pc.id category_id,
-        pc.parent_id parent_id,
         rp.name supplier,
         rp.vat tax_id,
         CONCAT(
@@ -271,7 +270,8 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
         (CASE WHEN sloc.usage = 'internal' and dloc.usage = 'internal' THEN sm.product_uom_qty
         ELSE null END) move_positive,
         (CASE WHEN sloc.usage = 'internal' and dloc.usage = 'internal' THEN -sm.product_uom_qty
-        ELSE null END) move_negative
+        ELSE null END) move_negative,
+        pc.parent_id parent_id
         FROM stock_move sm
         LEFT JOIN stock_picking sp
         ON sp.id = sm.picking_id
