@@ -259,8 +259,8 @@ class XLSXReportPabiStockCardForAccountingResults(models.Model):
         and am.id = (select aml.move_id 
                     from account_move_line aml 
                     where am.id = aml.move_id 
-                    and aml.name = ptmpl.name
-                    group by aml.move_id) 
+                    and aml.product_id = pp.id
+                    group by aml.move_id)
         limit 1) move_id,
         (CASE  WHEN sloc.usage = 'internal' and dloc.usage = 'internal' THEN 0
         WHEN dloc.usage = 'internal' THEN sm.product_uom_qty
