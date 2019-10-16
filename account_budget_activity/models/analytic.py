@@ -222,7 +222,31 @@ class AccountAnalyticLine(models.Model):
                     rec._write({'monitor_fy_id': fiscal.id, })
                 else:
                     rec._write({'monitor_fy_id': rec.fiscalyear_id.id, })
-
+    
+    @api.multi
+    def _check_analytic_asset_line(self):
+        MOVE = self.env['account.move']#
+        ASSET_line = self.env['account.asset.line']
+        #moves = MOVE.browse(self.move_id and self.move_id.id)
+        if self.move_id:
+            depreciation_lines = ASSET_line.search([('move_id','=',self.move_id.id),('asset_id','!=',False)])
+            if depreciation_lines:
+                self.section_id = depreciation_lines[0].asset_id.owner_section_id and\
+                                    depreciation_lines[0].asset_id.owner_section_id.id or False
+                self.project_id = depreciation_lines[0].asset_id.owner_project_id and\
+                                    depreciation_lines[0].asset_id.owner_project_id.id or False
+                self.invest_asset_id = depreciation_lines[0].asset_id.owner_invest_asset_id and\
+                                        depreciation_lines[0].asset_id.owner_invest_asset_id.id or False
+                self.invest_construction_phase_id = depreciation_lines[0].asset_id.owner_invest_construction_phase_id and\
+                                                        depreciation_lines[0].asset_id.owner_invest_construction_phase_id.id or False
+                chartfield_id = self.section_id or\
+                                self.project_id or\
+                                self.invest_asset_id or\
+                                self.invest_construction_phase_id or False
+                self.costcenter_id = chartfield_id and\
+                                        chartfield_id.costcenter_id and\
+                                        chartfield_id.costcenter_id.id or False
+    
     @api.model
     def create(self, vals):
         _logger.info("------- create analytic line -------")
@@ -244,7 +268,7 @@ class AccountAnalyticLine(models.Model):
         _logger.info("vals: %s", str(vals))
         analytic_line = super(AccountAnalyticLine, self).create(vals)
         _logger.info("analytic_line: %s", str(analytic_line))
-
+        analytic_line._check_analytic_asset_line()
         return analytic_line
 
     @api.multi
@@ -306,10 +330,35 @@ class AccountAnalyticAccount(models.Model):
             'activity_group_id',
         ]
         return dimensions
-
+    
+    
+    @api.multi
+    def _check_analytic_asset_line(self):
+        MOVE = self.env['account.move']#
+        ASSET_line = self.env['account.asset.line']
+        #moves = MOVE.browse(self.move_id and self.move_id.id)
+        if self.line_ids and self.line_ids[0].move_id and self.line_ids[0].move_id.move_id:
+            depreciation_lines = ASSET_line.search([('move_id','=',self.line_ids[0].move_id.move_id.id),('asset_id','!=',False)])
+            if depreciation_lines:
+                if self.section_id and depreciation_lines[0].asset_id.owner_section_id:
+                    self.section_id = depreciation_lines[0].asset_id.owner_section_id.id
+                if self.project_id and depreciation_lines[0].asset_id.owner_project_id:
+                    self.project_id = depreciation_lines[0].asset_id.owner_project_id.id
+                if self.invest_asset_id and depreciation_lines[0].asset_id.owner_invest_asset_id:
+                    self.invest_asset_id = depreciation_lines[0].asset_id.owner_invest_asset_id.id
+                if self.invest_construction_phase_id and depreciation_lines[0].asset_id.owner_invest_construction_phase_id:
+                    self.invest_construction_phase_id = depreciation_lines[0].asset_id.owner_invest_construction_phase_id.id
+                chartfield_id = self.section_id or\
+                                self.project_id or\
+                                self.invest_asset_id or\
+                                self.invest_construction_phase_id or False
+                if self.costcenter_id and chartfield_id and chartfield_id.costcenter_id:
+                    self.costcenter_id = chartfield_id.costcenter_id.id
+    
     @api.model
     def get_analytic_search_domain(self, rec):
         dimensions = self._analytic_dimensions()
+        rec._check_analytic_asset_line()
         domain = []
         for dimension in dimensions:
             if dimension in rec._fields:
