@@ -333,32 +333,40 @@ class AccountAnalyticAccount(models.Model):
     
     
     @api.multi
-    def _check_analytic_asset_line(self):
+    def _check_analytic_asset_line(self, vals):
         MOVE = self.env['account.move']#
+        ASSET = self.env['account.asset']
         ASSET_line = self.env['account.asset.line']
+        asset_id = False
         #moves = MOVE.browse(self.move_id and self.move_id.id)
+        if 'asset_id' in vals:
+            asset_id = ASSET.browse(vals['asset_id'])
+            
         if self.line_ids and self.line_ids[0].move_id and self.line_ids[0].move_id.move_id:
-            depreciation_lines = ASSET_line.search([('move_id','=',self.line_ids[0].move_id.move_id.id),('asset_id','!=',False)])
-            if depreciation_lines:
-                if self.section_id and depreciation_lines[0].asset_id.owner_section_id:
-                    self.section_id = depreciation_lines[0].asset_id.owner_section_id.id
-                if self.project_id and depreciation_lines[0].asset_id.owner_project_id:
-                    self.project_id = depreciation_lines[0].asset_id.owner_project_id.id
-                if self.invest_asset_id and depreciation_lines[0].asset_id.owner_invest_asset_id:
-                    self.invest_asset_id = depreciation_lines[0].asset_id.owner_invest_asset_id.id
-                if self.invest_construction_phase_id and depreciation_lines[0].asset_id.owner_invest_construction_phase_id:
-                    self.invest_construction_phase_id = depreciation_lines[0].asset_id.owner_invest_construction_phase_id.id
-                chartfield_id = self.section_id or\
-                                self.project_id or\
-                                self.invest_asset_id or\
-                                self.invest_construction_phase_id or False
-                if self.costcenter_id and chartfield_id and chartfield_id.costcenter_id:
-                    self.costcenter_id = chartfield_id.costcenter_id.id
+            asset_id = ASSET_line.search([('move_id','=',self.line_ids[0].move_id.move_id.id),('asset_id','!=',False)], limit=1).asset_id
+        #if not self.line_ids:
+        #    asset_id = ASSET.search([('account_analytic_id','=',self.id),('active','=',True)], limit=1)
+            
+        if asset_id:
+            if self.section_id and asset_id.owner_section_id:
+                self.section_id = asset_id.owner_section_id.id
+            if self.project_id and asset_id.owner_project_id:
+                self.project_id = asset_id.owner_project_id.id
+            if self.invest_asset_id and asset_id.owner_invest_asset_id:
+                self.invest_asset_id = asset_id.owner_invest_asset_id.id
+            if self.invest_construction_phase_id and asset_id.owner_invest_construction_phase_id:
+                self.invest_construction_phase_id = asset_id.owner_invest_construction_phase_id.id
+            chartfield_id = self.section_id or\
+                            self.project_id or\
+                            self.invest_asset_id or\
+                            self.invest_construction_phase_id or False
+            if self.costcenter_id and chartfield_id and chartfield_id.costcenter_id:
+                self.costcenter_id = chartfield_id.costcenter_id.id
     
     @api.model
     def get_analytic_search_domain(self, rec):
         dimensions = self._analytic_dimensions()
-        rec._check_analytic_asset_line()
+        #rec._check_analytic_asset_line([])
         domain = []
         for dimension in dimensions:
             if dimension in rec._fields:
