@@ -248,6 +248,10 @@ class AccountMove(models.Model):
         if stock_move_id:
             move.ref = stock_move_id.origin
             stock_move_id.account_move_id = move.id
+            # check ref in move_line and change from header
+            for move_line in move.line_id:
+                if not move_line.ref:
+                    move_line.ref = stock_move_id.origin
         return move
 
 
