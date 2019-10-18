@@ -164,7 +164,6 @@ class SaleOrder(models.Model):
                 line.activity_rpt_id = product.categ_id.activity_id
     
     def _get_pos_receipt(self):
-        date_now = datetime.today()
         SEQUENCE = self.env['ir.sequence']
         date_fis = datetime.now() + relativedelta(months=3)
         fisyear = str(date_fis.strftime('%y'))
@@ -173,10 +172,10 @@ class SaleOrder(models.Model):
         else:
             prefix = 'RT'
         
-        sequence_id = SEQUENCE.search([('name','=','POS Receipt %s %s'%(prefix,fisyear)),('prefix','=',prefix+'-PS'+fisyear)])
+        sequence_id = SEQUENCE.search([('name','=','POS Receipt %s - %s'%(prefix,fisyear)),('prefix','=',prefix+'-PS'+fisyear)])
         if not sequence_id:
-            sequence_id = SEQUENCE.create({'name': 'POS Receipt %s %s'%(prefix,fisyear),
-                                           'number_next': 1000,
+            sequence_id = SEQUENCE.create({'name': 'POS Receipt %s - %s'%(prefix,fisyear),
+                                           'number_next': 3333,
                                            'implementation': 'standard',
                                            'padding': 4,
                                            'number_increment': 1,
