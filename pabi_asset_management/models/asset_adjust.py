@@ -442,10 +442,10 @@ class AccountAssetAdjust(models.Model):
                     adjust_line.chartfield_id = \
                         adjust_line.invoice_line_id.chartfield_id
                     quantity = value[3]
-                    
+
                     for i in range(quantity):
                         self.adjust_expense_to_asset_ids += adjust_line
-                        
+
                 for line in self.adjust_expense_to_asset_ids:
                     _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
             else:
@@ -515,6 +515,8 @@ class AccountAssetAdjust(models.Model):
     @api.model
     def _duplicate_asset(self, asset, product, asset_name, analytic):
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
+        # add code in asset
+        asset_dict.update({'code': '/'})
         new_asset = asset.copy(asset_dict)
         Analytic = self.env['account.analytic.account']
         new_asset.account_analytic_id = \
@@ -635,11 +637,11 @@ class AccountAssetAdjust(models.Model):
             self.invoice_id.source_document_id.write({
                 'ship_expense': True,
                 'ship_purchase_id': self.ship_purchase_id.id, })
-            
+
         values = self._context.get('expense_to_asset_dict', {})
         _logger.info("values: %s", str(values))
         i = 0
-        
+
         # --
         for line in self.adjust_expense_to_asset_ids:
             line.account_analytic_id = Analytic.create_matched_analytic(line)
@@ -647,7 +649,7 @@ class AccountAssetAdjust(models.Model):
             _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
             _logger.info("line.account_analytic_id.line_ids: %s", \
                          str(line.account_analytic_id.line_ids))
-                
+
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,
                                            line.product_id, line.asset_name,
@@ -1237,7 +1239,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         am_vals = AssetAdjust._setup_move_data(adjust.journal_id,
                                                adjust_date, period, ref)
         move = self.env['account.move'].with_context(ctx).create(am_vals)
-        
+
         # Prepare move lines
         line_dict = \
             self._prepare_move_line_expense_to_asset(new_asset, exp_acc,
@@ -1248,7 +1250,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
             del ctx['novalidate']
             move.with_context(ctx).post()
         self.write({'move_id': move.id})
-        
+
         # update activity_id = activity_rpt_id
         analytic = None
         for movl in move.line_id:
@@ -1258,33 +1260,33 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
 
         # assign invoice_line's data to move_line's credit line
         self._assign_move_line_with_invoice_line(move)
-        
+
         # create analytic line for expense
         self._create_expense_analytic_line(analytic.line_ids)
-        
+
         return move
-    
+
     @api.model
     def _create_expense_analytic_line(self, analytic_line_ids):
         _logger.info("------- _create_expense_analytic_line -------")
         inv_number = self.adjust_id.invoice_id.number
         _logger.info("inv_number: %s", str(inv_number))
-        
+
         # find move_line_id of invoice_id to domain invoice's analytic_line
         inv_movl_ids = self.adjust_id.invoice_id.move_id.line_id
         inv_movl_id = ""
         for inv_movl in inv_movl_ids:
             if inv_movl.analytic_account_id and \
                 (inv_movl.account_id == self.account_id):
-                
+
                 inv_movl_id = inv_movl.id
                 break
         _logger.info("inv_movl_id: %s", str(inv_movl_id))
-        
+
         domain = []
         domain.append(("move_id", "=", inv_movl_id))
         _logger.info("domain: %s", str(domain))
-        
+
         analytic_line = self.env['account.analytic.line']
         invoice_line_id = self.invoice_line_id
         _logger.info("invoice_line_id: %s", str(invoice_line_id))
@@ -1292,7 +1294,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         _logger.info("invl_analytic_lines: %s", str(invl_analytic_lines))
         invl_analytic_line = invl_analytic_lines.search(domain)
         _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
-        
+
         domain = []
         domain.append(("account_id", "=", self.account_analytic_id.id))
         domain.append(("amount", "=", (self.amount * -1)))
@@ -1300,13 +1302,13 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         _logger.info("domain: %s", str(domain))
         _logger.info("self.account_analytic_id: %s", str(self.account_analytic_id))
         line_analytic_line = self.account_analytic_id.line_ids
-        
+
         if line_analytic_line:
             line_analytic_line = line_analytic_line.search(domain)
-        
+
         if not line_analytic_line:
             line_analytic_line = analytic_line_ids[0]
-        
+
         _logger.info("line_analytic_line: %s", str(line_analytic_line))
 
         values = {}
@@ -1350,13 +1352,13 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values["quarter"] = line_analytic_line.quarter
         values["doctype"] = line_analytic_line.doctype
         values["move_id"] = line_analytic_line.move_id.id
-        
+
         values["unit_amount"] = 0
         values["amount_currency"] = 0
         values["charge_type"] = "external"
         values["has_commit_amount"] = False
         values["require_chartfield"] = True
-         
+
         expense_analytic_line_id = analytic_line.create(values)
         _logger.info("expense_analytic_line_id: %s", str(expense_analytic_line_id))
 
