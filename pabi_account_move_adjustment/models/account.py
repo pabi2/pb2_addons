@@ -20,6 +20,7 @@ def action_done_async_process(session, model_name, res_id):
     except Exception, e:
         raise RetryableJobError(e)
 
+
 class AccountMove(models.Model):
     _name = 'account.move'
     _inherit = ['account.move', 'mail.thread']
@@ -78,7 +79,7 @@ class AccountMove(models.Model):
             rec.button_validate_job_id = jobs and jobs[0] or False
             rec.button_validate_uuid = jobs and jobs[0].uuid or False
         return True
-    
+
     @api.multi
     def action_done(self):
         for rec in self:
@@ -101,13 +102,12 @@ class AccountMove(models.Model):
                 session, self._name, self.id, description=description)
             job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
             # Process Name
-            #job.process_id = self.env.ref('pabi_async_process.'
+            # job.process_id = self.env.ref('pabi_async_process.'
             #                              'confirm_pos_order')
         else:
             return self.action_done()
-        
-###########################--------------------------------- end job backgruond ------------------------------- #######################
 
+###########################--------------------------------- end job backgruond ------------------------------- #######################
 
     @api.multi
     def _compute_charge_type(self):
@@ -237,6 +237,7 @@ class AccountMove(models.Model):
     def create(self, vals):
         move = super(AccountMove, self).create(vals)
         invoice_id = self._context.get('src_invoice_id', False)
+        stock_move_id = self._context.get('stock_move_id', False)
         if invoice_id:
             invoice = self.env['account.invoice'].browse(invoice_id)
             invoice.adjust_move_ids += move
@@ -244,6 +245,13 @@ class AccountMove(models.Model):
             #     update account_invoice set adjust_move_id = %s
             #     where id = %s
             # """, (move.id, invoice_id))
+        if stock_move_id:
+            move.ref = stock_move_id.origin
+            stock_move_id.account_move_id = move.id
+            # check ref in move_line and change from header
+            for move_line in move.line_id:
+                if not move_line.ref:
+                    move_line.ref = stock_move_id.origin
         return move
 
 
@@ -329,7 +337,6 @@ class AccountMoveLine(MergedChartField, models.Model):
                 move_line = False
 
         return move_line and move_line.org_id.id or False
-    
 
     is_tax_line = fields.Boolean(
         string='Is Tax Line',
@@ -340,7 +347,6 @@ class AccountMoveLine(MergedChartField, models.Model):
         related='account_id.is_require_activity',
     )
 
-
     _defaults = {
         'account_id': _get_default_account_id,
         'taxbranch_id': _get_default_taxbranch_id,
@@ -349,7 +355,6 @@ class AccountMoveLine(MergedChartField, models.Model):
         #'costcenter_id': _get_default_costcenter_id,
         #'org_id': _get_default_org_id,
     }
-    
 
     @api.multi
     @api.onchange('account_id')
@@ -395,7 +400,7 @@ class AccountMoveLine(MergedChartField, models.Model):
                 self.invest_asset_id = res_id
             elif self.chartfield_id.model == 'res.personnel.costcenter':
                 self.personnel_costcenter_id = res_id
-                
+
         if self.chartfield_id:
             if self.chartfield_id:
                 search = self._get_record_chartfield(self.chartfield_id.id)
@@ -403,7 +408,7 @@ class AccountMoveLine(MergedChartField, models.Model):
                     self.costcenter_id = search.costcenter_id.id
                     self.org_id = search.org_id.id
                     self.fund_id = search.fund_ids and search.fund_ids[0].id or False
-                    
+
             else:
                 search = self.env['account.move.line'].search([['move_id','=',self.move_id.id],
                                                                ['costcenter_id','!=',False],
@@ -413,7 +418,6 @@ class AccountMoveLine(MergedChartField, models.Model):
                     self.costcenter_id = search.costcenter_id.id
                     self.org_id = search.org_id.id
                     self.fund_id = search.fund_id.id
-    
 
     @api.multi
     @api.constrains('activity_group_id', 'activity_id')
@@ -502,10 +506,11 @@ class AccountMoveDueHistory(models.Model):
         string='Reason',
         size=500,
     )
-    
+
+
 class AccountAnalyticAccount(models.Model):
     _inherit = 'account.analytic.account'
-    
+
     taxbranch_id = fields.Many2one(
         'res.taxbranch',
         required=False,  # Some error on adjust asset -> expense, temp remove
@@ -514,11 +519,10 @@ class AccountAnalyticAccount(models.Model):
         'account.move',
         string='Journal Entry',
     )
-  
+
     @api.constrains('taxbranch_id')
     def check_taxbranch(self):
         if self.move_id.doctype == "adjustment":
             pass
-        elif not self.taxbranch_id :
-            raise ValidationError(
-                            _("Please check Tax branch is null"))
+        elif not self.taxbranch_id:
+            raise ValidationError(_("Please check Tax branch is null"))
