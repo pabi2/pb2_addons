@@ -11,7 +11,7 @@
                     <group>
                         <field name="operating_unit_id"/>
                         <field name="product_id"/>
-                        <field name="category_id"/>
+                        <field name="category_ids" widget="many2many_tags"/>
                         <field name="location_id"/>
                         <field name="date_from"/>
                         <field name="date_to"/>

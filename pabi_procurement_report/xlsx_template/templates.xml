@@ -123,7 +123,7 @@
                         '_HEAD_': {
                         	'B2': 'operating_unit_id.name${value or ""}',
                         	'B3': 'product_id.name${value or ""}',
-                        	'B4': 'category_id.name${value or ""}',
+                        	'B4': 'category_ids${value and ", ".join([x.name for x in value]) or ""}',
                         	'B5': 'location_id.name${value or ""}',
                         	'B6': 'date_from${value or ""}#{number_format=date}',
                             'B7': 'date_to${value or ""}#{number_format=date}',
@@ -144,10 +144,10 @@
                             'M10': 'inventory_value${value or ""}#{number_format=number}',
                             'N10': 'move_id.name${value or ""}',
                             'O10': 'move_id.date${value or ""}#{number_format=date}',
-                            'P10': 'move_id.line_id${value and value[0].account_id.code or ""}#{number_format=text}',
-                            'Q10': 'move_id.line_id${value and value[0].account_id.name or ""}',
-                            'R10': 'move_id.line_id${value and value[0].debit or ""}',
-                            'S10': 'move_id.line_id${value and value[0].credit or ""}',
+                            'P10': 'move_id.line_id${value and value.filtered(lambda l: "11" in l.account_id.code[0:2] )[0].account_id.code or ""   or ""}#{number_format=text}',
+                            'Q10': 'move_id.line_id${value and value.filtered(lambda l: "11" in l.account_id.code[0:2] )[0].account_id.name  or ""}',
+                            'R10': 'move_id.line_id${value and value.filtered(lambda l: "11" in l.account_id.code[0:2] )[0].debit  or ""}',
+                            'S10': 'move_id.line_id${value and value.filtered(lambda l: "11" in l.account_id.code[0:2] )[0].credit or ""}',
                             'T10': 'stock_move_id.partner_id.id${value or ""}#{number_format=text}',
                             'U10': 'stock_move_id.partner_id.name${value or ""}',
                             
