@@ -85,8 +85,8 @@ class SalesOrder(models.Model):
                 for picking in pos.picking_ids:
                     picking.action_picking_cancel()
                 
-            #if pos.state in ('progress','manual'):
-            pos.action_cancel()
+            if pos.state in ('progress','manual'):
+                pos.action_cancel()
             res = {
                 'is_success': True,
                 'result': pos.name,
