@@ -80,7 +80,7 @@ class SalesOrder(models.Model):
                     for voucher in voucher_ids:
                         voucher.cancel_reason_txt = data_dict['cancel_reason']
                         voucher.cancel_voucher()
-                    invoice.cancel_reason_txt = self.cancel_reason_txt
+                    invoice.cancel_reason_txt = data_dict['cancel_reason']
                     invoice.signal_workflow('invoice_cancel')
                 for picking in pos.picking_ids:
                     picking.action_picking_cancel()
