@@ -65,6 +65,43 @@ class SalesOrder(models.Model):
         _logger.info('generate_pos_order() - output: %s' % res)
         return res
 
+    @api.model
+    def cancel_pos_order(self, data_dict):
+        _logger.info('cancel_pos_order() - input: %s' % data_dict)
+        Voucher = self.env['account.voucher']
+        inv_ids = []
+        try:
+            pos = self.search([('name', '=', data_dict['name'])])
+            
+            if pos.state == 'done':
+                for invoice in pos.invoice_ids:
+                    move_ids = invoice.payment_ids.mapped('move_id')._ids
+                    voucher_ids = Voucher.search([('move_id', 'in', move_ids)])
+                    for voucher in voucher_ids:
+                        voucher.cancel_reason_txt = data_dict['cancel_reason']
+                        voucher.cancel_voucher()
+                    invoice.cancel_reason_txt = self.cancel_reason_txt
+                    invoice.signal_workflow('invoice_cancel')
+                for picking in pos.picking_ids:
+                    picking.action_picking_cancel()
+                
+            #if pos.state in ('progress','manual'):
+            pos.action_cancel()
+            res = {
+                'is_success': True,
+                'result': pos.name,
+                'messages': _('Record cancelled successfully'),
+            }
+        except Exception, e:
+            res = {
+                'is_success': False,
+                'result': False,
+                'messages': _(str(e)),
+            }
+            self._cr.rollback()
+        _logger.info('cancel_pos_order() - output: %s' % res)
+        return res
+    
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
