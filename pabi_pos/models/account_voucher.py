@@ -17,15 +17,19 @@ def action_done_async_process(session, model_name, res_id):
 class AccountVoucher(models.Model):
     _inherit = 'account.voucher'
     
+    @api.multi
+    def validate_picking(self):
+        picking = self.env['stock.picking'].search([('origin','=',self.line_ids[0].move_line_id.move_id.document_id.source_document_id.name)])
+        for pick in picking:
+            pick.validate_picking()
+        
     
     @api.multi
     def validate_picking_background(self):
         self.ensure_one()
         print "self._context.get('job_uuid', False): "+str(self._context.get('job_uuid'))
         if self._context.get('job_uuid', False):  # Called from @job
-            picking = self.env['stock.picking'].search([('origin','=',self.line_ids[0].move_line_id.move_id.document_id.source_document_id.name)])
-            for pick in picking:
-                pick.validate_picking()
+            return validate_picking()
         """if self.queue_job_id:
             message = ('Remove Asset')
             action = self.env.ref('pabi_utils.action_my_queue_job')
