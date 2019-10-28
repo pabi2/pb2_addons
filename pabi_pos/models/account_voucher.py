@@ -27,15 +27,10 @@ class AccountVoucher(models.Model):
     @api.multi
     def validate_picking_background(self):
         self.ensure_one()
-        print "self._context.get('job_uuid', False): "+str(self._context.get('job_uuid'))
         if self._context.get('job_uuid', False):  # Called from @job
             return self.validate_picking()
-        """if self.queue_job_id:
-            message = ('Remove Asset')
-            action = self.env.ref('pabi_utils.action_my_queue_job')
-            raise RedirectWarning(message, action.id, ('Go to My Jobs'))"""
         session = ConnectorSession(self._cr, self._uid, self._context)
-        description = '%s - POS Transfer Stock' % (self.number)
+        description = 'POS Transfer Stock - %s' % (self.line_ids[0].move_line_id.move_id.document_id.source_document_id.name)
         uuid = action_done_async_process.delay(
             session, self._name, self.id, description=description)
         job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
@@ -54,9 +49,6 @@ class AccountVoucher(models.Model):
                 voucher.line_ids[0].move_line_id.move_id.document_id and \
                 voucher.line_ids[0].move_line_id.move_id.document_id.source_document_id and \
                 'POS' in voucher.line_ids[0].move_line_id.move_id.document_id.source_document_id.name:
-                #picking = self.env['stock.picking'].search([('origin','=',voucher.line_ids[0].move_line_id.move_id.document_id.source_document_id.name)])
-                #for pick in picking:
-                #    pick.validate_picking()
                 voucher.validate_picking_background()
         return result
 
