@@ -29,7 +29,7 @@ class AccountVoucher(models.Model):
         self.ensure_one()
         print "self._context.get('job_uuid', False): "+str(self._context.get('job_uuid'))
         if self._context.get('job_uuid', False):  # Called from @job
-            return validate_picking()
+            return self.validate_picking()
         """if self.queue_job_id:
             message = ('Remove Asset')
             action = self.env.ref('pabi_utils.action_my_queue_job')
