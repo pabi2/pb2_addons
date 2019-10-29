@@ -63,7 +63,17 @@ class AccountMove(models.Model):
         string='Post Job UUID',
         compute='_compute_button_validate_job_uuid',
     )
+    @api.multi
+    def action_account_move_post(self):
+        for active_ids in self :
+            active_ids.button_validate()
+        return True
 
+    @api.multi
+    def action_account_move_post_background(self):
+        for active_ids in self :
+            active_ids.action_done_background()
+        return True
 
 ###########################--------------------------------- start job backgruond ------------------------------- #######################
 
