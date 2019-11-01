@@ -255,7 +255,7 @@ class AccountMove(models.Model):
             #     update account_invoice set adjust_move_id = %s
             #     where id = %s
             # """, (move.id, invoice_id))
-        if stock_move_id:
+        if stock_move_id and stock_move_id.inventory_id:
             move.ref = stock_move_id.origin
             stock_move_id.account_move_id = move.id
             # check ref in move_line and change from header
