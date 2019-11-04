@@ -61,5 +61,6 @@ class StockTransferDetails(models.TransientModel):
         _logger.info("self.asset_ids: %s", str(self.asset_ids))
         _logger.info("self._context: %s", str(self._context))
         res = super(StockTransferDetails, self).do_detailed_transfer()
+        _logger.info("self.asset_ids: %s", str(self.asset_ids))
         _logger.info("res: %s", str(res))
         return res
