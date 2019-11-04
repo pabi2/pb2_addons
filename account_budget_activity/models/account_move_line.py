@@ -41,6 +41,7 @@ class AccountMoveLine(models.Model):
         if vals.get('analytic_account_id', False):
             analytic = Analytic.browse(vals['analytic_account_id'])
         if analytic:
+            analytic._check_analytic_asset_line(vals)
             domain = Analytic.get_analytic_search_domain(analytic)
             vals.update(dict((x[0], x[2]) for x in domain))
         return vals

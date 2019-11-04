@@ -240,59 +240,6 @@ class AccountAssetRemoval(models.Model):
         result.update({'domain': dom})
         return result
 
-
-class AccountAssetRemovalLine(models.Model):
-    _name = 'account.asset.removal.line'
-    _inherit = 'account.asset.remove'
-
-    removal_id = fields.Many2one(
-        'account.asset.removal',
-        string='Removal ID',
-        ondelete='cascade',
-        index=True,
-        readonly=True,
-    )
-    asset_id = fields.Many2one(
-        'account.asset',
-        string='Asset',
-        domain=[('type', '=', 'normal'),
-                ('state', 'in', ('open','close'))],
-        required=True,
-        ondelete='restrict',
-    )
-    target_status = fields.Many2one(
-        'account.asset.status',
-        string='Asset Status',
-        domain="[('map_state_removed', '=', 'removed')]",
-        required=True,
-    )
-    _sql_constraints = [
-        ('asset_id_unique',
-         'unique(asset_id, removal_id)',
-         'Duplicate assets selected!')
-    ]
-
-    @api.onchange('asset_id')
-    def _onchange_asset_id(self):
-        Remove = self.env['account.asset.remove'].\
-            with_context(active_id=self.asset_id.id)
-        if self.asset_id:
-            vals = Remove._get_sale()
-            self.sale_value = vals['sale_value']
-            self.account_sale_id = vals['account_sale_id']
-            self.account_plus_value_id = \
-                Remove._default_account_plus_value_id()
-            self.account_min_value_id = \
-                Remove._default_account_min_value_id()
-            self.account_residual_value_id = \
-                Remove._default_account_residual_value_id()
-            self.posting_regime = Remove._get_posting_regime()
-
-    @api.onchange('posting_regime')
-    def _onchange_posting_regime(self):
-        if self.posting_regime == 'residual_value' and not (self.account_residual_value_id):
-            self.account_residual_value_id = self.env['account.account'].search([('code','=','5206060002')])
-            
             
 class AccountAssetRemovalLines(models.Model):
     _name = 'account.asset.removal.lines'
@@ -421,10 +368,17 @@ class AccountAssetRemovalLines(models.Model):
 
     @api.model
     def _get_posting_regime(self):
-        asset_obj = self.env['account.asset']
-        asset = asset_obj.browse(self._context.get('active_id'))
-        country = asset and asset.company_id.country_id.code or False
-        if country in self._residual_value_regime_countries():
+        #asset_obj = self.env['account.asset']
+        #asset = asset_obj.browse(self._context.get('active_id'))
+        if self.asset_id:
+            country = self.asset_id.company_id.country_id.code or False
+            if country in self._residual_value_regime_countries():
+                return 'residual_value'
+            elif self.target_status.code == 'deliver':
+                return 'residual_value'
+            else:
+                return 'gain_loss_on_sale'
+        elif self.removal_id.target_status and self.removal_id.target_status.code == 'deliver':
             return 'residual_value'
         else:
             return 'gain_loss_on_sale'
@@ -654,17 +608,41 @@ class AccountAssetRemovalLines(models.Model):
             vals = Remove._get_sale()
             self.sale_value = vals['sale_value']
             self.account_sale_id = vals['account_sale_id']
-            self.account_plus_value_id = \
-                Remove._default_account_plus_value_id()
-            self.account_min_value_id = \
-                Remove._default_account_min_value_id()
-            self.account_residual_value_id = \
-                Remove._default_account_residual_value_id()
-            self.posting_regime = Remove._get_posting_regime()
+            if self.posting_regime == 'gain_loss_on_sale':
+                self.account_plus_value_id = Remove._default_account_plus_value_id()
+                self.account_min_value_id = Remove._default_account_min_value_id()
+                self.account_residual_value_id = False
+            if self.posting_regime == 'residual_value':
+                self.account_residual_value_id = Remove._default_account_residual_value_id()
+                self.account_plus_value_id = False
+                self.account_min_value_id = False
+        else:
+            self.posting_regime = self._get_posting_regime()
+            self.account_plus_value_id = False
+            self.account_min_value_id = False
+
+        if self.posting_regime == 'residual_value' and not (self.account_residual_value_id):
+            self.account_residual_value_id = self.env['account.account'].search([('code','=','5206060002')])
 
     @api.onchange('posting_regime')
     def _onchange_posting_regime(self):
-        if self.posting_regime == 'residual_value' and not (self.account_residual_value_id):
-            self.account_residual_value_id = self.env['account.account'].search([('code','=','5206060002')])
+        if self.asset_id:
+            Remove = self.env['account.asset.remove'].with_context(active_id=self.asset_id.id)
+
+            if self.posting_regime == 'gain_loss_on_sale':
+                self.account_plus_value_id = Remove._default_account_plus_value_id()
+                self.account_min_value_id = Remove._default_account_min_value_id()
+                self.account_residual_value_id = False
+            if self.posting_regime == 'residual_value':
+                self.account_residual_value_id = Remove._default_account_residual_value_id()
+                self.account_plus_value_id = False
+                self.account_min_value_id = False
+        else:
+            if self.posting_regime == 'residual_value' and not (self.account_residual_value_id):
+                self.account_residual_value_id = self.env['account.account'].search([('code','=','5206060002')])
+                self.account_plus_value_id = False
+                self.account_min_value_id = False
+            if self.posting_regime == 'gain_loss_on_sale':
+                self.account_residual_value_id = False
             
             
