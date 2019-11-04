@@ -30,6 +30,14 @@
                     <attribute name="context">"{'order_line': order_line,'active_id':active_id}"</attribute>
                 </xpath>
                 
+                <xpath expr="//field[@name='activity_group_id']" position="attributes">
+                    <attribute name="required">True</attribute>
+                </xpath>
+                
+                <xpath expr="//field[@name='activity_rpt_id']" position="attributes">
+                    <attribute name="required">True</attribute>
+                </xpath>
+                
                  
                 <xpath expr="//form/sheet/notebook/page" position="after">
                     <page string="Fine">
