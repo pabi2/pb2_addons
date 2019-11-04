@@ -17,7 +17,8 @@ class CommonVoucher(object):
             date=invoice.date_invoice or
             datetime.today())
         company_currency = (journal.currency or journal.company_id.currency_id)
-        amount = currency.compute(float(amount), company_currency, round=False)
+        amount = currency.compute(
+            round(amount, 2), company_currency, round=False)
         return amount
 
     @api.model
@@ -26,7 +27,8 @@ class CommonVoucher(object):
             date=invoice.date_invoice or
             datetime.today())
         company_currency = (journal.currency or journal.company_id.currency_id)
-        amount = currency.compute(float(amount), company_currency, round=False)
+        amount = currency.compute(
+            round(amount, 2), company_currency, round=False)
         return amount
 
 
