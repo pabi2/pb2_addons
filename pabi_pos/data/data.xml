@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="seq_pos_rc_fs_20" model="ir.sequence">
+            <field name="name">POS Receipt RC - 20</field>
+            <field name="prefix">RC-PS20</field>
+            <field name="padding">4</field>
+            <field name="implementation">standard</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <record id="seq_pos_rt_fs_20" model="ir.sequence">
+            <field name="name">POS Receipt RT - 20</field>
+            <field name="prefix">RT-PS20</field>
+            <field name="padding">4</field>
+            <field name="implementation">standard</field>
+            <field name="number_increment">1</field>
+        </record>
+    </data>
+</openerp>
