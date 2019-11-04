@@ -57,6 +57,8 @@ class StockTransferDetails(models.TransientModel):
             self = self.with_context({'work_acceptance_id': wa.id,
                                       'installment': wa.installment,
                                       'num_installment': wa.num_installment})
+        _logger.info("self.id: %s", str(self.id))
+        _logger.info("self.asset_ids: %s", str(self.asset_ids))
         _logger.info("self._context: %s", str(self._context))
         res = super(StockTransferDetails, self).do_detailed_transfer()
         _logger.info("res: %s", str(res))
