@@ -54,6 +54,18 @@ class ProjectBalanceCarryForward(models.Model):
         required=True,
         states={'draft': [('readonly', False)]},
     )
+    program_id = fields.Many2one(
+        'res.program',
+        string='Program',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    adj_released_comsumed = fields.Boolean(
+        string='Adjust Released-Comsumed',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Adjust released amount to comsumed amount from Fiscal Year",
+    )
     line_ids = fields.One2many(
         'project.balance.carry.forward.line',
         'carry_forward_id',
@@ -123,7 +135,7 @@ class ProjectBalanceCarryForward(models.Model):
     @api.multi
     def write(self, vals):
         res = super(ProjectBalanceCarryForward, self).write(vals)
-        if 'from_fiscalyear_id' in vals:
+        if 'from_fiscalyear_id' in vals or 'program_id' in vals:
             self.compute_projects()
         return res
 
@@ -140,8 +152,11 @@ class ProjectBalanceCarryForward(models.Model):
         self.line_ids.unlink()
         """ This method, list all projects with, budget balance > 0 """
         where_ext = ''
+        where_program = ''
         if self.from_fiscalyear_id.control_ext_charge_only:
             where_ext = "and charge_type = 'external'"
+        if self.program_id:
+            where_program = "and program_id = %s" % self.program_id.id
         sql = """
             select a.project_id, a.program_id, a.balance_amount
             from (
@@ -151,7 +166,7 @@ class ProjectBalanceCarryForward(models.Model):
                 where budget_method = 'expense'
                 and project_id is not null
                 and fiscalyear_id = %s
-                %s
+                %s %s
                 and (coalesce(released_amount, 0.0) != 0.0
                      or coalesce(amount_actual, 0.0) != 0.0)
                 group by project_id,  program_id
@@ -160,7 +175,7 @@ class ProjectBalanceCarryForward(models.Model):
                     on prj.id = a.project_id
                     and prj.state = 'approve'
             where a.balance_amount > 0.0
-        """ % (self.from_fiscalyear_id.id, where_ext)
+        """ % (self.from_fiscalyear_id.id, where_ext, where_program)
         self._cr.execute(sql)
         projects = [(0, 0, project) for project in self._cr.dictfetchall()]
         self.write({'line_ids': projects})
@@ -188,7 +203,8 @@ class ProjectBalanceCarryForward(models.Model):
                     balance_amount = line.balance_amount
                     for budget in budget_lines:
                         released_amount = 0.0
-                        if float_compare(balance_amount, budget.planned_amount, 2) == 1:
+                        if float_compare(
+                                balance_amount, budget.planned_amount, 2) == 1:
                             released_amount = budget.planned_amount
                             balance_amount -= released_amount
                             budget.write({'released_amount': released_amount})
@@ -204,7 +220,8 @@ class ProjectBalanceCarryForward(models.Model):
         for line in self.line_ids:
             if line.state == "success":
                 project = line.project_id
-                self.update_project_released_amount(project, fiscalyear, line.balance_amount)
+                self.update_project_released_amount(
+                    project, fiscalyear, line.balance_amount)
         self.write({'state': 'done'})
 
     @api.multi
@@ -227,14 +244,15 @@ class ProjectBalanceCarryForward(models.Model):
         else:
             return self.action_done()
 
-    def update_project_released_amount(self, project, fiscalyear, balance_amount):
-        budget_plans = project.budget_plan_ids.filtered(lambda l:
-                                                        l.fiscalyear_id == fiscalyear
-                                                        and l.budget_method=='expense'
-                                                        and l.charge_type=='external')
+    def update_project_released_amount(
+            self, project, fiscalyear, balance_amount):
+        budget_plans = project.budget_plan_ids.filtered(
+            lambda l: l.fiscalyear_id == fiscalyear
+            and l.budget_method == 'expense' and l.charge_type == 'external')
         if not budget_plans:
-            raise ValidationError(
-                _("Not allow to release budget for %s without plan!" % project.code))
+            raise ValidationError(_(
+                "Not allow to release budget for %s without plan!"
+                % project.code))
 
         update_vals = []
         lock = 0
@@ -275,6 +293,20 @@ class ProjectBalanceCarryForward(models.Model):
                  'project_id': project.id,
                  'released_amount': released_amount,
             })
+            # Adjust released amount = actual amount
+            if self.adj_released_comsumed:
+                ext_consumed_amount = project.monitor_expense_ids.filtered(
+                    lambda l: l.fiscalyear_id == self.from_fiscalyear_id and
+                    l.charge_type == 'external').amount_consumed
+                project._release_fiscal_budget(
+                    self.from_fiscalyear_id, ext_consumed_amount)
+                # create history when adjust released amount
+                project.budget_release_ids.create({
+                     'fiscalyear_id': self.from_fiscalyear_id.id,
+                     'project_id': project.id,
+                     'released_amount': ext_consumed_amount,
+                })
+
             if lock:
                 project.write({'lock_release': True})
             if current_fy_release_only:

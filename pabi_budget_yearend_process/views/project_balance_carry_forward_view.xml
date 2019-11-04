@@ -10,6 +10,7 @@
                     <field name="name"/>
                     <field name="from_fiscalyear_id"/>
                     <field name="to_fiscalyear_id"/>
+                    <field name="program_id"/>
                     <field name="write_uid" readonly="1"/>
                     <field name="write_date" readonly="1"/>
                     <field name="state"/>
@@ -37,6 +38,8 @@
                             <group>
                                 <field name="from_fiscalyear_id"/>
                                 <field name="to_fiscalyear_id"/>
+                                <field name="program_id"/>
+                                <field name="adj_released_comsumed"/>
                                 <field name="amount_total"/>
                             </group>
                             <group>
