@@ -53,11 +53,11 @@ class StockTransferDetails(models.TransientModel):
         self._validate_asset_line()
         # Pass Installament information to Asset
         wa = self.picking_id.acceptance_id
-        _logger.info()
         if wa:
             self = self.with_context({'work_acceptance_id': wa.id,
                                       'installment': wa.installment,
                                       'num_installment': wa.num_installment})
+        _logger.info("self._context: %s", str(self._context))
         res = super(StockTransferDetails, self).do_detailed_transfer()
         _logger.info("res: %s", str(res))
         return res
