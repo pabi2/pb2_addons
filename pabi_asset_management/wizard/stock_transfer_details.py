@@ -63,9 +63,11 @@ class StockTransferDetails(models.TransientModel):
         for asset in self.picking_id.asset_ids:
             stock_move = asset.move_id
             _logger.info("stock_move: %s", str(stock_move))
-            asset.section_id = stock_move.section_id
-            asset.project_id = stock_move.project_id
-            asset.invest_asset_id = stock_move.invest_asset_id
-            asset.invest_construction_phase_id = stock_move.invest_construction_phase_id
+            asset.write({
+                'section_id': stock_move.section_id,
+                'project_id': stock_move.project_id,
+                'invest_asset_id': stock_move.invest_asset_id,
+                'invest_construction_phase_id': stock_move.invest_construction_phase_id
+                })
             
         return res
