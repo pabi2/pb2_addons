@@ -57,8 +57,15 @@ class StockTransferDetails(models.TransientModel):
             self = self.with_context({'work_acceptance_id': wa.id,
                                       'installment': wa.installment,
                                       'num_installment': wa.num_installment})
+        res = super(StockTransferDetails, self).do_detailed_transfer()
         _logger.info("self.picking_id: %s", str(self.picking_id))
         _logger.info("self.picking_id.asset_ids: %s", str(self.picking_id.asset_ids))
-        res = super(StockTransferDetails, self).do_detailed_transfer()
-        _logger.info("self.picking_id.asset_ids: %s", str(self.picking_id.asset_ids))
+        for asset in self.picking_id.asset_ids:
+            stock_move = asset.move_id
+            _logger.info("stock_move: %s", str(stock_move))
+            asset.section_id = stock_move.section_id
+            asset.project_id = stock_move.project_id
+            asset.invest_asset_id = stock_move.invest_asset_id
+            asset.invest_construction_phase_id = stock_move.invest_construction_phase_id
+            
         return res
