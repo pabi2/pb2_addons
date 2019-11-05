@@ -125,7 +125,7 @@
 		
 		###########################################################################
 
-		# PND3A
+		<!-- # PND3A
 		<record id="report_pnd3a_form" model="ir.actions.report.xml">
 			<field name="auto">True</field>
 			<field name="model">report.pnd3a.form</field>
@@ -183,6 +183,50 @@
 			<field name="name">PND3A Form</field>
 			<field name="model">report.pnd3a.form</field>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3a_form_txt)"/>
+		</record> -->
+		
+		###########################################################################
+		
+		# PND1A
+		<record id="report_pnd1a_form" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd1a.form</field>
+			<field name="name">PND1A Form</field>
+			<field name="report_name">report_pnd1a_form</field>
+			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd1a_form.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+		</record>
+
+		<record id="report_pnd1a_form_values" model="ir.values">
+			<field name="name">PND1A Form</field>
+			<field name="model">report.pnd1a.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd1a_form)"/>
+		</record>
+		
+		###########################################################################
+		
+		# PND1 (XLS)
+		<record id="report_pnd1_form_xls" model="ir.actions.report.xml">
+			<field name="auto">True</field>
+			<field name="model">report.pnd1.form</field>
+			<field name="name">PND1 Form</field>
+			<field name="report_name">report_pnd1_form_xls</field>
+			<field name="report_rml">l10n_th_account_pnd_form/report/report_pnd1_form_xls.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="copies">1</field>
+		</record>
+		
+		<record id="report_pnd1_form_xls_values" model="ir.values">
+			<field name="name">PND1 Form</field>
+			<field name="model">report.pnd1.form</field>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd1_form_xls)"/>
 		</record>
 	</data>
 </openerp>
