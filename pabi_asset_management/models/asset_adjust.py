@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import ast
+from dateutil.relativedelta import relativedelta
 from openerp import models, fields, api, _
 from openerp.addons.account_budget_activity_rpt.models.account_activity \
     import ActivityCommon
@@ -513,7 +514,8 @@ class AccountAssetAdjust(models.Model):
         return vals
 
     @api.model
-    def _duplicate_asset(self, asset, product, asset_name, analytic):
+    def _duplicate_asset(
+            self, asset, product, asset_name, analytic, day_amount):
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
         # add code in asset
         asset_dict.update({'code': '/'})
@@ -524,12 +526,27 @@ class AccountAssetAdjust(models.Model):
         asset.target_asset_ids += new_asset
         # Set back to normal
         # new_asset.type = 'normal'
-        # Also duplicate lines
-        previous_id = False
-        for line in asset.depreciation_line_ids.filtered(lambda l:
-                                                         not l.init_entry):
-            line = line.copy({'asset_id': new_asset.id,
-                              'previous_id': line.previous_id and previous_id})
+        # Create line continue from old asset
+        date_bf_remove = \
+            (fields.Date.from_string(self.date) - relativedelta(days=1))
+        # 1 asset line only (init_entry)
+        new_dlines = new_asset.depreciation_line_ids
+        last_asset_line = fields.Date.from_string(new_dlines.line_date)
+        days = (date_bf_remove - last_asset_line).days + 1
+        # find amount in line per days
+        amount = days * day_amount
+        line_name = new_asset._get_depreciation_entry_name(len(new_dlines))
+        line_date = fields.Date.to_string(date_bf_remove)
+        asset_line_vals = {
+            'amount': amount,
+            'asset_id': new_asset.id,
+            'name': line_name,
+            'line_date': line_date,
+            'line_days': days,
+            'type': 'depreciate',
+        }
+        asset_line = self.env['account.asset.line'].create(asset_line_vals)
+        asset_line.move_check = True
         return new_asset
 
     @api.model
@@ -547,6 +564,62 @@ class AccountAssetAdjust(models.Model):
         # Set back to normal
         # new_asset.type = 'normal'
         return new_asset
+
+    @api.multi
+    def _create_asset_line(self, line, asset, day_amount):
+        # check condition create line
+        date_bf_remove = \
+            (fields.Date.from_string(self.date) - relativedelta(days=1))
+        date_bf_remove = fields.Date.to_string(date_bf_remove)
+        running_asset = asset.depreciation_line_ids.filtered(
+            lambda l: l.type == 'depreciate')
+        lines = 2
+        if asset.depreciation_line_ids[-1].line_date == date_bf_remove or \
+                not running_asset:
+            lines = 1
+            # Create a collective journal entry
+            move = line.create_account_move_asset_type()
+            line.move_id = move
+
+        for val in range(lines):
+            dlines = asset.depreciation_line_ids
+            # find days in line
+            line_date = fields.Date.from_string(self.date)
+            last_asset_line = fields.Date.from_string(dlines[-1].line_date)
+            line_name = asset._get_depreciation_entry_name(len(dlines))
+            if val == 0 and lines == 2:
+                line_date = (line_date - relativedelta(days=1))
+                days = (line_date - last_asset_line).days
+                # find amount in line per days
+                amount = days * day_amount
+            # removal line
+            if (val == 1 and lines == 2) or lines == 1:
+                days = (line_date - last_asset_line).days - 1
+                amount = dlines[0].amount_accumulated - \
+                    dlines[-1].amount_accumulated
+            line_date = fields.Date.to_string(line_date)
+            asset_line_vals = {
+                'previous_id': dlines[-1].id,
+                'amount': amount,
+                'asset_id': asset.id,
+                'name': line_name,
+                'line_date': line_date,
+                'line_days': days,
+                'move_id': line.move_id.id if line_date == self.date
+                else False,
+                'type': 'remove' if line_date == self.date
+                else 'depreciate',
+            }
+            # Check asset line never post
+            if not dlines.filtered(lambda l: l.type == 'depreciate'):
+                asset_line_vals.update({'amount_accumulated': amount})
+            asset_line = self.env['account.asset.line'].create(asset_line_vals)
+            # Auto post last cal asset line before removal
+            if val == 0 and lines == 2:
+                asset_line.create_move()
+                # Create a collective journal entry
+                move = line.create_account_move_asset_type()
+                line.move_id = move
 
     @api.multi
     def adjust_asset_type(self):
@@ -569,17 +642,21 @@ class AccountAssetAdjust(models.Model):
                 filtered(lambda l: l.asset_id.state == 'open'):
             line.account_analytic_id = \
                 Analytic.create_matched_analytic(line)
-            # Remove
+            digits = self.env['decimal.precision'].precision_get('Account')
             asset = line.asset_id
+            # Get sum days in this asset for calculate amount per day
+            days = sum(asset.depreciation_line_ids.mapped('line_days'))
+            day_amount = round(asset.depreciation_base / days, digits)
+            # Remove
             self._set_asset_as_removed(asset, line.target_status)
             # Simple duplicate to new asset type, name
             new_asset = self._duplicate_asset(asset, line.product_id,
                                               line.asset_name,
-                                              line.account_analytic_id)
+                                              line.account_analytic_id,
+                                              day_amount)
             line.ref_asset_id = new_asset
-            # Create a collective journal entry
-            move = line.create_account_move_asset_type()
-            line.move_id = move
+            # Create asset line
+            self._create_asset_line(line, asset, day_amount)
             # Set move_check equal to amount depreciated
             new_asset.compute_depreciation_board()
             new_asset.validate()
