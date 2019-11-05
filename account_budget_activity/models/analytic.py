@@ -345,21 +345,39 @@ class AccountAnalyticAccount(models.Model):
         #if not self.line_ids:
         #    asset_id = ASSET.search([('account_analytic_id','=',self.id),('active','=',True)], limit=1)
 
-        if asset_id:
-            if self.section_id and asset_id.owner_section_id:
-                self.section_id = asset_id.owner_section_id.id
-            if self.project_id and asset_id.owner_project_id:
-                self.project_id = asset_id.owner_project_id.id
-            if self.invest_asset_id and asset_id.owner_invest_asset_id:
-                self.invest_asset_id = asset_id.owner_invest_asset_id.id
-            if self.invest_construction_phase_id and asset_id.owner_invest_construction_phase_id:
-                self.invest_construction_phase_id = asset_id.owner_invest_construction_phase_id.id
-            chartfield_id = self.section_id or\
-                            self.project_id or\
-                            self.invest_asset_id or\
-                            self.invest_construction_phase_id or False
-            if self.costcenter_id and chartfield_id and chartfield_id.costcenter_id:
-                self.costcenter_id = chartfield_id.costcenter_id.id
+        if asset_id:            
+            if asset_id.owner_section_id:
+                self.write({
+                            'section_id': asset_id.owner_section_id.id,
+                            'project_id': False,
+                            'invest_asset_id': False,
+                            'invest_construction_phase_id': False,
+                            'costcenter_id': asset_id.owner_section_id.costcenter_id.id,
+                    })
+            elif asset_id.owner_project_id:
+                self.write({
+                            'section_id': False,
+                            'project_id': asset_id.owner_project_id.id,
+                            'invest_asset_id': False,
+                            'invest_construction_phase_id': False,
+                            'costcenter_id': asset_id.owner_project_id.costcenter_id.id,
+                    })
+            elif asset_id.owner_invest_asset_id:
+                self.write({
+                            'section_id': False,
+                            'project_id': False,
+                            'invest_asset_id': asset_id.owner_invest_asset_id.id,
+                            'invest_construction_phase_id': False,
+                            'costcenter_id': asset_id.owner_invest_asset_id.costcenter_id.id,
+                    })
+            elif asset_id.owner_invest_construction_phase_id:
+                self.write({
+                            'section_id': False,
+                            'project_id': False,
+                            'invest_asset_id': False,
+                            'invest_construction_phase_id': asset_id.owner_invest_construction_phase_id.id,
+                            'costcenter_id': asset_id.owner_invest_construction_phase_id.costcenter_id.id,
+                    })
     
     @api.model
     def get_analytic_search_domain(self, rec):
