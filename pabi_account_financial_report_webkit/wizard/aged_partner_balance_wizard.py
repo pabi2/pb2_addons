@@ -37,7 +37,7 @@ class AccountAgedTrialBalance(orm.TransientModel):
         'fiscalyear_id': fields.many2one(
             'account.fiscalyear',
             'Fiscal Year',
-            required=True),
+            required=False),
         'period_to': fields.many2one('account.period', 'End Period',
                                      required=True),
         'period_length': fields.integer(
@@ -59,14 +59,23 @@ class AccountAgedTrialBalance(orm.TransientModel):
             cr, uid, ids, fiscalyear=fiscalyear, period_id=period_id,
             date_to=date_to, until_date=until_date, context=context
         )
+        fisyear_obj = self.pool.get('account.fiscalyear')
+        if not fiscalyear:
+            fiscalyear = fisyear_obj.search(cr, uid, [], order='date_start', limit=1)[0]
+            #fiscalyear = fiscalyear[0]
         filters = self.onchange_filter(cr, uid, ids, filter='filter_period',
                                        fiscalyear_id=fiscalyear,
                                        context=context)
+        fiscalyear_id = fisyear_obj.browse(cr, uid, fiscalyear)
         res['value'].update({
             'period_from': filters['value']['period_from'],
-            'period_to': filters['value']['period_to'],
+            #'period_to': filters['value']['period_to'],
+        })
+        res.update({
+            'domain': {'period_to': [('date_start', '>=', fiscalyear_id.date_start)]}
         })
         return res
+
 
     def _print_report(self, cr, uid, ids, data, context=None):
         data['form'].update(
