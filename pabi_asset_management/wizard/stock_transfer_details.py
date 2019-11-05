@@ -58,24 +58,15 @@ class StockTransferDetails(models.TransientModel):
                                       'installment': wa.installment,
                                       'num_installment': wa.num_installment})
         res = super(StockTransferDetails, self).do_detailed_transfer()
-        _logger.info("self.picking_id: %s", str(self.picking_id))
-        _logger.info("self.picking_id.asset_ids: %s", str(self.picking_id.asset_ids))
+        _logger.info("update owner of asset %s by Source of Budget of picking_id %s",
+                     str(self.picking_id.asset_ids), str(self.picking_id))
         for asset in self.picking_id.asset_ids:
             stock_move = asset.move_id
-            _logger.info("stock_move: %s", str(stock_move))
-            _logger.info("asset.owner_section_id: %s", str(asset.owner_section_id))
-            _logger.info("asset.owner_project_id: %s", str(asset.owner_project_id))
-            _logger.info("asset.owner_invest_asset_id: %s", str(asset.owner_invest_asset_id))
-            _logger.info("asset.owner_invest_construction_phase_id: %s", str(asset.owner_invest_construction_phase_id))
             asset.write({
                 'owner_section_id': stock_move.section_id.id,
                 'owner_project_id': stock_move.project_id.id,
                 'owner_invest_asset_id': stock_move.invest_asset_id.id,
                 'owner_invest_construction_phase_id': stock_move.invest_construction_phase_id.id
                 })
-            _logger.info("asset.owner_section_id: %s", str(asset.owner_section_id))
-            _logger.info("asset.owner_project_id: %s", str(asset.owner_project_id))
-            _logger.info("asset.owner_invest_asset_id: %s", str(asset.owner_invest_asset_id))
-            _logger.info("asset.owner_invest_construction_phase_id: %s", str(asset.owner_invest_construction_phase_id))
             
         return res
