@@ -63,19 +63,19 @@ class StockTransferDetails(models.TransientModel):
         for asset in self.picking_id.asset_ids:
             stock_move = asset.move_id
             _logger.info("stock_move: %s", str(stock_move))
-            _logger.info("asset.section_id: %s", str(asset.section_id))
-            _logger.info("asset.project_id: %s", str(asset.project_id))
-            _logger.info("asset.invest_asset_id: %s", str(asset.invest_asset_id))
-            _logger.info("asset.invest_construction_phase_id: %s", str(asset.invest_construction_phase_id))
+            _logger.info("asset.owner_section_id: %s", str(asset.owner_section_id))
+            _logger.info("asset.owner_project_id: %s", str(asset.owner_project_id))
+            _logger.info("asset.owner_invest_asset_id: %s", str(asset.owner_invest_asset_id))
+            _logger.info("asset.owner_invest_construction_phase_id: %s", str(asset.owner_invest_construction_phase_id))
             asset.write({
-                'section_id': stock_move.section_id.id,
-                'project_id': stock_move.project_id.id,
-                'invest_asset_id': stock_move.invest_asset_id.id,
-                'invest_construction_phase_id': stock_move.invest_construction_phase_id.id
+                'owner_section_id': stock_move.section_id.id,
+                'owner_project_id': stock_move.project_id.id,
+                'owner_invest_asset_id': stock_move.invest_asset_id.id,
+                'owner_invest_construction_phase_id': stock_move.invest_construction_phase_id.id
                 })
-            _logger.info("asset.section_id: %s", str(asset.section_id))
-            _logger.info("asset.project_id: %s", str(asset.project_id))
-            _logger.info("asset.invest_asset_id: %s", str(asset.invest_asset_id))
-            _logger.info("asset.invest_construction_phase_id: %s", str(asset.invest_construction_phase_id))
+            _logger.info("asset.owner_section_id: %s", str(asset.owner_section_id))
+            _logger.info("asset.owner_project_id: %s", str(asset.owner_project_id))
+            _logger.info("asset.owner_invest_asset_id: %s", str(asset.owner_invest_asset_id))
+            _logger.info("asset.owner_invest_construction_phase_id: %s", str(asset.owner_invest_construction_phase_id))
             
         return res
