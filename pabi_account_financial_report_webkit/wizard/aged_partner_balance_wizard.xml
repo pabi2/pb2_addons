@@ -47,7 +47,7 @@
           <field name="filter" position="attributes">
             <attribute name="invisible">True</attribute>
           </field>
-          <field name="period_from" position="attributes">
+          <!-- <field name="period_from" position="attributes">
             <attribute name="invisible">True</attribute>
           </field>
           <field name="period_to" position="attributes">
@@ -58,7 +58,7 @@
           </field>
           <field name="period_to" position="attributes">
             <attribute name="domain">[('fiscalyear_id', '=', fiscalyear_id)]</attribute>
-          </field>
+          </field> -->
         </data>
       </field>
     </record>

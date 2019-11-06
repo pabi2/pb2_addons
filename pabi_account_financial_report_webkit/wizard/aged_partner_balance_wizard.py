@@ -31,15 +31,15 @@ class AccountAgedTrialBalance(orm.TransientModel):
 
     _columns = {
         'filter': fields.selection(
-            [('filter_period', 'Periods')],
+            [('filter_period', 'Periods'),
+             ('filter_date', 'Dates')],
             "Filter by",
             required=True),
         'fiscalyear_id': fields.many2one(
             'account.fiscalyear',
-            'Fiscal Year',
-            required=True),
-        'period_to': fields.many2one('account.period', 'End Period',
-                                     required=True),
+            'Fiscal Year'),
+        # 'period_to': fields.many2one('account.period', 'End Period',
+        #                              required=True),
         'period_length': fields.integer(
             "Period Length (days)",
             required=True,
@@ -47,7 +47,7 @@ class AccountAgedTrialBalance(orm.TransientModel):
     }
 
     _defaults = {
-        'filter': 'filter_period',
+        'filter': 'filter_date',
         'fiscalyear_id': _get_current_fiscalyear,
         'period_length': 30,
     }
@@ -59,12 +59,16 @@ class AccountAgedTrialBalance(orm.TransientModel):
             cr, uid, ids, fiscalyear=fiscalyear, period_id=period_id,
             date_to=date_to, until_date=until_date, context=context
         )
-        filters = self.onchange_filter(cr, uid, ids, filter='filter_period',
+        filters = self.onchange_filter(cr, uid, ids, filter='filter_date',
                                        fiscalyear_id=fiscalyear,
                                        context=context)
+        # res['value'].update({
+        #     'period_from': filters['value']['period_from'],
+        #     'period_to': filters['value']['period_to'],
+        # })
         res['value'].update({
-            'period_from': filters['value']['period_from'],
-            'period_to': filters['value']['period_to'],
+            'date_from': filters['value']['date_from'],
+            'date_to': filters['value']['date_to'],
         })
         return res
 
