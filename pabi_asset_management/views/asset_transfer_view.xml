@@ -57,18 +57,18 @@
                     <header>
                         <button name="action_draft" states="draft2"
                           string="Set Source Assets" type="object"
-                          groups="purchase.group_purchase_user"/>
+                          groups="purchase.group_purchase_user,pabi_base.group_nstda_account_admin"/>
                         <button name="action_draft2" states="draft,ready"
                           string="Set Target Assets" type="object"
-                          groups="purchase.group_purchase_user,account.group_account_user"/>
+                          groups="purchase.group_purchase_user,account.group_account_user,pabi_base.group_nstda_account_admin"/>
                         <button name="action_ready" states="draft2"
                           string="Submit to Finance" type="object" class="oe_highlight"
-                          groups="purchase.group_purchase_user"/>
+                          groups="purchase.group_purchase_user,pabi_base.group_nstda_account_admin"/>
                         <button name="action_done" states="ready"
                           string="Transfer" type="object" class="oe_highlight"
-                          groups="account.group_account_user"/>  <!-- Only Accountant can Transfer -->
+                          groups="account.group_account_user,pabi_base.group_nstda_account_admin"/>  <!-- Only Accountant can Transfer -->
                         <button name="action_cancel" states="draft" string="Cancel" type="object"
-                          groups="purchase.group_purchase_user"/>
+                          groups="purchase.group_purchase_user,pabi_base.group_nstda_account_admin"/>
                           <field name="state" widget="statusbar" statusbar_visible="draft,draft2,ready,done"/>
                     </header>
                     <sheet>
