@@ -37,7 +37,7 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
 #  - is_complete = False
 object=object.with_context(lang='th_TH')
 subject=object.name
-body=u"%s ได้รับการยืนยันจาก %s แล้ว" % (object.name, object.supervisor_emp_id.name)
+body=u"%s ได้รับการยืนยันจาก %s" % (object.name, object.supervisor_emp_id.name)
 owner=object.supervisor_emp_id.employee_code
 boss=object.employee_id.employee_code
 action='A'
