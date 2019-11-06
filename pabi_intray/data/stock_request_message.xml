@@ -16,7 +16,7 @@
 #   - is_complete = False
 object=object.with_context(lang='th_TH')
 subject=object.name
-body=u"%s ขอเบิกวัสดุ / Stock Request [%s]" % (object.employee_id.name, object.name)
+body=u"%s ขอเบิกวัสดุจาก %s" % (object.name, object.employee_id.name)
 owner=object.employee_id.employee_code
 boss=object.supervisor_emp_id.employee_code
 action=False
@@ -37,7 +37,7 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
 #  - is_complete = False
 object=object.with_context(lang='th_TH')
 subject=object.name
-body=u"%s ได้รับการยืนยันจาก %s" % (object.name, object.supervisor_emp_id.name)
+body=u"%s ได้รับการยืนยันจาก %s แล้ว" % (object.name, object.supervisor_emp_id.name)
 owner=object.supervisor_emp_id.employee_code
 boss=object.employee_id.employee_code
 action='A'
@@ -60,7 +60,7 @@ object=object.with_context(lang='th_TH')
 subject=object.name
 body=u"%s พร้อมจ่ายให้กับ %s" % (object.name, object.employee_id.name)
 owner=object.write_uid.partner_id.employee_id.employee_code
-boss=object.employee_id.employee_code
+boss=False
 action='A'
 is_complete=False
 pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
@@ -81,7 +81,7 @@ object=object.with_context(lang='th_TH')
 subject=object.name
 body=u"%s จ่ายของเรียบร้อยแล้ว" % (object.name, )
 owner=object.employee_id.employee_code
-boss=False
+boss=object.employee_id.employee_code
 action='A'
 is_complete=True
 pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
