@@ -57,18 +57,18 @@
                     <header>
                         <button name="action_draft" states="draft2"
                           string="Set Source Assets" type="object"
-                          groups="purchase.group_purchase_user,pabi_base.group_nstda_account_admin"/>
+                          groups="purchase.group_purchase_user"/>
                         <button name="action_draft2" states="draft,ready"
                           string="Set Target Assets" type="object"
-                          groups="purchase.group_purchase_user,account.group_account_user,pabi_base.group_nstda_account_admin"/>
+                          groups="purchase.group_purchase_user,account.group_account_user"/>
                         <button name="action_ready" states="draft2"
                           string="Submit to Finance" type="object" class="oe_highlight"
-                          groups="purchase.group_purchase_user,pabi_base.group_nstda_account_admin"/>
+                          groups="purchase.group_purchase_user"/>
                         <button name="action_done" states="ready"
                           string="Transfer" type="object" class="oe_highlight"
-                          groups="account.group_account_user,pabi_base.group_nstda_account_admin"/>  <!-- Only Accountant can Transfer -->
+                          groups="account.group_account_user"/>  <!-- Only Accountant can Transfer -->
                         <button name="action_cancel" states="draft" string="Cancel" type="object"
-                          groups="purchase.group_purchase_user,pabi_base.group_nstda_account_admin"/>
+                          groups="purchase.group_purchase_user"/>
                           <field name="state" widget="statusbar" statusbar_visible="draft,draft2,ready,done"/>
                     </header>
                     <sheet>
@@ -143,7 +143,7 @@
                         <field name="note" placeholder="Add an internal note here..."/>
                     </sheet>
                     <div class="oe_chatter">
-                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user,pabi_base.group_nstda_account_admin"/>
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
                         <field name="message_ids" widget="mail_thread"/>
                     </div>
                 </form>
@@ -197,7 +197,7 @@
 
         <menuitem parent="menu_asset_actions" id="menu_action_account_asset_transfer"
           action="action_account_asset_transfer"
-          groups="purchase.group_purchase_user,account.group_account_user,pabi_base.group_nstda_account_admin"/>
+          groups="purchase.group_purchase_user,account.group_account_user"/>
 
     </data>
 </openerp>
