@@ -12,8 +12,8 @@
 object=object.with_context(lang='th_TH')
 subject=object.name
 
-res_res = self.env['resource.resource']
-hr_emp = self.env['hr.employee']
+res_res = object.env['resource.resource']
+hr_emp = object.env['hr.employee']
 
 # find preparer's employee_code
 res_id = res_res.search([('user_id', '=', object.user_id)])
@@ -42,8 +42,8 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
 object=object.with_context(lang='th_TH')
 subject=object.name
 
-res_res = self.env['resource.resource']
-hr_emp = self.env['hr.employee']
+res_res = object.env['resource.resource']
+hr_emp = object.env['hr.employee']
 
 # find preparer's employee_code
 res_id = res_res.search([('user_id', '=', object.responsible_user_id)])
