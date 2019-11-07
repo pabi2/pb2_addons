@@ -211,3 +211,122 @@ class ReportPNDFormLine(models.Model):
             ap.name, c.date, ct.wht_cert_income_type,
             ct.wht_cert_income_desc, c.state
         )""" % (self._table, ))
+        
+class ReportPnd1aForm(models.Model):
+    _name = 'report.pnd1a.form'
+    _description = 'PND1A form'
+    _auto = False
+     
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Partner ID',
+    )
+    supplier_taxid = fields.Char(
+        string='Supplier TaxID',
+        size=20,
+    )
+    supplier_branch = fields.Char(
+        string='Supplier Branch',
+        size=500,
+    )
+    title_th = fields.Char(
+        string='Title (TH)',
+        size=500,
+    )
+    supplier_name_th = fields.Char(
+        string='Supplier Name (TH)',
+        size=500,
+    )
+    supplier_street = fields.Char(
+        string='Supplier Street',
+        size=500,
+    )
+    supplier_street2 = fields.Char(
+        string='Supplier Street2',
+        size=500,
+    )
+    supplier_township = fields.Char(
+        string='Supplier Township',
+        size=500,
+    )
+    supplier_district = fields.Char(
+        string='Supplier District',
+        size=500,
+    )
+    supplier_province = fields.Char(
+        string='Supplier Province',
+        size=500,
+    )
+    supplier_zip = fields.Char(
+        string='Supplier Zip',
+        size=500,
+    )
+    supplier_country = fields.Char(
+        string='Supplier Country',
+        size=500,
+    )
+    calendar_year = fields.Char(
+        string='Calendar Year',
+    )
+    amount_income = fields.Float(
+        string='Amount Income',
+    )
+    amount_wht = fields.Float(
+        string='Amount Wht',
+    )
+     
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+        SELECT a.partner_id,
+        a.supplier_taxid,
+        a.supplier_branch,
+        COALESCE(( SELECT ir_translation.value
+        FROM ir_translation
+        WHERE (((ir_translation.name) = 'res.partner.title,name') 
+        AND ((ir_translation.type) = 'model') 
+        AND ((ir_translation.lang) = 'th_TH') 
+        AND (ir_translation.res_id = a.title_id))
+        LIMIT 1), (a.title)) AS title_th,
+        COALESCE(( SELECT ir_translation.value
+        FROM ir_translation
+        WHERE (((ir_translation.name) = 'res.partner,name') 
+        AND ((ir_translation.type) = 'model') 
+        AND ((ir_translation.lang) = 'th_TH') 
+        AND (ir_translation.res_id = a.partner_id))
+        LIMIT 1), (a.supplier_name)) AS supplier_name_th,
+        a.supplier_street,
+        a.supplier_street2,
+        a.supplier_township,
+        a.supplier_district,
+        a.supplier_province,
+        a.supplier_zip,
+        a.supplier_country,
+        taxy.calendar_year,
+        taxy.amount_income,
+        taxy.amount_wht
+        FROM (( SELECT rp.vat AS supplier_taxid,
+            rp.taxbranch AS supplier_branch,
+            rp.id AS partner_id,
+            rp.name AS supplier_name,
+            rt.id AS title_id,
+            rt.name AS title,
+            rp.street AS supplier_street,
+            rp.street2 AS supplier_street2,
+            ts.name AS supplier_township,
+            dt.name AS supplier_district,
+            pv.name AS supplier_province,
+            ts.zip AS supplier_zip,
+            co.name AS supplier_country
+           FROM ((((((personal_income_tax_yearly pt
+             LEFT JOIN res_partner rp ON ((rp.id = pt.partner_id)))
+             LEFT JOIN res_partner_title rt ON ((rt.id = rp.title)))
+             LEFT JOIN res_country_township ts ON ((ts.id = rp.township_id)))
+             LEFT JOIN res_country_district dt ON ((dt.id = rp.district_id)))
+             LEFT JOIN res_country_province pv ON ((pv.id = rp.province_id)))
+             LEFT JOIN res_country co ON ((co.id = rp.country_id)))) a
+             LEFT JOIN personal_income_tax_yearly taxy ON ((taxy.partner_id = a.partner_id)))
+            GROUP BY a.partner_id,a.supplier_taxid,a.supplier_branch,a.title_id,a.title,a.supplier_name,
+        a.supplier_street,a.supplier_street2,a.supplier_township,a.supplier_district,a.supplier_province,
+        a.supplier_zip,a.supplier_country,taxy.calendar_year,taxy.amount_income,taxy.amount_wht
+        )""" % (self._table, ))    
