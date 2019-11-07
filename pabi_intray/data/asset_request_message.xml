@@ -48,7 +48,7 @@ hr_emp = object.env['hr.employee']
 # find preparer's employee_code
 res_id = res_res.search([('user_id', '=', object.responsible_user_id.id)])
 hr_id = hr_emp.search([('resource_id', '=', res_id.id)])
-resp_emp_code = hr_id.name
+resp_emp_code = hr_id.employee_code
 
 body=u"%s ได้รับการยืนยันจาก %s" % (object.name, object.supervisor_res_id.name)
 owner=object.supervisor_res_id.employee_code
