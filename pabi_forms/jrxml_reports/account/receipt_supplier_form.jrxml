@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Wa FIne And Retention Form" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="40" bottomMargin="40">
 	<property name="ireport.zoom" value="1.2396694214876312"/>
-	<property name="ireport.x" value="121"/>
-	<property name="ireport.y" value="384"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_dr_ids&quot;]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
@@ -162,6 +162,12 @@
 	<field name="province" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/province_id/name]]></fieldDescription>
 	</field>
+	<field name="wa_total_fine_text_en" class="java.lang.String">
+		<fieldDescription><![CDATA[wa_total_fine_text_en]]></fieldDescription>
+	</field>
+	<field name="wa_total_fine_text_th" class="java.lang.String">
+		<fieldDescription><![CDATA[wa_total_fine_text_th]]></fieldDescription>
+	</field>
 	<variable name="purchase_number" class="java.lang.String">
 		<variableExpression><![CDATA[$F{receivable_type} == "late_work_acceptance" ? $F{late_wa_purchase_number} :
 (($F{amount_retention} != null && $F{amount_retention} > 0) ? $F{source_document} : "")]]></variableExpression>
@@ -199,7 +205,7 @@ $V{total}
 			</rectangle>
 			<staticText>
 				<reportElement style="table" mode="Opaque" x="421" y="265" width="114" height="38" backcolor="#D3D3D3"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="11" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[จำนวนเงิน (บาท)
@@ -210,7 +216,7 @@ Amount (THB)]]></text>
 			</rectangle>
 			<staticText>
 				<reportElement style="table" mode="Opaque" x="0" y="265" width="421" height="38" backcolor="#D3D3D3"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="11" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[รายการ
@@ -225,6 +231,23 @@ Description]]></text>
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[รวม/Total]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement style="table" mode="Transparent" x="0" y="603" width="535" height="45"/>
+			</rectangle>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="87" y="619" width="412" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{wa_total_fine_text_th}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="13" y="619" width="194" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[จำนวนเงินรวม]]></text>
 			</staticText>
 		</band>
 	</background>
@@ -319,14 +342,14 @@ Description]]></text>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="424" y="74" width="75" height="15"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" lineSpacing="Single">
 					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["หน้า/Page " + $V{PAGE_NUMBER} + " / "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="502" y="74" width="30" height="15"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
@@ -349,7 +372,7 @@ Description]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_wa}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_wa}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="3" y="348" width="397" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
@@ -365,7 +388,7 @@ Description]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_retention_supplier}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_retention_supplier}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Transparent" x="3" y="166" width="128" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -438,7 +461,7 @@ Description]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_wa} == null && $F{amount_retention_supplier} == null?
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_wa} == null && $F{amount_retention_supplier} == null?
 null:
 $F{amount_wa} == null && $F{amount_retention_supplier} != null?
 $F{amount_retention_supplier}:
