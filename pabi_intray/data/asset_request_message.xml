@@ -18,12 +18,12 @@ hr_emp = object.env['hr.employee']
 # find preparer's employee_code
 res_id = res_res.search([('user_id', '=', object.user_id.id)])
 hr_id = hr_emp.search([('resource_id', '=', res_id.id)])
-preparer_emp_code = hr_id.employee_code
+preparer_emp_code = hr_id.name
 
 # find approver's employee_code
 res_id = res_res.search([('user_id', '=', object.approve_user_id.id)])
 hr_id = hr_emp.search([('resource_id', '=', res_id.id)])
-approve_emp_code = hr_id.employee_code
+approve_emp_code = hr_id.name
 
 body=u"%s ขอเบิกครุภัณฑ์จาก %s" % (object.name, preparer_emp_code)
 owner=approve_emp_code
@@ -48,7 +48,7 @@ hr_emp = object.env['hr.employee']
 # find preparer's employee_code
 res_id = res_res.search([('user_id', '=', object.responsible_user_id.id)])
 hr_id = hr_emp.search([('resource_id', '=', res_id.id)])
-resp_emp_code = hr_emp.browse(hr_id).employee_code
+resp_emp_code = hr_id.name
 
 body=u"%s ได้รับการยืนยันจาก %s" % (object.name, object.supervisor_emp_id.name)
 owner=object.supervisor_emp_id.employee_code
