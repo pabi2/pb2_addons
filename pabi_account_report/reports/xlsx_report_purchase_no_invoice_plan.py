@@ -155,7 +155,11 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
     
     @api.multi
     def get_model_chartfield(self):
-        result = section = project = asset = phase = personnel = []
+        section = []
+        project = []
+        asset = []
+        phase = []
+        personnel = []
         
         for chartfield in self.chartfield_ids:
             if chartfield.model == 'res.section':
