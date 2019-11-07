@@ -37,9 +37,8 @@ class AccountAgedTrialBalance(orm.TransientModel):
             required=True),
         'fiscalyear_id': fields.many2one(
             'account.fiscalyear',
-            'Fiscal Year'),
-        # 'period_to': fields.many2one('account.period', 'End Period',
-        #                              required=True),
+            'Fiscal Year',
+            required=True),
         'period_length': fields.integer(
             "Period Length (days)",
             required=True,
@@ -55,6 +54,7 @@ class AccountAgedTrialBalance(orm.TransientModel):
     def onchange_fiscalyear(self, cr, uid, ids, fiscalyear=False,
                             period_id=False, date_to=False, until_date=False,
                             context=None):
+        period_id = False
         res = super(AccountAgedTrialBalance, self).onchange_fiscalyear(
             cr, uid, ids, fiscalyear=fiscalyear, period_id=period_id,
             date_to=date_to, until_date=until_date, context=context
@@ -62,10 +62,6 @@ class AccountAgedTrialBalance(orm.TransientModel):
         filters = self.onchange_filter(cr, uid, ids, filter='filter_date',
                                        fiscalyear_id=fiscalyear,
                                        context=context)
-        # res['value'].update({
-        #     'period_from': filters['value']['period_from'],
-        #     'period_to': filters['value']['period_to'],
-        # })
         res['value'].update({
             'date_from': filters['value']['date_from'],
             'date_to': filters['value']['date_to'],
