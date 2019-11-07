@@ -54,7 +54,7 @@ body=u"%s ได้รับการยืนยันจาก %s" % (object.n
 owner=object.supervisor_res_id.employee_code
 boss=resp_emp_code
 action='A'
-is_complete=True
+is_complete=False
 pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
           </field>
       </record>
