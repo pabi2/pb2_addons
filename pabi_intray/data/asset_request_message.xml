@@ -11,8 +11,22 @@
           <field name="code">
 object=object.with_context(lang='th_TH')
 subject=object.name
-body=u"%s ขอเบิกครุภัณฑ์จาก %s" % (object.name, object.employee_id.name)
-owner=object.approve_user_id.partner_id.employee_id.employee_code
+
+res_res = self.env['resource.resource']
+hr_emp = self.env['hr.employee']
+
+# find preparer's employee_code
+res_id = res_res.search([('user_id', '=', object.user_id)])
+hr_id = hr_emp.search([('resource_id', '=', res_id)])
+preparer_emp_code = hr_emp.browse(hr_id).employee_code
+
+# find approver's employee_code
+res_id = res_res.search([('user_id', '=', object.approve_user_id)])
+hr_id = hr_emp.search([('resource_id', '=', res_id)])
+approve_emp_code = hr_emp.browse(hr_id).employee_code
+
+body=u"%s ขอเบิกครุภัณฑ์จาก %s" % (object.name, preparer_emp_code)
+owner=approve_emp_code
 boss=object.supervisor_res_id.employee_code
 action='A'
 is_complete=False
@@ -25,16 +39,20 @@ pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, bo
           <field name="state">code</field>
           <field name="condition">object.state == 'ready'</field>
           <field name="code">
-# Supervisor Confirmed
-#  - owner = Chumchai
-#  - boss = False
-#  - action = 'A'
-#  - is_complete = False
 object=object.with_context(lang='th_TH')
 subject=object.name
+
+res_res = self.env['resource.resource']
+hr_emp = self.env['hr.employee']
+
+# find preparer's employee_code
+res_id = res_res.search([('user_id', '=', object.responsible_user_id)])
+hr_id = hr_emp.search([('resource_id', '=', res_id)])
+resp_emp_code = hr_emp.browse(hr_id).employee_code
+
 body=u"%s ได้รับการยืนยันจาก %s" % (object.name, object.supervisor_emp_id.name)
 owner=object.supervisor_emp_id.employee_code
-boss=object.employee_id.employee_code
+boss=resp_emp_code
 action='A'
 is_complete=True
 pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
