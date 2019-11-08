@@ -32,7 +32,7 @@ class XLSXReportRegistrarOfGuarantee(models.TransientModel):
         Result = self.env['registrar.of.guarantee.view']
         dom = []
         if self.account_code:
-            dom += [('invoice_move_line_id.account_id', 'in',
+            dom += [('invoice_move_line_id.account_id.code', 'in',
                      self.account_code.split(','))]
         if self.reconcile_cond != 'all':
             if self.reconcile_cond == 'open_item':
