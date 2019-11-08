@@ -528,8 +528,8 @@ class AccountAssetTransfer(models.Model):
                     # Budget
                     'project_id': project.id,
                     'section_id': section.id,
-                    'invest_asset_id': False,
-                    'invest_construction_phase_id': False,
+                    'invest_asset_id': invest_asset.id,
+                    'invest_construction_phase_id': invest_construction_phase.id,
                 }
                 move_lines.append(new_asset_move_line_dict)
             # Depreciation Move Line
@@ -551,8 +551,8 @@ class AccountAssetTransfer(models.Model):
                     # Budget
                     'project_id': project.id,
                     'section_id': section.id,
-                    'invest_asset_id': False,
-                    'invest_construction_phase_id': False,
+                    'invest_asset_id': invest_asset.id,
+                    'invest_construction_phase_id': invest_construction_phase.id,
                 }
                 accum_depre += new_depre
                 move_lines.append(new_depre_dict)
