@@ -76,7 +76,7 @@ class StockRequest(models.Model):
     receive_emp_id = fields.Many2one(
         'hr.employee',
         string='Receiver',
-        required=False,
+        required=True,
         readonly=False,
         states={'done': [('readonly', True)],
                 'done_return': [('readonly', True)],
