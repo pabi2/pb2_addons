@@ -2,9 +2,11 @@
 import logging
 from openerp import models, api, _
 from openerp.exceptions import ValidationError
-from openerp.tools.float_utils import float_compare
+from openerp.tools.float_utils import float_compare, float_is_zero
 
 _logger = logging.getLogger(__name__)
+
+CLOSE_PROJECT = ['ยุติโครงการ', 'ปิดโครงการแบบมีเงื่อนไข', 'ปิดโครงการโดยสมบูรณ์']
 
 
 class ResProject(models.Model):
@@ -86,17 +88,9 @@ class ResProject(models.Model):
         _logger.info('create_project(), output: %s' % res)
         return res
 
-    @api.model
-    def update_project(self, data_dict):
+    def update_project_function(self, data_dict):
         _logger.info('update_project(), input: %s' % data_dict)
-        """ Friendly update data, sample data_dict,
-        data_dict = {
-            'code': 'XXX', 'pm_employee_id': '102190',
-            'budget_plan_ids': [{'fiscalyear_id': '2018',
-                                 'activity_group_id': 'AG0001',
-                                 'm1': 102020.00, 'm3': 929201.00}]
-        }
-        Note:
+        """
          - Record updated using project 'code' as search key
          - Record fields will be updated if in the dict
          - Record one2many fields will be deleted then created
@@ -142,6 +136,35 @@ class ResProject(models.Model):
         return res
 
     @api.model
+    def update_project(self, data_dict):
+        """ Friendly update data, sample data_dict,
+        data_dict = {
+            'code': 'XXX', 'pm_employee_id': '102190',
+            'budget_plan_ids': [{'fiscalyear_id': '2018',
+                                 'activity_group_id': 'AG0001',
+                                 'm1': 102020.00, 'm3': 929201.00}]
+        }
+        Steps:
+            - Check function check_budget_commit_asset_owner before
+            - if return check_budget_commit and check_asset_owner is False,
+            it update project.
+        """
+        res = {
+            'is_success': False,
+            'result': False,
+            'messages': _('budget_commit or asset_owner are False'),
+        }
+        if data_dict['project_status'].encode('utf8') in CLOSE_PROJECT:
+            res = self.check_budget_commit_asset_owner(data_dict)
+            if res['is_success'] and not (
+                    res['check_budget_commit'] or res['check_asset_owner']
+            ):
+                res = self.update_project_function(data_dict)
+        else:
+            res = self.update_project_function(data_dict)
+        return res
+
+    @api.model
     def get_all_fy_budget_release(self, project_code):
         _logger.info('get_all_fy_budget_release(), input: %s' % project_code)
         """ Return result as dict i.e., {'2018': 234, '2019': 456} """
@@ -175,6 +198,56 @@ class ResProject(models.Model):
             result = res['result'] or {}
             res['result'] = result.get(fiscal.name, 0.0)
         _logger.info('get_current_fy_budget_release(), output: %s' % res)
+        return res
+
+    @api.model
+    def check_budget_commit_asset_owner(self, data_dict):
+        """ Example Test :
+        data_dict = {
+            'project_code': 'P1300475'
+        }
+        """
+        _logger.info(
+            'check_budget_commit_asset_owner(), input: %s' % data_dict)
+        if data_dict.get('project_code', False):
+            data_dict['code'] = data_dict.pop('project_code')
+        try:
+            # Update project, use 'code' as search key
+            res = self.env['pabi.utils.ws'].\
+                friendly_update_data(self._name, data_dict, 'code')
+            if res.get('is_success', False):
+                res['check_budget_commit'] = False
+                res['check_asset_owner'] = False
+                res_id = res['result']['id']
+                project_id = self.browse(res_id)
+                if project_id:
+                    self._cr.execute("""
+                        select COALESCE(sum(amount_pr_commit),0) +
+                        COALESCE(sum(amount_po_commit),0) +
+                        COALESCE(sum(amount_exp_commit),0) as amount_total
+                        from budget_consume_report
+                        where project_id = %s and budget_method = 'expense'
+                        and charge_type = 'external'
+                    """ % (project_id.id))
+                    amount_total = \
+                        self._cr.dictfetchone()['amount_total']
+                    # Check commit in project
+                    if not float_is_zero(amount_total, precision_rounding=5):
+                        res['check_budget_commit'] = True
+
+                asset = self.env['account.asset'].search([
+                    ('owner_project_id', '=', res_id)])
+                if asset:
+                    res['check_asset_owner'] = True
+                res['messages'] = [_('Check Budget Commit and Asset Owner')]
+        except Exception, e:
+            res = {
+                'is_success': False,
+                'result': False,
+                'messages': _(str(e)),
+            }
+        self._cr.rollback()
+        _logger.info('check_budget_commit_asset_owner(), output: %s' % res)
         return res
 
     @api.model
