@@ -38,11 +38,11 @@ class AccountVoucher(models.Model):
     )
     wa_total_fine_text_en = fields.Char(
         string='WA Total Fine Text (EN)',
-        compute='_amount_to_word_en',
+        compute='_wa_total_to_word_en',
     )
     wa_total_fine_text_th = fields.Char(
         string='WA Total Fine Text (TH)',
-        compute='_amount_to_word_th',
+        compute='_wa_total_to_word_th',
     )
 
 
@@ -150,7 +150,7 @@ class AccountVoucher(models.Model):
         return True
     
     @api.multi
-    def _amount_to_word_en(self):
+    def _wa_total_to_word_en(self):
         res = {}
         minus = False
         amount_text = ''
@@ -191,7 +191,7 @@ class AccountVoucher(models.Model):
         
     
     @api.multi
-    def _amount_to_word_th(self):
+    def _wa_total_to_word_th(self):
         minus = False
         amount_text = ''
         for rec in self:
