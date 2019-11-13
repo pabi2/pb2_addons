@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from openerp import models, api, _
 from openerp.exceptions import ValidationError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class StockTransferDetails(models.TransientModel):
@@ -55,4 +58,15 @@ class StockTransferDetails(models.TransientModel):
                                       'installment': wa.installment,
                                       'num_installment': wa.num_installment})
         res = super(StockTransferDetails, self).do_detailed_transfer()
+        _logger.info("update owner of asset %s by Source of Budget of picking_id %s",
+                     str(self.picking_id.asset_ids), str(self.picking_id))
+        for asset in self.picking_id.asset_ids:
+            stock_move = asset.move_id
+            asset.write({
+                'owner_section_id': stock_move.section_id.id,
+                'owner_project_id': stock_move.project_id.id,
+                'owner_invest_asset_id': stock_move.invest_asset_id.id,
+                'owner_invest_construction_phase_id': stock_move.invest_construction_phase_id.id
+                })
+            
         return res
