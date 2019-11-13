@@ -63,7 +63,17 @@ class AccountMove(models.Model):
         string='Post Job UUID',
         compute='_compute_button_validate_job_uuid',
     )
+    @api.multi
+    def action_account_move_post(self):
+        for active_ids in self :
+            active_ids.button_validate()
+        return True
 
+    @api.multi
+    def action_account_move_post_background(self):
+        for active_ids in self :
+            active_ids.action_done_background()
+        return True
 
 ###########################--------------------------------- start job backgruond ------------------------------- #######################
 
@@ -245,7 +255,7 @@ class AccountMove(models.Model):
             #     update account_invoice set adjust_move_id = %s
             #     where id = %s
             # """, (move.id, invoice_id))
-        if stock_move_id:
+        if stock_move_id and stock_move_id.inventory_id:
             move.ref = stock_move_id.origin
             stock_move_id.account_move_id = move.id
             # check ref in move_line and change from header

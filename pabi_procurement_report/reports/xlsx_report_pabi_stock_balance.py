@@ -15,7 +15,7 @@ class XLSXReportPabiStockBalance(models.TransientModel):
     location_ids = fields.Many2many(
         'stock.location',
         string='Location',
-        required=True,
+     
     )
     product_ids = fields.Many2many(
         'product.product',
@@ -27,7 +27,10 @@ class XLSXReportPabiStockBalance(models.TransientModel):
     location_name = fields.Char(
         string='Loc Name',
     )
-
+    category_ids = fields.Many2many(
+        'product.category',
+        string='Category',
+    )
     # date_to = fields.Date(
     #     string='To Date',
     #     required=True,
@@ -90,7 +93,12 @@ class XLSXReportPabiStockBalance(models.TransientModel):
             dom += [('org_id', 'in', self.org_ids.ids)]
         if self.product_ids:
             dom += [('product_id', 'in', self.product_ids.ids)]
-
+        if self.category_ids:
+            dom += [
+                '|',
+                ('category_id', 'in', self.category_ids._ids),
+                ('parent_id', 'in', self.category_ids._ids)
+            ]
         self.results = Result.search(dom)
     
 
@@ -148,6 +156,18 @@ class XLSXReportPabiStockBalanceResults(models.Model):
         string='Currency',
         readonly=True,
     )
+    category_id = fields.Many2one(
+        'product.category',
+        string='Category',
+    )
+    category_name = fields.Char(
+        string='Category Name',
+        readonly=True,
+    )
+    parent_id = fields.Many2one(
+        'product.category',
+        string='Parent Category',
+    )
 
 
     def init(self, cr):
@@ -166,7 +186,10 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             puom.name as uom,
             ou.name as ou_name,
             rc.name as currency,
-            (SELECT id from res_org WHERE operating_unit_id = ou.id) as org_id
+            (SELECT id from res_org WHERE operating_unit_id = ou.id) as org_id,
+            pc.id category_id,
+            pc.name as category_name,
+            pc.parent_id parent_id
             FROM public.stock_quant q
             left join stock_location sl on q.location_id = sl.id
             left join operating_unit ou on sl.operating_unit_id = ou.id 
@@ -175,7 +198,8 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             left join product_uom puom on t.uom_id = puom.id
             left join res_company com on com.id = t.company_id
             left join res_currency rc on com.currency_id = rc.id
-            group by t.id, sl.name, q.product_id, puom.name, ou.id, ou.name, rc.name, p.default_code, q.location_id
+            left join product_category pc on pc.id = t.categ_id
+            group by t.id, sl.name, q.product_id, puom.name, ou.id, ou.name, rc.name, p.default_code, q.location_id,pc.id,pc.name,pc.parent_id 
             order by t.name
         )""" % (self._table, ))
 

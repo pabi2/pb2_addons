@@ -250,13 +250,11 @@ class AccountAssetAdjust(models.Model):
     @api.model
     def create(self, vals):
         values = self._context.get('expense_to_asset_dict', {})
-        _logger.info("expense_to_asset_dict: %s", str(values))
         i = 0
         for value in values:
             vals['adjust_expense_to_asset_ids'][i][2]['invoice_line_id'] = value[2]
             i = i + 1
 
-        _logger.info("vals: %s", str(vals))
         if vals.get('name', '/') == '/':
             vals['name'] = self.env['ir.sequence'].\
                 get('account.asset.adjust') or '/'
@@ -371,7 +369,6 @@ class AccountAssetAdjust(models.Model):
 
     @api.onchange('adjust_type', 'invoice_id')
     def _onchange_adjust_type_invoice(self):
-        _logger.info("------- _onchange_adjust_type_invoice -------")
         self.adjust_line_ids = False
         self.adjust_asset_to_expense_ids = False
         self.adjust_expense_to_asset_ids = False
@@ -379,7 +376,6 @@ class AccountAssetAdjust(models.Model):
             return
         # Check if this adjustment is created from Suplier Invoice action
         src_invoice_id = self._context.get('default_invoice_id', False)
-        _logger.info("src_invoice_id: %s", str(src_invoice_id))
         status_cancel = self.env.ref('pabi_asset_management.'
                                      'asset_status_cancel')
         # Change Asset Type
@@ -432,10 +428,8 @@ class AccountAssetAdjust(models.Model):
                 self.adjust_asset_to_expense_ids += adjust_line
         # Expense => Asset
         elif self.adjust_type == 'expense_to_asset':
-            _logger.info("------- adjust_type == 'expense_to_asset' -------")
             if src_invoice_id:
                 values = self._context.get('expense_to_asset_dict', {})
-                _logger.info("expense_to_asset_dict: %s", str(values))
                 for value in values:
                     adjust_line = \
                         self.env['account.asset.adjust.expense_to_asset'].new()
@@ -449,11 +443,7 @@ class AccountAssetAdjust(models.Model):
 
                     for i in range(quantity):
                         self.adjust_expense_to_asset_ids += adjust_line
-
-                for line in self.adjust_expense_to_asset_ids:
-                    _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
             else:
-                _logger.info("else")
                 accounts = self.invoice_id.invoice_line.\
                     filtered(lambda l: not l.product_id).mapped('account_id')
                 for account in accounts:
@@ -702,7 +692,6 @@ class AccountAssetAdjust(models.Model):
         * Create new asset
         * Create collective moves
         """
-        _logger.info("------- adjust_expense_to_asset -------")
         self.ensure_one()
         value = sum(self.adjust_expense_to_asset_ids.mapped('amount'))
         if float_compare(self.limit_asset_value, value, 2) == -1:
@@ -723,15 +712,11 @@ class AccountAssetAdjust(models.Model):
                 'ship_purchase_id': self.ship_purchase_id.id, })
 
         values = self._context.get('expense_to_asset_dict', {})
-        _logger.info("values: %s", str(values))
+        i = 0
 
         # --
         for line in self.adjust_expense_to_asset_ids:
             line.account_analytic_id = Analytic.create_matched_analytic(line)
-            _logger.info("line.id: %s", str(line.id))
-            _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
-            _logger.info("line.account_analytic_id.line_ids: %s", \
-                         str(line.account_analytic_id.line_ids))
 
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,
@@ -1282,8 +1267,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
 
     @api.model
     def create(self, vals):
-        _logger.info("------- create line3 -------")
-        _logger.info("vals: %s", str(vals))
         asset = super(AccountAssetAdjustExpenseToAsset, self).create(vals)
         asset.update_related_dimension(vals)
         return asset
@@ -1294,7 +1277,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
 
     @api.multi
     def create_account_move_expense_to_asset(self, amount_depre):
-        _logger.info("------- create_account_move_expense_to_asset -------")
         """
         Dr: new asset - expense value
             Cr: expense - expense value
@@ -1353,39 +1335,30 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
 
     @api.model
     def _create_expense_analytic_line(self, analytic_line_ids):
-        _logger.info("------- _create_expense_analytic_line -------")
         inv_number = self.adjust_id.invoice_id.number
-        _logger.info("inv_number: %s", str(inv_number))
 
         # find move_line_id of invoice_id to domain invoice's analytic_line
         inv_movl_ids = self.adjust_id.invoice_id.move_id.line_id
         inv_movl_id = ""
         for inv_movl in inv_movl_ids:
             if inv_movl.analytic_account_id and \
-                (inv_movl.account_id == self.account_id):
+                    (inv_movl.account_id == self.account_id):
 
                 inv_movl_id = inv_movl.id
                 break
-        _logger.info("inv_movl_id: %s", str(inv_movl_id))
 
         domain = []
         domain.append(("move_id", "=", inv_movl_id))
-        _logger.info("domain: %s", str(domain))
 
         analytic_line = self.env['account.analytic.line']
         invoice_line_id = self.invoice_line_id
-        _logger.info("invoice_line_id: %s", str(invoice_line_id))
         invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
-        _logger.info("invl_analytic_lines: %s", str(invl_analytic_lines))
         invl_analytic_line = invl_analytic_lines.search(domain)
-        _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
 
         domain = []
         domain.append(("account_id", "=", self.account_analytic_id.id))
         domain.append(("amount", "=", (self.amount * -1)))
         domain.append(("name", "=", self.ref_asset_id.code))
-        _logger.info("domain: %s", str(domain))
-        _logger.info("self.account_analytic_id: %s", str(self.account_analytic_id))
         line_analytic_line = self.account_analytic_id.line_ids
 
         if line_analytic_line:
@@ -1393,8 +1366,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
 
         if not line_analytic_line:
             line_analytic_line = analytic_line_ids[0]
-
-        _logger.info("line_analytic_line: %s", str(line_analytic_line))
 
         values = {}
         # follow by invl_analytic_line
@@ -1445,15 +1416,11 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values["require_chartfield"] = True
 
         expense_analytic_line_id = analytic_line.create(values)
-        _logger.info("expense_analytic_line_id: %s", str(expense_analytic_line_id))
 
     @api.model
     def _assign_move_line_with_invoice_line(self, move):
-        _logger.info("------- _assign_move_line_with_invoice_line -------")
         invoice_line = self.invoice_line_id
-#         _logger.info("self.invoice_line_id: %s", str(invoice_line))
         for movl in move.line_id:
-#             _logger.info("movl_id: %s", str(movl.id))
             if movl.credit:
                 movl.write({"taxbranch_id": \
                             invoice_line.taxbranch_id.id})

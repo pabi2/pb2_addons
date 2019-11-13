@@ -6,6 +6,9 @@ from openerp.addons.l10n_th_account.models.res_partner \
 
 REPORT_NAMES = {
     'pnd1': {'pdf': False,  # TODO: pnd1
+             'xls': "report_pnd1_form_xls",
+             'txt_csv': False},
+    'pnd1a': {'pdf': 'report_pnd1a_form',
              'xls': False,
              'txt_csv': False},
     'pnd53': {'pdf': 'report_pnd53_form',
@@ -23,7 +26,10 @@ class PrintPNDFormWizard(models.TransientModel):
     _name = 'print.pnd.form.wizard'
 
     income_tax_form = fields.Selection(
-        INCOME_TAX_FORM,
+        [('pnd1', 'PND1'),
+         ('pnd1a', 'PND1A'),
+         ('pnd3', 'PND3'),
+         ('pnd53', 'PND53')],
         string='Income Tax Form',
         required=True,
     )
@@ -65,7 +71,10 @@ class PrintPNDFormWizard(models.TransientModel):
             'company_taxid': company_taxid,
             'company_branch': company_branch,
             'print_name': self.env.user.name or '',
-            'print_position': self.env.user.employee_id.job_id.name or ''
+            'print_position': self.env.user.employee_id.position_id.name or '',
+            'signature' : self.env.user.partner_id.sign_image  or '',
+            'fiscalyear' : self.fiscalyear_id.name
+ 
         }
         res = {
             'type': 'ir.actions.report.xml',

@@ -27,6 +27,7 @@ When set automatic workflow = POS, the order will automatically,
         "account_tax_force_rounding_method",
     ],
     "data": [
+        "data/data.xml",
         "views/product_view.xml",
         "views/sale_view.xml",
         "views/sale_workflow_process_view.xml",

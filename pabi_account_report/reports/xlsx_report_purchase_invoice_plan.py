@@ -138,7 +138,11 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
     
     @api.multi
     def get_model_chartfield(self):
-        result = section = project = asset = phase = personnel = []
+        section = []
+        project = []
+        asset = []
+        phase = []
+        personnel = []
         
         for chartfield in self.chartfield_ids:
             if chartfield.model == 'res.section':
@@ -228,7 +232,10 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             dom += [('pct.action_date','<=',self.date_contract_action_end)]
         
         where_str = self._domain_to_where_str(dom)
-        where_str += chartfield_dom
+        where_str2 = self._domain_to_where_str(dom)
+        if chartfield_dom != '':
+            where_str += chartfield_dom
+            where_str2 += 'and po.id is null'
         print 'where_str: '+where_str
         if len(dom_acc) > 0:
             where_acc = 'where '+(self._domain_to_where_str(dom_acc)).replace('and','')
@@ -414,7 +421,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             ) as new
             %s
             order by org_id, po_fiscalyear, date_order, po_number, docline_seq, installment
-        """  % (where_str,where_str,where_acc))
+        """  % (where_str,where_str2,where_acc))
         
         invoice_plans = self._cr.dictfetchall()
         
