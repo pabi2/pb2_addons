@@ -384,6 +384,9 @@ class AccountAssetAdjust(models.Model):
                                      'asset_status_cancel')
         # Change Asset Type
         if self.adjust_type == 'asset_type':
+            # Status reverse
+            status_cancel = self.env.ref('pabi_asset_management.'
+                                         'asset_status_reverse')
             assets = self.get_invoice_line_assets(self.invoice_id)
             values = self._context.get('adjust_asset_type_dict', {})
             for asset in assets:
@@ -465,7 +468,8 @@ class AccountAssetAdjust(models.Model):
         # Set as removed and inactive
         asset.write({'status': target_status.id,
                      'state': 'removed',
-                     'active': False})
+                     'date_remove': self.date,
+                     'active': False, })
         # Remove unposted lines
         depre_lines = asset.depreciation_line_ids
         depre_lines.filtered(
@@ -482,7 +486,7 @@ class AccountAssetAdjust(models.Model):
         asset.compute_depreciation_board()
 
     @api.multi
-    def _prepare_asset_dict(self, product, name, analytic):
+    def _prepare_asset_dict(self, product, name, analytic, asset=False):
         profile = product.asset_profile_id
         vals = {
             'profile_id': profile.id,
@@ -517,7 +521,7 @@ class AccountAssetAdjust(models.Model):
     def _duplicate_asset(
             self, asset, product, asset_name, analytic, day_amount):
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
-        # add code in asset
+        # add code, po and pr in asset
         asset_dict.update({'code': '/'})
         new_asset = asset.copy(asset_dict)
         Analytic = self.env['account.analytic.account']
@@ -566,7 +570,7 @@ class AccountAssetAdjust(models.Model):
         return new_asset
 
     @api.multi
-    def _create_asset_line(self, line, asset, day_amount):
+    def _create_asset_line(self, line, asset, day_amount, new_asset):
         # check condition create line
         date_bf_remove = \
             (fields.Date.from_string(self.date) - relativedelta(days=1))
@@ -616,10 +620,13 @@ class AccountAssetAdjust(models.Model):
             asset_line = self.env['account.asset.line'].create(asset_line_vals)
             # Auto post last cal asset line before removal
             if val == 0 and lines == 2:
-                asset_line.create_move()
+                move_old_line_id = asset_line.create_move()
+                # Auto post
+                self.env['account.move'].browse(move_old_line_id).post()
                 # Create a collective journal entry
                 move = line.create_account_move_asset_type()
                 line.move_id = move
+        new_asset.depreciation_line_ids[-1].move_id = move
 
     @api.multi
     def adjust_asset_type(self):
@@ -656,7 +663,7 @@ class AccountAssetAdjust(models.Model):
                                               day_amount)
             line.ref_asset_id = new_asset
             # Create asset line
-            self._create_asset_line(line, asset, day_amount)
+            self._create_asset_line(line, asset, day_amount, new_asset)
             # Set move_check equal to amount depreciated
             new_asset.compute_depreciation_board()
             new_asset.validate()
@@ -717,7 +724,6 @@ class AccountAssetAdjust(models.Model):
 
         values = self._context.get('expense_to_asset_dict', {})
         _logger.info("values: %s", str(values))
-        i = 0
 
         # --
         for line in self.adjust_expense_to_asset_ids:
@@ -998,7 +1004,8 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
         if amount_depre and not old_asset.profile_id.no_depreciation:
             old_depre_debit = AssetAdjust._setup_move_line_data(
                 old_asset.code, old_asset, period, old_depr_acc, adjust_date,
-                debit=amount_depre, credit=False, analytic_id=False)
+                debit=amount_depre, credit=False,
+                analytic_id=old_asset.account_analytic_id.id)
             old_exp_credit = AssetAdjust._setup_move_line_data(
                 old_asset.code, old_asset, period, old_exp_acc, adjust_date,
                 debit=False, credit=amount_depre,
@@ -1012,7 +1019,8 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
                 analytic_id=new_asset.account_analytic_id.id)
             new_exp_credit = AssetAdjust._setup_move_line_data(
                 new_asset.code, new_asset, period, new_depr_acc, adjust_date,
-                debit=False, credit=amount_depre, analytic_id=False)
+                debit=False, credit=amount_depre,
+                analytic_id=new_asset.account_analytic_id.id)
             line_dict += [(0, 0, new_depre_debit), (0, 0, new_exp_credit), ]
         return line_dict
 
