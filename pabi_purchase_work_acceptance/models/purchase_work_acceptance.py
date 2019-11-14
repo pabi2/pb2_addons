@@ -332,8 +332,9 @@ class PurchaseWorkAcceptance(models.Model):
                     "%Y-%m-%d",
                 )
                 due_date = inv_date + datetime.timedelta(days=days)
-                if len(invoice) > 0:
-                    for inv in invoice:
+                for inv in invoice:
+                    # Not update invoice is paid
+                    if inv.state != 'paid':
                         inv.write({
                             'date_invoice': self.date_invoice,
                             'date_due': due_date,
