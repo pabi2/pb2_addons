@@ -125,7 +125,8 @@ class ResProject(models.Model):
                         Release.browse([x[0] for x in self._cr.fetchall()])
                     for rec in rels:
                         project.with_context(ignore_lock_release=True,
-                                             ignore_current_fy_lock=True).\
+                                             ignore_current_fy_lock=True,
+                                             not_update_released=True).\
                             _release_fiscal_budget(rec.fiscalyear_id,
                                                    rec.released_amount)
                 # Refresh
