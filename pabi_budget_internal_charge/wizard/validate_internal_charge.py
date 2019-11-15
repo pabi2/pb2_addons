@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api, _
+from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 
 
@@ -13,6 +13,7 @@ class ValidateInternalCharge(models.TransientModel):
         active_ids = self._context.get('active_ids')
         exp_lines = ExLine.browse(active_ids)
         expenses = exp_lines.mapped('expense_id')
+        current_date = fields.Date.today()
         # Only confirm expenses can be validated
         non_confirm = \
             expenses.filtered(lambda l: l.state != 'confirm').mapped('number')
@@ -31,4 +32,8 @@ class ValidateInternalCharge(models.TransientModel):
                 _('Following expenses, not all of its lines have revenue '
                   'activity selected\n%s') % ', '.join(invalid_ex))
         for expense in expenses:
+            approved_date = expense.date
+            # Change date to today and overwrite back to approved_date
+            expense.write({'date': current_date})
             expense.signal_workflow('internal_charge')
+            expense.write({'date': approved_date})
