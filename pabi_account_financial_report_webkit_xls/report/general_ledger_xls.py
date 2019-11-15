@@ -46,7 +46,8 @@ _column_sizes = [
     ('cumul_bal', 15),
     ('curr_bal', 10),
     ('curr_code', 10),
-    ('posted_by', 30),
+    #('posted_by', 30),
+    ('validate_by', 30),
     ('reconcile_id', 10),
     ('partial_id', 10),
 ]
@@ -245,7 +246,9 @@ class general_ledger_xls(report_xls):
             ]
         c_specs += [
             # PABI2
-            ('posted_by', 1, 0, 'text', _('Posted By'), None,
+            #('posted_by', 1, 0, 'text', _('Posted By'), None,
+            #    c_hdr_cell_style),
+            ('validate_by', 1, 0, 'text', _('Validate By'), None,
                 c_hdr_cell_style),
             ('reconcile_id', 1, 0, 'text', _('Rec.ID'),
                 None, c_hdr_cell_style),
@@ -430,7 +433,8 @@ class general_ledger_xls(report_xls):
                     rec = line.get('reconcile_id', '')
                     c_specs += [
                         # PABI2
-                        ('posted_by', 1, 0, 'text', line.get('posted_by', '')),
+                        #('posted_by', 1, 0, 'text', line.get('posted_by', '')),
+                        ('validate_by', 1, 0, 'text', line.get('validate_by', '')),
                         ('reconcile_id', 1, 0, 'text', rec),
                         ('partial_id', 1, 0, 'text',
                             line.get('partial_id', '')),
@@ -472,7 +476,8 @@ class general_ledger_xls(report_xls):
                         c_specs += [('curr_bal', 1, 0, 'text', None)]
                     c_specs += [('curr_code', 1, 0, 'text', None)]
                 c_specs += [
-                    ('posted_by', 1, 0, 'text', None),
+                    #('posted_by', 1, 0, 'text', None),
+                    ('validate_by', 1, 0, 'text', None),
                     ('reconcile_id', 1, 0, 'text', None),
                     ('partial_id', 1, 0, 'text', None),
                 ]

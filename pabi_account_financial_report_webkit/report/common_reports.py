@@ -718,7 +718,10 @@ SELECT l.id AS id,
             SUBSTRING(m.name, 1, 2) AS doctype,
             coalesce(fullrec.name, '') as reconcile_id,
             coalesce(partialrec.name, '') as partial_id,
-            i.source_document
+            i.source_document,
+            (SELECT rp.display_name FROM res_users ru LEFT JOIN res_partner rp
+            ON rp.id = ru.partner_id WHERE ru.id = i.validate_user_id LIMIT 1)
+            AS validate_by
 FROM account_move_line l
     JOIN account_move m on (l.move_id=m.id)
     LEFT JOIN res_currency c on (l.currency_id=c.id)
