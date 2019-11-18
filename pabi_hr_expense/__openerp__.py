@@ -32,6 +32,7 @@
         "views/account_activity_view.xml",
         "views/hr_expense_view.xml",
         "views/account_invoice_view.xml",
-        'wizard/expense_create_supplier_invoice_view.xml',
+        "wizard/expense_create_supplier_invoice_view.xml",
+        "wizard/account_move_reverse_view.xml",
     ],
 }

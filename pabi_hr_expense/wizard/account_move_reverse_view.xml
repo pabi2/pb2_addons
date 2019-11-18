@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <act_window id="action_cancel_exp_rev"
+            name="Reverse Doc."
+            res_model="account.move.reverse"
+            src_model="hr.expense.expense"
+            view_mode="form"
+            context="{'reverse_move': True}"
+            target="new"/>
+    </data>
+</openerp>
