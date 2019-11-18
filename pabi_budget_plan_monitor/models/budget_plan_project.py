@@ -117,10 +117,17 @@ class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
             if rec.project_id.state == 'approve':
                 expenses = rec.project_id.monitor_expense_ids
                 revenues = rec.project_id.monitor_revenue_ids
+                summary = rec.project_id.summary_expense_ids
 
                 all_actual_expense = sum(expenses.filtered(
                     lambda l: l.charge_type == 'external'
                     ).mapped('amount_actual'))
+                # find first fiscalyear
+                bf_fiscalyear_id = expenses.mapped('fiscalyear_id')[0]
+                all_sum_bf_fiscalyear = sum(summary.filtered(
+                        lambda l: l.fiscalyear_id.id < bf_fiscalyear_id.id
+                        ).mapped('planned_amount'))
+                all_actual_expense += all_sum_bf_fiscalyear
                 all_actual_revenue = sum(revenues.mapped('amount_actual'))
 
                 next_fy_ex = expenses.filtered(
