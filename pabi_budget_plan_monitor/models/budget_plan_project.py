@@ -125,9 +125,10 @@ class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
                 # find first fiscalyear
                 bf_fiscalyear_id = expenses.mapped('fiscalyear_id')[0]
                 all_sum_bf_fiscalyear = sum(summary.filtered(
-                        lambda l: l.fiscalyear_id.id < bf_fiscalyear_id.id and
-                        l.budget_method == 'expense'
-                        ).mapped('planned_amount'))
+                    lambda l:
+                    l.fiscalyear_id.date_start < bf_fiscalyear_id.date_start
+                    and l.budget_method == 'expense'
+                    ).mapped('planned_amount'))
                 all_actual_expense += all_sum_bf_fiscalyear
                 all_actual_revenue = sum(revenues.mapped('amount_actual'))
 
