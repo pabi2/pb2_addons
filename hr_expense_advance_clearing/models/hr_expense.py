@@ -76,7 +76,8 @@ class HRExpenseExpense(models.Model):
     def _get_outstanding_advance_domain(self):
         domain = [('employee_id', '=', self.employee_id.id),
                   ('is_employee_advance', '=', True),
-                  ('amount_to_clearing', '>', 0.0)]
+                  ('amount_to_clearing', '>', 0.0),
+                  ('state', '!=', 'cancelled')]
         return domain
 
     @api.multi
