@@ -46,10 +46,12 @@
                 <xpath expr="/form/sheet/notebook/page[@string='Accounting']/group/group/field[@name='journal_id']" position="after">
                     <field name="rev_ic_journal_id" invisible="1"/>
                     <field name="rev_ic_move_id" attrs="{'invisible': [('pay_to', '!=', 'internal')]}"/>
+                    <field name="rev_ic_reversal_move_id" attrs="{'invisible': [('pay_to', '!=', 'internal')]}"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[@string='Accounting']/group/group/field[@name='journal_id']" position="after">
                     <field name="exp_ic_journal_id" invisible="1"/>
                     <field name="exp_ic_move_id" attrs="{'invisible': [('pay_to', '!=', 'internal')]}"/>
+                    <field name="exp_ic_reversal_move_id" attrs="{'invisible': [('pay_to', '!=', 'internal')]}"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[@string='Accounting']/group/group/field[@name='journal_id']" position="replace"/>
             </field>

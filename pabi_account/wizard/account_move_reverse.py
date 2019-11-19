@@ -40,31 +40,32 @@ class AccountMoveReverse(models.TransientModel):
         res_model = context.get('active_model', False)
         res_id = context.get('active_id', False)
         exp_reverse_move = context.get('reverse_move', False)
-        move = \
+        expense = \
             self.pool.get(res_model).browse(cr, uid, res_id, context=context)
 
         if exp_reverse_move:
             context = context.copy()
-            if move.exp_ic_move_id:
-                context.update({'active_ids': move.exp_ic_move_id.id})
-                exp_move = move.exp_ic_move_id
+            if expense.exp_ic_move_id:
+                context.update({'active_ids': expense.exp_ic_move_id.id})
+                exp_move = expense.exp_ic_move_id
                 wizard = self.browse(cr, uid, ids, context)
                 wizard.move_prefix = '%s - ' % exp_move.name
                 res = super(AccountMoveReverse, self).action_reverse(
                     cr, uid, ids, context=context)
-                reversal = move.exp_ic_move_id.reversal_id
+                reversal = expense.exp_ic_move_id.reversal_id
                 if reversal:
                     reversal.button_validate()
-            if move.rev_ic_move_id:
-                context.update({'active_ids': move.rev_ic_move_id.id})
-                exp_move = move.rev_ic_move_id
+            if expense.rev_ic_move_id:
+                context.update({'active_ids': expense.rev_ic_move_id.id})
+                exp_move = expense.rev_ic_move_id
                 wizard = self.browse(cr, uid, ids, context)
                 wizard.move_prefix = '%s - ' % exp_move.name
                 res = super(AccountMoveReverse, self).action_reverse(
                     cr, uid, ids, context=context)
-                reversal = move.rev_ic_move_id.reversal_id
+                reversal = expense.rev_ic_move_id.reversal_id
                 if reversal:
                     reversal.button_validate()
+            expense.state = 'cancelled'
             return res
         else:
             return super(AccountMoveReverse, self).action_reverse(
