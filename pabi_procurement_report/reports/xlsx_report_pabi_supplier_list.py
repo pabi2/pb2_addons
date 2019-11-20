@@ -70,14 +70,24 @@ class XLSXReportPabiSupplierList(models.TransientModel):
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['xlsx.report.pabi.supplier.list.results']
+        temp_Result = None
         dom = []
-        if self.tag_ids:
-            dom += [('tag_id', 'in', self.tag_ids._ids)]
         if self.categ_ids:
             dom += [('category_id', 'in', self.categ_ids._ids)]
-        self.results = Result.search(dom)
-
-
+            if not self.tag_ids:
+               self.results =  Result.search(dom)
+        if self.tag_ids:
+            for tag in self.tag_ids: 
+                temp_dom = list(dom)
+                temp_dom += [('tag_ids', 'like', tag.id)] #tag_ids is fields Char
+                if temp_Result == None:
+                    temp_Result = Result.search(temp_dom)
+                else:
+                    temp_Result =  temp_Result + (Result.search(temp_dom) - temp_Result) #Remove Value Result Duplicate and Sum Result
+            self.results = temp_Result
+        if (not self.categ_ids) and (not self.tag_ids):
+            self.results =  Result.search(dom)
+            
 class XLSXReportPabiSupplierListResults(models.Model):
     _name = 'xlsx.report.pabi.supplier.list.results'
     _auto = False
@@ -111,6 +121,14 @@ class XLSXReportPabiSupplierListResults(models.Model):
         string='Branch ID',
         readonly=True,
     )
+    tag_ids = fields.Char(
+        string='Tag ID',
+        readonly=True,
+    )
+    tag_name = fields.Char(
+        string='Tag Name',
+        readonly=True,
+    )
     phone = fields.Char(
         string='Phone',
         readonly=True,
@@ -141,7 +159,6 @@ class XLSXReportPabiSupplierListResults(models.Model):
         cr.execute("""CREATE or REPLACE VIEW %s as (
         SELECT 
         row_number() over (order by rp.id) as id,
-        rp.id as partner_id,
         rpc.id as category_id,
         rpc.name as category_name,
         rp.name as supplier_name,
@@ -162,10 +179,19 @@ class XLSXReportPabiSupplierListResults(models.Model):
         ) as address,
         rp.vat as vat,
         rp.taxbranch as taxbranch,
+        array_to_string(array(select rt.id from res_partner_tag rt 
+        LEFT JOIN res_partner_res_partner_tag_rel tag
+        ON tag.res_partner_tag_id = rt.id
+        where tag.res_partner_id = rp.id),',',null) as tag_ids,
+        array_to_string(array(select rt.name from res_partner_tag rt 
+        LEFT JOIN res_partner_res_partner_tag_rel tag
+        ON tag.res_partner_tag_id = rt.id
+        where tag.res_partner_id = rp.id),',',null) as tag_name,
         CONCAT(
         COALESCE(rp.phone||' ',''),
         COALESCE(rp.mobile,'')
         ) as phone,
+        rp.id as partner_id,
         rp.email as email,
         rpb.acc_number as account_number,
         rpb.bank_name as bank_name,
@@ -182,7 +208,7 @@ class XLSXReportPabiSupplierListResults(models.Model):
         WHERE rp.supplier = True
         AND rp.employee = False
         AND rpb.active = True 
-        AND rpb.default = True 
+        AND rpb.default = True
         GROUP BY 
         rp.id,
         rpc.id,
@@ -190,5 +216,3 @@ class XLSXReportPabiSupplierListResults(models.Model):
         rpb.bank_name,
         rpb.owner_name
         )""" % (self._table, ))
-        
-   
