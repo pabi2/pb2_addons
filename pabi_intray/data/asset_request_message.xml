@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+      # Messages for Stock Request
+      <record id="action_asset_request_supervisor_verify" model="ir.actions.server">
+          <field name="name">Supervisor Verify</field>
+          <field name="model_id" ref="pabi_asset_management.model_account_asset_request"/>
+          <field name="state">code</field>
+          <field name="condition">object.state == 'approve'</field>
+          <field name="code">
+object=object.with_context(lang='th_TH')
+subject=object.name
+
+res_res = object.env['resource.resource']
+hr_emp = object.env['hr.employee']
+
+# find preparer's employee_code
+res_id = res_res.search([('user_id', '=', object.user_id.id)])
+hr_id = hr_emp.search([('resource_id', '=', res_id.id)])
+preparer_emp_code = hr_id.name
+
+# find approver's employee_code
+res_id = res_res.search([('user_id', '=', object.approve_user_id.id)])
+hr_id = hr_emp.search([('resource_id', '=', res_id.id)])
+approve_emp_code = hr_id.employee_code
+
+body=u"%s ขอเบิกครุภัณฑ์จาก %s" % (object.name, preparer_emp_code)
+owner=approve_emp_code
+boss=object.supervisor_res_id.employee_code
+action='A'
+is_complete=False
+pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
+          </field>
+      </record>
+      <record id="action_asset_request_resp_request" model="ir.actions.server">
+          <field name="name">Responsible Request</field>
+          <field name="model_id" ref="pabi_asset_management.model_account_asset_request"/>
+          <field name="state">code</field>
+          <field name="condition">object.state == 'ready'</field>
+          <field name="code">
+object=object.with_context(lang='th_TH')
+subject=object.name
+
+res_res = object.env['resource.resource']
+hr_emp = object.env['hr.employee']
+
+# find preparer's employee_code
+res_id = res_res.search([('user_id', '=', object.responsible_user_id.id)])
+hr_id = hr_emp.search([('resource_id', '=', res_id.id)])
+resp_emp_code = hr_id.employee_code
+
+body=u"%s ได้รับการยืนยันจาก %s" % (object.name, object.supervisor_res_id.name)
+owner=object.supervisor_res_id.employee_code
+boss=resp_emp_code
+action='A'
+is_complete=False
+pool.get('mail.thread').message_intray(cr, uid, object, subject, body, owner, boss, action, is_complete, context=context)
+          </field>
+      </record>
+      
+      <!-- Rule -->
+      <record id="asset_request_intray_message" model="base.action.rule">
+          <field name="name">Asset Request Intray Messages</field>
+          <field name="model_id" ref="pabi_asset_management.model_account_asset_request"/>
+          <field name="sequence">1</field>
+          <field name="kind">on_write</field>
+          <field name="server_action_ids"
+            eval="[(6,0,[ref('action_asset_request_supervisor_verify'),
+                         ref('action_asset_request_resp_request')])]"/>
+      </record>
+
+    </data>
+</openerp>
