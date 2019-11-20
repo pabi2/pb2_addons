@@ -275,7 +275,7 @@ class HRSalaryExpense(models.Model):
         self.ensure_one()
         AccountMove = self.env['account.move']
         vals = AccountMove.account_move_prepare(self.journal_id.id,
-                                                date=self.date,
+                                                date=fields.Date.today(),
                                                 ref=self.name)
         return vals
 
