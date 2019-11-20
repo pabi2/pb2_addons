@@ -619,19 +619,21 @@ class ResProject(LogCommon, models.Model):
 
     @api.multi
     def _compute_amount_fy(self):
-
         Fiscal = self.env['account.fiscalyear']
-        current_fy = Fiscal.browse(Fiscal.find())
-
+        plan_fiscalyear_id = self._context.get('plan_fiscalyear_id', False)
+        if plan_fiscalyear_id:
+            current_fy = Fiscal.browse(plan_fiscalyear_id)
+        else:
+            current_fy = Fiscal.browse(Fiscal.find())
         for rec in self:
             for charge_type in ['external', 'internal']:
 
                 plans = rec.budget_plan_expense_ids.\
                     filtered(lambda l: l.charge_type == charge_type)
 
-                # Find current and previous years plan line
+                # Find previous years plan line
                 prev_plans = plans.filtered(
-                    lambda l: l.fiscalyear_id.date_start <=
+                    lambda l: l.fiscalyear_id.date_start <
                     current_fy.date_start)
 
                 if charge_type == 'external':
@@ -641,7 +643,7 @@ class ResProject(LogCommon, models.Model):
                     rec.amount_before_internal = \
                         sum(prev_plans.mapped('planned_amount'))
 
-                future_plans = plans - prev_plans  # Only future
+                future_plans = plans - prev_plans  # current and future
                 future_plans = future_plans.sorted(
                     key=lambda l: l.fiscalyear_id.date_start)
                 amount_beyond = 0.0
@@ -650,20 +652,35 @@ class ResProject(LogCommon, models.Model):
 
                 if charge_type == 'external':
                     for i in range(0, years):
+                        # Convert current_fy to date
+                        current_fy_datetime = \
+                            fields.Date.from_string(current_fy.date_start)
+                        # Create next year and convert_fy to string
+                        future_fy = fields.Date.to_string(
+                            current_fy_datetime + relativedelta(years=i))
+                        amount_year = sum(future_plans.filtered(
+                            lambda l: l.fiscalyear_id.date_start ==
+                            future_fy).mapped('planned_amount'))
                         if i < 4:  # only fy1 - fy4
-                            rec['amount_fy%s' % (i + 1)] = \
-                                future_plans[i].planned_amount
+                            rec['amount_fy%s' % (i + 1)] = amount_year
                         else:
-                            amount_beyond += future_plans[i].planned_amount
+                            amount_beyond += amount_year
                     rec.amount_beyond = amount_beyond
                 else:  # internal
                     for i in range(0, years):
+                        # Convert current_fy to date
+                        current_fy_datetime = \
+                            fields.Date.from_string(current_fy.date_start)
+                        # Create next year and convert_fy to string
+                        future_fy = fields.Date.to_string(
+                            current_fy_datetime + relativedelta(years=i))
+                        amount_year = sum(future_plans.filtered(
+                            lambda l: l.fiscalyear_id.date_start ==
+                            future_fy).mapped('planned_amount'))
                         if i < 4:  # only fy1 - fy5
-                            rec['amount_fy%s_internal' % (i + 1)] = \
-                                future_plans[i].planned_amount
+                            rec['amount_fy%s_internal' % (i + 1)] = amount_year
                         else:
-                            amount_beyond_internal += \
-                                future_plans[i].planned_amount
+                            amount_beyond_internal += amount_year
                     rec.amount_beyond_internal = amount_beyond_internal
 
     @api.model
