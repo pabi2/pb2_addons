@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="action_menu_purchase_billing_report_wizard" model="ir.actions.act_window">
+            <field name="name">Purchase Billing</field>
+            <field name="res_model">xlsx.report.purchase.billing</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'lang': 'th_TH'}</field>
+        </record>
+
+        <menuitem id="menu_purchase_billing_report_wizard"
+            name="Purchase Billing"
+            parent="menu_procurement_report"
+            action="action_menu_purchase_billing_report_wizard"
+            sequence="110"/>
+    </data>
+</openerp>
