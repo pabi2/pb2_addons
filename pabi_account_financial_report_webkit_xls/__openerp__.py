@@ -26,6 +26,7 @@
         'wizard/partners_ledger_wizard_view.xml',
         'wizard/partners_balance_wizard_view.xml',
         'wizard/open_invoices_wizard_view.xml',
+        'wizard/account_financial_report_wizard_view.xml',
     ],
     'test': [
         'tests/general_ledger.yml',

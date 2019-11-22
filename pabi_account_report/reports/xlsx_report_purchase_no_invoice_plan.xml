@@ -84,7 +84,7 @@
             </field>
         </record>
 
-        <record id="action_xlsx_report_purchase_no_invoice_plan_form" model="ir.actions.act_window">
+        <!-- <record id="action_xlsx_report_purchase_no_invoice_plan_form" model="ir.actions.act_window">
             <field name="name">Purchase no Invoice Plan</field>
             <field name="res_model">xlsx.report.purchase.no.invoice.plan</field>
             <field name="view_type">form</field>
@@ -97,6 +97,6 @@
             name="Purchase no Invoice Plan"
             parent="menu_pabi_payable_report"
             action="action_xlsx_report_purchase_no_invoice_plan_form"
-            sequence="131"/>
+            sequence="131"/> -->
     </data>
 </openerp>
