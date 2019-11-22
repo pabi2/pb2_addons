@@ -152,7 +152,8 @@ class ProductProduct(models.Model):
                                       'uom': x.uom_id.name,
                                       'list_price': x.list_price,
                                       'name': x.name,
-                                      'default_code': x.default_code, })
+                                      'default_code': x.default_code,
+                                      'barcode': x.ean13, })
                              for x in products])
         for val in vals:
             product = products_dict.get(val['product_id'], {})
@@ -161,6 +162,7 @@ class ProductProduct(models.Model):
             val['list_price'] = product.get('list_price', False)
             val['name'] = product.get('name', False)
             val['default_code'] = product.get('default_code', False)
+            val['barcode'] = product.get('barcode', False)
         return vals
 
     @api.model
