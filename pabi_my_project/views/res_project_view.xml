@@ -256,6 +256,7 @@
                                         <field name="employee_id"/>
                                         <field name="project_position"/>
                                         <field name="percent_participate"/>
+                                        <field name="report_check"/>
                                     </tree>
                                 </field>
                             </page>
