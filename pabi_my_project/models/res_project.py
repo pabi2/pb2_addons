@@ -728,6 +728,10 @@ class ResProjectMember(models.Model):
         default=0.0,
         required=True,
     )
+    report_check = fields.Boolean(
+        string='Report',
+        default=True,
+    )
 
     @api.one
     @api.constrains('project_id', 'employee_id', 'project_position')
