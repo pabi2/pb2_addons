@@ -343,7 +343,10 @@ class HRExpenseClearing(models.Model):
             ail.invoice_id, exp.amount as expense_amount,
             case when ai.type in ('in_invoice')
             and ail.price_subtotal < 0.0 then -ail.price_subtotal
-            when ai.type in ('out_invoice') then ai.amount_total
+            when ai.type in ('out_invoice')
+            then ai.amount_total
+            when ai.type in ('out_refund')
+            then -ai.amount_total
             else 0.0 end as clearing_amount, ai.amount_total
         """
 
@@ -364,7 +367,7 @@ class HRExpenseClearing(models.Model):
                     left outer join hr_expense_expense exp
                         on exp.id = ai.expense_id
                 where ((ai.type in ('in_invoice') and ail.price_subtotal < 0.0)
-                    or ai.type in ('out_invoice'))
+                    or ai.type in ('out_invoice', 'out_refund'))
                     and ai.state in ('open', 'paid')
             ) a
             where advance_expense_id is not null)) b
