@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Wa FIne And Retention Form" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="40" bottomMargin="40">
-	<property name="ireport.zoom" value="1.2396694214876312"/>
+	<property name="ireport.zoom" value="1.3636363636363944"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="432"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_dr_ids&quot;]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
@@ -162,11 +162,14 @@
 	<field name="province" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/province_id/name]]></fieldDescription>
 	</field>
-	<field name="wa_total_fine_text_en" class="java.lang.String">
-		<fieldDescription><![CDATA[wa_total_fine_text_en]]></fieldDescription>
+	<field name="amount_wa_total_text_en" class="java.lang.String">
+		<fieldDescription><![CDATA[amount_wa_total_text_th]]></fieldDescription>
 	</field>
-	<field name="wa_total_fine_text_th" class="java.lang.String">
-		<fieldDescription><![CDATA[wa_total_fine_text_th]]></fieldDescription>
+	<field name="amount_wa_total_text_th" class="java.lang.String">
+		<fieldDescription><![CDATA[amount_wa_total_text_th]]></fieldDescription>
+	</field>
+	<field name="amount_wa_total" class="java.lang.Number">
+		<fieldDescription><![CDATA[amount_wa_total]]></fieldDescription>
 	</field>
 	<variable name="purchase_number" class="java.lang.String">
 		<variableExpression><![CDATA[$F{receivable_type} == "late_work_acceptance" ? $F{late_wa_purchase_number} :
@@ -240,7 +243,7 @@ Description]]></text>
 				<textElement verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{wa_total_fine_text_th}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount_wa_total_text_th}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="13" y="619" width="194" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
