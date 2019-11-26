@@ -36,13 +36,18 @@ class AccountVoucher(models.Model):
         string='Installment',
         compute='_compute_sale_installment',
     )
-    wa_total_fine_text_en = fields.Char(
-        string='WA Total Fine Text (EN)',
-        compute='_wa_total_to_word_en',
+
+    amount_wa_total = fields.Float(
+        string='Amount total',
+        compute='_compute_wa_amount',
     )
-    wa_total_fine_text_th = fields.Char(
-        string='WA Total Fine Text (TH)',
-        compute='_wa_total_to_word_th',
+    amount_wa_total_text_en = fields.Char(
+        string='Amount WA total Text (EN)',
+        compute='_amount_wa_total_to_word_en',
+    )
+    amount_wa_total_text_th = fields.Char(
+        string='Amount WA total Text (TH)',
+        compute='_amount_wa_total_to_word_th',
     )
 
 
@@ -150,7 +155,15 @@ class AccountVoucher(models.Model):
         return True
     
     @api.multi
-    def _wa_total_to_word_en(self):
+    def _compute_wa_amount(self):
+        for rec in self:
+            wa_total_fine = rec.wa_total_fine or 0.0
+            retention_amount = rec.retention_amount or 0.0
+            rec.amount_wa_total = wa_total_fine + retention_amount 
+        return True
+    
+    @api.multi
+    def _amount_wa_total_to_word_en(self):
         res = {}
         minus = False
         amount_text = ''
@@ -182,22 +195,22 @@ class AccountVoucher(models.Model):
                 a = 'Yuan'
                 b = ' '
             amount_text = amount_to_text(
-                obj.wa_total_fine, 'en', a).replace(
+                obj.amount_wa_total, 'en', a).replace(
                     'and Zero Cent', 'Only').replace(
                         'Cent', b).replace('Cents', b)
             final_amount_text = (minus and 'Minus ' +
                                  amount_text or amount_text).lower()
-            obj.wa_total_fine_text_en = final_amount_text[:1].upper() + final_amount_text[1:]
+            obj.amount_wa_total_text_en = final_amount_text[:1].upper() + final_amount_text[1:]
         
     
     @api.multi
-    def _wa_total_to_word_th(self):
+    def _amount_wa_total_to_word_th(self):
         minus = False
         amount_text = ''
         for rec in self:
-            wa_total_fine = rec.wa_total_fine
-            wa_total_text = amount_to_text_th(wa_total_fine, rec.currency_id.name)
-        rec.wa_total_fine_text_th = minus and 'ลบ' + wa_total_text or wa_total_text
+            amount_wa_total = rec.amount_wa_total
+            amount_wa_total_text = amount_to_text_th(amount_wa_total, rec.currency_id.name)
+        rec.amount_wa_total_text_th  = minus and 'ลบ' + amount_wa_total_text or amount_wa_total_text
     
 class AccountVoucherLine_Des(models.Model):
     _inherit = 'account.voucher.line'
