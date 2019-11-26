@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*
 # from . import pabi_purchase_summarize_report_xls
+from . import xlsx_report_pabi_book_stock_balance
 from . import xlsx_report_pabi_purchase_tracking
 from . import xlsx_report_pabi_purchase_summarize
 from . import xlsx_report_pabi_standard_asset

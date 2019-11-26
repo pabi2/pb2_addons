@@ -37,6 +37,7 @@
         'reports/xlsx_report_pabi_hiring_summary.xml',
         'reports/xlsx_report_pabi_green_product_summary.xml',
         'reports/xlsx_report_pabi_purchase_annual.xml',
+        'reports/xlsx_report_pabi_book_stock_balance.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/load_template.xml',
     ],

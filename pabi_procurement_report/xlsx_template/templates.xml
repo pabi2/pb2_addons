@@ -753,6 +753,45 @@
           </field>
         </record>
         
+        <!-- PABI Stock Balance -->
+        <record id="xlsx_report_pabi_book_stock_balance" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.book.stock.balance</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_book_stock_balance.xlsx</field>
+            <field name="name">PABI Book Stock Balance</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B2': 'ou_name${value or ""}',
+                            'B3': 'location_name${value or ""}',
+                            'B4': '${time.strftime("%d-%m-%Y")}',
+                            'B5': 'active${value or ""}',
+                        },
+                        'results': {
+                        	'A8': 'product_tmpl_id.ean13${value or ""}#{number_format=text}',
+                            'B8': 'product_name${value or ""}',
+                            'C8': 'ou_name${value or ""}',
+                            'D8': 'location_name${value or ""}',
+                            'E8': 'product_tmpl_id.list_price${value or "0"}#{number_format=number}',
+                            'F8': 'product_tmpl_id.standard_price${value or "0"}#{number_format=number}',
+                            'G8': 'balance${value or ""}',
+                            'H8': 'uom${value or ""}',
+                            'I8': 'price${value or ""}',
+                            'J8': 'currency${value or ""}',
+                            'K8': 'product_active${value or "FALSE"}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+              }
+              
+          </field>
+        </record>
+        
         
         
     </data>
