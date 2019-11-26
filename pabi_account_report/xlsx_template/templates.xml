@@ -1809,7 +1809,7 @@ result = pd.pivot_table(df, index=groupby,
                              'B24': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                          },
                          'results': {
-                             'A27': 'budget${value and value.org_id.name_short or ""}#{number_format=text}',
+                             'A27': 'owner_budget${value and value.org_id.name_short or ""}#{number_format=text}',
                              'B27': 'profile_id.product_categ_id${value and value.name or ""}#{number_format=text}',
                              'C27': 'account_code${value or ""}#{number_format=text}',
                              'D27': 'account_name${value or ""}#{number_format=text}',
