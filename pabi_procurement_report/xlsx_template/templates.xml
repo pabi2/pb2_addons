@@ -781,6 +781,7 @@
                             'H8': 'uom${value or ""}',
                             'I8': 'price${value or ""}',
                             'J8': 'currency${value or ""}',
+                            'K8': 'product_active${value or "FALSE"}',
                         },
                         '_TAIL_0': {
                         }

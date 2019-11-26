@@ -108,7 +108,11 @@ class XLSXReportPabiBookStockBalance(models.TransientModel):
                 ('parent_id', 'in', self.category_ids._ids)
             ]
         if self.active:
-            dom += [('product_active','=',self.active)]
+            if self.active == 'True':
+                active = True
+            else:
+                active = False
+            dom += [('product_active','=',active)]
         self.results = Result.search(dom)
     
 
@@ -192,7 +196,7 @@ class XLSXReportPabiStockBalanceResults(models.Model):
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
-            SELECT row_number() over (order by q.product_id) as id,
+            SELECT row_number() over (order by p.ean13) as id,
             t.name as product_name,
             q.product_id as product_id,
             p.default_code as product_code,
@@ -220,8 +224,8 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             left join res_company com on com.id = t.company_id
             left join res_currency rc on com.currency_id = rc.id
             left join product_category pc on pc.id = t.categ_id
-            group by t.id, sl.name, q.product_id, puom.name, ou.id, ou.name, rc.name, p.default_code, q.location_id,pc.id,pc.name,pc.parent_id,p.active 
-            order by t.name
+            group by t.id, sl.name, q.product_id, puom.name, ou.id, ou.name, rc.name, p.default_code, q.location_id,pc.id,pc.name,pc.parent_id,p.active,p.ean13 
+            order by p.ean13
         )""" % (self._table, ))
 
 
