@@ -262,3 +262,12 @@ class account_move_line(osv.osv):
                 """ % (update_sql, hook_writeoff_move_id))
         # --
         return r_id
+
+    def _update_journal_check(
+            self, cr, uid, journal_id, period_id, context=None):
+        if context is None:
+            context = {}
+        if context.get('reverse_move', False):
+            return True
+        return super(account_move_line, self)._update_journal_check(
+            cr, uid, journal_id, period_id, context=context)

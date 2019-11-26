@@ -49,6 +49,20 @@ class HRExpense(models.Model):
         readonly=True,
         copy=False,
     )
+    rev_ic_reversal_move_id = fields.Many2one(
+        'account.move',
+        related='rev_ic_move_id.reversal_id',
+        string='Internal Revenue Reversal Entry',
+        readonly=True,
+        copy=False,
+    )
+    exp_ic_reversal_move_id = fields.Many2one(
+        'account.move',
+        related='exp_ic_move_id.reversal_id',
+        string='Internal Expense Reversal Entry',
+        readonly=True,
+        copy=False,
+    )
 
     @api.one
     @api.constrains('pay_to', 'line_ids')
