@@ -18,6 +18,8 @@
     'data': [
         'security/ir.model.access.csv',
         'wizards/pabi_purchase_summarize_report_wizard.xml',
+        'wizards/pabi_purchase_billing_report.xml',
+        'wizards/pabi_purchase_invoice_plan_report.xml',
         # Created using pabi_utils xlsx_template
         'reports/xlsx_report_pabi_purchase_tracking.xml',
         'reports/xlsx_report_pabi_purchase_summarize.xml',

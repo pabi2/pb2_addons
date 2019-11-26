@@ -247,7 +247,7 @@ class AssetRegisterReport(models.TransientModel):
             dom += [('responsible_user_id', 'in',
                      tuple(self.responsible_person_ids.ids + [0]))]
         if self.org_ids:
-            dom += [('org_id', 'in', tuple(self.org_ids.ids + [0]))]
+            dom += [('owner_org_id', 'in', tuple(self.org_ids.ids + [0]))]
         if self.asset_status_ids:
             dom += [('status', 'in',
                     tuple(self.asset_status_ids.ids + [0]))]
@@ -352,6 +352,14 @@ class AssetRegisterReport(models.TransientModel):
                         concat('res.invest.construction.phase,',
                                a.invest_construction_phase_id)
                      else null end as budget,
+                -- owner_org_id
+                case
+                    when a.owner_section_id is not null then rs.org_id
+                    when a.owner_project_id is not null then rp.org_id
+                    when a.owner_invest_asset_id is not null then ria.org_id
+                    when a.owner_invest_construction_phase_id is not null then ricp.org_id
+                    else null
+                end as owner_org_id,
                 -- owner_budget
                 case when a.owner_section_id is not null then
                         concat('res.section,', a.owner_section_id)
