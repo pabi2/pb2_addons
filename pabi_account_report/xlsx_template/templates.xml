@@ -1836,26 +1836,6 @@ result = pd.pivot_table(df, index=groupby,
                              'Y27': 'owner_section_id${value and value.subsector_id and value.subsector_id.name or ""}#{number_format=text}',
                              'Z27': 'owner_section_id${value and value.sector_id and value.sector_id.name or ""}#{number_format=text}',
                          }
-                     },
-                     'Accum. Depre. Group By GL': {
-                         '_BI_': {
-                             'A2': {
-                                 'df': 'Asset Register Report',
-                                 # Group by A, B, C, D, E, F and add Subtotal (so we use pivot)
-                                 # By scripting, we need result = ...
-                                 'oper_code': """
-df = df[["C", "AT", "AU", "AV", "AW", "AX", "AY", "AZ"]]
-groupby = ["C"]
-sum_cols = ["AT", "AU", "AV", "AW", "AX", "AY", "AZ"]
-result = pd.pivot_table(df, index=groupby,
-                     values=sum_cols,
-                     aggfunc=np.sum,
-                     fill_value=0,
-                     margins=True,
-                     margins_name="Total")
-                                 """,
-                             },
-                         },
                      }
                 }
             }
