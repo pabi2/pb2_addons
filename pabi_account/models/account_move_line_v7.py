@@ -267,7 +267,9 @@ class account_move_line(osv.osv):
             self, cr, uid, journal_id, period_id, context=None):
         if context is None:
             context = {}
-        if context.get('reverse_move', False):
+        clear_prepaid = context.get('is_clear_prepaid', False)
+        reverse_move = context.get('reverse_move', False)
+        if reverse_move or clear_prepaid:
             return True
         return super(account_move_line, self)._update_journal_check(
             cr, uid, journal_id, period_id, context=context)
