@@ -196,8 +196,8 @@ class InterfaceAccountEntry(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    _sql_constraints = [('sys_doc_unique', 'unique(name,system_id)',
-                         'Document must be unique per system.')]
+#     _sql_constraints = [('sys_doc_unique', 'unique(name,system_id)',
+#                          'Document must be unique per system.')]
 
     @api.multi
     @api.depends('journal_id')
@@ -700,36 +700,38 @@ class InterfaceAccountEntry(models.Model):
         
         # 1. check existing doc_origin in check existing table
         # for check double interface of document at same time
-        check_table = self.env["interface.account.entry.check.existing"]
-        
-        if str_type == "Reverse":
-            dom = [("doc_origin", "=", str_doc_origin),
-                   ("type", "=", "reverse")]
-        else:
-            dom = [("doc_origin", "=", str_doc_origin),
-                   ("type", "=", "post"),
-                   ("system", "=", data_dict["system_id"])]
+        if system == "mySales":
+            check_table = self.env["interface.account.entry.check.existing"]
             
-        check_datas = check_table.search(dom)
-        
-        if not check_datas:
-            values = {}
-            values["doc_origin"] = str_doc_origin
             if str_type == "Reverse":
-                values["type"] = "reverse"
+                dom = [("doc_origin", "=", str_doc_origin),
+                       ("type", "=", "reverse")]
             else:
-                values["type"] = "post"
-                values["system"] = data_dict["system_id"]
-            res = check_table.create(values)
-            self._cr.commit()
-        else:
-            err_message = "ไม่สามารถ Interface ได้"
-            res = {
-                'is_success': False,
-                'result': False,
-                'messages': _(err_message)
-                }
-            return res
+                dom = [("doc_origin", "=", str_doc_origin),
+                       ("type", "=", "post"),
+                       ("system", "=", data_dict["system_id"])]
+                
+            check_datas = check_table.search(dom)
+            
+            if not check_datas:
+                values = {}
+                values["doc_origin"] = str_doc_origin
+                if str_type == "Reverse":
+                    values["type"] = "reverse"
+                else:
+                    values["type"] = "post"
+                    values["system"] = data_dict["system_id"]
+                res = check_table.create(values)
+                self._cr.commit()
+            else:
+                err_message = "ไม่สามารถ Interface ได้ เนื่องจาก" + \
+                            "มีการส่งข้อมูลซ้ำ กรุณารอสักครู่แล้วลองอีกครั้ง"
+                res = {
+                    'is_success': False,
+                    'result': False,
+                    'messages': _(err_message)
+                    }
+                return res
         
         # 2. check existing doc_origin in interface table
         ia_table = self.env["interface.account.entry"]
@@ -749,9 +751,9 @@ class InterfaceAccountEntry(models.Model):
             else:
                 system = ia_datas.system_id.name
                 ia_number = ia_datas.number
-                
+
+            err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
             if system == "mySales":
-                err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
                 res = {
                     'is_success': False,
                     'result': False,
@@ -760,7 +762,6 @@ class InterfaceAccountEntry(models.Model):
                     }
             else:
                 if str_type != "Reverse":
-                    err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
                     res = {
                         'is_success': False,
                         'result': False,
@@ -811,10 +812,15 @@ class InterfaceAccountEntry(models.Model):
                 res['result']['fiscalyear'] = \
                     document.move_id.period_id.fiscalyear_id.name
         except Exception, e:
+            err_msg = str(e)
+            if err_msg == "could not serialize access due to concurrent update":
+                err_msg = "ไม่สามารถ Interface ได้ เนื่องจาก" + \
+                        "มีผู้ใช้งานจำนวนมาก กรุณารอ 10 นาทีแล้วลองอีกครั้ง"
+                        
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': _(str(e)),
+                'messages': _(err_msg),
             }
             self._cr.rollback()
         _logger.info("IA - Output: %s" % res)
