@@ -700,7 +700,7 @@ class InterfaceAccountEntry(models.Model):
         
         # 1. check existing doc_origin in check existing table
         # for check double interface of document at same time
-        if data_dict["system_id"] == "mySales":
+        if ("system_id" in data_dict) and (data_dict["system_id"] == "mySales"):
             check_table = self.env["interface.account.entry.check.existing"]
             
             if str_type == "Reverse":
