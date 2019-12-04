@@ -535,7 +535,10 @@ class AccountAssetAdjust(models.Model):
         # 1 asset line only (init_entry)
         new_dlines = new_asset.depreciation_line_ids
         last_asset_line = fields.Date.from_string(new_dlines.line_date)
-        days = (date_bf_remove - last_asset_line).days + 1
+        # Skip when adjust date > asset line 1 day.
+        if date_bf_remove <= last_asset_line:
+            return new_asset
+        days = (date_bf_remove - last_asset_line).days
         # find amount in line per days
         if asset.profile_type != 'normal':
             last_date = last_asset_line + relativedelta(
@@ -589,7 +592,6 @@ class AccountAssetAdjust(models.Model):
             # Create a collective journal entry
             move = line.create_account_move_asset_type()
             line.move_id = move
-
         for val in range(lines):
             dlines = asset.depreciation_line_ids
             # find days in line
@@ -606,6 +608,9 @@ class AccountAssetAdjust(models.Model):
                 days = (line_date - last_asset_line).days - 1
                 amount = dlines[0].amount_accumulated - \
                     dlines[-1].amount_accumulated
+            if lines == 1:
+                amount = dlines[0].amount_accumulated
+
             line_date = fields.Date.to_string(line_date)
             asset_line_vals = {
                 'previous_id': dlines[-1].id,
@@ -661,6 +666,17 @@ class AccountAssetAdjust(models.Model):
                 Analytic.create_matched_analytic(line)
             digits = self.env['decimal.precision'].precision_get('Account')
             asset = line.asset_id
+            if self.date <= asset.date_start:
+                date_start = fields.Date.from_string(
+                    asset.date_start).strftime('%d/%m/%Y')
+                raise ValidationError(
+                    _('Date must be more than %s'
+                        % date_start))
+            if self.date_approve != asset.date_start:
+                date_start = fields.Date.from_string(
+                    asset.date_start).strftime('%d/%m/%Y')
+                raise ValidationError(
+                    _('Date Approved must be %s' % date_start))
             # Get sum days in this asset for calculate amount per day
             days = sum(asset.depreciation_line_ids.mapped('line_days'))
             # Case no depreciation_line -> depreciation_line
@@ -675,7 +691,7 @@ class AccountAssetAdjust(models.Model):
                                               line.account_analytic_id,
                                               day_amount, digits)
             line.ref_asset_id = new_asset
-            # Create asset line
+            # Create asset line old asset
             if asset.profile_type == 'normal':
                 self._create_asset_line(line, asset, day_amount, new_asset)
             else:
