@@ -599,9 +599,9 @@ class PurchaseWorkAcceptance(models.Model):
                 )
                 amount_tax += sum([tax['amount'] for tax in taxes['taxes']])
                 amount_untaxed += taxes['total']
-            rec.amount_untaxed = amount_untaxed
-            rec.amount_tax = amount_tax
-            rec.amount_total = amount_untaxed + amount_tax
+            rec.amount_untaxed = round(amount_untaxed,2)
+            rec.amount_tax = round(amount_tax,2)
+            rec.amount_total = rec.amount_untaxed + rec.amount_tax
         return True
 
     @api.multi
