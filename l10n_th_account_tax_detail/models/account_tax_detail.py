@@ -47,8 +47,23 @@ class InvoiceVoucherTaxDetail(object):
                     TaxDetail.create(vals)
 
     @api.multi
-    def _check_tax_detail_info(self):
-        for doc in self:
+    def _check_tax_detail_info(self):                                          
+        for linetax in self.invoice_line:
+            for taxid in linetax.invoice_line_tax_id._ids:
+                taxlineid = self.env['account.tax'].search([('id','=',taxid)]).description
+                if taxlineid == 'WHTP1'  or taxlineid == 'WHTC1'  : 
+                    if self.income_tax_form == 'pnd53' and taxlineid == 'WHTC1'  :
+                        continue
+                    else:
+                         raise ValidationError(
+                                _('- PND53 must be related with WHTC1 only.\n- You can choose only one of WHTC1 or WHTP1.'))
+                    if self.income_tax_form == 'pnd3' and taxlineid == 'WHTP1':
+                        continue
+                    else:
+                         raise ValidationError(
+                                _('- PND3 must be related with WHTP1 only.\n- You can choose only one of WHTC1 or WHTP1.'))  
+                 
+        for doc in self:                
             taxes = doc.tax_line.filtered(lambda l:
                                           l.tax_code_type == 'normal')
             for tax in taxes:
