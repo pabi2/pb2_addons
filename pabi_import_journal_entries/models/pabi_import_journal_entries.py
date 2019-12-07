@@ -79,6 +79,7 @@ class PabiImportJournalEntries(models.Model):
         compute='_compute_split_entries_job_uuid',
     )
 ###########################--------------------------------- start job backgruond ------------------------------- #######################
+
     @api.multi
     def _compute_split_entries_job_uuid(self):
         for rec in self:
@@ -120,9 +121,6 @@ class PabiImportJournalEntries(models.Model):
             return self.action_done()
 
 ###########################--------------------------------- end job backgruond ------------------------------- #######################
-
-
-
 
     @api.multi
     def _compute_moves(self):
@@ -247,30 +245,30 @@ class PabiImportJournalEntries(models.Model):
                 move_id.write({'line_id': move_line})
                 move_line = []
             self.env.cr.commit()
-            print("=============if====================")
             return self.with_context({'not_unlink': True}).split_entries()
         else:
             self.write({'state': 'done'})
-            # self._validate_new_move(new_move)
+            self._validate_new_move(self.move_ids)
             return True
 
     @api.model
-    def _validate_new_move(self, move):
-        ag_lines = move.line_id.filtered('activity_group_id')
-        # JV must have AG/A
-        if move.journal_id.analytic_journal_id and not ag_lines:
-            raise ValidationError(
-                _('For JV (Adjust Budget), %s'
-                  'at least 1 line must have AG/A!') % move.ref)
-        # JN must not have AG/A
-        if not move.journal_id.analytic_journal_id and ag_lines:
-            raise ValidationError(
-                _('For JN (Adjust.No.Budget), %s'
-                  'no line can have activity group!') % move.ref)
-        # Debit != Credit
-        if float_compare(sum(move.line_id.mapped('debit')),
-                         sum(move.line_id.mapped('credit')), 2) != 0:
-            raise ValidationError(_('Entry not balance %s!') % move.ref)
+    def _validate_new_move(self, moves):
+        for move in moves:
+            ag_lines = move.line_id.filtered('activity_group_id')
+            # JV must have AG/A
+            if move.journal_id.analytic_journal_id and not ag_lines:
+                raise ValidationError(
+                    _('For JV (Adjust Budget), %s'
+                      'at least 1 line must have AG/A!') % move.ref)
+            # JN must not have AG/A
+            if not move.journal_id.analytic_journal_id and ag_lines:
+                raise ValidationError(
+                    _('For JN (Adjust.No.Budget), %s'
+                      'no line can have activity group!') % move.ref)
+            # Debit != Credit
+            if float_compare(sum(move.line_id.mapped('debit')),
+                             sum(move.line_id.mapped('credit')), 2) != 0:
+                raise ValidationError(_('Entry not balance %s!') % move.ref)
 
 
 class PabiImportJournalEntriesLine(MergedChartField, models.Model):
