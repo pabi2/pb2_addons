@@ -65,7 +65,10 @@ class PabiImportJournalEntries(models.Model):
         readonly=True,
         copy=False,
     )
-    
+    commit_every = fields.Integer(
+        default=100,
+    )
+
     split_entries_job_id = fields.Many2one(
         'queue.job',
         string='split entries Job',
@@ -159,9 +162,13 @@ class PabiImportJournalEntries(models.Model):
 
     @api.multi
     def split_entries(self):
-        """ For each repat Ref, do create journal entries """
+        """ For each repat Ref, do create journal entries
+            and commit every 100 record """
         self.ensure_one()
-        self.move_ids.unlink()
+        # do first time only
+        if not self._context.get('not_unlink', False) and \
+                not any(self.line_ids.mapped('check_commit')):
+            self.move_ids.unlink()
         moves = {}
         for line in self.line_ids:
             if not moves.get(line.ref, False):
@@ -187,44 +194,65 @@ class PabiImportJournalEntries(models.Model):
                 'fund_id': line.fund_id or line._get_default_fund(),
             }
             moves[line.ref].append(vals)
-        # Create JE
-        for ref, lines in moves.iteritems():
-            move_dict = {'ref': ref}
-            move_lines = []
-            i = 0
-            for l in lines:
-                period_id = self.env['account.period'].find(dt=line['date']).id
-                if i == 0:  # First loop
+        # first time to create all move
+        if not self._context.get('not_unlink', False) and \
+                not any(self.line_ids.mapped('check_commit')):
+            for ref, lines in moves.iteritems():
+                move_dict = {'ref': ref}
+                for l in lines:
+                    period_id = \
+                        self.env['account.period'].find(dt=line['date']).id
                     move_dict.update({
                         'journal_id': l['journal_id'],
                         'date': l['date'],
                         'to_be_reversed': l['to_be_reversed'],
                         'period_id': period_id,
                     })
-                i += 1
+                new_move = self.env['account.move'].create(move_dict)
+                new_move.date_document = new_move.date  # Reset date
+                self.move_ids += new_move
+        # Search line depend on commit
+        lines = self.env['pabi.import.journal.entries.line'].search([
+            ('import_id', '=', self.id),
+            ('check_commit', '=', False)], limit=self.commit_every)
+        if lines:
+            # Create JE
+            move_lines = []
+            for l in lines:
+                period_id = \
+                    self.env['account.period'].find(dt=line['date']).id
                 move_lines.append((0, 0, {
-                    'docline_seq': l['docline_seq'],
-                    'partner_id': l['partner_id'],
-                    'activity_group_id': l['activity_group_id'],
-                    'activity_id': l['activity_id'],
-                    'account_id': l['account_id'],
-                    'name': l['name'],
-                    'debit': l['debit'],
-                    'credit': l['credit'],
-                    'chartfield_id': l['chartfield_id'],
-                    'cost_control_id': l['cost_control_id'],
-                    'origin_ref': l['origin_ref'],
+                    'ref': l.ref,
+                    'docline_seq': l.docline_seq,
+                    'partner_id': l.partner_id.id,
+                    'activity_group_id': l.activity_group_id.id,
+                    'activity_id': l.activity_id.id,
+                    'account_id': l.account_id.id,
+                    'name': l.name,
+                    'debit': l.debit,
+                    'credit': l.credit,
+                    'chartfield_id': l.chartfield_id.id,
+                    'cost_control_id': l.cost_control_id.id,
+                    'origin_ref': l.origin_ref,
                     # More data
                     'period_id': period_id,
                     'fund_id': line._get_default_fund(),
                     }))
-            move_dict['line_id'] = move_lines
-            new_move = self.env['account.move'].create(move_dict)
-            new_move.date_document = new_move.date  # Reset date
-            self._validate_new_move(new_move)
-            self.move_ids += new_move
-        self.write({'state': 'done'})
-        return True
+            lines.write({'check_commit': True})
+            move_line = []
+            for move_id in self.move_ids:
+                for ml in move_lines:
+                    if ml[2].get('ref') == move_id.ref:
+                        move_line.append(ml)
+                move_id.write({'line_id': move_line})
+                move_line = []
+            self.env.cr.commit()
+            print("=============if====================")
+            return self.with_context({'not_unlink': True}).split_entries()
+        else:
+            self.write({'state': 'done'})
+            # self._validate_new_move(new_move)
+            return True
 
     @api.model
     def _validate_new_move(self, move):
@@ -254,6 +282,9 @@ class PabiImportJournalEntriesLine(MergedChartField, models.Model):
         string='Import ID',
         index=True,
         ondelete='cascade',
+    )
+    check_commit = fields.Boolean(
+        copy=False,
     )
     # Header
     ref = fields.Char(
