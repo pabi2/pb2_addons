@@ -40,7 +40,8 @@ class AccountInvoice(models.Model):
             acceptance = self.late_delivery_work_acceptance_id
             self.taxbranch_id = acceptance.order_id.taxbranch_id
             penalty_line = self.env['account.invoice.line'].new()
-            amount_penalty = acceptance.total_fine_cal
+            #amount_penalty = acceptance.total_fine_cal
+            amount_penalty = acceptance.total_fine
             if acceptance.is_manual_fine:
                 amount_penalty = acceptance.manual_fine
             company = self.env.user.company_id

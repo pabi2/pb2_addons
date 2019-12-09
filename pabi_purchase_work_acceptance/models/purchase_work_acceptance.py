@@ -236,7 +236,7 @@ class PurchaseWorkAcceptance(models.Model):
                 rec.order_id.num_installment or False
 
     @api.model
-    @api.depends('date_receive', 'date_scheduled_end')
+    @api.depends('date_receive', 'date_scheduled_end','total_fine')
     def _compute_fine_amount_to_word_th(self):
         res = {}
         minus = False
@@ -475,7 +475,8 @@ class PurchaseWorkAcceptance(models.Model):
                     total_fine_per_day += fine_per_day
                     total_fine += -1 * fine_delta_day * fine_per_day
                 acceptance.total_fine_cal = total_fine
-                acceptance.total_fine = acceptance.total_fine_cal
+                if not acceptance.total_fine:
+                    acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
                 acceptance.overdue_day = -1 * fine_delta_day
             else:
@@ -519,7 +520,8 @@ class PurchaseWorkAcceptance(models.Model):
                 total_fine_per_day += fine_per_day
                 total_fine += -1 * fine_delta_day * fine_per_day
                 acceptance.total_fine_cal = total_fine
-                acceptance.total_fine = acceptance.total_fine_cal
+                if not acceptance.total_fine:
+                    acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
                 acceptance.overdue_day = -1 * fine_delta_day
             else:
@@ -555,7 +557,13 @@ class PurchaseWorkAcceptance(models.Model):
 
     @api.multi
     def write(self, vals):
+        if vals.get('total_fine', False) and not vals.get('total_fine_cal', False):
+            vals['total_fine_cal'] = vals['total_fine']
+            
         res = super(PurchaseWorkAcceptance, self).write(vals)
+        
+        if vals.get('date_receive', False) or vals.get('date_contract_end', False) or vals.get('acceptance_line_ids', False):
+            self.total_fine = self.total_fine_cal
         # Redmine #2346
         self.change_invoice_detail()  # We did comment it, but set it back.
         return res
