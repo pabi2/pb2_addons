@@ -24,7 +24,7 @@ class AccountMove(models.Model):
         if self._context.get('overwrite_move_name', False):
             vals['name'] = '/'
         results = super(AccountMove, self).create(vals)
-        if results.journal_id.code in ('STJ','TT','TP'):
+        if results.journal_id.code in ('STJ','TP'):
             for line in results.line_id:
                 line._get_detail_move_line()
         
