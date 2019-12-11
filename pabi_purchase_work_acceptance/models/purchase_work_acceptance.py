@@ -475,8 +475,7 @@ class PurchaseWorkAcceptance(models.Model):
                     total_fine_per_day += fine_per_day
                     total_fine += -1 * fine_delta_day * fine_per_day
                 acceptance.total_fine_cal = total_fine
-                if not acceptance.total_fine:
-                    acceptance.total_fine = acceptance.total_fine_cal
+                acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
                 acceptance.overdue_day = -1 * fine_delta_day
             else:
@@ -520,8 +519,7 @@ class PurchaseWorkAcceptance(models.Model):
                 total_fine_per_day += fine_per_day
                 total_fine += -1 * fine_delta_day * fine_per_day
                 acceptance.total_fine_cal = total_fine
-                if not acceptance.total_fine:
-                    acceptance.total_fine = acceptance.total_fine_cal
+                acceptance.total_fine = acceptance.total_fine_cal
                 acceptance.fine_per_day = total_fine_per_day
                 acceptance.overdue_day = -1 * fine_delta_day
             else:
