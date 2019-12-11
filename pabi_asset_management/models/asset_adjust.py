@@ -518,6 +518,14 @@ class AccountAssetAdjust(models.Model):
         new_asset.account_analytic_id = \
             Analytic.create_matched_analytic(new_asset)
         asset.target_asset_ids += new_asset
+        # case : new asset don't have asset depreciation_line
+        if new_asset.profile_type != 'normal':
+            new_asset.write({
+                'value_depreciated': 0.0,
+                'net_book_value': new_asset.purchase_value,
+                'value_residual': new_asset.purchase_value
+            })
+            return new_asset
         # Set back to normal
         # new_asset.type = 'normal'
         # Create line continue from old asset
