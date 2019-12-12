@@ -44,3 +44,8 @@ class ResCompany(models.Model):
         string='Recognize VAT Journal',
         domain=[('type', '=', 'general')],
     )
+    group_email_wht = fields.Char(
+        string='Group Email WHT',
+        default='acf-adv@nstda.or.th',
+        size=500,
+    )

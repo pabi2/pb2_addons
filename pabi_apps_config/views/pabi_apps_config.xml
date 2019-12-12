@@ -173,6 +173,11 @@
                               <field name="head_account_employee_id" class="oe_inline"/>
                             </div>
                         </div>
+                        <label for="id" string="Witholding cert"/>
+                        <div>
+                        	<label string="Group Email"/>
+                            <field name="group_email_wht" class="oe_inline"/>
+                        </div>
                     </group>
                     <!-- Loan Installment -->
                     <separator string="Loan Installment"/>

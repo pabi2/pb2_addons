@@ -40,3 +40,7 @@ class AccountConfigSettings(models.TransientModel):
         string='Recognize VAT Journal',
         related="company_id.recognize_vat_journal_id",
     )
+    group_email_wht = fields.Char(
+        string='Group Email WHT',
+        related='company_id.group_email_wht',
+    )

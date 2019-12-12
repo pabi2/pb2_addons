@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!--Email template -->
+        <record id="email_template_withholding_certs" model="email.template">
+            <field name="name">Withholding Certs - Send by Email</field>
+			<field name="model">account.wht.cert</field>
+			<field name="model_id" ref="l10n_th_account.model_account_wht_cert" />
+			<field name="email_from">${(object.company_partner_id.email or 'noreply@localhost')|safe}</field>
+			<field name="partner_to"></field>
+            <field name="email_to"><![CDATA[{to}]]></field>
+            <field name="report_template" ref="l10n_th_account.report_withholding_cert"/>
+            <field name="report_name">Withholding Tax Certificate</field>
+            <field name="lang">th_TH</field>
+			<field name="subject">หนังสือรับรองการหักภาษี ณ ที่จ่าย</field>
+            <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
+    <p> <span>เรียน  {dear}</span></p>
+    <p style="text-indent: 25px;">
+       ด้วยสำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ ได้จัดทำและจัดเก็บเอกสาร หนังสือรับรองการหักภาษี ณ ที่จ่าย ตามมาตรา 50 ทวิ ในรูปแบบอิเล็กทรอนิกส์ และได้ขออนุมัติกับสรรพากร เลขที่อ้างอิง  ................. ลงวันที่ .................
+    </p>
+    <p style="text-indent: 25px;">
+      ทั้งนี้ สำนักงานฯ ขอจัดส่งหนังสือรับรองหักภาษี ณ ที่จ่าย มายังหน่วยงาน/บุคคล ทาง e-mail {mail} โดยให้ผู้ถูกหักภาษี ณ ที่จ่าย สามารถใช้เอกสารนี้ประกอบการยื่นชำระภาษีได้ตามปกติ
+    </p>
+    <p style="text-indent: 25px;">
+        หากมีข้อสงสัยโปรดแจ้งกลับทาง e-mail  หรือโทร 02 564 7000 ต่อ 71303, 71339
+    </p>
+    <p>
+        <div style="text-align: left;">การเงินและบัญชี</div>
+        <div style="text-align: left;">สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ</div>
+    </p>
+</div>
+            ]]></field>
+        </record>
+    </data>
+</openerp>

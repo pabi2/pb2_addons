@@ -25,6 +25,7 @@
         'views/account_wht_cert.xml',
         'views/voucher_payment_receipt_view.xml',
         'views/account_config.xml',
+        'data/email_template.xml',
     ],
     'demo': [
     ],

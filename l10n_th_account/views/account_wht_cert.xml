@@ -10,6 +10,7 @@
                         <button name="action_draft" string="Set to Draft" type="object" states="done,cancel"/>
                         <button name="action_done" string="Done" type="object" states="draft" class="oe_highlight"/>
                         <button name="action_cancel" string="Cancel" type="object" states="draft"/>
+                        <button name="send_mail" string="Email" type="object" class="oe_highlight"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,done" clickable="True"/>
                     </header>
                     <sheet>
@@ -28,6 +29,8 @@
                                 <field name="supplier_partner_id"/>
                                 <field name="supplier_taxid" string="Tax ID"/>
                                 <field name="supplier_address" string="Address"/>
+                                <field name="supplier_email" string="Email"/>
+                                <field name="date_sent_mail" />
                             </group>
                         </group>
                         <group>
@@ -36,11 +39,14 @@
                                 <field name="period_id" invisible="1"/>
                                 <field name="tax_payer"/>
                                 <field name="sequence_display" readonly="1"/>
+                                <field name="create_uid" string="WHT create by"/>
                             </group>
                             <group string="References">
                                 <field name="date"/>
                                 <field name="voucher_number" attrs="{'invisible': [('voucher_number', '=', False)]}"/>
                                 <field name="calendar_period_id"/>
+                                <field name="payment_export_id" string="Payment Export"/>
+                                <field name="date_value"/>
                             </group>
                         </group>
                         <field name="wht_line">
@@ -59,6 +65,10 @@
                             <button string="Cancel" class="oe_link" special="cancel"/>
                         </footer>
                     </sheet>
+                    <group>
+	                    <separator string="Memo :"/>
+	                    <field name="note" string=" "/>
+                    </group>
                 </form>
             </field>
         </record>
@@ -83,6 +93,9 @@
                     <field name="supplier_partner_id"/>
                     <field name="income_tax_form"/>
                     <field name="tax_payer"/>
+                    <field name="date_value"/>
+                    <field name="create_uid" string="WHT create by"/>
+                    <field name="mail_state"/>
                     <field name="state"/>
                 </tree>
             </field>

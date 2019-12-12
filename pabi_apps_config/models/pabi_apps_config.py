@@ -62,6 +62,10 @@ class PABIAppsConfigSettings(models.TransientModel):
         string='Retention on Payment',
         related="company_id.retention_on_payment",
     )
+    group_email_wht = fields.Char(
+        string='Group Email WHT',
+        related='company_id.group_email_wht',
+    )
     # Retention accounts
     account_retention_customer = fields.Many2one(
         'account.account',

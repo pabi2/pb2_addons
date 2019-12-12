@@ -3,6 +3,8 @@ from datetime import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from .res_partner import INCOME_TAX_FORM
+from datetime import datetime
+
 
 WHT_CERT_INCOME_TYPE = [('1', '1. เงินเดือน ค่าจ้าง ฯลฯ 40(1)'),
                         ('2', '2. ค่าธรรมเนียม ค่านายหน้า ฯลฯ 40(2)'),
@@ -137,6 +139,47 @@ class AccountWhtCert(models.Model):
          'unique (period_id, sequence, income_tax_form)',
          'WHT Sequence must be unique!'),
     ]
+    
+    supplier_email = fields.Char(
+        related='supplier_partner_id.email',
+        string='Supplier Email',
+        readonly=True,
+    )
+    
+    date_sent_mail = fields.Date(
+        string='Date sent mail',
+    )
+    
+    payment_export_id = fields.Many2one(
+        'payment.export',
+        string='Payment Export ID',
+        related='voucher_id.payment_export_id',
+    )
+    
+    date_value = fields.Date(
+        related='payment_export_id.date_value',
+        string='Value/Cheque Date',
+        readonly=True,
+    )
+    
+    mail_state = fields.Selection(
+        [('draft', ''),
+         ('done', 'sent')],
+        string='Mail status',
+        default='draft',
+        copy=False,
+    )
+    
+    note = fields.Text(
+        string='Notes',
+        size=1000,
+    )
+    
+    group_email_wht = fields.Char(
+        string="Group Email WHT",
+        default=lambda self: self.env.user.company_id.group_email_wht,
+        size=500,
+    )
 
     # Computed fields to be displayed in WHT Cert.
     x_voucher_number = fields.Char(compute='_compute_cert_fields')
@@ -424,6 +467,40 @@ class AccountWhtCert(models.Model):
                     'wht_cert_income_desc': line.wht_cert_income_desc,
                 })
         return
+    
+    @api.multi
+    def send_mail(self):
+        email_template_name = 'Withholding Certs - Send by Email'
+        template = self.env['email.template'].search([('name','=',email_template_name)])
+        if template:
+            if not self.group_email_wht:
+                raise ValidationError(
+                    _('Please enter valid email address for group email!'))
+#             if not self.supplier_email:
+#                     raise ValidationError(_("Please fill Email."))
+#             mail = self.supplier_email
+            dear = ""
+            if self.income_tax_form == 'pnd3':
+                dear = self.supplier_partner_id.display_name2
+            elif self.income_tax_form == 'pnd53':
+                dear = 'ฝ่ายบัญชีและการเงิน'
+            body_html = template.body_html
+            body_html = body_html.replace("{dear}", dear)
+            body_html = body_html.replace("{mail}",self.group_email_wht)
+            template.body_html = body_html
+            to_email = 'preerapol.che@ncr.nstda.or.th'
+            template.email_to = to_email
+            if template:
+                    ctx = self.env.context.copy()
+                    ctx.update({
+                        'date_print': fields.Date.context_today(self),
+                        'email_attachment': True,
+                    })
+            template.with_context(ctx).send_mail(self.id)
+            self.write({'mail_state': 'done',
+                    'date_sent_mail': datetime.today(),
+                    })
+        return True
 
 
 class WhtCertTaxLine(models.Model):
