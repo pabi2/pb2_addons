@@ -478,16 +478,7 @@ class AccountWhtCert(models.Model):
                     _('Please enter valid email address for group email!'))
 #             if not self.supplier_email:
 #                     raise ValidationError(_("Please fill Email."))
-#             mail = self.supplier_email
-            dear = ""
-            if self.income_tax_form == 'pnd3':
-                dear = self.supplier_partner_id.display_name2
-            elif self.income_tax_form == 'pnd53':
-                dear = 'ฝ่ายบัญชีและการเงิน'
-            body_html = template.body_html
-            body_html = body_html.replace("{dear}", dear)
-            body_html = body_html.replace("{mail}",self.group_email_wht)
-            template.body_html = body_html
+#             mail = self.supplier_email       
             to_email = 'preerapol.che@ncr.nstda.or.th'
             template.email_to = to_email
             if template:
