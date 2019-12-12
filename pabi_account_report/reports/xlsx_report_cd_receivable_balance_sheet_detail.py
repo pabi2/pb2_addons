@@ -127,6 +127,7 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
     @api.multi
     def get_execute_datas(self, loan_agreements, brought_forwards,
                           supplier_payments, customer_invoices):
+        print '\n get_execute_datas'
         # Set loan agreement ids
         loan_agreement_ids = loan_agreements.ids
         if len(loan_agreement_ids) in [0, 1]:
@@ -143,6 +144,10 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
         customer_invoice_ids = customer_invoices.ids
         if len(customer_invoice_ids) in [0, 1]:
             customer_invoice_ids.extend([0, 0])
+        print '\n loan_agreement_ids: '+str(loan_agreement_ids)
+        print '\n brought_forward_ids: '+str(brought_forward_ids)
+        print '\n supplier_payment_ids: '+str(supplier_payment_ids)
+        print '\n customer_invoice_ids: '+str(customer_invoice_ids)
         self._cr.execute("""
             SELECT lca.id AS loan_agreement_id, bf.brought_forward,
                    sp.voucher_id AS supplier_payment_id, ci.invoice_plan_id
@@ -261,6 +266,7 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
 
     @api.multi
     def create_cd_receivable_balance_sheet_detail(self):
+        print '\n create_cd_receivable_balance_sheet_detail'
         # Get loan agreements
         loan_agreements = self.get_loan_agreements()
 
