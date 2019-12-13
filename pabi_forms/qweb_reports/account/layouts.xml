@@ -705,7 +705,7 @@
                                                     <span t-field="o.document_id.validate_user_id.display_name"/>
                                                 </t>
                                             </t>
-                                            <t t-if="o.document_id and o.document_id.validate_user_id and o.document_id.validate_user_id and o.journal_id.code == 'TP'">
+                                            <t t-if="o.document_id and o.journal_id.code in ('TP','EXJ')">
 												<span t-field="o.create_uid.display_name"/>                                           
 											 </t>
                                             <t t-if="not o.document_id">
@@ -726,7 +726,7 @@
                                                     <span t-field="o.document_id.validate_date"/>
                                                 </t>
                                             </t>
-                                              <t t-if="o.document_id and o.journal_id.code == 'TP'">
+                                              <t t-if="o.document_id and o.journal_id.code in ('TP','EXJ')">
                                                     <span t-field="o.date"/>
                                                 </t>
                                             <t t-if="not o.document_id">
