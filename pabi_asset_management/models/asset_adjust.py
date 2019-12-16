@@ -518,6 +518,7 @@ class AccountAssetAdjust(models.Model):
         new_asset.account_analytic_id = \
             Analytic.create_matched_analytic(new_asset)
         asset.target_asset_ids += new_asset
+        new_asset.date_remove = False
         # case : new asset don't have asset depreciation_line
         if new_asset.profile_type != 'normal':
             new_asset.write({
