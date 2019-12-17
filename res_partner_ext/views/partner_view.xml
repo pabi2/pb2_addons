@@ -96,6 +96,7 @@
                 </xpath>
                 <xpath expr="/form/sheet/group//field[@name='title']" position="replace"/>
                 <xpath expr="/form/sheet/group//field[@name='email']" position="after">
+                  <field name="email_accountant"/>
                   <field name="customer_legacy_code" readonly="True"/>
                   <field name="supplier_legacy_code" readonly="True"/>
                 </xpath>
