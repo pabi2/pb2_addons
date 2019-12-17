@@ -577,8 +577,7 @@ class AccountAssetAdjust(models.Model):
         running_asset = asset.depreciation_line_ids.filtered(
             lambda l: l.type == 'depreciate')
         lines = 2
-        if asset.depreciation_line_ids[-1].line_date == date_bf_remove or \
-                not running_asset:
+        if asset.depreciation_line_ids[-1].line_date == date_bf_remove:
             lines = 1
             # Create a collective journal entry
             move = line.create_account_move_asset_type()
@@ -613,10 +612,12 @@ class AccountAssetAdjust(models.Model):
                 'type': 'remove' if line_date == self.date
                 else 'depreciate',
             }
-            # Check asset line never post
-            if not dlines.filtered(lambda l: l.type == 'depreciate'):
-                asset_line_vals.update({'amount_accumulated': amount})
             asset_line = self.env['account.asset.line'].create(asset_line_vals)
+            # Check asset line never post
+            if not running_asset:
+                ctx = {'allow_asset_line_update': True}
+                asset_line.with_context(ctx).depreciated_value = 0.0
+                asset_line.with_context(ctx).amount_accumulated = amount
             # Auto post last cal asset line before removal
             if val == 0 and lines == 2:
                 move_old_line_id = asset_line.create_move()

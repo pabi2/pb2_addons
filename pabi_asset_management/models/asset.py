@@ -681,17 +681,26 @@ class AccountAsset(ChartFieldAction, models.Model):
     def _compute_line_dates(self, table, start_date, stop_date):
         all_dates = super(AccountAsset, self)._compute_line_dates(
             table, start_date, stop_date)
+        first_asset = self.depreciation_line_ids.filtered(
+            lambda l: l.init_entry)
         # Check case asset from adjust or import
         asset_line = self.depreciation_line_ids.filtered(
             lambda l: l.move_check and not l.init_entry)
         line_dates = all_dates
         if len(asset_line) == 1:
+            first_asset_date = \
+                fields.Datetime.from_string(first_asset[-1].line_date)
             date_current = fields.Datetime.from_string(asset_line.line_date)
             line_dates = [line for line in all_dates if line >= date_current]
-            line_dates.insert(0, date_current - relativedelta(days=1))
-            # Case fiscalyear difference
-            # (i.e : Purchase value 2019 and Depreciation 2020)
-            line_dates.insert(0, all_dates[0])
+            # check case month duplicate
+            if first_asset_date.strftime('%m') == date_current.strftime('%m'):
+                line_dates.insert(0, date_current)
+                line_dates.insert(0, date_current)
+            else:
+                line_dates.insert(0, date_current - relativedelta(days=1))
+                # Case fiscalyear difference
+                # (i.e : Purchase value 2019 and Depreciation 2020)
+                line_dates.insert(0, all_dates[0])
         return line_dates
 
     # @api.multi
