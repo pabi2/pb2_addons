@@ -30,6 +30,7 @@
                                 <field name="supplier_taxid" string="Tax ID"/>
                                 <field name="supplier_address" string="Address"/>
                                 <field name="supplier_email" string="Email"/>
+                                <field name="supplier_email_accountant" string="Email Accountant"/>
                                 <field name="date_sent_mail" />
                             </group>
                         </group>

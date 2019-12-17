@@ -146,6 +146,12 @@ class AccountWhtCert(models.Model):
         readonly=True,
     )
     
+    supplier_email_accountant = fields.Char(
+        related='supplier_partner_id.email_accountant',
+        string='Supplier Email Accountant',
+        readonly=True,
+    )
+    
     date_sent_mail = fields.Date(
         string='Date sent mail',
     )
