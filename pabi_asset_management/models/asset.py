@@ -695,9 +695,8 @@ class AccountAsset(ChartFieldAction, models.Model):
             # check case month duplicate
             if first_asset_date.strftime('%m') == date_current.strftime('%m'):
                 line_dates.insert(0, date_current)
-                line_dates.insert(0, date_current)
             else:
-                line_dates.insert(0, date_current - relativedelta(days=1))
+                line_dates.insert(0, date_current)
                 # Case fiscalyear difference
                 # (i.e : Purchase value 2019 and Depreciation 2020)
                 line_dates.insert(0, all_dates[0])

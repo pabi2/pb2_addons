@@ -508,8 +508,8 @@ class AccountAssetAdjust(models.Model):
         return vals
 
     @api.model
-    def _duplicate_asset(
-            self, asset, product, asset_name, analytic, day_amount):
+    def _duplicate_asset(self, asset, product, asset_name, analytic,
+                         day_amount, digits=None):
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
         # add code, po and pr in asset
         asset_dict.update({'code': '/'})
@@ -537,6 +537,11 @@ class AccountAssetAdjust(models.Model):
         last_asset_line = fields.Date.from_string(new_dlines.line_date)
         days = (date_bf_remove - last_asset_line).days + 1
         # find amount in line per days
+        if asset.profile_type != 'normal':
+            last_date = last_asset_line + relativedelta(
+                years=new_asset.method_number, days=-1)
+            days_all = (last_date - last_asset_line).days + 1
+            day_amount = round(new_asset.depreciation_base / days_all, digits)
         amount = days * day_amount
         line_name = new_asset._get_depreciation_entry_name(len(new_dlines))
         line_date = fields.Date.to_string(date_bf_remove)
@@ -549,6 +554,8 @@ class AccountAssetAdjust(models.Model):
             'type': 'depreciate',
         }
         asset_line = self.env['account.asset.line'].create(asset_line_vals)
+        if asset.profile_type != 'normal':
+            return new_asset
         asset_line.move_check = True
         return new_asset
 
@@ -653,17 +660,29 @@ class AccountAssetAdjust(models.Model):
             asset = line.asset_id
             # Get sum days in this asset for calculate amount per day
             days = sum(asset.depreciation_line_ids.mapped('line_days'))
-            day_amount = round(asset.depreciation_base / days, digits)
+            # Case no depreciation_line -> depreciation_line
+            day_amount = 0.0
+            if asset.profile_type == 'normal':
+                day_amount = round(asset.depreciation_base / days, digits)
             # Remove
             self._set_asset_as_removed(asset, line.target_status)
             # Simple duplicate to new asset type, name
             new_asset = self._duplicate_asset(asset, line.product_id,
                                               line.asset_name,
                                               line.account_analytic_id,
-                                              day_amount)
+                                              day_amount, digits)
             line.ref_asset_id = new_asset
             # Create asset line
-            self._create_asset_line(line, asset, day_amount, new_asset)
+            if asset.profile_type == 'normal':
+                self._create_asset_line(line, asset, day_amount, new_asset)
+            else:
+                # Create a collective journal entry
+                move = line.create_account_move_asset_type()
+                line.move_id = move
+                new_asset.depreciation_line_ids[0].move_id = move
+                new_asset.depreciation_line_ids.filtered(
+                    lambda l: l.type == 'depreciate' and not l.move_check
+                    ).create_move()
             # Set move_check equal to amount depreciated
             new_asset.compute_depreciation_board()
             new_asset.validate()
