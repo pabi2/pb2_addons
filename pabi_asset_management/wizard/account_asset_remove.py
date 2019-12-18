@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models, api, _
-from openerp.exceptions import ValidationError
+from openerp import fields, models, api
 
 
 class AccountAssetRemove(models.TransientModel):
@@ -33,4 +32,5 @@ class AccountAssetRemove(models.TransientModel):
         self = self.with_context(overwrite_move_name='/')
         res = super(AccountAssetRemove, self).remove()
         asset.status = self.target_status
+        asset.active = False
         return res

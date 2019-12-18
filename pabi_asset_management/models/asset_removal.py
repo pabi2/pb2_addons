@@ -402,7 +402,6 @@ class AccountAssetRemovalLines(models.Model):
             residual_value = self._prepare_early_removal(asset)
         else:
             residual_value = asset.value_residual
-
         ctx = dict(self._context, company_id=asset.company_id.id)
         period_id = self.period_id.id
         if not period_id:
@@ -413,7 +412,6 @@ class AccountAssetRemovalLines(models.Model):
                 raise UserError(_(
                     "No period defined for the removal date."))
             period_id = period_ids[0].id
-
         dlines = asset_line_obj.search(
             [('asset_id', '=', asset.id), ('type', '=', 'depreciate')],
             order='line_date desc')
@@ -423,7 +421,6 @@ class AccountAssetRemovalLines(models.Model):
             create_dl = asset_line_obj.search(
                 [('asset_id', '=', asset.id), ('type', '=', 'create')])[0]
             last_date = create_dl.line_date
-
         if self.date_remove < last_date:
             raise UserError(
                 _("The removal date must be after "
@@ -431,7 +428,6 @@ class AccountAssetRemovalLines(models.Model):
 
         line_name = asset._get_depreciation_entry_name(len(dlines) + 1)
         journal_id = asset.profile_id.journal_id.id
-
         # create move
         move_vals = {
             'name': asset.name,
@@ -442,7 +438,6 @@ class AccountAssetRemovalLines(models.Model):
             'narration': self.note,
         }
         move = move_obj.create(move_vals)
-
         # create asset line
         asset_line_vals = {
             'amount': residual_value,
@@ -453,7 +448,11 @@ class AccountAssetRemovalLines(models.Model):
             'type': 'remove',
         }
         asset_line_obj.create(asset_line_vals)
-        asset.write({'state': 'removed', 'date_remove': self.date_remove})
+        asset.write({
+            'state': 'removed',
+            'date_remove': self.date_remove,
+            'active': False,
+        })
 
         # create move lines
         move_lines = self._get_removal_data(asset, residual_value)
@@ -546,7 +545,6 @@ class AccountAssetRemovalLines(models.Model):
                 'asset_id': asset.id
             }
             move_lines.append((0, 0, move_line_vals))
-
         move_line_vals = {
             'name': asset.name,
             'account_id': profile.account_asset_id.id,
