@@ -2280,6 +2280,52 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
+		
 
+        
+         <record id="xlsx_report_pabi_employee_advance_report" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.employee.advance.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_employee_advance_report.xlsx</field>
+            <field name="name">Employee Advance Report</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                   '__EXPORT__': {
+                       'Employee Advance Report': {
+                         '_HEAD_': {                                                 	
+                         	'B5': 'date_report${value or ""}#{number_format=date}',
+                            'B6': 'employee_codes${value and ", ".join([" ".join(list(filter(lambda l: l != False, [x.first_name,"", x.last_name]))) for x in value]) or ""}',
+                            'B7': '${env.user.display_name}',
+                            'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
+                        			},
+                        'results': {
+                        	'A13' :'employee_code${value or ""}',
+                            'B13' :'name_th${value or ""}',
+                            'C13' :'av_doc${value or ""}',
+                            'D13' :'description${value or ""}',
+                            'E13' :'supplier_invoice_number${value or ""}',
+                            'F13' :'source_doc${value or ""}',
+                            'G13' :'doc_date${value or ""}#{number_format=date}',
+                            'H13' :'posting_date${value or ""}#{number_format=date}',
+                            'I13' :'due_date${value or ""}#{number_format=date}',
+                            'J13' :'period_name${value or ""}',
+                            'K13' :'organization${value or ""}',
+                            'L13' :'costcenter_code${value or ""}',
+                            'M13' :'costcenter_name${value or ""}',
+                            'N13' :'source_budget${value or ""}',
+                            'O13' :'source_budget_name${value or ""}',
+                            'P13' :'amount${value or ""}',
+                            'Q13' :'reconcile_ref${value or ""}',
+                            'R13' :'reconcile_partial_id${value or ""}',
+                        	},
+                        	'_GROUPBY_results["employee_code"]': {  # groupby
+                                'P13': '@{sum}#{font=bold;number_format=number}',
+                            },
+                         }
+                    }
+                }
+            </field>
+        </record> 
     </data>
 </openerp>
