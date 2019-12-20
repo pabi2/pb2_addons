@@ -493,7 +493,7 @@ class AccountWhtCert(models.Model):
                         'date_print': fields.Date.context_today(self),
                         'email_attachment': True,
                     })
-            template.with_context(ctx).send_mail(self.id,force_send=True)
+            template.with_context(ctx).send_mail(self.id)
             self.write({'mail_state': 'done',
                     'date_sent_mail': datetime.today(),
                     })
