@@ -633,7 +633,10 @@ class AccountAssetAdjust(models.Model):
                 # Create a collective journal entry
                 move = line.create_account_move_asset_type()
                 line.move_id = move
-        new_asset.depreciation_line_ids[-1].move_id = move
+
+        for line in new_asset.depreciation_line_ids:
+            line.move_id = move
+        # new_asset.depreciation_line_ids[-1].move_id = move
 
     @api.multi
     def adjust_asset_type(self):
@@ -680,9 +683,11 @@ class AccountAssetAdjust(models.Model):
                 move = line.create_account_move_asset_type()
                 line.move_id = move
                 new_asset.depreciation_line_ids[0].move_id = move
-                new_asset.depreciation_line_ids.filtered(
+                move_id = new_asset.depreciation_line_ids.filtered(
                     lambda l: l.type == 'depreciate' and not l.move_check
                     ).create_move()
+                # Auto post
+                self.env['account.move'].browse(move_id).post()
             # Set move_check equal to amount depreciated
             new_asset.compute_depreciation_board()
             new_asset.validate()
