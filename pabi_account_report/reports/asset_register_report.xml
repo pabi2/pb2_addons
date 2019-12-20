@@ -90,6 +90,12 @@
                       </group>
                   </page>
               </page>
+              <!-- <xpath expr="//button[@name='action_get_report']" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </xpath> -->
+              <xpath expr="//button[@name='action_get_report']" position="before">
+                  <button name="button_export_xlsx" string="Execute New Report" type="object" class="oe_highlight"/>
+              </xpath>
           </field>
       </record>
 

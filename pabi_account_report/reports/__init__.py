@@ -18,7 +18,7 @@ from . import xlsx_report_supplier_receipt_follow_up
 from . import xlsx_report_pit_detail
 from . import qweb_report_payable_confirmation_letter
 from . import xlsx_report_purchase_invoice_plan
-#from . import xlsx_report_purchase_no_invoice_plan
+# from . import xlsx_report_purchase_no_invoice_plan
 # Receivable Reports
 from . import xlsx_report_output_tax
 from . import xlsx_report_cd_receivable_confirmation
@@ -44,7 +44,8 @@ from . import xlsx_report_gl_project
 from . import asset_repair_report
 from . import asset_register_report
 from . import asset_estimate_report
+from . import asset_register_xlsx
 # PND Reports
 from . import xlsx_report_pnd1
-#Preprint Receipt
-from . import xlsx_report_preprint_receipt 
+# Preprint Receipt
+from . import xlsx_report_preprint_receipt

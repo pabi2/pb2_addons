@@ -88,5 +88,15 @@
 			<field name="model">cd.receivable.follow.up.view</field>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cd_receivable_follow_up_group_by_bank)"/>
 		</record>
+
+		<!-- XLSX ASSET REGISTER REPORTS -->
+        <record id="action_report_asset_register_xlsx" model="ir.actions.report.xml">
+            <field name="name">Asset Register XLSX</field>
+            <field name="model">asset.register.report</field>
+            <field name="type">ir.actions.report.xml</field>
+            <field name="report_name">report_asset_register_xlsx</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_file">Asset Report</field>
+        </record>
 	</data>
 </openerp>

@@ -16,7 +16,6 @@ class AssetRegisterView(models.AbstractModel):
     _name = 'asset.register.view'
     _inherit = 'account.asset'
 
-    
     asset_id = fields.Many2one(
         'account.asset',
         string='Asset ID',
@@ -59,8 +58,6 @@ class AssetRegisterView(models.AbstractModel):
     account_name = fields.Char(
         string='Account Name',
     )
-
-
 
 
 class AssetRegisterReport(models.TransientModel):
@@ -116,7 +113,9 @@ class AssetRegisterReport(models.TransientModel):
         'xlsx.report.status',
         string='Asset State',
         domain=[('location', '=', 'asset.register.view')],
-        default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', ['draft', 'open', 'close'])]),
+        default=lambda self: self.env['xlsx.report.status'].search([
+            ('location', '=', 'asset.register.view'),
+            ('status', 'in', ['draft', 'open', 'close'])]),
     )
     account_ids = fields.Many2many(
         'account.account',
@@ -142,7 +141,6 @@ class AssetRegisterReport(models.TransientModel):
         'account.fiscalyear',
         string='Current Year',
         default=lambda self: self._get_fiscalyear(),
-        
     )
     # Note: report setting
     accum_depre_account_type = fields.Many2one(
@@ -203,7 +201,13 @@ class AssetRegisterReport(models.TransientModel):
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
-    
+
+    @api.multi
+    def _get_filter_many2many(self, obj_ids, attribute):
+        obj_name = obj_ids.mapped(attribute)
+        name_filter = ', '.join(x for x in obj_name)
+        return name_filter or _('')
+
     @api.multi
     @api.depends('asset_ids')
     def _compute_count_asset(self):
@@ -279,10 +283,13 @@ class AssetRegisterReport(models.TransientModel):
         if self.asset_state:
             res, state_name = [], self.asset_state
             for state in self.asset_state:
-                state_name = self.env['xlsx.report.status'].search([('id', '=', state.id)])
+                state_name = self.env['xlsx.report.status'].search([
+                    ('id', '=', state.id)])
                 res += [str(state_name.status)]
-            if len(self.asset_state) == 1 : dom += [('state', '=', str(state_name.status))]
-            else : dom += [('state', 'in', tuple(res))]
+            if len(self.asset_state) == 1:
+                dom += [('state', '=', str(state_name.status))]
+            else:
+                dom += [('state', 'in', tuple(res))]
 
         if self.building_ids:
             dom += [('building_id', 'in', tuple(self.building_ids.ids + [0]))]
@@ -291,17 +298,18 @@ class AssetRegisterReport(models.TransientModel):
         if self.room_ids:
             dom += [('room_id', 'in', tuple(self.room_ids.ids + [0]))]
         if self.asset_active:
-            dom += [('active', '=', True if (self.asset_active == 'active') else False)]
+            dom += [('active', '=', True if (self.asset_active == 'active')
+                    else False)]
         # date_start <= date_end
         if self.date_end:
             dom += [('date_start', '<=', self.date_end)]
-            
+
         # Prepare fixed params
         date_start = False
         date_end = False
-        
+
         if self.filter == 'filter_date':
-            date_start = self.date_start #self.fiscalyear_start_id.date_start
+            date_start = self.date_start  # self.fiscalyear_start_id.date_start
             date_end = self.date_end
         if self.filter == 'filter_period':
             date_start = self.period_start_id.date_start
@@ -357,8 +365,8 @@ class AssetRegisterReport(models.TransientModel):
                     when a.owner_section_id is not null then rs.org_id
                     when a.owner_project_id is not null then rp.org_id
                     when a.owner_invest_asset_id is not null then ria.org_id
-                    when a.owner_invest_construction_phase_id is not null then ricp.org_id
-                    else null
+                    when a.owner_invest_construction_phase_id is not null
+                    then ricp.org_id else null
                 end as owner_org_id,
                 -- owner_budget
                 case when a.owner_section_id is not null then
@@ -422,7 +430,8 @@ class AssetRegisterReport(models.TransientModel):
             left join account_account aa on aap.account_asset_id = aa.id
             ) asset
         """ + where_str + 'order by asset.account_code, asset.code',
-                         (self.fiscalyear_start_id.name,self.fiscalyear_start_id.name,
+                         (self.fiscalyear_start_id.name,
+                          self.fiscalyear_start_id.name,
                           tuple(accum_depre_account_ids), date_end,
                           tuple(depre_account_ids), date_start, date_end,
                           tuple(accum_depre_account_ids), date_end,
@@ -439,6 +448,14 @@ class AssetRegisterReport(models.TransientModel):
     #     action = self.env.ref(
     #         'pabi_account_report.action_asset_register_report_form')
     #     return super(AssetRegisterReport, self).action_get_report()
+    @api.multi
+    def button_export_xlsx(self):
+        self.ensure_one()
+        report = 'report_asset_register_xlsx'
+        return {
+            'type': 'ir.actions.report.xml',
+            'report_name': report,
+        }
 
     @api.onchange('asset_filter')
     def _onchange_asset_filter(self):
