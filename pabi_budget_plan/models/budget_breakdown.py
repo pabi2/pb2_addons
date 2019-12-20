@@ -309,16 +309,16 @@ class BudgetBreakdown(models.Model):
                 (entity_field, '=', entity_id),
                 ('chart_view', '=', breakdown.chart_view)])
             # Existing budgets, sub_entity_dict, i.e.,  {seciton_id: budget_id}
-            ent_bud_dict = {}  # {sub_entity_id: (budget_id, latest_policy)}
+            ent_bud_dict = {}  # {sub_entity_id: (budget_id, released_amount)}
             for x in budgets:
                 if sub_entity_field:
                     ent_bud_dict.update(
                         {x[sub_entity_field].id: (x.id,
-                                                  x.policy_amount)})
+                                                  x.released_amount)})
                 else:
                     # For personnel budget
                     ent_bud_dict.update({False: (x.id,
-                                                 x.policy_amount)})
+                                                 x.released_amount)})
             # Create line from plans first, so this will also reference to plan
             for plan in plans:
                 budget_plan_id = '%s,%s' % (BudgetPlan._name, plan.id)
@@ -501,14 +501,13 @@ class BudgetBreakdownLine(ChartField, models.Model):
             budget_plan = line.budget_plan_id
             line.planned_amount = \
                 self._get_planned_expense_hook(line.breakdown_id, budget_plan)
-            # line.latest_policy_amount = line.budget_id and \
-            #     line.budget_id.policy_amount or 0.0
+            line.latest_policy_amount = line.budget_id and \
+                line.budget_id.policy_amount or 0.0
             # From Budget Control
             line.future_plan = line.budget_id.future_plan
             line.past_consumed = line.budget_id.past_consumed
             line.rolling = line.budget_id.rolling
             line.released_amount = line.budget_id.released_amount
-            line.latest_policy_amount = line.budget_id.released_amount
 
     @api.model
     def _change_amount_content(self, breakdown, new_amount):
