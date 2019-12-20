@@ -21,7 +21,7 @@ class DocumentExportParser(models.TransientModel):
         path = tempfile.mktemp('.' + self.file_type)
         temp = file(path, 'wb')
         if 'KTB' in self.config_id.name:
-            line_text = line_text.encode('utf-8').strip()
+            line_text = line_text.encode('utf-8-sig')#.strip()
         else:
             line_text = line_text.encode('utf-8-sig').strip()
         temp.write(line_text)
