@@ -26,6 +26,7 @@
         'views/voucher_payment_receipt_view.xml',
         'views/account_config.xml',
         'data/email_template.xml',
+        'wizard/send_mail_wht_wizard.xml',
     ],
     'demo': [
     ],
