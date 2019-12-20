@@ -24,7 +24,7 @@ class DocumentExportParser(models.TransientModel):
         #    line_text = line_text.encode('utf-8-sig')#.strip()
         #else:
         #    line_text = line_text.encode('utf-8-sig').strip()
-        line_text = line_text.encode('utf-8')#.strip()
+        line_text = line_text.encode('utf-8-sig')#.strip()
         temp.write(line_text)
         result = base64.b64encode(line_text)
         (dirName, fileName) = os.path.split(path)
