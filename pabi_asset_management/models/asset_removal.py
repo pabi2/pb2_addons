@@ -235,7 +235,10 @@ class AccountAssetRemoval(models.Model):
         asset_ids = self.removal_asset_ids.mapped('asset_id').ids
         assets = Asset.with_context(active_test=False).search([('id', 'in',
                                                                 asset_ids)])
-        dom = [('id', 'in', assets.ids)]
+        dom = [
+            ('id', 'in', assets.ids),
+            ('active', '=', False)
+        ]
         result.update({'domain': dom})
         return result
 
