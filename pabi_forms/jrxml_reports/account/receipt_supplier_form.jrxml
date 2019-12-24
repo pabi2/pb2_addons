@@ -239,7 +239,7 @@ Description]]></text>
 				<reportElement style="table" mode="Transparent" x="0" y="603" width="535" height="45"/>
 			</rectangle>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="93" y="619" width="432" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="84" y="619" width="432" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
