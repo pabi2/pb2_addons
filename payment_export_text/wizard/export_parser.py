@@ -2,7 +2,6 @@
 import os
 import base64
 import tempfile
-import win_unicode_console
 from openerp import api, fields, models, _
 from openerp.tools.safe_eval import safe_eval as eval
 from openerp.exceptions import ValidationError
@@ -22,7 +21,6 @@ class DocumentExportParser(models.TransientModel):
         path = tempfile.mktemp('.' + self.file_type)
         temp = file(path, 'wb')
         if 'KTB' in self.config_id.name:
-            win_unicode_console.enable()
             line_text.replace('\n','\r\n')
             line_text = line_text.encode('utf-8')#.strip()
         else:
