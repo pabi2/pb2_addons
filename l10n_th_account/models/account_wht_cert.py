@@ -482,9 +482,9 @@ class AccountWhtCert(models.Model):
             if not self.group_email_wht:
                 raise ValidationError(
                     _('Please enter valid email address for group email!'))
-#             if not self.supplier_email:
-#                     raise ValidationError(_("Please fill Email."))
-#             mail = self.supplier_email       
+#             if not self.supplier_email_accountant:
+#                     raise ValidationError(_("Please fill Email Accountant."))
+#             mail = self.supplier_email_accountant       
             to_email = 'preerapol.che@ncr.nstda.or.th'
             template.email_to = to_email
             if template:
