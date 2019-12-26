@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pnd3a_form" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.1000000000000048"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="480"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
 +"/../../../pb2_generic/l10n_th_account_pnd_form/report/"]]></defaultValueExpression>
@@ -360,7 +360,7 @@ GROUP BY
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{supplier_address}]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement x="409" y="3" width="368" height="51"/>
+				<reportElement x="409" y="4" width="368" height="40"/>
 				<subreportParameter name="fiscalyear_id">
 					<subreportParameterExpression><![CDATA[$P{fiscalyear_id}]]></subreportParameterExpression>
 				</subreportParameter>
