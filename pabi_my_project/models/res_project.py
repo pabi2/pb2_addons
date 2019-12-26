@@ -512,7 +512,6 @@ class ResProject(LogCommon, models.Model):
         current_fy = self.env['account.fiscalyear'].find()
         release_external_budget = fiscalyear.control_ext_charge_only
         ignore_current_fy = self._context.get('ignore_current_fy_lock', False)
-        # not_update_released = self._context.get('not_update_released', False)
         for project in self.sudo():
             if project.current_fy_release_only and \
                     current_fy != fiscalyear.id and \
@@ -522,8 +521,6 @@ class ResProject(LogCommon, models.Model):
                       'current year budget is allowed.' % fiscalyear.name))
             budget_plans = project.budget_plan_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear)
             budget_monitor = project.monitor_expense_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear and l.budget_method=='expense' and l.charge_type=='external')
-            # if not_update_released:
-            #     current_released_amount = released_amount
             budget_plans.write({'released_amount': 0.0})  # Set zero
             if release_external_budget:  # Only for external charge
                 budget_plans = budget_plans.\
@@ -548,12 +545,13 @@ class ResProject(LogCommon, models.Model):
             remaining = released_amount
             update_vals = []
             for budget_plan in budget_plans:
-                # if not_update_released:
-                #     update = {'released_amount': current_released_amount}
-                #     update_vals.append((1, budget_plan.id, update))
-                #     continue
+                # remaining > planned_amount in line
                 if float_compare(remaining,
                                  budget_plan.planned_amount, 2) == 1:
+                    if not budget_plan.planned_amount:
+                        update = {'released_amount': remaining}
+                        update_vals.append((1, budget_plan.id, update))
+                        break
                     update = {'released_amount': budget_plan.planned_amount}
                     remaining -= budget_plan.planned_amount
                     update_vals.append((1, budget_plan.id, update))
