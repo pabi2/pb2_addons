@@ -113,6 +113,7 @@
                         <filter name="income_tax_form" string="Tax Form" context="{'group_by':'income_tax_form'}"/>
                         <filter name="tax_payer" string="Tax Payer" context="{'group_by':'tax_payer'}"/>
                         <filter name="calendar_period_id" string="Carendar Period" context="{'group_by':'calendar_period_id'}"/>
+                        <filter name="mywht_to_sent" string="myWHT to sent" domain="[('mail_state','=','draft'),('create_uid','=',uid)]" context="{'group_by':'calendar_period_id'}"/>
                     </group>
                 </search>
             </field>
