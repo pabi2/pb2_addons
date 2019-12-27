@@ -548,7 +548,9 @@ class ResProject(LogCommon, models.Model):
                 # remaining > planned_amount in line
                 if float_compare(remaining,
                                  budget_plan.planned_amount, 2) == 1:
-                    if not budget_plan.planned_amount:
+                    # expense only
+                    if not budget_plan.planned_amount \
+                            and budget_plan.budget_method == 'expense':
                         update = {'released_amount': remaining}
                         update_vals.append((1, budget_plan.id, update))
                         break
