@@ -92,15 +92,16 @@ class InvoiceVoucherTaxDetail(object):
                     else:
                         raise ValidationError(
                                 _('- WHTP1 must be related with PND3 only.')) 
-                  
                 elif taxlineid == 'WHTC1': 
                     if self.income_tax_form == 'pnd53' and taxlineid == 'WHTC1':
                         continue
+                    elif self.income_tax_form == 'pnd54' and taxlineid == 'WHTC1':
+                        continue
                     else:
                          raise ValidationError(
-                                _('- WHTC1 must be related with PND53 only.'))
+                                _('- WHTC1 must be related with PND53 or PND54 only.'))
         return True
-
+#////////////////////////////////////////////////////////////////////////////////////////////////                   
 
 class AccountTaxDetail(models.Model):
     _name = 'account.tax.detail'
