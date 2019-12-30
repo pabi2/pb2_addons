@@ -555,6 +555,9 @@ class ResProject(LogCommon, models.Model):
                         update_vals.append((1, budget_plan.id, update))
                         break
                     update = {'released_amount': budget_plan.planned_amount}
+                    # case : last line
+                    if budget_plan.id == budget_plans[-1].id:
+                        update = {'released_amount': remaining}
                     remaining -= budget_plan.planned_amount
                     update_vals.append((1, budget_plan.id, update))
                 else:
