@@ -120,6 +120,10 @@ class ReportXlsxAbstract(ReportXlsx):
         self.format_left = workbook.add_format({'align': 'left'})
         self.format_center = workbook.add_format({'align': 'center'})
         self.format_right = workbook.add_format({'align': 'right'})
+        self.format_indent_1 = workbook.add_format(
+            {'align': 'left', 'indent': 1, 'font_name': font_name})
+        self.format_indent_2 = workbook.add_format(
+            {'align': 'left', 'indent': 2, 'font_name': font_name})
         self.format_amount_left = workbook.add_format(
             {'align': 'left', 'num_format': num_format})
         self.format_amount_center = workbook.add_format(
