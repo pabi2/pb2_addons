@@ -1,4 +1,5 @@
 id,sequence,description,name,expression,default_css_style,dp,type,suffix,prefix,compare_method,report_id/id
+mis_report_bs_th,0,งบแสดงฐานะการเงิน,balance_sheet,bale[1000000000] + bale[2000000000] + bale[3000000000],font-weight: bold,2,num,,,pct,mis_report_bs
 mis_report_bs_th1000000000,1,[1000000000]สินทรัพย์,1000000000,bale[1000000000],font-weight: bold,2,num,,,pct,mis_report_bs
 mis_report_bs_th1100000000,2,[1100000000]สินทรัพย์หมุนเวียน,1100000000,bale[1100000000],font-weight: bold,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101000000,3,[1101000000]เงินสดและรายการเทียบเท่าเงินสด,1101000000,bale[1101000000],font-weight: bold,2,num,,,pct,mis_report_bs

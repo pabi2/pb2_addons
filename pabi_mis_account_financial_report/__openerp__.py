@@ -12,6 +12,7 @@
     'website': 'http://ecosoft.co.th',
     'depends': [
         'mis_builder',
+        'pabi_report_xlsx_helper',
     ],
     'data': [
         'data/mis_report_bs.xml',
