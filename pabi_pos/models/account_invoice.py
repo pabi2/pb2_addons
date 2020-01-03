@@ -13,12 +13,14 @@ def action_done_async_process(session, model_name, res_id):
         return {'result': res}
     except Exception, e:
         raise RetryableJobError(e)
-class AccountVoucher(models.Model):
-    _inherit = 'account.voucher'
+
+
+class AccountInvoice(models.Model):
+    _inherit = 'account.invoice'
     
     @api.multi
     def validate_picking(self):
-        picking = self.env['stock.picking'].search([('origin','=',self.line_ids[0].move_line_id.move_id.document_id.source_document_id.name)])
+        picking = self.env['stock.picking'].search([('origin','=',self.source_document)])
         for pick in picking:
             pick.validate_picking()
 
@@ -28,23 +30,15 @@ class AccountVoucher(models.Model):
         if self._context.get('job_uuid', False):  # Called from @job
             return self.validate_picking()
         session = ConnectorSession(self._cr, self._uid, self._context)
-        description = 'POS Transfer Stock - %s' % (self.line_ids[0].move_line_id.move_id.document_id.source_document_id.name)
+        description = 'POS Transfer Stock - %s' % (self.source_document)
         uuid = action_done_async_process.delay(
             session, self._name, self.id, description=description)
         job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
     
     @api.multi
-    def proforma_voucher(self):
-        result = super(AccountVoucher, self).proforma_voucher()
-        for voucher in self:
-            if voucher.line_ids and \
-                voucher.line_ids[0].move_line_id and \
-                voucher.line_ids[0].move_line_id.move_id.document and \
-                'DV' in voucher.line_ids[0].move_line_id.move_id.document and \
-                voucher.line_ids[0].move_line_id.move_id.document_id and \
-                voucher.line_ids[0].move_line_id.move_id.document_id.source_document_id and \
-                'POS' in voucher.line_ids[0].move_line_id.move_id.document_id.source_document_id.name:
-                
-                voucher.validate_picking_background()
+    def invoice_validate(self):
+        result = super(AccountInvoice, self).invoice_validate()
+        for invoice in self:
+            if 'POS' in invoice.source_document:
+                invoice.validate_picking_background()
         return result
-
