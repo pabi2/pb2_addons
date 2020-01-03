@@ -523,8 +523,9 @@ class ResProject(LogCommon, models.Model):
             budget_monitor = project.monitor_expense_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear and l.budget_method=='expense' and l.charge_type=='external')
             budget_plans.write({'released_amount': 0.0})  # Set zero
             if release_external_budget:  # Only for external charge
-                budget_plans = budget_plans.\
-                    filtered(lambda l: l.charge_type == 'external')
+                budget_plans = budget_plans.filtered(
+                    lambda l: l.charge_type == 'external'
+                    and l.budget_method == 'expense')
             if not budget_plans:
                 raise ValidationError(
                     _('Not allow to release budget for project without plan!'))
