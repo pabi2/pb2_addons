@@ -63,7 +63,7 @@ class AssetRegisterXlsx(ReportXlsxAbstract):
                 },
                 'data': {
                     'value':
-                        self._render('asset.profile_id.product_categ_id.name'),
+                        self._render('product_category'),
                 },
                 'width': 20,
             },
@@ -72,7 +72,7 @@ class AssetRegisterXlsx(ReportXlsxAbstract):
                     'value': _('Account Code'),
                 },
                 'data': {
-                    'value': self._render('asset.account_code'),
+                    'value': self._render('account_code'),
                 },
                 'width': 15,
             },
@@ -81,7 +81,7 @@ class AssetRegisterXlsx(ReportXlsxAbstract):
                     'value': _('Account Name'),
                 },
                 'data': {
-                    'value': self._render('asset.account_name'),
+                    'value': self._render('account_name'),
                 },
                 'width': 20,
             },
@@ -90,7 +90,7 @@ class AssetRegisterXlsx(ReportXlsxAbstract):
                     'value': _('Asset Profile Code'),
                 },
                 'data': {
-                    'value': self._render('asset.profile_id.code'),
+                    'value': self._render('profile_code'),
                 },
                 'width': 15,
             },
@@ -99,7 +99,7 @@ class AssetRegisterXlsx(ReportXlsxAbstract):
                     'value': _('Asset Profile Name'),
                 },
                 'data': {
-                    'value': self._render('asset.profile_id.name'),
+                    'value': self._render('profile_name'),
                 },
                 'width': 20,
             },
@@ -135,7 +135,7 @@ class AssetRegisterXlsx(ReportXlsxAbstract):
                     'value': _('Asset Type'),
                 },
                 'data': {
-                    'value': self._render('asset.product_id.name'),
+                    'value': self._render('asset_type'),
                 },
                 'width': 20,
             },
@@ -968,14 +968,20 @@ class AssetRegisterXlsx(ReportXlsxAbstract):
         row_pos = self._write_line(
             ws, row_pos, ws_params, col_specs_section='header',
             default_format=self.format_theader_yellow_center)
-        ws.freeze_panes(row_pos, 0)
 
         for asset in assets.results:
             row_pos = self._write_line(
                 ws, row_pos, ws_params, col_specs_section='data',
                 render_space={
                     'asset': asset,
+                    'product_category':
+                        asset.profile_id.product_categ_id.name or _(''),
+                    'account_code': asset.account_code or _(''),
+                    'account_name': asset.account_name or _(''),
+                    'profile_code': asset.profile_id.code or _(''),
+                    'profile_name': asset.profile_id.name or _(''),
                     'parent_name': asset.parent_id.name or _(''),
+                    'asset_type': asset.product_id.name or _(''),
                     'code_legacy': asset.code2 or _(''),
                     'acceptance_date': self.convert_to_date(
                         asset.picking_id.acceptance_id.date_accept),
@@ -1022,8 +1028,6 @@ class AssetRegisterXlsx(ReportXlsxAbstract):
                         self.convert_to_date(asset.date_remove),
                     'state': dict(STATE)[asset.state],
                 })
-        print('end write excel : %s' % fields.Datetime.now())
-        print("==============================================")
 
 
 AssetRegisterXlsx('report.report_asset_register_xlsx', 'asset.register.report')
