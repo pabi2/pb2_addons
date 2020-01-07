@@ -45,6 +45,10 @@ class XLSXReportReceivableDetail(models.TransientModel):
         string='Real End Date',
         compute='_compute_date_real',
     )
+    line_filter_document = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
     results = fields.Many2many(
         'account.move.line',
         string='Results',
@@ -146,3 +150,14 @@ class XLSXReportReceivableDetail(models.TransientModel):
         self.results = Moveline.search([('id', 'in', res_ids)]).sorted(
             key=lambda l: (l.partner_id.search_key, l.date, l.move_id.name))
 
+    @api.onchange('line_filter_document')
+    def _onchange_line_filter_document(self):
+        self.move_ids = []
+        account_move = self.env['account.move']
+        dom = [('company_id', '=', self.company_id.id), ('state', '=', 'posted'), ('doctype', 'in', ['out_invoice', 'out_refund', 'adjustment'])]
+        if self.line_filter_document:
+            names = self.line_filter_document.split('\n')
+            names = [x.strip() for x in names]
+            names = ','.join(names)
+            dom.append(('name', 'ilike', names))
+            self.move_ids = account_move.search(dom, order='id')
