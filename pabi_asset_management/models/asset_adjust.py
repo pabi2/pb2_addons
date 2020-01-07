@@ -785,6 +785,8 @@ class AccountAssetAdjust(models.Model):
             line.move_id = move
             # Set move_check equal to amount depreciated
             depre_lines.write({'move_id': move.id})
+            if not depre_lines:
+                new_asset.depreciation_line_ids[0].write({'move_id': move.id})
 
     @api.model
     def _setup_move_data(self, journal, adjust_date,
