@@ -20,6 +20,7 @@ class InvestAssetCommon(object):
         'res.org',
         string='Org',
         required=True,
+        readonly=True,
     )
     invest_asset_categ_id = fields.Many2one(
         'res.invest.asset.category',
@@ -62,6 +63,7 @@ class InvestAssetCommon(object):
         required=True,
         help="Not related to budgeting, this field hold the "
         "section owner of this asset",
+        readonly=True,
     )
     owner_program_id = fields.Many2one(
         'res.program',
@@ -167,8 +169,8 @@ class InvestAssetCommon(object):
             'specification_summary': self.specification_summary,
             'amount_plan_total': self.amount_plan_total,
         }
-
-
+     
+        
 # Investment - Asset
 class ResInvestAsset(ResCommon, InvestAssetCommon, models.Model):
     _name = 'res.invest.asset'
@@ -186,8 +188,14 @@ class ResInvestAsset(ResCommon, InvestAssetCommon, models.Model):
         string='Fiscalyear',
         required=True,
     )
-
-
+   
+    @api.onchange('request_user_id')
+    def _onchange_request_user_id(self):
+        self.owner_division_id = self.request_user_id.section_id.division_id
+        self.owner_section_id = self.request_user_id.section_id
+        self.org_id = self.request_user_id.org_id
+   
+    
 class ResInvestAssetCategory(ResCommon, models.Model):
     _name = 'res.invest.asset.category'
     _description = 'Investment Asset Category'
