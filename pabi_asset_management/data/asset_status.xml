@@ -26,7 +26,7 @@
             <field name="map_state_draft"></field>
             <field name="map_state_open">open</field>
             <field name="map_state_close">close</field>
-            <field name="map_state_removed"></field>
+            <field name="map_state_removed">removed</field>
         </record>
         <record id="asset_status_break" model="account.asset.status">
             <field name="sequence">4</field>
