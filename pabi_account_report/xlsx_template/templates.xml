@@ -2282,7 +2282,7 @@ result = pd.pivot_table(df, index=groupby,
         </record>
 		
 
-        
+        #Employee Advance Report
          <record id="xlsx_report_pabi_employee_advance_report" model="ir.attachment">
             <field name="res_model">xlsx.report.pabi.employee.advance.report</field>
             <field name="datas"></field>
@@ -2300,24 +2300,24 @@ result = pd.pivot_table(df, index=groupby,
                             'B8': '${time.strftime("%d/%m/%Y")}#{number_format=date}',
                         			},
                         'results': {
-                        	'A13' :'employee_code${value or ""}',
-                            'B13' :'name_th${value or ""}',
-                            'C13' :'av_doc${value or ""}',
-                            'D13' :'description${value or ""}',
-                            'E13' :'supplier_invoice_number${value or ""}',
-                            'F13' :'source_doc${value or ""}',
-                            'G13' :'doc_date${value or ""}#{number_format=date}',
-                            'H13' :'posting_date${value or ""}#{number_format=date}',
-                            'I13' :'due_date${value or ""}#{number_format=date}',
-                            'J13' :'period_name${value or ""}',
-                            'K13' :'organization${value or ""}',
-                            'L13' :'costcenter_code${value or ""}',
-                            'M13' :'costcenter_name${value or ""}',
-                            'N13' :'source_budget${value or ""}',
-                            'O13' :'source_budget_name${value or ""}',
-                            'P13' :'amount${value or ""}',
-                            'Q13' :'reconcile_ref${value or ""}',
-                            'R13' :'reconcile_partial_id${value or ""}',
+                        	'A13' : 'employee_code${value or ""}#{align=left}',
+                            'B13' : 'name_th${value or ""}#{align=left;number_format=text}',
+                            'C13' : 'av_doc${value or ""}#{align=left;number_format=text}',
+                            'D13' : 'description${value or ""}#{align=left;number_format=text}',
+                            'E13' : 'supplier_invoice_number${value or ""}#{align=left;number_format=text}',
+                            'F13' : 'source_doc${value or ""}#{align=left;number_format=text}',
+                            'G13' : 'doc_date${value or ""}#{align=left;number_format=date}',
+                            'H13' : 'posting_date${value or ""}#{align=left;number_format=date}',
+                            'I13' : 'due_date${value or ""}#{align=left;number_format=date}',
+                            'J13' : 'period_name${value or ""}#{align=left;number_format=text}',
+                            'K13' : 'organization${value or ""}#{align=left;number_format=text}',
+                            'L13' : 'costcenter_code${value or ""}#{align=left}',
+                            'M13' : 'costcenter_name${value or ""}#{align=left;number_format=text}',
+                            'N13' : 'source_budget${value or ""}#{align=left;number_format=text}',
+                            'O13' : 'source_budget_name${value or ""}#{align=left;number_format=text}',
+                            'P13' : 'amount${value or ""}#{align=left;number_format=number}',
+                            'Q13' : 'reconcile_ref${value or ""}#{align=left;number_format=text}',
+                            'R13' : 'reconcile_partial_id${value or ""}#{align=left;number_format=text}',
                         	},
                         	'_GROUPBY_results["employee_code"]': {  # groupby
                                 'P13': '@{sum}#{font=bold;number_format=number}',

@@ -10,6 +10,8 @@
                 <xpath expr="//group[@name='criteria']" position="inside">
                    <field name="av_ids"/>
                    <field name="employee_codes"/>
+                   <field name="source_budget_names"/>
+                   <field name="amounts"/>
                    
                 </xpath>
             </field>

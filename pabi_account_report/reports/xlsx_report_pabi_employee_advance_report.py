@@ -18,6 +18,21 @@ class XLSXReportPabiEmployeeAdvanceReport(models.TransientModel):
         
     )
     
+    source_budget_names = fields.Many2one(
+        'chartfield.view',
+        string='Source Budget Name',
+        
+    )
+    
+    amounts =  fields.Selection(
+        [(1, '==all=='),
+         (2, 'not clear'),
+        ],
+        string='Status',
+        default=1,
+        require=True,
+    )
+    
     date_report = fields.Date(
             string='Report Date',
             default=lambda self: fields.Date.context_today(self),
@@ -41,12 +56,43 @@ class XLSXReportPabiEmployeeAdvanceReport(models.TransientModel):
         self.ensure_one()
         Result = self.env['xlsx.report.pabi.employee.advance.report.results']
         dom = []
+        employee_code_id =[]
+        dom1=[]
+        state = 0
+        if  self.amounts == 2:
+            if self.av_ids:
+                    dom1+=[('av_id','=',self.av_ids.id)]
+            if self.employee_codes:
+                    dom1+=[('employee_code', '=', self.employee_codes.employee_code)]   
+            if self.source_budget_names:
+                    dom1+=[('source_budget', '=',self.source_budget_names.code)]
+            search_dom1 = Result.search(dom1)
+            numlen=len(search_dom1)                  
+            for dom1_id in search_dom1 :
+                if state == 0:
+                    hrid=dom1_id.employee_code
+                    name_amount =0.00
+                if hrid == dom1_id.employee_code :
+                    name_amount += dom1_id.amount                    
+                else :
+                    if name_amount != 0 :
+                       employee_code_id.append(hrid) 
+                    hrid=dom1_id.employee_code 
+                    name_amount =dom1_id.amount
+                state =state+1
+                if state == numlen:
+                    if name_amount != 0 :
+                       employee_code_id.append(hrid)                           
+            dom += [('employee_code', 'in', employee_code_id)]                   
+####////////////////////////////////////////////////////////////////  //////////////////////////////////////////////                                       
+        if self.amounts == 1:
+            if self.employee_codes:
+                    dom += [('employee_code', '=', self.employee_codes.employee_code)]
         if self.av_ids:
-            dom += [('av_id', '=', self.av_ids.id)]
-        if self.employee_codes:
-            dom += [('employee_code', '=', self.employee_codes.employee_code)]                                 
-        self.results = Result.search(dom)
-    
+                dom += [('av_id', '=', self.av_ids.id)]           
+        if self.source_budget_names:
+                dom += [('source_budget', '=',self.source_budget_names.code)]                               
+        self.results = Result.search(dom)    
 class XLSXReportPabiEmployeeAdvanceReportResults(models.Model):
     _name = 'xlsx.report.pabi.employee.advance.report.results'
     _auto = False
