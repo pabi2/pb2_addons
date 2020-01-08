@@ -15,7 +15,7 @@ REFERENCE_SELECT = [
 ]
 
 
-@job(default_channel='root.xlsx_report')
+@job(default_channel='root.xlsx_asset_report')
 def action_export_excel(session, model_name, res_id, report_name):
     try:
         report = session.env['ir.actions.report.xml'].search([
@@ -491,12 +491,6 @@ class AssetRegisterReport(models.TransientModel):
     #     action = self.env.ref(
     #         'pabi_account_report.action_asset_register_report_form')
     #     return super(AssetRegisterReport, self).action_get_report()
-    # @api.multi
-    # def button_export_xlsx(self):
-    #     self.ensure_one()
-    #     report_name = 'report_asset_register_xlsx'
-    #     report_xlsx = self.env['report'].get_action(self, report_name)
-    #     return report_xlsx
 
     @api.multi
     def button_export_xlsx(self):
@@ -523,7 +517,6 @@ class AssetRegisterReport(models.TransientModel):
                 'target': 'new',
             }
         else:
-            report_name = 'report_asset_register_xlsx'
             result = self.env['report'].get_action(self, report_name)
         return result
 
