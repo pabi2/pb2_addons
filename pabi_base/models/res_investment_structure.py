@@ -16,11 +16,14 @@ class InvestAssetCommon(object):
         string='Name',
         size=500,
     )
+    #/////////////////////////////////////////////////////////////
     org_id = fields.Many2one(
         'res.org',
         string='Org',
+        related='request_user_id.org_id', 
         required=True,
     )
+    #/////////////////////////////////////////////////////////////
     invest_asset_categ_id = fields.Many2one(
         'res.invest.asset.category',
         string='Investment Asset Category'
@@ -56,13 +59,16 @@ class InvestAssetCommon(object):
     name_common = fields.Char(
         string='Common Name',
     )
+    #/////////////////////////////////////////////////////////////
     owner_section_id = fields.Many2one(
         'res.section',
         string='Owner Section',
-        required=True,
+        #required=True,
+        related='request_user_id.section_id',
         help="Not related to budgeting, this field hold the "
         "section owner of this asset",
     )
+    #/////////////////////////////////////////////////////////////
     owner_program_id = fields.Many2one(
         'res.program',
         string='Owner Program',
@@ -119,13 +125,15 @@ class InvestAssetCommon(object):
         string='Owner Division',
         readonly=True,
     )
+    #/////////////////////////////////////////////////////////////
     costcenter_id = fields.Many2one(
         'res.costcenter',
         string='Costcenter',
-        related='owner_section_id.costcenter_id',
+        related='request_user_id.costcenter_id',
         store=True,
         readonly=True,
     )
+    #/////////////////////////////////////////////////////////////
     price_subtotal = fields.Float(
         string='Gross Price',
         compute='_compute_price',
@@ -167,8 +175,8 @@ class InvestAssetCommon(object):
             'specification_summary': self.specification_summary,
             'amount_plan_total': self.amount_plan_total,
         }
-
-
+        
+        
 # Investment - Asset
 class ResInvestAsset(ResCommon, InvestAssetCommon, models.Model):
     _name = 'res.invest.asset'
@@ -186,8 +194,14 @@ class ResInvestAsset(ResCommon, InvestAssetCommon, models.Model):
         string='Fiscalyear',
         required=True,
     )
-
-
+    
+    @api.onchange('request_user_id')
+    def _onchange_request_user_id(self):
+        self.owner_division_id = self.request_user_id.section_id.division_id
+        self.owner_section_id = self.request_user_id.section_id
+        self.org_id = self.request_user_id.org_id
+    
+    
 class ResInvestAssetCategory(ResCommon, models.Model):
     _name = 'res.invest.asset.category'
     _description = 'Investment Asset Category'
