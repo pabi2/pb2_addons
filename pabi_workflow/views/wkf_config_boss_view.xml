@@ -143,7 +143,7 @@
             <field name="name">view.wkf.cmd.boss.level.approval.history.tree</field>
             <field name="model">wkf.cmd.boss.level.approval.history</field>
             <field name="arch" type="xml">
-                <tree string="Boss Level History">
+                <tree string="Boss Level History" create="false">
                     <field name="section"/>
                     <field name="dep_id"/>
                     <field name="dep_name"/>
@@ -185,19 +185,25 @@
                     <field name="date"/>
                     <group expand="0" string="Group By">
                         <filter name="section" string="Section" context="{'group_by':'section'}"/>
-                        <filter name="dep_id" string="e-HR Dep ID" context="{'group_by':'dep_id'}"/>
+                        <separator/>
+                		<filter name="dep_id" string="Dep ID" context="{'group_by':'dep_id'}"/>
                         <filter name="dep_name" string="งาน" context="{'group_by':'dep_name'}"/>
-                        <filter name="div_id" string="e-HR Div ID'" context="{'group_by':'div_id'}"/>
+                        <separator/>
+                		<filter name="div_id" string="Div ID" context="{'group_by':'div_id'}"/>
                         <filter name="div_name" string="ฝ่าย" context="{'group_by':'div_name'}"/>
-                        <filter name="subsector_id" string="e-HR SucSector ID" context="{'group_by':'subsector_id'}"/>
+                        <separator/>
+                		<filter name="subsector_id" string="SucSector ID" context="{'group_by':'subsector_id'}"/>
                         <filter name="subsector_name" string="ด้าน" context="{'group_by':'subsector_name'}"/>
-                        <filter name="sector_id" string="e-HR Sector ID'" context="{'group_by':'sector_id'}"/>
+                        <separator/>
+                		<filter name="sector_id" string="Sector ID" context="{'group_by':'sector_id'}"/>
                         <filter name="sector_name" string="สายงาน'" context="{'group_by':'sector_name'}"/>
-                        <filter name="org_id" string="e-HR Org ID''" context="{'group_by':'org_id'}"/>
+                        <separator/>
+                		<filter name="org_id" string="Org ID" context="{'group_by':'org_id'}"/>
                         <filter name="org_name" string="ศูนย์'" context="{'group_by':'org_name'}"/>
-                        <filter name="employee_id" string="รหัสพนักงาน'" context="{'group_by':'employee_id'}"/>
-                        <filter name="employee_name" string="ชื่อพนักงาน'" context="{'group_by':'employee_name'}"/>
-                        <filter name="date" string="Date'" context="{'group_by':'date'}"/>
+                        <separator/>
+                		<filter name="employee_id" string="รหัสพนักงาน" context="{'group_by':'employee_id'}"/>
+                        <filter name="employee_name" string="ชื่อพนักงาน" context="{'group_by':'employee_name'}"/>
+                        <filter name="date" string="Date" context="{'group_by':'date'}"/>
                     </group>
                 </search>
             </field>
