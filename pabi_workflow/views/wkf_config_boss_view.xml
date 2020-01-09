@@ -196,10 +196,10 @@
                         <filter name="subsector_name" string="ด้าน" context="{'group_by':'subsector_name'}"/>
                         <separator/>
                 		<filter name="sector_id" string="Sector ID" context="{'group_by':'sector_id'}"/>
-                        <filter name="sector_name" string="สายงาน'" context="{'group_by':'sector_name'}"/>
+                        <filter name="sector_name" string="สายงาน" context="{'group_by':'sector_name'}"/>
                         <separator/>
                 		<filter name="org_id" string="Org ID" context="{'group_by':'org_id'}"/>
-                        <filter name="org_name" string="ศูนย์'" context="{'group_by':'org_name'}"/>
+                        <filter name="org_name" string="ศูนย์" context="{'group_by':'org_name'}"/>
                         <separator/>
                 		<filter name="employee_id" string="รหัสพนักงาน" context="{'group_by':'employee_id'}"/>
                         <filter name="employee_name" string="ชื่อพนักงาน" context="{'group_by':'employee_name'}"/>
