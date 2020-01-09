@@ -74,10 +74,8 @@ class MonitorView(models.AbstractModel):
                 sum(amount_po_commit) amount_po_commit,
                 sum(amount_exp_commit) amount_exp_commit,
                 sum(amount_actual) amount_actual,
-                sum(amount_so_commit) + sum(amount_pr_commit) +
-                sum(amount_po_commit) + sum(amount_exp_commit) +
-                sum(amount_actual) as amount_consumed,
-                sum(amount_balance) amount_balance
+                sum(amount_so_commit) + sum(amount_actual) as amount_consumed,
+                sum(amount_consumed) - sum(released_amount) as amount_balance
             from budget_monitor_report
             where %s
             group by budget_method, charge_type, fiscalyear_id, %s
