@@ -162,6 +162,7 @@ class WkfCmdBossLevelApprovalHistory(models.Model):
         string='ชื่อพนักงาน',
         size=500,
     )
-    date = fields.Datetime(
+    date = fields.Char(
         string='Date',
+        size=10,
     )
