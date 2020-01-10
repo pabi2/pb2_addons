@@ -104,6 +104,7 @@ class WkfCmdBossSpecailLevel(models.Model):
 class WkfCmdBossLevelApprovalHistory(models.Model):
     _name = 'wkf.cmd.boss.level.approval.history'
     _description = 'Boss Level History'
+    _order = 'date desc, section, level' 
 
     section = fields.Char(
         string='Section',
@@ -126,7 +127,7 @@ class WkfCmdBossLevelApprovalHistory(models.Model):
         size=500,
     )
     subsector_id = fields.Char(
-        string='e-HR SucSector ID',
+        string='e-HR SubSector ID',
         size=10,
     )
     subsector_name = fields.Text(
