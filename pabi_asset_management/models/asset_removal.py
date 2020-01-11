@@ -563,7 +563,7 @@ class AccountAssetRemovalLines(models.Model):
                     'name': asset.name,
                     'account_id': self.account_residual_value_id.id,
                     'analytic_account_id': asset.account_analytic_id.id,
-                    'debit': residual_value,
+                    'debit': residual_value + asset.salvage_value,
                     'credit': 0.0,
                     'partner_id': partner_id,
                     'asset_id': asset.id
