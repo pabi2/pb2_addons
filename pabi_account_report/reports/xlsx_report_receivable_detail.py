@@ -154,7 +154,7 @@ class XLSXReportReceivableDetail(models.TransientModel):
     def _onchange_line_filter_document(self):
         self.move_ids = []
         account_move = self.env['account.move']
-        dom = [('company_id', '=', self.company_id.id), ('state', '=', 'posted'), ('doctype', 'in', ['out_invoice', 'out_refund', 'adjustment'])]
+        dom = []
         if self.line_filter_document:
             names = self.line_filter_document.split('\n')
             names = [x.strip() for x in names]
