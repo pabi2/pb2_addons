@@ -74,10 +74,10 @@ class MonitorView(models.AbstractModel):
                 COALESCE(sum(amount_po_commit),0) amount_po_commit,
                 COALESCE(sum(amount_exp_commit),0) amount_exp_commit,
                 COALESCE(sum(amount_actual),0) amount_actual,
-                sum(amount_so_commit) + sum(amount_pr_commit) + 
-                sum(amount_po_commit) + sum(amount_exp_commit) + 
-                sum(amount_actual) as amount_consumed,
-                sum(released_amount) - sum(amount_consumed) as amount_balance
+                COALESCE(sum(amount_so_commit),0) + COALESCE(sum(amount_pr_commit),0) + 
+                COALESCE(sum(amount_po_commit),0) + COALESCE(sum(amount_exp_commit),0) + 
+                COALESCE(sum(amount_actual),0) as amount_consumed,
+                COALESCE(sum(released_amount),0) - COALESCE(sum(amount_consumed),0) as amount_balance
             from budget_monitor_report
             where %s
             group by budget_method, charge_type, fiscalyear_id, %s
