@@ -97,7 +97,7 @@ class XLSXReportPabiEmployeeAdvanceReportResults(models.Model):
     _name = 'xlsx.report.pabi.employee.advance.report.results'
     _auto = False
     _description = 'Temp table as ORM holder'
-    
+    _order='posting_date asc'
     
     employee_code = fields.Char(
         string='Employee Code',
