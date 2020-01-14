@@ -735,6 +735,7 @@ class InterfaceAccountEntry(models.Model):
         
         # 2. check existing doc_origin in interface table
         ia_table = self.env["interface.account.entry"]
+        res = None
         
         # if system_id = "mySales" do check exists
         # if system_id != "mySales" and type != "Reverse" do check exists 
@@ -744,7 +745,6 @@ class InterfaceAccountEntry(models.Model):
         if ia_datas:
             ia_id = ia_number = ia_fiscalyear = None
             system = None
-            res = None
             if len(ia_datas) > 1:
                 system = ia_datas[0].system_id.name
                 ia_id = ia_datas[0].id
@@ -784,7 +784,7 @@ class InterfaceAccountEntry(models.Model):
                                     (data_dict["name"], ia_number)
                         }
 
-            return res
+        return res
 
     @api.model
     def _pre_process_interface_account_entry(self, data_dict):
@@ -796,7 +796,7 @@ class InterfaceAccountEntry(models.Model):
                     
         # if origin document exists
         existing = self._is_document_origin_exists(data_dict)
-        if existing and (not existing["is_success"]):
+        if existing:
             _logger.info("IA - Output: %s" % existing)
             return existing
         
