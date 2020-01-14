@@ -700,38 +700,38 @@ class InterfaceAccountEntry(models.Model):
         
         # 1. check existing doc_origin in check existing table
         # for check double interface of document at same time
-        if ("system_id" in data_dict) and (data_dict["system_id"] == "mySales"):
-            check_table = self.env["interface.account.entry.check.existing"]
-            
-            if str_type == "Reverse":
-                dom = [("doc_origin", "=", str_doc_origin),
-                       ("type", "=", "reverse")]
-            else:
-                dom = [("doc_origin", "=", str_doc_origin),
-                       ("type", "=", "post"),
-                       ("system", "=", data_dict["system_id"])]
-                
-            check_datas = check_table.search(dom)
-            
-            if not check_datas:
-                values = {}
-                values["doc_origin"] = str_doc_origin
-                if str_type == "Reverse":
-                    values["type"] = "reverse"
-                else:
-                    values["type"] = "post"
-                    values["system"] = data_dict["system_id"]
-                res = check_table.create(values)
-                self._cr.commit()
-            else:
-                err_message = "ไม่สามารถ Interface ได้ เนื่องจาก" + \
-                            "มีการส่งข้อมูลซ้ำ กรุณารอสักครู่แล้วลองอีกครั้ง"
-                res = {
-                    'is_success': False,
-                    'result': False,
-                    'messages': _(err_message)
-                    }
-                return res
+#         if ("system_id" in data_dict) and (data_dict["system_id"] == "mySales"):
+#             check_table = self.env["interface.account.entry.check.existing"]
+#             
+#             if str_type == "Reverse":
+#                 dom = [("doc_origin", "=", str_doc_origin),
+#                        ("type", "=", "reverse")]
+#             else:
+#                 dom = [("doc_origin", "=", str_doc_origin),
+#                        ("type", "=", "post"),
+#                        ("system", "=", data_dict["system_id"])]
+#                 
+#             check_datas = check_table.search(dom)
+#             
+#             if not check_datas:
+#                 values = {}
+#                 values["doc_origin"] = str_doc_origin
+#                 if str_type == "Reverse":
+#                     values["type"] = "reverse"
+#                 else:
+#                     values["type"] = "post"
+#                     values["system"] = data_dict["system_id"]
+#                 res = check_table.create(values)
+#                 self._cr.commit()
+#             else:
+#                 err_message = "ไม่สามารถ Interface ได้ เนื่องจาก" + \
+#                             "มีการส่งข้อมูลซ้ำ กรุณารอสักครู่แล้วลองอีกครั้ง"
+#                 res = {
+#                     'is_success': False,
+#                     'result': False,
+#                     'messages': _(err_message)
+#                     }
+#                 return res
         
         # 2. check existing doc_origin in interface table
         ia_table = self.env["interface.account.entry"]
@@ -742,24 +742,39 @@ class InterfaceAccountEntry(models.Model):
         ia_datas = ia_table.search(dom)
         
         if ia_datas:
-            ia_number = None
+            ia_id = ia_number = ia_fiscalyear = None
             system = None
             res = None
             if len(ia_datas) > 1:
                 system = ia_datas[0].system_id.name
+                ia_id = ia_datas[0].id
                 ia_number = ia_datas[0].number
+                ia_fiscalyear = \
+                    ia_datas[0].move_id.period_id.fiscalyear_id.name
             else:
                 system = ia_datas.system_id.name
+                ia_id = ia_datas.id
                 ia_number = ia_datas.number
+                ia_fiscalyear = \
+                    ia_datas.move_id.period_id.fiscalyear_id.name
 
             err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
             if system == "mySales":
                 res = {
-                    'is_success': False,
-                    'result': False,
-                    'messages': _(err_message) %
-                            (data_dict["name"], ia_number)
-                    }
+                    'is_success': True,
+                    'result': {
+                        'id': ia_id,
+                        'number': ia_number,
+                        'fiscalyear': ia_fiscalyear
+                    },
+                    'messages': _('Record created successfully'),
+                }
+#                 res = {
+#                     'is_success': False,
+#                     'result': False,
+#                     'messages': _(err_message) %
+#                             (data_dict["name"], ia_number)
+#                     }
             else:
                 if str_type != "Reverse":
                     res = {
@@ -768,7 +783,7 @@ class InterfaceAccountEntry(models.Model):
                         'messages': _(err_message) %
                                     (data_dict["name"], ia_number)
                         }
-            
+
             return res
 
     @api.model
