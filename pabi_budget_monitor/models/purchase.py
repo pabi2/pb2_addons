@@ -10,7 +10,10 @@ class PurchaseOrder(models.Model):
     def _purchase_budget_check(self):
         Budget = self.env['account.budget']
         for purchase in self:
-            doc_date = purchase.date_order
+            # issue : https://mobileapp.nstda.or.th/redmine/issues/4099
+            # Change date po to date today
+            doc_date = fields.Date.context_today(self)
+            # doc_date = purchase.date_order
             doc_lines = Budget.convert_lines_to_doc_lines(purchase.order_line)
             res = Budget.post_commit_budget_check(doc_date, doc_lines)
             if not res['budget_ok']:
