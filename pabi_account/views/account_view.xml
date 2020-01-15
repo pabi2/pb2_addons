@@ -186,6 +186,12 @@
             	<field name="active" position="after">
                     <field name="is_require_activity"/>
                 </field>
+                <field name="note" position="after">
+                	<div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </field>
             </field>
         </record>
 
