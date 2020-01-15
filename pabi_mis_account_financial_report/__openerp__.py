@@ -17,6 +17,7 @@
     'data': [
         'data/mis_report_bs.xml',
         'data/mis.report.kpi.csv',
+        'views/mis_builder.xml',
     ],
     'installable': True,
     'auto_install': False,

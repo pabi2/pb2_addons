@@ -520,6 +520,7 @@ mis_report_bs_th3301010000,517,[3301010000]รายได้สูงกว่�
 mis_report_bs_th3301010001,518,[3301010001]รายได้สูงกว่า (ต่ำกว่า) ค่าใช้จ่ายสะสม,3301010001,bale[3301010001],text-indent: 50px,2,num,,,pct,mis_report_bs
 mis_report_bs_th3301010002,519,[3301010002]กำไร/ขาดทุน ที่ยังไม่เกิดขึ้นในหลักทรัพย์เผื่อขาย,3301010002,bale[3301010002],text-indent: 50px,2,num,,,pct,mis_report_bs
 ,,,,,,,,,,,
+mis_report_bs_internal_th,0,งบแสดงฐานะการเงิน,balance_sheet_internal,bale[1000000000] + bale[2000000000] + bale[3000000000],font-weight: bold,2,num,,,pct,mis_report_bs_internal
 mis_report_bs_internal_th1000000000,1,[1000000000]สินทรัพย์,1000000000,"bale[1000000000][('charge_type', '=', 'internal')]",font-weight: bold,2,num,,,pct,mis_report_bs_internal
 mis_report_bs_internal_th1100000000,2,[1100000000]สินทรัพย์หมุนเวียน,1100000000,"bale[1100000000][('charge_type', '=', 'internal')]",font-weight: bold,2,num,,,pct,mis_report_bs_internal
 mis_report_bs_internal_th1101000000,3,[1101000000]เงินสดและรายการเทียบเท่าเงินสด,1101000000,"bale[1101000000][('charge_type', '=', 'internal')]",font-weight: bold,2,num,,,pct,mis_report_bs_internal
@@ -1040,6 +1041,7 @@ mis_report_bs_internal_th3301010000,517,[3301010000]รายได้สูง�
 mis_report_bs_internal_th3301010001,518,[3301010001]รายได้สูงกว่า (ต่ำกว่า) ค่าใช้จ่ายสะสม,3301010001,"bale[3301010001][('charge_type', '=', 'internal')]",text-indent: 50px,2,num,,,pct,mis_report_bs_internal
 mis_report_bs_internal_th3301010002,519,[3301010002]กำไร/ขาดทุน ที่ยังไม่เกิดขึ้นในหลักทรัพย์เผื่อขาย,3301010002,"bale[3301010002][('charge_type', '=', 'internal')]",text-indent: 50px,2,num,,,pct,mis_report_bs_internal
 ,,,,,,,,,,,
+mis_report_bs_external_th,0,งบแสดงฐานะการเงิน,balance_sheet_external,bale[1000000000] + bale[2000000000] + bale[3000000000],font-weight: bold,2,num,,,pct,mis_report_bs_external
 mis_report_bs_external_th1000000000,1,[1000000000]สินทรัพย์,1000000000,"bale[1000000000][('charge_type', '=', 'external')]",font-weight: bold,2,num,,,pct,mis_report_bs_external
 mis_report_bs_external_th1100000000,2,[1100000000]สินทรัพย์หมุนเวียน,1100000000,"bale[1100000000][('charge_type', '=', 'external')]",font-weight: bold,2,num,,,pct,mis_report_bs_external
 mis_report_bs_external_th1101000000,3,[1101000000]เงินสดและรายการเทียบเท่าเงินสด,1101000000,"bale[1101000000][('charge_type', '=', 'external')]",font-weight: bold,2,num,,,pct,mis_report_bs_external

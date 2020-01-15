@@ -19,3 +19,12 @@ class MisReportInstance(models.Model):
             ('parent_id', '=', False)
         ])
         return account.id
+
+
+class MisReportInstancePeriod(models.Model):
+    _inherit = 'mis.report.instance.period'
+
+    period_special = fields.Boolean(
+        string='Special Period',
+        default=False,
+    )
