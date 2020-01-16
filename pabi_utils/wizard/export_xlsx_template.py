@@ -440,7 +440,9 @@ class ExportXlsxTemplate(models.TransientModel):
             for field in pair_fields:  # (field, raw_field)
                 value = self._get_field_data(field[1], line)
                 if type(value) == type(''):
+                    value = value.replace('','')
                     value = re.sub(r"[]", '', value)
+                    #value = _(value)
                 # Case Eval
                 eval_cond = field_cond_dict[field[0]]
                 if eval_cond:  # Get eval_cond of a raw field
@@ -808,7 +810,7 @@ class ExportXlsxTemplate(models.TransientModel):
         ptemp = ConfParam.get_param('path_temp_file') or '/temp'
         stamp = dt.utcnow().strftime('%H%M%S%f')[:-3]
         ftemp = '%s/temp%s.xlsx' % (ptemp, stamp)
-        f = open(ftemp, 'w')
+        f = open(ftemp, 'wb+')
         f.write(decoded_data)
         f.seek(0)
         f.close()
