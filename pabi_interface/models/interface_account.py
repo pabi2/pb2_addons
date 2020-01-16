@@ -697,15 +697,19 @@ class InterfaceAccountEntry(models.Model):
     def _is_document_origin_exists(self, data_dict):
         str_doc_origin = data_dict["name"]
         str_type = data_dict["type"]
-        str_system = data_dict["system_id"]
         ia_table = self.env["interface.account.entry"]
         system_table = self.env["interface.system"]
         
-        dom = [("name", "=", str_system)]
-        system_datas = system_table.search(dom)
-        
-        dom = [("name", "=", str_doc_origin),
-               ("system_id", "=", system_datas.id)]
+        if str_type != "Reverse":
+            str_system = data_dict["system_id"]
+            dom = [("name", "=", str_system)]
+            system_datas = system_table.search(dom)
+
+            dom = [("name", "=", str_doc_origin),
+                   ("system_id", "=", system_datas.id)]
+        else:
+            dom = [("name", "=", str_doc_origin)]
+            
         ia_datas = ia_table.search(dom)
         res = {"exists": False}
         
