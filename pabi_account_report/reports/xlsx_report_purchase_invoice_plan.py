@@ -239,7 +239,26 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             where_acc = 'where '+(self._domain_to_where_str(dom_acc)).replace('and','')
         
         self._cr.execute("""
-            select * from (
+            select *,
+                (select count(*) from purchase_invoice_plan pip
+                where pip.order_id = purchase_id
+                    and pip.installment is not null
+                ) as no_of_installment,
+                (select sum(pip.invoice_amount) from purchase_invoice_plan pip
+                where pip.order_id = purchase_id
+                     and pip.installment is not null
+                     and pip.fiscalyear_id = 
+                         (select id from account_fiscalyear
+                        where cast(NOW() as Date) between date_start and date_stop)
+                ) as amount_curr_fisyear,
+                (select sum(pip.invoice_amount) from purchase_invoice_plan pip
+                where pip.order_id = purchase_id
+                     and pip.installment is not null
+                     and pip.fiscalyear_id = 
+                         (select id from account_fiscalyear
+                        where cast(NOW() + interval '1 year' as Date) between date_start and date_stop)
+                ) as amount_next_fisyear
+             from (
                 (select pol.org_id as org_id, 
                      po.id as purchase_id, 
                      pct.id as contract_id,
@@ -255,10 +274,9 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     prod.id as product_id, po.partner_id as supplier_id, --wa.id as acceptance_id,
                     fis.name as po_fiscalyear, ou.name as org,
                     po.date_order, po.name as po_number, pol.docline_seq,
-                     null as installment,
+                    null as installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
-                        when po.contract_id is not null then pct_t.name
                         else ''
                     end as po_contract_type,
                     ag.name as activity_group, 
@@ -370,7 +388,6 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     cast(pip.installment as varchar) as installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
-                        when po.contract_id is not null then pct_t.name
                         else ''
                     end as po_contract_type,
                     ag.name as activity_group, 
@@ -485,7 +502,6 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     cast(pip.installment as varchar) as installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
-                        when po.contract_id is not null then pct_t.name
                         else ''
                     end as po_contract_type,
                     null as activity_group, 
@@ -533,7 +549,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     left join res_currency cur_kv on cur_kv.id = av.currency_id
                     left join account_account ads on ads.id = po.account_deposit_supplier
                 where po.state not in ('except_picking','except_invoice','cancel') and po.order_type = 'purchase_order' 
-                     and po.use_invoice_plan = True and pip.order_line_id is null and po.id is null and %s
+                     and po.use_invoice_plan = True and pip.order_line_id is null and %s
                 )
             ) as new
             %s
@@ -584,5 +600,10 @@ class ReportPurchaseInvoicePlanView(models.AbstractModel):
     inv_amount = fields.Float()
     advance_deposit = fields.Char()
     installment = fields.Char()
+    no_of_installment = fields.Integer()
+    amount_curr_fisyear = fields.Float()
+    amount_next_fisyear = fields.Float()
+    
+    
     
     
