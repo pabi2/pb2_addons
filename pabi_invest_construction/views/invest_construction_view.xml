@@ -118,8 +118,8 @@
                             <group>
                                 <field name="create_uid" readonly="1"/>
                                 <field name="pm_employee_id"/>
-                                <field name="pm_section_id"/>
-                                <field name="org_id" required="1" attrs="{'readonly': [('state', 'not in', ('draft', 'submit'))]}"/>
+                                <field name="pm_section_id" invisible="1"/>
+                                <field name="org_id" invisible="1" required="1" attrs="{'readonly': [('state', 'not in', ('draft', 'submit'))]}"/>
                                 <field name="costcenter_id" required="1" invisible="1"/>
                             </group>
                         </group>
@@ -277,7 +277,8 @@
                         <button name="action_approve" string="Approve" type="object" states="submit,unapprove" class="oe_highlight" groups="pabi_base.group_cooperate_budget" />
                         <button name="action_unapprove" string="Un-Approve" type="object" states="approve" groups="pabi_base.group_cooperate_budget" />
                         <button name="action_reject" string="Reject" type="object" states="submit"/>
-                        <button name="action_close" string="Close" type="object" states="approve" class="oe_highlight" groups="pabi_base.group_cooperate_budget" />
+                        <button name="%(action_close_phase)d" string="Close" type="action" states="approve" class="oe_highlight" groups="pabi_base.group_cooperate_budget" />
+                        <!-- <button name="action_close" string="Close" type="object" states="approve" class="oe_highlight" groups="pabi_base.group_cooperate_budget" /> -->
                         <button name="action_delete" string="Delete" type="object" states="approve" groups="pabi_base.group_cooperate_budget" />
                         <button name="action_cancel" string="Cancel" type="object" states="approve" groups="pabi_base.group_cooperate_budget" />
                         <button name="action_draft" string="Reset to Draft" type="object" states="delete,cancel,close,unapprove" groups="pabi_base.group_cooperate_budget" />
@@ -331,6 +332,7 @@
                                 <field name="date_start" required="1"/>
                                 <field name="date_end" required="1"/>
                                 <field name="date_expansion"/>
+                                <field name="date_close"/>
                             </group>
                             <group>
                                 <field name="contract_day_duration"/>
