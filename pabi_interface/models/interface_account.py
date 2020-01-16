@@ -697,9 +697,11 @@ class InterfaceAccountEntry(models.Model):
     def _is_document_origin_exists(self, data_dict):
         str_doc_origin = data_dict["name"]
         str_type = data_dict["type"]
+        str_system = data_dict["system_id"]
         ia_table = self.env["interface.account.entry"]
         
-        dom = [("name", "=", str_doc_origin)]
+        dom = [("name", "=", str_doc_origin),
+               ("system", "=", str_system)]
         ia_datas = ia_table.search(dom)
         res = {"exists": False}
         
@@ -782,6 +784,7 @@ class InterfaceAccountEntry(models.Model):
                             "มีการส่งข้อมูลซ้ำ กรุณารอสักครู่แล้วลองอีกครั้ง"
                 res = {
                         "interfaced": True,
+                        "is_success": False,
                         "result": False,
                         "messages": _(err_message)
                       }
