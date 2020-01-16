@@ -699,9 +699,13 @@ class InterfaceAccountEntry(models.Model):
         str_type = data_dict["type"]
         str_system = data_dict["system_id"]
         ia_table = self.env["interface.account.entry"]
+        system_table = self.env["interface.system"]
+        
+        dom = [("name", "=", str_system)]
+        system_datas = system_table.search(dom)
         
         dom = [("name", "=", str_doc_origin),
-               ("system", "=", str_system)]
+               ("system_id", "=", system_datas.id)]
         ia_datas = ia_table.search(dom)
         res = {"exists": False}
         
