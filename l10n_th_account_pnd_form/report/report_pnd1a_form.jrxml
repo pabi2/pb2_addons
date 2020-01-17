@@ -215,7 +215,7 @@ where calendar_year = $P{fiscalyear}]]>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_wht}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_wht}==0?$F{amount_wht}:$F{amount_wht}*-1]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="70" y="7" width="25" height="20"/>
