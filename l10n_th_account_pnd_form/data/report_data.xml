@@ -125,7 +125,7 @@
 		
 		###########################################################################
 
-		<!-- # PND3A
+		# PND3A
 		<record id="report_pnd3a_form" model="ir.actions.report.xml">
 			<field name="auto">True</field>
 			<field name="model">report.pnd3a.form</field>
@@ -183,7 +183,7 @@
 			<field name="name">PND3A Form</field>
 			<field name="model">report.pnd3a.form</field>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_pnd3a_form_txt)"/>
-		</record> -->
+		</record>
 		
 		###########################################################################
 		
