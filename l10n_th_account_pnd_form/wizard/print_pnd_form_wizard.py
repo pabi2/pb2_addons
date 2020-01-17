@@ -29,8 +29,10 @@ class PrintPNDFormWizard(models.TransientModel):
         [('pnd1', 'PND1'),
          ('pnd1a', 'PND1A'),
          ('pnd3', 'PND3'),
+         ('pnd3a', 'PND3A'),
          ('pnd53', 'PND53')],
         string='Income Tax Form',
+        default='pnd1',
         required=True,
     )
     calendar_period_id = fields.Many2one(
@@ -40,7 +42,7 @@ class PrintPNDFormWizard(models.TransientModel):
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
-        string='Calendar year',
+        string='Calendar Year',
         required=False,
     )
     print_format = fields.Selection(
