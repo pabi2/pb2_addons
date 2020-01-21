@@ -3,12 +3,12 @@ mis_report_bs_th,0,งบแสดงฐานะการเงิน,balance_s
 mis_report_bs_th1000000000,1,[1000000000]สินทรัพย์,1000000000,bale[1000000000],font-weight: bold,2,num,,,pct,mis_report_bs
 mis_report_bs_th1100000000,2,[1100000000]สินทรัพย์หมุนเวียน,1100000000,bale[1100000000],font-weight: bold,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101000000,3,[1101000000]เงินสดและรายการเทียบเท่าเงินสด,1101000000,bale[1101000000],font-weight: bold,2,num,,,pct,mis_report_bs
-mis_report_bs_th1101010000,4,[1101010000]เงินสด,1101010000,bale[1101010000],font-weight: bold,,str,,,pct,mis_report_bs
+mis_report_bs_th1101010000_header,4,[1101010000]เงินสด,header_1101010000,'’,font-weight: bold,,str,,,pct,mis_report_bs
 mis_report_bs_th1101010001,5,[1101010001]เงินสดย่อย,1101010001,bale[1101010001],text-indent: 50px,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101010002,6,[1101010002]เงินสดในมือ,1101010002,bale[1101010002],text-indent: 50px,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101010003,7,[1101010003]เช็ครับ,1101010003,bale[1101010003],text-indent: 50px,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101019990,8,[1101019990]เงินสดในมือ Interface,1101019990,bale[1101019990],text-indent: 50px,2,num,,,pct,mis_report_bs
-mis_report_bs_th_sum_1101010000,9,ยอดรวมเงินสด,Sum_1101010000,bale[1101010000],font-weight: bold,2,num,,,pct,mis_report_bs
+mis_report_bs_th1101010000_sum,9,ยอดรวมเงินสด,sum_1101010000,Bale[1101010000],font-weight: bold,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101020000,10,[1101020000]เงินฝากธนาคาร-ออมทรัพย์,1101020000,bale[1101020000],font-weight: bold,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101020001,11,[1101020001]KTB CA 152-6-00424-0 สวทช.-เงินในงบประมาณ,1101020001,bale[1101020001],text-indent: 50px,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101020002,12,[1101020002]KTB CA 152-6-00426-7 สวทช.-เงินนอกงบประมาณ,1101020002,bale[1101020002],text-indent: 50px,2,num,,,pct,mis_report_bs
