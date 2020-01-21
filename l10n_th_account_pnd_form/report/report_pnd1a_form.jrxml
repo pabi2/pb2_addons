@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pnd1a_form" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryWithPageHeaderAndFooter="true">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.2100000000000006"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="266"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
 +"/../../../pb2_generic/l10n_th_account_pnd_form/report/"]]></defaultValueExpression>
@@ -294,7 +294,7 @@ where calendar_year = $P{fiscalyear}]]>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{currentPage}.equals($V{PAGE_NUMBER}) ? $V{amount_wht} : null]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{currentPage}.equals($V{PAGE_NUMBER}) ? $V{amount_wht}*-1 : null]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>
