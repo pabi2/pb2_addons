@@ -8,8 +8,8 @@ mis_report_bs_th1101010001,5,[1101010001]เงินสดย่อย,11010100
 mis_report_bs_th1101010002,6,[1101010002]เงินสดในมือ,1101010002,bale[1101010002],text-indent: 50px,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101010003,7,[1101010003]เช็ครับ,1101010003,bale[1101010003],text-indent: 50px,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101019990,8,[1101019990]เงินสดในมือ Interface,1101019990,bale[1101019990],text-indent: 50px,2,num,,,pct,mis_report_bs
-mis_report_bs_th1101020000,9,[1101020000]เงินฝากธนาคาร-ออมทรัพย์,1101020000,bale[1101020000],font-weight: bold,2,num,,,pct,mis_report_bs
-mis_report_bs_th_sum_1101010000,10,ยอดรวมเงินสด,sum1101010000,bale[1101010000],font-weight: bold,2,num,,,pct,mis_report_bs
+mis_report_bs_th_sum_1101010000,9,ยอดรวมเงินสด,Sum_1101010000,bale[1101010000],font-weight: bold,2,num,,,pct,mis_report_bs
+mis_report_bs_th1101020000,10,[1101020000]เงินฝากธนาคาร-ออมทรัพย์,1101020000,bale[1101020000],font-weight: bold,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101020001,11,[1101020001]KTB CA 152-6-00424-0 สวทช.-เงินในงบประมาณ,1101020001,bale[1101020001],text-indent: 50px,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101020002,12,[1101020002]KTB CA 152-6-00426-7 สวทช.-เงินนอกงบประมาณ,1101020002,bale[1101020002],text-indent: 50px,2,num,,,pct,mis_report_bs
 mis_report_bs_th1101020003,13,[1101020003]KTB CA 152-6-00469-0 สวทช.-เงินเบิกแทนกัน,1101020003,bale[1101020003],text-indent: 50px,2,num,,,pct,mis_report_bs
