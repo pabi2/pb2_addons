@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="mis.report" id="mis_report_bs">
+          <field name="name">Thailand Balance Sheet (All)</field>
+        </record>
+        <record model="mis.report" id="mis_report_bs_internal">
+          <field name="name">Thailand Balance Sheet (Internal)</field>
+        </record>
+        <record model="mis.report" id="mis_report_bs_external">
+          <field name="name">Thailand Balance Sheet (External)</field>
+        </record>
+    </data>
+</openerp>
