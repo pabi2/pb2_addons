@@ -23,7 +23,7 @@
 	<parameter name="fiscalyear" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT * FROM public.issi_report_pnd3a
-where wht_year = $P{fiscalyear}]]>
+where wht_year = $P{fiscalyear} and sum_base_total > 0]]>
 	</queryString>
 	<field name="title" class="java.lang.String"/>
 	<field name="supplier_name_th" class="java.lang.String"/>
@@ -347,7 +347,7 @@ where wht_year = $P{fiscalyear}]]>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{sum_tax_total}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="22" y="16" width="25" height="20"/>
+				<reportElement x="20" y="16" width="28" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
