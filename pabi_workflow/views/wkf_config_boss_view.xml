@@ -68,12 +68,13 @@
                                    'search_default_group_by_section_id': 1}</field>
         </record>
 
-        <menuitem name="Boss View" id="menu_pb2_boss_view" action="action_pb2_boss_view" parent="menu_wkf_config" sequence="0"/>
+        <menuitem name="Boss View" id="menu_pb2_boss_view"
+        	action="action_pb2_boss_view" parent="menu_wkf_config" sequence="0"/>
 
         # TOP Work Flow Configuration Menu
         <!-- Deprecated -->
         <menuitem name="Boss/Employee" id="menu_wkf_config_boss"
-          parent="menu_wkf_config" sequence="3"/>
+        	parent="menu_wkf_config" sequence="6"/>
 
         # Boss Level Approval
         <record id="view_wkf_cmd_boss_level_approval_tree" model="ir.ui.view">
@@ -136,7 +137,8 @@
             <field name="view_id" ref="view_wkf_cmd_boss_level_approval_tree"/>
         </record>
 
-        <menuitem name="Boss Level Approval" id="menu_wkf_cmd_boss_level_approval" action="action_wkf_cmd_boss_level_approval" parent="menu_wkf_config" sequence="3"/>
+        <menuitem name="Boss Level Approval" id="menu_wkf_cmd_boss_level_approval"
+        	action="action_wkf_cmd_boss_level_approval" parent="menu_wkf_config" sequence="4"/>
 
         # Boss Level Approval History
         <record id="view_wkf_cmd_boss_level_approval_history_tree" model="ir.ui.view">
@@ -219,7 +221,7 @@
         </record>
 
         <menuitem name="Boss Level History" id="menu_wkf_cmd_boss_level_approval_history"
-        	action="action_wkf_cmd_boss_level_approval_history" parent="menu_wkf_config" sequence="4"/>
+        	action="action_wkf_cmd_boss_level_approval_history" parent="menu_wkf_config" sequence="5"/>
 
         #Boss Special Level Approval
         <record id="view_wkf_cmd_boss_special_level_tree" model="ir.ui.view">
@@ -259,7 +261,8 @@
         </record>
 
         <!-- Deprecated -->
-        <menuitem name="Special Level" id="menu_wkf_cmd_boss_special_level" action="action_wkf_cmd_boss_special_level" parent="menu_wkf_config_boss" sequence="2"/>
+        <menuitem name="Special Level" id="menu_wkf_cmd_boss_special_level"
+        	action="action_wkf_cmd_boss_special_level" parent="menu_wkf_config_boss" sequence="2"/>
 
         # Special Flow Emotion
         # If a section is setting up for special level, all level under this level
@@ -333,7 +336,7 @@
         </record>
 
         <menuitem name="Special Emotion Flow" id="menu_special_emotion_flow"
-          action="action_special_emotion_flow"  parent="menu_wkf_config" sequence="4"/>
+        	action="action_special_emotion_flow"  parent="menu_wkf_config" sequence="7"/>
 
 
     </data>
