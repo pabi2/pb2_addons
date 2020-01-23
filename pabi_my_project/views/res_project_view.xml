@@ -465,12 +465,11 @@
                             <field name="write_date" invisible="1"/>
                         </group>
                         <group>
-                            <h2>
-                                <label string="Release Amount"/>
-                                <field name="released_amount" class="oe_inline" attrs="{'readonly': [('write_date', '!=', False)]}"/>
-                                <button name="dummy" type="object" string="Release Budget" class="oe_highlight oe_inline"
-                                  invisible="not context.get('default_project_id', False)"/>
-                            </h2>
+                               <field name="current_release" string="Current Released" class='oe_inline' attrs="{'readonly': [('write_date', '!=', False)]}" readonly = "1"/>
+                               <field name="additional" string="Additional" class='oe_inline'/>
+                               <field name="released_amount" string ="Release Amount" class='oe_inline' attrs="{'readonly': [('write_date', '!=', False)]}" readonly = "1"/>
+                               <button name="dummy" type="object" string="Release Budget" class="oe_highlight oe_inline"
+                                  invisible="not context.get('default_project_id', False)"/> 
                         </group>
                     </group>
                 </form>
