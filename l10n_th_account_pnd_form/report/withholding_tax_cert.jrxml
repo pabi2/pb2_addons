@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="withholding_cert" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.4641000000000006"/>
-	<property name="ireport.x" value="135"/>
-	<property name="ireport.y" value="192"/>
+	<property name="ireport.x" value="308"/>
+	<property name="ireport.y" value="48"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
 +"/../../../pb2_generic/l10n_th_account_pnd_form/report/"]]></defaultValueExpression>
@@ -49,7 +49,7 @@ abs((select sum(amount_wht) from personal_income_tax
 where wht_cert_income_type = '2' and partner_id = p.partner_id and calendar_year = p.calendar_year
 and posted = TRUE)) as wht_type2
 from report_pnd1a_form p left join personal_income_tax t on p.partner_id = t.partner_id
-where p.calendar_year = $P{fiscalyear}
+where p.calendar_year = $P{fiscalyear} and t.posted = TRUE
 group by
 p.partner_id,
 p.supplier_taxid,
@@ -295,7 +295,7 @@ p.amount_wht]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(12,13):""]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="53" y="176" width="841" height="24"/>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="53" y="176" width="1000" height="24"/>
 				<textElement verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
