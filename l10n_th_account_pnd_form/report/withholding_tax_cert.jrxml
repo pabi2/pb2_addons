@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="withholding_cert" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="19"/>
+	<property name="ireport.y" value="1008"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
++"/../../../pb2_generic/l10n_th_account_pnd_form/report/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COPY" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="company_taxid" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="company_branch" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="income_tax_form" class="java.lang.String"/>
+	<parameter name="print_name" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="print_position" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="signature" class="java.lang.String"/>
+	<parameter name="fiscalyear" class="java.lang.String"/>
+	<parameter name="company_address" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="company_name" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="buddha_year" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select p.partner_id,
+p.supplier_taxid,
+p.supplier_branch,
+p.title_th,
+p.supplier_name_th,
+p.supplier_street,
+p.supplier_street2,
+p.supplier_township,
+p.supplier_district,
+p.supplier_province,
+p.supplier_zip,
+p.supplier_country,
+p.calendar_year,
+abs(p.amount_income) as amount_income,
+abs(p.amount_wht) as amount_wht,
+abs((select sum(amount_income) from personal_income_tax
+where wht_cert_income_type = '1' and partner_id = p.partner_id and calendar_year = p.calendar_year
+and posted = TRUE)) as income_type1,
+abs((select sum(amount_wht) from personal_income_tax
+where wht_cert_income_type = '1' and partner_id = p.partner_id  and calendar_year = p.calendar_year
+and posted = TRUE)) as wht_type1,
+abs((select sum(amount_income) from personal_income_tax
+where wht_cert_income_type = '2' and partner_id = p.partner_id and calendar_year = p.calendar_year
+and posted = TRUE)) as income_type2,
+abs((select sum(amount_wht) from personal_income_tax
+where wht_cert_income_type = '2' and partner_id = p.partner_id and calendar_year = p.calendar_year
+and posted = TRUE)) as wht_type2
+from report_pnd1a_form p left join personal_income_tax t on p.partner_id = t.partner_id
+where p.calendar_year = $P{fiscalyear}
+group by
+p.partner_id,
+p.supplier_taxid,
+p.supplier_branch,
+p.title_th,
+p.supplier_name_th,
+p.supplier_street,
+p.supplier_street2,
+p.supplier_township,
+p.supplier_district,
+p.supplier_province,
+p.supplier_zip,
+p.supplier_country,
+p.calendar_year,
+p.amount_income,
+p.amount_wht]]>
+	</queryString>
+	<field name="partner_id" class="java.lang.Integer"/>
+	<field name="supplier_taxid" class="java.lang.String"/>
+	<field name="supplier_branch" class="java.lang.String"/>
+	<field name="title_th" class="java.lang.String"/>
+	<field name="supplier_name_th" class="java.lang.String"/>
+	<field name="supplier_street" class="java.lang.String"/>
+	<field name="supplier_street2" class="java.lang.String"/>
+	<field name="supplier_township" class="java.lang.String"/>
+	<field name="supplier_district" class="java.lang.String"/>
+	<field name="supplier_province" class="java.lang.String"/>
+	<field name="supplier_zip" class="java.lang.String"/>
+	<field name="supplier_country" class="java.lang.String"/>
+	<field name="calendar_year" class="java.lang.String"/>
+	<field name="amount_income" class="java.lang.Number">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount_wht" class="java.lang.Number"/>
+	<field name="income_type1" class="java.lang.Number"/>
+	<field name="wht_type1" class="java.lang.Number"/>
+	<field name="income_type2" class="java.lang.Number"/>
+	<field name="wht_type2" class="java.lang.Number"/>
+	<variable name="supplier_address" class="java.lang.String">
+		<variableExpression><![CDATA[(new Scriptlet()).getAddress(
+    $F{supplier_street},
+    $F{supplier_street2},
+    $F{supplier_township},
+    $F{supplier_district},
+    $F{supplier_province},
+    $F{supplier_zip})]]></variableExpression>
+	</variable>
+	<variable name="amount_tax" class="java.lang.Double" resetType="Column">
+		<variableExpression><![CDATA[new Double( ((int)($F{amount_wht}.doubleValue() * 100)) / 100.0 )]]></variableExpression>
+	</variable>
+	<background>
+		<band height="802">
+			<image>
+				<reportElement x="0" y="0" width="555" height="802"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "WithholdingCert_2.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<detail>
+		<band height="602">
+			<textField isBlankWhenNull="true">
+				<reportElement x="365" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(1,2):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="439" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(7,8):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="399" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(4,5):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="451" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(8,9):""]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="334" y="269" width="120" height="35">
+					<printWhenExpression><![CDATA[$F{income_type2} >=0.0 & $F{wht_type2} >= 0.0 & !($F{income_type2} == 0.0 & $F{wht_type2} == 0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{income_type2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="388" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(3,4):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="429" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(6,7):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="490" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(11,12):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="417" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(5,6):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="349" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(0,1):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="489" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(11,12):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="387" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(3,4):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="440" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(7,8):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="464" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(9,10):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="377" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(2,3):""]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column">
+				<reportElement isPrintRepeatedValues="false" x="196" y="210" width="17" height="25"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="THSarabun.ttf"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="478" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(10,11):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="428" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(6,7):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="418" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(5,6):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="366" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(1,2):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="348" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(0,1):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="400" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(4,5):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="452" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(8,9):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="466" y="0" width="87" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="18" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{COPY} == 1 ? "ต้นฉบับ" : "สำเนา"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="376" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(2,3):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="509" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(12,13):""]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="60" y="165" width="658" height="35"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{supplier_address}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="59" y="93" width="841" height="35"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_address}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="508" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(12,13):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="479" y="139" width="10" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_taxid}.length()==13?$F{supplier_taxid}.substring(10,11):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="463" y="74" width="10" height="25"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_taxid}.length()==13?$P{company_taxid}.substring(9,10):""]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="" isBlankWhenNull="true">
+				<reportElement x="233" y="269" width="120" height="35">
+					<printWhenExpression><![CDATA[$F{income_type2} >=0.0 & $F{wht_type2} >= 0.0 & !($F{income_type2} == 0.0 & $F{wht_type2} == 0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{buddha_year}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="384" y="254" width="137" height="35">
+					<printWhenExpression><![CDATA[$F{income_type1} >=0.0 & $F{wht_type1} >= 0.0 & !($F{income_type1} == 0.0 & $F{wht_type1} == 0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{wht_type1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="384" y="269" width="137" height="35">
+					<printWhenExpression><![CDATA[$F{income_type2} >=0.0 & $F{wht_type2} >= 0.0 & !($F{income_type2} == 0.0 & $F{wht_type2} == 0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{wht_type2}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="" isBlankWhenNull="true">
+				<reportElement x="233" y="254" width="120" height="35">
+					<printWhenExpression><![CDATA[$F{income_type1} >=0.0 & $F{wht_type1} >= 0.0 & !($F{income_type1} == 0.0 & $F{wht_type1} == 0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{buddha_year}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="334" y="254" width="120" height="35">
+					<printWhenExpression><![CDATA[$F{income_type1} >=0.0 & $F{wht_type1} >= 0.0 & !($F{income_type1} == 0.0 & $F{wht_type1} == 0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{income_type1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="52" y="72" width="605" height="35"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="58" y="141" width="599" height="35"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{title_th} == null ? $F{supplier_name_th} : $F{title_th} + " " + $F{supplier_name_th}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="200">
+			<textField evaluationTime="Column">
+				<reportElement isPrintRepeatedValues="false" x="77" y="58" width="17" height="25"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="12" pdfFontName="THSarabun.ttf"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement isPrintRepeatedValues="false" x="213" y="111" width="319" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{print_name}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle" isUsingCache="true" evaluationTime="Column">
+				<reportElement x="296" y="98" width="158" height="27"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{signature}.isEmpty() ? null : new java.io.ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64($P{signature}.getBytes()))]]></imageExpression>
+			</image>
+			<textField evaluationTime="Column" pattern="yyyy" isBlankWhenNull="false">
+				<reportElement isPrintRepeatedValues="false" x="383" y="125" width="61" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="dd" isBlankWhenNull="false">
+				<reportElement isPrintRepeatedValues="false" x="297" y="125" width="44" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="MMMMM" isBlankWhenNull="false">
+				<reportElement isPrintRepeatedValues="false" x="300" y="125" width="120" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[(new Date())]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="401" y="-17" width="120" height="35"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_wht}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="334" y="-17" width="120" height="35"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_income}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="" isBlankWhenNull="false">
+				<reportElement isPrintRepeatedValues="false" x="76" y="3" width="518" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[(new Scriptlet()).getAmtInWords($V{amount_tax}.toString(),"THB")]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>
