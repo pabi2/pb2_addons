@@ -204,7 +204,7 @@
                         </field>
                     </page>
                     <page string="Job Order">
-                        	<field name="job_order_id"> 
+                        	<field name="job_order_ids"> 
                         	</field>
                     </page>
                 </xpath>

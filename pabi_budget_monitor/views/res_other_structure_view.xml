@@ -164,7 +164,7 @@
                     </page>
                     <page string="Report">
                     	<group string="Section " >
-                     		<field name="report_section_id">
+                     		<field name="section_ids">
                      		</field>
                      	</group>	
                     </page>

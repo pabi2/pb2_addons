@@ -22,7 +22,7 @@ class CostControl(models.Model):
         domain=[('budget_method', '=', 'expense')],
         readonly=True,
     )
-    report_section_id =fields.Many2many(
+    section_ids =fields.Many2many(
         'res.section',
         string='Section',
         
