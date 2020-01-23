@@ -7,6 +7,7 @@ class ProjectClosePhaseWizard(models.TransientModel):
 
     date_close = fields.Date(
         string='Close Date',
+        default=lambda self: self.get_date()
     )
 
     @api.multi
@@ -16,3 +17,9 @@ class ProjectClosePhaseWizard(models.TransientModel):
         phase.date_close = self.date_close
         phase.action_close()
         return True
+
+    @api.multi
+    def get_date(self):
+        active_id = self.env.context.get('active_id')
+        phase = self.env['res.invest.construction.phase'].browse(active_id)
+        return phase.date_close

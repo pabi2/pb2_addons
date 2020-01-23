@@ -78,9 +78,10 @@ class ResInvestConstruction(LogCommon, models.Model):
         'res.section',
         string='Project Manager Section',
         required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+        store=True,
+        readonly=False,
+        # states={'draft': [('readonly', False)],
+        #         'submit': [('readonly', False)]},
         track_visibility='onchange',
     )
     mission_id = fields.Many2one(
@@ -367,6 +368,13 @@ class ResInvestConstruction(LogCommon, models.Model):
 
     @api.multi
     def action_close(self):
+        phase_ids = self.env['res.invest.construction.phase'].search(
+            [('invest_construction_id', '=', self.id)])
+        for phase in phase_ids:
+            if phase.state not in ['draft', 'close', 'delete']:
+                raise except_orm(
+                    _('Warning!'),
+                    _("Phase Status is not Draft or Closed or Delete"))
         self.with_context(button_click=True).write({'state': 'close'})
 
     @api.multi
@@ -375,6 +383,13 @@ class ResInvestConstruction(LogCommon, models.Model):
 
     @api.multi
     def write(self, vals):
+        if vals.get('pm_employee_id'):
+            employee = self.pm_employee_id
+            vals.update({
+                'costcenter_id': employee.section_id.costcenter_id.id,
+                'pm_section_id': employee.section_id.id,
+                'org_id': employee.org_id.id,
+            })
         # Only cooperate budget allowed to edit when state == 'submit'
         button_click = self._context.get('button_click', False)
         for rec in self:
