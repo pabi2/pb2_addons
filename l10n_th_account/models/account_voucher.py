@@ -18,7 +18,7 @@ class CommonVoucher(object):
             datetime.today())
         company_currency = (journal.currency or journal.company_id.currency_id)
         amount = currency.compute(
-            round(amount, 2), company_currency, round=False)
+            amount, company_currency, round=False)
         return amount
 
     @api.model
@@ -28,7 +28,7 @@ class CommonVoucher(object):
             datetime.today())
         company_currency = (journal.currency or journal.company_id.currency_id)
         amount = currency.compute(
-            round(amount, 2), company_currency, round=False)
+            amount, company_currency, round=False)
         return amount
 
 
@@ -1036,7 +1036,7 @@ class AccountVoucherTax(CommonVoucher, models.Model):
                     val['tax_amount'] = voucher_cur.compute(
                         val['amount'] *
                         tax['tax_sign'],
-                        company_currency) * payment_ratio
+                        company_currency, round=False) * payment_ratio
                     val['account_id'] = (tax['account_collected_id'] or
                                          line.account_id.id)
                     val['account_analytic_id'] = \
@@ -1051,7 +1051,7 @@ class AccountVoucherTax(CommonVoucher, models.Model):
                     val['tax_amount'] = voucher_cur.compute(
                         val['amount'] *
                         tax['ref_tax_sign'],
-                        company_currency) * payment_ratio
+                        company_currency, round=False) * payment_ratio
                     val['account_id'] = (tax['account_paid_id'] or
                                          line.account_id.id)
                     val['account_analytic_id'] = \
@@ -1077,7 +1077,6 @@ class AccountVoucherTax(CommonVoucher, models.Model):
                     tax_gp[key]['base_amount'] += val['base_amount']
                     tax_gp[key]['tax_amount'] += val['tax_amount']
                     tax_gp[key]['tax_currency_gain'] += 0.0  # No gain for WHT
-
             # --> Adding Tax for Posting 1) Contra-Undue 2) Non-Undue
             elif tax1.is_undue_tax:
                 # First: Do the Cr: with Non-Undue Account
@@ -1098,7 +1097,7 @@ class AccountVoucherTax(CommonVoucher, models.Model):
                     val['tax_amount'] = voucher_cur.compute(
                         val['amount'] *
                         refer_tax.tax_sign,
-                        company_currency) * payment_ratio
+                        company_currency, round=False) * payment_ratio
                     val['account_id'] = (refer_tax.account_collected_id.id or
                                          line.account_id.id)
                     val['account_analytic_id'] = \
@@ -1114,7 +1113,7 @@ class AccountVoucherTax(CommonVoucher, models.Model):
                     val['tax_amount'] = voucher_cur.compute(
                         val['amount'] *
                         refer_tax.ref_tax_sign,
-                        company_currency) * payment_ratio
+                        company_currency, round=False) * payment_ratio
                     val['account_id'] = (refer_tax.account_paid_id.id or
                                          line.account_id.id)
                     val['account_analytic_id'] = \
@@ -1148,7 +1147,7 @@ class AccountVoucherTax(CommonVoucher, models.Model):
                     vals['tax_amount'] = voucher_cur.compute(
                         val['amount'] *
                         tax['tax_sign'],
-                        company_currency) * payment_ratio
+                        company_currency, round=False) * payment_ratio
                     # USE UNDUE ACCOUNT HERE
                     vals['account_id'] = \
                         (tax1.account_collected_id.id or
@@ -1165,7 +1164,7 @@ class AccountVoucherTax(CommonVoucher, models.Model):
                     vals['tax_amount'] = voucher_cur.compute(
                         val['amount'] *
                         tax['ref_tax_sign'],
-                        company_currency) * payment_ratio
+                        company_currency, round=False) * payment_ratio
                     # USE UNDUE ACCOUNT HERE
                     vals['account_id'] = \
                         (tax1.account_paid_id.id or
@@ -1270,7 +1269,6 @@ class AccountVoucherTax(CommonVoucher, models.Model):
             t['base_amount'] = voucher_cur.round(t['base_amount'])
             t['tax_amount'] = voucher_cur.round(t['tax_amount'])
             t['tax_currency_gain'] = voucher_cur.round(t['tax_currency_gain'])
-
         return tax_gps
 
     @api.model
