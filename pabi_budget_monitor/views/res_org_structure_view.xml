@@ -203,6 +203,10 @@
                             </tree>
                         </field>
                     </page>
+                    <page string="Job Order">
+                        	<field name="job_order_id"> 
+                        	</field>
+                    </page>
                 </xpath>
             </field>
         </record>

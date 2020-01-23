@@ -110,6 +110,10 @@ class ResSection(models.Model):
         domain=[('budget_method', '=', 'expense')],
         readonly=True,
     )
+    job_order_id= fields.Many2many(
+        'cost.control',
+        string='Job Order',
+    )
 
 
 class ResCostcenter(models.Model):
