@@ -62,7 +62,7 @@ where wht_year = $P{fiscalyear} and sum_base_total > 0]]>
 		<band height="595" splitType="Stretch">
 			<image>
 				<reportElement x="0" y="0" width="842" height="595"/>
-				<imageExpression class="java.lang.String"><![CDATA["pnd3a.png"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "pnd3a.png"]]></imageExpression>
 			</image>
 		</band>
 	</background>
