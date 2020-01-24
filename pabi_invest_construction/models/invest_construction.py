@@ -384,7 +384,9 @@ class ResInvestConstruction(LogCommon, models.Model):
     @api.multi
     def write(self, vals):
         if vals.get('pm_employee_id'):
-            employee = self.pm_employee_id
+            employee = self.env['hr.employee'].search(
+                [('id', '=', vals.get('pm_employee_id'))]
+            )
             vals.update({
                 'costcenter_id': employee.section_id.costcenter_id.id,
                 'pm_section_id': employee.section_id.id,
