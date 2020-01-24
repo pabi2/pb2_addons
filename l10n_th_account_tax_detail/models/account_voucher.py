@@ -69,6 +69,14 @@ class AccountVoucherTax(models.Model):
     @api.model
     def create(self, vals):
         voucher_tax = super(AccountVoucherTax, self).create(vals)
+        # case : undue vat != tax in invoice
+        invoice_id = vals.get('invoice_id', False)
+        invoice = self.env['account.invoice'].browse(invoice_id)
+        invoice_tax = invoice.tax_line.filtered(
+            lambda l: l.base_code_id.id == vals.get('base_code_id', False))
+        if invoice_tax and voucher_tax.tax_code_type == 'undue' \
+                and invoice_tax.tax_amount != voucher_tax.tax_amount:
+            voucher_tax.amount = -invoice_tax.tax_amount
         if voucher_tax.tax_code_type == 'normal':
             detail = voucher_tax._prepare_voucher_tax_detail()
             self.env['account.tax.detail'].create(detail)
