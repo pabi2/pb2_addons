@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+from openerp import models, api, fields
 
 
 class StockQuant(models.Model):
@@ -11,6 +11,16 @@ class StockQuant(models.Model):
         # Overwrite by asset value in stock.move
         if move.asset_value > 0.0:
             cost = move.asset_value
+        # Overwrite by current currency rate
+        currency_id = move.picking_id.acceptance_id.order_id.currency_id.id
+        if currency_id != move.company_id.currency_id.id:
+            search = self.env['res.currency.rate'].search([
+                ('currency_id', '=', currency_id),
+                ('name', '<=', fields.Date.today())
+            ], order="name DESC", limit=1)
+            currency_rate = search and search.rate_input or False
+            cost = currency_rate * move.purchase_line_id.price_unit
+            move.price_unit = cost
         res = super(StockQuant, self).\
             _prepare_account_move_line(move, qty, cost,
                                        credit_account_id, debit_account_id)
