@@ -242,7 +242,7 @@
 			<field name="header">False</field>
 			<field name="jasper_report">True</field>
 			<field name="jasper_output">pdf</field>
-			<field name="copies">2</field>
+			<field name="copies">1</field>
 		</record>
 
 		<record id="report_withholding_tax_cert_values" model="ir.values">
