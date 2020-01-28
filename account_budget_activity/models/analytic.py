@@ -222,7 +222,7 @@ class AccountAnalyticLine(models.Model):
                     rec._write({'monitor_fy_id': fiscal.id, })
                 else:
                     rec._write({'monitor_fy_id': rec.fiscalyear_id.id, })
-    
+
     @api.multi
     def _check_analytic_asset_line(self):
         MOVE = self.env['account.move']#
@@ -246,7 +246,7 @@ class AccountAnalyticLine(models.Model):
                 self.costcenter_id = chartfield_id and\
                                         chartfield_id.costcenter_id and\
                                         chartfield_id.costcenter_id.id or False
-    
+
     @api.model
     def create(self, vals):
         _logger.info("------- create analytic line -------")
@@ -330,29 +330,37 @@ class AccountAnalyticAccount(models.Model):
             'activity_group_id',
         ]
         return dimensions
-    
+
     @api.multi
     def _check_analytic_asset_line(self, vals):
         MOVE = self.env['account.move']
         ASSET = self.env['account.asset']
         ASSET_line = self.env['account.asset.line']
         asset_id = False
-        #moves = MOVE.browse(self.move_id and self.move_id.id)
+        # moves = MOVE.browse(self.move_id and self.move_id.id)
         if 'asset_id' in vals:
             asset_id = ASSET.browse(vals['asset_id'])
-        if self.line_ids and self.line_ids[0].move_id and self.line_ids[0].move_id.move_id:
-            asset_id = ASSET_line.search([('move_id','=',self.line_ids[0].move_id.move_id.id),('asset_id','!=',False)], limit=1).asset_id
-        #if not self.line_ids:
-        #    asset_id = ASSET.search([('account_analytic_id','=',self.id),('active','=',True)], limit=1)
+        if self.line_ids and self.line_ids.sorted()[0].move_id \
+                and self.line_ids.sorted()[0].move_id.move_id:
+            asset_id = ASSET_line.search([
+                ('move_id', '=', self.line_ids.sorted()[0].move_id.move_id.id),
+                ('asset_id', '!=', False)
+            ], limit=1).asset_id
+        # if not self.line_ids:
+        #     asset_id = ASSET.search([
+        #         ('account_analytic_id', '=', self.id),
+        #         ('active', '=', True)
+        #     ], limit=1)
 
-        if asset_id:            
+        if asset_id:
             if asset_id.owner_section_id:
                 self.write({
                             'section_id': asset_id.owner_section_id.id,
                             'project_id': False,
                             'invest_asset_id': False,
                             'invest_construction_phase_id': False,
-                            'costcenter_id': asset_id.owner_section_id.costcenter_id.id,
+                            'costcenter_id':
+                            asset_id.owner_section_id.costcenter_id.id,
                     })
             elif asset_id.owner_project_id:
                 self.write({
@@ -378,7 +386,7 @@ class AccountAnalyticAccount(models.Model):
                             'invest_construction_phase_id': asset_id.owner_invest_construction_phase_id.id,
                             'costcenter_id': asset_id.owner_invest_construction_phase_id.costcenter_id.id,
                     })
-    
+
     @api.model
     def get_analytic_search_domain(self, rec):
         dimensions = self._analytic_dimensions()
