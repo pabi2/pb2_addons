@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="withholding_cert" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.4641000000000006"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1056"/>
+	<property name="ireport.y" value="991"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
 +"/../../../pb2_generic/l10n_th_account_pnd_form/report/"]]></defaultValueExpression>
@@ -47,7 +47,37 @@ where wht_cert_income_type = '2' and partner_id = p.partner_id and calendar_year
 and posted = TRUE)) as income_type2,
 abs((select sum(amount_wht) from personal_income_tax
 where wht_cert_income_type = '2' and partner_id = p.partner_id and calendar_year = p.calendar_year
-and posted = TRUE)) as wht_type2
+and posted = TRUE)) as wht_type2,
+abs((select sum(amount_income) from personal_income_tax
+where wht_cert_income_type = '3' and partner_id = p.partner_id and calendar_year = p.calendar_year
+and posted = TRUE)) as income_type3,
+abs((select sum(amount_wht) from personal_income_tax
+where wht_cert_income_type = '3' and partner_id = p.partner_id  and calendar_year = p.calendar_year
+and posted = TRUE)) as wht_type3,
+abs((select sum(amount_income) from personal_income_tax
+where wht_cert_income_type = '5' and partner_id = p.partner_id and calendar_year = p.calendar_year
+and posted = TRUE)) as income_type5,
+abs((select sum(amount_wht) from personal_income_tax
+where wht_cert_income_type = '5' and partner_id = p.partner_id  and calendar_year = p.calendar_year
+and posted = TRUE)) as wht_type5,
+abs((select sum(amount_income) from personal_income_tax
+where wht_cert_income_type = '6' and partner_id = p.partner_id and calendar_year = p.calendar_year
+and posted = TRUE)) as income_type6,
+abs((select sum(amount_wht) from personal_income_tax
+where wht_cert_income_type = '6' and partner_id = p.partner_id  and calendar_year = p.calendar_year
+and posted = TRUE)) as wht_type6,
+abs((select sum(amount_income) from personal_income_tax
+where wht_cert_income_type = '7' and partner_id = p.partner_id and calendar_year = p.calendar_year
+and posted = TRUE)) as income_type7,
+abs((select sum(amount_wht) from personal_income_tax
+where wht_cert_income_type = '7' and partner_id = p.partner_id  and calendar_year = p.calendar_year
+and posted = TRUE)) as wht_type7,
+abs((select sum(amount_income) from personal_income_tax
+where wht_cert_income_type = '8' and partner_id = p.partner_id and calendar_year = p.calendar_year
+and posted = TRUE)) as income_type8,
+abs((select sum(amount_wht) from personal_income_tax
+where wht_cert_income_type = '8' and partner_id = p.partner_id  and calendar_year = p.calendar_year
+and posted = TRUE)) as wht_type8
 from report_pnd1a_form p left join personal_income_tax t on p.partner_id = t.partner_id
 where p.calendar_year = $P{fiscalyear} and p.amount_income > 0 and t.posted = TRUE
 group by
@@ -88,6 +118,16 @@ p.amount_wht]]>
 	<field name="wht_type1" class="java.lang.Number"/>
 	<field name="income_type2" class="java.lang.Number"/>
 	<field name="wht_type2" class="java.lang.Number"/>
+	<field name="income_type3" class="java.lang.Number"/>
+	<field name="wht_type3" class="java.lang.Number"/>
+	<field name="income_type5" class="java.lang.Number"/>
+	<field name="wht_type5" class="java.lang.Number"/>
+	<field name="income_type6" class="java.lang.Number"/>
+	<field name="wht_type6" class="java.lang.Number"/>
+	<field name="income_type7" class="java.lang.Number"/>
+	<field name="wht_type7" class="java.lang.Number"/>
+	<field name="income_type8" class="java.lang.Number"/>
+	<field name="wht_type8" class="java.lang.Number"/>
 	<variable name="supplier_address" class="java.lang.String">
 		<variableExpression><![CDATA[(new Scriptlet()).getAddress(
     $F{supplier_street},
@@ -99,6 +139,9 @@ p.amount_wht]]>
 	</variable>
 	<variable name="amount_tax" class="java.lang.Double" resetType="Column">
 		<variableExpression><![CDATA[new Double( ((int)($F{amount_wht}.doubleValue() * 100)) / 100.0 )]]></variableExpression>
+	</variable>
+	<variable name="income_type" class="java.lang.String" resetType="Column">
+		<variableExpression><![CDATA[$F{income_type6} > 0.0 ? "ค่าบริการ/ค่าสินค้าภาครัฐ" : ($F{income_type7} > 0.0 ? "ค่าจ้างทำของ ค่ารับเหมา" : ($F{income_type8} > 0.0 ? " ธุรกิจพาณิชย์ เกษตร อื่นๆ" : ''))]]></variableExpression>
 	</variable>
 	<background>
 		<band height="802">
@@ -392,6 +435,78 @@ p.amount_wht]]>
 				<reportElement x="76" y="208" width="38" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="334" y="551" width="120" height="35">
+					<printWhenExpression><![CDATA[$F{income_type5} >=0.0 & $F{wht_type5} >= 0.0 & !($F{income_type5} == 0.0 & $F{wht_type5} == 0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{income_type5}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="" isBlankWhenNull="true">
+				<reportElement x="233" y="551" width="120" height="35">
+					<printWhenExpression><![CDATA[$F{income_type5} >=0.0 & $F{wht_type5} >= 0.0 & !($F{income_type5} == 0.0 & $F{wht_type5} == 0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{buddha_year}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="384" y="551" width="137" height="35">
+					<printWhenExpression><![CDATA[$F{income_type5} >=0.0 & $F{wht_type5} >= 0.0 & !($F{income_type5} == 0.0 & $F{wht_type5} == 0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{wht_type5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="95" y="565" width="420" height="35">
+					<printWhenExpression><![CDATA[$F{income_type6} > 0.0 || $F{income_type7} > 0.0 || $F{income_type8} > 0.0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Bottom" lineSpacing="1_1_2">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{income_type}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="" isBlankWhenNull="true">
+				<reportElement x="233" y="565" width="120" height="35">
+					<printWhenExpression><![CDATA[$F{income_type6} >=0.0 & $F{wht_type6} >= 0.0 & !($F{income_type6} == 0.0 & $F{wht_type6} == 0.0)
+|| $F{income_type7} >=0.0 & $F{wht_type7} >= 0.0 & !($F{income_type7} == 0.0 & $F{wht_type7} == 0.0)
+|| $F{income_type8} >=0.0 & $F{wht_type8} >= 0.0 & !($F{income_type8} == 0.0 & $F{wht_type8} == 0.0)
+]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{buddha_year}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="334" y="565" width="120" height="35">
+					<printWhenExpression><![CDATA[$F{income_type6} >=0.0 & $F{wht_type6} >= 0.0 & !($F{income_type6} == 0.0 & $F{wht_type6} == 0.0)
+|| $F{income_type7} >=0.0 & $F{wht_type7} >= 0.0 & !($F{income_type7} == 0.0 & $F{wht_type7} == 0.0)
+|| $F{income_type8} >=0.0 & $F{wht_type8} >= 0.0 & !($F{income_type8} == 0.0 & $F{wht_type8} == 0.0)
+]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{income_type6} > 0.0 ? $F{income_type6} : ($F{income_type7} > 0.0 ? $F{income_type7} : ($F{income_type8} > 0.0 ? $F{income_type8} : ''))]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Column" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="384" y="565" width="137" height="35">
+					<printWhenExpression><![CDATA[$F{income_type6} >=0.0 & $F{wht_type6} >= 0.0 & !($F{income_type6} == 0.0 & $F{wht_type6} == 0.0)
+|| $F{income_type7} >=0.0 & $F{wht_type7} >= 0.0 & !($F{income_type7} == 0.0 & $F{wht_type7} == 0.0)
+|| $F{income_type8} >=0.0 & $F{wht_type8} >= 0.0 & !($F{income_type8} == 0.0 & $F{wht_type8} == 0.0)
+]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{wht_type6} >= 0.0 ? $F{wht_type6}: ($F{income_type7} >= 0.0 ? $F{income_type7}: ($F{wht_type8} >= 0.0 ? $F{wht_type8} : ''))]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
