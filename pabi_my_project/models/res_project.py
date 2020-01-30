@@ -1038,9 +1038,10 @@ class ResProjectBudgetRelease(models.Model):
         help="Dummy project_id, used to calculate init amount release",
     )
     released_amount = fields.Float(
+        compute='_compute_release_amount',
         string='Released Amount',
         default=0.0,
-        required=True,
+        store=True,
     )
     user_id = fields.Many2one(
         'res.users',
@@ -1054,10 +1055,10 @@ class ResProjectBudgetRelease(models.Model):
     )
     
     current_release = fields.Float(
-        #compute= '_compute_release_amount',
+        compute= '_compute_current_release',
         string='Current Release',
-        default=0.0,
-        required=True,
+        #default=0.0,
+        store=True,
     )
     additional = fields.Float(
         string='Additional',
@@ -1065,21 +1066,21 @@ class ResProjectBudgetRelease(models.Model):
         required=True,
     )
 
-    @api.onchange('additional')
+    @api.multi
+    @api.depends('additional')
     def _compute_release_amount(self):
         self.released_amount = self.current_release + self.additional
-        #self.current_release = self.released_amount
-        #self.additional = 0.0
-
-    @api.onchange('fiscalyear_id', 'project_id')
-    def _onchange_project_fiscal(self):
+    
+    @api.multi
+    @api.depends('fiscalyear_id', 'project_id')
+    def _compute_current_release(self):
         BudgetSummary = self.env['res.project.budget.summary']
         project_id = \
             self._context.get('project_id', False) or self.project_id.id
         summary = BudgetSummary.search([
             ('project_id', '=', project_id),
             ('fiscalyear_id', '=', self.fiscalyear_id.id)])
-        self.released_amount = summary and summary[0].released_amount or 0.0
+        self.current_release = summary and summary[0].released_amount or 0.0
 
     @api.model
     def create(self, vals):
