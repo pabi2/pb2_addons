@@ -1052,6 +1052,24 @@ class ResProjectBudgetRelease(models.Model):
     write_date = fields.Datetime(
         readonly=True,
     )
+    
+    current_release = fields.Float(
+        #compute= '_compute_release_amount',
+        string='Current Release',
+        default=0.0,
+        required=True,
+    )
+    additional = fields.Float(
+        string='Additional',
+        default=0.0,
+        required=True,
+    )
+
+    @api.onchange('additional')
+    def _compute_release_amount(self):
+        self.released_amount = self.current_release + self.additional
+        #self.current_release = self.released_amount
+        #self.additional = 0.0
 
     @api.onchange('fiscalyear_id', 'project_id')
     def _onchange_project_fiscal(self):
