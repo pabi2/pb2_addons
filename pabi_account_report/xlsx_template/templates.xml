@@ -259,7 +259,7 @@
                                 'C9': 'supplier_id${value and " ".join(list(filter(lambda l: l != False, [value.title.name, value.name]))) or ""}',
                                 'D9': 'name${value or ""}',
                                 'E9': 'requisition_id.purchase_ids${value and (value.mapped("order_id").filtered(lambda l: l.state == "done") and value.mapped("order_id").filtered(lambda l: l.state == "done")[0].name or "") or ""}',
-                                'F9': 'poc_code${value or ""}',
+                                'F9': 'display_code${value or ""}',
                                 'G9': 'state${value or ""}',
                                 'H9': 'start_date${value or ""}#{number_format=date}',
                                 'I9': 'end_date${value or ""}#{number_format=date}',
