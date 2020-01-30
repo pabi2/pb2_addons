@@ -1406,19 +1406,8 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         invoice_line_id = self.invoice_line_id
         invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
         invl_analytic_line = invl_analytic_lines.search(domain)
-        invl_general_account_id = invl_analytic_line.general_account_id.id
-        invl_analytic_id = invl_analytic_line.account_id.id
-        invl_journal_id = invl_analytic_line.journal_id.id
-        invl_document_id = invl_analytic_line.document_id
-        invl_document_line = invl_analytic_line.document_line
-
         if not invl_analytic_line:
-            invl_analytic_line = self.invoice_line_id
-            invl_general_account_id = invl_analytic_line.account_id.id
-            invl_analytic_id = invl_analytic_line.account_analytic_id.id
-            invl_journal_id = 2
-            invl_document_id = False
-            invl_document_line = False
+            invl_analytic_line = invl_analytic_lines[0]
 
         domain = []
         domain.append(("account_id", "=", self.account_analytic_id.id))
@@ -1435,9 +1424,10 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values = {}
         # follow by invl_analytic_line
         values["name"] = invl_analytic_line.name
-        values["journal_id"] = invl_journal_id
-        values["general_account_id"] = invl_general_account_id
+        values["journal_id"] = invl_analytic_line.journal_id.id
+        values["general_account_id"] = invl_analytic_line.general_account_id.id
 #         values["product_uom_id"] = invl_analytic_line.product_uom_id.id
+        values["journal_id"] = invl_analytic_line.journal_id.id
         values["product_id"] = invl_analytic_line.product_id.id
         values["activity_group_id"] = invl_analytic_line.activity_group_id.id
         values["activity_rpt_id"] = invl_analytic_line.activity_rpt_id.id
@@ -1452,9 +1442,10 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values["chart_view"] = invl_analytic_line.chart_view
         values["org_id"] = invl_analytic_line.org_id.id
         values["fund_id"] = invl_analytic_line.fund_id.id
-        values["document_id"] = invl_document_id
-        values["document_line"] = invl_document_line
-        values["account_id"] = invl_analytic_id
+        values["document_id"] = invl_analytic_line.document_id
+        values["document_line"] = invl_analytic_line.document_line
+        values["product_id"] = invl_analytic_line.product_id.id
+        values["account_id"] = invl_analytic_line.account_id.id
         # follow by line_analytic_line
         values["write_uid"] = line_analytic_line.write_uid.id
         values["create_uid"] = line_analytic_line.create_uid.id
