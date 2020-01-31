@@ -22,6 +22,7 @@ class InvestAssetCommon(object):
         string='Org',
         related='request_user_id.org_id', 
         required=True,
+        store=True,
     )
     #/////////////////////////////////////////////////////////////
     invest_asset_categ_id = fields.Many2one(
@@ -65,6 +66,7 @@ class InvestAssetCommon(object):
         string='Owner Section',
         #required=True,
         related='request_user_id.section_id',
+        store=True,
         help="Not related to budgeting, this field hold the "
         "section owner of this asset",
     )
