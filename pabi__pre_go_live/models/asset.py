@@ -26,3 +26,7 @@ class AccountAsset(models.Model):
     owner_invest_construction_phase_id = fields.Many2one(
         readonly=False,
     )
+    purchase_id = fields.Many2one(
+        related=False,
+        states={'draft': [('readonly', False)]}
+    )

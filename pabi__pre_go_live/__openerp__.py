@@ -7,6 +7,7 @@
     "description": """
 
 * Allow create / duplicate purchase
+* Allow create / import journal entries
 
     """,
     "website": "https://ecosoft.co.th/",
@@ -20,6 +21,7 @@
         "pabi_invest_construction",
         "pabi_asset_management",
         "purchase_invoice_plan",
+        "account",
     ],
     "data": [
         "views/purchase_requisition_view.xml",
@@ -28,5 +30,6 @@
         "views/hr_expense_view.xml",
         "views/invest_construction_view.xml",
         "views/asset_view.xml",
+        "views/account_view.xml",
     ],
 }

@@ -5,3 +5,4 @@ from . import purchase_request
 from . import hr_expense
 from . import asset
 from . import purchase
+from . import account_move
