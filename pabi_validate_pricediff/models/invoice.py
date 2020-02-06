@@ -2,6 +2,7 @@
 from openerp.osv import osv
 from openerp import _
 from openerp.exceptions import ValidationError
+from openerp.tools import float_compare
 
 
 class account_invoice_line(osv.osv):
@@ -37,6 +38,7 @@ class account_invoice_line(osv.osv):
                 # calculate and write down the possible price difference between invoice price and product price
                 for line in res:
                     if line.get('invl_id', 0) == i_line.id and a == line['account_id']:
+                        prec = self.pool['decimal.precision'].precision_get(cr, uid, 'Account')
                         uom = i_line.product_id.uos_id or i_line.product_id.uom_id
                         valuation_price_unit = self.pool.get('product.uom')._compute_price(cr, uid, uom.id, i_line.product_id.standard_price, i_line.uos_id.id)
                         if i_line.product_id.cost_method != 'standard' and i_line.purchase_line_id:
@@ -47,7 +49,8 @@ class account_invoice_line(osv.osv):
                                 valuation_price_unit = stock_move_obj.browse(cr, uid, valuation_stock_move[0], context=context).price_unit
                         if inv.currency_id.id != company_currency:
                             valuation_price_unit = self.pool.get('res.currency').compute(cr, uid, company_currency, inv.currency_id.id, valuation_price_unit, context={'date': inv.date_invoice})
-                        if valuation_price_unit != i_line.price_unit and line['price_unit'] == i_line.price_unit and acc:
+                        # if valuation_price_unit != i_line.price_unit and line['price_unit'] == i_line.price_unit and acc:
+                        if float_compare(valuation_price_unit, i_line.price_unit, precision_digits=prec) and line['price_unit'] == i_line.price_unit and acc:
                             raise ValidationError(_("This document has price diff.Please Contact Support Team."))
                 return diff_res
         return []
