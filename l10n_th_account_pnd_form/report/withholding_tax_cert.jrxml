@@ -21,81 +21,8 @@
 	<parameter name="company_name" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="buddha_year" class="java.lang.Integer"/>
 	<queryString>
-		<![CDATA[select p.partner_id,
-p.supplier_taxid,
-p.supplier_branch,
-p.title_th,
-p.supplier_name_th,
-p.supplier_street,
-p.supplier_street2,
-p.supplier_township,
-p.supplier_district,
-p.supplier_province,
-p.supplier_zip,
-p.supplier_country,
-p.calendar_year,
-abs(p.amount_income) as amount_income,
-abs(p.amount_wht) as amount_wht,
-abs((select sum(amount_income) from personal_income_tax
-where wht_cert_income_type = '1' and partner_id = p.partner_id and calendar_year = p.calendar_year
-and posted = TRUE)) as income_type1,
-abs((select sum(amount_wht) from personal_income_tax
-where wht_cert_income_type = '1' and partner_id = p.partner_id  and calendar_year = p.calendar_year
-and posted = TRUE)) as wht_type1,
-abs((select sum(amount_income) from personal_income_tax
-where wht_cert_income_type = '2' and partner_id = p.partner_id and calendar_year = p.calendar_year
-and posted = TRUE)) as income_type2,
-abs((select sum(amount_wht) from personal_income_tax
-where wht_cert_income_type = '2' and partner_id = p.partner_id and calendar_year = p.calendar_year
-and posted = TRUE)) as wht_type2,
-abs((select sum(amount_income) from personal_income_tax
-where wht_cert_income_type = '3' and partner_id = p.partner_id and calendar_year = p.calendar_year
-and posted = TRUE)) as income_type3,
-abs((select sum(amount_wht) from personal_income_tax
-where wht_cert_income_type = '3' and partner_id = p.partner_id  and calendar_year = p.calendar_year
-and posted = TRUE)) as wht_type3,
-abs((select sum(amount_income) from personal_income_tax
-where wht_cert_income_type = '5' and partner_id = p.partner_id and calendar_year = p.calendar_year
-and posted = TRUE)) as income_type5,
-abs((select sum(amount_wht) from personal_income_tax
-where wht_cert_income_type = '5' and partner_id = p.partner_id  and calendar_year = p.calendar_year
-and posted = TRUE)) as wht_type5,
-abs((select sum(amount_income) from personal_income_tax
-where wht_cert_income_type = '6' and partner_id = p.partner_id and calendar_year = p.calendar_year
-and posted = TRUE)) as income_type6,
-abs((select sum(amount_wht) from personal_income_tax
-where wht_cert_income_type = '6' and partner_id = p.partner_id  and calendar_year = p.calendar_year
-and posted = TRUE)) as wht_type6,
-abs((select sum(amount_income) from personal_income_tax
-where wht_cert_income_type = '7' and partner_id = p.partner_id and calendar_year = p.calendar_year
-and posted = TRUE)) as income_type7,
-abs((select sum(amount_wht) from personal_income_tax
-where wht_cert_income_type = '7' and partner_id = p.partner_id  and calendar_year = p.calendar_year
-and posted = TRUE)) as wht_type7,
-abs((select sum(amount_income) from personal_income_tax
-where wht_cert_income_type = '8' and partner_id = p.partner_id and calendar_year = p.calendar_year
-and posted = TRUE)) as income_type8,
-abs((select sum(amount_wht) from personal_income_tax
-where wht_cert_income_type = '8' and partner_id = p.partner_id  and calendar_year = p.calendar_year
-and posted = TRUE)) as wht_type8
-from report_pnd1a_form p left join personal_income_tax t on p.partner_id = t.partner_id
-where p.calendar_year = $P{fiscalyear} and p.amount_income > 0 and t.posted = TRUE
-group by
-p.partner_id,
-p.supplier_taxid,
-p.supplier_branch,
-p.title_th,
-p.supplier_name_th,
-p.supplier_street,
-p.supplier_street2,
-p.supplier_township,
-p.supplier_district,
-p.supplier_province,
-p.supplier_zip,
-p.supplier_country,
-p.calendar_year,
-p.amount_income,
-p.amount_wht]]>
+		<![CDATA[SELECT * FROM public.issi_report_pnd1a_detail
+where calendar_year = $P{fiscalyear} and amount_income > 0]]>
 	</queryString>
 	<field name="partner_id" class="java.lang.Integer"/>
 	<field name="supplier_taxid" class="java.lang.String"/>
@@ -476,8 +403,7 @@ p.amount_wht]]>
 				<reportElement x="233" y="565" width="120" height="35">
 					<printWhenExpression><![CDATA[$F{income_type6} >=0.0 & $F{wht_type6} >= 0.0 & !($F{income_type6} == 0.0 & $F{wht_type6} == 0.0)
 || $F{income_type7} >=0.0 & $F{wht_type7} >= 0.0 & !($F{income_type7} == 0.0 & $F{wht_type7} == 0.0)
-|| $F{income_type8} >=0.0 & $F{wht_type8} >= 0.0 & !($F{income_type8} == 0.0 & $F{wht_type8} == 0.0)
-]]></printWhenExpression>
+|| $F{income_type8} >=0.0 & $F{wht_type8} >= 0.0 & !($F{income_type8} == 0.0 & $F{wht_type8} == 0.0)]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -488,8 +414,7 @@ p.amount_wht]]>
 				<reportElement x="334" y="565" width="120" height="35">
 					<printWhenExpression><![CDATA[$F{income_type6} >=0.0 & $F{wht_type6} >= 0.0 & !($F{income_type6} == 0.0 & $F{wht_type6} == 0.0)
 || $F{income_type7} >=0.0 & $F{wht_type7} >= 0.0 & !($F{income_type7} == 0.0 & $F{wht_type7} == 0.0)
-|| $F{income_type8} >=0.0 & $F{wht_type8} >= 0.0 & !($F{income_type8} == 0.0 & $F{wht_type8} == 0.0)
-]]></printWhenExpression>
+|| $F{income_type8} >=0.0 & $F{wht_type8} >= 0.0 & !($F{income_type8} == 0.0 & $F{wht_type8} == 0.0)]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
@@ -500,8 +425,7 @@ p.amount_wht]]>
 				<reportElement x="384" y="565" width="137" height="35">
 					<printWhenExpression><![CDATA[$F{income_type6} >=0.0 & $F{wht_type6} >= 0.0 & !($F{income_type6} == 0.0 & $F{wht_type6} == 0.0)
 || $F{income_type7} >=0.0 & $F{wht_type7} >= 0.0 & !($F{income_type7} == 0.0 & $F{wht_type7} == 0.0)
-|| $F{income_type8} >=0.0 & $F{wht_type8} >= 0.0 & !($F{income_type8} == 0.0 & $F{wht_type8} == 0.0)
-]]></printWhenExpression>
+|| $F{income_type8} >=0.0 & $F{wht_type8} >= 0.0 & !($F{income_type8} == 0.0 & $F{wht_type8} == 0.0)]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
