@@ -53,8 +53,7 @@ class XLSXReportSLAEmployee(models.TransientModel):
         """
         self.ensure_one()
         Result = self.env['sla.employee.view']
-        dom = []
-        where_str = ''
+        dom = [('rpc.name', 'in', ('Supplier-ภาครัฐ','Supplier-ภาคเอกชน','ต่างประเทศ','พนักงาน สวทช.'))]
         if self.supplier_category_name:
             if self.supplier_category_name == 'employee':
                 dom += [('ex.pay_to', '=', 'employee')]
@@ -84,8 +83,7 @@ class XLSXReportSLAEmployee(models.TransientModel):
         if self.date_end:
             dom += [('av.date', '<=', self.date_end)]
         
-        if len(dom) > 0:
-            where_str = 'and %s'% self._domain_to_where_str(dom)
+        where_str = self._domain_to_where_str(dom)
         
         self._cr.execute("""
             SELECT 
@@ -108,14 +106,11 @@ class XLSXReportSLAEmployee(models.TransientModel):
             LEFT JOIN payment_export pe ON av.payment_export_id = pe.id
             LEFT JOIN hr_expense_expense ex ON ai.expense_id = ex.id
             LEFT JOIN hr_salary_expense sl ON sl.move_id = am_line.move_id
-            
             LEFT JOIN res_partner rp ON ai.partner_id = rp.id
             LEFT JOIN res_partner_category rpc ON rp.category_id = rpc.id
-            
             WHERE av.type = 'payment' AND av.state = 'posted'
-                AND (pe.state = 'done' OR av.payment_export_id is null)  AND rpc.name in ('Supplier-ภาครัฐ','Supplier-ภาคเอกชน','ต่างประเทศ','พนักงาน สวทช.')
-                
-                %s
+                AND (pe.state = 'done' OR av.payment_export_id is null)
+                AND %s
             """ % (where_str)) #OR am_line.doctype = 'salary_expense'
             
         sla_emp = self._cr.dictfetchall()
