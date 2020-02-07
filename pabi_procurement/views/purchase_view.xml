@@ -294,6 +294,7 @@
                 <xpath expr="//group[@expand='0']" position="inside">
                     <filter string="Status" domain="[]" context="{'group_by':'state'}"/>"
                     <filter string="Responsible" domain="[]" context="{'group_by':'create_uid'}"/>"
+                    <filter string="Currency" domain="[]" context="{'group_by':'currency_id'}"/>
                 </xpath>
             </field>
         </record>
