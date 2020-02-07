@@ -43,6 +43,7 @@
                             <field name="date_receive" attrs="{'readonly': [('state','!=','draft')]}"/>
                             <field name="date_accept" attrs="{'readonly': [('state','in',('done','cancel'))],
                                                               'required': [('state','=',('evaluation'))]}"/>
+                            <field name="create_date" attrs="{'readonly': [('state','!=','draft')]}" string="Creation Date" widget="date"/>                                                                                           
                         </group>
                     </group>
                     <field name="acceptance_line_ids" attrs="{'readonly': [('state','!=','draft')]}">
@@ -112,6 +113,7 @@
             <field name="arch" type="xml">
                 <tree string="Purchase Work Acceptance" create="false">
                     <field name="name"/>
+                    <field name="create_date" string="Creating Date" widget="date"/>
                     <field name="date_receive"/>
                     <field name="date_contract_start"/>
                     <field name="date_scheduled_end" string="Contract End Date"/>
