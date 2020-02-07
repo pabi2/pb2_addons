@@ -1406,6 +1406,8 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         invoice_line_id = self.invoice_line_id
         invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
         invl_analytic_line = invl_analytic_lines.search(domain)
+        if not invl_analytic_line:
+            invl_analytic_line = invl_analytic_lines[0]
 
         domain = []
         domain.append(("account_id", "=", self.account_analytic_id.id))
