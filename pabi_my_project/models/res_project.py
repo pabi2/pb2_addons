@@ -1038,9 +1038,10 @@ class ResProjectBudgetRelease(models.Model):
         help="Dummy project_id, used to calculate init amount release",
     )
     released_amount = fields.Float(
+        compute='_compute_release_amount',
         string='Released Amount',
         default=0.0,
-        required=True,
+        store=True,
     )
     user_id = fields.Many2one(
         'res.users',
@@ -1052,16 +1053,35 @@ class ResProjectBudgetRelease(models.Model):
     write_date = fields.Datetime(
         readonly=True,
     )
+    current_release = fields.Float(
+        compute= '_compute_current_release',
+        string='Current Release',
+        #default=0.0,
+        store=True,
+    )
+    additional = fields.Float(
+        string='Additional',
+        default=0.0,
+        required=True,
+    )
 
-    @api.onchange('fiscalyear_id', 'project_id')
-    def _onchange_project_fiscal(self):
-        BudgetSummary = self.env['res.project.budget.summary']
-        project_id = \
-            self._context.get('project_id', False) or self.project_id.id
-        summary = BudgetSummary.search([
-            ('project_id', '=', project_id),
-            ('fiscalyear_id', '=', self.fiscalyear_id.id)])
-        self.released_amount = summary and summary[0].released_amount or 0.0
+    @api.multi
+    @api.depends('additional')
+    def _compute_release_amount(self):
+        for rec in self:
+            rec.released_amount = rec.current_release + rec.additional
+
+    @api.multi
+    @api.depends('fiscalyear_id', 'project_id')
+    def _compute_current_release(self):
+        for rec in self:
+            BudgetSummary = self.env['res.project.budget.summary']
+            project_id = \
+                self._context.get('project_id', False) or rec.project_id.id
+            summary = BudgetSummary.search([
+                ('project_id', '=', project_id),
+                ('fiscalyear_id', '=', rec.fiscalyear_id.id)])
+            rec.current_release = summary and summary[0].released_amount or 0.0
 
     @api.model
     def create(self, vals):
