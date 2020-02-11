@@ -46,6 +46,7 @@
                     <filter string="สูญหาย" name="lost" domain="[('status_code','=','lost')]"/>
                     <filter string="หมดอายุการใช้งาน" name="expire" domain="[('status_code','=','expire')]"/>
                     <filter string="ยกเลิก" name="cancel" domain="[('status_code','=','cancel')]"/>
+                    <filter string="ยกเลิกเลขครุภันฑ์" name="reverse" domain="[('status_code','=','reverse')]"/>
                 </search>
                 <field name="partner_id" position="after">
                     <field name="purchase_id"/>
@@ -58,6 +59,10 @@
                     <filter string="Asset Status" context="{'group_by':'status'}"/>
                     <filter string="Owner Section" context="{'group_by':'owner_section_id'}"/>
                     <filter string="Owner Project" context="{'group_by':'owner_project_id'}"/>
+                    <filter string="Fiscal Year" context="{'group_by':'date_start'}"/>
+                    <filter string="Inactive" domain="[('active','=',False)]" context="{'group_by':'active'}"/>
+                    <filter string="Asset type" context="{'group_by':'product_id'}"/>
+                    <filter string="Building" context="{'group_by':'building_id'}"/>
                 </group>
             </field>
         </record>

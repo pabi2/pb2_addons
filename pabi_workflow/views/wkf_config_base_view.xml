@@ -44,7 +44,8 @@
             <field name="view_id" ref="view_wkf_config_doctype_tree"/>
         </record>
 
-        <menuitem name="Document Type" id="menu_wkf_config_doctype" action="action_wkf_config_doctype" parent="menu_wkf_config" sequence="1"/>
+        <menuitem name="Document Type" id="menu_wkf_config_doctype"
+        	action="action_wkf_config_doctype" parent="menu_wkf_config" sequence="1"/>
 
         # Level
         <record id="view_wkf_cmd_level_tree" model="ir.ui.view">
@@ -83,7 +84,8 @@
             <field name="view_id" ref="view_wkf_cmd_level_tree"/>
         </record>
 
-        <menuitem name="Level" id="menu_wkf_level" action="action_wkf_cmd_level" parent="menu_wkf_config" sequence="2"/>
+        <menuitem name="Level" id="menu_wkf_level"
+        	action="action_wkf_cmd_level" parent="menu_wkf_config" sequence="2"/>
 
         #Approval Amount
         <record id="view_wkf_cmd_approval_amount_tree" model="ir.ui.view">
@@ -138,6 +140,7 @@
             <field name="view_id" ref="view_wkf_cmd_approval_amount_tree"/>
         </record>
 
-        <menuitem name="Approval Amount" id="menu_wkf_cmd_approval_amount" action="action_wkf_cmd_approval_amount" parent="menu_wkf_config" sequence="3"/>
+        <menuitem name="Approval Amount" id="menu_wkf_cmd_approval_amount"
+        	action="action_wkf_cmd_approval_amount" parent="menu_wkf_config" sequence="3"/>
     </data>
 </openerp>

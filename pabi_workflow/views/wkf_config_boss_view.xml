@@ -68,12 +68,13 @@
                                    'search_default_group_by_section_id': 1}</field>
         </record>
 
-        <menuitem name="Boss View" id="menu_pb2_boss_view" action="action_pb2_boss_view" parent="menu_wkf_config" sequence="0"/>
+        <menuitem name="Boss View" id="menu_pb2_boss_view"
+        	action="action_pb2_boss_view" parent="menu_wkf_config" sequence="0"/>
 
         # TOP Work Flow Configuration Menu
         <!-- Deprecated -->
         <menuitem name="Boss/Employee" id="menu_wkf_config_boss"
-          parent="menu_wkf_config" sequence="3"/>
+        	parent="menu_wkf_config" sequence="6"/>
 
         # Boss Level Approval
         <record id="view_wkf_cmd_boss_level_approval_tree" model="ir.ui.view">
@@ -136,7 +137,91 @@
             <field name="view_id" ref="view_wkf_cmd_boss_level_approval_tree"/>
         </record>
 
-        <menuitem name="Boss Level Approval" id="menu_wkf_cmd_boss_level_approval" action="action_wkf_cmd_boss_level_approval" parent="menu_wkf_config" sequence="3"/>
+        <menuitem name="Boss Level Approval" id="menu_wkf_cmd_boss_level_approval"
+        	action="action_wkf_cmd_boss_level_approval" parent="menu_wkf_config" sequence="4"/>
+
+        # Boss Level Approval History
+        <record id="view_wkf_cmd_boss_level_approval_history_tree" model="ir.ui.view">
+            <field name="name">view.wkf.cmd.boss.level.approval.history.tree</field>
+            <field name="model">wkf.cmd.boss.level.approval.history</field>
+            <field name="arch" type="xml">
+                <tree string="Boss Level History" create="false">
+                    <field name="section"/>
+                    <field name="dep_id"/>
+                    <field name="dep_name"/>
+                    <field name="div_id"/>
+                    <field name="div_name"/>
+                    <field name="subsector_id"/>
+                    <field name="subsector_name"/>
+                    <field name="sector_id"/>
+                    <field name="sector_name"/>
+                    <field name="org_id"/>
+                    <field name="org_name"/>
+                    <field name="level"/>
+                    <field name="employee_id"/>
+                    <field name="employee_name"/>
+                    <field name="date"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_wkf_cmd_boss_level_approval_history_search" model="ir.ui.view">
+            <field name="name">view.wkf.cmd.boss.level.approval.history.search</field>
+            <field name="model">wkf.cmd.boss.level.approval.history</field>
+            <field name="arch" type="xml">
+                <search string="Boss Level History">
+                    <field name="section"/>
+                    <field name="dep_id"/>
+                    <field name="dep_name"/>
+                    <field name="div_id"/>
+                    <field name="div_name"/>
+                    <field name="subsector_id"/>
+                    <field name="subsector_name"/>
+                    <field name="sector_id"/>
+                    <field name="sector_name"/>
+                    <field name="org_id"/>
+                    <field name="org_name"/>
+                    <field name="level"/>
+                    <field name="employee_id"/>
+                    <field name="employee_name"/>
+                    <field name="date"/>
+                    <group expand="0" string="Group By">
+                        <filter name="section" string="Section" context="{'group_by':'section'}"/>
+                        <separator/>
+                		<filter name="dep_id" string="Dep ID" context="{'group_by':'dep_id'}"/>
+                        <filter name="dep_name" string="งาน" context="{'group_by':'dep_name'}"/>
+                        <separator/>
+                		<filter name="div_id" string="Div ID" context="{'group_by':'div_id'}"/>
+                        <filter name="div_name" string="ฝ่าย" context="{'group_by':'div_name'}"/>
+                        <separator/>
+                		<filter name="subsector_id" string="SucSector ID" context="{'group_by':'subsector_id'}"/>
+                        <filter name="subsector_name" string="ด้าน" context="{'group_by':'subsector_name'}"/>
+                        <separator/>
+                		<filter name="sector_id" string="Sector ID" context="{'group_by':'sector_id'}"/>
+                        <filter name="sector_name" string="สายงาน" context="{'group_by':'sector_name'}"/>
+                        <separator/>
+                		<filter name="org_id" string="Org ID" context="{'group_by':'org_id'}"/>
+                        <filter name="org_name" string="ศูนย์" context="{'group_by':'org_name'}"/>
+                        <separator/>
+                		<filter name="employee_id" string="รหัสพนักงาน" context="{'group_by':'employee_id'}"/>
+                        <filter name="employee_name" string="ชื่อพนักงาน" context="{'group_by':'employee_name'}"/>
+                        <filter name="date" string="Date" context="{'group_by':'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_wkf_cmd_boss_level_approval_history" model="ir.actions.act_window">
+            <field name="name">Boss Level History</field>
+            <field name="res_model">wkf.cmd.boss.level.approval.history</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="search_view_id" ref="view_wkf_cmd_boss_level_approval_history_search"/>
+            <field name="view_id" ref="view_wkf_cmd_boss_level_approval_history_tree"/>
+        </record>
+
+        <menuitem name="Boss Level History" id="menu_wkf_cmd_boss_level_approval_history"
+        	action="action_wkf_cmd_boss_level_approval_history" parent="menu_wkf_config" sequence="5"/>
 
         #Boss Special Level Approval
         <record id="view_wkf_cmd_boss_special_level_tree" model="ir.ui.view">
@@ -176,7 +261,8 @@
         </record>
 
         <!-- Deprecated -->
-        <menuitem name="Special Level" id="menu_wkf_cmd_boss_special_level" action="action_wkf_cmd_boss_special_level" parent="menu_wkf_config_boss" sequence="2"/>
+        <menuitem name="Special Level" id="menu_wkf_cmd_boss_special_level"
+        	action="action_wkf_cmd_boss_special_level" parent="menu_wkf_config_boss" sequence="2"/>
 
         # Special Flow Emotion
         # If a section is setting up for special level, all level under this level
@@ -250,7 +336,7 @@
         </record>
 
         <menuitem name="Special Emotion Flow" id="menu_special_emotion_flow"
-          action="action_special_emotion_flow"  parent="menu_wkf_config" sequence="4"/>
+        	action="action_special_emotion_flow"  parent="menu_wkf_config" sequence="7"/>
 
 
     </data>

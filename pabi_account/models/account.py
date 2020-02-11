@@ -150,7 +150,8 @@ class AccountMove(models.Model):
 
 
 class AccountAccount(models.Model):
-    _inherit = 'account.account'
+    _name = 'account.account'
+    _inherit = ['account.account', 'mail.thread']
 
     type = fields.Selection(
         index=True,
@@ -158,6 +159,22 @@ class AccountAccount(models.Model):
     is_require_activity = fields.Boolean(
         string='Require AG&A',
     )
+    #track_history
+    name = fields.Char(track_visibility='onchange')
+    code = fields.Char(track_visibility='onchange')
+    parent_id = fields.Many2one(track_visibility='onchange')
+    type = fields.Selection(track_visibility='onchange')
+    user_type = fields.Many2one(track_visibility='onchange')
+    asset_profile_id = fields.Many2one(track_visibility='onchange')
+    active = fields.Boolean(track_visibility='onchange')
+    centralized = fields.Boolean(track_visibility='onchange')
+    is_require_activity = fields.Boolean(track_visibility='onchange')
+    operating_unit_id = fields.Many2one(track_visibility='onchange')
+    tax_ids = fields.Many2many(track_visibility='onchange')
+    reconcile = fields.Boolean(track_visibility='onchange')
+    currency_id = fields.Many2one(track_visibility='onchange')
+    currency_mode = fields.Selection(track_visibility='onchange')
+    note = fields.Text(track_visibility='onchange')
 
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=80):

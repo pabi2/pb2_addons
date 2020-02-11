@@ -82,6 +82,8 @@
         'reports/xlsx_report_pnd1.xml',
         #Preprint Receipt
         'reports/xlsx_report_preprint_receipt.xml',
+        'reports/xlsx_report_pabi_employee_advance_report.xml',
+        
     ],
     'demo': [
     ],

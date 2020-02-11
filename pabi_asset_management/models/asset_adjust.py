@@ -508,8 +508,8 @@ class AccountAssetAdjust(models.Model):
         return vals
 
     @api.model
-    def _duplicate_asset(
-            self, asset, product, asset_name, analytic, day_amount):
+    def _duplicate_asset(self, asset, product, asset_name, analytic,
+                         day_amount, digits=None):
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
         # add code, po and pr in asset
         asset_dict.update({'code': '/'})
@@ -518,6 +518,7 @@ class AccountAssetAdjust(models.Model):
         new_asset.account_analytic_id = \
             Analytic.create_matched_analytic(new_asset)
         asset.target_asset_ids += new_asset
+        new_asset.date_remove = False
         # case : new asset don't have asset depreciation_line
         if new_asset.profile_type != 'normal':
             new_asset.write({
@@ -534,8 +535,16 @@ class AccountAssetAdjust(models.Model):
         # 1 asset line only (init_entry)
         new_dlines = new_asset.depreciation_line_ids
         last_asset_line = fields.Date.from_string(new_dlines.line_date)
-        days = (date_bf_remove - last_asset_line).days + 1
+        # Skip when adjust date > asset line 1 day.
+        if date_bf_remove <= last_asset_line:
+            return new_asset
+        days = (date_bf_remove - last_asset_line).days
         # find amount in line per days
+        if asset.profile_type != 'normal':
+            last_date = last_asset_line + relativedelta(
+                years=new_asset.method_number, days=-1)
+            days_all = (last_date - last_asset_line).days + 1
+            day_amount = round(new_asset.depreciation_base / days_all, digits)
         amount = days * day_amount
         line_name = new_asset._get_depreciation_entry_name(len(new_dlines))
         line_date = fields.Date.to_string(date_bf_remove)
@@ -548,6 +557,8 @@ class AccountAssetAdjust(models.Model):
             'type': 'depreciate',
         }
         asset_line = self.env['account.asset.line'].create(asset_line_vals)
+        if asset.profile_type != 'normal':
+            return new_asset
         asset_line.move_check = True
         return new_asset
 
@@ -576,13 +587,11 @@ class AccountAssetAdjust(models.Model):
         running_asset = asset.depreciation_line_ids.filtered(
             lambda l: l.type == 'depreciate')
         lines = 2
-        if asset.depreciation_line_ids[-1].line_date == date_bf_remove or \
-                not running_asset:
+        if asset.depreciation_line_ids[-1].line_date == date_bf_remove:
             lines = 1
             # Create a collective journal entry
             move = line.create_account_move_asset_type()
             line.move_id = move
-
         for val in range(lines):
             dlines = asset.depreciation_line_ids
             # find days in line
@@ -599,6 +608,9 @@ class AccountAssetAdjust(models.Model):
                 days = (line_date - last_asset_line).days - 1
                 amount = dlines[0].amount_accumulated - \
                     dlines[-1].amount_accumulated
+            if lines == 1:
+                amount = dlines[0].amount_accumulated
+
             line_date = fields.Date.to_string(line_date)
             asset_line_vals = {
                 'previous_id': dlines[-1].id,
@@ -612,10 +624,12 @@ class AccountAssetAdjust(models.Model):
                 'type': 'remove' if line_date == self.date
                 else 'depreciate',
             }
-            # Check asset line never post
-            if not dlines.filtered(lambda l: l.type == 'depreciate'):
-                asset_line_vals.update({'amount_accumulated': amount})
             asset_line = self.env['account.asset.line'].create(asset_line_vals)
+            # Check asset line never post
+            if not running_asset:
+                ctx = {'allow_asset_line_update': True}
+                asset_line.with_context(ctx).depreciated_value = 0.0
+                asset_line.with_context(ctx).amount_accumulated = amount
             # Auto post last cal asset line before removal
             if val == 0 and lines == 2:
                 move_old_line_id = asset_line.create_move()
@@ -624,7 +638,10 @@ class AccountAssetAdjust(models.Model):
                 # Create a collective journal entry
                 move = line.create_account_move_asset_type()
                 line.move_id = move
-        new_asset.depreciation_line_ids[-1].move_id = move
+
+        for line in new_asset.depreciation_line_ids:
+            line.move_id = move
+        # new_asset.depreciation_line_ids[-1].move_id = move
 
     @api.multi
     def adjust_asset_type(self):
@@ -649,19 +666,44 @@ class AccountAssetAdjust(models.Model):
                 Analytic.create_matched_analytic(line)
             digits = self.env['decimal.precision'].precision_get('Account')
             asset = line.asset_id
+            if self.date <= asset.date_start:
+                date_start = fields.Date.from_string(
+                    asset.date_start).strftime('%d/%m/%Y')
+                raise ValidationError(
+                    _('Date must be more than %s'
+                        % date_start))
+            if self.date_approve != asset.date_start:
+                date_start = fields.Date.from_string(
+                    asset.date_start).strftime('%d/%m/%Y')
+                raise ValidationError(
+                    _('Date Approved must be %s' % date_start))
             # Get sum days in this asset for calculate amount per day
             days = sum(asset.depreciation_line_ids.mapped('line_days'))
-            day_amount = round(asset.depreciation_base / days, digits)
+            # Case no depreciation_line -> depreciation_line
+            day_amount = 0.0
+            if asset.profile_type == 'normal':
+                day_amount = round(asset.depreciation_base / days, digits)
             # Remove
             self._set_asset_as_removed(asset, line.target_status)
             # Simple duplicate to new asset type, name
             new_asset = self._duplicate_asset(asset, line.product_id,
                                               line.asset_name,
                                               line.account_analytic_id,
-                                              day_amount)
+                                              day_amount, digits)
             line.ref_asset_id = new_asset
-            # Create asset line
-            self._create_asset_line(line, asset, day_amount, new_asset)
+            # Create asset line old asset
+            if asset.profile_type == 'normal':
+                self._create_asset_line(line, asset, day_amount, new_asset)
+            else:
+                # Create a collective journal entry
+                move = line.create_account_move_asset_type()
+                line.move_id = move
+                new_asset.depreciation_line_ids[0].move_id = move
+                move_id = new_asset.depreciation_line_ids.filtered(
+                    lambda l: l.type == 'depreciate' and not l.move_check
+                    ).create_move()
+                # Auto post
+                self.env['account.move'].browse(move_id).post()
             # Set move_check equal to amount depreciated
             new_asset.compute_depreciation_board()
             new_asset.validate()
@@ -743,6 +785,8 @@ class AccountAssetAdjust(models.Model):
             line.move_id = move
             # Set move_check equal to amount depreciated
             depre_lines.write({'move_id': move.id})
+            if not depre_lines:
+                new_asset.depreciation_line_ids[0].write({'move_id': move.id})
 
     @api.model
     def _setup_move_data(self, journal, adjust_date,
@@ -1362,6 +1406,8 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         invoice_line_id = self.invoice_line_id
         invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
         invl_analytic_line = invl_analytic_lines.search(domain)
+        if not invl_analytic_line:
+            invl_analytic_line = invl_analytic_lines[0]
 
         domain = []
         domain.append(("account_id", "=", self.account_analytic_id.id))

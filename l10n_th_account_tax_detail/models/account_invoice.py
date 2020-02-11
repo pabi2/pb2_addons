@@ -36,6 +36,7 @@ class AccountInvoice(InvoiceVoucherTaxDetail, models.Model):
         # Only check for case supplier invoice
         if self.type in ('in_refund', 'in_invoice'):
             self._check_tax_detail_info()
+            self._check_income_tax_from()
         return res
 
     @api.multi
