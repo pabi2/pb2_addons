@@ -40,7 +40,12 @@ class AccountConfigSettings(models.TransientModel):
         string='Recognize VAT Journal',
         related="company_id.recognize_vat_journal_id",
     )
+    #WHT email
     group_email_wht = fields.Char(
         string='Group Email WHT',
         related='company_id.group_email_wht',
+    )
+    send_to_groupmail_only = fields.Boolean(
+        string='Send to groupmail only',
+        related="company_id.send_to_groupmail_only",
     )

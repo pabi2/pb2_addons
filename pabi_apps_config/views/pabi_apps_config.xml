@@ -173,10 +173,18 @@
                               <field name="head_account_employee_id" class="oe_inline"/>
                             </div>
                         </div>
-                        <label for="id" string="Witholding cert"/>
+                    </group>
+                    <!-- Witholding E-Mail -->
+                    <separator string="Witholding E-Mail"/>
+                    <group>
+                    	<label for="id" string="Witholding e-mail NSTDA"/>
                         <div>
                         	<label string="Group Email"/>
                             <field name="group_email_wht" class="oe_inline"/>
+                        </div>
+                        <label string="Send to groupmail only"/>
+                        <div>
+                        	<field name="send_to_groupmail_only" class="oe_inline"/>
                         </div>
                     </group>
                     <!-- Loan Installment -->

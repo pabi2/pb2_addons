@@ -66,6 +66,10 @@ class PABIAppsConfigSettings(models.TransientModel):
         string='Group Email WHT',
         related='company_id.group_email_wht',
     )
+    send_to_groupmail_only = fields.Boolean(
+        string='Send to groupmail only',
+        related="company_id.send_to_groupmail_only",
+    )
     # Retention accounts
     account_retention_customer = fields.Many2one(
         'account.account',

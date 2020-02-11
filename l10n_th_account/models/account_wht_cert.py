@@ -485,8 +485,14 @@ class AccountWhtCert(models.Model):
 #             if not self.supplier_email_accountant:
 #                     raise ValidationError(_("Please fill Email Accountant."))
 #             mail = self.supplier_email_accountant       
-            to_email = 'preerapol.che@ncr.nstda.or.th'
-            template.email_to = to_email
+#             to_email = 'preerapol.che@ncr.nstda.or.th'
+#             template.email_to = to_email
+            if self.env.user.company_id.send_to_groupmail_only: #send email test
+                to_email = self.env.user.company_id.group_email_wht
+                template.email_to = to_email
+            else :
+                to_email = 'preerapol.che@ncr.nstda.or.th'
+                template.email_to = to_email
             if template:
                     ctx = self.env.context.copy()
                     ctx.update({

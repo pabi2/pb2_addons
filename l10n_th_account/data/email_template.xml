@@ -11,7 +11,7 @@
 			<field name="partner_to"></field>
             <field name="email_to"></field>
             <field name="report_template" ref="l10n_th_account.report_withholding_cert"/>
-            <field name="report_name">Withholding Tax Certificate</field>
+            <field name="report_name">WHT${object.calendar_period_id.fiscalyear_id.name}-${object.sequence_display}</field>
             <field name="lang">th_TH</field>
 			<field name="subject">หนังสือรับรองการหักภาษี ณ ที่จ่าย สวทช.</field>
             <field name="body_html"><![CDATA[
@@ -30,6 +30,7 @@
         <div style="text-align: left;">ฝ่ายการเงินและบัญชี</div>
         <div style="text-align: left;">สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ</div>
     </p>
+    <p> <img src="data:image/jpg;base64,${object.company_partner_id.image}" style="width: 250px;" /> </p>
 </div>
             ]]></field>
         </record>
