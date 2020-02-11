@@ -12,6 +12,19 @@ class SaleOrder(models.Model):
     cancel_date = fields.Datetime('Cancel Date')
     cancel_reason = fields.Char('Cancel Reason')
     
+    @api.multi
+    @api.constrains('client_order_ref')
+    def _constrains_client_order_ref(self):
+        for order in self:
+            if 'POS' in order.name:
+                pos_search = self.search([
+                    ('name', 'like', 'POS%'),
+                    ('client_order_ref', '=', order.client_order_ref),
+                    ('id', '!=', order.id)])
+                if pos_search:
+                    raise ValidationError(
+                        _("POS Reference must be unique!"))
+
     @api.model
     def _prepare_invoice(self, order, lines):
         invoice_vals = super(SaleOrder, self)._prepare_invoice(order, lines)
