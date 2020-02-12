@@ -491,7 +491,10 @@ class AccountWhtCert(models.Model):
                 to_email = self.env.user.company_id.group_email_wht
                 template.email_to = to_email
             else :
-                to_email = 'preerapol.che@ncr.nstda.or.th'
+                if not self.supplier_email_accountant:
+                    raise ValidationError(
+                        _('Please fill Email Accountant.'))
+                to_email = self.supplier_email_accountant
                 template.email_to = to_email
             if template:
                     ctx = self.env.context.copy()
@@ -499,7 +502,7 @@ class AccountWhtCert(models.Model):
                         'date_print': fields.Date.context_today(self),
                         'email_attachment': True,
                     })
-            template.with_context(ctx).send_mail(self.id)
+            template.with_context(ctx).send_mail(self.id, force_send=True)
             self.write({'mail_state': 'done',
                     'date_sent_mail': datetime.today(),
                     })

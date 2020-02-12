@@ -97,6 +97,8 @@
                     <field name="date_value"/>
                     <field name="create_uid" string="WHT create by"/>
                     <field name="mail_state"/>
+                    <field name="date_sent_mail" />
+                    <field name="supplier_email_accountant" string="Email Accountant"/>
                     <field name="state"/>
                 </tree>
             </field>
