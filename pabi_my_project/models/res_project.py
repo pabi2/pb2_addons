@@ -1089,7 +1089,8 @@ class ResProjectBudgetRelease(models.Model):
         carry_forward = self._context.get('button_carry_forward', False)
         carry_forward_async = \
             self._context.get('button_carry_forward_async_process', False)
-        if 'released_amount' in vals and not carry_forward and \
+        #if 'released_amount' in vals and not carry_forward and \
+        if 'additional' in vals and not carry_forward and \
                 not carry_forward_async:
             rec.project_id._release_fiscal_budget(rec.fiscalyear_id,
                                                   rec.released_amount)
@@ -1098,7 +1099,8 @@ class ResProjectBudgetRelease(models.Model):
     @api.multi
     def write(self, vals):
         result = super(ResProjectBudgetRelease, self).write(vals)
-        if 'released_amount' in vals:
+        #if 'released_amount' in vals:
+        if 'additional' in vals:
             for rec in self:
                 rec.project_id._release_fiscal_budget(rec.fiscalyear_id,
                                                       rec.released_amount)
