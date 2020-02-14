@@ -116,9 +116,9 @@
                         <filter name="tax_payer" string="Tax Payer" context="{'group_by':'tax_payer'}"/>
                         <filter name="calendar_period_id" string="Carendar Period" context="{'group_by':'calendar_period_id'}"/>
                         <filter name="mywht_to_sent_email" string="myWHT to sent" domain="[('create_uid','=',uid),('supplier_email_accountant', '!=', False)]" 
-                        context="{'group_by':['income_tax_form','date_value_period','mail_state']}"/>
+                        context="{'group_by':['income_tax_form','mail_state']}"/>
                         <filter name="mywht_to_sent_no_email" string="myWHT to sent (No email)" domain="[('create_uid','=',uid),('supplier_email_accountant', '=?', False)]" 
-                        context="{'group_by':['income_tax_form','date_value_period','mail_state']}"/>
+                        context="{'group_by':['income_tax_form','mail_state']}"/>
                     </group>
                 </search>
             </field>
