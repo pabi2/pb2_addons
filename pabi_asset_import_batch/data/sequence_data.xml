@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Asset Import Batch -->
+        <record id="seq_type_account_asset_import_batch" model="ir.sequence.type">
+            <field name="name">Asset Import Batch</field>
+            <field name="code">account.asset.import.batch</field>
+        </record>
+
+        <record id="seq_account_asset_import_batch" model="ir.sequence">
+            <field name="name">Asset Import Batch</field>
+            <field name="code">account.asset.import.batch</field>
+            <field name="prefix">ASIB</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</openerp>
