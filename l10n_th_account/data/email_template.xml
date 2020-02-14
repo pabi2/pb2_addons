@@ -30,7 +30,7 @@
         <div style="text-align: left;">ฝ่ายการเงินและบัญชี</div>
         <div style="text-align: left;">สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ</div>
     </p>
-    <p> <img src="data:image/jpg;base64,${object.company_partner_id.image}" style="width: 250px;" /> </p>
+    <p> <img src="/l10n_th_account/static/src/img/logo_nstda.png" style="width: 250px;"/> </p>
 </div>
             ]]></field>
         </record>

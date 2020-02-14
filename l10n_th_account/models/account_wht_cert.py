@@ -152,7 +152,7 @@ class AccountWhtCert(models.Model):
         readonly=True,
     )
     
-    date_sent_mail = fields.Date(
+    date_sent_mail = fields.Datetime(
         string='Date sent mail',
     )
     
@@ -169,7 +169,7 @@ class AccountWhtCert(models.Model):
     )
     
     mail_state = fields.Selection(
-        [('draft', ''),
+        [('draft', 'not sent'),
          ('done', 'sent')],
         string='Mail status',
         default='draft',
@@ -187,6 +187,12 @@ class AccountWhtCert(models.Model):
         size=500,
     )
 
+    date_value_period = fields.Char(
+        string="Value/Cheque Date Period",
+        compute="_compute_date_vaule_period",
+        store=True
+    )
+    
     # Computed fields to be displayed in WHT Cert.
     x_voucher_number = fields.Char(compute='_compute_cert_fields')
     x_date_value = fields.Date(compute='_compute_cert_fields')
@@ -475,6 +481,17 @@ class AccountWhtCert(models.Model):
         return
     
     @api.multi
+    @api.depends('date_value')
+    def _compute_date_vaule_period(self):
+        for rec in self:
+            if rec.date_value:
+                year, month, day = (rec.date_value).split("-")
+                if int(day) <= 15 :
+                    rec.date_value_period = "Value/Cheque Date รอบวันที่ 1-15"
+                else:
+                    rec.date_value_period = "Value/Cheque Date รอบวันที่ 16-31"
+
+    @api.multi
     def send_mail(self):
         email_template_name = 'Withholding Certs - Send by Email'
         template = self.env['email.template'].search([('name','=',email_template_name)])
@@ -482,11 +499,6 @@ class AccountWhtCert(models.Model):
             if not self.group_email_wht:
                 raise ValidationError(
                     _('Please enter valid email address for group email!'))
-#             if not self.supplier_email_accountant:
-#                     raise ValidationError(_("Please fill Email Accountant."))
-#             mail = self.supplier_email_accountant       
-#             to_email = 'preerapol.che@ncr.nstda.or.th'
-#             template.email_to = to_email
             if self.env.user.company_id.send_to_groupmail_only: #send email test
                 to_email = self.env.user.company_id.group_email_wht
                 template.email_to = to_email
