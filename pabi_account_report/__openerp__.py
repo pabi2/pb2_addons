@@ -52,7 +52,7 @@
         'reports/qweb_report_payable_confirmation_letter_template.xml',
         'reports/qweb_report_payable_confirmation_letter.xml',
         'reports/xlsx_report_purchase_invoice_plan.xml',
-        'reports/xlsx_report_purchase_no_invoice_plan.xml',
+        #'reports/xlsx_report_purchase_no_invoice_plan.xml',
         # Receivable Reports
         'reports/xlsx_report_output_tax.xml',
         'reports/xlsx_report_cd_receivable_confirmation.xml',
@@ -82,6 +82,8 @@
         'reports/xlsx_report_pnd1.xml',
         #Preprint Receipt
         'reports/xlsx_report_preprint_receipt.xml',
+        'reports/xlsx_report_pabi_employee_advance_report.xml',
+        
     ],
     'demo': [
     ],

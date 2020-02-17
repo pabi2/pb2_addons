@@ -343,6 +343,9 @@ class AccountBudget(models.Model):
                     raise ValidationError(
                         _('%s has no budget lines!\n'
                           'Not allow to allocate amount.') % budget.name)
+                # Skip, if called from function _convert_plan_to_budget_control
+                if self._context.get('in_convert_mode', False):
+                    continue
                 if budget.budget_expense_line_ids:
                     # Refresh all line to zero first
                     budget.budget_expense_line_ids.\
@@ -935,7 +938,7 @@ class AccountBudgetLine(ActivityCommon, models.Model):
         if adjust_past_plan or fiscal.date_start > period.date_start:
             return 0
         elif fiscal.date_stop < period.date_start:
-            return 12
+            return 13
         else:
             return self.env['account.period'].get_num_period_by_period()
 

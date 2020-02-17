@@ -116,7 +116,7 @@ class AssetRegisterReport(models.TransientModel):
         'xlsx.report.status',
         string='Asset State',
         domain=[('location', '=', 'asset.register.view')],
-        default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', ['draft', 'open', 'close'])]),
+        default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', ['draft', 'open', 'close', 'removed'])]),
     )
     account_ids = fields.Many2many(
         'account.account',
@@ -195,7 +195,7 @@ class AssetRegisterReport(models.TransientModel):
         [('active', 'Active'),
          ('inactive', 'Inactive')],
         string='Asset Active',
-        default='active',
+        #default='active',
     )
     results = fields.Many2many(
         'asset.register.view',
@@ -247,7 +247,7 @@ class AssetRegisterReport(models.TransientModel):
             dom += [('responsible_user_id', 'in',
                      tuple(self.responsible_person_ids.ids + [0]))]
         if self.org_ids:
-            dom += [('org_id', 'in', tuple(self.org_ids.ids + [0]))]
+            dom += [('owner_org_id', 'in', tuple(self.org_ids.ids + [0]))]
         if self.asset_status_ids:
             dom += [('status', 'in',
                     tuple(self.asset_status_ids.ids + [0]))]
@@ -292,9 +292,9 @@ class AssetRegisterReport(models.TransientModel):
             dom += [('room_id', 'in', tuple(self.room_ids.ids + [0]))]
         if self.asset_active:
             dom += [('active', '=', True if (self.asset_active == 'active') else False)]
+        # date_start <= date_end
         if self.date_end:
             dom += [('date_start', '<=', self.date_end)]
-        
             
         # Prepare fixed params
         date_start = False
@@ -322,11 +322,11 @@ class AssetRegisterReport(models.TransientModel):
                 aa.code as account_code, aa.name as account_name,
                 -- purchase_bf_current
                 case when date_part('year', a.date_start+92) !=
-                 date_part('year', CURRENT_DATE+92) then a.purchase_value
+                  CAST(%s AS int) then a.purchase_value
                  else null end as purchase_before_current,
                 -- purchase_current
                 case when date_part('year', a.date_start+92) =
-                 date_part('year', CURRENT_DATE+92) then a.purchase_value
+                 CAST(%s AS int) then a.purchase_value
                  else null end as purchase_current,
                 -- net_book_value
                 (select a.purchase_value - coalesce(sum(credit-debit), 0.0)
@@ -352,6 +352,14 @@ class AssetRegisterReport(models.TransientModel):
                         concat('res.invest.construction.phase,',
                                a.invest_construction_phase_id)
                      else null end as budget,
+                -- owner_org_id
+                case
+                    when a.owner_section_id is not null then rs.org_id
+                    when a.owner_project_id is not null then rp.org_id
+                    when a.owner_invest_asset_id is not null then ria.org_id
+                    when a.owner_invest_construction_phase_id is not null then ricp.org_id
+                    else null
+                end as owner_org_id,
                 -- owner_budget
                 case when a.owner_section_id is not null then
                         concat('res.section,', a.owner_section_id)
@@ -414,7 +422,8 @@ class AssetRegisterReport(models.TransientModel):
             left join account_account aa on aap.account_asset_id = aa.id
             ) asset
         """ + where_str + 'order by asset.account_code, asset.code',
-                         (tuple(accum_depre_account_ids), date_end,
+                         (self.fiscalyear_start_id.name,self.fiscalyear_start_id.name,
+                          tuple(accum_depre_account_ids), date_end,
                           tuple(depre_account_ids), date_start, date_end,
                           tuple(accum_depre_account_ids), date_end,
                           tuple(accum_depre_account_ids), date_start))
@@ -441,7 +450,7 @@ class AssetRegisterReport(models.TransientModel):
             codes = [x.strip() for x in codes]
             codes = ','.join(codes)
             dom.append(('code', 'ilike', codes))
-            self.asset_ids = Asset.search(dom, order='id')
+            self.asset_ids = Asset.with_context(active_test=False).search(dom, order='id')
 
     @api.onchange('budget_filter')
     def _onchange_budget_filter(self):

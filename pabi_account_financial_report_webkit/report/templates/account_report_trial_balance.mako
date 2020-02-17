@@ -191,12 +191,12 @@
                                 <div class="act_as_cell amount">${formatLang(init_balance_accounts[current_account.id]) | amount}</div>
                             %endif
                             ## debit
-                            <div class="act_as_cell amount">${formatLang(debit_accounts[current_account.id]) | amount}</div>
+                            <div class="act_as_cell amount">${formatLang(debit_accounts[current_account.id] - init_debit_accounts[current_account.id]) | amount}</div>
                             ## credit
-                            <div class="act_as_cell amount">${formatLang(credit_accounts[current_account.id]) | amount}</div>
+                            <div class="act_as_cell amount">${formatLang(credit_accounts[current_account.id] - init_credit_accounts[current_account.id]) | amount}</div>
                         %endif
                         ## balance
-                        <div class="act_as_cell amount">${formatLang(balance_accounts[current_account.id]) | amount}</div>
+                        <div class="act_as_cell amount">${formatLang(init_balance_accounts[current_account.id] + (debit_accounts[current_account.id] - init_debit_accounts[current_account.id]) - (credit_accounts[current_account.id] - init_credit_accounts[current_account.id])) | amount}</div>
 
                         %if comparison_mode in ('single', 'multiple'):
                             %for comp_account in comparisons:

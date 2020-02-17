@@ -18,6 +18,8 @@
     'data': [
         'security/ir.model.access.csv',
         'wizards/pabi_purchase_summarize_report_wizard.xml',
+        'wizards/pabi_purchase_billing_report.xml',
+        'wizards/pabi_purchase_invoice_plan_report.xml',
         # Created using pabi_utils xlsx_template
         'reports/xlsx_report_pabi_purchase_tracking.xml',
         'reports/xlsx_report_pabi_purchase_summarize.xml',
@@ -35,6 +37,7 @@
         'reports/xlsx_report_pabi_hiring_summary.xml',
         'reports/xlsx_report_pabi_green_product_summary.xml',
         'reports/xlsx_report_pabi_purchase_annual.xml',
+        'reports/xlsx_report_pabi_book_stock_balance.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/load_template.xml',
     ],

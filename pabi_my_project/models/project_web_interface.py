@@ -107,6 +107,10 @@ class ResProject(models.Model):
                 friendly_update_data(self._name, data_dict, 'code')
             if res['is_success']:
                 res_id = res['result']['id']
+                if 'budget_plan_expense_ids' not in data_dict and \
+                   'budget_plan_revenue_ids' not in data_dict and \
+                   'budget_plan_ids' not in data_dict:
+                    return res
                 project = self.browse(res_id)  # Project
                 # Release with latest release history (if any)
                 if res_id:
@@ -117,9 +121,11 @@ class ResProject(models.Model):
                         group by fiscalyear_id
                     """, (res_id, ))
                     Release = self.env['res.project.budget.release']
-                    rels = Release.browse([x[0] for x in self._cr.fetchall()])
+                    rels = \
+                        Release.browse([x[0] for x in self._cr.fetchall()])
                     for rec in rels:
-                        project.with_context(ignore_lock_release=True).\
+                        project.with_context(ignore_lock_release=True,
+                                             ignore_current_fy_lock=True).\
                             _release_fiscal_budget(rec.fiscalyear_id,
                                                    rec.released_amount)
                 # Refresh

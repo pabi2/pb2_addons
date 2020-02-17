@@ -28,6 +28,7 @@ Note: following are arequiremen for system to properly create analytic line
         'pabi_account_move_document_ref',
         'pabi_chartfield_merged',
         'pabi_utils',
+        'stock_account'
     ],
     'demo': [],
     'data': [
@@ -43,6 +44,7 @@ Note: following are arequiremen for system to properly create analytic line
         'views/account_view.xml',
         'views/account_invoice_view.xml',
         'views/account_move_priority_view.xml',
+        'views/stock_view.xml',
     ],
     'test': [
     ],

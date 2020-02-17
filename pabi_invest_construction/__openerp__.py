@@ -21,6 +21,7 @@
         "security/ir.model.access.csv",
         "data/invest_construction_sequence.xml",
         "data/invest_construction_history_rule.xml",
+        "wizard/project_close_phase_wizard.xml",
         "wizard/project_plan_report.xml",
         "views/invest_construction_view.xml",
         "views/account_budget_view.xml",

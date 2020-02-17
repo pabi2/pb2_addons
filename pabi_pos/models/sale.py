@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    cancel_id = fields.Many2one('res.partner', 'Cancel by')
+    cancel_date = fields.Datetime('Cancel Date')
+    cancel_reason = fields.Char('Cancel Reason')
+    
     @api.model
     def _prepare_invoice(self, order, lines):
         invoice_vals = super(SaleOrder, self)._prepare_invoice(order, lines)
@@ -162,7 +168,27 @@ class SaleOrder(models.Model):
                 line.activity_group_id = product.categ_id.activity_group_id
                 line.activity_rpt_id = product.categ_id.activity_id
 
+    def _get_pos_receipt(self):
+        SEQUENCE = self.env['ir.sequence']
+        date_fis = datetime.now() + relativedelta(months=3)
+        fisyear = str(date_fis.strftime('%y'))
+        if self.amount_tax == 0.00:
+            prefix = 'RC'
+        else:
+            prefix = 'RT'
 
+        sequence_id = SEQUENCE.search([('name','=','POS Receipt %s - %s'%(prefix,fisyear)),('prefix','=',prefix+'-PS'+fisyear)])
+        if not sequence_id:
+            sequence_id = SEQUENCE.create({'name': 'POS Receipt %s - %s'%(prefix,fisyear),
+                                           'number_next': 1,
+                                           'implementation': 'standard',
+                                           'padding': 4,
+                                           'number_increment': 1,
+                                           'prefix': prefix+'-PS'+fisyear,
+                                        })
+        receipt_no = SEQUENCE.get_id(sequence_id.id)
+        self.origin = receipt_no
+        
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 

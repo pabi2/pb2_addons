@@ -56,9 +56,17 @@
 					</group>
 				</xpath>
 				<xpath expr="//form/sheet/notebook/page[@string='Projects']" position="after">
-					<page string="Section Report">
-                    	<group string="Section Report" >
+					<page string="Report">
+                    	<group>
 							<field name="report_admin"/>
+							<!-- <field name="report_project"/>
+							<field name="report_section"/>
+							<field name="report_construction"/>
+							<field name="report_invest_asset"/> -->
+							<field name="report_project_ids" widget="many2many_tags" style="width: 25%"/>
+							<field name="report_section_ids" widget="many2many_tags" style="width: 25%"/>
+							<field name="report_construction_ids" widget="many2many_tags" style="width: 25%"/>
+							<field name="report_invest_asset_ids" widget="many2many_tags" style="width: 25%"/>
                         	<field name="section_rpt_ids"/>
 						</group>  
                     </page>

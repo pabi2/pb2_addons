@@ -121,15 +121,36 @@
                 '__EXPORT__': {
                     1: {
                         '_HEAD_': {
+                        	'B2': 'operating_unit_id.name${value or ""}',
+                        	'B3': 'product_id.name${value or ""}',
+                        	'B4': 'category_ids${value and ", ".join([x.name for x in value]) or ""}',
+                        	'B5': 'location_id.name${value or ""}',
+                        	'B6': 'date_from${value or ""}#{number_format=date}',
+                            'B7': 'date_to${value or ""}#{number_format=date}',
                         },
                         'results': {
-                            'A12': 'src_loc_name${value or ""}',
-                            'B12': 'date_move${value or ""}#{number_format=date}',
-                            'C12': 'grgi_slip${value or ""}',
-                            'D12': 'grgi_slip${value or ""}',
-                            'E12': 'product_uom_qty#{number_format=number}',
-                            'F12': 'product_uom_qty#{number_format=number}',
-                            'I12': 'price_unit#{number_format=number}',
+                        	'A10': 'product_name${value or ""}',
+                            'B10': 'src_loc_name${value or ""}',
+                            'C10': 'dest_loc_name${value or ""}',
+                            'D10': 'sm_date${value or ""}#{number_format=date}',
+                            'E10': 'scheduled_date${value or ""}#{number_format=date}',
+                            'F10': 'reference_doc${value or ""}',
+                            'G10': 'source_doc${value or ""}',
+                            'H10': 'stock_move_id.picking_type_id.name${value or ""}',
+                            'I10': 'move_positive${value or ""}#{number_format=number}',
+                            'J10': 'move_negative${value or ""}#{number_format=number}',
+                            'K10': 'quantity_balance${value or ""}#{number_format=number}',
+                            'L10': 'unit${value or ""}',
+                            'M10': 'inventory_value${value or ""}#{number_format=number}',
+                            'N10': 'move_id.name${value or ""}',
+                            'O10': 'move_id.date${value or ""}#{number_format=date}',
+                            'P10': 'move_id.line_id${value and value.filtered(lambda l: "11" in l.account_id.code[0:2] )[0].account_id.code or ""   or ""}#{number_format=text}',
+                            'Q10': 'move_id.line_id${value and value.filtered(lambda l: "11" in l.account_id.code[0:2] )[0].account_id.name  or ""}',
+                            'R10': 'move_id.line_id${value and value.filtered(lambda l: "11" in l.account_id.code[0:2] )[0].debit  or ""}',
+                            'S10': 'move_id.line_id${value and value.filtered(lambda l: "11" in l.account_id.code[0:2] )[0].credit or ""}',
+                            'T10': 'stock_move_id.partner_id.id${value or ""}#{number_format=text}',
+                            'U10': 'stock_move_id.partner_id.name${value or ""}',
+                            
                         },
                         '_TAIL_0': {
                         }
@@ -204,17 +225,19 @@
                         'results': {
                             'A7': 'sr_name${value or ""}',
                             'B7': 'requester${value or ""}',
-                            'C7': 'project${value or ""}',
+                            'C7': 'section_id${value or ""}',
                             'D7': 'section${value or ""}',
-                            'E7': 'requester_ou_name${value or ""}',
-                            'F7': 'date_request${value or ""}#{number_format=date}',
-                            'G7': 'date_confirm${value or ""}#{number_format=date}',
-                            'H7': 'date_to_approve${value or ""}#{number_format=date}',
-                            'I7': 'date_approve${value or ""}#{number_format=date}',
-                            'J7': 'date_receive${value or ""}#{number_format=date}',
-                            'K7': 'date_transfer${value or ""}#{number_format=date}',
-                            'L7': '${"=NETWORKDAYS(?(J7), ?(K7))"}',
-                            'M7': '${"=IF(?(L7)&lt;3,TRUE,FALSE)"}',
+							'E7': 'project_id${value or ""}',
+							'F7': 'project${value or ""}',
+                            'G7': 'requester_ou_name${value or ""}',
+                            'H7': 'date_request${value or ""}#{number_format=date}',
+                            'I7': 'date_confirm${value or ""}#{number_format=date}',
+                            'J7': 'date_to_approve${value or ""}#{number_format=date}',
+                            'K7': 'date_approve${value or ""}#{number_format=date}',
+                            'L7': 'date_receive${value or ""}#{number_format=date}',
+                            'M7': 'date_transfer${value or ""}#{number_format=date}',
+                            'N7': '${"=NETWORKDAYS(?(J7), ?(K7))"}',
+                            'O7': '${"=IF(?(L7)&lt;3,TRUE,FALSE)"}',
                         },
                         '_TAIL_0': {
                         }
@@ -731,6 +754,45 @@
                     }
                 }
               }
+          </field>
+        </record>
+        
+        <!-- PABI Stock Balance -->
+        <record id="xlsx_report_pabi_book_stock_balance" model="ir.attachment">
+            <field name="res_model">xlsx.report.pabi.book.stock.balance</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_pabi_book_stock_balance.xlsx</field>
+            <field name="name">PABI Book Stock Balance</field>
+            <field name="parent_id" eval="ref('dir_procurement_reports')"/>
+            <field name="description">
+              {
+                '__EXPORT__': {
+                    1: {
+                        '_HEAD_': {
+                            'B2': 'ou_name${value or ""}',
+                            'B3': 'location_name${value or ""}',
+                            'B4': '${time.strftime("%d-%m-%Y")}',
+                            'B5': 'active${value or ""}',
+                        },
+                        'results': {
+                        	'A8': 'product_tmpl_id.ean13${value or ""}#{number_format=text}',
+                            'B8': 'product_name${value or ""}',
+                            'C8': 'ou_name${value or ""}',
+                            'D8': 'location_name${value or ""}',
+                            'E8': 'product_tmpl_id.list_price${value or "0"}#{number_format=number}',
+                            'F8': 'product_tmpl_id.standard_price${value or "0"}#{number_format=number}',
+                            'G8': 'balance${value or ""}',
+                            'H8': 'uom${value or ""}',
+                            'I8': 'price${value or ""}',
+                            'J8': 'currency${value or ""}',
+                            'K8': 'product_active${value or "FALSE"}',
+                        },
+                        '_TAIL_0': {
+                        }
+                    }
+                }
+              }
+              
           </field>
         </record>
         

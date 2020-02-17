@@ -12,9 +12,13 @@
                             <field name="print_format" />
                         </group>
                         <group>
-                            <field name="calendar_period_id" attrs="{'invisible': [('income_tax_form','=','pnd3a')],'required': [('income_tax_form','!=','pnd3a')]}" />
-                            <field name="fiscalyear_id"  attrs="{'invisible': [('income_tax_form','!=','pnd3a')],'required': [('income_tax_form','=','pnd3a')]}" />
-                        </group>
+                             <field name="calendar_period_id" 
+                            	attrs="{'invisible': ['|',('income_tax_form','in',('pnd1a','pnd3a')),('income_tax_form','=',False)],
+                            	'required': [('income_tax_form','in',('pnd1','pnd3','pnd53'))]}" />
+                            <field name="fiscalyear_id"  
+                            	attrs="{'invisible': ['|',('income_tax_form','in',('pnd1','pnd3','pnd53')),('income_tax_form','=',False)],
+                            	'required': [('income_tax_form','in',('pnd1a','pnd3a'))]}" />
+                        </group>	
                     </group>
                     <footer>
                         <button string="Print" name="run_report" type="object" class="oe_highlight"/>

@@ -162,6 +162,12 @@
                             </tree>
                         </field>
                     </page>
+                    <page string="Report">
+                    	<group string="Section " >
+                     		<field name="section_ids">
+                     		</field>
+                     	</group>	
+                    </page>
                 </xpath>
             </field>
         </record>

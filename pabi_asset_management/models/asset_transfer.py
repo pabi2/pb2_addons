@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
+from dateutil.relativedelta import relativedelta
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from openerp.tools.float_utils import float_compare
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountAssetTransfer(models.Model):
@@ -395,6 +399,143 @@ class AccountAssetTransfer(models.Model):
     #         'target_asset_ids': [(4, x) for x in new_asset_ids],
     #         'status': AssetStatus.search([('code', '=', 'transfer')]).id})
 
+    @api.model
+    def _setup_move_line_data(self, name, asset, period, account, adjust_date,
+                              debit=False, credit=False, analytic_id=False):
+        if not debit and not credit:
+            return False
+        move_line_data = {
+            'name': name,
+            'ref': False,
+            'account_id': account.id,
+            'credit': credit,
+            'debit': debit,
+            'period_id': period,
+            'partner_id': asset and asset.partner_id.id or False,
+            'analytic_account_id': analytic_id,
+            'date': adjust_date,
+            'asset_id': asset and asset.id or False,
+            'state': 'valid',
+        }
+        return move_line_data
+
+    @api.model
+    def _prepare_move_line_asset(self, asset, period, adjust_date):
+        line_dict = []
+        asset_account = asset.profile_id.account_asset_id
+        depreciation_base = asset.depreciation_base
+        amount_depre = asset.value_depreciated
+        removal_amount = depreciation_base - amount_depre
+        # first asset line
+        asset_debit = self._setup_move_line_data(
+            asset.code, asset, period, asset_account, adjust_date,
+            debit=removal_amount, credit=False,
+            analytic_id=asset.account_analytic_id.id)
+        # last asset line
+        asset_credit = self._setup_move_line_data(
+            asset.code, asset, period, asset_account, adjust_date,
+            debit=False, credit=depreciation_base,
+            analytic_id=asset.account_analytic_id.id)
+        line_dict += [(0, 0, asset_debit), (0, 0, asset_credit)]
+
+        # Accumulated
+        if amount_depre and not asset.profile_id.no_depreciation:
+            asset_debit = self._setup_move_line_data(
+                asset.code, asset, period, asset_account, adjust_date,
+                debit=amount_depre, credit=False,
+                analytic_id=asset.account_analytic_id.id)
+            line_dict += [(0, 0, asset_debit)]
+        return line_dict
+
+    @api.multi
+    def _remove_asset_line(self, asset):
+        # check condition create line
+        ctx = {}
+        move_obj = self.env['account.move']
+        period_obj = self.env['account.period']
+        asset_line_obj = self.env['account.asset.line']
+        digits = self.env['decimal.precision'].precision_get('Account')
+        date_bf_remove = \
+            (fields.Date.from_string(self.date) - relativedelta(days=1))
+        date_bf_remove = fields.Date.to_string(date_bf_remove)
+        days = sum(asset.depreciation_line_ids.mapped('line_days'))
+        day_amount = round(asset.depreciation_base / days, digits)
+        # Remove unposted lines
+        depre_lines = asset.depreciation_line_ids
+        depre_lines.filtered(
+            lambda l: not (l.move_check or l.init_entry)).unlink()
+
+        running_asset = asset.depreciation_line_ids.filtered(
+            lambda l: l.type == 'depreciate')
+        lines = 2
+        if asset.depreciation_line_ids[-1].line_date == date_bf_remove:
+            lines = 1
+        for val in range(lines):
+            dlines = asset.depreciation_line_ids
+            # find days in line
+            line_date = fields.Date.from_string(self.date)
+            last_asset_line = fields.Date.from_string(dlines[-1].line_date)
+            line_name = asset._get_depreciation_entry_name(len(dlines))
+            # create before last asset line
+            if val == 0 and lines == 2:
+                line_date = (line_date - relativedelta(days=1))
+                days = (line_date - last_asset_line).days
+                # find amount in line per days
+                amount = days * day_amount
+            # removal line
+            if (val == 1 and lines == 2) or lines == 1:
+                days = (line_date - last_asset_line).days - 1
+                amount = dlines[0].amount_accumulated - \
+                    dlines[-1].amount_accumulated
+                # Create a collective journal entry
+                ctx.update(account_period_prefer_normal=True)
+                period_ids = period_obj.with_context(
+                    ctx).find(self.date)
+                period_id = period_ids[0].id
+                journal_id = asset.profile_id.journal_id.id
+                move_vals = {
+                    'name': asset.name,
+                    'date': self.date,
+                    'ref': line_name,
+                    'period_id': period_id,
+                    'journal_id': journal_id,
+                    'narration': self.note,
+                }
+                move = move_obj.create(move_vals)
+                move_lines = self._prepare_move_line_asset(
+                    asset, period_id, self.date)
+                move.with_context(allow_asset=True).write(
+                    {'line_id': move_lines})
+                # Auto post
+                move.button_validate()
+            if lines == 1:
+                amount = dlines[0].amount_accumulated
+
+            line_date = fields.Date.to_string(line_date)
+            asset_line_vals = {
+                'previous_id': dlines[-1].id,
+                'amount': amount,
+                'asset_id': asset.id,
+                'name': line_name,
+                'line_date': line_date,
+                'line_days': days,
+                'move_id': move.id if line_date == self.date
+                else False,
+                'type': 'remove' if line_date == self.date
+                else 'depreciate',
+            }
+            asset_line = asset_line_obj.create(asset_line_vals)
+            # Check asset line never post
+            if not running_asset:
+                ctx = {'allow_asset_line_update': True}
+                asset_line.with_context(ctx).depreciated_value = 0.0
+                asset_line.with_context(ctx).amount_accumulated = amount
+            # Auto post before last asset line
+            if val == 0 and lines == 2:
+                move_before_last_id = asset_line.create_move()
+                # Auto post
+                move_obj.browse(move_before_last_id).post()
+
     @api.multi
     def _transfer_new_asset(self):
         """ The Concept
@@ -483,6 +624,8 @@ class AccountAssetTransfer(models.Model):
                         asset.owner_invest_construction_phase_id.id,
                      },
                 ]
+
+        _logger.info("move_lines1: %s", str(move_lines))
         # All source assset must has single partner
         partner_ids = list(set(partner_ids))
         if len(partner_ids) != 1:
@@ -523,8 +666,8 @@ class AccountAssetTransfer(models.Model):
                     # Budget
                     'project_id': project.id,
                     'section_id': section.id,
-                    'invest_asset_id': False,
-                    'invest_construction_phase_id': False,
+                    'invest_asset_id': invest_asset.id,
+                    'invest_construction_phase_id': invest_construction_phase.id,
                 }
                 move_lines.append(new_asset_move_line_dict)
             # Depreciation Move Line
@@ -546,21 +689,26 @@ class AccountAssetTransfer(models.Model):
                     # Budget
                     'project_id': project.id,
                     'section_id': section.id,
-                    'invest_asset_id': False,
-                    'invest_construction_phase_id': False,
+                    'invest_asset_id': invest_asset.id,
+                    'invest_construction_phase_id': invest_construction_phase.id,
                 }
                 accum_depre += new_depre
                 move_lines.append(new_depre_dict)
+        _logger.info("move_lines2: %s", str(move_lines))
+
         # Finalize all moves before create it.
         final_move_lines = [(0, 0, x) for x in move_lines]
         move_dict = {'journal_id': new_journal.id,
                      'line_id': final_move_lines,
                      'period_id': Period.find(self.date).id,
                      'date': self.date,
+                     'date_document': fields.Date.context_today(self),
                      'ref': self.name}
         ctx = {'asset_purchase_method_id': new_purchase_method.id,
                'direct_create': True}  # direct_create to recalc dimension
+        _logger.info("move_dict: %s", str(move_dict))
         move = AccountMove.with_context(ctx).create(move_dict)
+        _logger.info("move: %s", str(move))
         # For transfer, new asset should be created
         new_assets = move.line_id.mapped('asset_id')
         if len(new_assets) != len(self.target_asset_ids):
@@ -572,9 +720,30 @@ class AccountAssetTransfer(models.Model):
         self.asset_ids.write({
             'active': False,
             'target_asset_ids': [(4, x) for x in new_assets.ids],
-            'status': AssetStatus.search([('code', '=', 'transfer')]).id})
+            'status': AssetStatus.search([('code', '=', 'transfer')]).id,
+            'state': 'removed',
+            'date_remove': self.date,
+        })
+        for asset in self.asset_ids:
+            if asset.profile_type == 'normal':
+                self._remove_asset_line(asset)
         self.write({'new_asset_ids': [(4, x) for x in new_assets.ids],
                     'move_id': move.id})
+
+        # copy owner data from source to target asset
+        src_asset = self.asset_ids[0]
+        src_owner_section_id = src_asset.owner_section_id
+        src_owner_project_id = src_asset.owner_project_id
+        src_owner_invest_asset_id = src_asset.owner_invest_asset_id
+        src_owner_invest_construction_phase_id = \
+            src_asset.owner_invest_construction_phase_id
+        for new_asset in new_assets:
+            new_asset.owner_section_id = src_owner_section_id
+            new_asset.owner_project_id = src_owner_project_id
+            new_asset.owner_invest_asset_id = src_owner_invest_asset_id
+            new_asset.owner_invest_construction_phase_id = \
+                src_owner_invest_construction_phase_id
+
         return True
 
     @api.multi

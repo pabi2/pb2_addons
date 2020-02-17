@@ -17,7 +17,8 @@ class CommonVoucher(object):
             date=invoice.date_invoice or
             datetime.today())
         company_currency = (journal.currency or journal.company_id.currency_id)
-        amount = currency.compute(float(amount), company_currency, round=False)
+        amount = currency.compute(
+            round(amount, 2), company_currency, round=False)
         return amount
 
     @api.model
@@ -26,7 +27,8 @@ class CommonVoucher(object):
             date=invoice.date_invoice or
             datetime.today())
         company_currency = (journal.currency or journal.company_id.currency_id)
-        amount = currency.compute(float(amount), company_currency, round=False)
+        amount = currency.compute(
+            round(amount, 2), company_currency, round=False)
         return amount
 
 
@@ -701,6 +703,13 @@ class AccountVoucher(CommonVoucher, models.Model):
             move.update({'date': date_clear_undue,
                          'period_id': period.id})
         return move
+    #//////////////////////////////////////////////////////////////////////////////////////////////////
+    @api.constrains('date','date_value')
+    def date_compare_posting_date(self):
+        if self.date_value != False:
+            if self.date > self.date_value:
+                raise ValidationError('Value/Cheque Date is greater than or equal to Posting date')
+     #//////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 class AccountVoucherLine(CommonVoucher, models.Model):

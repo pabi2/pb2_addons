@@ -38,6 +38,7 @@
                         <group>
                             <group>
                                 <field name="doctype"/>
+                                <field name="org_id"/>
                                 <field name="fiscalyear_id"/>
                                 <field name="amount_total"/>
                             </group>

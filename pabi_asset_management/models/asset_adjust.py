@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import ast
+from dateutil.relativedelta import relativedelta
 from openerp import models, fields, api, _
 from openerp.addons.account_budget_activity_rpt.models.account_activity \
     import ActivityCommon
@@ -249,13 +250,11 @@ class AccountAssetAdjust(models.Model):
     @api.model
     def create(self, vals):
         values = self._context.get('expense_to_asset_dict', {})
-        _logger.info("expense_to_asset_dict: %s", str(values))
         i = 0
         for value in values:
             vals['adjust_expense_to_asset_ids'][i][2]['invoice_line_id'] = value[2]
             i = i + 1
 
-        _logger.info("vals: %s", str(vals))
         if vals.get('name', '/') == '/':
             vals['name'] = self.env['ir.sequence'].\
                 get('account.asset.adjust') or '/'
@@ -370,7 +369,6 @@ class AccountAssetAdjust(models.Model):
 
     @api.onchange('adjust_type', 'invoice_id')
     def _onchange_adjust_type_invoice(self):
-        _logger.info("------- _onchange_adjust_type_invoice -------")
         self.adjust_line_ids = False
         self.adjust_asset_to_expense_ids = False
         self.adjust_expense_to_asset_ids = False
@@ -378,11 +376,13 @@ class AccountAssetAdjust(models.Model):
             return
         # Check if this adjustment is created from Suplier Invoice action
         src_invoice_id = self._context.get('default_invoice_id', False)
-        _logger.info("src_invoice_id: %s", str(src_invoice_id))
         status_cancel = self.env.ref('pabi_asset_management.'
                                      'asset_status_cancel')
         # Change Asset Type
         if self.adjust_type == 'asset_type':
+            # Status reverse
+            status_cancel = self.env.ref('pabi_asset_management.'
+                                         'asset_status_reverse')
             assets = self.get_invoice_line_assets(self.invoice_id)
             values = self._context.get('adjust_asset_type_dict', {})
             for asset in assets:
@@ -428,10 +428,8 @@ class AccountAssetAdjust(models.Model):
                 self.adjust_asset_to_expense_ids += adjust_line
         # Expense => Asset
         elif self.adjust_type == 'expense_to_asset':
-            _logger.info("------- adjust_type == 'expense_to_asset' -------")
             if src_invoice_id:
                 values = self._context.get('expense_to_asset_dict', {})
-                _logger.info("expense_to_asset_dict: %s", str(values))
                 for value in values:
                     adjust_line = \
                         self.env['account.asset.adjust.expense_to_asset'].new()
@@ -442,14 +440,10 @@ class AccountAssetAdjust(models.Model):
                     adjust_line.chartfield_id = \
                         adjust_line.invoice_line_id.chartfield_id
                     quantity = value[3]
-                    
+
                     for i in range(quantity):
                         self.adjust_expense_to_asset_ids += adjust_line
-                        
-                for line in self.adjust_expense_to_asset_ids:
-                    _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
             else:
-                _logger.info("else")
                 accounts = self.invoice_id.invoice_line.\
                     filtered(lambda l: not l.product_id).mapped('account_id')
                 for account in accounts:
@@ -464,7 +458,8 @@ class AccountAssetAdjust(models.Model):
         # Set as removed and inactive
         asset.write({'status': target_status.id,
                      'state': 'removed',
-                     'active': False})
+                     'date_remove': self.date,
+                     'active': False, })
         # Remove unposted lines
         depre_lines = asset.depreciation_line_ids
         depre_lines.filtered(
@@ -481,7 +476,7 @@ class AccountAssetAdjust(models.Model):
         asset.compute_depreciation_board()
 
     @api.multi
-    def _prepare_asset_dict(self, product, name, analytic):
+    def _prepare_asset_dict(self, product, name, analytic, asset=False):
         profile = product.asset_profile_id
         vals = {
             'profile_id': profile.id,
@@ -513,21 +508,58 @@ class AccountAssetAdjust(models.Model):
         return vals
 
     @api.model
-    def _duplicate_asset(self, asset, product, asset_name, analytic):
+    def _duplicate_asset(self, asset, product, asset_name, analytic,
+                         day_amount, digits=None):
         asset_dict = self._prepare_asset_dict(product, asset_name, analytic)
+        # add code, po and pr in asset
+        asset_dict.update({'code': '/'})
         new_asset = asset.copy(asset_dict)
         Analytic = self.env['account.analytic.account']
         new_asset.account_analytic_id = \
             Analytic.create_matched_analytic(new_asset)
         asset.target_asset_ids += new_asset
+        new_asset.date_remove = False
+        # case : new asset don't have asset depreciation_line
+        if new_asset.profile_type != 'normal':
+            new_asset.write({
+                'value_depreciated': 0.0,
+                'net_book_value': new_asset.purchase_value,
+                'value_residual': new_asset.purchase_value
+            })
+            return new_asset
         # Set back to normal
         # new_asset.type = 'normal'
-        # Also duplicate lines
-        previous_id = False
-        for line in asset.depreciation_line_ids.filtered(lambda l:
-                                                         not l.init_entry):
-            line = line.copy({'asset_id': new_asset.id,
-                              'previous_id': line.previous_id and previous_id})
+        # Create line continue from old asset
+        date_bf_remove = \
+            (fields.Date.from_string(self.date) - relativedelta(days=1))
+        # 1 asset line only (init_entry)
+        new_dlines = new_asset.depreciation_line_ids
+        last_asset_line = fields.Date.from_string(new_dlines.line_date)
+        # Skip when adjust date > asset line 1 day.
+        if date_bf_remove <= last_asset_line:
+            return new_asset
+        days = (date_bf_remove - last_asset_line).days
+        # find amount in line per days
+        if asset.profile_type != 'normal':
+            last_date = last_asset_line + relativedelta(
+                years=new_asset.method_number, days=-1)
+            days_all = (last_date - last_asset_line).days + 1
+            day_amount = round(new_asset.depreciation_base / days_all, digits)
+        amount = days * day_amount
+        line_name = new_asset._get_depreciation_entry_name(len(new_dlines))
+        line_date = fields.Date.to_string(date_bf_remove)
+        asset_line_vals = {
+            'amount': amount,
+            'asset_id': new_asset.id,
+            'name': line_name,
+            'line_date': line_date,
+            'line_days': days,
+            'type': 'depreciate',
+        }
+        asset_line = self.env['account.asset.line'].create(asset_line_vals)
+        if asset.profile_type != 'normal':
+            return new_asset
+        asset_line.move_check = True
         return new_asset
 
     @api.model
@@ -545,6 +577,71 @@ class AccountAssetAdjust(models.Model):
         # Set back to normal
         # new_asset.type = 'normal'
         return new_asset
+
+    @api.multi
+    def _create_asset_line(self, line, asset, day_amount, new_asset):
+        # check condition create line
+        date_bf_remove = \
+            (fields.Date.from_string(self.date) - relativedelta(days=1))
+        date_bf_remove = fields.Date.to_string(date_bf_remove)
+        running_asset = asset.depreciation_line_ids.filtered(
+            lambda l: l.type == 'depreciate')
+        lines = 2
+        if asset.depreciation_line_ids[-1].line_date == date_bf_remove:
+            lines = 1
+            # Create a collective journal entry
+            move = line.create_account_move_asset_type()
+            line.move_id = move
+        for val in range(lines):
+            dlines = asset.depreciation_line_ids
+            # find days in line
+            line_date = fields.Date.from_string(self.date)
+            last_asset_line = fields.Date.from_string(dlines[-1].line_date)
+            line_name = asset._get_depreciation_entry_name(len(dlines))
+            if val == 0 and lines == 2:
+                line_date = (line_date - relativedelta(days=1))
+                days = (line_date - last_asset_line).days
+                # find amount in line per days
+                amount = days * day_amount
+            # removal line
+            if (val == 1 and lines == 2) or lines == 1:
+                days = (line_date - last_asset_line).days - 1
+                amount = dlines[0].amount_accumulated - \
+                    dlines[-1].amount_accumulated
+            if lines == 1:
+                amount = dlines[0].amount_accumulated
+
+            line_date = fields.Date.to_string(line_date)
+            asset_line_vals = {
+                'previous_id': dlines[-1].id,
+                'amount': amount,
+                'asset_id': asset.id,
+                'name': line_name,
+                'line_date': line_date,
+                'line_days': days,
+                'move_id': line.move_id.id if line_date == self.date
+                else False,
+                'type': 'remove' if line_date == self.date
+                else 'depreciate',
+            }
+            asset_line = self.env['account.asset.line'].create(asset_line_vals)
+            # Check asset line never post
+            if not running_asset:
+                ctx = {'allow_asset_line_update': True}
+                asset_line.with_context(ctx).depreciated_value = 0.0
+                asset_line.with_context(ctx).amount_accumulated = amount
+            # Auto post last cal asset line before removal
+            if val == 0 and lines == 2:
+                move_old_line_id = asset_line.create_move()
+                # Auto post
+                self.env['account.move'].browse(move_old_line_id).post()
+                # Create a collective journal entry
+                move = line.create_account_move_asset_type()
+                line.move_id = move
+
+        for line in new_asset.depreciation_line_ids:
+            line.move_id = move
+        # new_asset.depreciation_line_ids[-1].move_id = move
 
     @api.multi
     def adjust_asset_type(self):
@@ -567,17 +664,46 @@ class AccountAssetAdjust(models.Model):
                 filtered(lambda l: l.asset_id.state == 'open'):
             line.account_analytic_id = \
                 Analytic.create_matched_analytic(line)
-            # Remove
+            digits = self.env['decimal.precision'].precision_get('Account')
             asset = line.asset_id
+            if self.date <= asset.date_start:
+                date_start = fields.Date.from_string(
+                    asset.date_start).strftime('%d/%m/%Y')
+                raise ValidationError(
+                    _('Date must be more than %s'
+                        % date_start))
+            if self.date_approve != asset.date_start:
+                date_start = fields.Date.from_string(
+                    asset.date_start).strftime('%d/%m/%Y')
+                raise ValidationError(
+                    _('Date Approved must be %s' % date_start))
+            # Get sum days in this asset for calculate amount per day
+            days = sum(asset.depreciation_line_ids.mapped('line_days'))
+            # Case no depreciation_line -> depreciation_line
+            day_amount = 0.0
+            if asset.profile_type == 'normal':
+                day_amount = round(asset.depreciation_base / days, digits)
+            # Remove
             self._set_asset_as_removed(asset, line.target_status)
             # Simple duplicate to new asset type, name
             new_asset = self._duplicate_asset(asset, line.product_id,
                                               line.asset_name,
-                                              line.account_analytic_id)
+                                              line.account_analytic_id,
+                                              day_amount, digits)
             line.ref_asset_id = new_asset
-            # Create a collective journal entry
-            move = line.create_account_move_asset_type()
-            line.move_id = move
+            # Create asset line old asset
+            if asset.profile_type == 'normal':
+                self._create_asset_line(line, asset, day_amount, new_asset)
+            else:
+                # Create a collective journal entry
+                move = line.create_account_move_asset_type()
+                line.move_id = move
+                new_asset.depreciation_line_ids[0].move_id = move
+                move_id = new_asset.depreciation_line_ids.filtered(
+                    lambda l: l.type == 'depreciate' and not l.move_check
+                    ).create_move()
+                # Auto post
+                self.env['account.move'].browse(move_id).post()
             # Set move_check equal to amount depreciated
             new_asset.compute_depreciation_board()
             new_asset.validate()
@@ -616,7 +742,6 @@ class AccountAssetAdjust(models.Model):
         * Create new asset
         * Create collective moves
         """
-        _logger.info("------- adjust_expense_to_asset -------")
         self.ensure_one()
         value = sum(self.adjust_expense_to_asset_ids.mapped('amount'))
         if float_compare(self.limit_asset_value, value, 2) == -1:
@@ -635,19 +760,14 @@ class AccountAssetAdjust(models.Model):
             self.invoice_id.source_document_id.write({
                 'ship_expense': True,
                 'ship_purchase_id': self.ship_purchase_id.id, })
-            
+
         values = self._context.get('expense_to_asset_dict', {})
-        _logger.info("values: %s", str(values))
         i = 0
-        
+
         # --
         for line in self.adjust_expense_to_asset_ids:
             line.account_analytic_id = Analytic.create_matched_analytic(line)
-            _logger.info("line.id: %s", str(line.id))
-            _logger.info("line.invoice_line_id: %s", str(line.invoice_line_id))
-            _logger.info("line.account_analytic_id.line_ids: %s", \
-                         str(line.account_analytic_id.line_ids))
-                
+
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,
                                            line.product_id, line.asset_name,
@@ -665,6 +785,8 @@ class AccountAssetAdjust(models.Model):
             line.move_id = move
             # Set move_check equal to amount depreciated
             depre_lines.write({'move_id': move.id})
+            if not depre_lines:
+                new_asset.depreciation_line_ids[0].write({'move_id': move.id})
 
     @api.model
     def _setup_move_data(self, journal, adjust_date,
@@ -919,7 +1041,8 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
         if amount_depre and not old_asset.profile_id.no_depreciation:
             old_depre_debit = AssetAdjust._setup_move_line_data(
                 old_asset.code, old_asset, period, old_depr_acc, adjust_date,
-                debit=amount_depre, credit=False, analytic_id=False)
+                debit=amount_depre, credit=False,
+                analytic_id=old_asset.account_analytic_id.id)
             old_exp_credit = AssetAdjust._setup_move_line_data(
                 old_asset.code, old_asset, period, old_exp_acc, adjust_date,
                 debit=False, credit=amount_depre,
@@ -933,7 +1056,8 @@ class AccountAssetAdjustLine(MergedChartField, ActivityCommon,
                 analytic_id=new_asset.account_analytic_id.id)
             new_exp_credit = AssetAdjust._setup_move_line_data(
                 new_asset.code, new_asset, period, new_depr_acc, adjust_date,
-                debit=False, credit=amount_depre, analytic_id=False)
+                debit=False, credit=amount_depre,
+                analytic_id=new_asset.account_analytic_id.id)
             line_dict += [(0, 0, new_depre_debit), (0, 0, new_exp_credit), ]
         return line_dict
 
@@ -1195,8 +1319,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
 
     @api.model
     def create(self, vals):
-        _logger.info("------- create line3 -------")
-        _logger.info("vals: %s", str(vals))
         asset = super(AccountAssetAdjustExpenseToAsset, self).create(vals)
         asset.update_related_dimension(vals)
         return asset
@@ -1207,7 +1329,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
 
     @api.multi
     def create_account_move_expense_to_asset(self, amount_depre):
-        _logger.info("------- create_account_move_expense_to_asset -------")
         """
         Dr: new asset - expense value
             Cr: expense - expense value
@@ -1237,7 +1358,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         am_vals = AssetAdjust._setup_move_data(adjust.journal_id,
                                                adjust_date, period, ref)
         move = self.env['account.move'].with_context(ctx).create(am_vals)
-        
+
         # Prepare move lines
         line_dict = \
             self._prepare_move_line_expense_to_asset(new_asset, exp_acc,
@@ -1248,7 +1369,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
             del ctx['novalidate']
             move.with_context(ctx).post()
         self.write({'move_id': move.id})
-        
+
         # update activity_id = activity_rpt_id
         analytic = None
         for movl in move.line_id:
@@ -1258,53 +1379,47 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
 
         # assign invoice_line's data to move_line's credit line
         self._assign_move_line_with_invoice_line(move)
-        
+
         # create analytic line for expense
         self._create_expense_analytic_line(analytic.line_ids)
-        
+
         return move
-    
+
     @api.model
     def _create_expense_analytic_line(self, analytic_line_ids):
-        _logger.info("------- _create_expense_analytic_line -------")
         inv_number = self.adjust_id.invoice_id.number
-        _logger.info("inv_number: %s", str(inv_number))
-        
+
         # find move_line_id of invoice_id to domain invoice's analytic_line
         inv_movl_ids = self.adjust_id.invoice_id.move_id.line_id
         inv_movl_id = ""
         for inv_movl in inv_movl_ids:
             if inv_movl.analytic_account_id and \
-                (inv_movl.account_id == self.account_id):
-                
+                    (inv_movl.account_id == self.account_id):
+
                 inv_movl_id = inv_movl.id
                 break
-        _logger.info("inv_movl_id: %s", str(inv_movl_id))
-        
+
         domain = []
         domain.append(("move_id", "=", inv_movl_id))
-        _logger.info("domain: %s", str(domain))
-        
+
         analytic_line = self.env['account.analytic.line']
         invoice_line_id = self.invoice_line_id
-        _logger.info("invoice_line_id: %s", str(invoice_line_id))
         invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
-        _logger.info("invl_analytic_lines: %s", str(invl_analytic_lines))
         invl_analytic_line = invl_analytic_lines.search(domain)
-        _logger.info("invl_analytic_line: %s", str(invl_analytic_line))
-        
+        if not invl_analytic_line:
+            invl_analytic_line = invl_analytic_lines[0]
+
         domain = []
         domain.append(("account_id", "=", self.account_analytic_id.id))
         domain.append(("amount", "=", (self.amount * -1)))
         domain.append(("name", "=", self.ref_asset_id.code))
-        _logger.info("domain: %s", str(domain))
-        _logger.info("self.account_analytic_id: %s", str(self.account_analytic_id))
         line_analytic_line = self.account_analytic_id.line_ids
+
+        if line_analytic_line:
+            line_analytic_line = line_analytic_line.search(domain)
+
         if not line_analytic_line:
             line_analytic_line = analytic_line_ids[0]
-        else:
-            line_analytic_line = line_analytic_line.search(domain)
-        _logger.info("line_analytic_line: %s", str(line_analytic_line))
 
         values = {}
         # follow by invl_analytic_line
@@ -1347,23 +1462,19 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         values["quarter"] = line_analytic_line.quarter
         values["doctype"] = line_analytic_line.doctype
         values["move_id"] = line_analytic_line.move_id.id
-        
+
         values["unit_amount"] = 0
         values["amount_currency"] = 0
         values["charge_type"] = "external"
         values["has_commit_amount"] = False
         values["require_chartfield"] = True
-         
+
         expense_analytic_line_id = analytic_line.create(values)
-        _logger.info("expense_analytic_line_id: %s", str(expense_analytic_line_id))
 
     @api.model
     def _assign_move_line_with_invoice_line(self, move):
-        _logger.info("------- _assign_move_line_with_invoice_line -------")
         invoice_line = self.invoice_line_id
-#         _logger.info("self.invoice_line_id: %s", str(invoice_line))
         for movl in move.line_id:
-#             _logger.info("movl_id: %s", str(movl.id))
             if movl.credit:
                 movl.write({"taxbranch_id": \
                             invoice_line.taxbranch_id.id})

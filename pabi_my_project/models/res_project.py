@@ -511,8 +511,11 @@ class ResProject(LogCommon, models.Model):
         # Not current year, no budget release allowed
         current_fy = self.env['account.fiscalyear'].find()
         release_external_budget = fiscalyear.control_ext_charge_only
+        ignore_current_fy = self._context.get('ignore_current_fy_lock', False)
         for project in self.sudo():
-            if project.current_fy_release_only and current_fy != fiscalyear.id:
+            if project.current_fy_release_only and \
+                    current_fy != fiscalyear.id and \
+                    not ignore_current_fy:
                 raise ValidationError(
                     _('Not allow to release budget for fiscalyear %s!\nOnly '
                       'current year budget is allowed.' % fiscalyear.name))
@@ -520,19 +523,22 @@ class ResProject(LogCommon, models.Model):
             budget_monitor = project.monitor_expense_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear and l.budget_method=='expense' and l.charge_type=='external')
             budget_plans.write({'released_amount': 0.0})  # Set zero
             if release_external_budget:  # Only for external charge
-                budget_plans = budget_plans.\
-                    filtered(lambda l: l.charge_type == 'external')
+                budget_plans = budget_plans.filtered(
+                    lambda l: l.charge_type == 'external'
+                    and l.budget_method == 'expense')
             if not budget_plans:
                 raise ValidationError(
                     _('Not allow to release budget for project without plan!'))
             planned_amount = sum([x.planned_amount for x in budget_plans])
             consumed_amount = sum([x.amount_consumed for x in budget_monitor])
-            if float_compare(released_amount, planned_amount, 2) == 1:
+            if float_compare(released_amount, planned_amount, 2) == 1 and \
+                    not ignore_current_fy:
                 raise ValidationError(
                     _('Releasing budget (%s) > planned (%s)!' %
                       ('{:,.2f}'.format(released_amount),
                        '{:,.2f}'.format(planned_amount))))
-            if float_compare(released_amount, consumed_amount, 2) == -1:
+            if float_compare(released_amount, consumed_amount, 2) == -1 and \
+                    not ignore_current_fy:
                 raise ValidationError(
                     _('Releasing budget (%s) < Consumed Amount (%s)!' %
                       ('{:,.2f}'.format(released_amount),
@@ -540,9 +546,19 @@ class ResProject(LogCommon, models.Model):
             remaining = released_amount
             update_vals = []
             for budget_plan in budget_plans:
+                # remaining > planned_amount in line
                 if float_compare(remaining,
                                  budget_plan.planned_amount, 2) == 1:
+                    # expense only
+                    if not budget_plan.planned_amount \
+                            and budget_plan.budget_method == 'expense':
+                        update = {'released_amount': remaining}
+                        update_vals.append((1, budget_plan.id, update))
+                        break
                     update = {'released_amount': budget_plan.planned_amount}
+                    # case : last line
+                    if budget_plan.id == budget_plans[-1].id:
+                        update = {'released_amount': remaining}
                     remaining -= budget_plan.planned_amount
                     update_vals.append((1, budget_plan.id, update))
                 else:
@@ -607,19 +623,21 @@ class ResProject(LogCommon, models.Model):
 
     @api.multi
     def _compute_amount_fy(self):
-
         Fiscal = self.env['account.fiscalyear']
-        current_fy = Fiscal.browse(Fiscal.find())
-
+        plan_fiscalyear_id = self._context.get('plan_fiscalyear_id', False)
+        if plan_fiscalyear_id:
+            current_fy = Fiscal.browse(plan_fiscalyear_id)
+        else:
+            current_fy = Fiscal.browse(Fiscal.find())
         for rec in self:
             for charge_type in ['external', 'internal']:
 
                 plans = rec.budget_plan_expense_ids.\
                     filtered(lambda l: l.charge_type == charge_type)
 
-                # Find current and previous years plan line
+                # Find previous years plan line
                 prev_plans = plans.filtered(
-                    lambda l: l.fiscalyear_id.date_start <=
+                    lambda l: l.fiscalyear_id.date_start <
                     current_fy.date_start)
 
                 if charge_type == 'external':
@@ -629,7 +647,7 @@ class ResProject(LogCommon, models.Model):
                     rec.amount_before_internal = \
                         sum(prev_plans.mapped('planned_amount'))
 
-                future_plans = plans - prev_plans  # Only future
+                future_plans = plans - prev_plans  # current and future
                 future_plans = future_plans.sorted(
                     key=lambda l: l.fiscalyear_id.date_start)
                 amount_beyond = 0.0
@@ -638,20 +656,35 @@ class ResProject(LogCommon, models.Model):
 
                 if charge_type == 'external':
                     for i in range(0, years):
+                        # Convert current_fy to date
+                        current_fy_datetime = \
+                            fields.Date.from_string(current_fy.date_start)
+                        # Create next year and convert_fy to string
+                        future_fy = fields.Date.to_string(
+                            current_fy_datetime + relativedelta(years=i))
+                        amount_year = sum(future_plans.filtered(
+                            lambda l: l.fiscalyear_id.date_start ==
+                            future_fy).mapped('planned_amount'))
                         if i < 4:  # only fy1 - fy4
-                            rec['amount_fy%s' % (i + 1)] = \
-                                future_plans[i].planned_amount
+                            rec['amount_fy%s' % (i + 1)] = amount_year
                         else:
-                            amount_beyond += future_plans[i].planned_amount
+                            amount_beyond += amount_year
                     rec.amount_beyond = amount_beyond
                 else:  # internal
                     for i in range(0, years):
+                        # Convert current_fy to date
+                        current_fy_datetime = \
+                            fields.Date.from_string(current_fy.date_start)
+                        # Create next year and convert_fy to string
+                        future_fy = fields.Date.to_string(
+                            current_fy_datetime + relativedelta(years=i))
+                        amount_year = sum(future_plans.filtered(
+                            lambda l: l.fiscalyear_id.date_start ==
+                            future_fy).mapped('planned_amount'))
                         if i < 4:  # only fy1 - fy5
-                            rec['amount_fy%s_internal' % (i + 1)] = \
-                                future_plans[i].planned_amount
+                            rec['amount_fy%s_internal' % (i + 1)] = amount_year
                         else:
-                            amount_beyond_internal += \
-                                future_plans[i].planned_amount
+                            amount_beyond_internal += amount_year
                     rec.amount_beyond_internal = amount_beyond_internal
 
     @api.model
@@ -698,6 +731,10 @@ class ResProjectMember(models.Model):
         string='Percent (%)',
         default=0.0,
         required=True,
+    )
+    report_check = fields.Boolean(
+        string='Report',
+        default=True,
     )
 
     @api.one
@@ -1029,7 +1066,11 @@ class ResProjectBudgetRelease(models.Model):
     @api.model
     def create(self, vals):
         rec = super(ResProjectBudgetRelease, self).create(vals)
-        if 'released_amount' in vals:
+        carry_forward = self._context.get('button_carry_forward', False)
+        carry_forward_async = \
+            self._context.get('button_carry_forward_async_process', False)
+        if 'released_amount' in vals and not carry_forward and \
+                not carry_forward_async:
             rec.project_id._release_fiscal_budget(rec.fiscalyear_id,
                                                   rec.released_amount)
         return rec

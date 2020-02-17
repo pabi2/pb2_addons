@@ -31,11 +31,11 @@ class BudgetPlanProject(models.Model):
         string='Job UUID',
         compute='_compute_button_job_uuid',
     )
-    
+
     ###########################--------------------------------- start job backgruond ------------------------------- #######################
 
     @api.multi
-    def _compute_button_job_uuid(self):      
+    def _compute_button_job_uuid(self):
         for rec in self:
             task_name = "%s('%s', %s)" % \
                 ('action_done_async_process', self._name, rec.id)
@@ -69,7 +69,7 @@ class BudgetPlanProject(models.Model):
 
   ###########################--------------------------------- end job backgruond ------------------------------- #######################
 
-    
+
     @api.multi
     def compute_prev_fy_performance(self):
         """ Prepre actual/commit amount from previous year from PR/PO/EX """
@@ -117,27 +117,42 @@ class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
             if rec.project_id.state == 'approve':
                 expenses = rec.project_id.monitor_expense_ids
                 revenues = rec.project_id.monitor_revenue_ids
-    
-                all_actual_expense = sum(expenses.mapped('amount_actual'))
+                summary = rec.project_id.summary_expense_ids
+
+                all_actual_expense = sum(expenses.filtered(
+                    lambda l: l.charge_type == 'external'
+                    ).mapped('amount_actual'))
+                # find first fiscalyear
+                bf_fiscalyear_id = expenses.mapped('fiscalyear_id')[0]
+                all_sum_bf_fiscalyear = sum(summary.filtered(
+                    lambda l:
+                    l.fiscalyear_id.date_start < bf_fiscalyear_id.date_start
+                    and l.budget_method == 'expense'
+                    ).mapped('planned_amount'))
+                all_actual_expense += all_sum_bf_fiscalyear
                 all_actual_revenue = sum(revenues.mapped('amount_actual'))
-    
+
                 next_fy_ex = expenses.filtered(
                     lambda l: l.fiscalyear_id.id == plan_fiscalyear_id)
                 next_fy_commit = sum(next_fy_ex.mapped('amount_pr_commit') +
                                      next_fy_ex.mapped('amount_po_commit') +
                                      next_fy_ex.mapped('amount_exp_commit'))
-    
+
+                current_fy_ex = sum(expenses.filtered(
+                    lambda l: l.charge_type == 'external' and
+                    l.fiscalyear_id == rec.fiscalyear_id
+                    ).mapped('amount_actual'))
+
                 ytd_ex = expenses.filtered(
                     lambda l: l.fiscalyear_id.date_start <=
                     rec.fiscalyear_id.date_start)
                 ytd_commit = sum(ytd_ex.mapped('amount_pr_commit') +
                                  ytd_ex.mapped('amount_po_commit') +
                                  ytd_ex.mapped('amount_exp_commit'))
-    
+
                 current_actual_revenue = sum(revenues.filtered(
                     lambda l: l.fiscalyear_id == rec.fiscalyear_id
                 ).mapped('amount_actual'))
-    
                 # 1) Begins
                 val = {'c_or_n': 'continue',
                        'code': rec.project_id.code,
@@ -179,7 +194,7 @@ class BudgetPlanProjectPrevFYView(PrevFYCommon, models.Model):
                     'planned': rec.planned,
                     'released': rec.released,
                     'all_commit': rec.all_commit,
-                    'actual': rec.actual,
+                    'actual': current_fy_ex,
                     'balance': rec.balance,
                     'est_commit': next_fy_commit,  # from PO invoice plan
                 })

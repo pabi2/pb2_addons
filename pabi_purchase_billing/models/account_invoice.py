@@ -7,7 +7,8 @@ import time
 
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
-
+    _order = "invoice_plan_ids asc,date_document asc"
+    
     purchase_billing_id = fields.Many2one(
         'purchase.billing',
         string='Billing Number',

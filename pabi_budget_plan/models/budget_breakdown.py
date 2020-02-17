@@ -309,16 +309,16 @@ class BudgetBreakdown(models.Model):
                 (entity_field, '=', entity_id),
                 ('chart_view', '=', breakdown.chart_view)])
             # Existing budgets, sub_entity_dict, i.e.,  {seciton_id: budget_id}
-            ent_bud_dict = {}  # {sub_entity_id: (budget_id, latest_policy)}
+            ent_bud_dict = {}  # {sub_entity_id: (budget_id, released_amount)}
             for x in budgets:
                 if sub_entity_field:
                     ent_bud_dict.update(
                         {x[sub_entity_field].id: (x.id,
-                                                  x.policy_amount)})
+                                                  x.released_amount)})
                 else:
                     # For personnel budget
                     ent_bud_dict.update({False: (x.id,
-                                                 x.policy_amount)})
+                                                 x.released_amount)})
             # Create line from plans first, so this will also reference to plan
             for plan in plans:
                 budget_plan_id = '%s,%s' % (BudgetPlan._name, plan.id)

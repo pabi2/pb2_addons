@@ -48,11 +48,13 @@ class SalesOrder(models.Model):
             res = self.env['pabi.utils.ws'].friendly_create_data(self._name,
                                                                  data_dict)
             pos = self.browse(res['result']['id'])
+            pos._get_pos_receipt()
             pos.post_process_pos_order()
             # auto confirm oder, with async process
             pos.with_context(pos_async_process=False).action_button_confirm()
             # return more data
             res['result']['name'] = pos.name
+            res['result']['origin'] = pos.origin
         except Exception, e:
             res = {
                 'is_success': False,
@@ -63,7 +65,52 @@ class SalesOrder(models.Model):
         _logger.info('generate_pos_order() - output: %s' % res)
         return res
 
+    @api.model
+    def cancel_pos_order(self, data_dict):
+        _logger.info('cancel_pos_order() - input: %s' % data_dict)
+        Voucher = self.env['account.voucher']
+        inv_ids = []
+        try:
+            pos = self.search([('name', '=', data_dict['name'])])
+            cancel_id = self.env['res.partner'].search([('name','=',data_dict['cancel_id'])])
+            """if not cancel_id:
+                return {
+                    'is_success': False,
+                    'result': False,
+                    'messages': _("('ValidateError','%s found no match.')"%(data_dict['cancel_id'])),
+                }"""
+            pos.cancel_id = cancel_id.id
+            pos.cancel_date = data_dict['cancel_date']
+            pos.cancel_reason = data_dict['cancel_reason']
+            if pos.state == 'done':
+                for invoice in pos.invoice_ids:
+                    move_ids = invoice.payment_ids.mapped('move_id')._ids
+                    voucher_ids = Voucher.search([('move_id', 'in', move_ids)])
+                    for voucher in voucher_ids:
+                        voucher.cancel_reason_txt = data_dict['cancel_reason']
+                        voucher.cancel_voucher()
+                    invoice.cancel_reason_txt = data_dict['cancel_reason']
+                    invoice.signal_workflow('invoice_cancel')
+                for picking in pos.picking_ids:
+                    picking.action_picking_cancel()
 
+            if pos.state in ('progress','manual'):
+                pos.action_cancel()
+            res = {
+                'is_success': True,
+                'result': pos.name,
+                'messages': _('Record cancelled successfully'),
+            }
+        except Exception, e:
+            res = {
+                'is_success': False,
+                'result': False,
+                'messages': _(str(e)),
+            }
+            self._cr.rollback()
+        _logger.info('cancel_pos_order() - output: %s' % res)
+        return res
+        
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
@@ -93,9 +140,11 @@ class ProductProduct(models.Model):
             """, (location_id, tuple(product_ids)))
         else:
             self._cr.execute("""
-               SELECT product_id, sum(qty) as product_qty
-               FROM stock_quant WHERE location_id = %s
-               GROUP BY product_id
+                SELECT sq.product_id, sum(sq.qty) as product_qty
+                FROM stock_quant sq
+                    LEFT JOIN product_product pp on pp.id = sq.product_id
+                WHERE pp.active = True and sq.location_id = %s
+                GROUP BY sq.product_id
             """, (location_id, ))
         vals = self._cr.dictfetchall()
         # Add list_price and uom
@@ -105,7 +154,8 @@ class ProductProduct(models.Model):
                                       'uom': x.uom_id.name,
                                       'list_price': x.list_price,
                                       'name': x.name,
-                                      'default_code': x.default_code, })
+                                      'default_code': x.default_code,
+                                      'barcode': x.ean13, })
                              for x in products])
         for val in vals:
             product = products_dict.get(val['product_id'], {})
@@ -114,6 +164,7 @@ class ProductProduct(models.Model):
             val['list_price'] = product.get('list_price', False)
             val['name'] = product.get('name', False)
             val['default_code'] = product.get('default_code', False)
+            val['barcode'] = product.get('barcode', False)
         return vals
 
     @api.model

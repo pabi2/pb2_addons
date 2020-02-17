@@ -212,12 +212,40 @@ class AccountAnalyticLine(models.Model):
     def _check_compute_fiscalyear_id(self):
         FiscalYear = self.env['account.fiscalyear']
         for rec in self:
+            fiscalyear_id = FiscalYear.find(rec.date)  # date of analytic.line
             if not rec.fiscalyear_id:  # No fiscal assigned, use rec.date
-                fiscalyear_id = FiscalYear.find(rec.date)
                 rec._write({'fiscalyear_id': fiscalyear_id,
                             'monitor_fy_id': fiscalyear_id, })
-            else:
-                rec._write({'monitor_fy_id': rec.fiscalyear_id.id, })
+            else:  # Has fiscalyear_id but year prior to analytic date
+                fiscal = FiscalYear.browse(fiscalyear_id)
+                if fiscal.date_start > rec.fiscalyear_id.date_start:
+                    rec._write({'monitor_fy_id': fiscal.id, })
+                else:
+                    rec._write({'monitor_fy_id': rec.fiscalyear_id.id, })
+
+    @api.multi
+    def _check_analytic_asset_line(self):
+        MOVE = self.env['account.move']#
+        ASSET_line = self.env['account.asset.line']
+        #moves = MOVE.browse(self.move_id and self.move_id.id)
+        if self.move_id:
+            depreciation_lines = ASSET_line.search([('move_id','=',self.move_id.id),('asset_id','!=',False)])
+            if depreciation_lines:
+                self.section_id = depreciation_lines[0].asset_id.owner_section_id and\
+                                    depreciation_lines[0].asset_id.owner_section_id.id or False
+                self.project_id = depreciation_lines[0].asset_id.owner_project_id and\
+                                    depreciation_lines[0].asset_id.owner_project_id.id or False
+                self.invest_asset_id = depreciation_lines[0].asset_id.owner_invest_asset_id and\
+                                        depreciation_lines[0].asset_id.owner_invest_asset_id.id or False
+                self.invest_construction_phase_id = depreciation_lines[0].asset_id.owner_invest_construction_phase_id and\
+                                                        depreciation_lines[0].asset_id.owner_invest_construction_phase_id.id or False
+                chartfield_id = self.section_id or\
+                                self.project_id or\
+                                self.invest_asset_id or\
+                                self.invest_construction_phase_id or False
+                self.costcenter_id = chartfield_id and\
+                                        chartfield_id.costcenter_id and\
+                                        chartfield_id.costcenter_id.id or False
 
     @api.model
     def create(self, vals):
@@ -240,7 +268,7 @@ class AccountAnalyticLine(models.Model):
         _logger.info("vals: %s", str(vals))
         analytic_line = super(AccountAnalyticLine, self).create(vals)
         _logger.info("analytic_line: %s", str(analytic_line))
-         
+        analytic_line._check_analytic_asset_line()
         return analytic_line
 
     @api.multi
@@ -303,9 +331,66 @@ class AccountAnalyticAccount(models.Model):
         ]
         return dimensions
 
+    @api.multi
+    def _check_analytic_asset_line(self, vals):
+        MOVE = self.env['account.move']
+        ASSET = self.env['account.asset']
+        ASSET_line = self.env['account.asset.line']
+        asset_id = False
+        # moves = MOVE.browse(self.move_id and self.move_id.id)
+        if 'asset_id' in vals:
+            asset_id = ASSET.browse(vals['asset_id'])
+        if self.line_ids and self.line_ids.sorted()[0].move_id \
+                and self.line_ids.sorted()[0].move_id.move_id:
+            asset_id = ASSET_line.search([
+                ('move_id', '=', self.line_ids.sorted()[0].move_id.move_id.id),
+                ('asset_id', '!=', False)
+            ], limit=1).asset_id
+        # if not self.line_ids:
+        #     asset_id = ASSET.search([
+        #         ('account_analytic_id', '=', self.id),
+        #         ('active', '=', True)
+        #     ], limit=1)
+
+        if asset_id:
+            if asset_id.owner_section_id:
+                self.write({
+                            'section_id': asset_id.owner_section_id.id,
+                            'project_id': False,
+                            'invest_asset_id': False,
+                            'invest_construction_phase_id': False,
+                            'costcenter_id':
+                            asset_id.owner_section_id.costcenter_id.id,
+                    })
+            elif asset_id.owner_project_id:
+                self.write({
+                            'section_id': False,
+                            'project_id': asset_id.owner_project_id.id,
+                            'invest_asset_id': False,
+                            'invest_construction_phase_id': False,
+                            'costcenter_id': asset_id.owner_project_id.costcenter_id.id,
+                    })
+            elif asset_id.owner_invest_asset_id:
+                self.write({
+                            'section_id': False,
+                            'project_id': False,
+                            'invest_asset_id': asset_id.owner_invest_asset_id.id,
+                            'invest_construction_phase_id': False,
+                            'costcenter_id': asset_id.owner_invest_asset_id.costcenter_id.id,
+                    })
+            elif asset_id.owner_invest_construction_phase_id:
+                self.write({
+                            'section_id': False,
+                            'project_id': False,
+                            'invest_asset_id': False,
+                            'invest_construction_phase_id': asset_id.owner_invest_construction_phase_id.id,
+                            'costcenter_id': asset_id.owner_invest_construction_phase_id.costcenter_id.id,
+                    })
+
     @api.model
     def get_analytic_search_domain(self, rec):
         dimensions = self._analytic_dimensions()
+        #rec._check_analytic_asset_line()
         domain = []
         for dimension in dimensions:
             if dimension in rec._fields:
@@ -397,7 +482,7 @@ class AccountAnalyticAccount(models.Model):
             if ('doctype' in rec._fields) and \
                 (rec.doctype == 'adjustment' and \
                 rec._name == 'account.move.line'):
-                
+
                 vals.update({'move_id':rec.move_id.id}) #update move_id to find doctype in analytic
             #
             # *************************** End *******************************

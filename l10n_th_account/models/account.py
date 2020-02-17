@@ -220,6 +220,7 @@ class AccountPeriod(models.Model):
             period = self.find()
         x = int(period.fiscalyear_id.date_start[5:7]) - 1
         num_period = (12 + int(period.date_start[5:7]) - x) % 12
+        num_period = num_period or 11
         return num_period
 
 

@@ -28,7 +28,7 @@
                         <group>
                             <field name="invest_asset_categ_id"/>
                             <field name="name_common"/>
-                            <field name="org_id"/>
+                            <field name="org_id" readonly="1"/>
                             <field name="costcenter_id"/>
                         </group>
                         <group>
@@ -38,9 +38,9 @@
                     </group>
                     <group>
                         <group string="Owner">
-                            <field name="owner_section_id"/>
+                            <field name="owner_section_id" readonly="1"/>
                             <field name="owner_division_id"/>
-                            <field name="owner_program_id"/>
+                            <field name="owner_program_id" />
                             <field name="request_user_id"/>
                             <field name="location"/>
                         </group>

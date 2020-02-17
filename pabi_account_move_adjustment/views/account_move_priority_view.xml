@@ -68,7 +68,7 @@
                                         <field name="is_require_activity" invisible="1"/>
                                         <field name="ref"/>
                                         <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
-                                        <field name="product_id" invisible="1"/>
+                                        <field name="product_id"/>
                                         <field name="activity_group_id" attrs="{'required': [('is_require_activity', '=', True)]}" />
                                         <field name="activity_id" domain="[('activity_group_ids','in',activity_group_id)]" attrs="{'required': [('is_require_activity', '=', True),('activity_rpt_id', '=', False)]}" />
                                         <field name="activity_rpt_id" readonly="1"/>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="xlsx_report_pabi_book_stock_balance_view" model="ir.ui.view">
+            <field name="name">xlsx.report.pabi.book.stock.balance.view</field>
+            <field name="model">xlsx.report.pabi.book.stock.balance</field>
+            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='criteria']" position="inside">
+                    <group>
+                        <field name="org_ids" widget="many2many_tags"/>
+                        <field name="category_ids" widget="many2many_tags"/>
+                        <field name="location_ids" widget="many2many_tags"/>
+                        <field name="product_ids" widget="many2many_tags"/>
+                         <field name="active"/>
+                        <field name="ou_name" invisible="1"/>
+                        <field name="location_name" invisible="1"/>
+                        <!--<field name="date_from"/>-->
+                        <!--<field name="date_to"/>-->
+                    </group>
+                    <group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_pabi_book_stock_balance" model="ir.actions.act_window">
+            <field name="name">Book Stock Balance</field>
+            <field name="res_model">xlsx.report.pabi.book.stock.balance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+		<menuitem
+            id="product.menu_products_report"
+            name = "Reports"
+            parent="base.menu_base_partner"
+            sequence="10"/>
+            
+        <menuitem id="menu_xlsx_report_pabi_book_stock_balance" 
+        	name="Book Stock Balance" 
+        	parent="product.menu_products_report" 
+        	action="action_xlsx_report_pabi_book_stock_balance" sequence="1"/>
+
+
+    </data>
+</openerp>

@@ -439,6 +439,8 @@ class ExportXlsxTemplate(models.TransientModel):
         for line in lines:
             for field in pair_fields:  # (field, raw_field)
                 value = self._get_field_data(field[1], line)
+                if type(value) == type(''):
+                    value = re.sub(r"[]", '', value)
                 # Case Eval
                 eval_cond = field_cond_dict[field[0]]
                 if eval_cond:  # Get eval_cond of a raw field

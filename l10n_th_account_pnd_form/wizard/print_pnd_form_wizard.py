@@ -6,15 +6,23 @@ from openerp.addons.l10n_th_account.models.res_partner \
 
 REPORT_NAMES = {
     'pnd1': {'pdf': False,  # TODO: pnd1
+             'pdf_wht': False,
+             'xls': "report_pnd1_form_xls",
+             'txt_csv': False},
+    'pnd1a': {'pdf': 'report_pnd1a_form',
+              'pdf_wht':"report_withholding_tax_cert" ,
              'xls': False,
              'txt_csv': False},
     'pnd53': {'pdf': 'report_pnd53_form',
+              'pdf_wht':False,
               'xls': 'report_pnd53_form_xls',
               'txt_csv': 'report_pnd53_form_txt'},
     'pnd3': {'pdf': 'report_pnd3_form',
+             'pdf_wht':False,
              'xls': 'report_pnd3_form_xls',
              'txt_csv': 'report_pnd3_form_txt'},
     'pnd3a': {'pdf': 'report_pnd3a_form',
+              'pdf_wht':False,
               'xls': 'report_pnd3a_form_xls',
               'txt_csv': 'report_pnd3a_form_txt'}, }
 
@@ -23,8 +31,13 @@ class PrintPNDFormWizard(models.TransientModel):
     _name = 'print.pnd.form.wizard'
 
     income_tax_form = fields.Selection(
-        INCOME_TAX_FORM,
+        [('pnd1', 'PND1'),
+         ('pnd1a', 'PND1A'),
+         ('pnd3', 'PND3'),
+         ('pnd3a', 'PND3A'),
+         ('pnd53', 'PND53')],
         string='Income Tax Form',
+        default='pnd1',
         required=True,
     )
     calendar_period_id = fields.Many2one(
@@ -34,11 +47,12 @@ class PrintPNDFormWizard(models.TransientModel):
     )
     fiscalyear_id = fields.Many2one(
         'account.fiscalyear',
-        string='Fiscalyear',
+        string='Calendar Year',
         required=False,
     )
     print_format = fields.Selection(
-        [('pdf', 'PDF'),
+        [('pdf', 'PDF - ใบขวาง'),
+         ('pdf_wht', 'PDF - 50 ทวิ'),
          ('xls', 'XLS'),
          ('txt_csv', 'TXT')],
         string='Print Format',
@@ -65,7 +79,14 @@ class PrintPNDFormWizard(models.TransientModel):
             'company_taxid': company_taxid,
             'company_branch': company_branch,
             'print_name': self.env.user.name or '',
-            'print_position': self.env.user.employee_id.job_id.name or ''
+            'print_position': self.env.user.employee_id.position_id.name or '',
+            'signature' : self.env.user.partner_id.sign_image  or '',
+            'fiscalyear' : self.fiscalyear_id.name,
+            #wht
+            'company_name' : company.display_name2,
+            'company_address' : self._prepare_address(company),
+            'buddha_year' : int(self.fiscalyear_id.name) + 543
+ 
         }
         res = {
             'type': 'ir.actions.report.xml',
@@ -74,3 +95,12 @@ class PrintPNDFormWizard(models.TransientModel):
             'context': {'lang': 'th_TH'},
         }
         return res
+    
+    @api.model
+    def _prepare_address(self, partner):
+        address_list = [partner.street, partner.street2, partner.city,
+                        partner.township_id.name, partner.district_id.name,
+                        partner.province_id.name, partner.zip, ]
+        address_list = filter(lambda x: x is not False and x != '',
+                              address_list)
+        return ' '.join(address_list).strip()

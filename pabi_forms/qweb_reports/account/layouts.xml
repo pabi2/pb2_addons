@@ -702,9 +702,14 @@
                                         <td style="width: 200px; border-bottom: 1px solid; padding-top: 10px;">
                                             <t t-if="o.doctype not in ['salary_expense']">
                                                 <t t-if="o.document_id and o.document_id.validate_user_id and o.document_id.validate_user_id">
-                                                    <span t-field="o.document_id.validate_user_id.display_name"/>
+                                                	<t t-if="o.journal_id.code != 'TP' and o.journal_id.code != 'EXJ'">
+                                                    	<span t-field="o.document_id.validate_user_id.display_name"/>
+                                                    </t>
                                                 </t>
                                             </t>
+                                            <t t-if="o.document_id and o.journal_id.code in ('TP','EXJ')">
+												<span t-field="o.create_uid.display_name"/>                                           
+											 </t>
                                             <t t-if="not o.document_id">
                                                 <t t-if="o.create_uid">
                                                     <span t-field="o.create_uid.display_name"/>
@@ -719,10 +724,13 @@
                                         <td></td>
                                         <td style="width: 200px; border-bottom: 1px solid; padding-top: 10px;">
                                             <t t-if="o.doctype not in ['salary_expense']">
-                                                <t t-if="o.document_id">
+                                                <t t-if="o.document_id and o.journal_id.code != 'TP' and o.journal_id.code != 'EXJ'">
                                                     <span t-field="o.document_id.validate_date"/>
                                                 </t>
                                             </t>
+                                              <t t-if="o.document_id and o.journal_id.code in ('TP','EXJ')">
+                                                    <span t-field="o.date"/>
+                                                </t>
                                             <t t-if="not o.document_id">
                                                 <span t-esc="datetime.datetime.strptime(o.create_date, '%Y-%m-%d %H:%M:%S').strftime('%d/%m/%Y')"/>
                                             </t>

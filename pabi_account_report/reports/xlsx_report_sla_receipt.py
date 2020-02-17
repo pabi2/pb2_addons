@@ -4,7 +4,8 @@ import datetime
 import numpy as np
 
 
-class AccountBankReceipt(models.Model):
+class AccountBankReceiptView(models.AbstractModel):
+    _name = 'account.bank.receipt.view'
     _inherit = 'account.bank.receipt'
 
     business_day = fields.Integer(
@@ -43,7 +44,7 @@ class XLSXReportSLAReceipt(models.TransientModel):
         string='Validated By',
     )
     results = fields.Many2many(
-        'account.bank.receipt',
+        'account.bank.receipt.view',
         string='Results',
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
@@ -53,6 +54,16 @@ class XLSXReportSLAReceipt(models.TransientModel):
         default=True,
     )
 
+    @api.model
+    def _domain_to_where_str(self, domain):
+        """ Helper Function for better performance """
+        where_dom = [" %s %s %s " % (x[0], x[1], isinstance(x[2], basestring)
+                     and "'%s'" % x[2] or x[2]) for x in domain]
+        
+        where_str = 'and'.join(where_dom)
+        where_str = where_str.replace(',)',')')
+        return where_str
+
     @api.multi
     def _compute_results(self):
         """
@@ -61,21 +72,36 @@ class XLSXReportSLAReceipt(models.TransientModel):
         2. Check state is done
         """
         self.ensure_one()
-        Result = self.env['account.bank.receipt']
-        dom = [('state', '=', 'done')]
+        Result = self.env['account.bank.receipt.view']
+        dom = [('abr.state', '=', 'done')]
         if self.user_ids:
-            dom += [('validate_user_id', 'in', self.user_ids.ids)]
+            dom += [('abr.validate_user_id', 'in', self.user_ids.ids)]
         if self.fiscalyear_start_id:
-            dom += [('move_id.date', '>=',
+            dom += [('am.date', '>=',
                      self.fiscalyear_start_id.date_start)]
         if self.fiscalyear_end_id:
-            dom += [('move_id.date', '<=', self.fiscalyear_end_id.date_stop)]
+            dom += [('am.date', '<=', self.fiscalyear_end_id.date_stop)]
         if self.period_start_id:
-            dom += [('move_id.date', '>=', self.period_start_id.date_start)]
+            dom += [('am.date', '>=', self.period_start_id.date_start)]
         if self.period_end_id:
-            dom += [('move_id.date', '<=', self.period_end_id.date_stop)]
+            dom += [('am.date', '<=', self.period_end_id.date_stop)]
         if self.date_start:
-            dom += [('move_id.date', '>=', self.date_start)]
+            dom += [('am.date', '>=', self.date_start)]
         if self.date_end:
-            dom += [('move_id.date', '<=', self.date_end)]
-        self.results = Result.search(dom, order="name")
+            dom += [('am.date', '<=', self.date_end)]
+            
+        where_str = self._domain_to_where_str(dom)
+        
+        self._cr.execute("""
+            select abr.* 
+            from account_bank_receipt abr
+                left join account_move am on am.id = abr.move_id
+            where %s
+            """ % (where_str))
+        
+        sla_receipt = self._cr.dictfetchall()
+        
+        for line in sla_receipt:
+            self.results += Result.new(line) 
+            
+        #self.results = Result.search(dom, order="name")

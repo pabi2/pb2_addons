@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pnd1_form_xls" language="groovy" pageWidth="1200" pageHeight="595" orientation="Landscape" columnWidth="1200" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.7715610000000155"/>
+	<property name="ireport.x" value="1120"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.csv.field.delimiter" value=" "/>
+	<style name="style1" lineSpacing="Single">
+		<box>
+			<pen lineColor="#D5D5D5"/>
+			<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#D5D5D5"/>
+			<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#D5D5D5"/>
+			<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#D5D5D5"/>
+			<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#D5D5D5"/>
+		</box>
+	</style>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
++"/../../../pb2_generic/l10n_th_account_pnd_form/report/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="company_taxid" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="company_branch" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EVENTS_DATA_SOURCE" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="income_tax_form" class="java.lang.String"/>
+	<parameter name="wht_period_id" class="java.lang.Integer"/>
+	<parameter name="print_name" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="no_header" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="date_start" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="date_stop" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select rp.vat,rpt.shortcut as title,rp.name,p.date,p.amount_income,p.amount_wht,p.wht_cert_income_type,av.number,ap.id
+from personal_income_tax p
+left join res_partner rp on p.partner_id = rp.id
+left join res_partner_title rpt on rp.title = rpt.id
+left join account_voucher av on p.voucher_id = av.id
+left join account_period ap on p.date between ap.date_start  and ap.date_stop
+where  p.amount_wht != 0.0 and ap.id = $P{wht_period_id}
+group by rp.vat,rpt.shortcut,rp.name,p.date,p.amount_income,p.amount_wht,p.wht_cert_income_type,av.number,av.period_id,ap.id
+order by date]]>
+	</queryString>
+	<field name="vat" class="java.lang.String"/>
+	<field name="title" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="date" class="java.util.Date"/>
+	<field name="amount_income" class="java.lang.Number"/>
+	<field name="amount_wht" class="java.lang.Number"/>
+	<field name="number" class="java.lang.String"/>
+	<field name="wht_cert_income_type" class="java.lang.String"/>
+	<variable name="day" class="java.util.Date">
+		<variableExpression><![CDATA[new Date()]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement style="style1" x="0" y="0" width="100" height="15"/>
+				<textElement lineSpacing="Single">
+					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style1" x="100" y="0" width="103" height="15"/>
+				<textElement lineSpacing="Single">
+					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{vat}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style1" x="203" y="0" width="69" height="15"/>
+				<textElement lineSpacing="Single">
+					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{title}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style1" x="272" y="0" width="161" height="15"/>
+				<textElement lineSpacing="Single">
+					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement style="style1" x="433" y="0" width="119" height="15"/>
+				<textElement lineSpacing="Single">
+					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement style="style1" x="552" y="0" width="112" height="15"/>
+				<textElement lineSpacing="Single">
+					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_income}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="style1" x="664" y="0" width="112" height="15"/>
+				<textElement lineSpacing="Single">
+					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_wht} * -1]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style1" x="892" y="0" width="131" height="15"/>
+				<textElement lineSpacing="Single">
+					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{number}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style1" x="776" y="0" width="116" height="15"/>
+				<textElement lineSpacing="Single">
+					<font size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[( $F{wht_cert_income_type} == '1' ? '1' : ($F{wht_cert_income_type} == '2' ? '4' :""))]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

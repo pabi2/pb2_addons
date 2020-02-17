@@ -94,7 +94,39 @@ class HREmployee(models.Model):
         'employee_id',
         'section_id',
         string='Section')
-
+    
+    report_project = fields.Boolean(
+        string='All Project'
+        ,default=False,store=True)
+    report_section = fields.Boolean(
+        string='All Section'
+        ,default=False,store=True)
+    report_construction = fields.Boolean(
+        string='All Investment construction'
+        ,default=False,store=True)
+    report_invest_asset = fields.Boolean(
+        string='All Investment asset'
+        ,default=False,store=True)
+    report_project_ids = fields.Many2many(
+        'res.org',
+        'report_project_org_employee_rel',
+        'employee_id', 'org_id',
+        string='Project')
+    report_section_ids = fields.Many2many(
+        'res.org',
+        'report_section_org_employee_rel',
+        'employee_id', 'org_id',
+        string='Section')
+    report_construction_ids = fields.Many2many(
+        'res.org',
+        'report_construction_org_employee_rel',
+        'employee_id', 'org_id',
+        string='Investment Construction')
+    report_invest_asset_ids = fields.Many2many(
+        'res.org',
+        'report_invest_asset_org_employee_rel',
+        'employee_id', 'org_id',
+        string='Investment Asset')
     @api.multi
     @api.depends('employee_code', 'title_id',
                  'first_name', 'mid_name', 'last_name',)

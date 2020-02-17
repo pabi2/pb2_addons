@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+from dateutil.relativedelta import relativedelta
 from openerp import models, fields, api, _
 from openerp import tools
 from openerp.exceptions import ValidationError
 from openerp.addons.pabi_chartfield.models.chartfield \
     import ChartFieldAction
-from openerp.tools.float_utils import float_compare
 
 # Map state vs status
 # 'draft': ['cancel'],
@@ -102,8 +102,8 @@ class AccountAsset(ChartFieldAction, models.Model):
         index=True,
         help="Status vs State\n"
         "Draft → ยกเลิก\n"
-        "Running → ใช้งานปกติ, โอนเป็นครุภัณฑ์, ชำรุด, รอจำหน่าย\n"
-        "Removed → จำหน่าย, สูญหาย, ส่งมอบ\n"
+        "Running → ใช้งานปกติ, ชำรุด, รอจำหน่าย\n"
+        "Removed → โอนเป็นครุภัณฑ์, จำหน่าย, สูญหาย, ส่งมอบ\n"
         "Close → หมดอายุการใช้งาน"
     )
     status_code = fields.Char(
@@ -499,12 +499,12 @@ class AccountAsset(ChartFieldAction, models.Model):
 
     @api.multi
     def validate_asset_to_removal(self):
-        invalid_assets = len(self.filtered(lambda l: l.type != 'normal' or
-                                           l.state not in ('open','close')))
-        if invalid_assets > 0:
+        invalid_assets = self.filtered(lambda l: l.type != 'normal' or l.state not in ('open','close')).mapped('code')
+
+        if len(invalid_assets) > 0:
             raise ValidationError(
-                _('Please select running or close assets!'))
-        return True
+                _('Please select running or close assets!\n'
+                  'Asset error : %s'%str(tuple(invalid_assets))))
 
     @api.multi
     def action_undeliver_assets(self):
@@ -523,7 +523,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         # Status follow state
         if 'state' in vals and vals.get('state', False):
 #             if vals.get('state') == 'close':
-                # jakkrich.cha 
+                # jakkrich.cha
 #                 if 'status' in vals and vals.get('status', False):
 #                     if vals.get('status') == 'expire':
 #                         vals['status'] = Status.search([('code', '=', 'expire')]).id
@@ -538,7 +538,7 @@ class AccountAsset(ChartFieldAction, models.Model):
             if status.map_state_close == 'close':
                 vals['status'] = Status.search([('code', '=', status.code)]).id
             for asset in self:
-                # jakkrich.cha 
+                # jakkrich.cha
                 # if status.map_state != asset.state:
                 if not (status.map_state_draft == asset.state or \
                         status.map_state_open == asset.state or \
@@ -631,11 +631,11 @@ class AccountAsset(ChartFieldAction, models.Model):
         type = vals.get('type', False)
         ptype = vals.get('parent_type', False)
         if ptype and type == 'view' and vals.get('code', '/') == '/':
-            
+
             #sequence_code = 'parent.asset.%s' % (ptype)
             sequence_code_changed = 'parent.asset.pa'
             vals['code'] = self.env['ir.sequence'].next_by_code(sequence_code_changed)
-            
+
         # Normal Case
         product_id = vals.get('product_id', False)
         if product_id and vals.get('code', '/') == '/':
@@ -677,6 +677,30 @@ class AccountAsset(ChartFieldAction, models.Model):
     def compute_depreciation_board(self):
         assets = self.filtered(lambda l: not l.no_depreciation)
         return super(AccountAsset, assets).compute_depreciation_board()
+
+    def _compute_line_dates(self, table, start_date, stop_date):
+        all_dates = super(AccountAsset, self)._compute_line_dates(
+            table, start_date, stop_date)
+        first_asset = self.depreciation_line_ids.filtered(
+            lambda l: l.init_entry)
+        # Check case asset from adjust or import
+        asset_line = self.depreciation_line_ids.filtered(
+            lambda l: l.move_check and not l.init_entry)
+        line_dates = all_dates
+        if len(asset_line) == 1:
+            first_asset_date = \
+                fields.Datetime.from_string(first_asset[-1].line_date)
+            date_current = fields.Datetime.from_string(asset_line.line_date)
+            line_dates = [line for line in all_dates if line >= date_current]
+            # check case month duplicate
+            if first_asset_date.strftime('%m') == date_current.strftime('%m'):
+                line_dates.insert(0, date_current)
+            else:
+                line_dates.insert(0, date_current)
+                # Case fiscalyear difference
+                # (i.e : Purchase value 2019 and Depreciation 2020)
+                line_dates.insert(0, all_dates[0])
+        return line_dates
 
     # @api.multi
     # def onchange_profile_id(self, profile_id):

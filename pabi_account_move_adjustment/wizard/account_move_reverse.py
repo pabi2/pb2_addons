@@ -17,7 +17,7 @@ def action_reverse_async_process(session, model_name, res_id, move_ids):
         return {'result': res}
     except Exception, e:
         raise RetryableJobError(e)
-    
+
 class AccountMoveReverse(models.TransientModel):
     _inherit = 'account.move.reverse'
 
@@ -29,7 +29,7 @@ class AccountMoveReverse(models.TransientModel):
 #         else:
 #             return False
         return False
-    
+
     date = fields.Date(
         string='Reversal Date',
         default=datetime.today(),
@@ -39,7 +39,7 @@ class AccountMoveReverse(models.TransientModel):
         string='Active Ids',
         default=get_active_ids
     )
-    
+
     reverse_job_id = fields.Many2one(
         'queue.job',
         string='Reverse Job',
@@ -62,7 +62,7 @@ class AccountMoveReverse(models.TransientModel):
             rec.reverse_job_id = jobs and jobs[0] or False
             rec.reverse_uuid = jobs and jobs[0].uuid or False
         return True
-    
+
     @api.multi
     def action_reverse_backgruond(self):
         assert 'active_ids' in self._context, "active_ids missing in context"
@@ -81,16 +81,23 @@ class AccountMoveReverse(models.TransientModel):
             #                              'confirm_pos_order')
         else:
             return self.action_reverse()
-        
+
     @api.multi
     def action_reverse(self):
         self.ensure_one()
         result = super(AccountMoveReverse, self).action_reverse()
+        exp_reverse_move = self._context.get('reverse_move', False)
         ctx = ast.literal_eval(result['context'])
         ctx.update({'direct_create': True})  # To ensure refresh dimension
         result['context'] = ctx
         move_id = self._context.get('active_id')
         move = self.env['account.move'].browse(move_id)
+        if exp_reverse_move:
+            self._context.copy()
+            res_model = self._context.get('active_model', False)
+            res_id = self._context.get('active_id', False)
+            expense_id = self.env[res_model].browse(res_id)
+            move = expense_id.rev_ic_move_id
         if move and move.doctype == 'adjustment':
             journal_budget = self.env.ref('pabi_account_move_adjustment.'
                                           'journal_adjust_budget')
@@ -111,4 +118,12 @@ class AccountMoveReverse(models.TransientModel):
                 new_result['name'] = result['name']
                 new_result['context'] = result['context']
                 result = new_result
+        # Case reverse move from hr_expense_expense
+        if exp_reverse_move:
+            expense_reverse = []
+            if expense_id.rev_ic_move_id:
+                expense_reverse.append(expense_id.rev_ic_move_id.id)
+            if expense_id.exp_ic_move_id:
+                expense_reverse.append(expense_id.exp_ic_move_id.id)
+            result.update({'domain': [('id', 'in', expense_reverse)]})
         return result

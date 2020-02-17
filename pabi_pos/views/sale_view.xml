@@ -84,6 +84,8 @@
                             <field name="currency_id" invisible="1"/>
                             <field name="warehouse_id"/>
                             <field name="taxbranch_id"/>
+                            <field name="cancel_reason" readonly="1" 
+                            		attrs="{'invisible': [('state','not in',('cancel','shipping_except','invoice_except'))]}" />
                         </group>
                     </group>
                     <notebook>

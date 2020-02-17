@@ -279,7 +279,7 @@ class AccountWhtCert(models.Model):
             res['supplier_partner_id'] = supplier.id
             res['income_tax_form'] = (voucher.income_tax_form or
                                       supplier.income_tax_form)
-            res['tax_payer'] = (voucher.tax_payer or False)
+            res['tax_payer'] = 'withholding'
             res['wht_line'] = self._prepare_wht_line(voucher)
         return res
 

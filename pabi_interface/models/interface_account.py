@@ -196,8 +196,8 @@ class InterfaceAccountEntry(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    _sql_constraints = [('sys_doc_unique', 'unique(name,system_id)',
-                         'Document must be unique per system.')]
+#     _sql_constraints = [('sys_doc_unique', 'unique(name,system_id)',
+#                          'Document must be unique per system.')]
 
     @api.multi
     @api.depends('journal_id')
@@ -697,55 +697,108 @@ class InterfaceAccountEntry(models.Model):
     def _is_document_origin_exists(self, data_dict):
         str_doc_origin = data_dict["name"]
         str_type = data_dict["type"]
-        
-        # 1. check existing doc_origin in check existing table
-        # for check double interface of document at same time
-        check_table = self.env["interface.account.entry.check.existing"]
-        
-        if str_type == "Reverse":
-            dom = [("doc_origin", "=", str_doc_origin),
-                   ("type", "=", "reverse")]
-        else:
-            dom = [("doc_origin", "=", str_doc_origin),
-                   ("type", "=", "post"),
-                   ("system", "=", data_dict["system_id"])]
-            
-        check_datas = check_table.search(dom)
-        
-        if not check_datas:
-            values = {}
-            values["doc_origin"] = str_doc_origin
-            if str_type == "Reverse":
-                values["type"] = "reverse"
-            else:
-                values["type"] = "post"
-                values["system"] = data_dict["system_id"]
-            res = check_table.create(values)
-            self._cr.commit()
-        else:
-            return True
-        
-        # 2. check existing doc_origin in interface table
         ia_table = self.env["interface.account.entry"]
+        system_table = self.env["interface.system"]
         
-        # if system_id = "mySales" do check exists
-        # if system_id != "mySales" and type != "Reverse" do check exists 
-        dom = [("name", "=", str_doc_origin)]
-        ia_datas = ia_table.search(dom)
-        
-        if not ia_datas:
-            return False
+        if str_type != "Reverse":
+            str_system = data_dict["system_id"]
+            dom = [("name", "=", str_system)]
+            system_datas = system_table.search(dom)
+
+            dom = [("name", "=", str_doc_origin),
+                   ("system_id", "=", system_datas.id)]
         else:
+            dom = [("name", "=", str_doc_origin)]
+            
+        ia_datas = ia_table.search(dom)
+        res = {"exists": False}
+        
+        if ia_datas:
+            ia_id = ia_number = ia_fiscalyear = None
+            system = None
             if len(ia_datas) > 1:
                 system = ia_datas[0].system_id.name
+                ia_id = ia_datas[0].id
+                ia_number = ia_datas[0].number
+                ia_fiscalyear = \
+                    ia_datas[0].move_id.period_id.fiscalyear_id.name
             else:
                 system = ia_datas.system_id.name
-                
-            if system == "mySales":
-                return True  # check_existing
-            else:
+                ia_id = ia_datas.id
+                ia_number = ia_datas.number
+                ia_fiscalyear = \
+                    ia_datas.move_id.period_id.fiscalyear_id.name
+
+            if system != "myProperty": # then return IA number
+                res = {
+                        "exists": True,
+                        "is_success": True,
+                        "result": {
+                                    "id": ia_id,
+                                    "number": ia_number,
+                                    "fiscalyear": ia_fiscalyear
+                                  },
+                        "messages": "Record created successfully"
+                      }
+            else: # system = "myProperty" and type != "Reverse" then return IA number
                 if str_type != "Reverse":
-                    return True  # check_existing
+                    res = {
+                            "exists": True,
+                            "is_success": True,
+                            "result": {
+                                        "id": ia_id,
+                                        "number": ia_number,
+                                        "fiscalyear": ia_fiscalyear
+                                      },
+                            "messages": "Record created successfully"
+                          }
+            
+        return res
+
+    @api.model
+    def _is_interfaced(self, data_dict):
+        str_doc_origin = data_dict["name"]
+        str_type = data_dict["type"]
+        res = {"interfaced": False}
+        # check existing doc_origin in check existing table
+        # for check double interface of document at same time
+        if ("system_id" in data_dict) and \
+           ((data_dict["system_id"] == "mySales") or \
+            (data_dict["system_id"] == "myCC")):
+            check_table = self.env["interface.account.entry.check.existing"]
+            
+            if str_type == "Reverse":
+                dom = [("doc_origin", "=", str_doc_origin),
+                       ("type", "=", "reverse")]
+            else:
+                dom = [("doc_origin", "=", str_doc_origin),
+                       ("type", "=", "post"),
+                       ("system", "=", data_dict["system_id"])]
+                
+            check_datas = check_table.search(dom)
+            
+            if not check_datas:
+                values = {}
+                values["doc_origin"] = str_doc_origin
+                if str_type == "Reverse":
+                    values["type"] = "reverse"
+                else:
+                    values["type"] = "post"
+                    values["system"] = data_dict["system_id"]
+                existing_id = check_table.create(values)
+                self._cr.commit()
+            else:
+                err_message = "ไม่สามารถ Interface ได้ เนื่องจาก" + \
+                            "มีการส่งข้อมูลซ้ำ กรุณารอสักครู่แล้วลองอีกครั้ง"
+                res = {
+                        "interfaced": True,
+                        "is_success": False,
+                        "result": False,
+                        "messages": _(err_message)
+                      }
+                return res
+        
+        return res
 
     @api.model
     def _pre_process_interface_account_entry(self, data_dict):
@@ -754,31 +807,17 @@ class InterfaceAccountEntry(models.Model):
     @api.model
     def generate_interface_account_entry(self, data_dict):
         _logger.info("IA - Input: %s" % data_dict)
-                    
-        # if origin document exists
-        if self._is_document_origin_exists(data_dict):
-            ia_table = self.env["interface.account.entry"]
-            dom = [("name", "=", data_dict["name"])]
-            ia_data = ia_table.search(dom)
-            if ia_data:
-                err_message = "ไม่สามารถ Interface ได้เนื่องจากเอกสารเลขที่ %s มีอยู่แล้วในระบบ [%s]"
-                res = {
-                    'is_success': False,
-                    'result': False,
-                    'messages': _(err_message) %
-                                (data_dict["name"], ia_data.number)
-                    }
-            else:
-                err_message = "ไม่สามารถ Interface ได้"
-                res = {
-                    'is_success': False,
-                    'result': False,
-                    'messages': _(err_message)
-                    }
-                
-            _logger.info("IA - Output: %s" % res)
 
-            return res
+        # check existing doc_origin in interface.account.entry table
+        existing = self._is_document_origin_exists(data_dict)
+        if existing["exists"]:
+            _logger.info("IA - Output: %s" % existing)
+            return existing
+        
+        interfaced = self._is_interfaced(data_dict)
+        if interfaced["interfaced"]:
+            _logger.info("IA - Output: %s" % interfaced)
+            return interfaced
         
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
@@ -807,10 +846,15 @@ class InterfaceAccountEntry(models.Model):
                 res['result']['fiscalyear'] = \
                     document.move_id.period_id.fiscalyear_id.name
         except Exception, e:
+            err_msg = str(e)
+            if err_msg == "could not serialize access due to concurrent update":
+                err_msg = "ไม่สามารถ Interface ได้ เนื่องจาก" + \
+                        "มีผู้ใช้งานจำนวนมาก กรุณารอ 10 นาทีแล้วลองอีกครั้ง"
+                        
             res = {
                 'is_success': False,
                 'result': False,
-                'messages': _(str(e)),
+                'messages': _(err_msg),
             }
             self._cr.rollback()
         _logger.info("IA - Output: %s" % res)
