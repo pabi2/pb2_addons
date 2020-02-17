@@ -187,11 +187,11 @@ class AccountWhtCert(models.Model):
         size=500,
     )
 
-#     date_value_period = fields.Char(
-#         string="Value/Cheque Date Period",
-#         compute="_compute_date_vaule_period",
-#         store=True
-#     )
+    date_value_period = fields.Char(
+        string="Value/Cheque Date Period",
+        compute="_compute_date_vaule_period",
+        store=True
+    )
     
     # Computed fields to be displayed in WHT Cert.
     x_voucher_number = fields.Char(compute='_compute_cert_fields')
@@ -480,16 +480,16 @@ class AccountWhtCert(models.Model):
                 })
         return
     
-#     @api.multi
-#     @api.depends('date_value')
-#     def _compute_date_vaule_period(self):
-#         for rec in self:
-#             if rec.date_value:
-#                 year, month, day = (rec.date_value).split("-")
-#                 if int(day) <= 15 :
-#                     rec.date_value_period = "Value/Cheque Date รอบวันที่ 1-15"
-#                 else:
-#                     rec.date_value_period = "Value/Cheque Date รอบวันที่ 16-31"
+    @api.multi
+    @api.depends('date_value')
+    def _compute_date_vaule_period(self):
+        for rec in self:
+            if rec.date_value:
+                year, month, day = (rec.date_value).split("-")
+                if int(day) <= 15 :
+                    rec.date_value_period = "Value/Cheque Date (1-15)"
+                else:
+                    rec.date_value_period = "Value/Cheque Date (16-31)"
 
     @api.multi
     def send_mail(self):
