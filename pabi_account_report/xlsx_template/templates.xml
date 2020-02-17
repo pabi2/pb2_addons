@@ -2347,6 +2347,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'C1': '${time.strftime("%d/%m/%Y")}',
                             },
                             'results': {
+                            	'A4': '${"=ROW()-3"}',
                                 'B4': 'partner_taxid${value or ""}#{align=left;number_format=text}',
                                 'C4': 'partner_name${value or ""}#{align=left;number_format=text}',
                                 'D4': 'name${value or ""}#{align=left;number_format=text}',

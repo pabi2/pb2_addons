@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import tools
 from openerp import models, fields, api
+from openerp.exceptions import ValidationError
 
 
 class XLSXReportCGD(models.TransientModel):
@@ -12,7 +13,12 @@ class XLSXReportCGD(models.TransientModel):
         string='Partner ID',
         )
     
-   
+    reference_date_start = fields.Date(
+        string = 'Reference Date Start',
+        )
+    reference_date_end = fields.Date(
+        string = 'Reference Date End',
+        )
           
     results = fields.Many2many(
         'issi.report.cgd.monthly.view',
@@ -20,6 +26,10 @@ class XLSXReportCGD(models.TransientModel):
         compute='_compute_results',
         help="Use compute fields, so there is nothing store in database",
     )
+    @api.multi
+    def chack_date(self):
+        if reference_date_end > reference_date_start:
+            raise ValidationError('Date Start more then Date End')
      
     @api.multi
     def _compute_results(self):
@@ -29,11 +39,14 @@ class XLSXReportCGD(models.TransientModel):
         2. Check state is done
         """
         self.ensure_one()
-        Result = self.env['issi.report.cgd.monthly']
+        Result = self.env['issi.report.cgd.monthly.view']
         dom = []
         if self.user_ids:
             dom += [(' partner_id', '=', self.partner_id)]
-                    
+        if self.reference_date_start:
+            dom += [('invoice_date','>=',self.reference_date_start)]
+        if self.reference_date_start:
+            dom += [('invoice_date','<=',self.reference_date_end)]                
          
         self._cr.execute("""
             select row_number() over (order by source_document, invoice_date ) as id, *
