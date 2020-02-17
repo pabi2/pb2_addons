@@ -9,6 +9,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='criteria']" position="inside">
                    <field name="partner_id" />
+                   <field name="reference_date_start" />
+                   <field name="reference_date_end" />
                 </xpath>
                 <!-- <form string="Reports">
                		<group name="criteria">

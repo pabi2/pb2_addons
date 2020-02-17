@@ -26,10 +26,20 @@ class XLSXReportCGD(models.TransientModel):
         compute='_compute_results',
         help="Use compute fields, so there is nothing store in database",
     )
-    @api.multi
-    def chack_date(self):
-        if reference_date_end > reference_date_start:
-            raise ValidationError('Date Start more then Date End')
+    
+    def check_date(self):
+        if self.reference_date_end < self.reference_date_start:
+            raise ValidationError('Date Start less than Date End')
+   
+    @api.model
+    def _domain_to_where_str(self, domain):
+        """ Helper Function for better performance """
+        where_dom = [" %s %s %s " % (x[0], x[1], isinstance(x[2], basestring)
+                     and "'%s'" % x[2] or x[2]) for x in domain]
+        
+        where_str = 'and'.join(where_dom)
+        where_str = where_str.replace(',)',')')
+        return where_str
      
     @api.multi
     def _compute_results(self):
@@ -38,21 +48,24 @@ class XLSXReportCGD(models.TransientModel):
         1. Get from account bank receipt
         2. Check state is done
         """
+        self.check_date()
         self.ensure_one()
         Result = self.env['issi.report.cgd.monthly.view']
         dom = []
-        if self.user_ids:
-            dom += [(' partner_id', '=', self.partner_id)]
+        if self.partner_id:
+            dom += [(' partner_id', '=', self.partner_id.id)]
         if self.reference_date_start:
             dom += [('invoice_date','>=',self.reference_date_start)]
         if self.reference_date_start:
             dom += [('invoice_date','<=',self.reference_date_end)]                
-         
+        if dom ==[]:
+            raise ValidationError('Please fill in information')
+        where_str = self._domain_to_where_str(dom) 
         self._cr.execute("""
             select row_number() over (order by source_document, invoice_date ) as id, *
             from issi_report_cgd_monthly 
             where %s          
-            """% (dom))
+            """% (where_str))
          
         sla_receipt = self._cr.dictfetchall()
          

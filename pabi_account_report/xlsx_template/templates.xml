@@ -2344,7 +2344,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Report CGD': {
                             '_HEAD_': {
-                                'C1': '${time.strftime("%d/%m/%Y")}',
+                                'C1': '${time.strftime("%m/%Y")}',
                             },
                             'results': {
                             	'A4': '${"=ROW()-3"}',
