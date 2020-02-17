@@ -2330,6 +2330,38 @@ result = pd.pivot_table(df, index=groupby,
                     }
                 }
             </field>
+        </record>
+        
+         # CGD Report
+        <record id="xlsx_report_cgd" model="ir.attachment">
+            <field name="res_model">xlsx.report.cgd</field>
+            <field name="datas"></field>
+            <field name="datas_fname">report_cgd.xlsx</field>
+            <field name="name">CGD Reports</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Report CGD': {
+                            '_HEAD_': {
+                                'C1': '${time.strftime("%d/%m/%Y")}',
+                            },
+                            'results': {
+                                'B4': 'partner_taxid${value or ""}#{align=left;number_format=text}',
+                                'C4': 'partner_name${value or ""}#{align=left;number_format=text}',
+                                'D4': 'name${value or ""}#{align=left;number_format=text}',
+                                'E4': 'base${value or ""}#{align=right;number_format=number}',
+                                'F4': 'invoice_date${value or ""}#{align=left;number_format=date}',
+                                'G4': 'partner_invoice_number${value or ""}#{align=left;number_format=text}',
+                                'H4': 'txtreason${value or ""}#{align=left;number_format=text}',
+                                'K4': 'source_document${value or ""}#{align=left;number_format=text}',
+                                'L4': 'partner_id${value or ""}#{align=left;number_format=text}',                                
+                            },
+                            
+                        }
+                    }
+                }
+            </field>
         </record> 
     </data>
 </openerp>
