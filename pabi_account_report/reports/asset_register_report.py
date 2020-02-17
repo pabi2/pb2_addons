@@ -16,7 +16,7 @@ class AssetRegisterView(models.AbstractModel):
     _name = 'asset.register.view'
     _inherit = 'account.asset'
 
-    
+
     asset_id = fields.Many2one(
         'account.asset',
         string='Asset ID',
@@ -142,7 +142,7 @@ class AssetRegisterReport(models.TransientModel):
         'account.fiscalyear',
         string='Current Year',
         default=lambda self: self._get_fiscalyear(),
-        
+
     )
     # Note: report setting
     accum_depre_account_type = fields.Many2one(
@@ -203,7 +203,7 @@ class AssetRegisterReport(models.TransientModel):
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
-    
+
     @api.multi
     @api.depends('asset_ids')
     def _compute_count_asset(self):
@@ -295,11 +295,11 @@ class AssetRegisterReport(models.TransientModel):
         # date_start <= date_end
         if self.date_end:
             dom += [('date_start', '<=', self.date_end)]
-            
+
         # Prepare fixed params
         date_start = False
         date_end = False
-        
+
         if self.filter == 'filter_date':
             date_start = self.date_start #self.fiscalyear_start_id.date_start
             date_end = self.date_end
@@ -430,8 +430,7 @@ class AssetRegisterReport(models.TransientModel):
 
         results = self._cr.dictfetchall()
         ReportLine = self.env['asset.register.view']
-        for line in results:
-            self.results += ReportLine.new(line)
+        self.results = [ReportLine.new(line).id for line in results]
         return True
 
     # @api.multi
