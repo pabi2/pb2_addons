@@ -2284,6 +2284,36 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
-
+        
+	      # PV-PE Report 
+	    <record id="xlsx_report_pv_pe" model="ir.attachment">
+	         <field name="res_model">xlsx.report.pv.pe</field>
+	         <field name="datas"></field>
+	         <field name="datas_fname">xlsx_report_pv_pe.xlsx</field>
+	         <field name="name">PV-PE Report</field>
+	         <field name="parent_id" eval="ref('dir_account_reports')"/>
+	         <field name="description">
+	             {
+	                 '__EXPORT__': {
+	                     'PV-PE': {
+	                         '_HEAD_': { },
+	                         'results': {
+	                             'A2': 'gl${value or ""}#{align=center;number_format=text}',
+	                             'B2': 'pe_doc${value  or ""}#{align=center}',
+	                             'C2': 'pe_valuedate${value  or ""}#{align=right;number_format=date}',
+	                             'D2': 'pe_transfertype${value or ""}#{align=left}',
+	                             'E2': 'pe_amount${value or ""}#{align=right;number_format=number}',
+	                             'F2': 'pv_doc${value or ""}#{align=center}',
+	                             'G2': 'pv_posting_date${value or ""}#{align=right;number_format=date}',
+	                             'H2': 'pv_cheque_date${value or ""}#{align=right;number_format=date}',
+	                             'I2': 'pv_valuedate${value  or ""}#{align=right;number_format=date}',
+	                             'J2': 'pv_amount${value or ""}#{align=right;number_format=number}',
+	                             'K2': 'state${value or ""}#{align=left}',
+	                         },
+	                     }
+	                 }
+	             }
+	        </field>
+	    </record>      
     </data>
 </openerp>

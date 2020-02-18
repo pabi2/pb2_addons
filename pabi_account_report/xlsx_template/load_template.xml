@@ -41,6 +41,7 @@
                 ref('xlsx_report_purchase_invoice_plan'),
                 ref('xlsx_report_purchase_no_invoice_plan'),
                 ref('xlsx_report_preprint_receipt'),
+                ref('xlsx_report_pv_pe'),
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>

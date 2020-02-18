@@ -82,6 +82,8 @@
         'reports/xlsx_report_pnd1.xml',
         #Preprint Receipt
         'reports/xlsx_report_preprint_receipt.xml',
+        #PE PV Reports
+        'reports/xlsx_report_pv_pe.xml'
     ],
     'demo': [
     ],

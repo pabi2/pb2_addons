@@ -47,4 +47,6 @@ from . import asset_estimate_report
 # PND Reports
 from . import xlsx_report_pnd1
 #Preprint Receipt
-from . import xlsx_report_preprint_receipt 
+from . import xlsx_report_preprint_receipt
+#PE PV Reports
+from . import xlsx_report_pv_pe
