@@ -274,7 +274,7 @@
                             'H8': 'phone${value or ""}',
                             'I8': 'email${value or ""}',
                             'J8': 'tag_name${value or ""}',
-                            'K8': 'account_number${value or ""}#{number_format=text}',
+                            'K8': 'account_number${value or ""},
                             'L8': 'bank_name${value or ""}',
                             'M8': 'account_owner_name${value or ""}',
                             'N8': 'partner_id.property_supplier_payment_term.name${value or ""}',                     
