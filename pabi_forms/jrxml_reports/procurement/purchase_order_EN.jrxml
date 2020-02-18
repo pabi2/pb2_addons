@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.100000000000007"/>
 	<property name="ireport.x" value="1"/>
-	<property name="ireport.y" value="122"/>
+	<property name="ireport.y" value="288"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -1191,14 +1191,14 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<reportElement x="1" y="42" width="318" height="1"/>
 			</line>
 			<staticText>
-				<reportElement x="4" y="0" width="159" height="21"/>
+				<reportElement x="4" y="0" width="266" height="22"/>
 				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Terms and Conditions]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement x="3" y="21" width="314" height="18" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="3" y="21" width="314" height="41" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
