@@ -142,7 +142,7 @@ class XLSXReportPabiSupplierListResults(models.Model):
         'res.partner',
         string='Partner',
     )
-    account_number = fields.Integer(
+    account_number = fields.Char(
         string='Account Number',
         readonly=True,
     )
