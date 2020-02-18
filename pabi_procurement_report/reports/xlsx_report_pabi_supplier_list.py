@@ -87,7 +87,8 @@ class XLSXReportPabiSupplierList(models.TransientModel):
             self.results = temp_Result
         if (not self.categ_ids) and (not self.tag_ids):
             self.results =  Result.search(dom)
-            
+
+           
 class XLSXReportPabiSupplierListResults(models.Model):
     _name = 'xlsx.report.pabi.supplier.list.results'
     _auto = False
