@@ -18,6 +18,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/document_history.xml',
+        'views/auditlog_view.xml',
     ],
     'auto_install': False,
     'installable': True,
