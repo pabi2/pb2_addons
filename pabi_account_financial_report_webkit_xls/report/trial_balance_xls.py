@@ -267,10 +267,10 @@ class trial_balance_xls(report_xls):
                                  cell_style_decimal)]
                 c_specs += [
                     ('debit', 1, 0, 'number',
-                     _p['debit_accounts'][current_account.id],
+                     _p['debit_accounts'][current_account.id] - _p['init_debit_accounts'][current_account.id],
                      None, cell_style_decimal),
                     ('credit', 1, 0, 'number',
-                     _p['credit_accounts'][current_account.id],
+                     _p['credit_accounts'][current_account.id] - _p['init_credit_accounts'][current_account.id],
                      None, cell_style_decimal),
                 ]
                 c_specs += [('balance', 1, 0, 'number', None,

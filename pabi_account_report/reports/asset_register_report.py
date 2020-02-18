@@ -156,9 +156,7 @@ class AssetRegisterReport(models.TransientModel):
         'xlsx.report.status',
         string='Asset State',
         domain=[('location', '=', 'asset.register.view')],
-        default=lambda self: self.env['xlsx.report.status'].search([
-            ('location', '=', 'asset.register.view'),
-            ('status', 'in', ['draft', 'open', 'close'])]),
+        default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', ['draft', 'open', 'close', 'removed'])]),
     )
     account_ids = fields.Many2many(
         'account.account',
@@ -236,7 +234,7 @@ class AssetRegisterReport(models.TransientModel):
         [('active', 'Active'),
          ('inactive', 'Inactive')],
         string='Asset Active',
-        default='active',
+        #default='active',
     )
     results = fields.Many2many(
         'asset.register.view',
@@ -530,7 +528,7 @@ class AssetRegisterReport(models.TransientModel):
             codes = [x.strip() for x in codes]
             codes = ','.join(codes)
             dom.append(('code', 'ilike', codes))
-            self.asset_ids = Asset.search(dom, order='id')
+            self.asset_ids = Asset.with_context(active_test=False).search(dom, order='id')
 
     @api.onchange('budget_filter')
     def _onchange_budget_filter(self):

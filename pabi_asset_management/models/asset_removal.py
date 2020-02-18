@@ -17,6 +17,8 @@ def action_done_async_process(session, model_name, res_id):
         return {'result': res}
     except Exception, e:
         raise RetryableJobError(e)
+
+
 class AccountAssetRemoval(models.Model):
     _name = 'account.asset.removal'
     _inherit = ['mail.thread']
@@ -74,7 +76,7 @@ class AccountAssetRemoval(models.Model):
     )
     target_status_code = fields.Char(
         string='Asset Status Code',
-        related = 'target_status.code'
+        related='target_status.code'
     )
     asset_count = fields.Integer(
         string='New Asset Count',
@@ -156,15 +158,14 @@ class AccountAssetRemoval(models.Model):
     @api.multi
     def action_draft(self):
         self.write({'state': 'draft'})
-    
+
     @api.multi
     def auto_post_account_move(self):
         Asset = self.env['account.asset']
-        action = self.env.ref('account_asset_management.account_asset_action')
         for removal in self:
             asset_ids = removal.removal_asset_ids.mapped('asset_id').ids
-            assets_id = Asset.with_context(active_test=False).search([('id', 'in',
-                                                                    asset_ids)])
+            assets_id = Asset.with_context(active_test=False).search([
+                ('id', 'in', asset_ids)])
 
             for asset in assets_id:
                 res = asset.open_entries()
@@ -172,15 +173,15 @@ class AccountAssetRemoval(models.Model):
                 for move in move_id:
                     if move.state == 'draft':
                         move.line_id._get_detail_asset_move_line()
-                        move.button_validate()    
-    
+                        move.button_validate()
+
     @api.multi
     def _remove_confirmed_assets(self):
         for removal in self:
             if not removal.removal_asset_ids:
                 raise ValidationError(_('No asset to remove!'))
             for line in removal.removal_asset_ids:
-                if line.asset_id.state not in ('open','close'):
+                if line.asset_id.state not in ('open', 'close'):
                     continue
                 asset = line.asset_id
                 ctx = {'active_ids': [asset.id], 'active_id': asset.id,
@@ -203,8 +204,7 @@ class AccountAssetRemoval(models.Model):
         self._remove_confirmed_assets()
         self.write({'state': 'done'})
         self.auto_post_account_move()
-        
-    
+
     @api.multi
     def action_done_background(self):
         self.ensure_one()
@@ -221,7 +221,6 @@ class AccountAssetRemoval(models.Model):
         job = self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
         self.queue_job_id = job.id
         self.queue_job_uuid = uuid
-    
 
     @api.multi
     def action_cancel(self):
@@ -236,11 +235,14 @@ class AccountAssetRemoval(models.Model):
         asset_ids = self.removal_asset_ids.mapped('asset_id').ids
         assets = Asset.with_context(active_test=False).search([('id', 'in',
                                                                 asset_ids)])
-        dom = [('id', 'in', assets.ids)]
+        dom = [
+            ('id', 'in', assets.ids),
+            ('active', '=', False)
+        ]
         result.update({'domain': dom})
         return result
 
-            
+
 class AccountAssetRemovalLines(models.Model):
     _name = 'account.asset.removal.lines'
 
@@ -259,7 +261,7 @@ class AccountAssetRemovalLines(models.Model):
         'account.asset',
         string='Asset',
         domain=[('type', '=', 'normal'),
-                ('state', 'in', ('open','close'))],
+                ('state', 'in', ('open', 'close'))],
         required=True,
         ondelete='restrict',
     )
@@ -293,19 +295,19 @@ class AccountAssetRemovalLines(models.Model):
         comodel_name='account.account',
         string='Plus-Value Account',
         domain=[('type', '=', 'other')],
-        #default=lambda self: self._default_account_plus_value_id()
+        # default=lambda self: self._default_account_plus_value_id()
     )
     account_min_value_id = fields.Many2one(
         comodel_name='account.account',
         string='Min-Value Account',
         domain=[('type', '=', 'other')],
-        #default=lambda self: self._default_account_min_value_id()
+        # default=lambda self: self._default_account_min_value_id()
     )
     account_residual_value_id = fields.Many2one(
         comodel_name='account.account',
         string='Residual Value Account',
         domain=[('type', '=', 'other')],
-        #default=lambda self: self._default_account_residual_value_id()
+        # default=lambda self: self._default_account_residual_value_id()
     )
     posting_regime = fields.Selection(
         selection=lambda self: self._selection_posting_regime(),
@@ -368,8 +370,8 @@ class AccountAssetRemovalLines(models.Model):
 
     @api.model
     def _get_posting_regime(self):
-        #asset_obj = self.env['account.asset']
-        #asset = asset_obj.browse(self._context.get('active_id'))
+        # asset_obj = self.env['account.asset']
+        # asset = asset_obj.browse(self._context.get('active_id'))
         if self.asset_id:
             country = self.asset_id.company_id.country_id.code or False
             if country in self._residual_value_regime_countries():
@@ -378,7 +380,8 @@ class AccountAssetRemovalLines(models.Model):
                 return 'residual_value'
             else:
                 return 'gain_loss_on_sale'
-        elif self.removal_id.target_status and self.removal_id.target_status.code == 'deliver':
+        elif self.removal_id.target_status and \
+                self.removal_id.target_status.code == 'deliver':
             return 'residual_value'
         else:
             return 'gain_loss_on_sale'
@@ -402,7 +405,6 @@ class AccountAssetRemovalLines(models.Model):
             residual_value = self._prepare_early_removal(asset)
         else:
             residual_value = asset.value_residual
-
         ctx = dict(self._context, company_id=asset.company_id.id)
         period_id = self.period_id.id
         if not period_id:
@@ -413,7 +415,6 @@ class AccountAssetRemovalLines(models.Model):
                 raise UserError(_(
                     "No period defined for the removal date."))
             period_id = period_ids[0].id
-
         dlines = asset_line_obj.search(
             [('asset_id', '=', asset.id), ('type', '=', 'depreciate')],
             order='line_date desc')
@@ -423,7 +424,6 @@ class AccountAssetRemovalLines(models.Model):
             create_dl = asset_line_obj.search(
                 [('asset_id', '=', asset.id), ('type', '=', 'create')])[0]
             last_date = create_dl.line_date
-
         if self.date_remove < last_date:
             raise UserError(
                 _("The removal date must be after "
@@ -431,7 +431,6 @@ class AccountAssetRemovalLines(models.Model):
 
         line_name = asset._get_depreciation_entry_name(len(dlines) + 1)
         journal_id = asset.profile_id.journal_id.id
-
         # create move
         move_vals = {
             'name': asset.name,
@@ -442,7 +441,6 @@ class AccountAssetRemovalLines(models.Model):
             'narration': self.note,
         }
         move = move_obj.create(move_vals)
-
         # create asset line
         asset_line_vals = {
             'amount': residual_value,
@@ -453,7 +451,11 @@ class AccountAssetRemovalLines(models.Model):
             'type': 'remove',
         }
         asset_line_obj.create(asset_line_vals)
-        asset.write({'state': 'removed', 'date_remove': self.date_remove})
+        asset.write({
+            'state': 'removed',
+            'date_remove': self.date_remove,
+            'active': False,
+        })
 
         # create move lines
         move_lines = self._get_removal_data(asset, residual_value)
@@ -472,7 +474,7 @@ class AccountAssetRemovalLines(models.Model):
         }
 
     def _prepare_early_removal(self, asset):
-        #Generate last depreciation entry on the day before the removal date.
+        # Generate last depreciation entry on the day before the removal date.
 
         date_remove = self.date_remove
         asset_line_obj = self.env['account.asset.line']
@@ -546,14 +548,11 @@ class AccountAssetRemovalLines(models.Model):
                 'asset_id': asset.id
             }
             move_lines.append((0, 0, move_line_vals))
-
         move_line_vals = {
             'name': asset.name,
             'account_id': profile.account_asset_id.id,
-            'debit': (asset.depreciation_base < 0 and -asset
-                      .depreciation_base or 0.0),
-            'credit': (asset.depreciation_base > 0 and asset
-                       .depreciation_base or 0.0),
+            'debit': asset.purchase_value < 0 and -asset.purchase_value or 0.0,
+            'credit': asset.purchase_value > 0 and asset.purchase_value or 0.0,
             'partner_id': partner_id,
             'asset_id': asset.id
         }
@@ -565,7 +564,7 @@ class AccountAssetRemovalLines(models.Model):
                     'name': asset.name,
                     'account_id': self.account_residual_value_id.id,
                     'analytic_account_id': asset.account_analytic_id.id,
-                    'debit': residual_value,
+                    'debit': residual_value + asset.salvage_value,
                     'credit': 0.0,
                     'partner_id': partner_id,
                     'asset_id': asset.id
@@ -584,7 +583,8 @@ class AccountAssetRemovalLines(models.Model):
                         'asset_id': asset.id
                     }
                     move_lines.append((0, 0, move_line_vals))
-                balance = self.sale_value - residual_value
+                balance = \
+                    self.sale_value - residual_value - asset.salvage_value
                 account_id = (self.account_plus_value_id.id
                               if balance > 0
                               else self.account_min_value_id.id)
@@ -644,5 +644,3 @@ class AccountAssetRemovalLines(models.Model):
                 self.account_min_value_id = False
             if self.posting_regime == 'gain_loss_on_sale':
                 self.account_residual_value_id = False
-            
-            

@@ -24,7 +24,7 @@ class AccountMove(models.Model):
         if self._context.get('overwrite_move_name', False):
             vals['name'] = '/'
         results = super(AccountMove, self).create(vals)
-        if 'STJ' in results.name:
+        if results.journal_id.code in ('STJ','TP'):
             for line in results.line_id:
                 line._get_detail_move_line()
         
@@ -204,7 +204,7 @@ class AccountMoveLine(models.Model):
                         self.org_id = search.org_id.id
                         self.fund_id = search.fund_id.id
                         
-            else:
+            """else:
                 search = self.search([['move_id','=',self.move_id.id],['chartfield_id','=',False]])
 
                 for rec in search:
@@ -213,8 +213,21 @@ class AccountMoveLine(models.Model):
                                 'org_id':self.org_id.id,
                                 'fund_id':self.fund_id.id,
                                 'chartfield_id':self.chartfield_id.id
-                        })
-        
+                        })"""
+        if not self.document_id and not self.chartfield_id:
+            search = self.search([['move_id','=',self.move_id.id],
+                                  #['costcenter_id','!=',False],
+                                  #['org_id','!=',False]
+                                  ['id','!=',self.id],
+                                  ['chartfield_id','!=',False]],limit=1)
+            if search:
+                self.chartfield_id = search.chartfield_id.id
+                self.costcenter_id = search.costcenter_id.id
+                self.org_id = search.org_id.id
+                self.fund_id = search.fund_id.id
+                
+                
+                    
     @api.multi
     def _get_detail_chartfield(self, chartfield_id):
         chartfield, costcenter, org, fund = False, False, False, False
@@ -270,10 +283,6 @@ class AccountMoveLine(models.Model):
                     Analytic = self.env['account.analytic.account']
                     move_line.asset_id.account_analytic_id = \
                         Analytic.create_matched_analytic(move_line.asset_id)
-        if move_line.document_id:
-            search_picking = self.env['stock.picking'].search([['id','=',move_line.document_id.id],'|',['origin','like','POS'],['origin','like','SR']])
-            if search_picking:
-                move_line._get_detail_move_line()
         return move_line
     
     

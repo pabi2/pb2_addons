@@ -112,6 +112,10 @@ class PurchaseWorkAcceptance(models.Model):
         required=True,
         readonly=True,
     )
+    date_action = fields.Date(
+        string='Action Date',
+        related = 'order_id.contract_id.action_date'
+    )
     partner_id = fields.Many2one(
         'res.partner',
         string='Supplier',
@@ -236,7 +240,7 @@ class PurchaseWorkAcceptance(models.Model):
                 rec.order_id.num_installment or False
 
     @api.model
-    @api.depends('date_receive', 'date_scheduled_end')
+    @api.depends('date_receive', 'date_scheduled_end','total_fine')
     def _compute_fine_amount_to_word_th(self):
         res = {}
         minus = False
@@ -555,7 +559,13 @@ class PurchaseWorkAcceptance(models.Model):
 
     @api.multi
     def write(self, vals):
+        if vals.get('total_fine', False) and not vals.get('total_fine_cal', False):
+            vals['total_fine_cal'] = vals['total_fine']
+            
         res = super(PurchaseWorkAcceptance, self).write(vals)
+        
+        if vals.get('date_receive', False) or vals.get('date_contract_end', False) or vals.get('acceptance_line_ids', False):
+            self.total_fine = self.total_fine_cal
         # Redmine #2346
         self.change_invoice_detail()  # We did comment it, but set it back.
         return res
@@ -599,9 +609,9 @@ class PurchaseWorkAcceptance(models.Model):
                 )
                 amount_tax += sum([tax['amount'] for tax in taxes['taxes']])
                 amount_untaxed += taxes['total']
-            rec.amount_untaxed = amount_untaxed
-            rec.amount_tax = amount_tax
-            rec.amount_total = amount_untaxed + amount_tax
+            rec.amount_untaxed = round(amount_untaxed,2)
+            rec.amount_tax = round(amount_tax,2)
+            rec.amount_total = rec.amount_untaxed + rec.amount_tax
         return True
 
     @api.multi

@@ -3,6 +3,8 @@ from datetime import datetime
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from .res_partner import INCOME_TAX_FORM
+from datetime import datetime
+
 
 WHT_CERT_INCOME_TYPE = [('1', '1. เงินเดือน ค่าจ้าง ฯลฯ 40(1)'),
                         ('2', '2. ค่าธรรมเนียม ค่านายหน้า ฯลฯ 40(2)'),
@@ -137,7 +139,60 @@ class AccountWhtCert(models.Model):
          'unique (period_id, sequence, income_tax_form)',
          'WHT Sequence must be unique!'),
     ]
+    
+    supplier_email = fields.Char(
+        related='supplier_partner_id.email',
+        string='Supplier Email',
+        readonly=True,
+    )
+    
+    supplier_email_accountant = fields.Char(
+        related='supplier_partner_id.email_accountant',
+        string='Supplier Email Accountant',
+        readonly=True,
+    )
+    
+    date_sent_mail = fields.Datetime(
+        string='Date sent mail',
+    )
+    
+    payment_export_id = fields.Many2one(
+        'payment.export',
+        string='Payment Export ID',
+        related='voucher_id.payment_export_id',
+    )
+    
+    date_value = fields.Date(
+        related='payment_export_id.date_value',
+        string='Value/Cheque Date',
+        readonly=True,
+    )
+    
+    mail_state = fields.Selection(
+        [('draft', 'not sent'),
+         ('done', 'sent')],
+        string='Mail status',
+        default='draft',
+        copy=False,
+    )
+    
+    note = fields.Text(
+        string='Notes',
+        size=1000,
+    )
+    
+    group_email_wht = fields.Char(
+        string="Group Email WHT",
+        default=lambda self: self.env.user.company_id.group_email_wht,
+        size=500,
+    )
 
+    date_value_period = fields.Char(
+        string="Value/Cheque Date Period",
+        compute="_compute_date_vaule_period",
+        store=True
+    )
+    
     # Computed fields to be displayed in WHT Cert.
     x_voucher_number = fields.Char(compute='_compute_cert_fields')
     x_date_value = fields.Date(compute='_compute_cert_fields')
@@ -279,7 +334,7 @@ class AccountWhtCert(models.Model):
             res['supplier_partner_id'] = supplier.id
             res['income_tax_form'] = (voucher.income_tax_form or
                                       supplier.income_tax_form)
-            res['tax_payer'] = (voucher.tax_payer or False)
+            res['tax_payer'] = 'withholding'
             res['wht_line'] = self._prepare_wht_line(voucher)
         return res
 
@@ -424,6 +479,46 @@ class AccountWhtCert(models.Model):
                     'wht_cert_income_desc': line.wht_cert_income_desc,
                 })
         return
+    
+    @api.multi
+    @api.depends('date_value')
+    def _compute_date_vaule_period(self):
+        for rec in self:
+            if rec.date_value:
+                year, month, day = (rec.date_value).split("-")
+                if int(day) <= 15 :
+                    rec.date_value_period = "Value/Cheque Date (1-15)"
+                else:
+                    rec.date_value_period = "Value/Cheque Date (16-31)"
+
+    @api.multi
+    def send_mail(self):
+        email_template_name = 'Withholding Certs - Send by Email'
+        template = self.env['email.template'].search([('name','=',email_template_name)])
+        if template:
+            if not self.group_email_wht:
+                raise ValidationError(
+                    _('Please enter valid email address for group email!'))
+            if self.env.user.company_id.send_to_groupmail_only: #send email test
+                to_email = self.env.user.company_id.group_email_wht
+                template.email_to = to_email
+            else :
+                if not self.supplier_email_accountant:
+                    raise ValidationError(
+                        _('Please fill Email Accountant.'))
+                to_email = self.supplier_email_accountant
+                template.email_to = to_email
+            if template:
+                    ctx = self.env.context.copy()
+                    ctx.update({
+                        'date_print': fields.Date.context_today(self),
+                        'email_attachment': True,
+                    })
+            template.with_context(ctx).send_mail(self.id, force_send=True)
+            self.write({'mail_state': 'done',
+                    'date_sent_mail': datetime.today(),
+                    })
+        return True
 
 
 class WhtCertTaxLine(models.Model):

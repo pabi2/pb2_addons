@@ -74,28 +74,32 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
     def _onchange_line_filter(self):
         self.chartfield_ids = []
         Chartfield = self.env['chartfield.view']
-        dom = []
         if self.line_filter:
             codes = self.line_filter.split('\n')
             codes = [x.strip() for x in codes]
-            codes = ','.join(codes)
-            dom.append(('code', 'ilike', codes))
+            #codes = ','.join(codes)
+            codes = tuple(codes)
+            dom = [('code', 'in', codes)]
             self.chartfield_ids = Chartfield.search(dom, order='id')
+            print('\n Onchange Filter Budget: '+str(self.chartfield_ids))
     
     
     def get_domain_filter(self, fields, filters):
         dom = []
         n = 0
         codes = filters.replace(' ','').replace('\n',',').replace(',,',',').replace(',\n','').split(',')
-        if '' in codes:
-            codes.remove('')
+        #codes = filters.split(',')
+        codes = tuple(codes)
+        #if '' in codes:
+        #    codes.remove('')
         codes = [x.strip() for x in codes]
-        for rec in codes:
+        """for rec in codes:
             n += 1
             if rec != '':
                 if n != len(codes):
                     dom.append('|')
-                dom.append((fields, 'ilike', rec))
+                dom.append((fields, 'ilike', rec))"""
+        dom = [(fields, 'in', codes)]
         return dom
     
     
@@ -185,23 +189,22 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                      and "'%s'" % x[2] or x[2]) for x in chartfield_dom]
         
         where_str = 'or'.join(where_dom)
-        where_str = 'and (' + where_str.replace(',)',')') + ') '
+        where_str = '(%s)' % where_str.replace(',)',')')
         return where_str
     
     
     
     @api.multi
     def _compute_results(self):
-        self.ensure_one()
+        #self.ensure_one()
         plan_ids = []
         chartfield_dom = ''
         where_acc = ''
         InvoicePlan = self.env['purchase.invoice.plan']
         Reports = self.env['report.purchase.invoice.plan.view']
-        
+        where_str = ''
         dom_acc = []
         dom = []
-        
         if self.org_ids:
             dom += [('ou.org_id', 'in', tuple(self.org_ids.ids))]
         if self.purchase_ids:
@@ -210,10 +213,23 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             dom += [('pct.id', 'in', tuple(self.contract_ids.ids))]
         if self.account_ids:
             dom_acc += [('account_id', 'in', tuple(self.account_ids.ids))]
+
+        if self.line_filter and not self.chartfield_ids:
+            self.chartfield_ids = []
+            Chartfield = self.env['chartfield.view']
+            dom2 = []
+            if self.line_filter:
+                codes = self.line_filter.split('\n')
+                codes = [x.strip() for x in codes]
+                codes = tuple(codes)
+                dom2.append(('code', 'in', codes))
+                self.chartfield_ids = Chartfield.search(dom2, order='id')
+
         if self.chartfield_ids:
-            
             chartfield_dom = self.get_where_str_chartfield()
-        
+
+        print('\n chartfield_dom: '+chartfield_dom)
+
         if self.date_po_start and not self.date_po_end:
             dom += [('cast(po.date_order as date)','=',self.date_po_start)]
         if self.date_po_start and self.date_po_end:
@@ -231,15 +247,39 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         if self.date_contract_action_end:
             dom += [('pct.action_date','<=',self.date_contract_action_end)]
         
-        where_str = self._domain_to_where_str(dom)
-        if chartfield_dom != '':
-            where_str += chartfield_dom
+        if len(dom) > 0:
+            where_str = self._domain_to_where_str(dom)
+        if where_str != '' and chartfield_dom != '':
+            where_str += 'and ' + chartfield_dom
+        if where_str == '' and chartfield_dom != '':
+            where_str = chartfield_dom
+        if where_str != '':
+            where_str = 'and %s' % where_str
         print 'where_str: '+where_str
         if len(dom_acc) > 0:
             where_acc = 'where '+(self._domain_to_where_str(dom_acc)).replace('and','')
         
         self._cr.execute("""
-            select * from (
+            select *,
+                (select count(*) from purchase_invoice_plan pip
+                where pip.order_id = purchase_id
+                    and pip.installment is not null
+                ) as no_of_installment,
+                (select sum(pip.invoice_amount) from purchase_invoice_plan pip
+                where pip.order_id = purchase_id
+                     and pip.installment is not null
+                     and pip.fiscalyear_id = 
+                         (select id from account_fiscalyear
+                        where cast(NOW() as Date) between date_start and date_stop)
+                ) as amount_curr_fisyear,
+                (select sum(pip.invoice_amount) from purchase_invoice_plan pip
+                where pip.order_id = purchase_id
+                     and pip.installment is not null
+                     and pip.fiscalyear_id = 
+                         (select id from account_fiscalyear
+                        where cast(NOW() + interval '1 year' as Date) between date_start and date_stop)
+                ) as amount_next_fisyear
+             from (
                 (select pol.org_id as org_id, 
                      po.id as purchase_id, 
                      pct.id as contract_id,
@@ -255,10 +295,9 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     prod.id as product_id, po.partner_id as supplier_id, --wa.id as acceptance_id,
                     fis.name as po_fiscalyear, ou.name as org,
                     po.date_order, po.name as po_number, pol.docline_seq,
-                     null as installment,
+                    null as installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
-                        when po.contract_id is not null then pct_t.name
                         else ''
                     end as po_contract_type,
                     ag.name as activity_group, 
@@ -354,7 +393,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     left join res_currency cur_kv on cur_kv.id = av.currency_id
                     left join account_account ads on ads.id = po.account_deposit_supplier
                 where po.state not in ('except_picking','except_invoice','cancel') and po.order_type = 'purchase_order'
-                    and po.use_invoice_plan != True and pol.active = True and %s
+                    and po.use_invoice_plan != True and pol.active = True %s
                 )
                 UNION
                 (select org.id as org_id, po.id as purchase_id, pct.id as contract_id, 
@@ -370,7 +409,6 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     cast(pip.installment as varchar) as installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
-                        when po.contract_id is not null then pct_t.name
                         else ''
                     end as po_contract_type,
                     ag.name as activity_group, 
@@ -474,7 +512,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     left join res_currency cur_kv on cur_kv.id = av.currency_id
                     left join account_account ads on ads.id = po.account_deposit_supplier
                 where po.state not in ('except_picking','except_invoice','cancel') and po.order_type = 'purchase_order' 
-                    and po.use_invoice_plan = True and (pip.id is null or pip.order_line_id is not null) and pol.active = True and %s
+                    and po.use_invoice_plan = True and (pip.id is null or pip.order_line_id is not null) and pol.active = True %s
                 )
                 union
                 (select ou.org_id as org_id, po.id as purchase_id, pct.id as contract_id, pip.id as inv_plan_id, av.id as invoice_id, 
@@ -485,7 +523,6 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     cast(pip.installment as varchar) as installment,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
-                        when po.contract_id is not null then pct_t.name
                         else ''
                     end as po_contract_type,
                     null as activity_group, 
@@ -524,6 +561,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     end as advance_deposit
                 from purchase_invoice_plan pip
                     left join purchase_order po on po.id = pip.order_id
+                    left join purchase_order_line pol on pol.id = pip.order_line_id
                     left join purchase_contract pct on pct.id = po.contract_id
                     left join purchase_contract_type pct_t on pct_t.id = pct.contract_type_id
                     left join purchase_contract_type po_pct_t on po_pct_t.id = po.po_contract_type_id
@@ -533,7 +571,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     left join res_currency cur_kv on cur_kv.id = av.currency_id
                     left join account_account ads on ads.id = po.account_deposit_supplier
                 where po.state not in ('except_picking','except_invoice','cancel') and po.order_type = 'purchase_order' 
-                     and po.use_invoice_plan = True and pip.order_line_id is null and po.id is null and %s
+                     and po.use_invoice_plan = True and pip.order_line_id is null %s
                 )
             ) as new
             %s
@@ -584,5 +622,10 @@ class ReportPurchaseInvoicePlanView(models.AbstractModel):
     inv_amount = fields.Float()
     advance_deposit = fields.Char()
     installment = fields.Char()
+    no_of_installment = fields.Integer()
+    amount_curr_fisyear = fields.Float()
+    amount_next_fisyear = fields.Float()
+    
+    
     
     

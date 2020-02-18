@@ -99,3 +99,70 @@ class WkfCmdBossSpecailLevel(models.Model):
         string='Section',
         required=True,
     )
+
+
+class WkfCmdBossLevelApprovalHistory(models.Model):
+    _name = 'wkf.cmd.boss.level.approval.history'
+    _description = 'Boss Level History'
+    _order = 'date desc, section, level' 
+
+    section = fields.Char(
+        string='Section',
+        size=10,
+    )
+    dep_id = fields.Char(
+        string='e-HR Dep ID',
+        size=10,
+    )
+    dep_name = fields.Text(
+        string='งาน',
+        size=500,
+    )
+    div_id = fields.Char(
+        string='e-HR Div ID',
+        size=10,
+    )
+    div_name = fields.Text(
+        string='ฝ่าย',
+        size=500,
+    )
+    subsector_id = fields.Char(
+        string='e-HR SubSector ID',
+        size=10,
+    )
+    subsector_name = fields.Text(
+        string='ด้าน',
+        size=500,
+    )
+    sector_id = fields.Char(
+        string='e-HR Sector ID',
+        size=10,
+    )
+    sector_name = fields.Text(
+        string='สายงาน',
+        size=500,
+    )
+    org_id = fields.Char(
+        string='e-HR Org ID',
+        size=5,
+    )
+    org_name = fields.Text(
+        string='ศูนย์',
+        size=500,
+    )
+    level = fields.Char(
+        string='Level',
+        size=5,
+    )
+    employee_id = fields.Char(
+        string='รหัสพนักงาน',
+        size=10,
+    )
+    employee_name = fields.Text(
+        string='ชื่อพนักงาน',
+        size=500,
+    )
+    date = fields.Char(
+        string='Date',
+        size=10,
+    )
