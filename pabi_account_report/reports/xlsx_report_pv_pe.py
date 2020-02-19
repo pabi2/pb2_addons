@@ -11,7 +11,7 @@ class XLSXReportPVPE(models.TransientModel):
     
     date_start = fields.Date(
         string='Start Date',
-        default = lambda self: date.today() + relativedelta(months=-3), 
+        default = lambda self: date.today() + relativedelta(day=1,months=-3), 
     )
     
     date_end = fields.Date(
@@ -46,7 +46,7 @@ class XLSXReportPVPE(models.TransientModel):
         if self.date_end:
             dom += [('pv_posting_date', '<=', self.date_end)]
         where_str = self._domain_to_where_str(dom) 
-        self._cr.execute(""" select row_number() over (order by pv_doc, pe_doc ) as id, *
+        self._cr.execute(""" select *
             from issi_figl_pv_pe
             where %s"""% (where_str))
         sla_receipt = self._cr.dictfetchall()
