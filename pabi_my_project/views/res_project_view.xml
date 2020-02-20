@@ -466,7 +466,7 @@
                         </group>
                         <group>
                             <field name="current_release" string="Current Released" class='oe_inline' readonly = "1"/>
-                            <field name="additional" string="Additional" class='oe_inline'/>
+                            <field name="additional" string="Additional Release" class='oe_inline'/>
                             <field name="released_amount" string ="Release Amount" class='oe_inline' readonly = "1"/>
                         </group>
                         <footer>

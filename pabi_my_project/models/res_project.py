@@ -1038,9 +1038,7 @@ class ResProjectBudgetRelease(models.Model):
         help="Dummy project_id, used to calculate init amount release",
     )
     released_amount = fields.Float(
-        compute='_compute_release_amount',
         string='Released Amount',
-        default=0.0,
         store=True,
     )
     user_id = fields.Many2one(
@@ -1054,34 +1052,30 @@ class ResProjectBudgetRelease(models.Model):
         readonly=True,
     )
     current_release = fields.Float(
-        compute= '_compute_current_release',
         string='Current Release',
-        #default=0.0,
         store=True,
     )
     additional = fields.Float(
-        string='Additional',
+        string='Additional Release',
         default=0.0,
         required=True,
     )
 
-    @api.multi
-    @api.depends('additional')
-    def _compute_release_amount(self):
-        for rec in self:
-            rec.released_amount = rec.current_release + rec.additional
+    @api.onchange('fiscalyear_id', 'project_id')
+    def _onchange_project_fiscal(self):
+        BudgetSummary = self.env['res.project.budget.summary']
+        if self._context.get('active_id', False):
+            self.project_id = BudgetSummary.browse(self._context.get('active_id', False)).project_id.id
+        project_id = \
+            self._context.get('project_id', False) or self.project_id.id
+        summary = BudgetSummary.search([
+            ('project_id', '=', project_id),
+            ('fiscalyear_id', '=', self.fiscalyear_id.id)])
+        self.current_release = summary and summary[0].released_amount or 0.0
 
-    @api.multi
-    @api.depends('fiscalyear_id', 'project_id')
-    def _compute_current_release(self):
-        for rec in self:
-            BudgetSummary = self.env['res.project.budget.summary']
-            project_id = \
-                self._context.get('project_id', False) or rec.project_id.id
-            summary = BudgetSummary.search([
-                ('project_id', '=', project_id),
-                ('fiscalyear_id', '=', rec.fiscalyear_id.id)])
-            rec.current_release = summary and summary[0].released_amount or 0.0
+    @api.onchange('additional')
+    def _onchange_additional(self):
+        self.released_amount = self.current_release + self.additional
 
     @api.model
     def create(self, vals):
@@ -1089,7 +1083,10 @@ class ResProjectBudgetRelease(models.Model):
         carry_forward = self._context.get('button_carry_forward', False)
         carry_forward_async = \
             self._context.get('button_carry_forward_async_process', False)
-        #if 'released_amount' in vals and not carry_forward and \
+        if 'current_release' not in vals:
+            rec._onchange_project_fiscal()
+        if 'released_amount' not in vals:
+            rec._onchange_additional()
         if 'additional' in vals and not carry_forward and \
                 not carry_forward_async:
             rec.project_id._release_fiscal_budget(rec.fiscalyear_id,
