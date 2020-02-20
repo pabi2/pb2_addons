@@ -70,14 +70,25 @@ class XLSXReportPabiSupplierList(models.TransientModel):
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['xlsx.report.pabi.supplier.list.results']
+        temp_Result = None
         dom = []
-        if self.tag_ids:
-            dom += [('tag_id', 'in', self.tag_ids._ids)]
         if self.categ_ids:
             dom += [('category_id', 'in', self.categ_ids._ids)]
-        self.results = Result.search(dom)
+            if not self.tag_ids:
+               self.results =  Result.search(dom)
+        if self.tag_ids:
+            for tag in self.tag_ids: 
+                temp_dom = list(dom)
+                temp_dom += [('tag_ids', 'like', tag.id)] #tag_ids is fields Char
+                if temp_Result == None:
+                    temp_Result = Result.search(temp_dom)
+                else:
+                    temp_Result =  temp_Result + (Result.search(temp_dom) - temp_Result) #Remove Value Result Duplicate and Sum Result
+            self.results = temp_Result
+        if (not self.categ_ids) and (not self.tag_ids):
+            self.results =  Result.search(dom)
 
-
+           
 class XLSXReportPabiSupplierListResults(models.Model):
     _name = 'xlsx.report.pabi.supplier.list.results'
     _auto = False
@@ -111,11 +122,11 @@ class XLSXReportPabiSupplierListResults(models.Model):
         string='Branch ID',
         readonly=True,
     )
-    tag_id = fields.Many2one(
-        'res.partner.tag',
+    tag_ids = fields.Char(
         string='Tag ID',
+        readonly=True,
     )
-    tag_name = fields.Float(
+    tag_name = fields.Char(
         string='Tag Name',
         readonly=True,
     )
@@ -125,6 +136,22 @@ class XLSXReportPabiSupplierListResults(models.Model):
     )
     email = fields.Char(
         string='Email',
+        readonly=True,
+    )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Partner',
+    )
+    account_number = fields.Char(
+        string='Account Number',
+        readonly=True,
+    )
+    bank_name = fields.Char(
+        string='Bank Name',
+        readonly=True,
+    )
+    account_owner_name = fields.Char(
+        string='Account Owner Name',
         readonly=True,
     )
 
@@ -153,13 +180,23 @@ class XLSXReportPabiSupplierListResults(models.Model):
         ) as address,
         rp.vat as vat,
         rp.taxbranch as taxbranch,
-        rpt.id as tag_id,
-        rpt.name as tag_name,
+        array_to_string(array(select rt.id from res_partner_tag rt 
+        LEFT JOIN res_partner_res_partner_tag_rel tag
+        ON tag.res_partner_tag_id = rt.id
+        where tag.res_partner_id = rp.id),',',null) as tag_ids,
+        array_to_string(array(select rt.name from res_partner_tag rt 
+        LEFT JOIN res_partner_res_partner_tag_rel tag
+        ON tag.res_partner_tag_id = rt.id
+        where tag.res_partner_id = rp.id),',',null) as tag_name,
         CONCAT(
         COALESCE(rp.phone||' ',''),
         COALESCE(rp.mobile,'')
         ) as phone,
-        rp.email as email
+        rp.id as partner_id,
+        rp.email as email,
+        rpb.acc_number as account_number,
+        rpb.bank_name as bank_name,
+        rpb.owner_name as account_owner_name
         FROM res_partner rp
         LEFT JOIN res_partner_res_partner_tag_rel rprptl
         ON rprptl.res_partner_id = rp.id
@@ -167,6 +204,16 @@ class XLSXReportPabiSupplierListResults(models.Model):
         ON rprptl.res_partner_tag_id = rpt.id
         LEFT JOIN res_partner_category rpc
         ON rp.category_id = rpc.id
+        LEFT JOIN res_partner_bank rpb
+        ON rp.id = rpb.partner_id 
         WHERE rp.supplier = True
         AND rp.employee = False
+        AND rpb.active = True 
+        AND rpb.default = True
+        GROUP BY 
+        rp.id,
+        rpc.id,
+        rpb.acc_number,
+        rpb.bank_name,
+        rpb.owner_name
         )""" % (self._table, ))
