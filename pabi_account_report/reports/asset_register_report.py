@@ -421,7 +421,7 @@ class AssetRegisterReport(models.TransientModel):
             a.owner_invest_construction_phase_id = ricp.id
             left join account_account aa on aap.account_asset_id = aa.id
             ) asset
-        """ + where_str + 'order by asset.account_code, asset.code LIMIT 65000',
+        """ + where_str + 'order by asset.account_code, asset.code LIMIT 10000',
                          (self.fiscalyear_start_id.name,self.fiscalyear_start_id.name,
                           tuple(accum_depre_account_ids), date_end,
                           tuple(depre_account_ids), date_start, date_end,
