@@ -176,6 +176,11 @@ class PABIPartnerDunningLetterLine(models.Model):
         'account.move.line',
         string='Invoice',
     )
+    validate_user_id = fields.Many2one(
+        'res.users',
+        string='Validator',
+        compute='_compute_validate_user_id',
+    )
     date_invoice = fields.Date(
         related='move_line_id.date',
         string='Invoice Date',
@@ -207,4 +212,14 @@ class PABIPartnerDunningLetterLine(models.Model):
         for line in self:
             move_line = line.move_line_id
             sign = move_line.debit - move_line.credit < 0 and -1 or 1
-            line.amount_residual = sign * abs(move_line.amount_residual)
+            line.amount_residual = sign * abs(move_line.amount_residual) 
+            
+    @api.multi       
+    @api.depends('move_line_id')
+    def _compute_validate_user_id(self):
+        for line in self:
+            ref_name = line.move_line_id.ref
+            interface_account = self.env["interface.account.entry"]
+            interface_move_line = interface_account.search([('name','=',ref_name)])
+            validate_user = interface_move_line.validate_user_id
+            line.validate_user_id = validate_user
