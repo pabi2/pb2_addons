@@ -5,7 +5,7 @@ from openerp.tools.float_utils import float_compare
 from openerp.addons.pabi_chartfield_merged.models.chartfield import \
     MergedChartField
 from openerp.exceptions import RedirectWarning
-from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.queue.job import job
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import RetryableJobError
 
@@ -187,6 +187,8 @@ class PabiImportJournalEntries(models.Model):
                 'chartfield_id': line.chartfield_id.id,
                 'cost_control_id': line.cost_control_id.id,
                 'origin_ref': line.origin_ref,
+                'product_id': line.product_id.id,
+                'asset_code': line.asset_code,
                 # More data
                 'period_id': self.env['account.period'].find(line.date).id,
                 'fund_id': line.fund_id or line._get_default_fund(),
@@ -219,6 +221,14 @@ class PabiImportJournalEntries(models.Model):
             for l in lines:
                 period_id = \
                     self.env['account.period'].find(dt=line['date']).id
+                # ensure 1 asset
+                asset = self.env['account.asset'].search([
+                    ('code', '=', l.asset_code)], limit=1)
+                if (l.asset_code and not asset):
+                    raise ValidationError(
+                        _("%s not found!") % l.asset_code)
+                if not l.asset_code:
+                    asset = False
                 move_lines.append((0, 0, {
                     'ref': l.ref,
                     'docline_seq': l.docline_seq,
@@ -232,18 +242,24 @@ class PabiImportJournalEntries(models.Model):
                     'chartfield_id': l.chartfield_id.id,
                     'cost_control_id': l.cost_control_id.id,
                     'origin_ref': l.origin_ref,
+                    'product_id': l.product_id.id,
+                    'asset_id': asset and asset.id or False,
                     # More data
                     'period_id': period_id,
                     'fund_id': line._get_default_fund(),
                     }))
             lines.write({'check_commit': True})
-            move_line = []
             for move_id in self.move_ids:
-                for ml in move_lines:
-                    if ml[2].get('ref') == move_id.ref:
-                        move_line.append(ml)
-                move_id.write({'line_id': move_line})
-                move_line = []
+                move_line = [ml for ml in move_lines
+                             if ml[2].get('ref') == move_id.ref]
+                move_id.with_context({'allow_asset': True}).write({
+                    'line_id': move_line
+                })
+                for asset in move_id.line_id.mapped('asset_id'):
+                    asset_line = asset.depreciation_line_ids.filtered(
+                        lambda l: not l.move_id and l.init_entry)
+                    if asset_line:
+                        asset_line.write({'move_id': move_id.id})
             self.env.cr.commit()
             return self.with_context({'not_unlink': True}).split_entries()
         else:
@@ -348,4 +364,11 @@ class PabiImportJournalEntriesLine(MergedChartField, models.Model):
     chartfield_id = fields.Many2one(
         'chartfield.view',
         domain=[],  # Remove domain
+    )
+    product_id = fields.Many2one(
+        'product.product',
+        string='Product',
+    )
+    asset_code = fields.Char(
+        string='Asset Code',
     )

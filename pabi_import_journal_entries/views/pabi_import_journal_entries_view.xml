@@ -71,6 +71,8 @@
                                         <field name="partner_id"/>
                                         <field name="activity_group_id"/>
                                         <field name="activity_id"/>
+                                        <field name="product_id"/>
+                                        <field name="asset_code"/>
                                         <field name="check_commit" invisible="1"/>
                                     </tree>
                                 </field>
