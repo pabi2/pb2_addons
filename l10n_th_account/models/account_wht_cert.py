@@ -21,7 +21,6 @@ TAX_PAYER = [('withholding', 'Withholding'),
 
 class AccountWhtCert(models.Model):
     _name = 'account.wht.cert'
-    _inherit = ['mail.thread']
     _rec_name = 'number'
 
     number = fields.Char(
@@ -35,7 +34,6 @@ class AccountWhtCert(models.Model):
         readonly=True,
         copy=False,
         states={'draft': [('readonly', False)]},
-         track_visibility='onchange',
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -231,19 +229,6 @@ class AccountWhtCert(models.Model):
     x_type_8_tax = fields.Float(compute='_compute_cert_fields')
     x_type_8_desc = fields.Char(compute='_compute_cert_fields')
     x_signature = fields.Char(compute='_compute_cert_fields')
-
-    @api.multi
-    @api.onchange('date')
-    def _compute_date(self):
-        for rec in self:
-            date_value = self.env['account.voucher'].search([('number', '=', rec.voucher_number)]).date_value
-            calendar_period = datetime.strptime(rec.calendar_period_id.date_start,'%Y-%m-%d').strftime('%m')
-            if rec.calendar_period_id:
-                if datetime.strptime(rec.date,'%Y-%m-%d').strftime('%m') != calendar_period:
-                    raise ValidationError(_("Choose day in month of date only"))
-            elif rec.voucher_number:
-                if datetime.strptime(rec.date,'%Y-%m-%d').strftime('%m') != datetime.strptime(date_value,'%Y-%m-%d').strftime('%m'):
-                    raise ValidationError(_("Choose day in month of date only"))
 
     @api.multi
     def _compute_cert_fields(self):
