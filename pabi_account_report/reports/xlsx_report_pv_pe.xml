@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="view_pabi_report_cgd" model="ir.ui.view">
+            <field name="name">issi.figl.pv.pe.view</field>
+            <field name="model">xlsx.report.pv.pe</field>
+            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='criteria']" position="inside">
+                   <field name="date_start" />
+                   <field name="date_end" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_xlsx_report_pv_pe" model="ir.actions.act_window">
+            <field name="name">PV PE Report</field>
+            <field name="res_model">xlsx.report.pv.pe</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_xlsx_report_pv_pe" 
+        	name="PV PE Reports" 
+        	parent="menu_pabi_payable_report" 
+        	action="action_xlsx_report_pv_pe" sequence="140"/>
+
+    </data>
+</openerp>
