@@ -132,6 +132,9 @@
                 <!-- <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="after">
                     <field name="account_id_readonly"/>
                 </xpath> -->
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="currency_rate"/>
+                </xpath>
                 <!-- Test account_id editable -->
                 <field name="state" position="before">
                     <field name="recreated_invoice_id" invisible="1"/>

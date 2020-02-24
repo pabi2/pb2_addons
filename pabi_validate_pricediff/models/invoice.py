@@ -46,9 +46,14 @@ class account_invoice_line(osv.osv):
                             stock_move_obj = self.pool.get('stock.move')
                             valuation_stock_move = stock_move_obj.search(cr, uid, [('purchase_line_id', '=', i_line.purchase_line_id.id)], limit=1, context=context)
                             if valuation_stock_move:
-                                valuation_price_unit = stock_move_obj.browse(cr, uid, valuation_stock_move[0], context=context).price_unit
+                                stock_move_id = stock_move_obj.browse(cr, uid, valuation_stock_move[0], context=context)
+                                valuation_price_unit = stock_move_id.price_unit
                         if inv.currency_id.id != company_currency:
-                            valuation_price_unit = self.pool.get('res.currency').compute(cr, uid, company_currency, inv.currency_id.id, valuation_price_unit, context={'date': inv.date_invoice})
+                            if valuation_stock_move:
+                                # get currency from IN transfer date
+                                valuation_price_unit = self.pool.get('res.currency').compute(cr, uid, company_currency, inv.currency_id.id, valuation_price_unit, context={'date': stock_move_id.date})
+                            else:
+                                valuation_price_unit = self.pool.get('res.currency').compute(cr, uid, company_currency, inv.currency_id.id, valuation_price_unit, context={'date': inv.date_invoice})
                         # if valuation_price_unit != i_line.price_unit and line['price_unit'] == i_line.price_unit and acc:
                         if float_compare(valuation_price_unit, i_line.price_unit, precision_digits=prec) and line['price_unit'] == i_line.price_unit and acc:
                             raise ValidationError(_("This document has price diff.Please Contact Support Team."))
