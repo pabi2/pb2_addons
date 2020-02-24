@@ -237,8 +237,8 @@ class AccountWhtCert(models.Model):
     def _compute_date(self):
         for rec in self:
             date_value = self.env['account.voucher'].search([('number', '=', rec.voucher_number)]).date_value
-            calendar_period = datetime.strptime(rec.calendar_period_id.date_start,'%Y-%m-%d').strftime('%m')
             if rec.calendar_period_id:
+                calendar_period = datetime.strptime(rec.calendar_period_id.date_start,'%Y-%m-%d').strftime('%m')
                 if datetime.strptime(rec.date,'%Y-%m-%d').strftime('%m') != calendar_period:
                     raise ValidationError(_("Choose day in month of date only"))
             elif rec.voucher_number:
