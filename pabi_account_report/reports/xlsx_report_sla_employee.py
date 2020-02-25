@@ -53,14 +53,19 @@ class XLSXReportSLAEmployee(models.TransientModel):
         """
         self.ensure_one()
         Result = self.env['sla.employee.view']
-        dom = [('rpc.name', 'in', ('Supplier-ภาครัฐ','Supplier-ภาคเอกชน','ต่างประเทศ','พนักงาน สวทช.'))]
+        
+        partner_cat = self.env['res.partner.category'].search([('name','in',('Supplier-ภาครัฐ','Supplier-ภาคเอกชน','ต่างประเทศ','พนักงาน สวทช.'))])
+        partner_cat_foreign = self.env['res.partner.category'].search([('name', '=', 'ต่างประเทศ')], limit=1)
+        
+        dom = [('rp.category_id', 'in', tuple(partner_cat.ids))]
+        
         if self.supplier_category_name:
             if self.supplier_category_name == 'employee':
                 dom += [('ex.pay_to', '=', 'employee')]
             elif self.supplier_category_name == 'supplier':
-                dom += [('ex.pay_to', '!=', 'employee'),('ai_part_cate.name', '!=', 'ต่างประเทศ')]
+                dom += [('ex.pay_to', '!=', 'employee'),('ai_part.category_id', '!=', partner_cat_foreign.id)]
             elif self.supplier_category_name == 'foreign':
-                dom += [('ex.pay_to', '!=', 'employee'),('ai_part_cate.name', '=', 'ต่างประเทศ')]
+                dom += [('ex.pay_to', '!=', 'employee'),('ai_part.category_id', '=', partner_cat_foreign.id)]
         if self.user_ids:
             dom += [('av.validate_user_id', 'in', self.user_ids.ids)]
         if self.source_document_type:
@@ -82,9 +87,9 @@ class XLSXReportSLAEmployee(models.TransientModel):
             dom += [('av.date', '>=', self.date_start)]
         if self.date_end:
             dom += [('av.date', '<=', self.date_end)]
-        
+
         where_str = self._domain_to_where_str(dom)
-        
+
         self._cr.execute("""
             SELECT 
                 ROW_NUMBER() OVER(ORDER BY av.id, ai.id) AS id,
@@ -100,18 +105,16 @@ class XLSXReportSLAEmployee(models.TransientModel):
                 ON av_line.move_line_id = am_line.id
             LEFT JOIN account_invoice ai ON am_line.move_id = ai.move_id
             LEFT JOIN res_partner ai_part ON ai_part.id = ai.partner_id
-            LEFT JOIN res_partner_category ai_part_cate ON ai_part_cate.id = ai_part.category_id
             LEFT JOIN account_period ap ON av.period_id = ap.id
             LEFT JOIN account_fiscalyear af ON ap.fiscalyear_id = af.id
             LEFT JOIN payment_export pe ON av.payment_export_id = pe.id
             LEFT JOIN hr_expense_expense ex ON ai.expense_id = ex.id
             LEFT JOIN hr_salary_expense sl ON sl.move_id = am_line.move_id
             LEFT JOIN res_partner rp ON ai.partner_id = rp.id
-            LEFT JOIN res_partner_category rpc ON rp.category_id = rpc.id
             WHERE av.type = 'payment' AND av.state = 'posted'
                 AND (pe.state = 'done' OR av.payment_export_id is null)
                 AND %s
-            """ % (where_str)) #OR am_line.doctype = 'salary_expense'
+            """ % (where_str))
             
         sla_emp = self._cr.dictfetchall()
         
@@ -176,8 +179,7 @@ class SLAEmployeeView(models.AbstractModel):
         string='Business Day',
         compute='_compute_business_day',
     )
-    
-    
+
     @api.multi
     def _compute_business_day(self):
         holidays = self.env['calendar.event'].search(
