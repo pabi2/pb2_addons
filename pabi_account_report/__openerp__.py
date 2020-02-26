@@ -85,6 +85,7 @@
         'reports/xlsx_report_pabi_employee_advance_report.xml',
         #PE PV Reports
         'reports/xlsx_report_pv_pe.xml',
+        'reports/xlsx_report_cgd.xml',
 
     ],
     'demo': [
