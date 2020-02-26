@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_update_project" model="ir.ui.view">
+            <field name="name">Update Project Interface</field>
+            <field name="model">project.interface.wizard</field>
+            <field name="arch" type="xml">
+             <form string="CreateWork Acceptance">
+                <p class="oe_grey">
+                    Example: {'code': 'XXX', 'pm_employee_id': '102190', 'budget_plan_ids': [{'fiscalyear_id': '2018', 'activity_group_id': 'AG0001', 'm1': 102020.00, 'm3': 929201.00}]}
+                </p>
+                 <group>
+                     <field name="data_dict"/>
+                 </group>
+                <footer>
+                    <button name="action_update_project"
+                        string="Update" type="object"
+                        class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link"
+                        special="cancel" />
+                </footer>
+            </form>
+            </field>
+        </record>
+
+        <record id="action_interface_update_project" model="ir.actions.act_window">
+            <field name="name">Update Project Interface</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project.interface.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_update_project"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>
