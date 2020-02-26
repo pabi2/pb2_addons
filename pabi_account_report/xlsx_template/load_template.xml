@@ -43,6 +43,7 @@
                 ref('xlsx_report_preprint_receipt'),
                 ref('xlsx_report_pabi_employee_advance_report'),
                 ref('xlsx_report_pv_pe'),
+                ref('xlsx_report_cgd'),
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>

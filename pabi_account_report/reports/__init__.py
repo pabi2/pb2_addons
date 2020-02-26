@@ -51,3 +51,5 @@ from . import xlsx_report_preprint_receipt
 from . import xlsx_report_pabi_employee_advance_report
 #PE PV Reports
 from . import xlsx_report_pv_pe
+#Report cgd
+from . import xlsx_report_cgd
