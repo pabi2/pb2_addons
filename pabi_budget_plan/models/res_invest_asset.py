@@ -1,9 +1,19 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+from openerp import models, api, fields
 
 
 class ResInvestAsset(models.Model):
     _inherit = 'res.invest.asset'
+
+
+    fund_type_id = fields.Many2one(
+        'project.fund.type',
+        string='Fund Type',
+    )
+    project_ids = fields.Many2many(
+        'res.project',
+        string='Projects',
+    )
 
     @api.multi
     def generate_code(self):
