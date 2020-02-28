@@ -296,9 +296,9 @@ class XLSXReportGlProject(models.TransientModel):
         if self.fiscalyear_end_id:
             dom += [('date', '<=', self.fiscalyear_end_id.date_stop)]
         if self.period_start_id:
-            dom += [('date', '>=', self.period_start_id.date_start)]
+            dom += [('period_id', '>=', self.period_start_id.id)]
         if self.period_end_id:
-            dom += [('date', '<=', self.period_end_id.date_stop)]
+            dom += [('period_id', '<=', self.period_end_id.id)]
         if self.date_start:
             dom += [('date', '>=', self.date_start)]
         if self.date_end:
