@@ -18,7 +18,13 @@ class XLSXReportPVPE(models.TransientModel):
         string='End Date',
         default = fields.Date.today,
     )
-   
+    filter = fields.Selection(
+        [('filter_date', 'Dates'),],
+        string='Filter by',
+        required=True,
+        readonly = True,
+        default='filter_date',
+    )
     results = fields.Many2many(
         'issi.figl.pv.pe.view',
         string='Results',
