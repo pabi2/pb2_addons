@@ -20,3 +20,5 @@ class ClearUndueVatWizard(models.TransientModel):
         ctx.update({'recognize_vat': True,
                     'date_clear_undue': self.date, })
         voucher.with_context(ctx).proforma_voucher()
+        if voucher.recognize_vat_move_id and voucher.recognize_vat_move_id[0].journal_id.code == 'TT':
+            voucher._set_recognize_journal_item_detail()
