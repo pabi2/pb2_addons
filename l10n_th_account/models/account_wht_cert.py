@@ -156,6 +156,7 @@ class AccountWhtCert(models.Model):
     
     date_sent_mail = fields.Datetime(
         string='Date sent mail',
+        readonly=True,
     )
     
     payment_export_id = fields.Many2one(
@@ -511,7 +512,7 @@ class AccountWhtCert(models.Model):
         email_template_name = 'Withholding Certs - Send by Email'
         template = self.env['email.template'].search([('name','=',email_template_name)])
         if template:
-            if not self.group_email_wht:
+            if not self.env.user.company_id.group_email_wht:
                 raise ValidationError(
                     _('Please enter valid email address for group email!'))
             if self.env.user.company_id.send_to_groupmail_only: #send email test
