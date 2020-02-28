@@ -718,7 +718,7 @@ class AccountVoucher(CommonVoucher, models.Model):
         invoices = self.env['account.invoice'].search([('number', 'in', invoices)])
         
         for line in self.recognize_vat_move_id.line_id:
-            if line.chartfield_id is not True:
+            if line.chartfield_id is not True and line.account_id.user_type.name == 'Revenue':
                 line.chartfield_id = invoices[0].invoice_line[0].chartfield_id.id
 
 class AccountVoucherLine(CommonVoucher, models.Model):
