@@ -1,19 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-    	<record id="view_pabi_report_cgd" model="ir.ui.view">
+    	<record id="view_xlsx_report_pv_pe" model="ir.ui.view">
             <field name="name">issi.figl.pv.pe.view</field>
             <field name="model">xlsx.report.pv.pe</field>
-            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <xpath expr="//group[@name='criteria']" position="inside">
-                   <field name="date_start" />
-                   <field name="date_end" />
-                </xpath>
+            	<form string = "PV PE Reports" >
+<!-- search criteria -->
+                  <group name="criteria" states="choose">
+	                  <notebook name="pv_pe_reports">
+	            			
+	                        <page string="Time Filters" name="time_filters">
+	                            <group>
+	                                <field name="filter" />
+	                        	</group>
+	                            <group string="Dates" >
+	                                <field name="date_start"/>
+	                                <field name="date_end"/>
+	                            </group>
+	                        </page>
+	                	</notebook>
+                  </group>
+<!-- xlsx.report common field -->
+                  <div name="xlsx.report">
+                      <field name="state" invisible="1"/>
+                      <field name="name" invisible="1"/>
+                      <div states="choose" groups="pabi_utils.group_see_own_spool_report">
+                          <field name="async_process"/><label for="async_process"/>
+                          <field name="to_csv"/><label for="to_csv"/>
+                          <field name="csv_delimiter" invisible="1"/>
+                          <field name="csv_extension" invisible="1"/>
+                          <field name="csv_quote" invisible="1"/>
+                      </div>
+                      <div states="get">
+                          <h2 attrs="{'invisible': [('async_process', '=', True)]}">
+                              Complete Prepare Report (.xlsx)
+                          </h2>
+                          <h2 attrs="{'invisible': [('async_process', '=', False)]}">
+                              Report Enqueued (.xlsx)
+                          </h2>
+                          <p attrs="{'invisible': [('async_process', '=', True)]}" colspan="4">
+                              Here is the report file:
+                              <field name="data" filename="name" class="oe_inline"/>
+                          </p>
+                          <p attrs="{'invisible': [('async_process', '=', False)]}" colspan="4">
+                              Report UUID:
+                              <field name="uuid" class="oe_inline"/>
+                          </p>
+                      </div>
+                      <footer states="choose">
+                          <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
+                          or
+                          <button special="cancel" string="Cancel" type="object" class="oe_link"/>
+                      </footer>
+                      <footer states="get">
+                          <button special="cancel" string="Close" type="object"/>
+                      </footer>
+                  </div>
+                </form>
             </field>
         </record>
-
+		
         <record id="action_xlsx_report_pv_pe" model="ir.actions.act_window">
             <field name="name">PV PE Report</field>
             <field name="res_model">xlsx.report.pv.pe</field>
@@ -21,7 +69,7 @@
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
-
+	
         <menuitem id="menu_xlsx_report_pv_pe" 
         	name="PV PE Reports" 
         	parent="menu_pabi_payable_report" 
