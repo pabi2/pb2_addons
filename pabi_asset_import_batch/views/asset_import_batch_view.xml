@@ -1,6 +1,25 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
+        <!-- asset tree view from asset batch  -->
+        <record id="account_asset_batch_view_tree" model="ir.ui.view">
+            <field name="name">account.asset.batch.tree</field>
+            <field name="model">account.asset</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="state" invisible="1"/>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="date_start"/>
+                    <field name="purchase_value"/>
+                    <field name="section_id"/>
+                    <field name="project_id"/>
+                    <field name="invest_asset_id"/>
+                    <field name="invest_construction_phase_id"/>
+                    <field name="status"/>
+                </tree>
+            </field>
+        </record>
 
         <!-- Asset Import Batch -->
         <record id="view_asset_import_batch_form" model="ir.ui.view">

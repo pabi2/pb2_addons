@@ -44,12 +44,16 @@ class AccountAssetImportBatch(models.Model):
     @api.multi
     def asset_count_tree_view(self):
         self.ensure_one()
+        view_id = self.env.ref(
+            'pabi_asset_import_batch.account_asset_batch_view_tree', False)
+        form_id = self.env.ref(
+            'pabi_asset_management.account_asset_view_form', False)
         return {
             'name': _("Assets"),
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.asset',
-            'view_id': False,
+            'views': [(view_id.id, 'tree'), (form_id.id, 'form')],
             'type': 'ir.actions.act_window',
             'nodestroy': True,
             'domain': [('id', 'in', self.asset_ids.ids)],
