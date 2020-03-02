@@ -306,6 +306,34 @@ class AccountVoucher(models.Model):
         return res
 
     @api.multi
+    def confirm_proforma_voucher(self):
+        if self.tax_line_wht:
+            for rec in self.tax_line_wht:
+                line_dr_id = self.line_dr_ids.filtered(
+                    lambda l: l.invoice_id == rec.invoice_id)
+                if line_dr_id and rec.amount != line_dr_id.amount_wht\
+                and rec.manual != True:
+                
+                #and self.tax_line_wht.amount != self.line_dr_ids.amount_wht \
+                #    and self.tax_line_wht.manual != True:
+                    view_id = self.env.ref('pabi_account.view_confirm_vendor_payment_wizard_form').id
+                    return {
+                            'type': 'ir.actions.act_window',
+                            'res_model': 'account.voucher',
+                            'view_mode': 'form',
+                            'view_type': 'form',
+                            'res_id': self.id,
+                            'views': [(view_id, 'form')],
+                            'target': 'new',
+                        }
+        else:
+            self.proforma_voucher()
+
+    @api.multi
+    def confirm_validate_payments(self):
+        self.proforma_voucher()
+
+    @api.multi
     def cancel_voucher(self):
         """ Auto create reversal for TT and reconcile it """
         for voucher in self:
