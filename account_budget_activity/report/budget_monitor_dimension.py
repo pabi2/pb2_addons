@@ -67,23 +67,25 @@ class MonitorView(models.AbstractModel):
                 (ORDER BY budget_method, charge_type, fiscalyear_id, %s) AS id,
                 budget_method, charge_type, fiscalyear_id,
                 %s,
-                sum(planned_amount) planned_amount,
-                sum(released_amount) released_amount,
-                sum(amount_so_commit) amount_so_commit,
-                sum(amount_pr_commit) amount_pr_commit,
-                sum(amount_po_commit) amount_po_commit,
-                sum(amount_exp_commit) amount_exp_commit,
-                sum(amount_actual) amount_actual,
-                sum(amount_so_commit) + sum(amount_pr_commit) +
-                sum(amount_po_commit) + sum(amount_exp_commit) +
-                sum(amount_actual) as amount_consumed,
-                sum(amount_balance) amount_balance
+                COALESCE(sum(planned_amount),0) planned_amount,
+                COALESCE(sum(released_amount),0) released_amount,
+                COALESCE(sum(amount_so_commit),0) amount_so_commit,
+                COALESCE(sum(amount_pr_commit),0) amount_pr_commit,
+                COALESCE(sum(amount_po_commit),0) amount_po_commit,
+                COALESCE(sum(amount_exp_commit),0) amount_exp_commit,
+                COALESCE(sum(amount_actual),0) amount_actual,
+                COALESCE(sum(amount_so_commit),0) + COALESCE(sum(amount_pr_commit),0) + 
+                COALESCE(sum(amount_po_commit),0) + COALESCE(sum(amount_exp_commit),0) + 
+                COALESCE(sum(amount_actual),0) as amount_consumed,
+                COALESCE(sum(released_amount),0) - COALESCE(sum(amount_consumed),0) as amount_balance
             from budget_monitor_report
             where %s
             group by budget_method, charge_type, fiscalyear_id, %s
         )
     """
-
+    #sum(amount_so_commit) + sum(amount_actual) as amount_consumed,
+    #sum(amount_balance) amount_balance 
+    #COALESCE(sum(amount_so_commit),0)       
     def _create_monitor_view(self, cr, field):
         conds = [x.strip() + ' is not null' for x in field.split(',')]
         where = ' and '.join(conds)

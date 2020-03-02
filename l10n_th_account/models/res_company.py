@@ -44,3 +44,13 @@ class ResCompany(models.Model):
         string='Recognize VAT Journal',
         domain=[('type', '=', 'general')],
     )
+    #WHT email
+    group_email_wht = fields.Char(
+        string='Group Email WHT',
+        default='acf-adv@nstda.or.th',
+        size=500,
+    )
+    send_to_groupmail_only = fields.Boolean(
+        string='Send to groupmail only',
+        default=False,
+    )

@@ -77,7 +77,7 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
         # PABI2
         if charge_type:
             ctx.update({'charge_type': charge_type})
-            
+
         if org_id:
             ctx.update({'org_id': org_id})
 
@@ -100,8 +100,20 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
                         init_bal['init_balance']
                         for acnt_id, init_bal in init_balance.iteritems()
                         if acnt_id in child_ids]
+                    child_debit_balance = [
+                        init_bal['debit']
+                        for acnt_id, init_bal in init_balance.iteritems()
+                        if acnt_id in child_ids]
+                    child_credit_balance = [
+                        init_bal['credit']
+                        for acnt_id, init_bal in init_balance.iteritems()
+                        if acnt_id in child_ids]
                     top_init_balance = reduce(add, child_init_balances)
+                    top_debit_balance = reduce(add, child_debit_balance)
+                    top_credit_balance = reduce(add, child_credit_balance)
                     account['init_balance'] = top_init_balance
+                    account['init_debit'] = top_debit_balance
+                    account['init_credit'] = top_credit_balance
                 else:
                     account.update(init_balance[account['id']])
                 account['balance'] = account['init_balance'] + \
@@ -112,7 +124,7 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
     def _get_comparison_details(self, data, account_ids, target_move,
                                 comparison_filter, index, charge_type=False,
                                 org_id=False,specific_report=False, context=None):
-                                
+
         """
 
         @param data: data of the wizard form
@@ -296,6 +308,8 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
 
         to_display_accounts = dict.fromkeys(account_ids, True)
         init_balance_accounts = dict.fromkeys(account_ids, False)
+        init_debit_accounts = dict.fromkeys(account_ids, False)
+        init_credit_accounts = dict.fromkeys(account_ids, False)
         comparisons_accounts = dict.fromkeys(account_ids, [])
         debit_accounts = dict.fromkeys(account_ids, False)
         credit_accounts = dict.fromkeys(account_ids, False)
@@ -316,8 +330,12 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
                 accounts_by_ids[account.id]['credit']
             balance_accounts[account.id] = \
                 accounts_by_ids[account.id]['balance']
-            init_balance_accounts[account.id] =  \
+            init_balance_accounts[account.id] = \
                 accounts_by_ids[account.id].get('init_balance', 0.0)
+            init_debit_accounts[account.id] = \
+                accounts_by_ids[account.id].get('init_debit', 0.0)
+            init_credit_accounts[account.id] = \
+                accounts_by_ids[account.id].get('init_credit', 0.0)
 
             # if any amount is != 0 in comparisons, we have to display the
             # whole account
@@ -361,6 +379,8 @@ class CommonBalanceReportHeaderWebkit(CommonReportHeaderWebkit):
             'comp_params': comparison_params,
             'to_display_accounts': to_display_accounts,
             'init_balance_accounts': init_balance_accounts,
+            'init_debit_accounts': init_debit_accounts,
+            'init_credit_accounts': init_credit_accounts,
             'comparisons_accounts': comparisons_accounts,
             'debit_accounts': debit_accounts,
             'credit_accounts': credit_accounts,

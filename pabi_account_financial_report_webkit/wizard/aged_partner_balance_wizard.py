@@ -43,6 +43,13 @@ class AccountAgedTrialBalance(orm.TransientModel):
             "Period Length (days)",
             required=True,
         ),
+        'account_ids': fields.many2many(
+            'account.account',
+            'account_account_aged_trial_balance_webkit_rel',
+            'account_account_id',
+            'account_id',
+            string = 'Filter on account',
+            ),
     }
 
     _defaults = {
@@ -70,7 +77,7 @@ class AccountAgedTrialBalance(orm.TransientModel):
 
     def _print_report(self, cr, uid, ids, data, context=None):
         data['form'].update(
-            self.read(cr, uid, ids, ['period_length'], context=context)[0])
+            self.read(cr, uid, ids, ['period_length','account_ids'], context=context)[0])
         # we update form with display account value
         data = self.pre_print_report(cr, uid, ids, data, context=context)
         return {'type': 'ir.actions.report.xml',

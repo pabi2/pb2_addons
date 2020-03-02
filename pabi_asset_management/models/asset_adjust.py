@@ -1221,7 +1221,7 @@ class AccountAssetAdjustAssetToExpense(MergedChartField, ActivityCommon,
             old_asset_credit = AssetAdjust._setup_move_line_data(
                 old_asset.code, old_asset, period, old_asset_acc, adjust_date,
                 debit=False, credit=purchase_value,
-                analytic_id=False)
+                analytic_id=old_asset.account_analytic_id.id)
             line_dict += [(0, 0, expense_debit), (0, 0, old_asset_credit)]
         # Dr: old - depre accum value (account_depreciation_id)
         #   Cr: old - depre value (account_expense_depreciation_id)(budget)
@@ -1406,6 +1406,8 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         invoice_line_id = self.invoice_line_id
         invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
         invl_analytic_line = invl_analytic_lines.search(domain)
+        if not invl_analytic_line:
+            invl_analytic_line = invl_analytic_lines[0]
 
         domain = []
         domain.append(("account_id", "=", self.account_analytic_id.id))

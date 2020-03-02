@@ -113,8 +113,8 @@ class HRExpenseExpense(models.Model):
                 amount_advanced = expense.amount_advanced
             clearing_amount = sum([x.clearing_amount
                                    for x in expense.advance_clearing_ids])
-            expense.amount_to_clearing = (amount_advanced -
-                                          clearing_amount)
+            expense.amount_to_clearing = \
+                round(amount_advanced - clearing_amount, 2)
 
     @api.model
     def default_get(self, field_list):

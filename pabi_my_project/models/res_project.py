@@ -1039,8 +1039,7 @@ class ResProjectBudgetRelease(models.Model):
     )
     released_amount = fields.Float(
         string='Released Amount',
-        default=0.0,
-        required=True,
+        store=True,
     )
     user_id = fields.Many2one(
         'res.users',
@@ -1052,16 +1051,31 @@ class ResProjectBudgetRelease(models.Model):
     write_date = fields.Datetime(
         readonly=True,
     )
+    current_release = fields.Float(
+        string='Current Release',
+        store=True,
+    )
+    additional = fields.Float(
+        string='Additional Release',
+        default=0.0,
+        required=True,
+    )
 
     @api.onchange('fiscalyear_id', 'project_id')
     def _onchange_project_fiscal(self):
         BudgetSummary = self.env['res.project.budget.summary']
+        if self._context.get('active_id', False):
+            self.project_id = BudgetSummary.browse(self._context.get('active_id', False)).project_id.id
         project_id = \
             self._context.get('project_id', False) or self.project_id.id
         summary = BudgetSummary.search([
             ('project_id', '=', project_id),
             ('fiscalyear_id', '=', self.fiscalyear_id.id)])
-        self.released_amount = summary and summary[0].released_amount or 0.0
+        self.current_release = summary and summary[0].released_amount or 0.0
+
+    @api.onchange('additional')
+    def _onchange_additional(self):
+        self.released_amount = self.current_release + self.additional
 
     @api.model
     def create(self, vals):
@@ -1069,7 +1083,11 @@ class ResProjectBudgetRelease(models.Model):
         carry_forward = self._context.get('button_carry_forward', False)
         carry_forward_async = \
             self._context.get('button_carry_forward_async_process', False)
-        if 'released_amount' in vals and not carry_forward and \
+        if 'current_release' not in vals:
+            rec._onchange_project_fiscal()
+        if 'released_amount' not in vals:
+            rec._onchange_additional()
+        if 'additional' in vals and not carry_forward and \
                 not carry_forward_async:
             rec.project_id._release_fiscal_budget(rec.fiscalyear_id,
                                                   rec.released_amount)
@@ -1078,7 +1096,8 @@ class ResProjectBudgetRelease(models.Model):
     @api.multi
     def write(self, vals):
         result = super(ResProjectBudgetRelease, self).write(vals)
-        if 'released_amount' in vals:
+        #if 'released_amount' in vals:
+        if 'additional' in vals:
             for rec in self:
                 rec.project_id._release_fiscal_budget(rec.fiscalyear_id,
                                                       rec.released_amount)

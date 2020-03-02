@@ -46,13 +46,17 @@ class StockPicking(models.Model):
         assets = Asset.with_context(active_test=False).search([('picking_id',
                                                                 '=', self.id)])
         dom = [('id', 'in', assets.ids)]
-        result.update({'domain': dom})
+        result.update({
+            'domain': dom,
+            'context': {'active_test': False},
+        })
         return result
 
     @api.multi
     def _compute_assset_count(self):
         for rec in self:
-            rec.asset_count = len(rec.asset_ids)
+            rec.asset_count = len(rec.with_context(active_test=False).
+                                  asset_ids)
 
     @api.multi
     def open_entries(self):

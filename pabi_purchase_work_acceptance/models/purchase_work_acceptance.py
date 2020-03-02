@@ -112,6 +112,10 @@ class PurchaseWorkAcceptance(models.Model):
         required=True,
         readonly=True,
     )
+    date_action = fields.Date(
+        string='Action Date',
+        related = 'order_id.contract_id.action_date'
+    )
     partner_id = fields.Many2one(
         'res.partner',
         string='Supplier',
