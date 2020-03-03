@@ -37,6 +37,7 @@
         'action_asset_depre_line/pabi_process.xml',
         'action_confirm_pos_order/sale_view.xml',
         'action_confirm_pos_order/pabi_process.xml',
+        'action_account_model/account_model_view.xml',
         # Using pabi.asset class as guideline
         'pabi_action_generate_entries/pabi_action_generate_entries.xml',
         'pabi_action_generate_entries/pabi_process.xml',
@@ -50,6 +51,7 @@
         'pabi_action_asset_compute/report/report_paperformat_data.xml',
         'pabi_action_asset_compute/report/report_asset_depre_batch.xml',
         'pabi_action_asset_compute/report/report_data.xml',
+        'action_account_model/pabi_process.xml',
     ],
     'installable': True,
     'application': False,

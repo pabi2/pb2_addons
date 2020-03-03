@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="recurring_create_entrie" model="pabi.process">
+						<field name="name">Rucurring Create Entries</field>
+				</record>
+		</data>
+</openerp>

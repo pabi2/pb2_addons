@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_account_use_model_create_entry" model="ir.ui.view">
+            <field name="name">account.use.model.create.entry.form</field>
+            <field name="model">account.use.model</field>
+            <field name="inherit_id" ref="account.view_account_use_model_create_entry"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/label" position="after">
+                    <group>
+                      <group>
+                          <field name="async_process"/>
+                      </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
