@@ -711,6 +711,15 @@ class AccountVoucher(CommonVoucher, models.Model):
                 raise ValidationError('Value/Cheque Date is greater than or equal to Posting date')
      #//////////////////////////////////////////////////////////////////////////////////////////////////
 
+    @api.multi
+    def _set_recognize_journal_item_detail(self):
+        invoices = self.invoices_text.split(',')
+        invoices = tuple(invoices)
+        invoices = self.env['account.invoice'].search([('number', 'in', invoices)])
+        
+        for line in self.recognize_vat_move_id.line_id:
+            if line.chartfield_id is not True and line.account_id.user_type.name == 'Revenue':
+                line.chartfield_id = invoices[0].invoice_line[0].chartfield_id.id
 
 class AccountVoucherLine(CommonVoucher, models.Model):
 
