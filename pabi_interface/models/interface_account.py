@@ -760,7 +760,7 @@ class InterfaceAccountEntry(models.Model):
         sql = "delete from interface_account_entry_check_existing"
         self._cr.execute(sql)
         
-        return true
+        return True
 
     @api.model
     def _is_interfaced(self, data_dict):
