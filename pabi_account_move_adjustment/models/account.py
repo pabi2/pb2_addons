@@ -359,7 +359,7 @@ class AccountMoveLine(MergedChartField, models.Model):
     )
     is_require_budget = fields.Boolean(
         'is require Budget',
-        compute='_compute_is_require_budget',
+        related='account_id.user_type.is_require_budget',
     )
 
     _defaults = {
@@ -370,15 +370,6 @@ class AccountMoveLine(MergedChartField, models.Model):
         #'costcenter_id': _get_default_costcenter_id,
         #'org_id': _get_default_org_id,
     }
-
-    @api.multi
-    @api.depends('account_id')
-    def _compute_is_require_budget(self):
-        for rec in self:
-            JN = self.env.ref('pabi_account_move_adjustment.journal_adjust_no_budget')
-            JV = self.env.ref('pabi_account_move_adjustment.journal_adjust_budget')
-            if rec.move_id.journal_id == JN or rec.move_id.journal_id == JV:
-                rec.is_require_budget = rec.account_id.user_type.is_require_budget
 
     @api.multi
     @api.onchange('account_id')
