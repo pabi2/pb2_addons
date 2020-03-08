@@ -84,6 +84,12 @@ class ResInvestConstruction(LogCommon, models.Model):
         #         'submit': [('readonly', False)]},
         track_visibility='onchange',
     )
+    member_ids = fields.One2many(
+        'invest.construction.project.member',
+        'invest_construction_id',
+        string='Project Member',
+        copy=False,
+    )
     mission_id = fields.Many2one(
         'res.mission',
         string='Core Mission',
@@ -236,6 +242,14 @@ class ResInvestConstruction(LogCommon, models.Model):
                       "Project's approved budget"))
             rec.amount_phase_approve = amount_total
 
+    @api.constrains('member_ids')
+    def _check_fte_not_greater_than_100(self):
+        total_fte = 0
+        for rec in self.member_ids:
+            total_fte += rec.full_time_equivalent
+        if total_fte > 100:
+            raise ValidationError("%FTE must not exceed 100%")
+
     @api.multi
     @api.constrains('date_expansion', 'date_start', 'date_end')
     def _check_date(self):
@@ -282,6 +296,21 @@ class ResInvestConstruction(LogCommon, models.Model):
         self.pm_section_id = employee.section_id
         self.costcenter_id = employee.section_id.costcenter_id
         self.org_id = employee.org_id
+        if employee:
+            if self.member_ids:
+                self.member_ids[0].update({
+                    'employee_id': employee.id,
+                })
+            else:
+                self.update({
+                    'member_ids': [(0, 0, {
+                        'invest_construction_id': self.id,
+                        'employee_id': employee.id,
+                        'position': 'manager',
+                        'full_time_equivalent': 100.00,
+                        'contribution': 100.00,
+                    })],
+                })
 
     @api.onchange('month_duration', 'date_start', 'date_end')
     def _onchange_date(self):
@@ -1174,3 +1203,59 @@ class InvestConstructionPhaseSummary(models.Model):
         cr.execute(
             """CREATE or REPLACE VIEW %s as (%s)""" %
             (self._table, _sql,))
+
+
+class InvestConstructionProjectMember(models.Model):
+    _name = 'invest.construction.project.member'
+    _description = 'Project Member'
+
+    invest_construction_id = fields.Many2one(
+        'res.invest.construction',
+        string='Construction Project',
+        index=True,
+        ondelete='cascade',
+        copy=False,
+    )
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string='Employee',
+        index=True,
+        required=True,
+    )
+    position = fields.Selection([
+        ('manager', 'Project Manager'),
+        ('member', 'Member'),
+        ],
+        string='Position',
+        required=True,
+        default='member',
+    )
+    full_time_equivalent = fields.Float(
+        string='FTE (%)',
+        required=True,
+    )
+    contribution = fields.Float(
+        string='Contribution (%)',
+        required=True,
+    )
+
+    @api.one
+    @api.constrains('invest_construction_id', 'employee_id', 'position')
+    def _check_unique_project_manager(self):
+        self._cr.execute("""
+            select coalesce(count(*))
+            from invest_construction_project_member
+            where position = 'manager'
+            and invest_construction_id = %s
+        """, (self.invest_construction_id.id,))
+        count = self._cr.fetchone()[0]
+        if count > 1:
+            raise ValidationError(
+                _('''Cannot select 'Project Manager' than one'''))
+
+    @api.onchange('full_time_equivalent', 'contribution')
+    def _check_is_positive(self):
+        if self.full_time_equivalent < 0:
+            raise ValidationError("%FTE must positive")
+        if self.contribution < 0:
+            raise ValidationError("%Contribution must positive")

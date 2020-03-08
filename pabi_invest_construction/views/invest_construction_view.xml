@@ -160,6 +160,16 @@
                             <page string="Status History">
                                 <field name="auditlog_line_ids"/>
                             </page>
+                            <page string="Project Member" id="project_member">
+                                <field name="member_ids">
+                                    <tree string="Project Member" editable="bottom">
+                                        <field name="employee_id"/>
+                                        <field name="position"/>
+                                        <field name="full_time_equivalent"/>
+                                        <field name="contribution"/>
+                                    </tree>
+                                </field>
+                            </page>
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
