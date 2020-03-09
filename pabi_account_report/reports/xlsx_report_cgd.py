@@ -52,11 +52,11 @@ class XLSXReportCGD(models.TransientModel):
         Result = self.env['issi.report.cgd.monthly.view']
         dom = []
         if self.partner_id:
-            dom += [(' partner_id', '=', self.partner_id.id)]
+            dom += [('partner_id', '=', self.partner_id.id)]
         if self.reference_date_start:
-            dom += [('invoice_date','>=',self.reference_date_start)]
-        if self.reference_date_start:
-            dom += [('invoice_date','<=',self.reference_date_end)]                
+            dom += [('kv_postingdate','>=',self.reference_date_start)]
+        if self.reference_date_end:
+            dom += [('kv_postingdate','<=',self.reference_date_end)]                
         if dom ==[]:
             raise ValidationError('Please fill in information')
         where_str = self._domain_to_where_str(dom) 
@@ -112,4 +112,10 @@ class ISSIReportCGDMonthly(models.AbstractModel):
         )
     is_reason = fields.Char(
         string = 'Is Reason',
+        )
+    kv_period = fields.Integer(
+        string = 'Period',
+        )
+    kv_postingdate = fields.Date(
+        string = 'Posting Date',
         )
