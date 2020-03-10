@@ -80,9 +80,20 @@ class ResInvestConstruction(LogCommon, models.Model):
         required=True,
         store=True,
         readonly=False,
-        # states={'draft': [('readonly', False)],
-        #         'submit': [('readonly', False)]},
         track_visibility='onchange',
+    )
+    pm_section_id_readonly = fields.Many2one(
+        'res.section',
+        string='Project Manager Section',
+        related='pm_section_id',
+        store=False,
+        readonly=True,
+    )
+    org_id_readonly = fields.Many2one(
+        'res.org',
+        string='Org',
+        related='org_id',
+        store=False,
     )
     member_ids = fields.One2many(
         'invest.construction.project.member',
@@ -274,15 +285,6 @@ class ResInvestConstruction(LogCommon, models.Model):
 
     @api.model
     def create(self, vals):
-        if vals.get('pm_employee_id'):
-            employee = self.env['hr.employee'].search(
-                [('id', '=', vals.get('pm_employee_id'))]
-            )
-            vals.update({
-                'costcenter_id': employee.section_id.costcenter_id.id,
-                'pm_section_id': employee.section_id.id,
-                'org_id': employee.org_id.id,
-            })
         if vals.get('code', '/') == '/':
             fiscalyear_id = self.env['account.fiscalyear'].find()
             vals['code'] = self.env['ir.sequence'].\
@@ -421,15 +423,6 @@ class ResInvestConstruction(LogCommon, models.Model):
 
     @api.multi
     def write(self, vals):
-        if vals.get('pm_employee_id'):
-            employee = self.env['hr.employee'].search(
-                [('id', '=', vals.get('pm_employee_id'))]
-            )
-            vals.update({
-                'costcenter_id': employee.section_id.costcenter_id.id,
-                'pm_section_id': employee.section_id.id,
-                'org_id': employee.org_id.id,
-            })
         # Only cooperate budget allowed to edit when state == 'submit'
         button_click = self._context.get('button_click', False)
         for rec in self:
