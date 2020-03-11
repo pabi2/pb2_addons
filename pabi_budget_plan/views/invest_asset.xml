@@ -14,6 +14,13 @@
                       attrs="{'invisible': [('code', '!=', False)]}"
                       type="object" help="Generate code by fiscalyear if not already exists"/>
                 </field>
+                <field name="org_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly">0</attribute>
+                </field>
+                <field name="name_common" position="after">
+                    <field name="org_id_readonly"/>
+                </field>
                 <field name="active" position="after">
                     <field name="fund_type_id"/>
                 </field>

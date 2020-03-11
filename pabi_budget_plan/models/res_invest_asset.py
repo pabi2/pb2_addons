@@ -5,7 +5,6 @@ from openerp import models, api, fields
 class ResInvestAsset(models.Model):
     _inherit = 'res.invest.asset'
 
-
     fund_type_id = fields.Many2one(
         'project.fund.type',
         string='Fund Type',
@@ -13,6 +12,12 @@ class ResInvestAsset(models.Model):
     project_ids = fields.Many2many(
         'res.project',
         string='Projects',
+    )
+    org_id_readonly = fields.Many2one(
+        'res.org',
+        string='Org',
+        related='org_id',
+        readonly=True,
     )
 
     @api.multi
