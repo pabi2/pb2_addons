@@ -41,6 +41,7 @@ class GeneralLedgerWebkit(report_sxw.rml_parse, CommonReportHeaderWebkit):
             'amount_currency': self._get_amount_currency,
             'display_target_move': self._get_display_target_move,
             'display_reconciled': self._get_display_reconciled,
+            'amount_unpaid_by_date': self._get_amount_unpaid,
             'accounts': self._get_accounts_br,
             'additional_args': [
                 ('--header-font-name', 'Helvetica'),

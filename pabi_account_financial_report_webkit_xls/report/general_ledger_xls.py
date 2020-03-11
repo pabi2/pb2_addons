@@ -44,12 +44,15 @@ _column_sizes = [
     ('debit', 15),
     ('credit', 15),
     ('cumul_bal', 15),
+    ('amount_unpaid', 15),
+    ('diff_db_cd', 15),
     ('curr_bal', 10),
     ('curr_code', 10),
     #('posted_by', 30),
     ('validate_by', 30),
     ('reconcile_id', 10),
     ('partial_id', 10),
+    ('date_reconciled', 15),
 ]
 
 
@@ -58,14 +61,13 @@ class general_ledger_xls(report_xls):
     column_sizes = dict(_column_sizes)
 
     def generate_xls_report(self, _p, _xs, data, objects, wb):
- 
+
         ws = wb.add_sheet(_p.report_name[:31])
         ws.panes_frozen = True
         ws.remove_splits = True
         ws.portrait = 0  # Landscape
         ws.fit_width_to_pages = 1
         row_pos = 0
-
         # set print header/footer
         ws.header_str = self.xls_headers['standard']
         ws.footer_str = self.xls_footers['standard']
@@ -132,7 +134,7 @@ class general_ledger_xls(report_xls):
             ('coa', 2, 0, 'text', _p.chart_account.name),
             ('fy', 1, 0, 'text', _p.fiscalyear.name if _p.fiscalyear else '-'),
             ('org', 1, 0, 'text', ' '.join(org_name)),
-        ]  
+        ]
         df = _('From') + ': '
         if _p.filter_form(data) == 'filter_date':
             df += _p.start_date if _p.start_date else u''
@@ -219,7 +221,7 @@ class general_ledger_xls(report_xls):
                 c_hdr_cell_style),
             ('partner_code', 1, 0, 'text', ('Partner code'), None,
                 c_hdr_cell_style),
-            ('partner', 1, 0, 'text', _('Partner'), None, 
+            ('partner', 1, 0, 'text', _('Partner'), None,
              c_hdr_cell_style),
             ('reference', 1, 0, 'text', _('Reference'), None,
                 c_hdr_cell_style),
@@ -236,6 +238,10 @@ class general_ledger_xls(report_xls):
                 c_hdr_cell_style_right),
             ('cumul_bal', 1, 0, 'text', _('Cumul. Bal.'),
              None, c_hdr_cell_style_right),
+            ('amount_unpaid', 1, 0, 'text', _('Amount Unpaid'),
+                None, c_hdr_cell_style_right),
+            ('diff_db_cd', 1, 0, 'text', _('Debit - Credit'), None,
+                c_hdr_cell_style_right),
         ]
         if _p.amount_currency(data):
             c_specs += [
@@ -254,6 +260,8 @@ class general_ledger_xls(report_xls):
                 None, c_hdr_cell_style),
             ('partial_id', 1, 0, 'text', _('Part.ID'),
                 None, c_hdr_cell_style),
+            ('date_reconciled', 1, 0, 'text', _('Date Reconciled'), None,
+                c_hdr_cell_style),
             # --
         ]
         c_hdr_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
@@ -286,6 +294,8 @@ class general_ledger_xls(report_xls):
                 cumul_credit = 0.0
                 cumul_balance = 0.0
                 cumul_balance_curr = 0.0
+                cumul_amount_unpaid = 0.0
+                cumul_diff_db_cd = 0.0
                 c_specs = [
                     ('acc_title', 11, 0, 'text',
                      ' - '.join([account.code, account.name])),
@@ -304,6 +314,10 @@ class general_ledger_xls(report_xls):
                     cumul_balance = init_balance.get('init_balance') or 0.0
                     cumul_balance_curr = init_balance.get(
                         'init_balance_currency') or 0.0
+                    cumul_amount_unpaid = init_balance.get(
+                        'amount_unpaid') or 0.0
+                    cumul_diff_db_cd = init_balance.get(
+                        'debit') - init_balance.get('credit')
                     c_specs = [('empty%s' % x, 1, 0, 'text', None)
                                for x in range(29)]
                     c_specs += [
@@ -315,6 +329,10 @@ class general_ledger_xls(report_xls):
                          None, c_init_cell_style_decimal),
                         ('cumul_bal', 1, 0, 'number', cumul_balance,
                          None, c_init_cell_style_decimal),
+                        ('amount_unpaid', 1, 0, 'number', cumul_amount_unpaid,
+                            None, c_init_cell_style_decimal),
+                        ('diff_db_cd', 1, 0, 'number', cumul_diff_db_cd,
+                            None, c_init_cell_style_decimal),
                     ]
                     if _p.amount_currency(data):
                         c_specs += [
@@ -326,7 +344,7 @@ class general_ledger_xls(report_xls):
                         c_specs, [x[0] for x in c_specs])
                     row_pos = self.xls_write_row(
                         ws, row_pos, row_data, c_init_cell_style)
-
+                _p.amount_unpaid_by_date(_p['ledger_lines'][account.id], data)
                 for line in _p['ledger_lines'][account.id]:
                     if (line.get('debit', 0.0)):
                         cumul_debit += line.get('debit', 0.0)
@@ -336,6 +354,10 @@ class general_ledger_xls(report_xls):
                         cumul_balance_curr += line.get('amount_currency', 0.0)
                     if (line.get('balance', 0.0)):
                         cumul_balance += line.get('balance', 0.0)
+                    if (line.get('amount_unpaid', 0.0)):
+                        cumul_amount_unpaid += line.get('amount_unpaid', 0.0)
+                    diff = line.get('debit', 0.0) - line.get('credit', 0.0)
+                    cumul_diff_db_cd += diff
                     label_elements = [line.get('lname', '')]
                     if line.get('invoice_number'):
                         label_elements.append(
@@ -416,6 +438,10 @@ class general_ledger_xls(report_xls):
                          None, ll_cell_style_decimal),
                         ('cumul_bal', 1, 0, 'number', cumul_balance,
                          None, ll_cell_style_decimal),
+                        ('amount_unpaid', 1, 0, 'number', line.get('amount_unpaid', 0.0),
+                         None, ll_cell_style_decimal),
+                        ('diff_db_cd', 1, 0, 'number', line.get('debit', 0.0) - line.get('credit', 0.0),
+                         None, ll_cell_style_decimal),
                     ]
                     if _p.amount_currency(data):
                         c_specs += [
@@ -438,13 +464,14 @@ class general_ledger_xls(report_xls):
                         ('reconcile_id', 1, 0, 'text', rec),
                         ('partial_id', 1, 0, 'text',
                             line.get('partial_id', '')),
+                        ('date_reconciled', 1, 0, 'text',
+                            line.get('date_reconciled', '')),
                         # --
                     ]
                     row_data = self.xls_row_template(
                         c_specs, [x[0] for x in c_specs])
                     row_pos = self.xls_write_row(
                         ws, row_pos, row_data, ll_cell_style)
-
                 debit_start = rowcol_to_cell(row_start, 31)
                 debit_end = rowcol_to_cell(row_pos - 1, 31)
                 debit_formula = 'SUM(' + debit_start + ':' + debit_end + ')'
@@ -454,6 +481,12 @@ class general_ledger_xls(report_xls):
                 balance_debit = rowcol_to_cell(row_pos, 31)
                 balance_credit = rowcol_to_cell(row_pos, 32)
                 balance_formula = balance_debit + '-' + balance_credit
+                unpaid_start = rowcol_to_cell(row_start, 34)
+                unpaid_end = rowcol_to_cell(row_pos - 1, 34)
+                unpaid_formula = 'SUM(' + unpaid_start + ':' + unpaid_end + ')'
+                diff_start = rowcol_to_cell(row_start, 35)
+                diff_end = rowcol_to_cell(row_pos - 1, 35)
+                diff_formula = 'SUM(' + diff_start + ':' + diff_end + ')'
                 c_specs = [
                     ('acc_title', 30, 0, 'text',
                      ' - '.join([account.code, account.name])),
@@ -466,6 +499,10 @@ class general_ledger_xls(report_xls):
                      credit_formula, c_hdr_cell_style_decimal),
                     ('balance', 1, 0, 'number', None,
                      balance_formula, c_hdr_cell_style_decimal),
+                    ('amount_unpaid', 1, 0, 'number', None,
+                     unpaid_formula, c_hdr_cell_style_decimal),
+                    ('diff_db_cd', 1, 0, 'number', None,
+                     diff_formula, c_hdr_cell_style_decimal),
                 ]
                 if _p.amount_currency(data):
                     if account.currency_id:
@@ -480,13 +517,13 @@ class general_ledger_xls(report_xls):
                     ('validate_by', 1, 0, 'text', None),
                     ('reconcile_id', 1, 0, 'text', None),
                     ('partial_id', 1, 0, 'text', None),
+                    ('date_reconciled', 1, 0, 'text', None),
                 ]
                 row_data = self.xls_row_template(
                     c_specs, [x[0] for x in c_specs])
                 row_pos = self.xls_write_row(
                     ws, row_pos, row_data, c_hdr_cell_style)
                 row_pos += 1
-
 
 general_ledger_xls('report.account.account_report_general_ledger_xls',
                    'account.account',
