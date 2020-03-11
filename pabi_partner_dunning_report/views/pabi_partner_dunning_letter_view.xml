@@ -53,6 +53,7 @@
 							<field name="line_ids" nolabel="1">
 								<tree editable="bottom">
 									<field name="move_line_id"/>
+									<field name="validate_user_id"/>
 									<field name="date_invoice"/>
 									<field name="date_due"/>
 									<field name="amount_residual" sum="Total Amount"/>

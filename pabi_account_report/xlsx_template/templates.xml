@@ -2330,6 +2330,67 @@ result = pd.pivot_table(df, index=groupby,
                     }
                 }
             </field>
-        </record> 
+        </record>
+        # PV-PE Report 
+	    <record id="xlsx_report_pv_pe" model="ir.attachment">
+	         <field name="res_model">xlsx.report.pv.pe</field>
+	         <field name="datas"></field>
+	         <field name="datas_fname">xlsx_report_pv_pe.xlsx</field>
+	         <field name="name">PV-PE Report</field>
+	         <field name="parent_id" eval="ref('dir_account_reports')"/>
+	         <field name="description">
+	             {
+	                 '__EXPORT__': {
+	                     'PV-PE': {
+	                         '_HEAD_': { },
+	                         'results': {
+	                             'A2': 'gl${value or ""}#{align=center;number_format=text}',
+	                             'B2': 'pe_doc${value  or ""}#{align=center}',
+	                             'C2': 'pe_valuedate${value  or ""}#{align=right;number_format=date}',
+	                             'D2': 'pe_transfertype${value or ""}#{align=left}',
+	                             'E2': 'pe_amount${value or ""}#{align=right;number_format=number}',
+	                             'F2': 'pv_doc${value or ""}#{align=center}',
+	                             'G2': 'pv_posting_date${value or ""}#{align=right;number_format=date}',
+	                             'H2': 'pv_cheque_date${value or ""}#{align=right;number_format=date}',
+	                             'I2': 'pv_valuedate${value  or ""}#{align=right;number_format=date}',
+	                             'J2': 'pv_amount${value or ""}#{align=right;number_format=number}',
+	                             'K2': 'state${value or ""}#{align=left}',
+	                         },
+	                     }
+	                 }
+	             }
+	        </field>
+	    </record>
+	    # CGD Report
+        <record id="xlsx_report_cgd" model="ir.attachment">
+            <field name="res_model">xlsx.report.cgd</field>
+            <field name="datas"></field>
+            <field name="datas_fname">report_cgd.xlsx</field>
+            <field name="name">CGD Reports</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Report CGD': {
+                            '_HEAD_': {
+                                'C1': '${time.strftime("%m/%Y")}',
+                            },
+                            'results': {
+                            	'A4': '${"=ROW()-3"}',
+                                'B4': 'partner_taxid${value or ""}#{align=left;number_format=text}',
+                                'C4': 'partner_name${value or ""}#{align=left;number_format=text}',
+                                'D4': 'name${value or ""}#{align=left;number_format=text}',
+                                'E4': 'base${value or ""}#{align=right;number_format=number}',
+                                'F4': 'invoice_date${value or ""}#{align=left;number_format=date}',
+                                'G4': 'partner_invoice_number${value or ""}#{align=left;number_format=text}',
+                                'H4': 'txtreason${value or ""}#{align=left;number_format=text}',
+                                'K4': 'source_document${value or ""}#{align=left;number_format=text}',
+                                'L4': 'partner_id${value or ""}#{align=left;number_format=text}',                                
+                            },                            
+                        }
+                    }
+                }
+            </field>
+        </record>        
     </data>
 </openerp>

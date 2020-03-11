@@ -298,6 +298,17 @@
                 </xpath>
             </field>
         </record>
+        
+        <record id="purchase_order_line_search" model="ir.ui.view">
+        	<field name="name">purchase_order_line_search</field>
+        	<field name="model">purchase.order.line</field>
+        	<field name="inherit_id" ref="purchase_operating_unit.purchase_order_line_search"/>
+        	<field name="arch" type="xml">
+                <xpath expr="//filter[@string='Operating Unit']" position="replace">
+                    <filter string="Operating Unit" groups="operating_unit.group_multi_operating_unit" context="{'group_by':'org_id'}"/>
+                </xpath>
+            </field>
+        </record>
 
         <record id="purchase.purchase_rfq" model="ir.actions.act_window">
             <field name="name">Quotation</field>

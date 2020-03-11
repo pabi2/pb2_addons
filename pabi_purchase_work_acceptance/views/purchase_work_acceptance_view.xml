@@ -33,6 +33,7 @@
                             <field name="order_method" invisible="1"/>
                             <field name="invoice_created" invisible="1"/>
                             <field name="total_fine_cal" invisible="1"/>
+                            <field name="date_action" readonly="1"/>
                         </group>
                         <group>
                             <field name="is_manual_fine" attrs="{'readonly': [('state','!=','draft')]}"/>

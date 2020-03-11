@@ -156,6 +156,7 @@
             <xpath expr="/form" position="attributes">
                 <attribute name="create">1</attribute>
                 <attribute name="edit">1</attribute>
+				<attribute name="delete">false</attribute>
             </xpath>
         </field>
     </record>
@@ -177,7 +178,7 @@
 			<field name="name">purchase.contract.tree</field>
 			<field name="model">purchase.contract</field>
 			<field name="arch" type="xml">
-				<tree string="PO Contract" colors="red:state=='cancel_generate';red:state=='terminate' ">
+				<tree string="PO Contract" colors="red:state=='cancel_generate';red:state=='terminate' " delete="false">
 					<field name="display_code"/>
 					<field name="contract_type_id"/>
 					<field name="name"/>

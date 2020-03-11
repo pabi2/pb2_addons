@@ -756,15 +756,20 @@ class InterfaceAccountEntry(models.Model):
         return res
 
     @api.model
+    def _clear_temp_check_existing(self):
+        sql = "delete from interface_account_entry_check_existing"
+        self._cr.execute(sql)
+        
+        return True
+
+    @api.model
     def _is_interfaced(self, data_dict):
         str_doc_origin = data_dict["name"]
         str_type = data_dict["type"]
         res = {"interfaced": False}
         # check existing doc_origin in check existing table
         # for check double interface of document at same time
-        if ("system_id" in data_dict) and \
-           ((data_dict["system_id"] == "mySales") or \
-            (data_dict["system_id"] == "myCC")):
+        if ("system_id" in data_dict):
             check_table = self.env["interface.account.entry.check.existing"]
             
             if str_type == "Reverse":

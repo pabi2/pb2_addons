@@ -196,7 +196,7 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
         if exclude_reconcile:
             sql_where += ("  AND ((account_move_line.reconcile_id IS NULL)"
                           "   OR (account_move_line.reconcile_id IS NOT NULL \
-                              AND account_move_line.last_rec_date > \
+                              AND account_move_line.date_reconciled > \
                                                       date(%(date_stop)s)))")
 
         if partner_filter:
@@ -313,7 +313,7 @@ class CommonPartnersReportHeaderWebkit(CommonReportHeaderWebkit):
             search_param.update({'date_stop': date_stop})
             sql += ("AND ((ml.reconcile_id IS NULL) "
                     "OR (ml.reconcile_id IS NOT NULL \
-                    AND ml.last_rec_date > date(%(date_stop)s))) ")
+                    AND ml.date_reconciled > date(%(date_stop)s))) ")
         if partner_filter:
             sql += "AND ml.partner_id in %(partner_ids)s "
             search_param.update({'partner_ids': tuple(partner_filter)})

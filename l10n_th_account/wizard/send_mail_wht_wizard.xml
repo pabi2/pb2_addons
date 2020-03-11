@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_sent_mail_wht_wizard" model="ir.ui.view">
+            <field name="name">Email</field>
+            <field name="model">send.mail.wht.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Send Mail Wht">
+                 <label string="Do you want to send email?"/>
+                    <footer>
+                        <button string="Ok" name="send_mail" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        
+        <act_window id="launch_send_mail_wht_wizard"
+                    name="Email"
+                    src_model="account.wht.cert"
+                    res_model="send.mail.wht.wizard"
+                    view_mode="form"
+                    target="new"
+                    key2="client_action_multi"/>
+
+    </data>
+</openerp>
