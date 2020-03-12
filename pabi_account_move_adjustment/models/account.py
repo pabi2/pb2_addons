@@ -441,7 +441,7 @@ class AccountMoveLine(MergedChartField, models.Model):
             if rec.activity_group_id and \
                     not rec.activity_id and not rec.activity_rpt_id:
                 
-                print('\n activity_group_id: %s\n activity_id: %s\n activity_rpt_id: %s'+(
+                print('\n activity_group_id: %s\n activity_id: %s\n activity_rpt_id: %s' % (
                     str(rec.activity_group_id),str(rec.activity_id),str(rec.activity_rpt_id)))
                 raise ValidationError(
                     _('Activity is required for activity group!: '+str(rec.document_id)))
