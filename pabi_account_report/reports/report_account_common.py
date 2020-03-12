@@ -99,6 +99,12 @@ class ReportAccountCommon(models.AbstractModel):
         string='End Period',
     )
 
+    @api.multi
+    def _get_filter_many2many(self, obj_ids, attribute):
+        obj_name = obj_ids.mapped(attribute)
+        name_filter = ', '.join(x for x in obj_name)
+        return name_filter or _('')
+
     @api.model
     def _get_account(self):
         company_id = self.env.user.company_id.id

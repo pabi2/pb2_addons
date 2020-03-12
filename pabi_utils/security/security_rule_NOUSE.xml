@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <openerp>
-    <data>
+    <data noupdate="1">
         <!-- Spool Reports -->
         <record model="ir.rule" id="see_own_spool_reports">
             <field name="name">See Own Spool Reports</field>

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright 2009-2018 Noviat.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-
 from datetime import datetime, date
 import re
 from types import CodeType
@@ -64,6 +63,33 @@ class ReportXlsxAbstract(ReportXlsx):
         """
         return []
 
+    def _common_report(self, workbook, ws, ws_params, data, objects):
+        ws.set_portrait()
+        ws.fit_to_pages(1, 0)
+        ws.set_header(self.xls_headers['standard'])
+        ws.set_footer(self.xls_footers['standard'])
+        # Set font name
+        workbook.formats[0].set_font_name('Arial')
+
+        self._set_column_width(ws, ws_params)
+
+        row_pos = 0
+        row_pos = self._write_ws_title(ws, row_pos, ws_params)
+        # Create Filters data
+        pos = 0
+        pos, row_pos = self.write_ws_filter(ws, pos, ws_params, row_pos)
+        # Create line data header + data
+        row_pos += 1
+        row_pos = self._write_line(
+            ws, row_pos, ws_params, col_specs_section='header',
+            default_format=self.format_theader_yellow_center)
+        # Create each line data
+        row_pos = self.write_line_data(ws, row_pos, ws_params, objects)
+        # Create Footer
+        if ws_params.get('data_footer'):
+            row_pos = \
+                self.write_ws_footer(ws, pos, row_pos, ws_params, objects)
+
     def _define_xls_headers(self, workbook):
         """
         Predefined worksheet headers/footers.
@@ -117,113 +143,149 @@ class ReportXlsxAbstract(ReportXlsx):
             {'bold': True, 'font_size': 11, 'font_name': font_name})
 
         # no border formats
-        self.format_left = workbook.add_format({'align': 'left'})
-        self.format_center = workbook.add_format({'align': 'center'})
-        self.format_right = workbook.add_format({'align': 'right'})
+        self.format_left = workbook.add_format(
+            {'align': 'left', 'font_name': font_name})
+        self.format_center = workbook.add_format(
+            {'align': 'center', 'font_name': font_name})
+        self.format_right = workbook.add_format(
+            {'align': 'right', 'font_name': font_name})
         self.format_indent_1 = workbook.add_format(
             {'align': 'left', 'indent': 1, 'font_name': font_name})
         self.format_indent_2 = workbook.add_format(
             {'align': 'left', 'indent': 2, 'font_name': font_name})
         self.format_amount_left = workbook.add_format(
-            {'align': 'left', 'num_format': num_format})
+            {'align': 'left', 'num_format': num_format,
+             'font_name': font_name})
         self.format_amount_center = workbook.add_format(
-            {'align': 'center', 'num_format': num_format})
+            {'align': 'center', 'num_format': num_format,
+             'font_name': font_name})
         self.format_amount_right = workbook.add_format(
-            {'align': 'right', 'num_format': num_format})
+            {'align': 'right', 'num_format': num_format,
+             'font_name': font_name})
         self.format_amount_conditional_left = workbook.add_format(
-            {'align': 'left', 'num_format': num_format_conditional})
+            {'align': 'left', 'num_format': num_format_conditional,
+             'font_name': font_name})
         self.format_amount_conditional_center = workbook.add_format(
-            {'align': 'center', 'num_format': num_format_conditional})
+            {'align': 'center', 'num_format': num_format_conditional,
+             'font_name': font_name})
         self.format_amount_conditional_right = workbook.add_format(
-            {'align': 'right', 'num_format': num_format_conditional})
+            {'align': 'right', 'num_format': num_format_conditional,
+             'font_name': font_name})
         self.format_percent_left = workbook.add_format(
-            {'align': 'left', 'num_format': pct_format})
+            {'align': 'left', 'num_format': pct_format,
+             'font_name': font_name})
         self.format_percent_center = workbook.add_format(
-            {'align': 'center', 'num_format': pct_format})
+            {'align': 'center', 'num_format': pct_format,
+             'font_name': font_name})
         self.format_percent_right = workbook.add_format(
-            {'align': 'right', 'num_format': pct_format})
+            {'align': 'right', 'num_format': pct_format,
+             'font_name': font_name})
         self.format_percent_conditional_left = workbook.add_format(
-            {'align': 'left', 'num_format': pct_format_conditional})
+            {'align': 'left', 'num_format': pct_format_conditional,
+             'font_name': font_name})
         self.format_percent_conditional_center = workbook.add_format(
-            {'align': 'center', 'num_format': pct_format_conditional})
+            {'align': 'center', 'num_format': pct_format_conditional,
+             'font_name': font_name})
         self.format_percent_conditional_right = workbook.add_format(
-            {'align': 'right', 'num_format': pct_format_conditional})
+            {'align': 'right', 'num_format': pct_format_conditional,
+             'font_name': font_name})
         self.format_integer_left = workbook.add_format(
-            {'align': 'left', 'num_format': int_format})
+            {'align': 'left', 'num_format': int_format,
+             'font_name': font_name})
         self.format_integer_center = workbook.add_format(
-            {'align': 'center', 'num_format': int_format})
+            {'align': 'center', 'num_format': int_format,
+             'font_name': font_name})
         self.format_integer_right = workbook.add_format(
-            {'align': 'right', 'num_format': int_format})
+            {'align': 'right', 'num_format': int_format,
+             'font_name': font_name})
         self.format_integer_conditional_left = workbook.add_format(
-            {'align': 'right', 'num_format': int_format_conditional})
+            {'align': 'right', 'num_format': int_format_conditional,
+             'font_name': font_name})
         self.format_integer_conditional_center = workbook.add_format(
-            {'align': 'center', 'num_format': int_format_conditional})
+            {'align': 'center', 'num_format': int_format_conditional,
+             'font_name': font_name})
         self.format_integer_conditional_right = workbook.add_format(
-            {'align': 'right', 'num_format': int_format_conditional})
+            {'align': 'right', 'num_format': int_format_conditional,
+             'font_name': font_name})
         self.format_date_left = workbook.add_format(
-            {'align': 'left', 'num_format': date_format})
+            {'align': 'left', 'num_format': date_format,
+             'font_name': font_name})
         self.format_date_center = workbook.add_format(
-            {'align': 'center', 'num_format': date_format})
+            {'align': 'center', 'num_format': date_format,
+             'font_name': font_name})
         self.format_date_right = workbook.add_format(
-            {'align': 'right', 'num_format': date_format})
+            {'align': 'right', 'num_format': date_format,
+             'font_name': font_name})
 
         self.format_left_bold = workbook.add_format(
-            {'align': 'left', 'bold': True})
+            {'align': 'left', 'bold': True, 'font_name': font_name})
         self.format_center_bold = workbook.add_format(
-            {'align': 'center', 'bold': True})
+            {'align': 'center', 'bold': True, 'font_name': font_name})
         self.format_right_bold = workbook.add_format(
-            {'align': 'right', 'bold': True})
+            {'align': 'right', 'bold': True, 'font_name': font_name})
         self.format_amount_left_bold = workbook.add_format(
-            {'align': 'left', 'bold': True, 'num_format': num_format})
+            {'align': 'left', 'bold': True, 'num_format': num_format,
+             'font_name': font_name})
         self.format_amount_center_bold = workbook.add_format(
-            {'align': 'center', 'bold': True, 'num_format': num_format})
+            {'align': 'center', 'bold': True, 'num_format': num_format,
+             'font_name': font_name})
         self.format_amount_right_bold = workbook.add_format(
-            {'align': 'right', 'bold': True, 'num_format': num_format})
+            {'align': 'right', 'bold': True, 'num_format': num_format,
+             'font_name': font_name})
         self.format_amount_conditional_left_bold = workbook.add_format(
             {'align': 'left', 'bold': True,
-             'num_format': num_format_conditional})
+             'num_format': num_format_conditional, 'font_name': font_name})
         self.format_amount_conditional_center_bold = workbook.add_format(
             {'align': 'center', 'bold': True,
-             'num_format': num_format_conditional})
+             'num_format': num_format_conditional, 'font_name': font_name})
         self.format_amount_conditional_right_bold = workbook.add_format(
             {'align': 'right', 'bold': True,
-             'num_format': num_format_conditional})
+             'num_format': num_format_conditional, 'font_name': font_name})
         self.format_percent_left_bold = workbook.add_format(
-            {'align': 'left', 'bold': True, 'num_format': pct_format})
+            {'align': 'left', 'bold': True, 'num_format': pct_format,
+             'font_name': font_name})
         self.format_percent_center_bold = workbook.add_format(
-            {'align': 'center', 'bold': True, 'num_format': pct_format})
+            {'align': 'center', 'bold': True, 'num_format': pct_format,
+             'font_name': font_name})
         self.format_percent_right_bold = workbook.add_format(
-            {'align': 'right', 'bold': True, 'num_format': pct_format})
+            {'align': 'right', 'bold': True, 'num_format': pct_format,
+             'font_name': font_name})
         self.format_percent_conditional_left_bold = workbook.add_format(
             {'align': 'left', 'bold': True,
-             'num_format': pct_format_conditional})
+             'num_format': pct_format_conditional, 'font_name': font_name})
         self.format_percent_conditional_center_bold = workbook.add_format(
             {'align': 'center', 'bold': True,
-             'num_format': pct_format_conditional})
+             'num_format': pct_format_conditional, 'font_name': font_name})
         self.format_percent_conditional_right_bold = workbook.add_format(
             {'align': 'right', 'bold': True,
-             'num_format': pct_format_conditional})
+             'num_format': pct_format_conditional, 'font_name': font_name})
         self.format_integer_left_bold = workbook.add_format(
-            {'align': 'left', 'bold': True, 'num_format': int_format})
+            {'align': 'left', 'bold': True, 'num_format': int_format,
+             'font_name': font_name})
         self.format_integer_center_bold = workbook.add_format(
-            {'align': 'center', 'bold': True, 'num_format': int_format})
+            {'align': 'center', 'bold': True, 'num_format': int_format,
+             'font_name': font_name})
         self.format_integer_right_bold = workbook.add_format(
-            {'align': 'right', 'bold': True, 'num_format': int_format})
+            {'align': 'right', 'bold': True, 'num_format': int_format,
+             'font_name': font_name})
         self.format_integer_conditional_left_bold = workbook.add_format(
             {'align': 'left', 'bold': True,
-             'num_format': int_format_conditional})
+             'num_format': int_format_conditional, 'font_name': font_name})
         self.format_integer_conditional_center_bold = workbook.add_format(
             {'align': 'center', 'bold': True,
-             'num_format': int_format_conditional})
+             'num_format': int_format_conditional, 'font_name': font_name})
         self.format_integer_conditional_right_bold = workbook.add_format(
             {'align': 'right', 'bold': True,
-             'num_format': int_format_conditional})
+             'num_format': int_format_conditional, 'font_name': font_name})
         self.format_date_left_bold = workbook.add_format(
-            {'align': 'left', 'bold': True, 'num_format': date_format})
+            {'align': 'left', 'bold': True, 'num_format': date_format,
+             'font_name': font_name})
         self.format_date_center_bold = workbook.add_format(
-            {'align': 'center', 'bold': True, 'num_format': date_format})
+            {'align': 'center', 'bold': True, 'num_format': date_format,
+             'font_name': font_name})
         self.format_date_right_bold = workbook.add_format(
-            {'align': 'right', 'bold': True, 'num_format': date_format})
+            {'align': 'right', 'bold': True, 'num_format': date_format,
+             'font_name': font_name})
 
         # formats for worksheet table column headers
         self.format_theader_yellow_left = workbook.add_format(theader_yellow)
@@ -473,16 +535,177 @@ class ReportXlsxAbstract(ReportXlsx):
             ws.write_string(row_pos, 0, title, self.format_ws_title)
         return row_pos + 2
 
+    def write_ws_filter(self, ws, pos, ws_params, row):
+        """
+        Write a filter line and return pos, row_pos(default 2).
+        """
+        pos, row_pos = self._write_ws_filter(
+            ws, pos, row, ws_params, col_specs_section='header',
+            default_format=self.format_theader_yellow_left)
+        pos, row_pos = self._write_ws_filter(
+            ws, pos, row, ws_params, col_specs_section='data')
+        return pos + 1, row_pos
+
+    def _write_line_multi(self, cell_multi, ws, pos, row_pos, colspan, layout,
+                          render_space=None, default_format=None):
+        for multi in cell_multi:
+            cell_value = multi.get('value')
+            cell_type = multi.get('type')
+            cell_pattern = multi.get('pattern')
+            cell_format = multi.get('format') or default_format
+            cell_column = multi.get('col') or False
+            if isinstance(cell_value, CodeType):
+                cell_value = self._eval(cell_value, render_space)
+                # write 0 if type is number and '' when type is string
+                if cell_type == 'number':
+                    cell_format = multi.get('format') or \
+                        self.format_tcell_amount_right
+                    if not cell_value:
+                        cell_value = 0
+                if not cell_value and not cell_type:
+                    cell_value = ''
+            # convert string date to date
+            if cell_type == 'datetime':
+                if not cell_value:
+                    cell_value = ''
+                    cell_type = 'string'
+                elif isinstance(cell_value, str):
+                    cell_value = fields.Datetime.from_string(cell_value)
+                    cell_format = multi.get('format') or self.format_date_left
+                    # get 1 attribute from date by used pattern %d, %m, %Y
+                    if cell_pattern and isinstance(cell_pattern, str):
+                        cell_value = cell_value.strftime(cell_pattern)
+                        cell_type = 'string'
+            if cell_column:
+                pos = ord(cell_column.upper()) - 65  # ascii Code
+
+            if not cell_type:
+                # test bool first since isinstance(val, int) returns
+                # True when type(val) is bool
+                if isinstance(cell_value, bool):
+                    cell_type = 'boolean'
+                elif isinstance(cell_value, str) or \
+                        isinstance(cell_value, unicode):
+                    cell_type = 'string'
+                elif isinstance(cell_value, (int, float)):
+                    cell_type = 'number'
+                elif isinstance(cell_value, datetime):
+                    cell_type = 'datetime'
+                elif isinstance(cell_value, date):
+                    cell_value = datetime.combine(
+                        cell_value, datetime.min.time())
+                    cell_type = 'datetime'
+                else:
+                    if not cell_value:
+                        cell_type = 'blank'
+
+            colspan = multi.get('colspan') or colspan
+            args_pos = [row_pos, pos]
+            args_data = [cell_value]
+            if cell_format:
+                if isinstance(cell_format, CodeType):
+                    cell_format = self._eval(cell_format, render_space)
+                args_data.append(cell_format)
+            if colspan > 1:
+                args_pos += [row_pos, pos + colspan - 1]
+                args = args_pos + args_data
+                ws.merge_range(*args)
+            else:
+                ws_method = getattr(ws, 'write_%s' % cell_type)
+                args = args_pos + args_data
+                ws_method(*args)
+            colspan = 1
+            if layout == 'body':
+                row_pos += colspan
+                cell_position = pos
+            else:
+                pos += colspan+1
+                cell_position = row_pos
+        return cell_position + 1
+
+    def _write_ws_filter(self, ws, pos, row_pos, ws_params,
+                         col_specs_section=None,
+                         render_space=None, default_format=None,
+                         col_specs='col_filters', wanted_list='data_filters'):
+        """
+        Write a filter line and return pos, row_pos.
+        Example :
+        |  A  |  B  |  C  |  D  |
+        =========================
+        | 1,1 | 1,2 | 1,3 | 1,4 |
+        | 2,1 | 2,2 | 2,3 | 2,4 |
+        | 3,1 | 3,2 | 3,3 | 3,4 |
+        | 4,1 | 4,2 | 4,3 | 4,4 |
+        """
+        col_specs = ws_params.get(col_specs)
+        wl = ws_params.get(wanted_list) or []
+        for col in wl:
+            colspan = col_specs[col].get('colspan') or 1
+            cell_spec = col_specs[col].get(col_specs_section) or {}
+            cell_multi = cell_spec.get('multi')
+            if cell_multi:
+                row_pos = self._write_line_multi(
+                    cell_multi, ws, pos, row_pos, colspan, 'filter',
+                    default_format=default_format)
+                continue
+            cell_value = cell_spec.get('value') or ''
+            cell_type = cell_spec.get('type')
+            cell_pattern = cell_spec.get('pattern')
+            cell_format = cell_spec.get('format') or default_format
+            if not cell_type:
+                cell_type = 'string'
+            # convert string date to date
+            if cell_type == 'datetime':
+                if not cell_value:
+                    cell_value = ''
+                    cell_type = 'string'
+                elif isinstance(cell_value, str):
+                    cell_value = fields.Datetime.from_string(cell_value)
+                    cell_format = \
+                        cell_spec.get('format') or self.format_date_left
+                    # get 1 attribute from date by used pattern %d, %m, %Y
+                    if cell_pattern and isinstance(cell_pattern, str):
+                        cell_value = cell_value.strftime(cell_pattern)
+                        cell_type = 'string'
+            colspan = cell_spec.get('colspan') or colspan
+            args_pos = [row_pos, pos]
+            args_data = [cell_value]
+            if cell_format:
+                if isinstance(cell_format, CodeType):
+                    cell_format = self._eval(cell_format, render_space)
+                args_data.append(cell_format)
+            ws_method = getattr(ws, 'write_%s' % cell_type)
+            args = args_pos + args_data
+            ws_method(*args)
+            row_pos += colspan
+        return pos + 1, row_pos
+
+    def _render_space(self, object):
+        """For hook and add field"""
+        render_space = {
+            'object': object,
+        }
+        return render_space
+
+    def write_line_data(self, ws, row_pos, ws_params, objects):
+        for object in objects.results:
+            render_space = self._render_space(object)
+            row_pos = self._write_line(
+                ws, row_pos, ws_params, col_specs_section='data',
+                render_space=render_space)
+        return row_pos
+
     def _write_line(self, ws, row_pos, ws_params, col_specs_section=None,
-                    render_space=None, default_format=None):
+                    render_space=None, default_format=None,
+                    col_specs='col_specs', wanted_list='wanted_list'):
         """
         Write a line with all columns included in the 'wanted_list'.
         Use the entry defined by the col_specs_section.
         An empty cell will be written if no col_specs_section entry
         for a column.
         """
-        col_specs = ws_params.get('col_specs')
-        wl = ws_params.get('wanted_list') or []
+        col_specs = ws_params.get(col_specs)
+        wl = ws_params.get(wanted_list) or []
         pos = 0
         for col in wl:
             if col not in col_specs:
@@ -498,10 +721,43 @@ class ReportXlsxAbstract(ReportXlsx):
                 cell_format = default_format
             else:
                 cell_value = cell_spec.get('value')
+                cell_multi = cell_spec.get('multi')
+                # multi data
+                if cell_multi:
+                    pos = self._write_line_multi(
+                        cell_multi, ws, pos, row_pos, colspan, 'body',
+                        default_format=default_format)
+                    if col == wl[-1]:
+                        row_pos += 1
+                    continue
+
+                cell_type = cell_spec.get('type')
+                cell_pattern = cell_spec.get('pattern')
+                cell_format = cell_spec.get('format') or default_format
                 if isinstance(cell_value, CodeType):
                     cell_value = self._eval(cell_value, render_space)
-                cell_type = cell_spec.get('type')
-                cell_format = cell_spec.get('format') or default_format
+                    # write 0 if type is number and '' when type is string
+                    if cell_type == 'number':
+                        cell_format = cell_spec.get('format') or \
+                            self.format_tcell_amount_right
+                        if not cell_value:
+                            cell_value = 0
+                    if not cell_value and not cell_type:
+                        cell_value = ''
+                # convert string date to date
+                if cell_type == 'datetime':
+                    if not cell_value:
+                        cell_value = ''
+                        cell_type = 'string'
+                    elif isinstance(cell_value, str):
+                        cell_value = fields.Datetime.from_string(cell_value)
+                        cell_format = \
+                            cell_spec.get('format') or self.format_date_left
+                        # get 1 attribute from date by used pattern %d, %m, %Y
+                        if cell_pattern and isinstance(cell_pattern, str):
+                            cell_value = cell_value.strftime(cell_pattern)
+                            cell_type = 'string'
+
                 if not cell_type:
                     # test bool first since isinstance(val, int) returns
                     # True when type(val) is bool
@@ -547,6 +803,92 @@ class ReportXlsxAbstract(ReportXlsx):
                 ws_method(*args)
             pos += colspan
         return row_pos + 1
+
+    def _write_ws_footer(self, ws, pos, row_pos, ws_params,
+                         col_specs_section=None,
+                         render_space=None, default_format=None,
+                         col_specs='col_footer', wanted_list='data_footer'):
+        col_specs = ws_params.get(col_specs)
+        wl = ws_params.get(wanted_list) or []
+        for col in wl:
+            colspan = col_specs[col].get('colspan') or 1
+            cell_spec = col_specs[col].get(col_specs_section) or {}
+            if not cell_spec:
+                cell_value = None
+                cell_type = 'blank'
+                cell_format = default_format
+            else:
+                cell_value = cell_spec.get('value')
+                cell_multi = cell_spec.get('multi')
+                if cell_multi:
+                    row_pos = self._write_line_multi(
+                        cell_multi, ws, pos, row_pos, colspan, 'footer',
+                        default_format=default_format,
+                        render_space=render_space)
+                if isinstance(cell_value, CodeType):
+                    cell_value = self._eval(cell_value, render_space)
+                cell_type = cell_spec.get('type')
+                cell_format = cell_spec.get('format') or default_format
+                if not cell_type:
+                    # test bool first since isinstance(val, int) returns
+                    # True when type(val) is bool
+                    if isinstance(cell_value, bool):
+                        cell_type = 'boolean'
+                    elif isinstance(cell_value, str) or \
+                            isinstance(cell_value, unicode):
+                        cell_type = 'string'
+                    elif isinstance(cell_value, (int, float)):
+                        cell_type = 'number'
+                    elif isinstance(cell_value, datetime):
+                        cell_type = 'datetime'
+                    elif isinstance(cell_value, date):
+                        cell_value = datetime.combine(
+                            cell_value, datetime.min.time())
+                        cell_type = 'datetime'
+                    else:
+                        if not cell_value:
+                            cell_type = 'blank'
+                        else:
+                            msg = _(
+                                "%s, _write_line : programming error "
+                                "detected while processing "
+                                "col_specs_section %s, column %s"
+                            ) % (__name__, col_specs_section, col)
+                            if cell_value:
+                                msg += _(", cellvalue %s") % cell_value
+                            raise ValidationError(msg)
+
+            colspan = cell_spec.get('colspan') or colspan
+            args_pos = [row_pos, pos]
+            args_data = [cell_value]
+            if cell_format:
+                if isinstance(cell_format, CodeType):
+                    cell_format = self._eval(cell_format, render_space)
+                args_data.append(cell_format)
+            ws_method = getattr(ws, 'write_%s' % cell_type)
+            args = args_pos + args_data
+            ws_method(*args)
+            row_pos += colspan
+        return pos + 1, row_pos
+
+    def _render_space_footer(self, objects):
+        """Example for hook footer"""
+        render_space_footer = {
+            'objects': objects
+        }
+        return render_space_footer
+
+    def write_ws_footer(self, ws, pos, row, ws_params, objects):
+        # default column footer at A
+        pos = 0
+        render_space = self._render_space_footer(objects)
+        pos, row_pos = self._write_ws_footer(
+            ws, pos, row, ws_params, col_specs_section='header',
+            default_format=self.format_theader_yellow_center)
+        pos, row_pos = self._write_ws_footer(
+            ws, pos, row, ws_params, col_specs_section='data',
+            render_space=render_space)
+        return row_pos
 
     @staticmethod
     def _render(code):
