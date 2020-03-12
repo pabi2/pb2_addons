@@ -439,9 +439,9 @@ class AccountMoveLine(MergedChartField, models.Model):
     def _check_activity_group(self):
         for rec in self:
             if rec.activity_group_id and \
-                    not (rec.activity_id or rec.activity_rpt_id):
+                    not rec.activity_id and not rec.activity_rpt_id:
                 raise ValidationError(
-                    _('Actvitiy is required for activity group!'))
+                    _('Activity is required for activity group!'))
 
 
 class AccountModel(models.Model):
