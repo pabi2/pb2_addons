@@ -1,23 +1,18 @@
 # -*- coding: utf-8 -*-
-
 {
-    'name': 'Document Status History',
+    'name': 'NSTDA :: PABI2 - Log Access',
     'version': '1.0',
     'author': "Ecosoft",
     'category': 'Human Resources',
     'license': 'AGPL-3',
-    'images': [],
     'website': "http://ecosoft.co.th",
-    'description': """
-    Records the status history of documents.
-    """,
+    'description': """ Keep Log Access """,
     'depends': [
         'auditlog',
     ],
     'demo': [],
     'data': [
-        'security/ir.model.access.csv',
-        'views/document_history.xml',
+        'views/auditlog_view.xml',
     ],
     'auto_install': False,
     'installable': True,
