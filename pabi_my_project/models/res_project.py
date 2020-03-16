@@ -520,7 +520,6 @@ class ResProject(LogCommon, models.Model):
                     _('Not allow to release budget for fiscalyear %s!\nOnly '
                       'current year budget is allowed.' % fiscalyear.name))
             budget_plans = project.budget_plan_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear)
-            budget_monitor = project.monitor_expense_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear and l.budget_method=='expense' and l.charge_type=='external')
             budget_plans.write({'released_amount': 0.0})  # Set zero
             if release_external_budget:  # Only for external charge
                 # All expense
@@ -540,7 +539,25 @@ class ResProject(LogCommon, models.Model):
                 raise ValidationError(
                     _('Not allow to release budget for project without plan!'))
             planned_amount = sum([x.planned_amount for x in budget_plans])
-            consumed_amount = sum([x.amount_consumed for x in budget_monitor])
+            # Performance : Query direct database faster than ORM
+            self._cr.execute("""
+                select COALESCE(sum(amount_so_commit),0) +
+                    COALESCE(sum(amount_pr_commit),0) +
+                    COALESCE(sum(amount_po_commit),0) +
+                    COALESCE(sum(amount_exp_commit),0) +
+                    COALESCE(sum(amount_actual),0) as amount_consumed
+                from budget_consume_report
+                where project_id = %s and fiscalyear_id = %s
+                and budget_method = 'expense' and charge_type = 'external'
+            """ % (project.id, fiscalyear.id))
+            consumed_amount = self._cr.dictfetchone()['amount_consumed']
+
+            # ==== OLD METHOD ====
+            # budget_monitor = project.monitor_expense_ids.filtered(
+            #     lambda l: l.fiscalyear_id == fiscalyear and
+            #     l.budget_method == 'expense' and l.charge_type == 'external')
+            # consumed_amount = sum(
+            #     [x.amount_consumed for x in budget_monitor])
             if float_compare(released_amount, planned_amount, 2) == 1 and \
                     not ignore_current_fy:
                 raise ValidationError(
