@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api, tools
+from openerp import models, fields, api
 import datetime
 import numpy as np
+
 
 class XLSXReportSLAEmployee(models.TransientModel):
     _name = 'xlsx.report.sla.employee'
@@ -32,17 +33,17 @@ class XLSXReportSLAEmployee(models.TransientModel):
         string='Run task in background?',
         default=True,
     )
-    
+
     @api.model
     def _domain_to_where_str(self, domain):
         """ Helper Function for better performance """
         where_dom = [" %s %s %s " % (x[0], x[1], isinstance(x[2], basestring)
                      and "'%s'" % x[2] or x[2]) for x in domain]
-        
+
         where_str = 'and'.join(where_dom)
-        where_str = where_str.replace(',)',')')
+        where_str = where_str.replace(',)', ')')
         return where_str
-    
+
     @api.multi
     def _compute_results(self):
         """
@@ -53,12 +54,12 @@ class XLSXReportSLAEmployee(models.TransientModel):
         """
         self.ensure_one()
         Result = self.env['sla.employee.view']
-        
+
         partner_cat = self.env['res.partner.category'].search([('name','in',('Supplier-ภาครัฐ','Supplier-ภาคเอกชน','ต่างประเทศ','พนักงาน สวทช.'))])
         partner_cat_foreign = self.env['res.partner.category'].search([('name', '=', 'ต่างประเทศ')], limit=1)
-        
+
         dom = [('rp.category_id', 'in', tuple(partner_cat.ids))]
-        
+
         if self.supplier_category_name:
             if self.supplier_category_name == 'employee':
                 dom += [('ex.pay_to', '=', 'employee')]
@@ -91,7 +92,7 @@ class XLSXReportSLAEmployee(models.TransientModel):
         where_str = self._domain_to_where_str(dom)
 
         self._cr.execute("""
-            SELECT 
+            SELECT
                 ROW_NUMBER() OVER(ORDER BY av.id, ai.id) AS id,
                 av.id AS voucher_id, ai.id AS invoice_id,
                 av_line.id AS voucher_line_id, ex.id AS expense_id,
@@ -115,11 +116,10 @@ class XLSXReportSLAEmployee(models.TransientModel):
                 AND (pe.state = 'done' OR av.payment_export_id is null)
                 AND %s
             """ % (where_str))
-            
+
         sla_emp = self._cr.dictfetchall()
-        
-        for line in sla_emp:
-            self.results += Result.new(line)
+        self.results = [Result.new(line).id for line in sla_emp]
+
 
 class SLAEmployeeView(models.AbstractModel):
     _name = 'sla.employee.view'
@@ -205,4 +205,3 @@ class SLAEmployeeView(models.AbstractModel):
                                   .strftime('%Y-%m-%d')
                 rec.business_day = np.busday_count(
                     date_start, date_end, holidays=holidays)
-

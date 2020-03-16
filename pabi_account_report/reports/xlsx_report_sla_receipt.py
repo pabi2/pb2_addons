@@ -59,9 +59,9 @@ class XLSXReportSLAReceipt(models.TransientModel):
         """ Helper Function for better performance """
         where_dom = [" %s %s %s " % (x[0], x[1], isinstance(x[2], basestring)
                      and "'%s'" % x[2] or x[2]) for x in domain]
-        
+
         where_str = 'and'.join(where_dom)
-        where_str = where_str.replace(',)',')')
+        where_str = where_str.replace(',)', ')')
         return where_str
 
     @api.multi
@@ -89,19 +89,17 @@ class XLSXReportSLAReceipt(models.TransientModel):
             dom += [('am.date', '>=', self.date_start)]
         if self.date_end:
             dom += [('am.date', '<=', self.date_end)]
-            
+
         where_str = self._domain_to_where_str(dom)
-        
+
         self._cr.execute("""
-            select abr.* 
+            select abr.*
             from account_bank_receipt abr
                 left join account_move am on am.id = abr.move_id
             where %s
             """ % (where_str))
-        
+
         sla_receipt = self._cr.dictfetchall()
-        
-        for line in sla_receipt:
-            self.results += Result.new(line) 
-            
-        #self.results = Result.search(dom, order="name")
+        self.results = [Result.new(line).id for line in sla_receipt]
+
+        # self.results = Result.search(dom, order="name")

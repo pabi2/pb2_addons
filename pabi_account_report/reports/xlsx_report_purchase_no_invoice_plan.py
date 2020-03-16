@@ -5,8 +5,7 @@ from openerp import models, fields, api
 class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
     _name = 'xlsx.report.purchase.no.invoice.plan'
     _inherit = 'report.account.common'
-    
-    
+
     filter = fields.Selection(
         [('filter_no', 'No Filters'),
          ('filter_period', 'Periods')],
@@ -73,7 +72,7 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
-    
+
     """@api.multi
     @api.depends('purchase_ids')
     def _compute_po_name(self):
@@ -82,10 +81,10 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
                 po_name = rec.purchase_ids.filtered('name').mapped('name')
                 po_name = [x.strip() for x in po_name]
                 po_name = ','.join(po_name)
-                
+
                 rec.po_name = str(po_name)
     """
-    
+
     @api.onchange('line_filter')
     def _onchange_line_filter(self):
         self.chartfield_ids = []
@@ -97,8 +96,8 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
             codes = ','.join(codes)
             dom.append(('code', 'ilike', codes))
             self.chartfield_ids = Chartfield.search(dom, order='id')
-    
-    
+
+
     def get_domain_filter(self, fields, filters):
         dom = []
         n = 0
@@ -113,8 +112,8 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
                     dom.append('|')
                 dom.append((fields, 'ilike', rec))
         return dom
-    
-    
+
+
     @api.onchange('line_po_filter')
     def _onchange_line_po_filter(self):
         self.purchase_ids = []
@@ -122,7 +121,7 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
         if self.line_po_filter:
             dom = self.get_domain_filter('name', self.line_po_filter)
             self.purchase_ids = Purchase.search(dom, order='id')
-    
+
     @api.onchange('line_ct_filter')
     def _onchange_line_ct_filter(self):
         self.contract_ids = []
@@ -131,7 +130,7 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
         if self.line_ct_filter:
             dom = self.get_domain_filter('poc_code', self.line_ct_filter)
             self.contract_ids = Contract.search(dom, order='id')
-    
+
     @api.onchange('line_acc_filter')
     def _onchange_line_acc_filter(self):
         self.account_ids = []
@@ -140,19 +139,19 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
         if self.line_acc_filter:
             dom = self.get_domain_filter('code', self.line_acc_filter)
             self.account_ids = Account.search(dom, order='id')
-    
-    
+
+
     @api.model
     def _domain_to_where_str(self, domain):
         """ Helper Function for better performance """
         where_dom = [" %s %s %s " % (x[0], x[1], isinstance(x[2], basestring)
                      and "'%s'" % x[2] or x[2]) for x in domain]
-        
+
         where_str = 'and'.join(where_dom)
         where_str = where_str.replace(',)',')')
         return where_str
-    
-    
+
+
     @api.multi
     def get_model_chartfield(self):
         section = []
@@ -160,7 +159,7 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
         asset = []
         phase = []
         personnel = []
-        
+
         for chartfield in self.chartfield_ids:
             if chartfield.model == 'res.section':
                 section.append(chartfield.res_id)
@@ -172,7 +171,7 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
                 phase.append(chartfield.res_id)
             elif chartfield.model == 'res.personnel.costcenter':
                 personnel.append(chartfield.res_id)
-        
+
         return {
                 'section': section,
                 'project': project,
@@ -180,12 +179,12 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
                 'phase': phase,
                 'personnel': personnel
             }
-    
+
     @api.multi
     def get_where_str_chartfield(self):
         dom = []
         chartfield_dom = []
-        
+
         chartfield = self.get_model_chartfield()
         if chartfield['section']:
             chartfield_dom += [('pol.section_id','in',tuple(chartfield['section']))]
@@ -197,14 +196,14 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
             chartfield_dom += [('pol.invest_construction_phase_id','in',tuple(chartfield['phase']))]
         if chartfield['personnel']:
             chartfield_dom += [('pol.personnel_costcenter_id','in',tuple(chartfield['personnel']))]
-            
+
         where_dom = [" %s %s %s " % (x[0], x[1], isinstance(x[2], basestring)
                      and "'%s'" % x[2] or x[2]) for x in chartfield_dom]
-        
+
         where_str = 'or'.join(where_dom)
         where_str = 'and (' + where_str.replace(',)',')') + ') '
         return where_str
-    
+
 
     @api.multi
     def _compute_results(self):
@@ -212,60 +211,60 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
         line_ids = []
         chartfield_dom = ''
         where_acc = ''
-        
+
         InvoiceLine = self.env['account.invoice.line']
         Reports = self.env['report.purchase.no.invoice.plan.view']
-        
+
         dom_acc = []
         dom = [('po.use_invoice_plan','!=',True)]
-        
+
         if self.org_ids:
             dom += [('org.id','in',tuple(self.org_ids.ids))]
-            
+
         if self.purchase_ids:
             dom += [('po.id','in',tuple(self.purchase_ids.ids))]
-            
+
         if self.contract_ids:
             dom += [('po.contract_id', 'in', tuple(self.contract_ids.ids))]
-            
+
         if self.account_ids:
             dom_acc += [('account_id', 'in', tuple(self.account_ids.ids))]
-            
+
         if self.chartfield_ids:
             chartfield_dom = self.get_where_str_chartfield()
-        
+
         if self.date_po_start and not self.date_po_end:
             dom += [('cast(po.date_order as date)', '=', self.date_po_start)]
-            
+
         if self.date_po_start and self.date_po_end:
             dom += [('cast(po.date_order as date)', '>=', self.date_po_start),('cast(po.date_order as date)','<=',self.date_po_end)]
-            
+
         if self.date_start:
             dom += [('av.date_document','>=',self.date_start)]
         if self.date_end:
             dom += [('av.date_document','<=',self.date_end)]
         if self.period_start_id:
             dom += [('cast(po.date_order as date)','>=',self.period_start_id.date_start)]
-            
+
         if self.period_end_id:
             dom += [('cast(po.date_order as date)','<=',self.period_end_id.date_stop)]
-            
+
         if self.date_contract_action_start:
             dom += [('pct.action_date','>=',self.date_contract_action_start)]
-            
+
         if self.date_contract_action_end:
             dom += [('pct.action_date','<=',self.date_contract_action_end)]
-        
+
         where_str = self._domain_to_where_str(dom)
         where_str += chartfield_dom
-        
+
         if len(dom_acc) > 0:
             where_acc = 'where '+(self._domain_to_where_str(dom_acc)).replace('and','')
-        
+
         self._cr.execute("""
             select * from
                 (select pol.org_id as org_id, po.id as purchase_id, pct.id as contract_id, av.id as invoice_id, avl.id as invoice_line_id,
-                    av.purchase_billing_id as billing_id, pol.id as purchase_line_id, 
+                    av.purchase_billing_id as billing_id, pol.id as purchase_line_id,
                     po.date_order, po.name as po_number, pol.docline_seq,
                     case
                         when prot.type in ('product','consu') then acc_st.id
@@ -279,7 +278,7 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
                         when po.contract_id is not null then pct_t.name
                         else ''
                     end as po_contract_type,
-                    ag.name as activity_group, 
+                    ag.name as activity_group,
                     rpt.name as activity_rpt,
                     case
                         when pol.section_id is not null then sec.code
@@ -298,40 +297,40 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
                         else ''
                     end as budget_name,
                     fund.name as fund, fis.name as fiscal_year_by_invoice_plan,
-                    cur_po.name as currency, 
-                    (SELECT STRING_AGG(tax.description, ', ') AS tax 
-                     FROM account_tax tax 
+                    cur_po.name as currency,
+                    (SELECT STRING_AGG(tax.description, ', ') AS tax
+                     FROM account_tax tax
                          LEFT JOIN purchase_order_taxe pot ON pot.tax_id = tax.id
                      WHERE pot.ord_id = pol.id
                     ) AS taxes,
                     ROUND((CASE
                         WHEN cur_po.name = 'THB' THEN 1
-                        WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1) IS NULL 
-                        THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
+                        WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r
+                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1) IS NULL
+                        THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r
                             WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) > CAST(cur_r.name AS DATE) order by cur_r.name limit 1)
-                        ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
+                        ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r
                             WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1)
                     END), 2) as exchange_rate_po,
                     ROUND((CASE
                         WHEN cur_kv.name = 'THB' THEN 1
-                        WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice = CAST(cur_r.name AS DATE) limit 1) IS NULL 
-                        THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
+                        WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r
+                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice = CAST(cur_r.name AS DATE) limit 1) IS NULL
+                        THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r
                             WHERE cur_r.currency_id = cur_kv.id and av.date_invoice  > CAST(cur_r.name AS DATE) order by cur_r.name limit 1)
-                        ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
+                        ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r
                             WHERE cur_r.currency_id = cur_kv.id and av.date_invoice  = CAST(cur_r.name AS DATE) limit 1)
                     END), 2) as exchange_rate_kv,
-                    (select wal.to_receive_qty from purchase_work_acceptance_line wal 
+                    (select wal.to_receive_qty from purchase_work_acceptance_line wal
                         where wal.line_id = pol.id and wa.id = wal.acceptance_id limit 1
                     ) as plan_qty,
-                    (select wal.price_unit_untaxed from purchase_work_acceptance_line wal 
+                    (select wal.price_unit_untaxed from purchase_work_acceptance_line wal
                         where wal.line_id = pol.id and wa.id = wal.acceptance_id limit 1
                     ) as plan_unit_price,
-                    (select wal.price_subtotal from purchase_work_acceptance_line wal 
+                    (select wal.price_subtotal from purchase_work_acceptance_line wal
                         where wal.line_id = pol.id and wa.id = wal.acceptance_id limit 1
                     ) as subtotal,
-                    (select invl.price_subtotal from account_invoice_line invl where invl.invoice_id = av.id and 
+                    (select invl.price_subtotal from account_invoice_line invl where invl.invoice_id = av.id and
                         invl.purchase_line_id = pol.id
                     ) as inv_amount,
                     case
@@ -352,10 +351,10 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
                     left join product_product prod on prod.id = pol.product_id
                     left join product_template prot on prot.id = prod.product_tmpl_id
                     left join product_category cate on cate.id = prot.categ_id
-                    left join ir_property ip_exp on ip_exp.res_id = concat('product.category,',cate.id) 
+                    left join ir_property ip_exp on ip_exp.res_id = concat('product.category,',cate.id)
                         and ip_exp.name = 'property_account_expense_categ'
                     left join account_account acc_exp on concat('account.account,',acc_exp.id) = ip_exp.value_reference
-                    left join ir_property ip_st on ip_st.res_id = concat('product.category,',cate.id) 
+                    left join ir_property ip_st on ip_st.res_id = concat('product.category,',cate.id)
                         and ip_st.name = 'property_stock_valuation_account_id'
                     left join account_account acc_st on concat('account.account,',acc_st.id) = ip_st.value_reference
                     left join res_org org on org.id = pol.org_id
@@ -377,19 +376,18 @@ class XLSXReportPurchasenoInvoicePlan(models.TransientModel):
             order by org_id, po_fiscalyear, date_order, po_number, docline_seq
             """  % (where_str,where_acc))
         #search = rec.search([('invoice_id','=',rec.invoice_id.id),('purchase_line_id','!=',False)], limit=1)
-        
+
         invoice_lines = self._cr.dictfetchall()
-        
-        for line in invoice_lines:
-            self.results += Reports.new(line)
-        
+
+        self.results = [Reports.new(line).id for line in invoice_lines]
+
         print 'results: '+str(self.results)
 
 
 class ReportPurchaseNoInvoicePlanView(models.AbstractModel):
     _name = 'report.purchase.no.invoice.plan.view'
     #_auto = False
-    
+
     #id = fields.Integer()
     org_id = fields.Many2one('res.org')
     purchase_id = fields.Many2one('purchase.order')
@@ -419,5 +417,3 @@ class ReportPurchaseNoInvoicePlanView(models.AbstractModel):
     subtotal = fields.Char()
     inv_amount = fields.Char()
     advance_deposit = fields.Char()
-    
-    
