@@ -220,6 +220,6 @@ class PABIPartnerDunningLetterLine(models.Model):
         for line in self:
             ref_name = line.move_line_id.ref
             interface_account = self.env["interface.account.entry"]
-            interface_move_line = interface_account.search([('name','=',ref_name)])
+            interface_move_line = interface_account.sudo().search([('name','=',ref_name)])
             validate_user = interface_move_line.validate_user_id
             line.validate_user_id = validate_user
