@@ -13,6 +13,17 @@
                 </tree>
             </field>
         </record>
+        
+        <record id="view_cost_control_type_search" model="ir.ui.view">
+            <field name="name">view.cost.control.type.search</field>
+            <field name="model">cost.control.type</field>
+            <field name="arch" type="xml">
+                <search string="Search Job Order Type">
+                    <field name="name" string="Job Order Type" filter_domain="['|',('name','ilike',self),('code','ilike',self)]"/>
+                    <separator/>
+               </search>
+            </field>
+        </record>
 
         <record id="view_cost_control_type_form" model="ir.ui.view">
             <field name="name">view.cost.control.type.form</field>
@@ -56,11 +67,12 @@
             <field name="arch" type="xml">
                 <tree string="Job Order" colors="grey:(not active)">
                     <field name="cost_control_type_id"/>
-                    <field name="name"/>
                     <field name="code" />
+                    <field name="name"/>
                     <field name="name_short"/>
                     <field name="description" />
                     <field name="owner_level"/>
+					<field name="owner_name"/>
                     <field name="active"/>
                 </tree>
             </field>
@@ -88,8 +100,8 @@
                         </group>
                         <group>
                             <field name="active"/>
-                        	   <field name="code" />
-                             <field name="name_short"/>
+                        	<field name="code" />
+                            <field name="name_short"/>
                             <field name="description" />
                         </group>
                     </group>
@@ -108,12 +120,19 @@
             <field name="model">cost.control</field>
             <field name="arch" type="xml">
                 <search string="Search Job Order">
-                    <field name="name" string="Job Order" filter_domain="['|',('name','ilike',self), ('code','ilike',self), ('name_short','ilike',self)]"/>
+                	<field name="name" string="Job Order" filter_domain="['|','|',('name','ilike',self),('code','ilike',self),('name_short','ilike',self)]"/>
                     <filter name="public" string="NSTDA Wide" domain="[('public','=',True)]"/>
                     <separator/>
                     <group expand="0" string="Group By">
                         <filter name="group_by_owner_level" string="Owner Level" context="{'group_by':'owner_level'}"/>
-                        <filter name="group_by_active" string="Active" context="{'group_by':'active'}"/>
+                        <filter name="group_by_job_order_type" string="Job order type" context="{'group_by':'cost_control_type_id'}"/>
+                        <filter name="group_by_owner_name1" string="Owner Org" context="{'group_by':'org_id'}"/>
+                        <filter name="group_by_owner_name2" string="Owner Sector" context="{'group_by':'sector_id'}"/>
+                      	<filter name="group_by_owner_name3" string="Owner Subsector" context="{'group_by':'subsector_id'}"/>
+                      	<filter name="group_by_owner_name4" string="Owner Division" context="{'group_by':'division_id'}"/>
+                      	<filter name="group_by_owner_name5" string="Owner Section" context="{'group_by':'section_id'}"/>
+                        <filter name="group_by_active" string="Active" context="{'group_by':'active'}" domain="[('active','=',True)]"/>
+                        <filter name="group_by_inactive" string="Inactive" context="{'group_by':'active'}" domain="[('active','=',False)]"/>
                     </group>
                </search>
             </field>
