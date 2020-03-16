@@ -295,9 +295,17 @@ class ProjectBalanceCarryForward(models.Model):
             })
             # Adjust released amount = actual amount
             if self.adj_released_comsumed:
-                ext_consumed_amount = project.monitor_expense_ids.filtered(
-                    lambda l: l.fiscalyear_id == self.from_fiscalyear_id and
-                    l.charge_type == 'external').amount_consumed
+                self._cr.execute("""
+                select COALESCE(sum(amount_consumed),0) amount_consumed
+                from budget_consume_report
+                where project_id = %s and fiscalyear_id = %s
+                    and budget_method = 'expense' and charge_type = 'external'
+                """ % (project.id, self.from_fiscalyear_id.id))
+                ext_consumed_amount = \
+                    self._cr.dictfetchone()['amount_consumed']
+                # ext_consumed_amount = project.monitor_expense_ids.filtered(
+                #     lambda l: l.fiscalyear_id == self.from_fiscalyear_id and
+                #     l.charge_type == 'external').amount_consumed
                 project._release_fiscal_budget(
                     self.from_fiscalyear_id, ext_consumed_amount)
                 # create history when adjust released amount
