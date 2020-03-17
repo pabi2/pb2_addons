@@ -3,9 +3,11 @@
 from . import report_account_common
 from . import report_status
 from . import xlsx_report_input_tax
+from . import xlsx_report_input_tax_excel
 from . import xlsx_report_partner_detail
 from . import xlsx_report_cheque_register
 from . import xlsx_report_advance_status
+from . import xlsx_report_advance_status_excel
 from . import xlsx_report_contract_collateral
 from . import xlsx_report_advance_payment
 from . import xlsx_report_payable_detail
@@ -43,11 +45,12 @@ from . import xlsx_report_gl_project
 # Asset Reports
 from . import asset_repair_report
 from . import asset_register_report
+from . import asset_register_report_xlsx
 from . import asset_estimate_report
 # PND Reports
 from . import xlsx_report_pnd1
 #Preprint Receipt
-from . import xlsx_report_preprint_receipt 
+from . import xlsx_report_preprint_receipt
 from . import xlsx_report_pabi_employee_advance_report
 #PE PV Reports
 from . import xlsx_report_pv_pe

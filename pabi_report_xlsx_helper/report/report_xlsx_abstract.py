@@ -680,7 +680,7 @@ class ReportXlsxAbstract(ReportXlsx):
             row_pos += colspan
         return pos + 1, row_pos
 
-    def _render_space(self, object):
+    def _render_space(self, objects, object):
         """For hook and add field"""
         render_space = {
             'object': object,
@@ -689,7 +689,7 @@ class ReportXlsxAbstract(ReportXlsx):
 
     def write_line_data(self, ws, row_pos, ws_params, objects):
         for object in objects.results:
-            render_space = self._render_space(object)
+            render_space = self._render_space(objects, object)
             row_pos = self._write_line(
                 ws, row_pos, ws_params, col_specs_section='data',
                 render_space=render_space)

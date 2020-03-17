@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+        <!-- XLSX ASSET REGISTER REPORTS -->
+        <record id="action_report_asset_register_xlsx" model="ir.actions.report.xml">
+            <field name="name">Asset Register XLSX</field>
+            <field name="model">asset.register.report</field>
+            <field name="type">ir.actions.report.xml</field>
+            <field name="report_name">report_asset_register_xlsx</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_file">Asset Report</field>
+        </record>
+
+        <!-- XLSX INPUT TAX REPORTS -->
+        <record id="action_report_input_tax_xlsx" model="ir.actions.report.xml">
+            <field name="name">Input Tax XLSX</field>
+            <field name="model">xlsx.report.input.tax</field>
+            <field name="type">ir.actions.report.xml</field>
+            <field name="report_name">report_input_tax_xlsx</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_file">Input Tax</field>
+        </record>
+    </data>
+</openerp>

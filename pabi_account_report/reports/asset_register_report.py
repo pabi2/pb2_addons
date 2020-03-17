@@ -433,6 +433,12 @@ class AssetRegisterReport(models.TransientModel):
         self.results = [ReportLine.new(line).id for line in results]
         return True
 
+    @api.multi
+    def button_export_xlsx(self):
+        self.ensure_one()
+        report_name = 'report_asset_register_xlsx'
+        return super(AssetRegisterReport, self).button_export_xlsx(report_name)
+
     # @api.multi
     # def action_get_report(self):
     #     action = self.env.ref(

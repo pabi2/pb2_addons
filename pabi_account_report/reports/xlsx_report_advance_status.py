@@ -30,7 +30,7 @@ class XLSXReportAdvanceStatus(models.TransientModel):
         compute='_compute_results',
         help='Use compute fields, so there is nothing store in database',
     )
-  
+
 
     @api.model
     def _get_expense_id(self, date_report):
@@ -80,9 +80,9 @@ class XLSXReportAdvanceStatus(models.TransientModel):
         self.results = Result.search(
             dom, order="operating_unit_id,employee_id,invoice_id")
 
-
-
-
-
-
-
+    @api.multi
+    def button_export_xlsx(self):
+        self.ensure_one()
+        report_name = 'report_advance_status_xlsx'
+        return super(XLSXReportAdvanceStatus, self).button_export_xlsx(
+            report_name)

@@ -54,3 +54,9 @@ class XLSXReportInputTax(models.TransientModel):
         if report_ids:
             dom = [('id', 'in', report_ids)]
         self.results = Result.search(dom, order='tax_sequence_display')
+
+    @api.multi
+    def button_export_xlsx(self):
+        self.ensure_one()
+        report_name = 'report_input_tax_xlsx'
+        return super(XLSXReportInputTax, self).button_export_xlsx(report_name)
