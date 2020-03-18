@@ -34,6 +34,11 @@ class PABIPartnerDunningReport(models.Model):
         string='Reconcile',
         readonly=True,
     )
+    reconcile_partial_id = fields.Many2one(
+        'account.move.reconcile',
+        string='Partial Reconcile',
+        readonly=True,
+    )
     date_maturity = fields.Date(
         string='Due Date',
         readonly=True,
@@ -141,6 +146,7 @@ class PABIPartnerDunningReport(models.Model):
                  id = split_part(am.document_id, ',', 2) :: int) else
                  am.create_uid end as validate_user_id, aml.id,
                 aml.id as move_line_id, aml.reconcile_id as reconcile_id,
+                aml.reconcile_partial_id as reconcile_partial_id,
                 aml.date_maturity, aml.date, aml.partner_id, rp.category_id,
                 aa.type account_type, aa.id account_id, new_title,
                 case when letter.l1 is not null then true else false end as l1,
