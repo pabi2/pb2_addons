@@ -7,6 +7,7 @@ import openerp.addons.decimal_precision as dp
 from .res_partner import INCOME_TAX_FORM
 from .account_wht_cert import WHT_CERT_INCOME_TYPE, TAX_PAYER
 from openerp.tools.float_utils import float_compare
+from math import floor
 
 
 class CommonVoucher(object):
@@ -716,7 +717,7 @@ class AccountVoucher(CommonVoucher, models.Model):
         invoices = self.invoices_text.split(',')
         invoices = tuple(invoices)
         invoices = self.env['account.invoice'].search([('number', 'in', invoices)])
-        
+
         for line in self.recognize_vat_move_id.line_id:
             if line.chartfield_id is not True and line.account_id.user_type.name == 'Revenue':
                 line.chartfield_id = invoices[0].invoice_line[0].chartfield_id.id
@@ -830,7 +831,13 @@ class AccountVoucherLine(CommonVoucher, models.Model):
                 move_line_id,
                 amount_original,
                 amount)
-            vals['amount_wht'] = -round(amount_wht, prec)
+            # Fix for issue: https://mobileapp.nstda.or.th/redmine/issues/4273
+            # Github: https://github.com/pabi2/pb2_addons/pull/1800
+            rounding_amount_wht = -round(amount_wht, prec)
+            check_rounding_val = -floor(amount_wht*10**(prec)+0.5)/10**(prec)
+            if check_rounding_val != rounding_amount_wht:
+                rounding_amount_wht = check_rounding_val
+            vals['amount_wht'] = rounding_amount_wht
             vals['amount_retention'] = -round(amount_retention, prec)
             vals['amount'] = round(amount, prec)
         return {'value': vals}
