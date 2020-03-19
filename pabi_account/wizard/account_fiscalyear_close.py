@@ -250,5 +250,27 @@ class AccountFiscalyearClose(models.TransientModel):
                     'SET end_journal_period_id = %s ' \
                     'WHERE id = %s', (ids[0], old_fyear.id))
         obj_acc_fiscalyear.invalidate_cache(cr, uid, ['end_journal_period_id'], [old_fyear.id], context=context)
-
+        self._update_date_reconciled(cr, uid, ids, context=context)
         return {'type': 'ir.actions.act_window_close'}
+
+    def _update_date_reconciled(self, cr, uid, ids, context=None):
+        cr.execute(
+            '''
+                select distinct reconcile_id
+                from account_move_line
+                    where reconcile_id is not null
+                        and date_reconciled is null
+            '''
+        )
+        result_ids = map(lambda x: x[0], cr.fetchall())
+        if result_ids:
+            cr.execute(
+                '''
+                    update account_move_line a
+                    set date_reconciled = (
+                        select max(date) from account_move_line
+                            where reconcile_id = %s)
+                            where reconcile_id = %s
+                            and date_reconciled is null
+                ''', (tuple(result_ids), (tuple(result_ids),))
+            )
