@@ -35,6 +35,7 @@ class PABIPartnerDunningWizard(models.TransientModel):
         # Report = self.env['pabi.partner.dunning.report']
         date_run = fields.Date.context_today(self)
         domain = [('reconcile_id', '=', False),
+                  ('reconcile_partial_id', '=', False),
                   ('account_type', '=', 'receivable')]
         # Filter by account
         if self.account_ids:
