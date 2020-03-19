@@ -218,8 +218,12 @@ class PABIPartnerDunningLetterLine(models.Model):
     @api.depends('move_line_id')
     def _compute_validate_user_id(self):
         for line in self:
-            ref_name = line.move_line_id.ref
-            interface_account = self.env["interface.account.entry"]
-            interface_move_line = interface_account.search([('name','=',ref_name)])
-            validate_user = interface_move_line.validate_user_id
+            ref_name = line.move_line_id.move_id.name
+            if self.env["interface.account.entry"].sudo().search([('number','=',ref_name)]):
+                interface_account = self.env["interface.account.entry"].sudo().search([('number','=',ref_name)]).validate_user_id
+            elif self.env["account.invoice"].sudo().search([('number','=',ref_name)]):
+                interface_account = self.env["account.invoice"].sudo().search([('number','=',ref_name)]).validate_user_id
+            else:
+                interface_account = line.move_line_id.move_id.write_uid
+            validate_user = interface_account
             line.validate_user_id = validate_user
