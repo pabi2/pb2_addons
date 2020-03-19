@@ -17,7 +17,7 @@ pu.name product_uom
 FROM purchase_order_line pol
 LEFT JOIN product_uom pu
 ON pu.id = pol.product_uom
-WHERE pol.order_id = $P{ids}]]>
+WHERE pol.order_id = $P{ids} and pol.active = True]]>
 		</queryString>
 		<field name="name" class="java.lang.String"/>
 		<field name="price_unit" class="java.math.BigDecimal">
