@@ -266,14 +266,18 @@
                         'results': {
                             'A8': '${"=ROW()-7"}',
                             'B8': 'category_name${value or ""}',
-                            'C8': 'search_key${value or ""}',
+                            'C8': 'search_key${value or ""}#{number_format=text}',
                             'D8': 'supplier_name${value or ""}',
                             'E8': 'address${value or ""}',
-                            'F8': 'vat${value or ""}',
+                            'F8': 'vat${value or ""}#{number_format=text}',
                             'G8': 'taxbranch${value or ""}',
                             'H8': 'phone${value or ""}',
                             'I8': 'email${value or ""}',
                             'J8': 'tag_name${value or ""}',
+                            'K8': 'account_number${value or ""}#{number_format=text}',
+                            'L8': 'bank_name${value or ""}',
+                            'M8': 'account_owner_name${value or ""}',
+                            'N8': 'partner_id.property_supplier_payment_term.name${value or ""}',                     
                         },
                         '_TAIL_0': {
                         }

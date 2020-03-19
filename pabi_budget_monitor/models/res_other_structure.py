@@ -22,7 +22,11 @@ class CostControl(models.Model):
         domain=[('budget_method', '=', 'expense')],
         readonly=True,
     )
-
+    section_ids =fields.Many2many(
+        'res.section',
+        string='Section',
+        
+    )
 
 class CostControlType(models.Model):
     _inherit = 'cost.control.type'

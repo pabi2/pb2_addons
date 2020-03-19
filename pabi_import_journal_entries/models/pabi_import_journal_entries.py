@@ -5,7 +5,7 @@ from openerp.tools.float_utils import float_compare
 from openerp.addons.pabi_chartfield_merged.models.chartfield import \
     MergedChartField
 from openerp.exceptions import RedirectWarning
-from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.queue.job import job
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import RetryableJobError
 
@@ -65,7 +65,10 @@ class PabiImportJournalEntries(models.Model):
         readonly=True,
         copy=False,
     )
-    
+    commit_every = fields.Integer(
+        default=100,
+    )
+
     split_entries_job_id = fields.Many2one(
         'queue.job',
         string='split entries Job',
@@ -76,6 +79,7 @@ class PabiImportJournalEntries(models.Model):
         compute='_compute_split_entries_job_uuid',
     )
 ###########################--------------------------------- start job backgruond ------------------------------- #######################
+
     @api.multi
     def _compute_split_entries_job_uuid(self):
         for rec in self:
@@ -118,9 +122,6 @@ class PabiImportJournalEntries(models.Model):
 
 ###########################--------------------------------- end job backgruond ------------------------------- #######################
 
-
-
-
     @api.multi
     def _compute_moves(self):
         for rec in self:
@@ -159,9 +160,13 @@ class PabiImportJournalEntries(models.Model):
 
     @api.multi
     def split_entries(self):
-        """ For each repat Ref, do create journal entries """
+        """ For each repat Ref, do create journal entries
+            and commit every 100 record """
         self.ensure_one()
-        self.move_ids.unlink()
+        # do first time only
+        if not self._context.get('not_unlink', False) and \
+                not any(self.line_ids.mapped('check_commit')):
+            self.move_ids.unlink()
         moves = {}
         for line in self.line_ids:
             if not moves.get(line.ref, False):
@@ -182,67 +187,104 @@ class PabiImportJournalEntries(models.Model):
                 'chartfield_id': line.chartfield_id.id,
                 'cost_control_id': line.cost_control_id.id,
                 'origin_ref': line.origin_ref,
+                'product_id': line.product_id.id,
+                'asset_code': line.asset_code,
                 # More data
                 'period_id': self.env['account.period'].find(line.date).id,
                 'fund_id': line.fund_id or line._get_default_fund(),
             }
             moves[line.ref].append(vals)
-        # Create JE
-        for ref, lines in moves.iteritems():
-            move_dict = {'ref': ref}
-            move_lines = []
-            i = 0
-            for l in lines:
-                period_id = self.env['account.period'].find(dt=line['date']).id
-                if i == 0:  # First loop
+        # first time to create all move
+        if not self._context.get('not_unlink', False) and \
+                not any(self.line_ids.mapped('check_commit')):
+            for ref, lines in moves.iteritems():
+                move_dict = {'ref': ref}
+                for l in lines:
+                    period_id = \
+                        self.env['account.period'].find(dt=line['date']).id
                     move_dict.update({
                         'journal_id': l['journal_id'],
                         'date': l['date'],
                         'to_be_reversed': l['to_be_reversed'],
                         'period_id': period_id,
                     })
-                i += 1
+                new_move = self.env['account.move'].create(move_dict)
+                new_move.date_document = new_move.date  # Reset date
+                self.move_ids += new_move
+        # Search line depend on commit
+        lines = self.env['pabi.import.journal.entries.line'].search([
+            ('import_id', '=', self.id),
+            ('check_commit', '=', False)], limit=self.commit_every)
+        if lines:
+            # Create JE
+            move_lines = []
+            for l in lines:
+                period_id = \
+                    self.env['account.period'].find(dt=line['date']).id
+                # ensure 1 asset
+                asset = self.env['account.asset'].search([
+                    ('code', '=', l.asset_code)], limit=1)
+                if (l.asset_code and not asset):
+                    raise ValidationError(
+                        _("%s not found!") % l.asset_code)
+                if not l.asset_code:
+                    asset = False
                 move_lines.append((0, 0, {
-                    'docline_seq': l['docline_seq'],
-                    'partner_id': l['partner_id'],
-                    'activity_group_id': l['activity_group_id'],
-                    'activity_id': l['activity_id'],
-                    'account_id': l['account_id'],
-                    'name': l['name'],
-                    'debit': l['debit'],
-                    'credit': l['credit'],
-                    'chartfield_id': l['chartfield_id'],
-                    'cost_control_id': l['cost_control_id'],
-                    'origin_ref': l['origin_ref'],
+                    'ref': l.ref,
+                    'docline_seq': l.docline_seq,
+                    'partner_id': l.partner_id.id,
+                    'activity_group_id': l.activity_group_id.id,
+                    'activity_id': l.activity_id.id,
+                    'account_id': l.account_id.id,
+                    'name': l.name,
+                    'debit': l.debit,
+                    'credit': l.credit,
+                    'chartfield_id': l.chartfield_id.id,
+                    'cost_control_id': l.cost_control_id.id,
+                    'origin_ref': l.origin_ref,
+                    'product_id': l.product_id.id,
+                    'asset_id': asset and asset.id or False,
                     # More data
                     'period_id': period_id,
                     'fund_id': line._get_default_fund(),
                     }))
-            move_dict['line_id'] = move_lines
-            new_move = self.env['account.move'].create(move_dict)
-            new_move.date_document = new_move.date  # Reset date
-            self._validate_new_move(new_move)
-            self.move_ids += new_move
-        self.write({'state': 'done'})
-        return True
+            lines.write({'check_commit': True})
+            for move_id in self.move_ids:
+                move_line = [ml for ml in move_lines
+                             if ml[2].get('ref') == move_id.ref]
+                move_id.with_context({'allow_asset': True}).write({
+                    'line_id': move_line
+                })
+                for asset in move_id.line_id.mapped('asset_id'):
+                    asset_line = asset.depreciation_line_ids.filtered(
+                        lambda l: not l.move_id and l.init_entry)
+                    if asset_line:
+                        asset_line.write({'move_id': move_id.id})
+            self.env.cr.commit()
+            return self.with_context({'not_unlink': True}).split_entries()
+        else:
+            self.write({'state': 'done'})
+            self._validate_new_move(self.move_ids)
+            return True
 
     @api.model
-    def _validate_new_move(self, move):
-        ag_lines = move.line_id.filtered('activity_group_id')
-        # JV must have AG/A
-        if move.journal_id.analytic_journal_id and not ag_lines:
-            raise ValidationError(
-                _('For JV (Adjust Budget), %s'
-                  'at least 1 line must have AG/A!') % move.ref)
-        # JN must not have AG/A
-        if not move.journal_id.analytic_journal_id and ag_lines:
-            raise ValidationError(
-                _('For JN (Adjust.No.Budget), %s'
-                  'no line can have activity group!') % move.ref)
-        # Debit != Credit
-        if float_compare(sum(move.line_id.mapped('debit')),
-                         sum(move.line_id.mapped('credit')), 2) != 0:
-            raise ValidationError(_('Entry not balance %s!') % move.ref)
+    def _validate_new_move(self, moves):
+        for move in moves:
+            ag_lines = move.line_id.filtered('activity_group_id')
+            # JV must have AG/A
+            if move.journal_id.analytic_journal_id and not ag_lines:
+                raise ValidationError(
+                    _('For JV (Adjust Budget), %s'
+                      'at least 1 line must have AG/A!') % move.ref)
+            # JN must not have AG/A
+            if not move.journal_id.analytic_journal_id and ag_lines:
+                raise ValidationError(
+                    _('For JN (Adjust.No.Budget), %s'
+                      'no line can have activity group!') % move.ref)
+            # Debit != Credit
+            if float_compare(sum(move.line_id.mapped('debit')),
+                             sum(move.line_id.mapped('credit')), 2) != 0:
+                raise ValidationError(_('Entry not balance %s!') % move.ref)
 
 
 class PabiImportJournalEntriesLine(MergedChartField, models.Model):
@@ -254,6 +296,9 @@ class PabiImportJournalEntriesLine(MergedChartField, models.Model):
         string='Import ID',
         index=True,
         ondelete='cascade',
+    )
+    check_commit = fields.Boolean(
+        copy=False,
     )
     # Header
     ref = fields.Char(
@@ -319,4 +364,11 @@ class PabiImportJournalEntriesLine(MergedChartField, models.Model):
     chartfield_id = fields.Many2one(
         'chartfield.view',
         domain=[],  # Remove domain
+    )
+    product_id = fields.Many2one(
+        'product.product',
+        string='Product',
+    )
+    asset_code = fields.Char(
+        string='Asset Code',
     )

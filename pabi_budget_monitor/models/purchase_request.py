@@ -10,7 +10,10 @@ class PurchaseRequest(models.Model):
     def _pr_budget_check(self):
         Budget = self.env['account.budget']
         for pr in self:
-            doc_date = pr.date_approve
+            # issue : https://mobileapp.nstda.or.th/redmine/issues/4099
+            # Change date pr to date today
+            doc_date = fields.Date.context_today(self)
+            # doc_date = pr.date_approve
             doc_lines = Budget.convert_lines_to_doc_lines(pr.line_ids)
             res = Budget.post_commit_budget_check(doc_date, doc_lines)
             if not res['budget_ok']:

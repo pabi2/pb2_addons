@@ -63,6 +63,7 @@ class AccountMove(models.Model):
         string='Post Job UUID',
         compute='_compute_button_validate_job_uuid',
     )
+
     @api.multi
     def action_account_move_post(self):
         for active_ids in self :
@@ -356,6 +357,10 @@ class AccountMoveLine(MergedChartField, models.Model):
         string='Require AG&A',
         related='account_id.is_require_activity',
     )
+    is_require_budget = fields.Boolean(
+        'is require Budget',
+        related='account_id.user_type.is_require_budget',
+    )
 
     _defaults = {
         'account_id': _get_default_account_id,
@@ -536,3 +541,11 @@ class AccountAnalyticAccount(models.Model):
             pass
         elif not self.taxbranch_id:
             raise ValidationError(_("Please check Tax branch is null"))
+
+
+class AccountAccountType(models.Model):
+    _inherit = 'account.account.type'
+
+    is_require_budget = fields.Boolean(
+        'Require Budget Structure'
+    )

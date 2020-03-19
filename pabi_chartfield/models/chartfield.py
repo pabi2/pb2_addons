@@ -307,11 +307,15 @@ class CostControl(ResCommon, models.Model):
     active = fields.Boolean(
         track_visibility='onchange',
     )
+    owner_name = fields.Char(
+        string='Owner',
+        compute='_check_owner',
+    )
 
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Job Order Name must be unique!'),
     ]
-
+    
     @api.model
     def _check_access(self):
         if not self.env.user.has_group(
@@ -350,6 +354,26 @@ class CostControl(ResCommon, models.Model):
         self.subsector_id = False
         self.division_id = False
         self.section_id = False
+        
+    @api.depends('owner_level','org_id','sector_id','subsector_id','division_id','section_id')
+    def _check_owner(self):
+        for rec in self:
+            if rec.owner_level == 'org':
+                owner = rec.org_id.display_name
+                rec.owner_name = owner
+            if rec.owner_level == 'sector':
+                owner = rec.sector_id.display_name
+                rec.owner_name = owner
+            if rec.owner_level == 'subsector':
+                owner = rec.subsector_id.display_name
+                rec.owner_name = owner
+            if rec.owner_level == 'division':
+                owner = rec.division_id.display_name
+                rec.owner_name = owner
+            if rec.owner_level == 'section':
+                owner = rec.section_id.display_name
+                rec.owner_name = owner
+
 
     # @api.multi
     # def name_get(self):

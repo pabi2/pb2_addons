@@ -76,6 +76,11 @@ class ResPartner(models.Model):
         string='Supplier Legacy Code',
         size=100,
     )
+    #Add by Peerapol C. 801645
+    email_accountant = fields.Char(
+        string='Email Accountant',
+        store=True,
+    )
 
     @api.onchange('title')
     def _onchange_title(self):

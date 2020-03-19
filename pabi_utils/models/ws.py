@@ -76,14 +76,16 @@ class PABIUtilsWS(models.AbstractModel):
             # First, delete all lines o2m
             lines.unlink()
             final_line_dict = []
+            final_line_append = final_line_dict.append
             # Loop all o2m lines, and recreate it
             for line_data_dict in data_dict[line_field]:
                 rec_fields = []
+                rec_fields_append = rec_fields.append
                 line_fields = []
                 for field, model_field in rec[line_field]._fields.iteritems():
                     if field in line_data_dict and \
                             model_field.type != 'one2many':
-                        rec_fields.append(field)
+                        rec_fields_append(field)
                     elif field in line_data_dict:
                         line_fields.append(field)
                 line_dict = {k: v for k, v in line_data_dict.iteritems()
@@ -92,7 +94,7 @@ class PABIUtilsWS(models.AbstractModel):
                     raise ValidationError(_('friendly_update_data() support '
                                             'only 1 level of one2many lines'))
                 line_dict = self._finalize_data_to_write(lines, line_dict)
-                final_line_dict.append((0, 0, line_dict))
+                final_line_append((0, 0, line_dict))
             rec_dict[line_field] = final_line_dict
         rec.write(rec_dict)
         res = {

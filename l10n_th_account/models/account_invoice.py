@@ -68,6 +68,13 @@ class AccountInvoice(models.Model):
         if res:
             res['context']['default_amount'] = 0.0
         return res
+    #//////////////////////////////////////////////////////////////////////////////////////////////////
+    @api.constrains('date_due','date_invoice')
+    def date_compare(self):
+        if self.type == 'in_invoice' and self.date_due != False:
+            if self.date_due < self.date_invoice:
+                raise ValidationError('Due Date is greater than or equal to Posting date')
+    #//////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 class AccountInvoiceLine(models.Model):

@@ -512,7 +512,6 @@ class ResProject(LogCommon, models.Model):
         current_fy = self.env['account.fiscalyear'].find()
         release_external_budget = fiscalyear.control_ext_charge_only
         ignore_current_fy = self._context.get('ignore_current_fy_lock', False)
-        # not_update_released = self._context.get('not_update_released', False)
         for project in self.sudo():
             if project.current_fy_release_only and \
                     current_fy != fiscalyear.id and \
@@ -521,18 +520,44 @@ class ResProject(LogCommon, models.Model):
                     _('Not allow to release budget for fiscalyear %s!\nOnly '
                       'current year budget is allowed.' % fiscalyear.name))
             budget_plans = project.budget_plan_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear)
-            budget_monitor = project.monitor_expense_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear and l.budget_method=='expense' and l.charge_type=='external')
-            # if not_update_released:
-            #     current_released_amount = released_amount
             budget_plans.write({'released_amount': 0.0})  # Set zero
             if release_external_budget:  # Only for external charge
-                budget_plans = budget_plans.\
-                    filtered(lambda l: l.charge_type == 'external')
+                # All expense
+                expense_budget_plans = budget_plans.filtered(
+                    lambda l: l.budget_method == 'expense')
+                # Filter only internal
+                int_budget_plans = expense_budget_plans.filtered(
+                    lambda l: l.charge_type == 'internal')
+                # Filter only extenral
+                budget_plans = expense_budget_plans.filtered(
+                    lambda l: l.charge_type == 'external')
+                # Check case internal but not external, just return, no error
+                if int_budget_plans and not budget_plans:
+                    return
+
             if not budget_plans:
                 raise ValidationError(
                     _('Not allow to release budget for project without plan!'))
             planned_amount = sum([x.planned_amount for x in budget_plans])
-            consumed_amount = sum([x.amount_consumed for x in budget_monitor])
+            # Performance : Query direct database faster than ORM
+            self._cr.execute("""
+                select COALESCE(sum(amount_so_commit),0) +
+                    COALESCE(sum(amount_pr_commit),0) +
+                    COALESCE(sum(amount_po_commit),0) +
+                    COALESCE(sum(amount_exp_commit),0) +
+                    COALESCE(sum(amount_actual),0) as amount_consumed
+                from budget_consume_report
+                where project_id = %s and fiscalyear_id = %s
+                and budget_method = 'expense' and charge_type = 'external'
+            """ % (project.id, fiscalyear.id))
+            consumed_amount = self._cr.dictfetchone()['amount_consumed']
+
+            # ==== OLD METHOD ====
+            # budget_monitor = project.monitor_expense_ids.filtered(
+            #     lambda l: l.fiscalyear_id == fiscalyear and
+            #     l.budget_method == 'expense' and l.charge_type == 'external')
+            # consumed_amount = sum(
+            #     [x.amount_consumed for x in budget_monitor])
             if float_compare(released_amount, planned_amount, 2) == 1 and \
                     not ignore_current_fy:
                 raise ValidationError(
@@ -548,13 +573,19 @@ class ResProject(LogCommon, models.Model):
             remaining = released_amount
             update_vals = []
             for budget_plan in budget_plans:
-                # if not_update_released:
-                #     update = {'released_amount': current_released_amount}
-                #     update_vals.append((1, budget_plan.id, update))
-                #     continue
+                # remaining > planned_amount in line
                 if float_compare(remaining,
                                  budget_plan.planned_amount, 2) == 1:
+                    # expense only
+                    if not budget_plan.planned_amount \
+                            and budget_plan.budget_method == 'expense':
+                        update = {'released_amount': remaining}
+                        update_vals.append((1, budget_plan.id, update))
+                        break
                     update = {'released_amount': budget_plan.planned_amount}
+                    # case : last line
+                    if budget_plan.id == budget_plans[-1].id:
+                        update = {'released_amount': remaining}
                     remaining -= budget_plan.planned_amount
                     update_vals.append((1, budget_plan.id, update))
                 else:
@@ -1035,8 +1066,7 @@ class ResProjectBudgetRelease(models.Model):
     )
     released_amount = fields.Float(
         string='Released Amount',
-        default=0.0,
-        required=True,
+        store=True,
     )
     user_id = fields.Many2one(
         'res.users',
@@ -1048,16 +1078,31 @@ class ResProjectBudgetRelease(models.Model):
     write_date = fields.Datetime(
         readonly=True,
     )
+    current_release = fields.Float(
+        string='Current Release',
+        store=True,
+    )
+    additional = fields.Float(
+        string='Additional Release',
+        default=0.0,
+        required=True,
+    )
 
     @api.onchange('fiscalyear_id', 'project_id')
     def _onchange_project_fiscal(self):
         BudgetSummary = self.env['res.project.budget.summary']
+        if self._context.get('active_id', False):
+            self.project_id = BudgetSummary.browse(self._context.get('active_id', False)).project_id.id
         project_id = \
             self._context.get('project_id', False) or self.project_id.id
         summary = BudgetSummary.search([
             ('project_id', '=', project_id),
             ('fiscalyear_id', '=', self.fiscalyear_id.id)])
-        self.released_amount = summary and summary[0].released_amount or 0.0
+        self.current_release = summary and summary[0].released_amount or 0.0
+
+    @api.onchange('additional')
+    def _onchange_additional(self):
+        self.released_amount = self.current_release + self.additional
 
     @api.model
     def create(self, vals):
@@ -1065,7 +1110,11 @@ class ResProjectBudgetRelease(models.Model):
         carry_forward = self._context.get('button_carry_forward', False)
         carry_forward_async = \
             self._context.get('button_carry_forward_async_process', False)
-        if 'released_amount' in vals and not carry_forward and \
+        if 'current_release' not in vals:
+            rec._onchange_project_fiscal()
+        if 'released_amount' not in vals:
+            rec._onchange_additional()
+        if 'additional' in vals and not carry_forward and \
                 not carry_forward_async:
             rec.project_id._release_fiscal_budget(rec.fiscalyear_id,
                                                   rec.released_amount)
@@ -1074,7 +1123,8 @@ class ResProjectBudgetRelease(models.Model):
     @api.multi
     def write(self, vals):
         result = super(ResProjectBudgetRelease, self).write(vals)
-        if 'released_amount' in vals:
+        #if 'released_amount' in vals:
+        if 'additional' in vals:
             for rec in self:
                 rec.project_id._release_fiscal_budget(rec.fiscalyear_id,
                                                       rec.released_amount)

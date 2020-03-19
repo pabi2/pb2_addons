@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Journal Adj.Budget Template -->
+        <act_window id="action_import_asset_batch_xlsx_template"
+            name="Import Assets (.xlsx)"
+            res_model="import.xlsx.template"
+            src_model="account.asset.import.batch"
+            view_mode="form"
+            target="new"/>
+
+        <!-- Optional: To be specific to some template and context -->
+		<record id="action_import_asset_batch_xlsx_template" model="ir.actions.act_window">
+  			<field name="context" eval="{'template_fname': 'import_asset_batch.xlsx'}"/>
+        </record>
+
+    </data>
+</openerp>

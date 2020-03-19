@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pnd1a_form" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryWithPageHeaderAndFooter="true">
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="266"/>
+	<property name="ireport.zoom" value="1.2100000000000006"/>
+	<property name="ireport.x" value="19"/>
+	<property name="ireport.y" value="576"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
 +"/../../../pb2_generic/l10n_th_account_pnd_form/report/"]]></defaultValueExpression>
@@ -20,10 +20,9 @@
 	<parameter name="signature" class="java.lang.String"/>
 	<parameter name="fiscalyear" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT * FROM report_pnd1a_form
-where calendar_year = $P{fiscalyear}]]>
+		<![CDATA[SELECT * FROM public.issi_report_pnd1a
+where calendar_year = $P{fiscalyear} and amount_income > 0]]>
 	</queryString>
-	<field name="partner_id" class="java.lang.Integer"/>
 	<field name="supplier_taxid" class="java.lang.String"/>
 	<field name="supplier_branch" class="java.lang.String"/>
 	<field name="title_th" class="java.lang.String"/>
@@ -215,10 +214,10 @@ where calendar_year = $P{fiscalyear}]]>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_wht}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_wht}==0?$F{amount_wht}:$F{amount_wht}*-1]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="70" y="7" width="25" height="20"/>
+				<reportElement x="62" y="9" width="38" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single"/>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
@@ -294,7 +293,7 @@ where calendar_year = $P{fiscalyear}]]>
 				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{currentPage}.equals($V{PAGE_NUMBER}) ? $V{amount_wht} : null]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{currentPage}.equals($V{PAGE_NUMBER}) ? $V{amount_wht}*-1 : null]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

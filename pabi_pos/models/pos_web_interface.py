@@ -140,9 +140,11 @@ class ProductProduct(models.Model):
             """, (location_id, tuple(product_ids)))
         else:
             self._cr.execute("""
-               SELECT product_id, sum(qty) as product_qty
-               FROM stock_quant WHERE location_id = %s
-               GROUP BY product_id
+                SELECT sq.product_id, sum(sq.qty) as product_qty
+                FROM stock_quant sq
+                    LEFT JOIN product_product pp on pp.id = sq.product_id
+                WHERE pp.active = True and sq.location_id = %s
+                GROUP BY sq.product_id
             """, (location_id, ))
         vals = self._cr.dictfetchall()
         # Add list_price and uom

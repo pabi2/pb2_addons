@@ -132,6 +132,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             where_data.append(where)
         # Preparing report_lines
         report_lines = []
+        append = report_lines.append
         for where in where_data:
             where_str = prepare_where_str(where)
             fields_str = ', '.join(where.keys())
@@ -139,20 +140,16 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             self._cr.execute(sql)
             res = self._cr.dictfetchall()
             row = res and res[0] or where  # if res no row use where
-            report_lines.append((0, 0, row))
+            append((0, 0, row))
         # --------------------------------------------------
         # For Overview Report, we need to get Rolling Amount
         # --------------------------------------------------
         Budget = self.env['account.budget']
         for report_line in report_lines:
             line = report_line[2]
-            search_keys = []
-            for key in line.keys():
-                if key in Budget and key not in ['released_amount']:
-                    search_keys.append(key)
-            domain = []
-            for key in search_keys:
-                domain.append((key, '=', line[key]))
+            search_keys = [key for key in line.keys()
+                           if key in Budget and key not in ['released_amount']]
+            domain = [(key, '=', line[key]) for key in search_keys]
             consume_dom = []
             if line.get('charge_type', False):
                 consume_dom = [('charge_type', '=', line['charge_type'])]
@@ -174,13 +171,13 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
             amount_future = 0.0
             if line.get('charge_type', False):
                 if line['charge_type'] == 'internal':
-                    amount_future += budgets._get_future_plan_amount_internal()
+                    amount_future = budgets._get_future_plan_amount_internal()
                 elif line['charge_type'] == 'external':
-                    amount_future += budgets._get_future_plan_amount()
+                    amount_future = budgets._get_future_plan_amount()
                     policy = sum([x.policy_amount for x in budgets])
             else:
-                amount_future += budgets._get_future_plan_amount_internal()
-                amount_future += budgets._get_future_plan_amount()
+                amount_future = budgets._get_future_plan_amount_internal()
+                amount_future = budgets._get_future_plan_amount()
                 policy = sum([x.policy_amount for x in budgets])
             # Rolling
             rolling = amount_actual + amount_future
@@ -194,6 +191,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
     def _prepare_report_by_structure(self, chart_view, view_xml_id):
         self.ensure_one()
         report_lines = []
+        append = report_lines.append
         # Prepare where and group by clause
         rows = self._query_report_by_structure(chart_view)
         for row in rows:
@@ -213,7 +211,7 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
                     if self.project_ids:
                         project_ids = self.project_ids.ids
                     row['project_ids'] = [(6, 0, project_ids)]
-            report_lines.append((0, 0, row))
+            append((0, 0, row))
         view = self.env.ref(view_xml_id)
         return (report_lines, view.id)
 
@@ -302,11 +300,9 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         if chart_view:
             where.update({'chart_view': chart_view})
 
-        group_by = []
-        for field in REPORT_GROUPBY.get(self.report_type, []):
-            groupby_field = 'group_by_%s' % field
-            if self[groupby_field]:
-                group_by.append(field)
+        group_by = \
+            [field for field in REPORT_GROUPBY.get(self.report_type, [])
+             if self['group_by_%s' % field]]
 
         # if chart_view == 'invest_construction':
         #     group_by.append('invest_construction_phase_id')
@@ -389,17 +385,14 @@ class BudgetDrilldownReport(SearchCommon, models.Model):
         name = _('%s - %s') % (title, RPT[wizard.report_type])
         # Fill provided search values to report head (used to execute report)
         report_dict = {'name': name}
-        groupby_fields = []
 
         # If report type = all
         groupby_chartfield = [[]]
         if wizard.report_type == 'all':
             groupby_chartfield[0].append('chartfield_id')
-
-        for field_list in REPORT_GROUPBY.values() + groupby_chartfield:
-            for field in field_list:
-                groupby_fields.append('group_by_%s' % field)
-        groupby_fields = list(set(groupby_fields))  # remove duplicates
+        groupby_fields = list(set(['group_by_%s' % field for field_list in
+                              REPORT_GROUPBY.values() + groupby_chartfield
+                              for field in field_list]))  # remove duplicates
         search_keys = ALL_SEARCH_KEYS + groupby_fields + ['report_type']
 
         # update search keys

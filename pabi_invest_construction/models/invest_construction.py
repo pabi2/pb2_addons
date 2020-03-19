@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from openerp import models, api, fields, _
 from openerp import tools
 from openerp.tools.float_utils import float_compare
-from openerp.exceptions import ValidationError
+from openerp.exceptions import ValidationError, except_orm
 from openerp.addons.pabi_base.models.res_investment_structure \
     import CONSTRUCTION_PHASE
 from openerp.addons.document_status_history.models.document_history import \
@@ -78,10 +78,17 @@ class ResInvestConstruction(LogCommon, models.Model):
         'res.section',
         string='Project Manager Section',
         required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)],
-                'submit': [('readonly', False)]},
+        store=True,
+        readonly=False,
+        # states={'draft': [('readonly', False)],
+        #         'submit': [('readonly', False)]},
         track_visibility='onchange',
+    )
+    member_ids = fields.One2many(
+        'invest.construction.project.member',
+        'invest_construction_id',
+        string='Project Member',
+        copy=False,
     )
     mission_id = fields.Many2one(
         'res.mission',
@@ -235,6 +242,14 @@ class ResInvestConstruction(LogCommon, models.Model):
                       "Project's approved budget"))
             rec.amount_phase_approve = amount_total
 
+    @api.constrains('member_ids')
+    def _check_fte_not_greater_than_100(self):
+        total_fte = 0
+        for rec in self.member_ids:
+            total_fte += rec.full_time_equivalent
+        if total_fte > 100:
+            raise ValidationError("%FTE must not exceed 100%")
+
     @api.multi
     @api.constrains('date_expansion', 'date_start', 'date_end')
     def _check_date(self):
@@ -259,6 +274,15 @@ class ResInvestConstruction(LogCommon, models.Model):
 
     @api.model
     def create(self, vals):
+        if vals.get('pm_employee_id'):
+            employee = self.env['hr.employee'].search(
+                [('id', '=', vals.get('pm_employee_id'))]
+            )
+            vals.update({
+                'costcenter_id': employee.section_id.costcenter_id.id,
+                'pm_section_id': employee.section_id.id,
+                'org_id': employee.org_id.id,
+            })
         if vals.get('code', '/') == '/':
             fiscalyear_id = self.env['account.fiscalyear'].find()
             vals['code'] = self.env['ir.sequence'].\
@@ -272,6 +296,21 @@ class ResInvestConstruction(LogCommon, models.Model):
         self.pm_section_id = employee.section_id
         self.costcenter_id = employee.section_id.costcenter_id
         self.org_id = employee.org_id
+        if employee:
+            if self.member_ids:
+                self.member_ids[0].update({
+                    'employee_id': employee.id,
+                })
+            else:
+                self.update({
+                    'member_ids': [(0, 0, {
+                        'invest_construction_id': self.id,
+                        'employee_id': employee.id,
+                        'position': 'manager',
+                        'full_time_equivalent': 100.00,
+                        'contribution': 100.00,
+                    })],
+                })
 
     @api.onchange('month_duration', 'date_start', 'date_end')
     def _onchange_date(self):
@@ -352,6 +391,13 @@ class ResInvestConstruction(LogCommon, models.Model):
 
     @api.multi
     def action_delete(self):
+        for phase in self.phase_ids:
+            for line in phase.monitor_expense_ids:
+                if line.amount_consumed:
+                    raise except_orm(
+                        _('Warning!'),
+                        _("If consumed amount already have values, "
+                          "Cannot delete ProjectC/Phase."))
         self.with_context(button_click=True).write({'state': 'delete'})
 
     @api.multi
@@ -360,6 +406,13 @@ class ResInvestConstruction(LogCommon, models.Model):
 
     @api.multi
     def action_close(self):
+        phase_ids = self.env['res.invest.construction.phase'].search(
+            [('invest_construction_id', '=', self.id)])
+        for phase in phase_ids:
+            if phase.state not in ['draft', 'close', 'delete']:
+                raise except_orm(
+                    _('Warning!'),
+                    _("Phase Status is not Draft or Closed or Delete"))
         self.with_context(button_click=True).write({'state': 'close'})
 
     @api.multi
@@ -368,6 +421,15 @@ class ResInvestConstruction(LogCommon, models.Model):
 
     @api.multi
     def write(self, vals):
+        if vals.get('pm_employee_id'):
+            employee = self.env['hr.employee'].search(
+                [('id', '=', vals.get('pm_employee_id'))]
+            )
+            vals.update({
+                'costcenter_id': employee.section_id.costcenter_id.id,
+                'pm_section_id': employee.section_id.id,
+                'org_id': employee.org_id.id,
+            })
         # Only cooperate budget allowed to edit when state == 'submit'
         button_click = self._context.get('button_click', False)
         for rec in self:
@@ -475,6 +537,10 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
         string='Date Expansion',
         track_visibility='onchange',
     )
+    date_close = fields.Date(
+        string='Date Close',
+        track_visibility='onchange',
+    )
     contract_day_duration = fields.Integer(
         string='Contract Duration (days)',
         readonly=True,
@@ -571,7 +637,7 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
                 if period_ids.count(x) > 1:
                     raise ValidationError(
                         _('Duplicate period in budget plan!'))
-                    
+
             for expense in rec.monitor_expense_ids:
                 phase_summary = rec.summary_ids.filtered(lambda l: l.fiscalyear_id == expense.fiscalyear_id)
                 phase_consumed = rec.monitor_expense_ids.filtered(lambda l: l.fiscalyear_id == expense.fiscalyear_id)
@@ -705,11 +771,14 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
     def _onchange_date(self):
         if not self.month_duration or not self.date_start:
             self.date_end = False
+            self.date_expansion = False
         else:
             date_start = datetime.strptime(self.date_start, '%Y-%m-%d').date()
             date_end = date_start + relativedelta(months=self.month_duration)
-            self.date_end = date_end.strftime('%Y-%m-%d')
-        self._prepare_phase_plan_line(self.date_start, self.date_end)
+            self.date_expansion = date_end.strftime('%Y-%m-%d')
+            if not self.date_end:
+                self.date_end = self.date_expansion
+        self._prepare_phase_plan_line(self.date_start, self.date_expansion)
 
     @api.onchange('contract_day_duration', 'contract_date_start',
                   'contract_date_end')
@@ -890,6 +959,12 @@ class RestInvestConstructionPhase(LogCommon, models.Model):
 
     @api.multi
     def action_delete(self):
+        for line in self.monitor_expense_ids:
+            if line.amount_consumed:
+                raise except_orm(
+                    _('Warning!'),
+                    _("If consumed amount already have values, "
+                      "Cannot delete ProjectC/Phase."))
         self.write({'state': 'delete'})
 
     @api.multi
@@ -1128,3 +1203,59 @@ class InvestConstructionPhaseSummary(models.Model):
         cr.execute(
             """CREATE or REPLACE VIEW %s as (%s)""" %
             (self._table, _sql,))
+
+
+class InvestConstructionProjectMember(models.Model):
+    _name = 'invest.construction.project.member'
+    _description = 'Project Member'
+
+    invest_construction_id = fields.Many2one(
+        'res.invest.construction',
+        string='Construction Project',
+        index=True,
+        ondelete='cascade',
+        copy=False,
+    )
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string='Employee',
+        index=True,
+        required=True,
+    )
+    position = fields.Selection([
+        ('manager', 'Project Manager'),
+        ('member', 'Member'),
+        ],
+        string='Position',
+        required=True,
+        default='member',
+    )
+    full_time_equivalent = fields.Float(
+        string='FTE (%)',
+        required=True,
+    )
+    contribution = fields.Float(
+        string='Contribution (%)',
+        required=True,
+    )
+
+    @api.one
+    @api.constrains('invest_construction_id', 'employee_id', 'position')
+    def _check_unique_project_manager(self):
+        self._cr.execute("""
+            select coalesce(count(*))
+            from invest_construction_project_member
+            where position = 'manager'
+            and invest_construction_id = %s
+        """, (self.invest_construction_id.id,))
+        count = self._cr.fetchone()[0]
+        if count > 1:
+            raise ValidationError(
+                _('''Cannot select 'Project Manager' than one'''))
+
+    @api.onchange('full_time_equivalent', 'contribution')
+    def _check_is_positive(self):
+        if self.full_time_equivalent < 0:
+            raise ValidationError("%FTE must positive")
+        if self.contribution < 0:
+            raise ValidationError("%Contribution must positive")

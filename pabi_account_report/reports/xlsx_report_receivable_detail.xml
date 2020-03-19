@@ -31,8 +31,14 @@
                         <field name="partner_ids" domain="[('company_id', '=', company_id), ('customer', '=', True)]"/>
                     </page>
                     <page string="Document Filters" name="document_filters">
-                        <separator string="Print only" colspan="4"/>
-                        <field name="move_ids" domain="[('company_id', '=', company_id), ('state', '=', 'posted'), ('doctype', 'in', ['out_invoice', 'out_refund', 'adjustment'])]"/>
+                        <group>
+                            <group string="Paste list of number to search">
+                                <field name="line_filter_document" placeholder="Paste list of number" nolabel="1" context="{'active_test': False}"/>
+                            </group>
+                            <group string="Print only">
+                                <field name="move_ids" nolabel="1" domain="[('company_id', '=', company_id), ('state', '=', 'posted'), ('doctype', 'in', ['out_invoice', 'out_refund', 'adjustment'])]"/>
+                            </group>
+                        </group>
                     </page>
                     <page string="System Origin Filters" name="system_origin_filters">
                         <separator string="Print only" colspan="4"/>

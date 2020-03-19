@@ -128,6 +128,10 @@
                     <field name="name" string="Description"/>
                     <group expand="0" string="Group By">
                         <filter string="Date" domain="[]" context="{'group_by':'date'}"/>
+                        <filter string="Prepared By" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter string="Submited By" domain="[]" context="{'group_by':'submit_user_id'}"/>
+                        <filter string="Approved By" domain="[]" context="{'group_by':'approve_user_id'}"/>
+                        <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
                     </group>
                 </search>
             </field>
