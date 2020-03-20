@@ -270,8 +270,8 @@ class PurchaseOrder(models.Model):
                     ('order_type', '=', 'purchase_order'),
                 ]
             )
-            for rfq in confirmed_rfqs:
-                po_total_payment += rfq.amount_total
+            po_total_payment = sum([rfq.amount_total
+                                    for rfq in confirmed_rfqs])
             over_rate = (self.requisition_id.amount_total * 10) / 100
             cfb_total_amount = self.requisition_id.amount_total + over_rate
             if float_compare(po_total_payment + self.amount_total,

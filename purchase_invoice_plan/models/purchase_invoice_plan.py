@@ -173,10 +173,11 @@ class PurchaseInvoicePlan(models.Model):
 
     @api.model
     def _validate_installment_date(self, installments):
-        dates = []
-        for l in installments:
-            dates.append(datetime.strptime(l.date_invoice, '%Y-%m-%d')) \
-                if l.date_invoice else dates
+        dates = [datetime.strptime(l.date_invoice, '%Y-%m-%d')
+                 for l in installments if l.date_invoice]
+        # for l in installments:
+        #     dates.append(datetime.strptime(l.date_invoice, '%Y-%m-%d')) \
+        #         if l.date_invoice else dates
         sorted_dates = dates[:]
         sorted_dates.sort()
         if dates != sorted_dates:
