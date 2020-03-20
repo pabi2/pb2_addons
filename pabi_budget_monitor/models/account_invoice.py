@@ -23,8 +23,7 @@ class AccountInvoice(models.Model):
                 invoice_line = invoice.invoice_line.filtered(
                     lambda l: Budget.budget_eligible_line(analytic_journal, l))
                 # --
-                doc_lines = Budget.\
-                    convert_lines_to_doc_lines(invoice_line)
+                doc_lines = Budget.convert_lines_to_doc_lines(invoice_line)
                 res = Budget.post_commit_budget_check(doc_date, doc_lines)
                 if not res['budget_ok']:
                     raise ValidationError(res['message'])

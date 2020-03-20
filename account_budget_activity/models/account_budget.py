@@ -577,12 +577,24 @@ class AccountBudget(models.Model):
                                  budget_level, resource,
                                  blevel=False, extra_dom=[]):
         """ For budget check, expenses only """
-        comodel = resource._fields['monitor_ids'].comodel_name
+        # comodel = resource._fields['monitor_ids'].comodel_name
         inverse = resource._fields['monitor_ids'].inverse_name
         domain = [(inverse, '=', resource.id),
                   ('fiscalyear_id', '=', fiscal.id),
                   ('budget_method', '=', 'expense')] + extra_dom
         where_str = self._domain_to_where_str(domain)
+        # self._cr.execute("""
+        #     select count(*) count,
+        #         coalesce(sum(planned_amount), 0.0) planned_amount,
+        #         coalesce(sum(released_amount), 0.0) released_amount,
+        #         coalesce(sum(amount_pr_commit), 0.0) amount_pr_commit,
+        #         coalesce(sum(amount_po_commit), 0.0) amount_po_commit,
+        #         coalesce(sum(amount_exp_commit), 0.0) amount_exp_commit,
+        #         coalesce(sum(amount_actual), 0.0) amount_actual,
+        #         coalesce(sum(amount_balance), 0.0) amount_balance
+        #     from """ + self.env[comodel]._table + """
+        #     where %s
+        # """ % where_str)
         self._cr.execute("""
             select count(*) count,
                 coalesce(sum(planned_amount), 0.0) planned_amount,
@@ -592,7 +604,7 @@ class AccountBudget(models.Model):
                 coalesce(sum(amount_exp_commit), 0.0) amount_exp_commit,
                 coalesce(sum(amount_actual), 0.0) amount_actual,
                 coalesce(sum(amount_balance), 0.0) amount_balance
-            from """ + self.env[comodel]._table + """
+            from budget_monitor_report
             where %s
         """ % where_str)
         res = self._cr.dictfetchall()
