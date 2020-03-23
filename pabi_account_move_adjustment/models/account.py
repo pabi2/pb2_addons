@@ -355,7 +355,8 @@ class AccountMoveLine(MergedChartField, models.Model):
     )
     is_require_activity = fields.Boolean(
         string='Require AG&A',
-        related='account_id.is_require_activity',
+        #related='account_id.is_require_activity',
+        compute='_compute_is_require_activity',
     )
     is_require_budget = fields.Boolean(
         'is require Budget',
@@ -370,6 +371,14 @@ class AccountMoveLine(MergedChartField, models.Model):
         #'costcenter_id': _get_default_costcenter_id,
         #'org_id': _get_default_org_id,
     }
+
+    @api.multi
+    @api.depends('account_id')
+    def _compute_is_require_activity(self):
+        for rec in self:
+            JV = self.env.ref('pabi_account_move_adjustment.journal_adjust_budget')
+            if rec.move_id.journal_id == JV or rec.move_id.journal_id.code in ('TP'):
+                rec.is_require_activity = rec.account_id.is_require_activity
 
     @api.multi
     @api.onchange('account_id')
