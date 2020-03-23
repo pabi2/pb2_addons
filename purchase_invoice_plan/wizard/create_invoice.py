@@ -10,12 +10,9 @@ class PurchaseCreateInvoice(models.TransientModel):
 
     @api.multi
     def create_purchase_invoices(self):
-        invoice_ids = []
+        order_ids = self.env.context.get('active_ids')
+        purchase_orders = self.env['purchase.order'].browse(order_ids)
         for record in self:
             if record.create_invoice:
-                order_ids = self.env.context.get('active_ids')
-                purchase_orders = self.env['purchase.order'].browse(order_ids)
-                for order in purchase_orders:
-                    inv_ids = order.action_invoice_create()
-                    invoice_ids.append(inv_ids)
+                [order.action_invoice_create() for order in purchase_orders]
         return True

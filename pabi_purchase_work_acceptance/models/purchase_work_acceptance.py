@@ -561,9 +561,9 @@ class PurchaseWorkAcceptance(models.Model):
     def write(self, vals):
         if vals.get('total_fine', False) and not vals.get('total_fine_cal', False):
             vals['total_fine_cal'] = vals['total_fine']
-            
+
         res = super(PurchaseWorkAcceptance, self).write(vals)
-        
+
         if vals.get('date_receive', False) or vals.get('date_contract_end', False) or vals.get('acceptance_line_ids', False):
             self.total_fine = self.total_fine_cal
         # Redmine #2346
@@ -617,7 +617,6 @@ class PurchaseWorkAcceptance(models.Model):
     @api.multi
     def validate_amount_total_with_order(self):
         if self.state == 'draft' and self.order_id.use_invoice_plan:
-            wa_total_payment = 0
             order = self.order_id
             paid_accpts = self.search(
                 [
@@ -625,8 +624,8 @@ class PurchaseWorkAcceptance(models.Model):
                     ('state', 'in', ('evaluation', 'done')),
                 ]
             )
-            for accpt in paid_accpts:
-                wa_total_payment += accpt.amount_total
+            wa_total_payment = sum(
+                [accpt.amount_total for accpt in paid_accpts])
             if float_compare(wa_total_payment + self.amount_total,
                              order.amount_total+0.1, 2) == 1:
                 raise ValidationError(
