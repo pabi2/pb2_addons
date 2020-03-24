@@ -58,7 +58,7 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
             date_start = self.date_start
         dom = [('loan_agreement_id', 'in', loan_agreements.ids),
                ('invoice_id.state', '=', 'paid'),
-               ('invoice_id.date_due', '<', date_start)]
+               ('invoice_id.date_due', '>=', date_start)]
         return dom
 
     @api.multi
