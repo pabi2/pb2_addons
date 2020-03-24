@@ -1,0 +1,22 @@
+# -*- coding: utf-8 -*-
+{
+    'name': 'NSTDA :: Account GL Jasper',
+    'version': '1.0',
+    'category': 'Accounting & Finance',
+    'description': """
+""",
+    'author': 'Peerapol C.',
+    'website': 'http://ecosoft.co.th',
+    'depends': [
+        'pabi_account_report',
+    ],
+    'data': [
+        'reports/jasper_report_journal_document_entry.xml',
+
+    ],
+    'demo': [
+    ],
+    'installable': True,
+    'auto_install': False,
+    'application': False,
+}

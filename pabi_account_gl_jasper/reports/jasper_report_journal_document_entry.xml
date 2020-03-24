@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_jasper_report_journal_document_entry" model="ir.ui.view">
+            <field name="name">view.jasper.report.journal.document.entry</field>
+            <field name="model">jasper.report.journal.document.entry</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_expense_ledger_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='operating_unit_ids']" position="after">
+            		<field name="doc_type"/>
+            	</xpath>
+            	<xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Document Number Filters" name="doc_number_filters">
+                        <group>
+                            <group string="Paste list of code to search">
+                                <field name="doc_line_filter" placeholder="Paste list of Document Number" nolabel="1" context="{'active_test': False}"/>
+                            </group>
+                            <group string="Print only">
+                                <field name="doc_number_ids" nolabel="1" context="{'active_test': False}"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//button[@name='action_get_report']" position="replace">
+                	<button name="start_report" string="Execute Report" type="object" class="oe_highlight"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_jasper_report_journal_document_entry_form" model="ir.actions.act_window">
+            <field name="name">Journal document Entry</field>
+            <field name="res_model">jasper.report.journal.document.entry</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'lang': 'th_TH'}</field>
+        </record>
+
+        <menuitem id="menu_jasper_report_journal_document_entry"
+            name="Journal document Entry"
+            parent="pabi_account_report.menu_pabi_general_ledger_report"
+            action="action_jasper_report_journal_document_entry_form"
+            sequence="70"/>
+    </data>
+</openerp>

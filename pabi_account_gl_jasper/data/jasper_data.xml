@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<openerp>
+	<data noupdate="0">
+		<record id="report_journal_document_entry_view" model="ir.actions.report.xml">
+			<field name="string">Journal document Entry VIEW</field>
+			<field name="auto">True</field>
+			<field name="model">jasper.report.journal.document.entry</field>
+			<field name="jasper_model_id" ref="pabi_account_gl_jasper.model_jasper_report_journal_document_entry" />
+			<field name="name">report_journal_document_entry</field>
+			<field name="report_name">report_journal_document_entry</field>
+			<field name="menu">False</field>
+			<field name="header">False</field>
+			<field name="report_type">jasperserver_rest_v2</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="jasper_report_path">/Reports/#SERVER_URL#/pb2</field>
+			<field name="criteria_field">id</field>
+		</record>
+		<record id="jasper_report_journal_document_entry_values" model="ir.values">
+			<field name="name">report_journal_document_entry_values</field>
+			<field name="model">jasper.report.journal.document.entry</field>
+			<field name="value_unpickle"
+				eval="'ir.actions.report.xml, ' +str(report_journal_document_entry)" />
+		</record>	
+		
+	</data>
+</openerp>
