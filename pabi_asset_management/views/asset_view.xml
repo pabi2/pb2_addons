@@ -63,6 +63,8 @@
                     <filter string="Inactive" domain="[('active','=',False)]" context="{'group_by':'active'}"/>
                     <filter string="Asset type" context="{'group_by':'product_id'}"/>
                     <filter string="Building" context="{'group_by':'building_id'}"/>
+                    <filter string="Investment Asset" context="{'group_by':'owner_invest_asset_id'}"/>
+                    <filter string="Construction Phase" context="{'group_by':'owner_invest_construction_phase_id'}"/>
                 </group>
             </field>
         </record>
