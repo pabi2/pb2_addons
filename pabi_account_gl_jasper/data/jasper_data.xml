@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
 	<data noupdate="0">
-		<record id="report_journal_document_entry_view" model="ir.actions.report.xml">
+		<record id="report_journal_document_entry" model="ir.actions.report.xml">
 			<field name="string">Journal document Entry VIEW</field>
 			<field name="auto">True</field>
 			<field name="model">jasper.report.journal.document.entry</field>
