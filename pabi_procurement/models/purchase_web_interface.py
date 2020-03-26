@@ -15,6 +15,54 @@ _logger = logging.getLogger(__name__)
 class PurchaseRequest(models.Model):
     _inherit = "purchase.request"
 
+    @api.multi
+    def _convert_data_to_id(self, data_dict):
+        self = self.sudo()
+        Users = self.env['res.users']
+        # Taxes = self.env['account.tax']
+        Fiscalyear = self.env['account.fiscalyear']
+        if 'requested_by' in data_dict:
+            requested_by = Users.search([
+                ('login', '=', data_dict['requested_by'] or False)
+            ], limit=1).id
+            del data_dict['requested_by']
+        if 'responsible_uid' in data_dict:
+            responsible_uid = Users.search([
+                ('login', '=', data_dict['responsible_uid'] or False)
+            ], limit=1).id
+            del data_dict['responsible_uid']
+        if 'assigned_to' in data_dict:
+            assigned_to = Users.search([
+                ('login', '=', data_dict['assigned_to'] or False)
+            ], limit=1).id
+            del data_dict['assigned_to']
+        if 'request_ref_id' in data_dict:
+            request_ref_id = self.search([
+                ('id', '=', data_dict['request_ref_id'] or False)
+            ], limit=1).id
+            del data_dict['request_ref_id']
+
+        data_dict.update({
+            'requested_by.id': requested_by,
+            'responsible_uid.id': responsible_uid,
+            'assigned_to.id': assigned_to,
+            'request_ref_id.id': request_ref_id,
+        })
+
+        # line_ids
+        for line in data_dict['line_ids']:
+            if 'fiscalyear_id' in line:
+                # Alfresco will send Tax ensure one
+                fiscalyear_id = Fiscalyear.search([
+                    ('name', '=', line['fiscalyear_id'] or False)
+                ], limit=1).id
+                line.update({
+                    'fiscalyear_id.id': fiscalyear_id,
+                })
+                del line['fiscalyear_id']
+
+        return data_dict
+
     @api.model
     def _get_request_info(self, data_dict):
         if 'org_id' in data_dict:
@@ -70,6 +118,8 @@ class PurchaseRequest(models.Model):
             raise ValidationError(_('Odoo/PABIWeb Disconnected!'))
         ret = {}
         data_dict = self.sudo()._get_request_info(data_dict)
+        # Convert data to id for performance
+        data_dict = self._convert_data_to_id(data_dict)
         fields = data_dict.keys()
         data = data_dict.values()
         # Final Preparation of fields and data

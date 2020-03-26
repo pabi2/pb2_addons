@@ -14,9 +14,9 @@ class PurchaseRequest(CommitCommon, models.Model):
 
     @api.multi
     def button_to_approve(self):
+        Analytic = self.env['account.analytic.account']
         for request in self:
             for line in request.line_ids:
-                Analytic = self.env['account.analytic.account']
                 line.analytic_account_id = \
                     Analytic.create_matched_analytic(line)
         return super(PurchaseRequest, self).button_to_approve()
