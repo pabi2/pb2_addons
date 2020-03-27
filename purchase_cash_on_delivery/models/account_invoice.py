@@ -126,8 +126,11 @@ class AccountInvoice(models.Model):
     @api.model
     def line_get_convert(self, line, part, date):
         res = super(AccountInvoice, self).line_get_convert(line, part, date)
+        journal = self._get_journal_hook(self._context)
+        profit_loss_id = journal.clear_prepaid_profit_loss.id
         if self._context.get('is_clear_prepaid', False) and \
-                line['type'] == 'dest':
+                line['type'] == 'dest' and \
+                line['account_id'] != profit_loss_id:
             # journal = self.env.ref('purchase_cash_on_delivery.'
             #                        'clear_prepaid_journal')
             res.update({'account_id': self.prepaid_account_id.id})

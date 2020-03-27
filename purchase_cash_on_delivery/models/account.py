@@ -22,3 +22,23 @@ class AccountPaymentTerm(models.Model):
         default=False,
         help="If checked, this term is payment in advance",
     )
+
+
+class AccountJournal(models.Model):
+    _inherit = 'account.journal'
+
+    clear_prepaid_profit_loss = fields.Many2one(
+        'account.account',
+        string='Prepaid Profit and Loss',
+        help="create new profit/loss line for clear prepaid only",
+    )
+    clear_prepaid_ag = fields.Many2one(
+        'account.activity.group',
+        string='Prepaid Activity Group',
+        help="activity group of new profit/loss for clear prepaid only"
+    )
+    clear_prepaid_activity = fields.Many2one(
+        'account.activity',
+        string='Prepaid Activity',
+        help="activity of new profit/loss for clear prepaid only"
+    )
