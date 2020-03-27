@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+	<data>
+			
+		<record id="view_email_enhance_form" model="ir.ui.view">
+        	<field name="name">view.email.enhance.form</field>
+        	<field name="model">mail.mail</field>
+        	<field name="arch" type="xml">
+        		<form string="Email message">
+                    <header>
+                        <button name="send" string="Send Now" type="object" states='outgoing' class="oe_highlight" context="{'expense_id' : active_id}"/>
+                        <button name="mark_outgoing" string="Retry" type="object" states='exception,cancel'/>
+                        <button name="cancel" string="Cancel" type="object" states='outgoing'/>
+                        <field name="state" widget="statusbar" statusbar_visible="outgoing,sent,received,exception,cancel"/>
+                    </header>
+                    <sheet>
+                        <field name="mail_message_id" required="0" invisible="1"/>
+                        <div style="vertical-align: top;">
+                            by <field name="author_id" class="oe_inline" string="User"/> on <field name="date" readonly="1" class="oe_inline"/>
+                            <button name="%(mail.action_email_compose_message_wizard)d" string="Reply" type="action" icon="terp-mail-replied"
+                                context="{'default_composition_mode':'reply', 'default_parent_id': mail_message_id}" states='received,sent,exception,cancel'/>
+                        </div>
+                        <group>
+                            <field name="email_from"/>
+                            <field name="recipient_ids" widget="many2many_tags" string="To Employee"/>
+                            <field name="email_to" string="To (External)"/>
+                            <field name="email_cc"/>
+                        </group>
+                        <label for="subject" class="oe_edit_only"/>
+                        <h2><field name="subject"/></h2>
+                        <notebook>
+                            <page string="Body">
+                                <field name="body_html"/>
+                            </page>
+                            <page string="Attachments">
+                                <field name="attachment_ids"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+        	</field>
+    	</record>
+	
+		<record id="action_view_mail_mail" model="ir.actions.act_window">
+            <field name="name">Email Enhance</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">mail.mail</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_email_enhance_form"/>
+        </record>
+        
+        <record id="view_expenses_form" model="ir.ui.view">
+			<field name="name">hr.expense.form</field>
+			<field name="model">hr.expense.expense</field>
+			<field name="inherit_id" ref="hr_expense_status_history.view_expenses_form"/>
+			<field name="priority" eval="10"/>
+			<field name="arch" type="xml">
+				<xpath expr="//page[last()]" position="after">
+					<page name="messageing" string="Messaging">
+		            	<button name="%(pabi_email_enhance.action_view_mail_mail)d" string="Send Mail" type="action" class="oe_highlight"/>
+		                <field name="message_mail">
+		                	<tree>
+		                		<field name="subject"/>
+								<field name="recipient_ids"/>
+								<field name="state"/>
+		                	</tree>
+		                </field>
+		           	</page>
+		        </xpath>
+		    </field>
+		</record>
+	
+		<!-- <menuitem name="Emails" id="menu_mail_mail" parent="pabi_apps_config.menu_pabi2_config_unused_menu" action="action_view_mail_mail" sequence="500" /> -->
+		
+	</data>
+</openerp>
