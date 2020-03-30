@@ -209,7 +209,7 @@ $F{amount_total_text_th}]]></variableExpression>
 				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "Draf Receipt200_background.jpg"]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement mode="Transparent" x="268" y="21" width="135" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="264" y="21" width="146" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
