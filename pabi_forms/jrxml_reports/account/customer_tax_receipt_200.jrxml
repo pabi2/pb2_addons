@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voucher" language="groovy" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
-	<property name="ireport.zoom" value="1.2418426461183112"/>
+	<property name="ireport.zoom" value="1.3636363636363635"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="234"/>
+	<property name="ireport.y" value="888"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -54,6 +54,7 @@
 	<parameter name="PIDS" class="java.util.List">
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
 	</parameter>
+	<parameter name="print_type" class="java.lang.String"/>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
 	</queryString>
@@ -200,6 +201,23 @@ $F{amount_total_text_th}]]></variableExpression>
 		<variableExpression><![CDATA[$F{invoice_amount_tax} == null ? 0.0 :
 ($F{invoice_type} == "out_refund" ? -$F{invoice_amount_tax} : $F{invoice_amount_tax})]]></variableExpression>
 	</variable>
+	<background>
+		<band height="792">
+			<printWhenExpression><![CDATA[$P{print_type} == "print_draft"]]></printWhenExpression>
+			<image>
+				<reportElement x="0" y="4" width="612" height="788"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "Draf Receipt200_background.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="268" y="21" width="135" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[เป็นเอกสารฉบับร่าง
+ต้นฉบับอยู่ระหว่างการจัดส่ง]]></text>
+			</staticText>
+		</band>
+	</background>
 	<title>
 		<band height="287">
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
@@ -272,14 +290,14 @@ $F{first_product_categ}.toString() != "การร่วมวิจัย"]]><
 				<reportElement x="245" y="160" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{research_type} == "applied"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="90" y="160" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{research_type} == "basic"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 		</band>
@@ -419,28 +437,28 @@ $F{first_product_categ}.toString() != "การร่วมวิจัย"]]><
 				<reportElement x="160" y="25" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "transfer"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="233" y="25" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "cheque"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="11" y="25" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "cash"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="74" y="25" width="13" height="20">
 					<printWhenExpression><![CDATA[$F{receipt_type} == "credit"]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
+				<textElement lineSpacing="Single"/>
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<textField>

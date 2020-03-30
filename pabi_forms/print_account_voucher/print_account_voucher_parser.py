@@ -5,6 +5,9 @@ from openerp.addons import jasper_reports
 def print_account_voucher_parser(cr, uid, ids, data, context):
     return {
         'ids': data['parameters']['ids'],
+        'parameters': {
+                'print_type': data['parameters']['print_type'],
+            }
     }
 
 
