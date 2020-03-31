@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voucher" language="groovy" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
 	<property name="ireport.zoom" value="1.239669421487624"/>
-	<property name="ireport.x" value="18"/>
+	<property name="ireport.x" value="16"/>
 	<property name="ireport.y" value="797"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
@@ -206,7 +206,7 @@ $F{amount_total_text_th}]]></variableExpression>
 				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "Draft 1Receipt-2ReceiptForCus-3ReciptCD_background.jpg"]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement mode="Transparent" x="232" y="15" width="156" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="232" y="15" width="156" height="27" forecolor="#FF3300" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
