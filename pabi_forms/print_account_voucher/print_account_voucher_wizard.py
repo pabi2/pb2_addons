@@ -19,6 +19,20 @@ DOCTYPE_REPORT_MAP = {
             'payment': False,
         }
     },
+    'receipt_customer_draft': {
+        'en': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'receipt_customer_form_en',
+            'payment': False,
+        },
+        'th': {
+            'sale': False,
+            'purchase': False,
+            'receipt': 'receipt_customer_form_th',
+            'payment': False,
+        }
+    },
     'receipt_supplier': {
         'en': {
             'sale': False,
@@ -149,6 +163,26 @@ class PrintAccountVoucherWizard(models.TransientModel):
         data = {'parameters': {}}
         ids = self._context.get('active_ids')
         data['parameters']['ids'] = ids
+        data['parameters']['print_type'] = 'print_receipt'
+        try:
+            report_name = DOCTYPE_REPORT_MAP.get(self.doc_print, False).\
+                get(self.lang, False).get(self.doctype, False)
+        except Exception:
+            raise ValidationError(_('No form for for this Doctype'))
+        res = {
+            'type': 'ir.actions.report.xml',
+            'report_name': report_name,
+            'datas': data,
+            'context': self._context,  # Requried for report wizard
+        }
+        return res
+
+    @api.multi
+    def action_print_draft_account_voucher(self):
+        data = {'parameters': {}}
+        ids = self._context.get('active_ids')
+        data['parameters']['ids'] = ids
+        data['parameters']['print_type'] = 'print_draft'
         try:
             report_name = DOCTYPE_REPORT_MAP.get(self.doc_print, False).\
                 get(self.lang, False).get(self.doctype, False)
@@ -168,12 +202,19 @@ class PrintAccountVoucherWizard(models.TransientModel):
         if ids:
             voucher = self.env['account.voucher'].browse(ids[0])
             if voucher.type == 'receipt':
-                return[('customer_receipt', 'Receipt'),
-                       ('customer_receipt_voucher', 'Receipt Voucher'),
-                       ('customer_tax_receipt', 'Tax Receipt'),
-                       ('customer_tax_receipt200', 'Tax Receipt 200%'),
-                       ('receipt_customer', 'Receipt For Customer'),
-                       ('receipt_cd', 'Receipt CD')]
+                if self._context.get('print_type', False) and self._context.get('print_type') == 'print_draft':
+                    return[('customer_receipt', 'Draft Receipt'),
+                           ('customer_tax_receipt', 'Draft Tax Receipt'),
+                           ('customer_tax_receipt200', 'Draft Tax Receipt 200%'),
+                           ('receipt_customer_draft', 'Draft Receipt For Customer'),
+                           ('receipt_cd', 'Draft Receipt CD')]
+                else:
+                    return[('customer_receipt', 'Receipt'),
+                           ('customer_receipt_voucher', 'Receipt Voucher'),
+                           ('customer_tax_receipt', 'Tax Receipt'),
+                           ('customer_tax_receipt200', 'Tax Receipt 200%'),
+                           ('receipt_customer', 'Receipt For Customer'),
+                           ('receipt_cd', 'Receipt CD')]
             elif voucher.type == 'payment':
                 return [('receipt_supplier', 'Receipt For Supplier')]
         return []
