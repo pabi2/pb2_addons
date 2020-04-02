@@ -97,21 +97,21 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
 #                                       l.period_id.name))
 
         if self.fiscalyear_start_id:
-            dom += [(" aml.date >= '{}' ".format(self.fiscalyear_start_id.date_start))]
+            dom += [(" date >= '{}' ".format(self.fiscalyear_start_id.date_start))]
         if self.fiscalyear_end_id:
-            dom += [(" aml.date <= '{}' ".format(self.fiscalyear_end_id.date_stop))]
+            dom += [(" date <= '{}' ".format(self.fiscalyear_end_id.date_stop))]
         if self.period_start_id:
-            dom += [(" aml.date >= '{}' ".format(self.period_start_id.date_start))]
+            dom += [(" date >= '{}' ".format(self.period_start_id.date_start))]
         if self.period_end_id:
-            dom += [(" aml.date <= '{}' ".format(self.period_end_id.date_stop))]
+            dom += [(" date <= '{}' ".format(self.period_end_id.date_stop))]
         if self.date_start:
-            dom += [(" aml.date >= '{}' ".format(self.date_start))]
+            dom += [(" date >= '{}' ".format(self.date_start))]
         if self.date_end:
-            dom += [(" aml.date <= '{}' ".format(self.date_end))]
+            dom += [(" date <= '{}' ".format(self.date_end))]
         if self.doc_type:
-            dom += [(" aml.journal_id = {} ".format(self.doc_type.id))]
+            dom += [(" journal_id = {} ".format(self.doc_type.id))]
         if self.doc_number_ids:
-            dom += [(" am.id in ({}) ".format(','.join(map(str, (self.doc_number_ids.ids)))))]
+            dom += [(" move_id in ({}) ".format(','.join(map(str, (self.doc_number_ids.ids)))))]
 
         return dom
             
@@ -120,8 +120,8 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
         self.ensure_one()
         where_str = self._compute_results()
         params = {}
-#         params['aaa'] = 'and'.join(map(str, where_str))
-        params['ids'] = [3613143,3613144]
+        params['condition'] = 'and'.join(map(str, where_str))
+#         params['ids'] = [3613143,3613144]
         return {
             'type': 'ir.actions.report.xml',
             'report_name': 'report_journal_document_entry',
