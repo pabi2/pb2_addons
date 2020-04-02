@@ -120,8 +120,9 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
         self.ensure_one()
         where_str = self._compute_results()
         params = {}
-        params['condition'] = 'and'.join(map(str, where_str))
+#         params['condition'] = 'and'.join(map(str, where_str))
 #         params['ids'] = [3613143,3613144]
+        params['condition'] = 'id in (1829948,1829949,1829950,1829951,1847763)'
         return {
             'type': 'ir.actions.report.xml',
             'report_name': 'report_journal_document_entry',
