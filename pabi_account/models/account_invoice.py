@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import ast
+from datetime import datetime
 from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 
 class AccountInvoice(models.Model):
@@ -35,6 +37,7 @@ class AccountInvoice(models.Model):
     )
     currency_rate = fields.Float(
         string='Currency Rate',
+        digits=(16, 5),
         compute='_compute_currency_rate',
         store=True,
     )
@@ -238,12 +241,22 @@ class AccountInvoice(models.Model):
                     rec.ref_docs = header_text
 
     @api.multi
-    @api.depends('currency_id')
+    @api.depends('currency_id', 'date_invoice')
     def _compute_currency_rate(self):
         for rec in self:
             company = rec.company_id
             context = self._context.copy()
             ctx_date = rec.date_invoice
+            if rec.invoice_line:
+                stock_move = self.env['stock.move'].search([
+                    ('purchase_line_id', '=',
+                        rec.invoice_line[0].purchase_line_id.id)
+                ], limit=1)
+                # check case IN -> INV used date IN.
+                if stock_move and stock_move.picking_id.state == 'done':
+                    ctx_date = datetime.strptime(
+                        stock_move.date, DEFAULT_SERVER_DATETIME_FORMAT
+                        ).strftime('%Y-%m-%d')
             if not ctx_date:
                 ctx_date = fields.Date.today()
             context.update({'date': ctx_date})
@@ -251,7 +264,10 @@ class AccountInvoice(models.Model):
             rate = self.env['res.currency'].\
                 with_context(context)._get_conversion_rate(company.currency_id,
                                                            rec.currency_id)
-            rec.currency_rate = rate
+            if rec.currency_id.type == 'smaller':
+                rec.currency_rate = rate
+            else:
+                rec.currency_rate = 1 / rate
 
     @api.multi
     def _compute_payment_count(self):
