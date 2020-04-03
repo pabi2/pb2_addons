@@ -154,16 +154,52 @@
         </record>
 
         # Account Reconcile
+        <record id="view_move_reconcile_tree" model="ir.ui.view">
+            <field name="name">account.move.reconcile.tree</field>
+            <field name="model">account.move.reconcile</field>
+            <field name="arch" type="xml">
+            	<tree>
+                    <field name="name"/>
+                    <field name="id"/>
+                    <field name="create_date"/>
+                    <field name="create_uid"/>
+                   	<field name="write_date" widget="date"/>
+                   	<field name="write_uid"/>
+                </tree>
+            </field>
+        </record>
+        
         <record id="view_move_reconcile_form" model="ir.ui.view">
             <field name="name">account.move.reconcile.form</field>
             <field name="model">account.move.reconcile</field>
             <field name="inherit_id" ref="account.view_move_reconcile_form"/>
             <field name="arch" type="xml">
+            	<xpath expr="//field[@name='type']" position="after">
+		            <field name="create_uid"/>
+		            <field name="write_date" widget="date"/>
+		            <field name="write_uid"/>
+            	</xpath>
                 <form position="attributes">
                     <attribute name="create">0</attribute>
                     <attribute name="delete">0</attribute>
                     <attribute name="edit">0</attribute>
                 </form>
+            </field>
+        </record>
+        
+        <record id="view_move_reconcile_search" model="ir.ui.view">
+            <field name="name">account.move.reconcile.search</field>
+            <field name="model">account.move.reconcile</field>
+            <field name="arch" type="xml">
+                <search string="Search Reconcile Move Lines">
+                    <field name="name"/>
+                    <group string="Group By" name="groupby">
+                        <filter name="create_date" string="Creation Date" context="{'group_by': 'create_date'}"/>
+                        <filter name="create_uid" string="Creation by" context="{'group_by': 'create_uid'}"/>
+                        <filter name="write_date" string="Last Update Date" context="{'group_by': 'write_date'}"/>
+                        <filter name="write_uid" string="Last Update by" context="{'group_by': 'write_uid'}"/>
+                    </group>
+                </search>
             </field>
         </record>
 
