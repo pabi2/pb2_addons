@@ -34,7 +34,6 @@
                 <xpath expr="/search/field[@name='supplier_invoice_number']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
-                
                 <xpath expr="//group[@string='Group By']" position="inside">
                     <filter string="Currency" context="{'group_by':'currency_id'}"/>
                 </xpath>
