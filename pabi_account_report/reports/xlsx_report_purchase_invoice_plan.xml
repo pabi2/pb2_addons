@@ -23,6 +23,8 @@
                 		<group>
                 			<field name="date_po_end"/>
                 			<field name="date_contract_action_end"/>
+                			<field name="invoice_plan"/>
+                			<field name="po_not_closed"/>
                 		</group>
                 	</group>
                 </group>
