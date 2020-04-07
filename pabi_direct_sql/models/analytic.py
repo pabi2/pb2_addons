@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.tools.misc import DEFAULT_SERVER_DATETIME_FORMAT as DATE_FORMAT
+from openerp.addons.pabi_chartfield.models.chartfield import CHART_VIEW_FIELD
+from openerp.exceptions import ValidationError
+from datetime import datetime as dt
 import time
 import logging
 
@@ -35,13 +39,14 @@ class AccountAnalyticLine(models.Model):
             self._prepare_related_values(vals)
             # Computed fields functions
             self._prepare_compute_quarter(vals)
+            self._prepare_compute_chart_view(vals)
+            self._prepare_compute_require_chartfield(vals)
             # Special constraints methods
             self._prepare_check_compute_fiscalyear_id(vals)
             self._prepare_compute_document(vals)
             # Do SQL Insert
             _logger.info("vals: %s", str(vals))
-            keys = [key for key, value in vals.items() if value]
-            values = [value for key, value in vals.items() if value]
+            keys, values = self._finalize_values_for_sql(vals)
             sql = "insert into %s (%s) values (%s) returning id" % (
                 self._table, ', '.join(keys),
                 ', '.join(['%s' for x in range(len(keys))])
@@ -66,7 +71,7 @@ class AccountAnalyticLine(models.Model):
                 domain = Analytic.get_analytic_search_domain(analytic)
                 vals.update(dict((x[0], x[2]) for x in domain))
         # Prepare period_id for reporting purposes
-        date = vals.get('date', fields.Date.context_today(self))
+        date = vals.get('date', dt.utcnow().strftime(DATE_FORMAT))
         if date:
             periods = self.env['account.period'].find(date)
             period = periods and periods[0] or False
@@ -74,7 +79,7 @@ class AccountAnalyticLine(models.Model):
 
     @api.model
     def _prepare_orm_defaults(self, vals):
-        today = vals.get('write_date', fields.Date.context_today(self))
+        today = dt.utcnow().strftime(DATE_FORMAT)
         vals['write_uid'] = vals.get('write_uid', self.env.user.id)
         vals['write_date'] = vals.get('write_date', today)
         vals['create_uid'] = vals.get('create_uid', self.env.user.id)
@@ -83,7 +88,7 @@ class AccountAnalyticLine(models.Model):
     @api.model
     def _prepare_defaults(self, vals):
         vals['charge_type'] = vals.get('charge_type', 'external')
-        vals['date'] = vals.get('date', fields.Date.context_today(self))
+        vals['date'] = vals.get('date', dt.utcnow().strftime(DATE_FORMAT))
         vals['amount'] = vals.get('amount', 0.0)
         company = self.env['res.company'].\
             _company_default_get('account.analytic.line')
@@ -109,6 +114,7 @@ class AccountAnalyticLine(models.Model):
 
         }
         for k, v in related.items():
+            vals[k] = False  # This line is required, to reset the value
             if vals.get(v[0]):
                 sql = 'select %s from %s where id = %s' % (v[1], v[2], '%s')
                 self._cr.execute(sql, (vals[v[0]], ))
@@ -154,21 +160,25 @@ class AccountAnalyticLine(models.Model):
     def _prepare_compute_document(self, vals):
         # From pabi_account_move_document_ref.models.account_analytic_line.py
         # MUST be exact same logic as _compute_document()
-        if vals.get('move_id'):  # move_id is account_move_line
-            Move = self.env['account.move'].sudo()
-            move = Move.browse(vals['move_id'])
-            document = move.document_id
-            if document:
-                if document._name in ('stock.picking',
-                                      'account.bank.receipt'):
-                    vals['document'] = document.name
-                elif document._name == 'account.invoice':
-                    vals['document'] = document.internal_number
-                else:
-                    vals['document'] = document.number
-            vals['document_line'] = vals['name']
-            vals['document_id'] = document.id
-            vals['doctype'] = move.doctype
+        # ===================================================================
+        # ### Due to update order, moved to _prepare_compute_document_2() ###
+        # ===================================================================
+        # if vals.get('move_id'):  # move_id is account_move_line
+        #     MoveLine = self.env['account.move.line'].sudo()
+        #     move_line = MoveLine.browse(vals['move_id'])
+        #     document = move_line.document_id
+        #     if document:
+        #         if document._name in ('stock.picking',
+        #                               'account.bank.receipt'):
+        #             vals['document'] = document.name
+        #         elif document._name == 'account.invoice':
+        #             vals['document'] = document.internal_number
+        #         else:
+        #             vals['document'] = document.number
+        #     vals['document_line'] = vals['name']
+        #     vals['document_id'] = document.id
+        #     vals['doctype'] = move_line.doctype
+        # ===================================================================
         if vals.get('expense_id'):
             ExpenseLine = self.env['hr.expense.line'].sudo()
             expense_line = ExpenseLine.browse(vals['expense_line_id'])
@@ -201,3 +211,86 @@ class AccountAnalyticLine(models.Model):
             vals['document_id'] = \
                 '%s,%s' % ('sale.order', sale_line.order_id.id)
             vals['doctype'] = 'sale_order'
+
+    @api.model
+    def _prepare_compute_chart_view(self, vals):
+        vals['chart_view'] = False
+        view_set = False
+        for k, v in CHART_VIEW_FIELD.items():
+            if vals.get(v) and not view_set:
+                if not view_set:
+                    vals['chart_view'] = k
+                    view_set = True
+                else:
+                    raise ValidationError(
+                        _('More than 1 dimension selected'))
+
+    @api.model
+    def _prepare_compute_require_chartfield(self, vals):
+        Budget = self.env['account.budget']
+        vals['require_chartfield'] = Budget.trx_budget_required(vals)
+        if not vals['require_chartfield']:
+            vals['section_id'] = False
+            vals['project_id'] = False
+            vals['personnel_costcenter_id'] = False
+            vals['invest_asset_id'] = False
+            vals['invest_construction_phase_id'] = False
+        return
+
+    @api.model
+    def _finalize_values_for_sql(self, vals):
+        """ Generic funciton to better prepare keys and values by types """
+        columns = dict([(k, self._columns[k])
+                        for k in self._columns.keys()])
+        # Reassign values for SQL
+        for k, v in vals.items():
+            if columns[k]._type in ('char', 'many2one'):
+                val = v or None
+                vals.update({k: val})
+            if columns[k]._type == 'boolean':
+                val = v and True or False
+                vals.update({k: val})
+            if columns[k]._type == 'float':
+                val = v or 0.0
+                if columns[k].digits:  # with digits
+                    val = round(val, columns[k].digits[1])
+                vals.update({k: val})
+        keys = [key for key, value in vals.items()]
+        values = [value for key, value in vals.items()]
+        return (keys, values)
+
+
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+
+    @api.multi
+    def _write(self, vals):
+        res = super(AccountMoveLine, self)._write(vals)
+        # ===================================================================
+        # _prepare_compute_document_2(), to update account.analytic.line
+        # ===================================================================
+        key = 'pabi_direct_sql.analytic_create'
+        config_obj = self.env['ir.config_parameter']
+        if str(config_obj.get_param(key)).lower() == 'true':
+            if vals.get('document_id', False):
+                for move_line in self:
+                    for rec in move_line.analytic_lines:
+                        document = move_line.document_id
+                        if rec.document_id:
+                            continue
+                        vals = {}
+                        if document:
+                            if document._name in ('stock.picking',
+                                                  'account.bank.receipt'):
+                                vals['document'] = document.name
+                            elif document._name == 'account.invoice':
+                                vals['document'] = document.internal_number
+                            else:
+                                vals['document'] = document.number
+                        vals['document_line'] = rec.name
+                        vals['document_id'] = \
+                            '%s,%s' % (document._name, document.id)
+                        vals['doctype'] = move_line.doctype
+                        # Update
+                        rec._write(vals)
+        return res
