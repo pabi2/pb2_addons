@@ -199,9 +199,8 @@ class SectionBudgetTransfer(models.Model):
                     _('You can not confirm without transfer line amount!'))
             # 2) Can't transfer > room
             for line in record.transfer_line_ids:
-                if float_compare(
-                        line.amount_transfer,
-                        line.from_budget_id.release_diff_rolling, 2) == 1:
+                balance = line._get_balance()
+                if float_compare(line.amount_transfer, balance, 2) == 1:
                     raise ValidationError(
                         _('Your amount is bigger than '
                           'available amount to transfer!'))
@@ -327,17 +326,36 @@ class SectionBudgetTransferLine(models.Model):
 
     @api.onchange('from_budget_id')
     def _onchange_from_budget_id(self):
-        if self.from_budget_id and \
-                self.from_budget_id.release_diff_rolling <= 0.0:
+        balance = self._get_balance()
+        if self.from_budget_id and balance <= 0.0:
             raise ValidationError(
                 _("%s don't have enough budget to transfer.\n"
                   "Make sure its rolling amount is less than its released") %
                 self.from_budget_id.name)
-        self.amount_transfer = self.from_budget_id.release_diff_rolling
+        self.amount_transfer = balance
 
     @api.onchange('amount_transfer')
     def _onchange_amount_transfer(self):
-        if float_compare(self.amount_transfer,
-                         self.from_budget_id.release_diff_rolling, 2) == 1:
+        balance = self._get_balance()
+        if float_compare(self.amount_transfer, balance, 2) == 1:
             raise ValidationError(
                 _('Your amount is bigger than available amount to transfer!'))
+
+    @api.multi
+    def _get_balance(self):
+        budget = self.from_budget_id
+        fiscalyear = budget.fiscalyear_id
+        control_external = fiscalyear.control_ext_charge_only
+        if control_external:
+            expense_lines = budget.section_id.monitor_expense_ids.filtered(
+                lambda l: l.fiscalyear_id in fiscalyear
+                and l.charge_type == 'external'
+            )
+        else:
+            expense_lines = budget.section_id.monitor_expense_ids.filtered(
+                lambda l: l.fiscalyear_id in fiscalyear
+            )
+        consumed = sum([i.amount_consumed for i in expense_lines])
+        release = self.from_budget_id.to_release_amount
+        balance = release - consumed
+        return balance
