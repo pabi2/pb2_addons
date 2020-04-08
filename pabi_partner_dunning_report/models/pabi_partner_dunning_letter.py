@@ -7,6 +7,12 @@ from pychart.arrow import default
 class PABIPartnerDunningLetter(models.Model):
     _name = 'pabi.partner.dunning.letter'
     _rec_name = 'number'
+    
+    """@api.model
+    def _default_config_id(self):
+        config_id = self.ref('pabi_partner_dunning_report.pabi_dunning_config_data').id
+        return config_id"""
+        
 
     number = fields.Char(
         string='Number',
@@ -80,6 +86,12 @@ class PABIPartnerDunningLetter(models.Model):
         string='Header',
         compute='_compute_letter_text',
         readonly=True,
+    )
+    config_id = fields.Many2one(
+        'pabi.dunning.config',
+        'Dunning Config',
+        #default=_default_config_id
+        default=lambda self: self.env.ref('pabi_partner_dunning_report.pabi_dunning_config_data')
     )
 
     @api.multi
