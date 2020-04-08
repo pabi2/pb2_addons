@@ -20,12 +20,16 @@ class AccountAnalyticLine(models.Model):
         ======================================
         This should be the top most method which will not call any super(),
         as such, it must include all of the following logic here!!!
+        Before create:
         - All logic of [account.analytic.line].create()
         - 4 ORM fileds, _prepare_orm_defaults
         - Defaults, _prepare_defaults
         - Related fields, _prepare_related_values
         - Compute fields (with store=True)
         - Constraints (that update fields)
+        After create:
+        - Compute fields that triggered because of analytic line
+
         """
         key = 'pabi_direct_sql.analytic_create'
         config_obj = self.env['ir.config_parameter']
@@ -53,6 +57,10 @@ class AccountAnalyticLine(models.Model):
             )
             self._cr.execute(sql, tuple(values))
             analytic_line = self.sudo().browse(self._cr.fetchone()[0])
+            # Compute fields that triggered because of analytic line creation
+            # class CommitCommon and class CommitLineCommon
+            self._trigger_compute_has_commit_amount(vals)
+            self._trigger_compute_net_committed_amount(vals)
             diff = time.time() - begin
             _logger.info("analytic_line: %s, %s", str(analytic_line), diff)
             return analytic_line
@@ -161,23 +169,23 @@ class AccountAnalyticLine(models.Model):
         # From pabi_account_move_document_ref.models.account_analytic_line.py
         # MUST be exact same logic as _compute_document()
         # ===================================================================
-        # ### Due to update order, moved to _prepare_compute_document_2() ###
+        # ### Due to update order, repeat in _prepare_compute_document_2() ##
         # ===================================================================
-        # if vals.get('move_id'):  # move_id is account_move_line
-        #     MoveLine = self.env['account.move.line'].sudo()
-        #     move_line = MoveLine.browse(vals['move_id'])
-        #     document = move_line.document_id
-        #     if document:
-        #         if document._name in ('stock.picking',
-        #                               'account.bank.receipt'):
-        #             vals['document'] = document.name
-        #         elif document._name == 'account.invoice':
-        #             vals['document'] = document.internal_number
-        #         else:
-        #             vals['document'] = document.number
-        #     vals['document_line'] = vals['name']
-        #     vals['document_id'] = document.id
-        #     vals['doctype'] = move_line.doctype
+        if vals.get('move_id'):  # move_id is account_move_line
+            MoveLine = self.env['account.move.line'].sudo()
+            move_line = MoveLine.browse(vals['move_id'])
+            document = move_line.document_id
+            if document:
+                if document._name in ('stock.picking',
+                                      'account.bank.receipt'):
+                    vals['document'] = document.name
+                elif document._name == 'account.invoice':
+                    vals['document'] = document.internal_number
+                else:
+                    vals['document'] = document.number
+                vals['document_id'] = '%s,%s' % (document._name, document.id)
+            vals['document_line'] = vals['name']
+            vals['doctype'] = move_line.doctype
         # ===================================================================
         if vals.get('expense_id'):
             ExpenseLine = self.env['hr.expense.line'].sudo()
@@ -258,6 +266,30 @@ class AccountAnalyticLine(models.Model):
         keys = [key for key, value in vals.items()]
         values = [value for key, value in vals.items()]
         return (keys, values)
+
+    @api.model
+    def _trigger_compute_net_committed_amount(self, vals):
+        header_fields = [('purchase_request_id', 'purchase.request'),
+                         ('purchase_id', 'purchase.order'),
+                         ('expense_id', 'hr.expense.expense'),
+                         ('sale_id', 'sale.order'), ]
+        for f in header_fields:
+            if vals.get(f[0], False):
+                obj = self.env[f[1]].browse(vals[f[0]])
+                obj.invalidate_cache()
+                obj._compute_net_committed_amount()
+
+    @api.model
+    def _trigger_compute_has_commit_amount(self, vals):
+        line_fields = [('purchase_request_line_id', 'purchase.request.line'),
+                       ('purchase_line_id', 'purchase.order.line'),
+                       ('expense_line_id', 'hr.expense.line'),
+                       ('sale_line_id', 'sale.order.line'), ]
+        for f in line_fields:
+            if vals.get(f[0], False):
+                obj = self.env[f[1]].browse(vals[f[0]])
+                obj.invalidate_cache()
+                obj._compute_has_commit_amount()
 
 
 class AccountMoveLine(models.Model):
