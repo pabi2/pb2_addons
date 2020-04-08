@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="customer_dunning_report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="495" leftMargin="60" rightMargin="40" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="customer_dunning_report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="495" leftMargin="60" rightMargin="40" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="1742cabf-0621-4942-863c-b421e2e0628c">
 	<property name="ireport.zoom" value="1.4641000000000037"/>
 	<property name="ireport.x" value="356"/>
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
-	<style name="border_box" lineSpacing="Single">
+	<style name="border_box">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 			<topPen lineWidth="0.5" lineStyle="Solid"/>
 			<leftPen lineWidth="0.5" lineStyle="Solid"/>
 			<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 			<rightPen lineWidth="0.5"/>
 		</box>
+		<paragraph lineSpacing="Single"/>
 	</style>
-	<style name="space" lineSpacing="Double" markup="styled" pattern=""/>
-	<style name="box" lineSpacing="Double"/>
+	<style name="space" markup="styled" pattern="">
+		<paragraph lineSpacing="Double"/>
+	</style>
+	<style name="box">
+		<paragraph lineSpacing="Double"/>
+	</style>
 	<parameter name="COPY" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir")
@@ -115,147 +120,176 @@
 		<groupHeader>
 			<band height="185">
 				<textField>
-					<reportElement style="border_box" positionType="FixRelativeToBottom" x="150" y="160" width="100" height="25"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+					<reportElement style="border_box" positionType="FixRelativeToBottom" x="150" y="160" width="100" height="25" uuid="58daeca8-f02f-4027-b874-f8af02a0020d"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["วันที่ใบแจ้งหนี้"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["วันที่ใบแจ้งหนี้"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="border_box" positionType="FixRelativeToBottom" x="250" y="160" width="100" height="25"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+					<reportElement style="border_box" positionType="FixRelativeToBottom" x="250" y="160" width="100" height="25" uuid="62933422-5627-451b-a0e2-eff7ace86aba"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["วันที่ครบกำหนด"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["วันที่ครบกำหนด"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="border_box" positionType="FixRelativeToBottom" x="350" y="160" width="145" height="25"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+					<reportElement style="border_box" positionType="FixRelativeToBottom" x="350" y="160" width="145" height="25" uuid="b6ebc469-9593-4c56-92a3-1c3190f90bde"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["จำนวนเงิน " +
+					<textFieldExpression><![CDATA["จำนวนเงิน " +
 ($F{currency} == "THB" ? "(บาท)" : "("+$F{currency}+")")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="33" width="147" height="20"/>
-					<textElement lineSpacing="Single" markup="none">
+					<reportElement x="0" y="33" width="147" height="20" uuid="19918580-791c-4eda-9a19-5e2389947621"/>
+					<textElement markup="none">
 						<font size="11" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[ที่ อว 6001/]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="box" positionType="Float" mode="Transparent" x="0" y="129" width="491" height="25"/>
-					<textElement textAlignment="Justified" lineSpacing="1_1_2" markup="html">
+					<reportElement style="box" positionType="Float" mode="Transparent" x="0" y="129" width="491" height="25" uuid="5720e4ab-3741-42a5-8c78-442a2f490f68"/>
+					<textElement textAlignment="Justified" markup="html">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="1_1_2"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{letter_header}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{letter_header}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="57" y="33" width="100" height="20"/>
-					<textElement lineSpacing="Single">
+					<reportElement x="57" y="33" width="100" height="20" uuid="e34b6f49-9ca8-4282-b0df-06f6dc56ea15"/>
+					<textElement>
 						<font size="11" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{number}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{number}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="155" y="-1" width="195" height="24">
+					<reportElement x="155" y="-1" width="195" height="24" uuid="5d07cb53-3f41-4d0f-bae5-9e995ac21ffe">
 						<printWhenExpression><![CDATA[$P{REPORT_LOCALE}.toString() == "th_TH" && $F{letter_type} == "l3"]]></printWhenExpression>
 					</reportElement>
-					<textElement textAlignment="Center" lineSpacing="Single" markup="none">
+					<textElement textAlignment="Center" markup="none">
 						<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[บันทึกข้อความ]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="80" width="340" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<reportElement mode="Transparent" x="0" y="80" width="340" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="1324e0e8-d478-4e56-b8fc-862d5fbba76d"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
 						<font fontName="SansSerif" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{subject}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{subject}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="false">
-					<reportElement style="box" mode="Transparent" x="35" y="101" width="300" height="21" forecolor="#000000" backcolor="#FFFFFF">
+					<reportElement style="box" mode="Transparent" x="35" y="101" width="300" height="21" forecolor="#000000" backcolor="#FFFFFF" uuid="8f05f5a8-3de3-45df-815d-4daf4ca9eaa7">
 						<printWhenExpression><![CDATA[!$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
 					</reportElement>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="1_1_2" markup="none">
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
 						<font fontName="SansSerif" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="1_1_2"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($F{to_whom_title}.toString().equals("") ? "" : $F{to_whom_title} + "\n") +
+					<textFieldExpression><![CDATA[($F{to_whom_title}.toString().equals("") ? "" : $F{to_whom_title} + "\n") +
 ($F{partner_title}.toString().equals("") ? "" : $F{partner_title} + " ") +
 $F{partner_name} + "\n" +
 (new Scriptlet()).getAddress($F{street},$F{street2},$F{township},$F{district},$F{province},$F{zip})]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="106" width="147" height="20"/>
-					<textElement lineSpacing="Single" markup="none">
+					<reportElement x="0" y="106" width="147" height="20" uuid="a3971c31-cd0a-4e7f-8b51-6ff6da1a8498"/>
+					<textElement markup="none">
 						<font size="11" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[เรียน]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="border_box" positionType="FixRelativeToBottom" x="0" y="160" width="150" height="25"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+					<reportElement style="border_box" positionType="FixRelativeToBottom" x="0" y="160" width="150" height="25" uuid="7a2e1360-e983-4ff6-8405-df278a2ed2cc"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["ใบแจ้งหนี้เลขที่"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["ใบแจ้งหนี้เลขที่"]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy">
-					<reportElement mode="Transparent" x="218" y="53" width="261" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<reportElement mode="Transparent" x="218" y="53" width="261" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="58cde901-dcdc-4ab7-9085-e0171c18a3e8"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
 						<font fontName="SansSerif" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="193" y="53" width="147" height="20"/>
-					<textElement lineSpacing="Single" markup="none">
+					<reportElement x="193" y="53" width="147" height="20" uuid="b2841e67-9cf8-430a-81fc-c5a420825708"/>
+					<textElement markup="none">
 						<font size="11" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[วันที่]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="false">
-					<reportElement style="box" mode="Transparent" x="28" y="101" width="300" height="16" forecolor="#000000" backcolor="#FFFFFF">
+					<reportElement style="box" mode="Transparent" x="28" y="101" width="300" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="cb33f240-3ff7-48ac-92d3-60368ce8b406">
 						<printWhenExpression><![CDATA[$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
 					</reportElement>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="1_1_2" markup="none">
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
 						<font fontName="SansSerif" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="1_1_2"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($F{to_whom_title}.toString().equals("") ? "" : $F{to_whom_title}+ "\n")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{to_whom_title}.toString().equals("") ? "" : $F{to_whom_title}+ "\n")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
 			<band height="170">
 				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="178" y="24" width="301" height="141">
+					<reportElement positionType="FixRelativeToBottom" x="178" y="24" width="301" height="30" uuid="62c9d4c8-e5a3-4f68-989a-3b711a5d6983">
 						<printWhenExpression><![CDATA[!$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
 					</reportElement>
-					<textElement textAlignment="Center" lineSpacing="1_1_2" markup="none">
+					<textElement textAlignment="Center" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="1_1_2"/>
 					</textElement>
-					<text><![CDATA[ขอแสดงความนับถือ
-
-
+					<text><![CDATA[ขอแสดงความนับถือ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="FixRelativeToBottom" x="178" y="124" width="301" height="45" uuid="62c9d4c8-e5a3-4f68-989a-3b711a5d6983">
+						<printWhenExpression><![CDATA[!$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" markup="none">
+						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="1_1_2"/>
+					</textElement>
+					<text><![CDATA[
 (นางสาวศิรินาถ  แถบทอง)
 ผู้อำนวยการฝ่ายการเงินและบัญชี
 ปฏิบัติการแทนผู้อำนวยการ
 สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ]]></text>
 				</staticText>
+				<image>
+					<reportElement x="278" y="42" width="107" height="25" uuid="6eedd84d-905f-4083-8fc9-0931527e50e1"/>
+					<imageExpression><![CDATA["Z:\\signature.png"]]></imageExpression>
+				</image>
 				<staticText>
-					<reportElement x="35" y="0" width="410" height="24">
+					<reportElement x="35" y="0" width="410" height="24" uuid="e8ce9f57-09e3-41de-8e15-809fa863f645">
 						<printWhenExpression><![CDATA[!$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
 					</reportElement>
-					<textElement lineSpacing="1_1_2" markup="none">
+					<textElement markup="none">
 						<font fontName="SansSerif" size="11" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="1_1_2"/>
 					</textElement>
 					<text><![CDATA[จึงเรียนมาเพื่อโปรดพิจารณาดำเนินการ]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="182" y="65" width="301" height="86">
+					<reportElement positionType="FixRelativeToBottom" x="182" y="65" width="301" height="86" uuid="24ada56d-68a4-4133-b827-08b4869dc2ff">
 						<printWhenExpression><![CDATA[$F{letter_type}.toString().equals("l3")]]></printWhenExpression>
 					</reportElement>
-					<textElement textAlignment="Center" lineSpacing="1_1_2" markup="none">
+					<textElement textAlignment="Center" markup="none">
 						<font size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="1_1_2"/>
 					</textElement>
 					<text><![CDATA[(นางสาวศิรินาถ แถบทอง)
 ผู้อํานวยการฝ่ายการเงินและบัญชี ]]></text>
@@ -268,25 +302,28 @@ $F{partner_name} + "\n" +
 		<groupFooter>
 			<band height="85">
 				<textField>
-					<reportElement style="border_box" x="250" y="0" width="100" height="25"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+					<reportElement style="border_box" x="250" y="0" width="100" height="25" uuid="a3688bdc-9955-440e-bfcc-ede8d8fcbc96"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_LOCALE}.toString() == "th_TH" ? "ยอดรวมทั้งสิ้น" : "Grand Total"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{REPORT_LOCALE}.toString() == "th_TH" ? "ยอดรวมทั้งสิ้น" : "Grand Total"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
-					<reportElement style="border_box" x="350" y="0" width="145" height="25"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+					<reportElement style="border_box" x="350" y="0" width="145" height="25" uuid="1b0e1f5e-cef8-483e-9c20-1f6824a464a5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_total}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{amount_total}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement style="box" x="0" y="40" width="491" height="34"/>
-					<textElement textAlignment="Justified" lineSpacing="1_1_2" markup="html">
+					<reportElement style="box" x="0" y="40" width="491" height="34" uuid="5c5fc55d-4b28-476d-a524-adebea9df67e"/>
+					<textElement textAlignment="Justified" markup="html">
 						<font fontName="SansSerif" size="11" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="1_1_2"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{letter_footer}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{letter_footer}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -294,77 +331,84 @@ $F{partner_name} + "\n" +
 	<pageHeader>
 		<band height="42">
 			<image>
-				<reportElement x="372" y="0" width="124" height="42"/>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "logo_nstda.jpg"]]></imageExpression>
+				<reportElement x="372" y="0" width="124" height="42" uuid="b104a9ff-ab07-4c44-8667-4a1f3432733e"/>
 			</image>
 		</band>
 	</pageHeader>
 	<detail>
 		<band height="25">
 			<textField isStretchWithOverflow="true">
-				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="0" y="0" width="150" height="25"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="0" y="0" width="150" height="25" uuid="bfaf8111-3df4-45be-9345-7afcfe44016e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_ref}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{invoice_ref}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="150" y="0" width="100" height="25"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="150" y="0" width="100" height="25" uuid="cc7297ab-7bde-42bc-a48b-516c79898232"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_invoice}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{date_invoice}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="250" y="0" width="100" height="25"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="250" y="0" width="100" height="25" uuid="4bb6d85a-1aa5-420e-985b-17db4acfa113"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_due}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{date_due}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="350" y="0" width="145" height="25"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+				<reportElement style="border_box" stretchType="RelativeToTallestObject" x="350" y="0" width="145" height="25" uuid="e7b4d4d1-f535-452b-be84-b73b897edbdf"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<pageFooter>
 		<band height="40">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="-11" y="1" width="513" height="1"/>
+				<reportElement positionType="FixRelativeToBottom" x="-11" y="1" width="513" height="1" uuid="758dc714-245d-49be-9dd1-e66c072f6831"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="205" y="4" width="332" height="15" isPrintWhenDetailOverflows="true"/>
-				<textElement lineSpacing="1_1_2" markup="html">
+				<reportElement positionType="FixRelativeToBottom" x="205" y="4" width="332" height="15" isPrintWhenDetailOverflows="true" uuid="02cbc366-fbd3-4eb5-9f6f-57c3bfed0dc9"/>
+				<textElement markup="html">
 					<font size="8" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<text><![CDATA[National Science and Technology Development Agency]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="-81" y="4" width="276" height="15" isPrintWhenDetailOverflows="true"/>
-				<textElement textAlignment="Right" lineSpacing="1_1_2" markup="none">
+				<reportElement positionType="FixRelativeToBottom" x="-81" y="4" width="276" height="15" isPrintWhenDetailOverflows="true" uuid="32f56506-0eaa-4805-bb42-80fe16846385"/>
+				<textElement textAlignment="Right" markup="none">
 					<font size="8" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<text><![CDATA[สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="-81" y="20" width="276" height="20" isPrintWhenDetailOverflows="true"/>
-				<textElement textAlignment="Right" lineSpacing="1_1_2" markup="none">
+				<reportElement positionType="FixRelativeToBottom" x="-81" y="20" width="276" height="20" isPrintWhenDetailOverflows="true" uuid="4341f154-5a0e-4ae1-8cf4-510a26bffe72"/>
+				<textElement textAlignment="Right" markup="none">
 					<font size="6" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<text><![CDATA[๑๑๑ อุทยานวิทยาศาสตร์ประเทศไทย ถ.พหลโยธิน ต.คลองหนึ่ง อ.คลองหลวง
 จ.ปทุมธานี ๑๒๑๒๐ โทรศัพท์ ๐ ๒๕๖๔ ๗๐๐๐ โทรสาร ๐ ๒๕๖๔ ๗๐๐๒-๕]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="205" y="20" width="469" height="20" isPrintWhenDetailOverflows="true"/>
-				<textElement lineSpacing="1_1_2" markup="none">
+				<reportElement positionType="FixRelativeToBottom" x="205" y="20" width="469" height="20" isPrintWhenDetailOverflows="true" uuid="96c09257-bbcf-4fd5-b0c4-b928b6fd3427"/>
+				<textElement markup="none">
 					<font size="6" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<text><![CDATA[111 Thailand Science Park, Phahonyothin Road,Khlong Nueng,Khlong Luang, Pathum Thani 12120, Thailand.
 Tel. +66 2564 7000 Fax. +66 2564 7002-5 http://www.nstda.or.th]]></text>
@@ -374,45 +418,50 @@ Tel. +66 2564 7000 Fax. +66 2564 7002-5 http://www.nstda.or.th]]></text>
 	<lastPageFooter>
 		<band height="101">
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="207" y="81" width="469" height="20" isPrintWhenDetailOverflows="true"/>
-				<textElement lineSpacing="1_1_2" markup="none">
+				<reportElement positionType="FixRelativeToBottom" x="207" y="81" width="469" height="20" isPrintWhenDetailOverflows="true" uuid="320cb81c-6bed-4de1-b886-f9a8fe395265"/>
+				<textElement markup="none">
 					<font size="6" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<text><![CDATA[111 Thailand Science Park, Phahonyothin Road,Khlong Nueng,Khlong Luang, Pathum Thani 12120, Thailand.
 Tel. +66 2564 7000 Fax. +66 2564 7002-5 http://www.nstda.or.th]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="207" y="65" width="332" height="15" isPrintWhenDetailOverflows="true"/>
-				<textElement lineSpacing="1_1_2" markup="html">
+				<reportElement positionType="FixRelativeToBottom" x="207" y="65" width="332" height="15" isPrintWhenDetailOverflows="true" uuid="19ae2681-4315-43a9-8f0b-87a88559f4fc"/>
+				<textElement markup="html">
 					<font size="8" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<text><![CDATA[National Science and Technology Development Agency]]></text>
 			</staticText>
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="-9" y="62" width="513" height="1"/>
+				<reportElement positionType="FixRelativeToBottom" x="-9" y="62" width="513" height="1" uuid="a840037f-37fa-44d1-97ad-4c470ada9598"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="-79" y="65" width="276" height="15" isPrintWhenDetailOverflows="true"/>
-				<textElement textAlignment="Right" lineSpacing="1_1_2" markup="none">
+				<reportElement positionType="FixRelativeToBottom" x="-79" y="65" width="276" height="15" isPrintWhenDetailOverflows="true" uuid="7b42a143-bb5a-4538-8ae1-5fae951fd73c"/>
+				<textElement textAlignment="Right" markup="none">
 					<font size="8" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<text><![CDATA[สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="-79" y="81" width="276" height="20" isPrintWhenDetailOverflows="true"/>
-				<textElement textAlignment="Right" lineSpacing="1_1_2" markup="none">
+				<reportElement positionType="FixRelativeToBottom" x="-79" y="81" width="276" height="20" isPrintWhenDetailOverflows="true" uuid="e554fe51-c0a8-4d41-a4b4-a20d368eac62"/>
+				<textElement textAlignment="Right" markup="none">
 					<font size="6" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<text><![CDATA[๑๑๑ อุทยานวิทยาศาสตร์ประเทศไทย ถ.พหลโยธิน ต.คลองหนึ่ง อ.คลองหลวง
 จ.ปทุมธานี ๑๒๑๒๐ โทรศัพท์ ๐ ๒๕๖๔ ๗๐๐๐ โทรสาร ๐ ๒๕๖๔ ๗๐๐๒-๕]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="0" width="238" height="60"/>
-				<textElement lineSpacing="1_1_2" markup="none">
+				<reportElement positionType="FixRelativeToBottom" x="0" y="0" width="238" height="60" uuid="eb3a0a12-c10c-4b95-9f77-7aeabf3b2289"/>
+				<textElement markup="none">
 					<font size="11" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<text><![CDATA[ฝ่ายการเงินและบัญชี
 โทร. 0 2564 7000 ต่อ 71317

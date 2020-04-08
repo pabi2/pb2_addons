@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="pabi_dunning_config_data" model="pabi.dunning.config">
+			<field name="id">1</field>
+		</record>
+    </data>
+</openerp>

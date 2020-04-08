@@ -240,7 +240,7 @@ National Science and Technology Development Agency]]></text>
 		<band height="42">
 			<image>
 				<reportElement x="371" y="0" width="124" height="42"/>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "logo_nstda.jpg"]]></imageExpression>
+				<!-- <imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "logo_nstda.jpg"]]></imageExpression> -->
 			</image>
 		</band>
 	</pageHeader>

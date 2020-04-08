@@ -227,6 +227,10 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
+                                    <p class="col-xs-5 text-center" style="padding-left:0px;text-align:center;margin-left: 500px;margin-top: 80px;">
+						                <span t-field="o.sign_image"
+						                	t-field-options='{"widget": "image", "style":"height: 50px;text-align:center;"}'/>
+						           </p>
                                     <p style="margin-top: 80px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
