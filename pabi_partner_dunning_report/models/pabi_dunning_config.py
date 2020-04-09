@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+from openerp import fields, models, api, tools
 
 
 class PABIDunningConfig(models.Model):
@@ -84,6 +84,25 @@ class PABIDunningConfig(models.Model):
     sign_image = fields.Binary(
         string='Signature Image'
     )
+    image_small = fields.Binary(string="Small-sized image",
+                                store=False,
+                                compute="_get_image",
+                                help="Small sized image of this model. It is automatically " \
+                                     "resized as a 64x64px image, with aspect ratio preserved. " \
+                                     "Use this field in form views or some kanban views.")
+    
+    @api.one
+    @api.depends("sign_image")
+    def _get_image(self):
+        """ calculate the images sizes and set the images to the corresponding
+            fields
+        """
+        image = self.sign_image
+
+        data = tools.image_get_resized_images(image)
+        self.image_medium = data["image_medium"]
+        self.image_small = data["image_small"]
+        return True
 
 
 class PABIDunningConfigTitle(models.Model):
