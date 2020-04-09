@@ -315,7 +315,7 @@ class CostControl(ResCommon, models.Model):
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Job Order Name must be unique!'),
     ]
-    
+
     @api.model
     def _check_access(self):
         if not self.env.user.has_group(
@@ -354,7 +354,7 @@ class CostControl(ResCommon, models.Model):
         self.subsector_id = False
         self.division_id = False
         self.section_id = False
-        
+
     @api.depends('owner_level','org_id','sector_id','subsector_id','division_id','section_id')
     def _check_owner(self):
         for rec in self:
@@ -636,7 +636,7 @@ class ChartField(object):
         if self.invest_construction_phase_id:
             funds = self.invest_construction_phase_id.fund_ids
         # Get default fund
-        if len(funds) == 1:
+        if funds:
             fund_id = funds[0].id
         else:
             fund_id = False
