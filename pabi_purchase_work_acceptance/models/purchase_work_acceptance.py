@@ -592,7 +592,13 @@ class PurchaseWorkAcceptance(models.Model):
                         wa_line.inv_line_id.invoice_id.state == 'draft':
                     wa_line.inv_line_id.quantity = wa_line.to_receive_qty
                     wa_line.inv_line_id.price_unit = wa_line.price_unit
-                    wa_line.inv_line_id.invoice_id.button_reset_taxes()
+                    # wa_line.inv_line_id.invoice_id.button_reset_taxes()
+
+            invoice_ids = wa.acceptance_line_ids.filtered(
+                lambda l: l.inv_line_id.invoice_id and
+                l.inv_line_id.invoice_id.state == 'draft'
+                ).mapped('inv_line_id.invoice_id')
+            invoice_ids.button_reset_taxes()
 
     @api.multi
     @api.depends('acceptance_line_ids.price_subtotal',
