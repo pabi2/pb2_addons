@@ -115,29 +115,29 @@ class PABIPartnerDunningLetter(models.Model):
             letter.currency_id = move_line and move_line.currency_id or \
                 self.env.user.company_id.currency_id
             if letter.letter_type == 'l1':
-                letter.subject = company.letter1_subject
+                letter.subject = letter.config_id.letter1_subject
                 letter.letter_header = \
-                    self._eval_text(company.letter1_header, letter)
+                    self._eval_text(letter.config_id.letter1_header, letter)
                 letter.letter_footer = \
-                    self._eval_text(company.letter1_footer, letter)
+                    self._eval_text(letter.config_id.letter1_footer, letter)
                 letter.letter_signature = \
-                    self._eval_text(company.letter1_signature, letter)
+                    self._eval_text(letter.config_id.letter1_signature, letter)
             if letter.letter_type == 'l2':
-                letter.subject = company.letter2_subject
+                letter.subject = letter.config_id.letter2_subject
                 letter.letter_header = \
-                    self._eval_text(company.letter2_header, letter)
+                    self._eval_text(letter.config_id.letter2_header, letter)
                 letter.letter_footer = \
-                    self._eval_text(company.letter2_footer, letter)
+                    self._eval_text(letter.config_id.letter2_footer, letter)
                 letter.letter_signature = \
-                    self._eval_text(company.letter2_signature, letter)
+                    self._eval_text(letter.config_id.letter2_signature, letter)
             if letter.letter_type == 'l3':
-                letter.subject = company.letter3_subject
+                letter.subject = letter.config_id.letter3_subject
                 letter.letter_header = \
-                    self._eval_text(company.letter3_header, letter)
+                    self._eval_text(letter.config_id.letter3_header, letter)
                 letter.letter_footer = \
-                    self._eval_text(company.letter3_footer, letter)
+                    self._eval_text(letter.config_id.letter3_footer, letter)
                 letter.letter_signature = \
-                    self._eval_text(company.letter3_signature, letter)
+                    self._eval_text(letter.config_id.letter3_signature, letter)
 
     @api.multi
     def get_dunning_letter_line(self, lines):
