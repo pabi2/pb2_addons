@@ -227,7 +227,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -240,7 +244,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -255,7 +263,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -268,7 +280,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -283,7 +299,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -296,7 +316,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -311,7 +335,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -324,7 +352,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -352,7 +384,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -365,7 +401,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -380,7 +420,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -393,7 +437,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -408,7 +456,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -421,7 +473,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -436,7 +492,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -449,7 +509,11 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
@@ -466,7 +530,11 @@
                             <p class="text_indent_report_customer_dunning_letter">
                                 จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ และ ขอให้ดําเนินการยกเลิกสัญญา (หากมี) เพื่อให้ฝ่ายกฎหมาย ดําเนินการตามขั้นตอนต่อไป
                             </p>
-                            <p class="center_report_customer_dunning_letter_name" style="margin-top: 70px;">
+						   	<t t-if="o.config_id.sign_image">
+						   		<span t-field="o.config_id.sign_image"
+						    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+						    </t>
+						    <p class="center_report_customer_dunning_letter_name" style="margin-top: 10px;">
                                 (นางสาวศิรินาถ แถบทอง) <br/>
                                 ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                             </p>
@@ -475,7 +543,11 @@
                             <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
                                 จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ และ ขอให้ดําเนินการยกเลิกสัญญา (หากมี) เพื่อให้ฝ่ายกฎหมาย ดําเนินการตามขั้นตอนต่อไป
                             </p>
-                            <p class="center_report_customer_dunning_letter_name" style="margin-top: 70px;">
+						   	<t t-if="o.config_id.sign_image">
+						   		<span t-field="o.config_id.sign_image"
+						    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+						    </t>
+						    <p class="center_report_customer_dunning_letter_name" style="margin-top: 10px;">
                                 (นางสาวศิรินาถ แถบทอง) <br/>
                                 ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                             </p>

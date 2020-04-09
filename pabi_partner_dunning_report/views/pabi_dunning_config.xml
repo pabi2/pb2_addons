@@ -44,6 +44,11 @@
                             <field name="letter3_footer"/>
                             <field name="letter3_signature"/>
                         </page>
+	                    <page string="Signature" name="signature" >
+	                    	<group string="Upload Signature">
+	                    		<field name="sign_image" widget="image" class="oe_avatar oe_left"/>
+	                    	</group>
+	                    </page>
                     </notebook>
                     <!-- <group string="Alternalte Text for Dunning Letter Form" >
                         <group>
@@ -69,6 +74,7 @@
             <field name="view_type">form</field>
             <field name="target">inline</field>
             <field name="view_id" ref="view_pabi_dunning_config_form"/>
+            <field name="res_id" ref="pabi_dunning_config_data"/>
         </record>
 
         <menuitem action="action_pabi_dunning_config" id="menu_pabi_dunning_config" sequence="30" name="Dunning Config" parent="menu_pabi_customer_dunning"/>
