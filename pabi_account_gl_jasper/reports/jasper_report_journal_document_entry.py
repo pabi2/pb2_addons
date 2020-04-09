@@ -73,7 +73,7 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
             if res_ids:
                 sql = "select id from account_move_line where " + where_str
                 self._cr.execute(sql, res_ids)
-                dom += [('id', 'in', map(lambda l: l[0], self._cr.fetchall()))]
+#                 dom += [('id', 'in', map(lambda l: l[0], self._cr.fetchall()))]
                 dom += [(' id in ({}) '.format(','.join(map(str, (map(lambda l: l[0], self._cr.fetchall()))))))]
         if self.partner_ids:
 #             dom += [('partner_id', 'in', self.partner_ids.ids)]
@@ -131,7 +131,7 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
 #         params['condition'] = "date >= \'2019-10-01\' and date <= \'2020-09-30\' and move_id in (628204,627347,626953,624181)" #error
         params['date_start'] = date_start
         params['date_end'] = date_end
-        params['move_id'] = 'and'.join(map(str, dom))
+        params['condition'] = 'and'.join(map(str, dom))
         return { 
             'type': 'ir.actions.report.xml',
             'report_name': 'report_journal_document_entry',
