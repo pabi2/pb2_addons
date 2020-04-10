@@ -95,6 +95,58 @@
             </field>
         </record>
 
+        <record id="view_budget_monitor_form" model="ir.ui.view">
+            <field name="name">view.budget.monitor.form</field>
+            <field name="model">res.project</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <notebook>
+                            <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget,pabi_base.group_program_secretary_budget">
+                                <separator string="Expense"/>
+                                <field name="monitor_expense_ids">
+                                    <tree string="Monitor" editable="bottom">
+                                        <field name="fiscalyear_id"/>
+                                        <field name="charge_type"/>
+                                        <field name="planned_amount"/>
+                                        <field name="released_amount"/>
+                                        <field name="amount_pr_commit"/>
+                                        <field name="amount_po_commit"/>
+                                        <field name="amount_exp_commit"/>
+                                        <field name="amount_actual"/>
+                                        <field name="amount_consumed"/>
+                                        <field name="amount_balance"/>
+                                    </tree>
+                                </field>
+                                <separator string="Revenue"/>
+                                <field name="monitor_revenue_ids">
+                                    <tree string="Monitor" editable="bottom">
+                                        <field name="fiscalyear_id"/>
+                                        <field name="charge_type"/>
+                                        <field name="planned_amount"/>
+                                        <field name="released_amount"/>
+                                        <field name="amount_so_commit"/>
+                                        <field name="amount_actual"/>
+                                        <field name="amount_consumed"/>
+                                        <field name="amount_balance"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_myproject_budget_monitor_view" model="ir.actions.act_window">
+            <field name="name">Budget Monitor</field>
+            <field name="res_model">res.project</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_budget_monitor_form"/>
+        </record>
+
         <!-- Main Form -->
         <record id="view_project_form" model="ir.ui.view">
             <field name="name">view.project.form</field>
@@ -113,6 +165,7 @@
                             <button class="oe_inline oe_stat_button" type="object" context="{}" name="action_open_to_sync_budget_control" icon="fa-refresh" attrs="{'invisible': [('budget_to_sync_count', '=', 0), ('budget_count', '>', 0)]}">
                                 <field string="Need Sync" name="budget_to_sync_count" widget="statinfo"/>
                             </button>
+                            <button class="oe_inline oe_stat_button" type="object" string="Budget Monitor" name="action_open_budget_monitor" icon="fa-search" groups="pabi_base.group_cooperate_budget,pabi_base.group_program_secretary_budget"/>
                         </div>
                         <h1>
                             <label string="Project: "/>
@@ -179,8 +232,6 @@
                                         <field name="m11"/>
                                         <field name="m12"/>
                                         <field name="planned_amount" sum="Total Planned"/>
-                                        <!-- <button name="%(action_project_budget_release_wizard)d"
-                                          string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/> -->
                                         <field name="released_amount" sum="Total Released" readonly="1"/>
                                         <field name="expense_synced"/>
                                     </tree>
@@ -221,8 +272,6 @@
                                         <field name="m11"/>
                                         <field name="m12"/>
                                         <field name="planned_amount" sum="Total Planned"/>
-                                        <!-- <button name="%(action_project_budget_release_wizard)d"
-                                          string="Release Budget" type="action" icon="terp-gtk-jump-to-ltr"/> -->
                                         <field name="released_amount" sum="Total Released" readonly="1"/>
                                         <field name="revenue_synced"/>
                                     </tree>
@@ -316,7 +365,7 @@
                                     </group>
                                 </group>
                             </page>
-                            <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget,pabi_base.group_program_secretary_budget">
+                            <!-- <page string="Budget Monitor" groups="pabi_base.group_cooperate_budget,pabi_base.group_program_secretary_budget">
                                 <separator string="Expense"/>
                                 <field name="monitor_expense_ids">
                                     <tree string="Monitor" editable="bottom">
@@ -345,7 +394,7 @@
                                         <field name="amount_balance"/>
                                     </tree>
                                 </field>
-                            </page>
+                            </page> -->
                             <page string="Status History">
                                 <field name="auditlog_line_ids"/>
                             </page>
@@ -471,7 +520,7 @@
                         </group>
                         <footer>
                         	<button name="dummy" type="object" string="Release Budget" class="oe_highlight oe_inline"
-                                  invisible="not context.get('default_project_id', False)"/> 
+                                  invisible="not context.get('default_project_id', False)"/>
                         </footer>
                     </group>
                 </form>
