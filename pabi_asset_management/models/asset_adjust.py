@@ -767,7 +767,6 @@ class AccountAssetAdjust(models.Model):
         # --
         for line in self.adjust_expense_to_asset_ids:
             line.account_analytic_id = Analytic.create_matched_analytic(line)
-
             # Create new asset
             new_asset = self._create_asset(line.asset_date, line.amount,
                                            line.product_id, line.asset_name,
@@ -1358,178 +1357,155 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         am_vals = AssetAdjust._setup_move_data(adjust.journal_id,
                                                adjust_date, period, ref)
         move = self.env['account.move'].with_context(ctx).create(am_vals)
-
         # Prepare move lines
         line_dict = \
             self._prepare_move_line_expense_to_asset(new_asset, exp_acc,
                                                      period, adjust_date,
                                                      amount_depre)
         move.write({'line_id': line_dict})
+        analytic = self._update_move_line_expense(move)
         if adjust.journal_id.entry_posted:
             del ctx['novalidate']
             move.with_context(ctx).post()
+        # update analytic line for expense
+        ml_credit = move.line_id.filtered(lambda l: l.credit)
+        self._create_expense_analytic_line(analytic.line_ids, ml_credit)
         self.write({'move_id': move.id})
+        return move
 
+    @api.multi
+    def _update_move_line_expense(self, move):
         # update activity_id = activity_rpt_id
         analytic = None
         for movl in move.line_id:
             if movl.debit:
-                movl.write({"activity_id": movl.activity_rpt_id.id})
+                movl.write({'activity_id': movl.activity_rpt_id.id})
                 analytic = movl.analytic_account_id
-
         # assign invoice_line's data to move_line's credit line
         self._assign_move_line_with_invoice_line(move)
+        return analytic
 
-        # create analytic line for expense
-        self._create_expense_analytic_line(analytic.line_ids)
-
-        return move
-
-    @api.model
-    def _create_expense_analytic_line(self, analytic_line_ids):
-        inv_number = self.adjust_id.invoice_id.number
-
+    @api.multi
+    def _create_expense_analytic_line(self, analytic_line_ids, ml_credit):
+        self.ensure_one()
+        analytic_line = self.env['account.analytic.line']
         # find move_line_id of invoice_id to domain invoice's analytic_line
         inv_movl_ids = self.adjust_id.invoice_id.move_id.line_id
-        inv_movl_id = ""
+        inv_movl_id = ''
         for inv_movl in inv_movl_ids:
             if inv_movl.analytic_account_id and \
                     (inv_movl.account_id == self.account_id):
-
                 inv_movl_id = inv_movl.id
                 break
 
-        domain = []
-        domain.append(("move_id", "=", inv_movl_id))
-
-        analytic_line = self.env['account.analytic.line']
-        invoice_line_id = self.invoice_line_id
-        invl_analytic_lines = invoice_line_id.account_analytic_id.line_ids
-        invl_analytic_line = invl_analytic_lines.search(domain)
+        invl_analytic_lines = self.invoice_line_id.account_analytic_id.line_ids
+        invl_analytic_line = invl_analytic_lines.search([
+            ('move_id', '=', inv_movl_id)])
         if not invl_analytic_line:
             invl_analytic_line = invl_analytic_lines[0]
 
-        domain = []
-        domain.append(("account_id", "=", self.account_analytic_id.id))
-        domain.append(("amount", "=", (self.amount * -1)))
-        domain.append(("name", "=", self.ref_asset_id.code))
+        domain = [
+            ('account_id', '=', self.account_analytic_id.id),
+            ('amount', '=', (self.amount * -1)),
+            ('name', '=', self.ref_asset_id.code)
+        ]
         line_analytic_line = self.account_analytic_id.line_ids
-
         if line_analytic_line:
             line_analytic_line = line_analytic_line.search(domain)
 
-        if not line_analytic_line:
+        if not line_analytic_line and analytic_line_ids:
             line_analytic_line = analytic_line_ids[0]
 
-        values = {}
         # follow by invl_analytic_line
-        values["name"] = invl_analytic_line.name
-        values["journal_id"] = invl_analytic_line.journal_id.id
-        values["general_account_id"] = invl_analytic_line.general_account_id.id
-#         values["product_uom_id"] = invl_analytic_line.product_uom_id.id
-        values["journal_id"] = invl_analytic_line.journal_id.id
-        values["product_id"] = invl_analytic_line.product_id.id
-        values["activity_group_id"] = invl_analytic_line.activity_group_id.id
-        values["activity_rpt_id"] = invl_analytic_line.activity_rpt_id.id
-        values["section_program_id"] = invl_analytic_line.section_program_id.id
-        values["sector_id"] = invl_analytic_line.sector_id.id
-        values["subsector_id"] = invl_analytic_line.subsector_id.id
-        values["costcenter_id"] = invl_analytic_line.costcenter_id.id
-        values["taxbranch_id"] = invl_analytic_line.taxbranch_id.id
-        values["division_id"] = invl_analytic_line.division_id.id
-        values["section_id"] = invl_analytic_line.section_id.id
-        values["mission_id"] = invl_analytic_line.mission_id.id
-        values["chart_view"] = invl_analytic_line.chart_view
-        values["org_id"] = invl_analytic_line.org_id.id
-        values["fund_id"] = invl_analytic_line.fund_id.id
-        values["document_id"] = invl_analytic_line.document_id
-        values["document_line"] = invl_analytic_line.document_line
-        values["product_id"] = invl_analytic_line.product_id.id
-        values["account_id"] = invl_analytic_line.account_id.id
-        # follow by line_analytic_line
-        values["write_uid"] = line_analytic_line.write_uid.id
-        values["create_uid"] = line_analytic_line.create_uid.id
-        values["user_id"] = line_analytic_line.user_id.id
-        values["company_id"] = line_analytic_line.company_id.id
-        values["amount"] = line_analytic_line.amount * -1
-        values["date"] = line_analytic_line.date
-        values["create_date"] = line_analytic_line.create_date
-        values["write_date"] = line_analytic_line.write_date
-        values["ref"] = line_analytic_line.ref
-        values["fiscalyear_id"] = line_analytic_line.fiscalyear_id.id
-        values["monitor_fy_id"] = line_analytic_line.monitor_fy_id.id
-        values["period_id"] = line_analytic_line.period_id.id
-        values["quarter"] = line_analytic_line.quarter
-        values["doctype"] = line_analytic_line.doctype
-        values["move_id"] = line_analytic_line.move_id.id
+        analytic_line_credit = analytic_line.search([
+            ('move_id', '=', ml_credit.id)])
+        analytic_line_credit.update({
+            'name': invl_analytic_line.name,
+            'general_account_id': invl_analytic_line.general_account_id.id,
+            'journal_id': invl_analytic_line.journal_id.id,
+            'document_line': invl_analytic_line.document_line,
+        })
+        # values = {
+        #     'name': invl_analytic_line.name,
+        #     'journal_id': invl_analytic_line.journal_id.id,
+        #     'general_account_id': invl_analytic_line.general_account_id.id,
+        #     'product_id': invl_analytic_line.product_id.id,
+        #     'activity_group_id': invl_analytic_line.activity_group_id.id,
+        #     'activity_rpt_id': invl_analytic_line.activity_rpt_id.id,
+        #     'section_program_id': invl_analytic_line.section_program_id.id,
+        #     'sector_id': invl_analytic_line.sector_id.id,
+        #     'subsector_id': invl_analytic_line.subsector_id.id,
+        #     'costcenter_id': invl_analytic_line.costcenter_id.id,
+        #     'taxbranch_id': invl_analytic_line.taxbranch_id.id,
+        #     'division_id': invl_analytic_line.division_id.id,
+        #     'section_id': invl_analytic_line.section_id.id,
+        #     'mission_id': invl_analytic_line.mission_id.id,
+        #     'chart_view': invl_analytic_line.chart_view,
+        #     'org_id': invl_analytic_line.org_id.id,
+        #     'fund_id': invl_analytic_line.fund_id.id,
+        #     'document_id': invl_analytic_line.document_id,
+        #     'document_line': invl_analytic_line.document_line,
+        #     'account_id': invl_analytic_line.account_id.id,
+        #     'write_uid': line_analytic_line.write_uid.id,
+        #     'create_uid': line_analytic_line.create_uid.id,
+        #     'user_id': line_analytic_line.user_id.id,
+        #     'company_id': line_analytic_line.company_id.id,
+        #     'amount': line_analytic_line.amount * -1,
+        #     'date': line_analytic_line.date,
+        #     'create_date': line_analytic_line.create_date,
+        #     'write_date': line_analytic_line.write_date,
+        #     'ref': line_analytic_line.ref,
+        #     'fiscalyear_id': line_analytic_line.fiscalyear_id.id,
+        #     'monitor_fy_id': line_analytic_line.monitor_fy_id.id,
+        #     'period_id': line_analytic_line.period_id.id,
+        #     'quarter': line_analytic_line.quarter,
+        #     'doctype': line_analytic_line.doctype,
+        #     'move_id': line_analytic_line.move_id.id,
+        #     'unit_amount': 0,
+        #     'amount_currency': 0,
+        #     'charge_type': 'external',
+        #     'has_commit_amount': False,
+        #     'require_chartfield': True,
+        # }
+        # analytic_line.create(values)
 
-        values["unit_amount"] = 0
-        values["amount_currency"] = 0
-        values["charge_type"] = "external"
-        values["has_commit_amount"] = False
-        values["require_chartfield"] = True
-
-        expense_analytic_line_id = analytic_line.create(values)
-
-    @api.model
+    @api.multi
     def _assign_move_line_with_invoice_line(self, move):
+        self.ensure_one()
         invoice_line = self.invoice_line_id
         for movl in move.line_id:
             if movl.credit:
-                movl.write({"taxbranch_id": \
-                            invoice_line.taxbranch_id.id})
-                movl.write({"operating_unit_id": \
-                            invoice_line.operating_unit_id.id})
-                movl.write({"analytic_account_id": \
-                            invoice_line.account_analytic_id.id})
-                movl.write({"activity_id": \
-                            invoice_line.activity_id.id})
-                movl.write({"activity_rpt_id": \
-                            invoice_line.activity_rpt_id.id})
-                movl.write({"activity_group_id": \
-                            invoice_line.activity_group_id.id})
-                movl.write({"costcenter_id": \
-                            invoice_line.costcenter_id.id})
-                movl.write({"project_id": \
-                            invoice_line.project_id.id})
-                movl.write({"org_id": \
-                            invoice_line.org_id.id})
-                movl.write({"fund_id": \
-                            invoice_line.fund_id.id})
-                movl.write({"invest_construction_phase_id": \
-                            invoice_line.invest_construction_phase_id.id})
-                movl.write({"division_id": \
-                            invoice_line.division_id.id})
-                movl.write({"section_id": \
-                            invoice_line.section_id.id})
-                movl.write({"program_id": \
-                            invoice_line.program_id.id})
-                movl.write({"mission_id": \
-                            invoice_line.mission_id.id})
-                movl.write({"personnel_costcenter_id": \
-                            invoice_line.personnel_costcenter_id.id})
-                movl.write({"section_program_id": \
-                            invoice_line.section_program_id.id})
-                movl.write({"program_group_id": \
-                            invoice_line.program_group_id.id})
-                movl.write({"subsector_id": \
-                            invoice_line.subsector_id.id})
-                movl.write({"invest_asset_id": \
-                            invoice_line.invest_asset_id.id})
-                movl.write({"sector_id": \
-                            invoice_line.sector_id.id})
-                movl.write({"costcenter_id": \
-                            invoice_line.costcenter_id.id})
-                movl.write({"spa_id": \
-                            invoice_line.spa_id.id})
-                movl.write({"cost_control_id": \
-                            invoice_line.cost_control_id.id})
-                movl.write({"cost_control_type_id": \
-                            invoice_line.cost_control_type_id.id})
-                movl.write({"project_group_id": \
-                            invoice_line.project_group_id.id})
-                movl.write({"functional_area_id": \
-                            invoice_line.functional_area_id.id})
+                movl.write({
+                    'taxbranch_id': invoice_line.taxbranch_id.id,
+                    'operating_unit_id': invoice_line.operating_unit_id.id,
+                    'analytic_account_id': invoice_line.account_analytic_id.id,
+                    'activity_id': invoice_line.activity_id.id,
+                    'activity_rpt_id': invoice_line.activity_rpt_id.id,
+                    'activity_group_id': invoice_line.activity_group_id.id,
+                    'project_id': invoice_line.project_id.id,
+                    'org_id': invoice_line.org_id.id,
+                    'fund_id': invoice_line.fund_id.id,
+                    'invest_construction_phase_id':
+                        invoice_line.invest_construction_phase_id.id,
+                    'division_id': invoice_line.division_id.id,
+                    'section_id': invoice_line.section_id.id,
+                    'program_id': invoice_line.program_id.id,
+                    'mission_id': invoice_line.mission_id.id,
+                    'personnel_costcenter_id':
+                        invoice_line.personnel_costcenter_id.id,
+                    'section_program_id': invoice_line.section_program_id.id,
+                    'program_group_id': invoice_line.program_group_id.id,
+                    'subsector_id': invoice_line.subsector_id.id,
+                    'invest_asset_id': invoice_line.invest_asset_id.id,
+                    'sector_id': invoice_line.sector_id.id,
+                    'costcenter_id': invoice_line.costcenter_id.id,
+                    'spa_id': invoice_line.spa_id.id,
+                    'cost_control_id': invoice_line.cost_control_id.id,
+                    'cost_control_type_id':
+                        invoice_line.cost_control_type_id.id,
+                    'project_group_id': invoice_line.project_group_id.id,
+                    'functional_area_id': invoice_line.functional_area_id.id,
+                })
 
     @api.model
     def _prepare_move_line_expense_to_asset(self, new_asset, exp_acc,
