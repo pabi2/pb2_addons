@@ -660,7 +660,7 @@
                             </p>
 						    <p class="center_report_customer_dunning_letter_name" style="margin-top: 10px;">
 						   		<span t-field="o.config_id.sign_image"
-						    		t-field-options='{"widget": "image", "style":"height: 50px;"}'/><br/><br/>
+						    		t-field-options='{"widget": "image", "style":"height: 50px;"}'/><br/>
                                 (นางสาวศิรินาถ แถบทอง) <br/>
                                 ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                             </p>
@@ -677,7 +677,7 @@
                             </p>
 						    <p class="center_report_customer_dunning_letter_name" style="margin-top: 10px;">
 						   		<span t-field="o.config_id.sign_image"
-						    		t-field-options='{"widget": "image", "style":"height: 50px;"}'/><br/><br/>
+						    		t-field-options='{"widget": "image", "style":"height: 50px;"}'/><br/>
                                 (นางสาวศิรินาถ แถบทอง) <br/>
                                 ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                             </p>
