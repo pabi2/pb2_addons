@@ -229,7 +229,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -254,7 +254,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -281,7 +281,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -306,7 +306,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -333,7 +333,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -358,7 +358,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -385,7 +385,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -410,7 +410,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -450,7 +450,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -475,7 +475,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -502,7 +502,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -527,7 +527,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -554,7 +554,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -579,7 +579,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -606,7 +606,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -631,7 +631,7 @@
                                     </p>
                                     <t t-if="o.config_id.sign_image">
 								   		<span t-field="o.config_id.sign_image"
-								    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 								    </t>
 								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
@@ -659,8 +659,8 @@
                                 จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ และ ขอให้ดําเนินการยกเลิกสัญญา (หากมี) เพื่อให้ฝ่ายกฎหมาย ดําเนินการตามขั้นตอนต่อไป
                             </p>
 						   	<t t-if="o.config_id.sign_image">
-						   		<span t-field="o.config_id.sign_image"
-						    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+						   		<span class="center_report_customer_dunning_letter_name" t-field="o.config_id.sign_image"
+						    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 						    </t>
 						    <p class="center_report_customer_dunning_letter_name" style="margin-top: 10px;">
                                 (นางสาวศิรินาถ แถบทอง) <br/>
@@ -678,8 +678,8 @@
                                 จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ และ ขอให้ดําเนินการยกเลิกสัญญา (หากมี) เพื่อให้ฝ่ายกฎหมาย ดําเนินการตามขั้นตอนต่อไป
                             </p>
 						   	<t t-if="o.config_id.sign_image">
-						   		<span t-field="o.config_id.sign_image"
-						    		t-field-options='{"widget": "image", "style":"text-align:center;height: 50px;margin-left: 300px;margin-top: 10px;"}'/>
+						   		<span class="center_report_customer_dunning_letter_name" t-field="o.config_id.sign_image"
+						    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
 						    </t>
 						    <p class="center_report_customer_dunning_letter_name" style="margin-top: 10px;">
                                 (นางสาวศิรินาถ แถบทอง) <br/>
