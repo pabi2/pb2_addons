@@ -202,21 +202,21 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
     @api.model
     def _prepare_acceptance(self):
         lines = []
-        vals = {}
+        # vals = {}
         PWAcceptance = self.env['purchase.work.acceptance']
-        vals.update({
-            'name': self.env['ir.sequence'].get('purchase.work.acceptance'),
-            'date_scheduled_end': self.date_scheduled_end,
-            'date_contract_start': self.date_contract_start,
-            'date_contract_end': self.date_scheduled_end,
-            'date_receive': self.date_receive,
-            'order_id': self.order_id.id,
-            'supplier_invoice': '-',
-            'date_invoice': self.date_receive,
-            'total_fine': 0,
-            'installment': self.select_invoice_plan,
-        })
-        acceptance = PWAcceptance.create(vals)
+        # vals.update({
+        #     'name': self.env['ir.sequence'].get('purchase.work.acceptance'),
+        #     'date_scheduled_end': self.date_scheduled_end,
+        #     'date_contract_start': self.date_contract_start,
+        #     'date_contract_end': self.date_scheduled_end,
+        #     'date_receive': self.date_receive,
+        #     'order_id': self.order_id.id,
+        #     'supplier_invoice': '-',
+        #     'date_invoice': self.date_receive,
+        #     'total_fine': 0,
+        #     'installment': self.select_invoice_plan,
+        # })
+        # acceptance = PWAcceptance.create(vals)
         if self.is_invoice_plan:
             items = \
                 self._prepare_acceptance_plan_line(self.select_invoice_plan)
@@ -235,7 +235,21 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                     'price_unit': act_line.line_id.price_unit,
                 }
                 lines.append([0, 0, line_vals])
-        acceptance.write({'acceptance_line_ids': lines})
+        vals = {
+            'name': self.env['ir.sequence'].get('purchase.work.acceptance'),
+            'date_scheduled_end': self.date_scheduled_end,
+            'date_contract_start': self.date_contract_start,
+            'date_contract_end': self.date_scheduled_end,
+            'date_receive': self.date_receive,
+            'order_id': self.order_id.id,
+            'supplier_invoice': '-',
+            'date_invoice': self.date_receive,
+            'total_fine': 0,
+            'installment': self.select_invoice_plan,
+            'acceptance_line_ids': lines,
+        }
+        acceptance = PWAcceptance.create(vals)
+        # acceptance.write({'acceptance_line_ids': lines})
         acceptance._compute_total_fine()
         return acceptance
 
