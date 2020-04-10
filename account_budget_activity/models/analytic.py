@@ -2,6 +2,7 @@
 from openerp import api, fields, models, _
 from openerp.exceptions import ValidationError
 import logging
+import time
 
 _logger = logging.getLogger(__name__)
 
@@ -119,6 +120,7 @@ class AccountAnalyticLine(models.Model):
         string='Purchase Request',
         related='purchase_request_line_id.request_id',
         store=True,
+        index=True,
         help="PR Commitment",
     )
     purchase_request_line_id = fields.Many2one(
@@ -126,6 +128,7 @@ class AccountAnalyticLine(models.Model):
         string='Purchase Request Line',
         ondelete='cascade',
         readonly=True,
+        index=True,
         help="PR Commitment",
     )
     # ---------- PO ---------------
@@ -134,6 +137,7 @@ class AccountAnalyticLine(models.Model):
         string='Purchase Order',
         related='purchase_line_id.order_id',
         store=True,
+        index=True,
         help="PO Commitment",
     )
     purchase_line_id = fields.Many2one(
@@ -141,6 +145,7 @@ class AccountAnalyticLine(models.Model):
         string='Purchase Order Line',
         ondelete='cascade',
         readonly=True,
+        index=True,
         help="PO Commitment",
     )
     # ---------- SO ---------------
@@ -149,6 +154,7 @@ class AccountAnalyticLine(models.Model):
         string='Sales Order',
         related='sale_line_id.order_id',
         store=True,
+        index=True,
         help="SO Commitment",
     )
     sale_line_id = fields.Many2one(
@@ -156,6 +162,7 @@ class AccountAnalyticLine(models.Model):
         string='Sales Order Line',
         ondelete='cascade',
         readonly=True,
+        index=True,
         help="SO Commitment",
     )
     # ---------- Expense ---------------
@@ -164,6 +171,7 @@ class AccountAnalyticLine(models.Model):
         string='Expense',
         related='expense_line_id.expense_id',
         store=True,
+        index=True,
         help="Expense Commitment",
     )
     expense_line_id = fields.Many2one(
@@ -171,6 +179,7 @@ class AccountAnalyticLine(models.Model):
         string='Expense Line',
         ondelete='cascade',
         readonly=True,
+        index=True,
         help="Expense Commitment",
     )
     # ----------------------------------
@@ -251,6 +260,7 @@ class AccountAnalyticLine(models.Model):
     def create(self, vals):
         _logger.info("------- create analytic line -------")
         """ Add posting dimension """
+        begin = time.time()
         if vals.get('account_id', False):
             Analytic = self.env['account.analytic.account']
             analytic = Analytic.browse(vals['account_id'])
@@ -267,7 +277,8 @@ class AccountAnalyticLine(models.Model):
             vals.update({'period_id': period.id})
         _logger.info("vals: %s", str(vals))
         analytic_line = super(AccountAnalyticLine, self).create(vals)
-        _logger.info("analytic_line: %s", str(analytic_line))
+        diff = time.time() - begin
+        _logger.info("analytic_line: %s, %s", str(analytic_line), diff)
         analytic_line._check_analytic_asset_line()
         return analytic_line
 
