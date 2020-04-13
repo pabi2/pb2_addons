@@ -227,11 +227,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -240,11 +250,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -255,11 +275,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -268,11 +298,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -283,11 +323,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -296,11 +346,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -311,11 +371,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -324,11 +394,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -352,11 +432,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -365,11 +455,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -380,11 +480,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -393,11 +503,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -408,11 +528,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -421,11 +551,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -436,11 +576,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -449,11 +599,21 @@
                                     <p>
                                         ขอแสดงความนับถือ
                                     </p>
-                                    <p style="margin-top: 80px;">
+                                    <t t-if="o.config_id.sign_image">
+								   		<span t-field="o.config_id.sign_image"
+								    		t-field-options='{"widget": "image", "style":"height: 50px;margin-top: 10px;"}'/>
+								    </t>
+								    <p style="margin-top: 10px;">
                                         (นางสาวศิรินาถ แถบทอง) <br/>
                                         ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
                                         ปฏิบัติการแทนผู้อำนวยการ <br/>
                                         สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin-top: 50px;">
+                                    	หมายเหตุ<br/>
+                                    	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                                     </p>
                                 </div>
                             </t>
@@ -466,18 +626,30 @@
                             <p class="text_indent_report_customer_dunning_letter">
                                 จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ และ ขอให้ดําเนินการยกเลิกสัญญา (หากมี) เพื่อให้ฝ่ายกฎหมาย ดําเนินการตามขั้นตอนต่อไป
                             </p>
-                            <p class="center_report_customer_dunning_letter_name" style="margin-top: 70px;">
+						    <p class="center_report_customer_dunning_letter_name" style="margin-top: 10px;">
+						   		<span t-field="o.config_id.sign_image"
+						    		t-field-options='{"widget": "image", "style":"height: 50px;"}'/><br/>
                                 (นางสาวศิรินาถ แถบทอง) <br/>
                                 ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                            </p>
+                            <p style="margin-top: 50px;">
+                            	หมายเหตุ<br/>
+                            	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                             </p>
                         </t>
                         <t t-if="len(o.line_ids.ids) &lt; 13 or (len(o.line_ids.ids) &gt; 16 and len(o.line_ids.ids) &lt; 42) or len(o.line_ids.ids) &gt; 46">
                             <p class="text_indent_report_customer_dunning_letter newline_report_customer_dunning_letter">
                                 จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ และ ขอให้ดําเนินการยกเลิกสัญญา (หากมี) เพื่อให้ฝ่ายกฎหมาย ดําเนินการตามขั้นตอนต่อไป
                             </p>
-                            <p class="center_report_customer_dunning_letter_name" style="margin-top: 70px;">
+						    <p class="center_report_customer_dunning_letter_name" style="margin-top: 10px;">
+						   		<span t-field="o.config_id.sign_image"
+						    		t-field-options='{"widget": "image", "style":"height: 50px;"}'/><br/>
                                 (นางสาวศิรินาถ แถบทอง) <br/>
                                 ผู้อำนวยการฝ่ายการเงินและบัญชี <br/>
+                            </p>
+                            <p style="margin-top: 50px;">
+                            	หมายเหตุ<br/>
+                            	หนังสือฉบับนี้ใช้ลายมือชื่ออิเล็กทรอนิกส์โดยวิธีสแกนซึ่งมีผลบังคับใช้ได้
                             </p>
                         </t>
                     </div>
