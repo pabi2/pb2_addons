@@ -290,39 +290,3 @@ class AccountAnalyticLine(models.Model):
                 obj = self.env[f[1]].browse(vals[f[0]])
                 obj.invalidate_cache()
                 obj._compute_has_commit_amount()
-
-
-class AccountMoveLine(models.Model):
-    _inherit = 'account.move.line'
-
-    @api.multi
-    def _write(self, vals):
-        res = super(AccountMoveLine, self)._write(vals)
-        # ===================================================================
-        # _prepare_compute_document_2(), to update account.analytic.line
-        # ===================================================================
-        key = 'pabi_direct_sql.analytic_create'
-        config_obj = self.env['ir.config_parameter']
-        if str(config_obj.get_param(key)).lower() == 'true':
-            if vals.get('document_id', False):
-                for move_line in self:
-                    for rec in move_line.analytic_lines:
-                        document = move_line.document_id
-                        if rec.document_id:
-                            continue
-                        vals = {}
-                        if document:
-                            if document._name in ('stock.picking',
-                                                  'account.bank.receipt'):
-                                vals['document'] = document.name
-                            elif document._name == 'account.invoice':
-                                vals['document'] = document.internal_number
-                            else:
-                                vals['document'] = document.number
-                        vals['document_line'] = rec.name
-                        vals['document_id'] = \
-                            '%s,%s' % (document._name, document.id)
-                        vals['doctype'] = move_line.doctype
-                        # Update
-                        rec._write(vals)
-        return res
