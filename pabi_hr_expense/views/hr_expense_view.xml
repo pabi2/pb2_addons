@@ -248,11 +248,14 @@
 				<field name="date" position="after">
 					<filter name="draft" domain="[('state','=','draft')]" string="Draft"/>
 					<filter name="confirm" domain="[('state','=','confirm')]" string="Wait for Accept"/>
+					<filter name="confirm_current" domain="[('state','=','confirm'),('date','&lt;',(context_today()+relativedelta(years=1)).strftime('%%Y-%%m-01')), ('date','&gt;=',time.strftime('%%Y-%%m-01'))]" string="Wait for Accept (Current Year)"/>
+					<filter name="confirm_Past" domain="[('state','=','confirm'),('date','&lt;',time.strftime('%%Y-01-01'))]" string="Wait for Accept (Past Year)"/>
 					<filter name="accepted" domain="[('state','=','accepted')]" string="Accepted"/>
 					<filter name="done" domain="[('state','=','done')]" string="Waiting Payment"/>
 					<filter name="paid" domain="[('state','=','paid')]" string="Paid"/>
 					<filter name="cancelled" domain="[('state','=','cancelled')]" string="Rejected"/>
 				</field>
+				
 				<field name="department_id" position="replace"/>
 				<group position="replace">
 					<group expand="0" string="Group By">
@@ -268,7 +271,7 @@
 		</record>
 
 		<record id="hr_expense.expense_all" model="ir.actions.act_window">
-			<field name="context">{ 'is_advance_clearing':False, 'is_employee_advance':False, 'default_is_advance_clearing':False, 'default_is_employee_advance':False, 'search_default_confirm': True, }</field>
+			<field name="context">{ 'is_advance_clearing':False, 'is_employee_advance':False, 'default_is_advance_clearing':False, 'default_is_employee_advance':False, 'search_default_confirm_current': True, }</field>
 		</record>
 
 		<record id="hr_expense_advance_clearing.action_expense_clearing" model="ir.actions.act_window">
