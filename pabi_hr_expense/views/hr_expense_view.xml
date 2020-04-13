@@ -270,7 +270,7 @@
 		</record>
 
 		<record id="hr_expense.expense_all" model="ir.actions.act_window">
-			<field name="context">{ 'is_advance_clearing':False, 'is_employee_advance':False, 'default_is_advance_clearing':False, 'default_is_employee_advance':False, 'search_default_confirm_current': True, }</field>
+			<field name="context">{ 'is_advance_clearing':False, 'is_employee_advance':False, 'default_is_advance_clearing':False, 'default_is_employee_advance':False, 'search_default_confirm_current': True,}</field>
 		</record>
 
 		<record id="hr_expense_advance_clearing.action_expense_clearing" model="ir.actions.act_window">
