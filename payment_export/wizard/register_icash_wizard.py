@@ -30,8 +30,7 @@ class PabiRegister_iCashWizard(models.TransientModel):
     @api.multi
     def action_get_report(self):
         self.register_id.state = 'exported'
-        res = super(XLSXReportCDReceivableBalanceSheetDetail, self) \
-            .action_get_report()
+        res = super(PabiRegister_iCashWizard, self).action_get_report()
         return res
 
 
