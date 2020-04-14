@@ -233,14 +233,16 @@ class PurchaseWorkAcceptance(models.Model):
     )
 
     @api.multi
-    @api.depends('order_id')
+    # @api.depends('order_id')
+    @api.constrains('order_id')
     def _compute_num_installment(self):
         for rec in self:
             rec.num_installment = rec.order_id.use_invoice_plan and \
                 rec.order_id.num_installment or False
 
     @api.model
-    @api.depends('date_receive', 'date_scheduled_end','total_fine')
+    # @api.depends('date_receive', 'date_scheduled_end','total_fine')
+    @api.constrains('date_receive', 'date_scheduled_end', 'total_fine')
     def _compute_fine_amount_to_word_th(self):
         res = {}
         minus = False
@@ -257,7 +259,8 @@ class PurchaseWorkAcceptance(models.Model):
         return res
 
     @api.model
-    @api.depends('date_receive', 'date_contract_end')
+    # @api.depends('date_receive', 'date_contract_end')
+    @api.constrains('date_receive', 'date_contract_end')
     def _compute_fine_per_day_to_word_th(self):
         res = {}
         minus = False
@@ -533,7 +536,8 @@ class PurchaseWorkAcceptance(models.Model):
                 acceptance.overdue_day = 0
 
     @api.multi
-    @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
+    # @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
+    @api.constrains('date_receive', 'date_contract_end', 'acceptance_line_ids')
     def _compute_total_fine(self):
         for acceptance in self:
             # product_type, is_consumable = acceptance._check_product_type()
@@ -547,7 +551,8 @@ class PurchaseWorkAcceptance(models.Model):
                 acceptance.total_fine = acceptance.manual_fine
 
     @api.multi
-    @api.depends('invoice_ids', 'invoice_ids.state')
+    # @api.depends('invoice_ids', 'invoice_ids.state')
+    @api.constrains('invoice_ids')
     def _compute_invoiced(self):
         for rec in self:
             if not rec.invoice_ids:
@@ -601,8 +606,9 @@ class PurchaseWorkAcceptance(models.Model):
             invoice_ids.button_reset_taxes()
 
     @api.multi
-    @api.depends('acceptance_line_ids.price_subtotal',
-                 'acceptance_line_ids.tax_ids')
+    # @api.depends('acceptance_line_ids.price_subtotal',
+    #              'acceptance_line_ids.tax_ids')
+    @api.constrains('acceptance_line_ids')
     def _compute_amount(self):
         for rec in self:
             amount_untaxed = 0.0
@@ -719,7 +725,8 @@ class PurchaseWorkAcceptanceLine(models.Model):
     _description = 'Purchase Work Acceptance Line'
 
     @api.multi
-    @api.depends('acceptance_id', 'line_id')
+    # @api.depends('acceptance_id', 'line_id')
+    @api.constrains('acceptance_id', 'line_id')
     def _compute_get_balance_qty(self):
         for acc_line in self:
             purchase = acc_line.line_id.order_id
@@ -800,7 +807,8 @@ class PurchaseWorkAcceptanceLine(models.Model):
     )
 
     @api.multi
-    @api.depends('to_receive_qty', 'price_unit', 'tax_ids')
+    # @api.depends('to_receive_qty', 'price_unit', 'tax_ids')
+    @api.constrains('to_receive_qty', 'price_unit', 'tax_ids')
     def _compute_price_subtotal(self):
         for rec in self:
             taxes = rec.tax_ids.compute_all(rec.price_unit, rec.to_receive_qty,
