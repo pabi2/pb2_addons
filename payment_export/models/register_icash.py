@@ -15,7 +15,7 @@ class PabiRegister_iCash(models.Model):
     )
     export_date = fields.Date(
         'Register export date',
-        default=fields.Date.context_today,
+        #default=fields.Date.context_today,
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -42,8 +42,9 @@ class PabiRegister_iCash(models.Model):
     @api.multi
     def write(self, vals):
         res = super(PabiRegister_iCash, self).write(vals)
-        self.line_ids.unlink()
-        self._create_register_icash_line()
+        if 'service_type' in vals:
+            self.line_ids.unlink()
+            self._create_register_icash_line()
         return res
 
     @api.multi
@@ -71,9 +72,6 @@ class PabiRegister_iCash(models.Model):
                                     'account_number': line.acc_number,
                                     'email': line.partner_id.email,
                                     })
-
-    #@api.multi
-    #def _create_register_icash_line(self):
 
     @api.multi
     def reload(self):

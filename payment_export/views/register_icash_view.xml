@@ -10,6 +10,7 @@
                     <field name="name"/>
                     <field name="export_date"/>
                     <field name="service_type"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
@@ -27,7 +28,7 @@
                     	<h1><label string="Pre register iCash"/></h1>
                     	<group>
                     		<group>
-                    			<field name="service_type" required="1"/>
+                    			<field name="service_type" states="draft" required="1"/>
                     		</group>
                     		<group>
                     			<field name="name" readonly="1"/>

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
+from datetime import datetime
 
 
 class PabiRegister_iCashWizard(models.TransientModel):
@@ -29,7 +30,13 @@ class PabiRegister_iCashWizard(models.TransientModel):
     
     @api.multi
     def action_get_report(self):
-        self.register_id.state = 'exported'
+        if self.register_id.state == 'draft':
+            self.register_id.state = 'exported'
+            self.register_id.export_date = datetime.now()
+            for line in self.register_line_ids:
+                line.partner_bank_id.register_no = self.register_id.name
+                line.partner_bank_id.register_date = datetime.now()
+                line.partner_bank_id.is_register = True
         res = super(PabiRegister_iCashWizard, self).action_get_report()
         return res
 
