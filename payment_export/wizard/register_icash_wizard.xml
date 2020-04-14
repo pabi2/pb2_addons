@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <act_window id="action_register_icash_report"
+	        key2="client_action_multi" 
+	        name="Register Export"
+	        res_model="pabi.register.icash.wizard"
+	        src_model="pabi.register.icash"
+	        view_mode="form" 
+	        target="new"
+	        view_type="form"/>
+
+		<record model="ir.ui.view" id="view_pabi_register_icash_wizard_form">
+            <field name="name">view.pabi.register.icash.wizard.form</field>
+            <field name="model">pabi.register.icash.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Register iCash wizard">
+                	<field name="register_id" invisible="1"/>
+                	<field name="state" invisible="1"/>
+                    <field name="name" invisible="1"/>
+	                <p states="choose">
+                        Export Excel
+                    </p>
+                    <div states="get">
+                          <h2>
+                              Complete Prepare Report (.xlsx)
+                          </h2>
+                          <p colspan="4">
+                              Here is the report file:
+                              <field name="data" filename="name" class="oe_inline"/>
+                          </p>
+                      </div>
+	                <footer states="choose">
+	                    <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
+	                    or
+	                    <button string="Cancel" class="oe_link" special="cancel" />
+	                </footer>
+                    <footer states="get">
+                        <button special="cancel" string="Close" type="object"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</openerp> 
