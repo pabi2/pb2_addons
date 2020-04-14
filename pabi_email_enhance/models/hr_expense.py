@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from google.auth._default import default
 from openpyxl.worksheet import related
 
 
