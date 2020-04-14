@@ -26,4 +26,12 @@ class PabiRegister_iCashWizard(models.TransientModel):
             dom = [('register_id', '=', self.register_id.id)]
         self.register_line_ids = RegisterLine.search(dom)
         print('\n Results: '+str(self.register_line_ids))
+    
+    @api.multi
+    def action_get_report(self):
+        self.register_id.state = 'exported'
+        res = super(XLSXReportCDReceivableBalanceSheetDetail, self) \
+            .action_get_report()
+        return res
+
 
