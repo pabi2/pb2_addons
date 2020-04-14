@@ -96,10 +96,16 @@ class MISReportInstanceXlsx(ReportXlsxAbstract):
                     format_css = self.format_indent_1
                 else:
                     format_css = self.format_indent_2
+            datas = [l.strip() for l in line.get('default_style').split(';')]
+            talign = 'left'
+            for rec in datas:
+                if 'text-align' in rec:
+                    talign = rec.split(':')[1].strip()
+                if 'font-weight' in rec:
+                    style = rec.split(':')[1].strip()
             if 'font-weight' in line.get('default_style'):
-                style = line.get('default_style').split(':')[1].strip()
                 format_css = workbook.add_format(
-                    {'align': 'left', u'{}'.format(style): True,
+                    {'align': talign, u'{}'.format(style): True,
                      'font_name': font_name})
             row_pos = self._write_line(
                 ws, row_pos, ws_params, col_specs_section='data',
