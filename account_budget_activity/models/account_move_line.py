@@ -4,7 +4,7 @@ from openerp import api, fields, models
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
-    
+
     charge_type = fields.Selection(  # Prepare for pabi_internal_charge
         [('internal', 'Internal'),
          ('external', 'External')],
@@ -16,7 +16,7 @@ class AccountMoveLine(models.Model):
     )
     org_id = fields.Many2one(
             'res.org', string='Org')
-            
+
     activity_group_id = fields.Many2one(
         'account.activity.group',
         string='Activity Group',
@@ -50,6 +50,19 @@ class AccountMoveLine(models.Model):
     def create(self, vals):
         vals = self._update_analytic_dimension(vals)
         return super(AccountMoveLine, self).create(vals)
+
+    @api.multi
+    def _write(self, vals):
+        '''
+            recompute document after there is move_id in account.analytic.line
+        '''
+        res = super(AccountMoveLine, self)._write(vals)
+        if vals.get('document_id', False):
+            for move_line in self:
+                for analytic_line in move_line.analytic_lines.filtered(
+                        lambda l: not l.document_id):
+                    analytic_line._compute_document()
+        return res
 
     @api.multi
     def create_analytic_lines(self):
