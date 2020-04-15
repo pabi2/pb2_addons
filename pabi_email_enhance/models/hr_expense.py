@@ -18,13 +18,19 @@ class PABIEmailEnhance(models.Model):
     
     expense_id = fields.Many2one(
         'hr.expense.expense',
+        string='Document'
     )
     mail_id = fields.Many2one(
         'mail.mail',
+        string='Email',
     )
     subject = fields.Char(
         string='Subject',
         related='mail_id.mail_message_id.subject'
+    )
+    body_html = fields.Text(
+        string='Body',
+        related='mail_id.body_html',
     )
     recipient_ids = fields.Many2many(
         'res.partner', 

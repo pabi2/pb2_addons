@@ -17,13 +17,13 @@
                     <sheet>
                         <field name="mail_message_id" required="0" invisible="1"/>
                         <div style="vertical-align: top;">
-                            by <field name="author_id" class="oe_inline" string="User"/> on <field name="date" readonly="1" class="oe_inline"/>
+                            by <field name="author_id" class="oe_inline" string="User" readonly="1"/> on <field name="date" readonly="1" class="oe_inline"/>
                             <button name="%(mail.action_email_compose_message_wizard)d" string="Reply" type="action" icon="terp-mail-replied"
                                 context="{'default_composition_mode':'reply', 'default_parent_id': mail_message_id}" states='received,sent,exception,cancel'/>
                         </div>
                         <group>
-                            <field name="email_from"/>
-                            <field name="recipient_ids" widget="many2many_tags" string="To Employee"/>
+                            <field name="email_from" readonly='1'/>
+                            <field name="recipient_ids" widget="many2many_tags" string="To Employee" domain="[('employee','=',True)]"/>
                             <field name="email_to" string="To (External)"/>
                             <field name="email_cc"/>
                         </group>
@@ -51,11 +51,32 @@
             <field name="target">new</field>
             <field name="view_id" ref="view_email_enhance_form"/>
         </record>
-        
+
+        <record id="view_email_enhance_line_form" model="ir.ui.view">
+            <field name="name">email.enhance.line.form</field>
+            <field name="model">hr.email.enhance</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Email Enhance">
+                    <group>
+                        <group>
+                            <field name="mail_id"/>
+                            <field name="subject"/>
+                            <field name="body_html"/>
+                            <field name="expense_id"/>
+                        </group>
+                        <group>
+                            <field name="state"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
         <record id="view_expenses_form" model="ir.ui.view">
 			<field name="name">hr.expense.form</field>
 			<field name="model">hr.expense.expense</field>
-			<field name="inherit_id" ref="hr_expense_status_history.view_expenses_form"/>
+			<field name="inherit_id" ref="hr_expense_advance_clearing.view_expenses_form_advance"/>
 			<field name="priority" eval="10"/>
 			<field name="arch" type="xml">
 				<xpath expr="//page[last()]" position="after">
