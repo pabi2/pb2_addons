@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+from openerp import fields, models, api
 
 
 class ResSpa(models.Model):
@@ -198,3 +198,59 @@ class ResProject(models.Model):
         domain=[('budget_method', '=', 'expense')],
         readonly=True,
     )
+    monitor_revenue_view_ids = fields.One2many(
+        'res.project.monitor.only.view',
+        compute='_compute_budget_monitor',
+        readonly=True,
+        string='Project Monitor',
+        help='This field created for speed performance views \
+        in Budget Monitor Tab only',
+    )
+    monitor_expense_view_ids = fields.One2many(
+        'res.project.monitor.only.view',
+        compute='_compute_budget_monitor',
+        readonly=True,
+        string='Project Monitor',
+        help='This field created for speed performance views \
+        in Budget Monitor Tab only',
+    )
+
+    @api.multi
+    def _compute_budget_monitor(self):
+        self.ensure_one()
+        # delete all record and create new for performance on menu myProject
+        self._cr.execute("""delete from res_project_monitor_only_view""")
+        self._cr.execute("""
+            select dense_rank() OVER  -- Can't use row_number, it not persist
+                (ORDER BY budget_method, charge_type, fiscalyear_id) AS id,
+                budget_method, charge_type, fiscalyear_id,
+                COALESCE(sum(planned_amount),0) planned_amount,
+                COALESCE(sum(released_amount),0) released_amount,
+                COALESCE(sum(amount_pr_commit),0) amount_pr_commit,
+                COALESCE(sum(amount_po_commit),0) amount_po_commit,
+                COALESCE(sum(amount_exp_commit),0) amount_exp_commit,
+                COALESCE(sum(amount_actual),0) amount_actual,
+                COALESCE(sum(amount_so_commit),0) +
+                COALESCE(sum(amount_pr_commit),0) +
+                COALESCE(sum(amount_po_commit),0) +
+                COALESCE(sum(amount_exp_commit),0) +
+                COALESCE(sum(amount_actual),0) as amount_consumed,
+                COALESCE(sum(released_amount),0) -
+                COALESCE(sum(amount_consumed),0) as amount_balance
+            from budget_monitor_report
+            where project_id = %s
+            group by budget_method, charge_type, fiscalyear_id
+        """ % (self.id, ))
+        results = self._cr.dictfetchall()
+        ReportLine = self.env['res.project.monitor.only.view']
+        for line in results:
+            if line.get('budget_method') == 'expense':
+                self.monitor_expense_view_ids += ReportLine.create(line)
+            if line.get('budget_method') == 'revenue':
+                self.monitor_revenue_view_ids += ReportLine.create(line)
+        return True
+
+
+class ResProjectMonitorViewOnly(models.TransientModel):
+    _name = 'res.project.monitor.only.view'
+    _inherit = 'monitor.view'

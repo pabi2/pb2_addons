@@ -468,15 +468,6 @@ class ResProject(LogCommon, models.Model):
         return result
 
     @api.multi
-    def action_open_budget_monitor(self):
-        self.ensure_one()
-        action = self.env.ref(
-            'pabi_my_project.action_myproject_budget_monitor_view')
-        result = action.read()[0]
-        result.update({'res_id': self.id})
-        return result
-
-    @api.multi
     def action_open_to_sync_budget_control(self):
         self.ensure_one()
         # TODO: check for access?
