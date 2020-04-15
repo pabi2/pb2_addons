@@ -8,7 +8,6 @@
             name="Account Report"
             parent="account_budget_activity.menu_budgeting"
             sequence="120"
-            groups="account.group_account_user"
             />
         
         <!-- Budgeting > Account Report == Expense Ledger   -->  
