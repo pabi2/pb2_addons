@@ -296,58 +296,75 @@ class PurchaseWorkAcceptance(models.Model):
             self.manual_fine = 0.0
             self.manual_days = 0
 
-    @api.onchange('date_invoice')
+    # @api.onchange('date_invoice')
+    @api.multi
+    @api.constrains('date_invoice')
     def _onchange_date_invoice(self):
+        self.ensure_one()
         Invoice = self.env['account.invoice']
         InvoiceLine = self.env['account.invoice.line']
         self.write_to_invoice = True
         invoice = []
-        sup_inv = self.supplier_invoice
-        if len(self.acceptance_line_ids) > 0 and self.date_invoice:
+        # sup_inv = self.supplier_invoice
+        if self.acceptance_line_ids and self.date_invoice:
             for accept_line in self.acceptance_line_ids:
                 if accept_line.product_id.type == 'service':
                     # inv plan case
                     if accept_line.inv_line_id:
-                        invoice = Invoice.search([
-                            ('id', '=', accept_line.inv_line_id.invoice_id.id),
-                        ])
+                        invoice = Invoice.browse(
+                            accept_line.inv_line_id.invoice_id.id).filtered(
+                            lambda l: l.state == 'draft')
                     # service case
                     else:
                         invoice_line = InvoiceLine.search([
                             ('purchase_line_id', '=', accept_line.line_id.id),
                         ])
-                        for inv_line in invoice_line:
-                            invoice = Invoice.search([
-                                ('id', '=', inv_line.invoice_id.id),
-                            ])
+                        # for inv_line in invoice_line:
+                        #     invoice = Invoice.search([
+                        #         ('id', '=', inv_line.invoice_id.id),
+                        #     ])
+                        if invoice_line:
+                            invoice = Invoice.browse(
+                                invoice_line[0].invoice_id.id).filtered(
+                                lambda l: l.state == 'draft')
                 elif accept_line.product_id.type == 'product':
                     invoice = Invoice.search([
                         ('origin', 'like', self.order_id.name),
+                        ('state', '=', 'draft'),  # update draft only
                     ])
                 days = 0
                 term = self.order_id.partner_id.\
                     property_supplier_payment_term.id or False
                 if term:
                     PTLine = self.env['account.payment.term.line']
-                    term_line = PTLine.search([
-                        ('id', '=', term),
-                    ])
-                    for line in term_line:
-                        days = line.days
-                inv_date = datetime.datetime.strptime(
-                    self.date_invoice,
-                    "%Y-%m-%d",
-                )
+                    # term_line = PTLine.search([
+                    #     ('id', '=', term),
+                    # ])
+                    # for line in term_line:
+                    #     days = line.days
+                    days = PTLine.browse(term).days
+                # inv_date = datetime.datetime.strptime(
+                #     self.date_invoice,
+                #     "%Y-%m-%d",
+                # )
+                # for inv in invoice:
+                #     # Update invoice state draft only
+                #     if inv.state == 'draft':
+                #         inv.write({
+                #             'date_invoice': self.date_invoice,
+                #             'date_due': due_date,
+                #             'supplier_invoice_number': sup_inv,
+                #             'reference': self.order_id.name,
+                #         })
+                inv_date = fields.Date.from_string(self.date_invoice)
                 due_date = inv_date + datetime.timedelta(days=days)
-                for inv in invoice:
-                    # Update invoice state draft only
-                    if inv.state == 'draft':
-                        inv.write({
-                            'date_invoice': self.date_invoice,
-                            'date_due': due_date,
-                            'supplier_invoice_number': sup_inv,
-                            'reference': self.order_id.name,
-                        })
+                if invoice:
+                    invoice.write({
+                        'date_invoice': self.date_invoice,
+                        'date_due': due_date,
+                        'supplier_invoice_number': self.supplier_invoice,
+                        'reference': self.order_id.name,
+                    })
 
     @api.model
     def _check_purchase_type(self):
