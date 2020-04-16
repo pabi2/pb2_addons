@@ -365,7 +365,7 @@
                             <strong>AR VOUCHER</strong>
                         </t>
                         <t t-if="o.doctype in ['in_invoice', 'in_refund']">
-                            <strong>AP VOUCHER</strong>
+                            <strong>--AP VOUCHER--</strong>
                         </t>
                         <t t-if="o.doctype in ['payment']">
                             <strong>Payment Voucher</strong>
