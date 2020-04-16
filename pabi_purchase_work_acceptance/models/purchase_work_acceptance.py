@@ -233,14 +233,16 @@ class PurchaseWorkAcceptance(models.Model):
     )
 
     @api.multi
-    @api.depends('order_id')
+    # @api.depends('order_id')
+    @api.constrains('order_id')
     def _compute_num_installment(self):
         for rec in self:
             rec.num_installment = rec.order_id.use_invoice_plan and \
                 rec.order_id.num_installment or False
 
     @api.model
-    @api.depends('date_receive', 'date_scheduled_end','total_fine')
+    # @api.depends('date_receive', 'date_scheduled_end','total_fine')
+    @api.constrains('date_receive', 'date_scheduled_end', 'total_fine')
     def _compute_fine_amount_to_word_th(self):
         res = {}
         minus = False
@@ -257,7 +259,8 @@ class PurchaseWorkAcceptance(models.Model):
         return res
 
     @api.model
-    @api.depends('date_receive', 'date_contract_end')
+    # @api.depends('date_receive', 'date_contract_end')
+    @api.constrains('date_receive', 'date_contract_end')
     def _compute_fine_per_day_to_word_th(self):
         res = {}
         minus = False
@@ -293,58 +296,75 @@ class PurchaseWorkAcceptance(models.Model):
             self.manual_fine = 0.0
             self.manual_days = 0
 
-    @api.onchange('date_invoice')
+    # @api.onchange('date_invoice')
+    @api.multi
+    @api.constrains('date_invoice')
     def _onchange_date_invoice(self):
+        self.ensure_one()
         Invoice = self.env['account.invoice']
         InvoiceLine = self.env['account.invoice.line']
         self.write_to_invoice = True
         invoice = []
-        sup_inv = self.supplier_invoice
-        if len(self.acceptance_line_ids) > 0 and self.date_invoice:
+        # sup_inv = self.supplier_invoice
+        if self.acceptance_line_ids and self.date_invoice:
             for accept_line in self.acceptance_line_ids:
                 if accept_line.product_id.type == 'service':
                     # inv plan case
                     if accept_line.inv_line_id:
-                        invoice = Invoice.search([
-                            ('id', '=', accept_line.inv_line_id.invoice_id.id),
-                        ])
+                        invoice = Invoice.browse(
+                            accept_line.inv_line_id.invoice_id.id).filtered(
+                            lambda l: l.state == 'draft')
                     # service case
                     else:
                         invoice_line = InvoiceLine.search([
                             ('purchase_line_id', '=', accept_line.line_id.id),
                         ])
-                        for inv_line in invoice_line:
-                            invoice = Invoice.search([
-                                ('id', '=', inv_line.invoice_id.id),
-                            ])
+                        # for inv_line in invoice_line:
+                        #     invoice = Invoice.search([
+                        #         ('id', '=', inv_line.invoice_id.id),
+                        #     ])
+                        if invoice_line:
+                            invoice = Invoice.browse(
+                                invoice_line[0].invoice_id.id).filtered(
+                                lambda l: l.state == 'draft')
                 elif accept_line.product_id.type == 'product':
                     invoice = Invoice.search([
                         ('origin', 'like', self.order_id.name),
+                        ('state', '=', 'draft'),  # update draft only
                     ])
                 days = 0
                 term = self.order_id.partner_id.\
                     property_supplier_payment_term.id or False
                 if term:
                     PTLine = self.env['account.payment.term.line']
-                    term_line = PTLine.search([
-                        ('id', '=', term),
-                    ])
-                    for line in term_line:
-                        days = line.days
-                inv_date = datetime.datetime.strptime(
-                    self.date_invoice,
-                    "%Y-%m-%d",
-                )
+                    # term_line = PTLine.search([
+                    #     ('id', '=', term),
+                    # ])
+                    # for line in term_line:
+                    #     days = line.days
+                    days = PTLine.browse(term).days
+                # inv_date = datetime.datetime.strptime(
+                #     self.date_invoice,
+                #     "%Y-%m-%d",
+                # )
+                # for inv in invoice:
+                #     # Update invoice state draft only
+                #     if inv.state == 'draft':
+                #         inv.write({
+                #             'date_invoice': self.date_invoice,
+                #             'date_due': due_date,
+                #             'supplier_invoice_number': sup_inv,
+                #             'reference': self.order_id.name,
+                #         })
+                inv_date = fields.Date.from_string(self.date_invoice)
                 due_date = inv_date + datetime.timedelta(days=days)
-                for inv in invoice:
-                    # Update invoice state draft only
-                    if inv.state == 'draft':
-                        inv.write({
-                            'date_invoice': self.date_invoice,
-                            'date_due': due_date,
-                            'supplier_invoice_number': sup_inv,
-                            'reference': self.order_id.name,
-                        })
+                if invoice:
+                    invoice.write({
+                        'date_invoice': self.date_invoice,
+                        'date_due': due_date,
+                        'supplier_invoice_number': self.supplier_invoice,
+                        'reference': self.order_id.name,
+                    })
 
     @api.model
     def _check_purchase_type(self):
@@ -533,7 +553,8 @@ class PurchaseWorkAcceptance(models.Model):
                 acceptance.overdue_day = 0
 
     @api.multi
-    @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
+    # @api.depends('date_receive', 'date_contract_end', 'acceptance_line_ids')
+    @api.constrains('date_receive', 'date_contract_end', 'acceptance_line_ids')
     def _compute_total_fine(self):
         for acceptance in self:
             # product_type, is_consumable = acceptance._check_product_type()
@@ -547,7 +568,8 @@ class PurchaseWorkAcceptance(models.Model):
                 acceptance.total_fine = acceptance.manual_fine
 
     @api.multi
-    @api.depends('invoice_ids', 'invoice_ids.state')
+    # @api.depends('invoice_ids', 'invoice_ids.state')
+    @api.constrains('invoice_ids')
     def _compute_invoiced(self):
         for rec in self:
             if not rec.invoice_ids:
@@ -601,8 +623,9 @@ class PurchaseWorkAcceptance(models.Model):
             invoice_ids.button_reset_taxes()
 
     @api.multi
-    @api.depends('acceptance_line_ids.price_subtotal',
-                 'acceptance_line_ids.tax_ids')
+    # @api.depends('acceptance_line_ids.price_subtotal',
+    #              'acceptance_line_ids.tax_ids')
+    @api.constrains('acceptance_line_ids')
     def _compute_amount(self):
         for rec in self:
             amount_untaxed = 0.0
@@ -719,7 +742,8 @@ class PurchaseWorkAcceptanceLine(models.Model):
     _description = 'Purchase Work Acceptance Line'
 
     @api.multi
-    @api.depends('acceptance_id', 'line_id')
+    # @api.depends('acceptance_id', 'line_id')
+    @api.constrains('acceptance_id', 'line_id')
     def _compute_get_balance_qty(self):
         for acc_line in self:
             purchase = acc_line.line_id.order_id
@@ -800,7 +824,8 @@ class PurchaseWorkAcceptanceLine(models.Model):
     )
 
     @api.multi
-    @api.depends('to_receive_qty', 'price_unit', 'tax_ids')
+    # @api.depends('to_receive_qty', 'price_unit', 'tax_ids')
+    @api.constrains('to_receive_qty', 'price_unit', 'tax_ids')
     def _compute_price_subtotal(self):
         for rec in self:
             taxes = rec.tax_ids.compute_all(rec.price_unit, rec.to_receive_qty,

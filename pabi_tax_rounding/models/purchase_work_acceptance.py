@@ -10,8 +10,9 @@ class PurchaseWorkAcceptance(models.Model):
     )
 
     @api.multi
-    @api.depends('round_total', 'acceptance_line_ids.price_subtotal',
-                 'acceptance_line_ids.tax_ids')
+    # @api.depends('round_total', 'acceptance_line_ids.price_subtotal',
+    #              'acceptance_line_ids.tax_ids')
+    @api.constrains('round_total', 'acceptance_line_ids')
     def _compute_amount(self):
         super(PurchaseWorkAcceptance, self)._compute_amount()
         for order in self:
