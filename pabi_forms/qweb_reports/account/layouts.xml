@@ -428,7 +428,7 @@
                     <div class="col-xs-3">
                         <span>Rate: </span>
                         <t t-if="o.doctype in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'bank_receipt', 'salary_expense', 'receipt', 'payment']">
-                            <t t-if="o.document_id and o.document_id.currency_rate">
+                            <t t-if="o.document_id and o.document_id.currency_id">
                                 <span t-esc="'{:,.2f}'.format(o.document_id.currency_rate)"/>
                             </t>
                         </t>
