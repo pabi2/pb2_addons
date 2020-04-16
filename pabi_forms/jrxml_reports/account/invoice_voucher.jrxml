@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice_voucher" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.000000000000012"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;line_id&quot;]"/>
-	<style name="space">
+	<style name="space" lineSpacing="Single">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
 	</style>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
@@ -128,6 +128,9 @@
 	</field>
 	<field name="name" class="java.lang.String">
 		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="currency_rate" class="java.lang.Number">
+		<fieldDescription><![CDATA[document_id/currency_rate]]></fieldDescription>
 	</field>
 	<sortField name="debit" order="Descending"/>
 	<sortField name="credit" order="Descending"/>
@@ -291,8 +294,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[Math.abs(($F{amount_currency} == null ? 0.0 : $F{amount_currency}) == 0.0 ?
-1 : (($F{debit} == null ? 0.0 : $F{debit}) + ($F{credit} == null ? 0.0 : $F{credit})) / ($F{amount_currency} == null ? 0.0 : $F{amount_currency}))]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{currency_rate}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Transparent" x="418" y="84" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -542,14 +544,14 @@ Order]]></text>
 		<band height="16">
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="447" y="0" width="75" height="15"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" lineSpacing="Single">
 					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " / "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="525" y="0" width="30" height="15"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
@@ -628,14 +630,14 @@ Order]]></text>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="447" y="120" width="75" height="15"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" lineSpacing="Single">
 					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " / "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="525" y="120" width="30" height="15"/>
-				<textElement>
+				<textElement lineSpacing="Single">
 					<font size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
