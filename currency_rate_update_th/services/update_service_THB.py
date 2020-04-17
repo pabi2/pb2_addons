@@ -54,11 +54,17 @@ class THB_getter(Currency_getter_interface):
             _logger.info("dom.entries[2] : %s" % str(dom.entries[2]))
             _logger.info("dom.entries[2].summary_detail.value : %s" 
                          % str(dom.entries[2].summary_detail.value))
+            _logger.info("dom.entries[2].summary_detail.value.split('\n', 1) : %s" 
+                         % str(dom.entries[2].summary_detail.value.split('\n', 1)))
             if (dom.entries[2].cb_basecurrency == main_currency) and \
                     (dom.entries[2].cb_targetcurrency[:3] == curr):
+                _logger.info("1")
                 value = dom.entries[2].summary_detail.value.split('\n', 1)[0]
+                _logger.info("2")
                 rate = value.split('\n', 1)[0].split()[0]
+                _logger.info("3")
                 factor = value.split('=')[1].split()[0]
+                _logger.info("4")
                 if rate:
                     rate = float(rate) / float(factor)
                 else:
@@ -69,6 +75,7 @@ class THB_getter(Currency_getter_interface):
                     datetime.strptime(dom.entries[2].updated, '%Y-%m-%d')
                 self.check_rate_date(rate_date_datetime, max_delta_days)
 
+                _logger.info("rate : %s" % str(rate))
                 self.updated_currency[curr] = rate
                 _logger.debug("BOT Rate retrieved : %s = %s %s" %
                               (main_currency, rate, curr))
