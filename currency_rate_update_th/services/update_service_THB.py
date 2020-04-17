@@ -51,8 +51,9 @@ class THB_getter(Currency_getter_interface):
             _logger.debug("BOT sent a valid RSS file for: " + curr)
 
             # check for valid exchange data
-            _logger.info("dom : %s" % str(dom))
             _logger.info("dom.entries[2] : %s" % str(dom.entries[2]))
+            _logger.info("dom.entries[2].summary_detail.value : %s" 
+                         % str(dom.entries[2].summary_detail.value))
             if (dom.entries[2].cb_basecurrency == main_currency) and \
                     (dom.entries[2].cb_targetcurrency[:3] == curr):
                 value = dom.entries[2].summary_detail.value.split('\n', 1)[0]
