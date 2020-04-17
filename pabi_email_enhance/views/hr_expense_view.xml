@@ -23,7 +23,7 @@
                         </div>
                         <group>
                             <field name="email_from" readonly='1'/>
-                            <field name="recipient_ids" widget="many2many_tags" string="To Employee" domain="[('employee','=',True)]"/>
+                            <field name="recipient_ids" widget="many2many_kanban" string="To Employee" domain="[('employee','=',True)]"/>
                             <field name="email_to" string="To (External)"/>
                             <field name="email_cc"/>
                         </group>
