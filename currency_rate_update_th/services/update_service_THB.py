@@ -52,10 +52,10 @@ class THB_getter(Currency_getter_interface):
             _logger.debug("BOT sent a valid RSS file for: " + curr)
 
             # check for valid exchange data
-            _logger.info("dom.entries[0] : %s" % str(dom.entries[0]))
-            if (dom.entries[0].cb_basecurrency == main_currency) and \
-                    (dom.entries[0].cb_targetcurrency[:3] == curr):
-                value = dom.entries[0].summary_detail.value.split('\n', 1)[0]
+            _logger.info("dom.entries[2] : %s" % str(dom.entries[2]))
+            if (dom.entries[2].cb_basecurrency == main_currency) and \
+                    (dom.entries[2].cb_targetcurrency[:3] == curr):
+                value = dom.entries[2].summary_detail.value.split('\n', 1)[0]
                 rate = value.split('\n', 1)[0].split()[0]
                 factor = value.split('=')[1].split()[0]
                 if rate:
@@ -65,11 +65,12 @@ class THB_getter(Currency_getter_interface):
                 # rate = 1 / rate
 
                 rate_date_datetime =\
-                    datetime.strptime(dom.entries[0].updated, '%Y-%m-%d')
+                    datetime.strptime(dom.entries[2].updated, '%Y-%m-%d')
                 self.check_rate_date(rate_date_datetime, max_delta_days)
 
                 _logger.info("rate : %s" % str(rate))
                 self.updated_currency[curr] = rate
+                _logger.info("self.updated_currency[%s] : %s" % (str(curr), str(self.updated_currency[curr])))
                 _logger.debug("BOT Rate retrieved : %s = %s %s" %
                               (main_currency, rate, curr))
             else:
