@@ -29,6 +29,7 @@ class THB_getter(Currency_getter_interface):
         import feedparser
 
         for curr in currency_array:
+            _logger.info("curr : %s " % str(curr))
             _logger.debug("BOT currency rate service : connecting...")
             dom = feedparser.parse(url % curr)
 
@@ -51,20 +52,12 @@ class THB_getter(Currency_getter_interface):
             _logger.debug("BOT sent a valid RSS file for: " + curr)
 
             # check for valid exchange data
-            _logger.info("dom.entries[2] : %s" % str(dom.entries[2]))
-            _logger.info("dom.entries[2].summary_detail.value : %s" 
-                         % str(dom.entries[2].summary_detail.value))
-            _logger.info("dom.entries[2].summary_detail.value.split('\n', 1) : %s" 
-                         % str(dom.entries[2].summary_detail.value.split('\n', 1)))
-            if (dom.entries[2].cb_basecurrency == main_currency) and \
-                    (dom.entries[2].cb_targetcurrency[:3] == curr):
-                _logger.info("1")
-                value = dom.entries[2].summary_detail.value.split('\n', 1)[0]
-                _logger.info("2")
+            _logger.info("dom.entries[0] : %s" % str(dom.entries[0]))
+            if (dom.entries[0].cb_basecurrency == main_currency) and \
+                    (dom.entries[0].cb_targetcurrency[:3] == curr):
+                value = dom.entries[0].summary_detail.value.split('\n', 1)[0]
                 rate = value.split('\n', 1)[0].split()[0]
-                _logger.info("3")
                 factor = value.split('=')[1].split()[0]
-                _logger.info("4")
                 if rate:
                     rate = float(rate) / float(factor)
                 else:
@@ -72,7 +65,7 @@ class THB_getter(Currency_getter_interface):
                 # rate = 1 / rate
 
                 rate_date_datetime =\
-                    datetime.strptime(dom.entries[2].updated, '%Y-%m-%d')
+                    datetime.strptime(dom.entries[0].updated, '%Y-%m-%d')
                 self.check_rate_date(rate_date_datetime, max_delta_days)
 
                 _logger.info("rate : %s" % str(rate))
