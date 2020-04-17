@@ -49,11 +49,27 @@ class THB_getter(Currency_getter_interface):
                                 % str(curr)))
 
             _logger.debug("BOT sent a valid RSS file for: " + curr)
+            
+            # 1.) อัตราแลกเปลี่ยนถัวเฉลี่ยที่ธนาคารพาณิชย์ใช้ซื้อขายกับลูกค้า
+            # index = 0 คือ อัตราซื้อ ตั๋วเงิน
+            # index = 1 คือ อัตราซื้อ เงินโอน
+            # index = 2 คือ อัตราขาย
+            # 2.) อัตราในตลาดต่างประเทศ (ทอมสันรอยเตอร์) คำนวณผ่านอัตราซื้อขายเงินดอลลาร์ สรอ. ในตลาดกรุงเทพฯ
+            # index = 0 คือ อัตราซื้อ
+            # index = 1 คือ อัตราขาย
+            # 
+            # ตอนนี้ในระบบใช้อัตราขาย
+            index = 2
+            if len(dom.entries) < 3:
+                # ถ้า len(dom.entries) < 3 แปลว่าเป็นสกุลเงินประเภทที่ 2.)
+                index = 1
+            else:
+                index = 2
 
             # check for valid exchange data
-            if (dom.entries[0].cb_basecurrency == main_currency) and \
-                    (dom.entries[0].cb_targetcurrency[:3] == curr):
-                value = dom.entries[0].summary_detail.value.split('\n', 1)[0]
+            if (dom.entries[index].cb_basecurrency == main_currency) and \
+                    (dom.entries[index].cb_targetcurrency[:3] == curr):
+                value = dom.entries[index].summary_detail.value.split('\n', 1)[0]
                 rate = value.split('\n', 1)[0].split()[0]
                 factor = value.split('=')[1].split()[0]
                 if rate:
@@ -63,7 +79,7 @@ class THB_getter(Currency_getter_interface):
                 # rate = 1 / rate
 
                 rate_date_datetime =\
-                    datetime.strptime(dom.entries[0].updated, '%Y-%m-%d')
+                    datetime.strptime(dom.entries[index].updated, '%Y-%m-%d')
                 self.check_rate_date(rate_date_datetime, max_delta_days)
 
                 self.updated_currency[curr] = rate
