@@ -10,4 +10,5 @@ class SaleOrder(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
+        index=True,
     )

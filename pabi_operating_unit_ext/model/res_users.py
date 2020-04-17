@@ -10,6 +10,7 @@ class ResUsers(models.Model):
         compute='_compute_access_all_operating_unit',
         store=True,
         default=False,
+        index=True,
         help="This user belong to a group that can access of Operating Units",
     )
 

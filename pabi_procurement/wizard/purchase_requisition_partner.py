@@ -9,7 +9,8 @@ class PurchaseRequisitionPartner(models.TransientModel):
     is_central_purchase = fields.Boolean(
         string='Central Purchase',
         default=lambda self: self.env['purchase.requisition'].
-        browse(self._context.get('active_id')).is_central_purchase
+        browse(self._context.get('active_id')).is_central_purchase,
+        index=True,
     )
     operating_unit_view_id = fields.Many2one(
         'operating.unit.view',
