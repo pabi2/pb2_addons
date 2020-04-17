@@ -60,6 +60,8 @@ class THB_getter(Currency_getter_interface):
             # index = 1 คือ อัตราขาย
             # 
             # ตอนนี้ในระบบใช้อัตราขาย
+            _logger.info("len(dom.entries) : %s" % str(len(dom.entries)))
+            _logger.info("dom.entries : %s" % str(dom.entries))
             index = 2
             if len(dom.entries) < 2:
                 # ถ้า len(dom.entries) < 2 แปลว่าเป็นสกุลเงินประเภทที่ 2.
