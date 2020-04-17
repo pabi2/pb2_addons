@@ -29,7 +29,6 @@ class THB_getter(Currency_getter_interface):
         import feedparser
 
         for curr in currency_array:
-            _logger.info("curr : %s " % str(curr))
             _logger.debug("BOT currency rate service : connecting...")
             dom = feedparser.parse(url % curr)
 
@@ -60,8 +59,6 @@ class THB_getter(Currency_getter_interface):
             # index = 1 คือ อัตราขาย
             # 
             # ตอนนี้ในระบบใช้อัตราขาย
-            _logger.info("len(dom.entries) : %s" % str(len(dom.entries)))
-            _logger.info("dom.entries : %s" % str(dom.entries))
             index = 2
             if len(dom.entries) < 3:
                 # ถ้า len(dom.entries) < 3 แปลว่าเป็นสกุลเงินประเภทที่ 2.)
@@ -70,7 +67,6 @@ class THB_getter(Currency_getter_interface):
                 index = 2
 
             # check for valid exchange data
-            _logger.info("dom.entries[%s] : %s" % (str(index), str(dom.entries[index])))
             if (dom.entries[index].cb_basecurrency == main_currency) and \
                     (dom.entries[index].cb_targetcurrency[:3] == curr):
                 value = dom.entries[index].summary_detail.value.split('\n', 1)[0]
@@ -86,9 +82,7 @@ class THB_getter(Currency_getter_interface):
                     datetime.strptime(dom.entries[index].updated, '%Y-%m-%d')
                 self.check_rate_date(rate_date_datetime, max_delta_days)
 
-                _logger.info("rate : %s" % str(rate))
                 self.updated_currency[curr] = rate
-                _logger.info("self.updated_currency[%s] : %s" % (str(curr), str(self.updated_currency[curr])))
                 _logger.debug("BOT Rate retrieved : %s = %s %s" %
                               (main_currency, rate, curr))
             else:
