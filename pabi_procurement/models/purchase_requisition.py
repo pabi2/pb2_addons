@@ -237,6 +237,7 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         default=False,
+        index=True,
     )
     exclusive = fields.Selection(
         default='exclusive',

@@ -9,6 +9,7 @@ class StockWarehouse(models.Model):
         'operating.unit',
         required=True,
         # domain=lambda self: self.env['operating.unit']._ou_domain(),
+        index=True,
     )
 
 
@@ -19,6 +20,7 @@ class StockLocation(models.Model):
         'operating.unit',
         required=True,
         # domain=lambda self: self.env['operating.unit']._ou_domain(),
+        index=True,
     )
 
 
@@ -35,5 +37,13 @@ class StockPicking(models.Model):
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
-    operating_unit_id = fields.Many2one(required=False)
-    operating_unit_dest_id = fields.Many2one(required=False)
+    operating_unit_id = fields.Many2one(
+        required=False,
+        index=True,
+        store=True,
+    )
+    operating_unit_dest_id = fields.Many2one(
+        required=False,
+        index=True,
+        store=True,
+    )

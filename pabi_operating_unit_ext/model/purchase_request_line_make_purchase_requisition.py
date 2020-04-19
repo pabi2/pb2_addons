@@ -10,6 +10,7 @@ class PurchaseRequestLineMakePurchaseRequisition(models.TransientModel):
         'operating.unit',
         required=True,
         # domain=lambda self: self.env['operating.unit']._ou_domain(),
+        index=True,
     )
 
     @api.model

@@ -196,6 +196,7 @@ class PurchaseRequest(models.Model):
             'to_approve': [('readonly', False)],
         },
         default=False,
+        index=True,
     )
     is_small_amount = fields.Boolean(
         string='Small Amount',
@@ -451,6 +452,7 @@ class PurchaseRequestLine(models.Model):
         readonly=True,
         related='request_id.is_central_purchase',
         store=True,
+        index=True,
     )
     is_small_amount = fields.Boolean(
         string='Is Small Amount',

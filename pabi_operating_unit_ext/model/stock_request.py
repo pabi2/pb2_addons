@@ -11,6 +11,7 @@ class StockRequest(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         # domain=lambda self: self.env['operating.unit']._ou_domain(),
+        index=True,
     )
 
     operating_unit_borrow_view_id = fields.Many2one(
