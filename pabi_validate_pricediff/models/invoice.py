@@ -47,7 +47,7 @@ class account_invoice_line(osv.osv):
                             valuation_stock_move = stock_move_obj.search(cr, uid, [('purchase_line_id', '=', i_line.purchase_line_id.id)], limit=1, context=context)
                             if valuation_stock_move:
                                 stock_move_id = stock_move_obj.browse(cr, uid, valuation_stock_move[0], context=context)
-                                valuation_price_unit = stock_move_id.price_unit
+                                valuation_price_unit = stock_move_id.purchase_line_id.price_unit
                         if inv.currency_id.id != company_currency:
                             if valuation_stock_move:
                                 # get currency from IN transfer date
