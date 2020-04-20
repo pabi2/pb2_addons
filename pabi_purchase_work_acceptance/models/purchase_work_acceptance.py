@@ -358,8 +358,8 @@ class PurchaseWorkAcceptance(models.Model):
                 #         })
                 inv_date = fields.Date.from_string(self.date_invoice)
                 due_date = inv_date + datetime.timedelta(days=days)
-                if invoice:
-                    invoice.write({
+                for inv in invoice:
+                    inv.write({
                         'date_invoice': self.date_invoice,
                         'date_due': due_date,
                         'supplier_invoice_number': self.supplier_invoice,
