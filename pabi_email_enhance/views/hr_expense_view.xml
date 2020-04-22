@@ -85,7 +85,7 @@
 		                <field name="message_mail">
 		                	<tree>
 		                		<field name="subject"/>
-								<field name="recipient_ids" string='To Employee'/>
+								<field name="recipient_ids"  string='To Employee'/>
 								<field name="state"/>
 		                	</tree>
 		                </field>

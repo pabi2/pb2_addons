@@ -59,7 +59,6 @@ class mail_mail(models.Model):
         string="To Employee",
         readonly=True,
     )
-    
     email_cc = fields.Char(
         string='Cc',  
     )
