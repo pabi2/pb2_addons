@@ -32,5 +32,20 @@ class AccountAssetRemove(models.TransientModel):
         self = self.with_context(overwrite_move_name='/')
         res = super(AccountAssetRemove, self).remove()
         asset.status = self.target_status
-        asset.active = False
+        return res
+
+    def _get_removal_data(self, asset, residual_value):
+        res = super(AccountAssetRemove, self)._get_removal_data(
+            asset, residual_value)
+        chartfield_id = asset.owner_section_id or asset.owner_project_id or \
+            asset.owner_invest_asset_id or \
+            asset.owner_invest_construction_phase_id or False
+        asset.account_analytic_id.write({
+            'section_id': asset.owner_section_id.id or False,
+            'project_id': asset.owner_project_id.id or False,
+            'invest_asset_id': asset.owner_invest_asset_id.id or False,
+            'invest_construction_phase_id':
+                asset.owner_invest_construction_phase_id.id or False,
+            'costcenter_id': chartfield_id.costcenter_id.id or False,
+        })
         return res
