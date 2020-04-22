@@ -218,6 +218,9 @@ class ResProject(models.Model):
     @api.multi
     def _compute_budget_monitor(self):
         self.ensure_one()
+        # create new project not query
+        if not isinstance(self.id, int):
+            return True
         # delete all record and create new for performance on menu myProject
         self._cr.execute("""delete from res_project_monitor_only_view""")
         self._cr.execute("""
