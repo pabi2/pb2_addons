@@ -635,6 +635,7 @@
                                 'W13': "${'=IF(?(M13)=\"\",\"\",IF(?(Q13)=\"\",\"ไม่มีวันที่ PE\",IF(AND(?(V13)=\"KV 9 - 22\",?(Q13)&lt;=DATE(YEAR(?(M13)),MONTH(?(M13)),30)),\"Yes\",IF(AND(?(V13)=\"KV 23 - 8\",MONTH(?(M13))&lt;12,?(Q13)&lt;=DATE(YEAR(?(M13)),MONTH(?(M13))+1,15)),\"Yes\",IF(AND(?(V13)=\"KV 23 - 8\",MONTH(?(M13))=12,?(Q13)&lt;=DATE(YEAR(?(M13))+1,MONTH(?(M13))-11,15)),\"Yes\",\"No\")))))'}",
                                 'X13': "${'=IF(?(M13)=\"\",\"\",IF(AND(OR(AND(DAY(?(M13))&gt;=23,DAY(?(M13))&lt;=31),AND(DAY(?(M13))&gt;=1,DAY(?(M13))&lt;=8)),AND(DAY(?(Q13))&gt;=1,DAY(?(Q13))&lt;=15)),\"Yes\",IF(AND(AND(DAY(?(M13))&gt;=9,DAY(?(M13))&lt;=22),AND(DAY(?(Q13))&gt;=16,DAY(?(Q13))&lt;=31)),\"Yes\",\"No\")))'}",
                                 'Y13': '${"=NETWORKDAYS(?(N13),?(M13),Holliday!B:B)"}',
+                                'AI13': "${'=IF(?(B13)&lt;&gt;\"\",?(C13)&amp;\" \"&amp;?(E13)&amp;\" จำนวนเงิน \"&amp;TEXT(?(L13),\"#,##0.00\")&amp;\" บาท ได้โอนเงินเรียบร้อยแล้ว\",\"\")'}",
                                 # hide column
                                 'AE13': 'invoice_id.source_document_id${value and value.display_name or ""}',
                                 'AF13': 'salary_number${value or ""}',
