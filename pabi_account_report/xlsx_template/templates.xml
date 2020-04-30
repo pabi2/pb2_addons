@@ -1062,7 +1062,7 @@ result = pd.pivot_table(df, index=groupby,
                                 'J14': 'customer_invoice_posting_date${value or ""}#{number_format=date}',
                                 'K14': 'customer_invoice_amount${value and (value != -1 and value or "0") or ""}#{number_format=number}',
                                 'L14': 'outstanding${value or ""}#{number_format=number}',
-                                'L15': '${'=K14+L14'}',
+                                'L15': '${"=SUM(?(K14):?(L14))"}#{number_format=number}',
                             }
                         },
                     }
