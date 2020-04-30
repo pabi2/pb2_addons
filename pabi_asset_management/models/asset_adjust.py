@@ -1401,7 +1401,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         invl_analytic_lines = self.invoice_line_id.account_analytic_id.line_ids
         invl_analytic_line = invl_analytic_lines.search([
             ('move_id', '=', inv_movl_id)])
-        if not invl_analytic_line:
+        if not invl_analytic_line or len(invl_analytic_line) > 1:
             invl_analytic_line = invl_analytic_lines[0]
 
         domain = [
@@ -1412,10 +1412,8 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         line_analytic_line = self.account_analytic_id.line_ids
         if line_analytic_line:
             line_analytic_line = line_analytic_line.search(domain)
-
         if not line_analytic_line and analytic_line_ids:
             line_analytic_line = analytic_line_ids[0]
-
         # follow by invl_analytic_line
         analytic_line_credit = analytic_line.search([
             ('move_id', '=', ml_credit.id)])

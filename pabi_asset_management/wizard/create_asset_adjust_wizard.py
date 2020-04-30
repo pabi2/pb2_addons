@@ -97,6 +97,7 @@ class CreateAssetAdjustWizard(models.TransientModel):
                        'views': False})
         ctx = ast.literal_eval(result['context'])
         invoice_id = self._context.get('active_id')
+        invoice = self.env['account.invoice'].browse(invoice_id)
         # Adjust Asset Type values
         adjust_asset_types = [(x.from_product_id.id, x.to_product_id.id)
                               for x in self.adjust_asset_type_ids]
@@ -109,8 +110,17 @@ class CreateAssetAdjustWizard(models.TransientModel):
         expense_to_assets = [(x.from_account_id.id, x.to_product_id.id,
                               x.invoice_line_id.id, x.quantity, x.id)
                              for x in self.expense_to_asset_ids]
-        limit_asset_value = sum([x.invoice_line_id.price_subtotal
-                                 for x in self.expense_to_asset_ids])
+        limit, price_unit_THB = 0.0, 0.0
+        # return date IN, INV or today
+        ctx_date = invoice._compute_currency_rate()
+        ctx = {'date': ctx_date}
+        for line in self.expense_to_asset_ids:
+            if invoice.currency_id != invoice.company_id.currency_id:
+                price_unit_THB = invoice.currency_id.with_context(ctx).\
+                    compute(line.invoice_line_id.price_subtotal,
+                            invoice.company_id.currency_id)
+            limit += price_unit_THB or line.invoice_line_id.price_subtotal
+        limit_asset_value = limit
         ctx.update({'default_adjust_type': self.adjust_type,
                     'default_invoice_id': invoice_id,
                     'default_ship_purchase_id': self.ship_purchase_id.id,
