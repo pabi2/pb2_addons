@@ -442,7 +442,11 @@ class ISSIBudgetProjectMonitorView(models.Model):
                          LEFT JOIN account_fiscalyear fis ON ((plan.fiscalyear_id = fis.id)))
                       WHERE (((plan.budget_method)::text = 'revenue'::text) AND ((fis.name)::text <= '2018'::text) AND (plan.planned_amount <> (0)::double precision))) query
                  LEFT JOIN res_project project ON ((query.project_id = project.id)))
-                 LEFT JOIN res_project_revenue_actual rev_project ON (((project.id = rev_project.project_id) AND (query.fiscalyear_id = rev_project.fiscalyear_id))))
+                 LEFT JOIN (SELECT res_project_revenue_actual.fiscalyear_id,
+                            res_project_revenue_actual.project_id,
+                            sum(res_project_revenue_actual.actual_amount) AS actual_amount
+                            FROM res_project_revenue_actual
+                            GROUP BY res_project_revenue_actual.fiscalyear_id, res_project_revenue_actual.project_id) rev_project ON (((project.id = rev_project.project_id) AND (query.fiscalyear_id = rev_project.fiscalyear_id))))
               GROUP BY query.fiscal_year, query.fiscalyear_id, project.code, project.id
         )
         """ % self._table)
