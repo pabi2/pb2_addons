@@ -268,6 +268,7 @@ class AccountInvoice(models.Model):
                 rec.currency_rate = rate
             else:
                 rec.currency_rate = 1 / rate
+        return ctx_date
 
     @api.multi
     def _compute_payment_count(self):
