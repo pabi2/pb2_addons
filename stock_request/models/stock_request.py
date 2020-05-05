@@ -259,6 +259,10 @@ class StockRequest(models.Model):
         self.ensure_one()
         if not self.line_ids:
             raise ValidationError(_('No lines!'))
+        for line in self.line_ids:
+            if line.product_id.qty_available == 0:
+                raise ValidationError(_('Product "%s" Onhand Qty is empty')
+                                      % line.product_id.name)
         self.write({
             'state': 'wait_confirm',
             'date_request': fields.Date.context_today(self),
