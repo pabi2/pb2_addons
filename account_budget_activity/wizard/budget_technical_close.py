@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-from openerp import api, models
+from openerp import api, models, fields
 
 
 class BudgetTechnicalCloseWizard(models.TransientModel):
     _name = "budget.technical.close.wizard"
 
+    reason_text = fields.Text(
+        string='Reason',
+    )
+    
     @api.multi
     def action_close(self):
         self.ensure_one()

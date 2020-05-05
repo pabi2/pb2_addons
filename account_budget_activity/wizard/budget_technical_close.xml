@@ -33,6 +33,7 @@
                         Closing this document will also relase all committed budget and inactive budget transition.<br/>
                         Are you sure to continue?
                     </p>
+                    <field name="reason_text"/>
                     <footer>
                         <button name="action_close" string="Close &amp; Uncommit Budget" type="object" class="oe_highlight"/>
                         or

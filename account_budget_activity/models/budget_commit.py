@@ -45,6 +45,11 @@ class CommitCommon(object):
         store=True,
         help="Committed Amount Remaining (Net)",
     )
+    reason_text = fields.Text(
+        string='Reason',
+        default='',
+        copy=False,
+    )
 
     @api.multi
     @api.depends('budget_commit_ids')
