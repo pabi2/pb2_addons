@@ -16,42 +16,49 @@ class HRExpense(models.Model):
     internal_section_id = fields.Many2one(
         'res.section',
         string='Internal Section',
+        index=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
     internal_project_id = fields.Many2one(
         'res.project',
         string='Internal Project',
+        index=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
     rev_ic_journal_id = fields.Many2one(
         'account.journal',
         string='Revenue Internal Charge Journal',
+        index=True,
         compute='_compute_internal_charge_journal',
         store=True,
     )
     exp_ic_journal_id = fields.Many2one(
         'account.journal',
         string='Expense Internal Charge Journal',
+        index=True,
         compute='_compute_internal_charge_journal',
         store=True,
     )
     rev_ic_move_id = fields.Many2one(
         'account.move',
         string='Internal Revenue Journal Entry',
+        index=True,
         readonly=True,
         copy=False,
     )
     exp_ic_move_id = fields.Many2one(
         'account.move',
         string='Internal Expense Journal Entry',
+        index=True,
         readonly=True,
         copy=False,
     )
     rev_ic_reversal_move_id = fields.Many2one(
         'account.move',
         related='rev_ic_move_id.reversal_id',
+        index=True,
         string='Internal Revenue Reversal Entry',
         readonly=True,
         copy=False,
@@ -59,6 +66,7 @@ class HRExpense(models.Model):
     exp_ic_reversal_move_id = fields.Many2one(
         'account.move',
         related='exp_ic_move_id.reversal_id',
+        index=True,
         string='Internal Expense Reversal Entry',
         readonly=True,
         copy=False,
