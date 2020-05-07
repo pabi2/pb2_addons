@@ -11,6 +11,7 @@
         'pabi_account_report',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'reports/jasper_report_journal_document_entry.xml',
         'data/jasper_data.xml',
     ],
