@@ -23,8 +23,8 @@
                         </div>
                         <group>
                             <field name="email_from" readonly='1'/>
-                            <field name="recipient_ids" widget="many2many_tags"/>
-                            <field name="email_to" string="To (External)"/>
+                            <!-- <field name="recipient_ids" widget="many2many_tags"/> -->
+                            <field name="email_to" string="To (External)"  readonly="True" />
                             <field name="email_cc"/>
                         </group>
                         <label for="subject" class="oe_edit_only"/>
@@ -33,9 +33,9 @@
                             <page string="Body">
                                 <field name="body_html"/>
                             </page>
-                            <page string="Attachments">
+                           <!-- <page string="Attachments">
                                 <field name="attachment_ids"/>
-                            </page>
+                            </page> -->
                         </notebook>
                     </sheet>
                 </form>
