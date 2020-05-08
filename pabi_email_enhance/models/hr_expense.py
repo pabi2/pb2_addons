@@ -80,10 +80,10 @@ class mail_mail(models.Model):
 #         list_ids.append(res_partner.id)
 #         res['recipient_ids'] = list_ids
         res['email_to'] = hr_employee_work_mail
-        if res_partner == res_partner_prepare :
-            res['email_cc'] = ''
+        if res_partner != res_partner_prepare :
+            res['email_cc'] = email_res_partner
         else:
-            res['email_cc'] = email_res_partner + ';'
+            res['email_cc'] = ''
         return res
     
     def create(self, cr, uid, values, context=None):
