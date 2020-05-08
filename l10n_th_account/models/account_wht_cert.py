@@ -540,9 +540,10 @@ class AccountWhtCert(models.Model):
     @api.model
     def process_mail_wht_auto_send(self):
         sql = """
-            Select pe.name,pe.date_value, * from account_wht_cert whtc
-                left join payment_export pe on whtc.voucher_id = pe.id
-                where date_sent_mail is null and pe.date_value = (now()::timestamp::date)
+            Select pe.name,pe.date_value, whtc.* from account_wht_cert whtc
+            left join account_voucher vo on whtc.voucher_id = vo.id
+            left join payment_export pe on vo.payment_export_id = pe.id
+            where date_sent_mail is null and pe.date_value = (now()::timestamp::date)
         """
         self._cr.execute(sql)
         awt_rec = self._cr.dictfetchall()
