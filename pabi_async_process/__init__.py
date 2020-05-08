@@ -7,6 +7,7 @@ from . import action_generate_entries
 from . import action_open_hr_salary
 from . import action_generate_budget_plans
 from . import action_asset_depre_line
+from . import action_hr_expense_create_multi_supplier_invoices
 # Use pabi.action
 from . import pabi_action_generate_entries
 from . import pabi_action_asset_compute
