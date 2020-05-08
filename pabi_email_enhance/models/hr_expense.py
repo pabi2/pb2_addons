@@ -59,23 +59,25 @@ class mail_mail(models.Model):
         string="To Employee",
         readonly=True,
     )
-    email_cc = fields.Char(
-        string='Cc',  
-    )
+#     email_cc = fields.Char(
+#         string='Cc',  
+#     )
     
     @api.model
     def default_get(self, fields):
-        list_ids = []
+#         list_ids = []
+        email_res_partner = ''
         res = super(mail_mail, self).default_get(fields)
         active_model = self._context.get('active_model')
         active_id = self._context.get('active_id')
         hr_expenes_doc = self.env['hr.expense.expense'].search([('id', '=', active_id)])
         hr_employee_code = hr_expenes_doc.employee_id.employee_code
         hr_employee_work_mail = hr_expenes_doc.employee_id.work_email
-        email_res_partner = hr_expenes_doc.user_id.partner_id.email
+        if hr_expenes_doc.user_id.partner_id.email :
+            email_res_partner = hr_expenes_doc.user_id.partner_id.email
         res_partner = self.env['res.partner'].search([('search_key', '=', hr_employee_code)])
         res_partner_prepare = hr_expenes_doc.user_id.partner_id
-        list_ids.append(res_partner.id)
+#         list_ids.append(res_partner.id)
 #         res['recipient_ids'] = list_ids
         res['email_to'] = hr_employee_work_mail
         if res_partner == res_partner_prepare :
