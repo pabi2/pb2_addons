@@ -330,7 +330,7 @@ class AssetRegisterReport(models.TransientModel):
                 (select coalesce(sum(line.amount), 0.0)
                  from account_asset_line line
                  left join account_asset asset on line.asset_id = asset.id
-                 where line.line_date between %s and %s
+                 where line.line_date <= %s
                  and asset.id = a.id and line.type = 'depreciate') accumulated_bf
             from
             account_asset a
@@ -347,7 +347,7 @@ class AssetRegisterReport(models.TransientModel):
                           # tuple(depre_account_ids),
                           date_dep_start, date_dep_end,
                           tuple(accum_depre_account_ids), date_end,
-                          date_bef_start, date_bef_end))
+                          date_bef_end))
 
         results = self._cr.dictfetchall()
         ReportLine = self.env['asset.register.view']
