@@ -47,7 +47,6 @@ class CommitCommon(object):
     )
     reason_text = fields.Text(
         string='Reason',
-        default='',
         copy=False,
     )
 

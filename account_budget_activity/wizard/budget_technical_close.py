@@ -16,3 +16,4 @@ class BudgetTechnicalCloseWizard(models.TransientModel):
         active_model = self._context.get('active_model')
         record = self.env[active_model].browse(active_id)
         record.action_technical_closed()
+        record.write({'reason_text': self.reason_text,})
