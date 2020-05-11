@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+
+      <record id="stock.action_inventory_form" model="ir.actions.act_window">
+          <field name="context">{'default_inv_adjust': True}</field>
+      </record>
+
         <record id="view_inventory_form" model="ir.ui.view">
             <field name="name">stock.inventory.form</field>
             <field name="model">stock.inventory</field>
