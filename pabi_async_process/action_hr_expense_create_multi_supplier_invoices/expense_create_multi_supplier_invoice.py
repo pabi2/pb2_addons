@@ -23,7 +23,6 @@ class ExpenseCreateMultiSupplierInvoice(PabiAsync, models.TransientModel):
 
     async_process = fields.Boolean(
         string='Run task in background?',
-        default=True,
     )
     get_context = fields.Char()
 
