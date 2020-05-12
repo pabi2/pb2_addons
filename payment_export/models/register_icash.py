@@ -68,9 +68,11 @@ class PabiRegister_iCash(models.Model):
             RegisterLineObj.create({'register_id': self.id,
                                     'partner_bank_id': line.id,
                                     'beneficiary_code': 'NSTDA_%s' % line.acc_number,
-                                    'name_en': line.owner_name_en,
                                     'account_number': line.acc_number,
-                                    'email': line.partner_id.email,
+                                    'owner_name_en': line.owner_name_en,
+                                    'partner_searchkey': line.partner_id.search_key,
+                                    'partner_name': line.partner_id.name,
+                                    'partner_email': line.partner_id.email,
                                     })
 
     @api.multi
@@ -95,13 +97,19 @@ class PabiRegister_iCashLine(models.Model):
     beneficiary_code = fields.Char(
         'Beneficiary Code'
     )
-    name_en = fields.Char(
-        'Name En'
-    )
     account_number = fields.Char(
         'Account Number'
     )
-    email = fields.Char(
+    owner_name_en = fields.Char(
+        'Account Ower Name En'
+    )
+    partner_searchkey = fields.Char(
+        'Partner Search Key'
+    )
+    partner_name = fields.Char(
+        'Partner Name'
+    )
+    partner_email = fields.Char(
         'Email Account'
     )
 
@@ -110,7 +118,9 @@ class PabiRegister_iCashLine(models.Model):
         for rec in self:
             if rec.register_id.state == 'draft' and rec.partner_bank_id:
                 rec.beneficiary_code = 'NSTDA_%s' % rec.partner_bank_id.acc_number
-                rec.name_en = rec.partner_bank_id.owner_name_en
                 rec.account_number = rec.partner_bank_id.acc_number
-                rec.email = rec.partner_bank_id.partner_id.email
+                rec.owner_name_en = rec.partner_bank_id.owner_name_en
+                rec.partner_searchkey = rec.partner_bank_id.partner_id.search_key
+                rec.partner_name = rec.partner_bank_id.partner_id.name
+                rec.partner_email = rec.partner_bank_id.partner_id.email
 

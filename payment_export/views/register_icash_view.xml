@@ -38,12 +38,14 @@
                     	<notebook>
                             <page string="Supplier Account">
                             	<field name="line_ids">
-                                    <tree create="0" edit="0">
+                                    <tree editable="bottom" create="0" edit="1" delete="0">
                                         <field name="partner_bank_id" invisible="1"/>
-                                        <field name="beneficiary_code"/>
-                                        <field name="name_en"/>
-                                        <field name="account_number"/>
-                                        <field name="email"/>
+                                        <field name="beneficiary_code" readonly="1"/>
+                                        <field name="account_number" readonly="1"/>
+                                        <field name="owner_name_en" readonly="1"/>
+                                        <field name="partner_searchkey" readonly="1"/>
+                                        <field name="partner_name" readonly="1"/>
+                                        <field name="partner_email" readonly="1"/>
                                     </tree>
                                 </field>
                             </page>
