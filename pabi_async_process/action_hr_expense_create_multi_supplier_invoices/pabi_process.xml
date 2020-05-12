@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+		<data>
+				<record id="hr_expense_create_multi_supplier_invoice" model="pabi.process">
+						<field name="name">HR Expense Create Multi Supplier Invoice</field>
+				</record>
+		</data>
+</openerp>
