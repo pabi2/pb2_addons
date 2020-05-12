@@ -10,6 +10,12 @@
             	<xpath expr="//field[@name='operating_unit_ids']" position="after">
             		<field name="doc_type"/>
             	</xpath>
+            	<xpath expr="//page[@name='account_filters']" position="replace">
+                    <page string="Account Filters" name="account_filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="account_ids" domain="[('company_id', '=', company_id), '|', ('user_type.code', 'in', ('Expense', 'Allocation'))]"/>
+                    </page>
+                </xpath>
             	<xpath expr="//notebook[@name='additional_criteria']" position="inside">
                     <page string="Document Number Filters" name="doc_number_filters">
                         <group>

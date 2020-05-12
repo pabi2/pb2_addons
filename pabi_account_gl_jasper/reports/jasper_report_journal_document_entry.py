@@ -6,8 +6,7 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
     _name = 'jasper.report.journal.document.entry'
     _inherit = 'xlsx.report.expense.ledger'
     
-    doc_type = fields.Many2one(
-        'account.journal',
+    doc_type = fields.Char(
         string='Doc Type',
     )
     
@@ -106,9 +105,9 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
 #             date_end = [(" date <= '{}' ".format(self.date_end))]
             date_end = self.date_end
         if self.doc_type:
-            dom += [(" journal_id = {} ".format(self.doc_type.id))]
+            dom += [(" am.name like '{}%'".format(self.doc_type))]
         if self.doc_number_ids:
-            dom += [(" move_id in ({}) ".format(','.join(map(str, (self.doc_number_ids.ids)))))]
+            dom += [(" aml.move_id in ({}) ".format(','.join(map(str, (self.doc_number_ids.ids)))))]
             
 #         self.results = Result.with_context(active=False).search(dom).sorted(
 #                        key=lambda l: (l.charge_type,
