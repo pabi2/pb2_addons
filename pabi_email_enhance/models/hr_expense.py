@@ -54,15 +54,6 @@ class mail_mail(models.Model):
     _inherit = 'mail.mail'
     
     
-    recipient_ids = fields.Many2many(
-        'res.partner',
-        string="To Employee",
-        readonly=True,
-    )
-#     email_cc = fields.Char(
-#         string='Cc',  
-#     )
-    
     @api.model
     def default_get(self, fields):
 #         list_ids = []
@@ -84,6 +75,8 @@ class mail_mail(models.Model):
             res['email_cc'] = email_res_partner
         else:
             res['email_cc'] = ''
+        if res['email_cc'] != '':
+            res['email_cc'] = email_res_partner + ';'
         return res
     
     def create(self, cr, uid, values, context=None):
