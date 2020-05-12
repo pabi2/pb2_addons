@@ -171,7 +171,27 @@ class PurchaseBilling(models.Model):
     @api.multi
     def validate_billing(self):
         self.write({'state': 'billed'})
+        Stock = self.env['stock.picking']
+        WA = self.env['purchase.work.acceptance']
         for rec in self:
+            for inv in rec.supplier_invoice_ids:
+                po = inv.source_document_id
+                if po and po.use_invoice_plan:
+                    wa = WA.sudo().search([
+                        ('order_id', '=', po.id),
+                        ('installment', '=', inv.installment),
+                    ])
+                    if not wa:
+                        raise ValidationError(
+                            _("Can not Find Work Acceptance Installment "
+                              "'%s' of '%s'") % (inv.installment, po.name))
+                    picking = Stock.sudo().search([
+                        ('origin', '=', po.name),
+                        ('acceptance_id', '=', wa.id),
+                    ])
+                    if picking and picking.state != 'done':
+                        raise ValidationError(_("[%s], %s must transfer")
+                                              % (po.name, picking.name))
             rec.supplier_invoice_ids.write({'date_invoice': rec.date,
                                             'date_due': rec.date_due,
                                             'purchase_billing_id': rec.id})
