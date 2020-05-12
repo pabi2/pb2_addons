@@ -13,7 +13,7 @@ class StockQuant(models.Model):
             cost = move.asset_value
         # Overwrite by current currency rate
         currency_id = move.picking_id.acceptance_id.order_id.currency_id.id
-        if currency_id != move.company_id.currency_id.id:
+        if currency_id and currency_id != move.company_id.currency_id.id:
             search = self.env['res.currency.rate'].search([
                 ('currency_id', '=', currency_id),
                 ('name', '<=', fields.Date.today())
