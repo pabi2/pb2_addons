@@ -123,6 +123,7 @@ class PurchaseOrder(models.Model):
         string='Central Purchase',
         readonly=True,
         default=False,
+        index=True,
     )
     select_reason = fields.Many2one(
         'purchase.select.reason',

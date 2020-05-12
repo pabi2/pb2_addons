@@ -11,6 +11,7 @@ class PurchaseRequisition(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         # domain=lambda self: self.env['operating.unit']._ou_domain(),
+        index=True,
     )
 
 
@@ -20,4 +21,5 @@ class PurchaseRequisitionLine(models.Model):
     operating_unit_id = fields.Many2one(
         'operating.unit',
         required=False,
+        index=True,
     )

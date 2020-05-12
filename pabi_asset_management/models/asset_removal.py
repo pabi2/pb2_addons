@@ -5,9 +5,10 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp.exceptions import Warning as UserError
 from openerp.exceptions import RedirectWarning
-from openerp.addons.connector.queue.job import job, related_action
+from openerp.addons.connector.queue.job import job
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.exception import RetryableJobError
+
 
 @job
 def action_done_async_process(session, model_name, res_id):
@@ -164,16 +165,14 @@ class AccountAssetRemoval(models.Model):
         Asset = self.env['account.asset']
         for removal in self:
             asset_ids = removal.removal_asset_ids.mapped('asset_id').ids
-            assets_id = Asset.with_context(active_test=False).search([
-                ('id', 'in', asset_ids)])
-
+            assets_id = Asset.with_context(active_test=False).browse(asset_ids)
             for asset in assets_id:
                 res = asset.open_entries()
+                res['domain'].append(('state', '=', 'draft'))
                 move_id = self.env['account.move'].search(res['domain'])
                 for move in move_id:
-                    if move.state == 'draft':
-                        move.line_id._get_detail_asset_move_line()
-                        move.button_validate()
+                    move.line_id._get_detail_asset_move_line()
+                    move.button_validate()
 
     @api.multi
     def _remove_confirmed_assets(self):
@@ -197,9 +196,13 @@ class AccountAssetRemoval(models.Model):
         for rec in self:
             assets = rec.removal_asset_ids.mapped('asset_id')
             if rec.target_status.code == 'deliver':
-                for asset in assets:
-                    asset.deliver_to = rec.deliver_to
-                    asset.deliver_date = rec.deliver_date
+                assets.write({
+                    'deliver_to': rec.deliver_to,
+                    'deliver_date': rec.deliver_date,
+                })
+                # for asset in assets:
+                #     asset.deliver_to = rec.deliver_to
+                #     asset.deliver_date = rec.deliver_date
             assets.validate_asset_to_removal()
         self._remove_confirmed_assets()
         self.write({'state': 'done'})
@@ -390,6 +393,21 @@ class AccountAssetRemovalLines(models.Model):
         return ['FR']
 
     @api.multi
+    def change_ou_to_owner(self, asset):
+        chartfield_id = asset.owner_section_id or asset.owner_project_id or \
+            asset.owner_invest_asset_id or \
+            asset.owner_invest_construction_phase_id or False
+        asset.account_analytic_id.write({
+            'section_id': asset.owner_section_id.id or False,
+            'project_id': asset.owner_project_id.id or False,
+            'invest_asset_id': asset.owner_invest_asset_id.id or False,
+            'invest_construction_phase_id':
+                asset.owner_invest_construction_phase_id.id or False,
+            'costcenter_id': chartfield_id.costcenter_id.id or False,
+        })
+        return True
+
+    @api.multi
     def remove(self):
         self.ensure_one()
         asset_obj = self.env['account.asset']
@@ -415,6 +433,7 @@ class AccountAssetRemovalLines(models.Model):
                 raise UserError(_(
                     "No period defined for the removal date."))
             period_id = period_ids[0].id
+
         dlines = asset_line_obj.search(
             [('asset_id', '=', asset.id), ('type', '=', 'depreciate')],
             order='line_date desc')
@@ -424,6 +443,7 @@ class AccountAssetRemovalLines(models.Model):
             create_dl = asset_line_obj.search(
                 [('asset_id', '=', asset.id), ('type', '=', 'create')])[0]
             last_date = create_dl.line_date
+
         if self.date_remove < last_date:
             raise UserError(
                 _("The removal date must be after "
@@ -431,6 +451,7 @@ class AccountAssetRemovalLines(models.Model):
 
         line_name = asset._get_depreciation_entry_name(len(dlines) + 1)
         journal_id = asset.profile_id.journal_id.id
+
         # create move
         move_vals = {
             'name': asset.name,
@@ -441,6 +462,7 @@ class AccountAssetRemovalLines(models.Model):
             'narration': self.note,
         }
         move = move_obj.create(move_vals)
+
         # create asset line
         asset_line_vals = {
             'amount': residual_value,
@@ -459,6 +481,9 @@ class AccountAssetRemovalLines(models.Model):
 
         # create move lines
         move_lines = self._get_removal_data(asset, residual_value)
+        # change account_analytic <OU> to owner_<OU>_id
+        self.change_ou_to_owner(asset)
+
         move.with_context(allow_asset=True).write({'line_id': move_lines})
 
         return {
@@ -542,17 +567,22 @@ class AccountAssetRemovalLines(models.Model):
             move_line_vals = {
                 'name': asset.name,
                 'account_id': profile.account_depreciation_id.id,
+                'analytic_account_id': asset.account_analytic_id.id,
                 'debit': depr_amount > 0 and depr_amount or 0.0,
                 'credit': depr_amount < 0 and -depr_amount or 0.0,
                 'partner_id': partner_id,
                 'asset_id': asset.id
             }
             move_lines.append((0, 0, move_line_vals))
+
         move_line_vals = {
             'name': asset.name,
             'account_id': profile.account_asset_id.id,
-            'debit': asset.purchase_value < 0 and -asset.purchase_value or 0.0,
-            'credit': asset.purchase_value > 0 and asset.purchase_value or 0.0,
+            'analytic_account_id': asset.account_analytic_id.id,
+            'debit': (asset.purchase_value < 0 and -asset
+                      .purchase_value or 0.0),
+            'credit': (asset.purchase_value > 0 and asset
+                       .purchase_value or 0.0),
             'partner_id': partner_id,
             'asset_id': asset.id
         }
@@ -598,6 +628,32 @@ class AccountAssetRemovalLines(models.Model):
                     'asset_id': asset.id
                 }
                 move_lines.append((0, 0, move_line_vals))
+
+        # case asset action removel and unbalanced journal
+        diff = asset.purchase_value - depr_amount
+        if diff and not residual_value:
+            if self.posting_regime == 'residual_value':
+                move_line_vals = {
+                    'name': self.account_residual_value_id.name,
+                    'account_id': self.account_residual_value_id.id,
+                    'analytic_account_id': asset.account_analytic_id.id,
+                    'debit': diff > 0.0 and diff or 0.0,
+                    'credit': diff < 0.0 and diff or 0.0,
+                    'partner_id': partner_id,
+                    'asset_id': asset.id
+                }
+            elif self.posting_regime == 'gain_loss_on_sale':
+                move_line_vals = {
+                    'name': self.account_plus_value_id.name,
+                    'account_id': diff > 0.0 and self.account_min_value_id.id
+                    or self.account_plus_value_id.id,
+                    'analytic_account_id': asset.account_analytic_id.id,
+                    'debit': diff > 0.0 and diff or 0.0,
+                    'credit': diff < 0.0 and diff or 0.0,
+                    'partner_id': partner_id,
+                    'asset_id': asset.id
+                }
+            move_lines.append((0, 0, move_line_vals))
         return move_lines
 
     @api.onchange('asset_id')

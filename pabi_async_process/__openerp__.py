@@ -31,6 +31,8 @@
         'action_generate_entries/pabi_process.xml',
         'action_open_hr_salary/hr_salary_view.xml',
         'action_open_hr_salary/pabi_process.xml',
+        'action_hr_expense_create_multi_supplier_invoices/expense_create_multi_supplier_invoice_view.xml',
+        'action_hr_expense_create_multi_supplier_invoices/pabi_process.xml',
         'action_generate_budget_plans/generate_budget_plan_wizard.xml',
         'action_generate_budget_plans/pabi_process.xml',
         'action_asset_depre_line/asset_view.xml',

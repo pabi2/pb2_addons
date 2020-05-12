@@ -2,7 +2,6 @@
 
 from . import res_users
 from . import account_account
-# from . import account_budget
 from . import account_move
 from . import account_voucher
 from . import hr_expense

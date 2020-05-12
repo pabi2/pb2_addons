@@ -192,6 +192,7 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
             subtotal_payment_amount = 0
             subtotal_invoice_amount = 0
             old_outstanding = 0
+            sum_customer_invoice_amount = 0
             for rec in filter(lambda x: x[0] == loan_agreement_id, datas):
                 # Not have brought forward,
                 # supplier_payment and customer payment
@@ -228,15 +229,15 @@ class XLSXReportCDReceivableBalanceSheetDetail(models.TransientModel):
                     'customer_invoice_amount':
                         invoice_plan.ref_invoice_id.amount_total,
                     'outstanding': first_rec and
-                        ((rec[1] and rec[1] or 0) + supplier_payment.amount -
+                        ((rec[1] and rec[1] or 0) + 
                          invoice_plan.ref_invoice_id.amount_total) or
                         not first_rec and
-                        (old_outstanding -
+                        (old_outstanding +
                          invoice_plan.ref_invoice_id.amount_total) or False,
                 }))
+                sum_customer_invoice_amount += invoice_plan.ref_invoice_id.amount_total
                 old_outstanding = (rec[1] and rec[1] or 0) + \
-                    supplier_payment.amount - \
-                    invoice_plan.ref_invoice_id.amount_total
+                    sum_customer_invoice_amount
                 subtotal_payment_amount += \
                     first_rec and supplier_payment.amount or 0
                 subtotal_invoice_amount += \

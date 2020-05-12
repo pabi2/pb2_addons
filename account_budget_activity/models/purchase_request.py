@@ -23,12 +23,15 @@ class PurchaseRequest(CommitCommon, models.Model):
 
     @api.multi
     def button_approved(self):
+        res = super(PurchaseRequest, self).button_approved()
+        Analytic = self.env['account.analytic.account']
         for request in self:
-            for line in request.line_ids:
-                Analytic = self.env['account.analytic.account']
+            for line in request.sudo().line_ids:
                 line.analytic_account_id = \
                     Analytic.create_matched_analytic(line)
-        return super(PurchaseRequest, self).button_approved()
+                # Update write_uid to user
+                line.write_uid = request._uid
+        return res
 
     @api.multi
     def write(self, vals):

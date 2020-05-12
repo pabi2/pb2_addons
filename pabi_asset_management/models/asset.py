@@ -499,12 +499,13 @@ class AccountAsset(ChartFieldAction, models.Model):
 
     @api.multi
     def validate_asset_to_removal(self):
-        invalid_assets = self.filtered(lambda l: l.type != 'normal' or l.state not in ('open','close')).mapped('code')
-
-        if len(invalid_assets) > 0:
+        invalid_assets = self.filtered(
+            lambda l: l.type != 'normal' or l.state not in ('open', 'close')
+            ).mapped('code')
+        if invalid_assets:
             raise ValidationError(
                 _('Please select running or close assets!\n'
-                  'Asset error : %s'%str(tuple(invalid_assets))))
+                  'Asset error : %s' % str(tuple(invalid_assets))))
 
     @api.multi
     def action_undeliver_assets(self):
@@ -703,10 +704,15 @@ class AccountAsset(ChartFieldAction, models.Model):
             return line_dates
         # Import asset batch
         if not asset_line:
-            init_last_date = \
-                fields.Datetime.from_string(first_asset[-1].line_date)
-            line_dates = [line for line in all_dates if line >= init_last_date]
-            line_dates.insert(0, init_last_date)
+            # Import 1 asset line will return original asset line
+            if len(first_asset) <= 1:
+                return line_dates
+            return line_dates
+            # error from issue #4542
+            # init_last_date = \
+            #     fields.Datetime.from_string(first_asset[-1].line_date)
+            # line_dates = [line for line in all_dates if line >= init_last_date]
+            # line_dates.insert(0, init_last_date)
         return line_dates
 
     # @api.multi

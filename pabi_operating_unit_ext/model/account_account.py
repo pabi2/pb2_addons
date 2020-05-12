@@ -8,4 +8,5 @@ class AccountAccount(models.Model):
     operating_unit_id = fields.Many2one(
         'operating.unit',
         required=False,
+        index=True,
     )

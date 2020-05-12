@@ -413,14 +413,14 @@ class ISSIBudgetProjectMonitorView(models.Model):
                 0 AS plan_expense_internal,
                 0 AS sum_actual_internal,
                 sum(query.plan_revenue_external) AS plan_revenue_external,
-                sum(query.sum_revenue_external) AS sum_revenue_external,
+                COALESCE(sum(rev_project.actual_amount), (0)::double precision) AS sum_revenue_external,
                 0 AS plan_revenue_internal,
                 0 AS sum_revenue_internal,
                 true AS old_data,
                 0 AS sum_ex_internal,
                 query.fiscalyear_id,
                 project.id AS project_id
-               FROM (( SELECT fis.name AS fiscal_year,
+               FROM ((( SELECT fis.name AS fiscal_year,
                         plan.project_id,
                         plan.planned_amount AS release,
                         plan.planned_amount AS sum_actual_external,
@@ -449,6 +449,11 @@ class ISSIBudgetProjectMonitorView(models.Model):
                               GROUP BY res_project_revenue_actual.fiscalyear_id, res_project_revenue_actual.project_id) rev_project ON (((plan.project_id = rev_project.project_id) AND (plan.fiscalyear_id = rev_project.fiscalyear_id))))
                       WHERE (((plan.budget_method)::text = 'revenue'::text) AND ((fis.name)::text <= '2018'::text) AND (plan.planned_amount <> (0)::double precision))) query
                  LEFT JOIN res_project project ON ((query.project_id = project.id)))
+                 LEFT JOIN (SELECT res_project_revenue_actual.fiscalyear_id,
+                            res_project_revenue_actual.project_id,
+                            sum(res_project_revenue_actual.actual_amount) AS actual_amount
+                            FROM res_project_revenue_actual
+                            GROUP BY res_project_revenue_actual.fiscalyear_id, res_project_revenue_actual.project_id) rev_project ON (((project.id = rev_project.project_id) AND (query.fiscalyear_id = rev_project.fiscalyear_id))))
               GROUP BY query.fiscal_year, query.fiscalyear_id, project.code, project.id
         )
         """ % self._table)
